@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Level 2 Semester 2 - Exam Hub & Study Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-card: rgba(18, 24, 38, 0.85);
+      --bg-card-hover: rgba(28, 36, 56, 0.95);
+      --bg-input: #151c2c;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.3);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --accent-secondary: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-card-hover: rgba(248, 250, 252, 0.98);
+      --bg-input: #f1f5f9;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.25);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-faint: #94a3b8;
+      --accent: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.15);
+      --shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 90px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Glow backdrop effects */
+    .bg-glow {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1200px;
+      height: 350px;
+      background: radial-gradient(circle at 50% 0%, var(--accent-glow), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Top Navigation / App Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    [data-theme="light"] .brand-title {
+      background: linear-gradient(135deg, #1e293b, #475569);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-icon {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* Next Exam Countdown Banner */
+    .countdown-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.1));
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .countdown-info h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-secondary);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .countdown-info p {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .countdown-timer {
+      display: flex;
+      gap: 8px;
+    }
+
+    .time-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      text-align: center;
+      min-width: 54px;
+    }
+
+    .time-chip .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: block;
+      line-height: 1.1;
+    }
+
+    .time-chip .lbl {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* Navigation Pills / Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-card);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 120px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Tab Content Areas */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section Cards & Layouts */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-accent);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Timetable Grid */
+    .timetable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .exam-card {
+      border-left: 4px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .exam-card .date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .exam-card h4 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .exam-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+
+    .exam-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exam-card-actions {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-main);
+    }
+
+    .btn-sm:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #4f46e5;
+    }
+
+    /* Tasks / To-Do Planner */
+    .task-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-control {
+      flex: 1;
+      min-width: 180px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent);
+    }
+
+    select.form-control {
+      cursor: pointer;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .task-item:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-hover);
+    }
+
+    .task-item.completed {
+      opacity: 0.6;
+    }
+
+    .task-item.completed .task-text {
+      text-decoration: line-through;
+      color: var(--text-faint);
+    }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .task-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--border-accent);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+    }
+
+    .task-item.completed .task-check {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .task-content-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .task-text {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .task-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.72rem;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+    }
+
+    .task-delete {
+      background: transparent;
+      border: none;
+      color: var(--text-faint);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+      transition: color 0.2s ease;
+    }
+
+    .task-delete:hover {
+      color: var(--danger);
+    }
+
+    /* Resource Index & Explorer */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .resource-group {
+      margin-bottom: 20px;
+    }
+
+    .resource-group-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-secondary);
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+
+    .file-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .file-item:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+      transform: translateY(-1px);
+    }
+
+    .file-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+    }
+
+    .file-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .file-name {
+      font-size: 0.84rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-main);
+    }
+
+    .file-size {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* Notes Manager */
+    .notes-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .notes-textarea {
+      width: 100%;
+      min-height: 240px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+    }
+
+    .notes-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .notes-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .note-status {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Bottom Quick Navigation Bar for Mobile */
+    .mobile-dock {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 14, 23, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 8px 12px;
+      z-index: 100;
+      justify-content: space-around;
+    }
+
+    [data-theme="light"] .mobile-dock {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .dock-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color 0.2s ease;
+    }
+
+    .dock-btn.active {
+      color: var(--accent);
+    }
+
+    .dock-btn .dock-icon {
+      font-size: 1.25rem;
+    }
+
+    @media (max-width: 680px) {
+      .nav-tabs {
+        display: none;
+      }
+      .mobile-dock {
+        display: flex;
+      }
+      body {
+        padding-bottom: 80px;
+      }
+      .timetable-grid, .file-grid {
+        grid-template-columns: 1fr;
+      }
+      .countdown-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="container">
+    <header>
+      <div>
+        <div class="brand-title">📚 Y2S2 Exam Hub</div>
+        <div class="brand-sub">University of Kelaniya · Department of Industrial Management</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-icon" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
+      </div>
+    </header>
+
+    <!-- Next Exam Countdown Banner -->
+    <div class="countdown-banner" id="countdownBanner">
+      <div class="countdown-info">
+        <h3 id="nextExamBadge">⏳ Next Upcoming Exam</h3>
+        <p id="nextExamTitle">Loading exam schedule...</p>
+      </div>
+      <div class="countdown-timer">
+        <div class="time-chip"><span class="val" id="cdDays">0</span><span class="lbl">Days</span></div>
+        <div class="time-chip"><span class="val" id="cdHours">0</span><span class="lbl">Hours</span></div>
+        <div class="time-chip"><span class="val" id="cdMins">0</span><span class="lbl">Mins</span></div>
+        <div class="time-chip"><span class="val" id="cdSecs">0</span><span class="lbl">Secs</span></div>
+      </div>
+    </div>
+
+    <!-- Desktop Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('timetable')">📅 Timetable & Modules</button>
+      <button class="tab-btn" onclick="switchTab('tasks')">✅ Daily Study Planner</button>
+      <button class="tab-btn" onclick="switchTab('resources')">📂 Resource Index (253 Files)</button>
+      <button class="tab-btn" onclick="switchTab('notes')">📝 Special Notes</button>
+    </div>
+
+    <!-- TAB 1: Timetable & Modules -->
+    <div id="tab-timetable" class="tab-content active">
+      <div class="section-header">
+        <h2 class="section-title">📅 Level 2 Semester 2 Exam Schedule</h2>
+        <span class="date-badge">October – November 2026</span>
+      </div>
+      <div class="timetable-grid" id="timetableGrid"></div>
+    </div>
+
+    <!-- TAB 2: Daily Study Planner / Tasks -->
+    <div id="tab-tasks" class="tab-content">
+      <div class="section-header">
+        <h2 class="section-title">✅ Daily Task & Revision Planner</h2>
+        <span class="tag-badge" id="taskStatsBadge">0 / 0 completed</span>
+      </div>
+
+      <div class="task-form">
+        <div class="form-row">
+          <input type="text" id="taskInput" class="form-control" placeholder="What do you need to study or revise?" />
+        </div>
+        <div class="form-row">
+          <select id="taskModuleSelect" class="form-control"></select>
+          <input type="date" id="taskDate" class="form-control" />
+          <button class="btn-sm btn-primary" onclick="addTask()" style="padding: 10px 20px; font-size: 0.9rem;">+ Add Task</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <select id="taskFilterModule" class="form-control" onchange="renderTasks()" style="max-width: 240px;">
+          <option value="all">🔍 Filter by All Modules</option>
+        </select>
+        <button class="btn-sm" onclick="clearCompletedTasks()">🧹 Clear Completed</button>
+      </div>
+
+      <div class="task-list" id="taskList"></div>
+    </div>
+
+    <!-- TAB 3: Resource Explorer / Index -->
+    <div id="tab-resources" class="tab-content">
+      <div class="section-header">
+        <h2 class="section-title">📂 Offline Course Resource Explorer</h2>
+        <span class="tag-badge">253 Materials Cataloged</span>
+      </div>
+
+      <div class="filter-bar">
+        <select id="resourceModuleFilter" class="form-control" onchange="renderResources()" style="max-width: 280px;"></select>
+        <input type="text" id="resourceSearch" class="form-control" placeholder="🔍 Search slides, labs, videos..." oninput="renderResources()" />
+      </div>
+
+      <div id="resourceContainer"></div>
+    </div>
+
+    <!-- TAB 4: Notes & Summaries -->
+    <div id="tab-notes" class="tab-content">
+      <div class="section-header">
+        <h2 class="section-title">📝 Module Special Notes & Formulas</h2>
+        <span class="note-status" id="noteSaveStatus">Auto-saved to device</span>
+      </div>
+
+      <div class="card">
+        <div class="filter-bar" style="margin-bottom: 12px;">
+          <select id="notesModuleSelect" class="form-control" onchange="loadNote()" style="max-width: 300px;"></select>
+        </div>
+        <textarea id="notesArea" class="notes-textarea" placeholder="Jot down formulas, memory tricks, key definitions, or exam reminders for this module..." oninput="saveNote()"></textarea>
+        <div class="notes-footer" style="margin-top: 12px;">
+          <span style="font-size: 0.78rem; color: var(--text-faint);">💡 Notes automatically save to your browser's local storage.</span>
+          <button class="btn-sm" onclick="clearCurrentNote()">Clear Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Dock -->
+  <div class="mobile-dock">
+    <button class="dock-btn active" onclick="switchTab('timetable')">
+      <span class="dock-icon">📅</span>
+      <span>Exams</span>
+    </button>
+    <button class="dock-btn" onclick="switchTab('tasks')">
+      <span class="dock-icon">✅</span>
+      <span>Tasks</span>
+    </button>
+    <button class="dock-btn" onclick="switchTab('resources')">
+      <span class="dock-icon">📂</span>
+      <span>Library</span>
+    </button>
+    <button class="dock-btn" onclick="switchTab('notes')">
+      <span class="dock-icon">📝</span>
+      <span>Notes</span>
+    </button>
+  </div>
+
+  <script>
+    const CATALOG = [{"folder": "1 - DSA", "categories": {"Root Materials": [{"name": "Overview.md", "path": "1 - DSA/Overview.md", "size": 2179, "ext": ".md"}], "Lecture Materials": [{"name": "01 - Part 01 - Introduction to Algorithms.pdf", "path": "1 - DSA/Lecture Materials/01 - Part 01 - Introduction to Algorithms.pdf", "size": 164783, "ext": ".pdf"}, {"name": "02 - Part 02 - Space Complexity.pdf", "path": "1 - DSA/Lecture Materials/02 - Part 02 - Space Complexity.pdf", "size": 248956, "ext": ".pdf"}, {"name": "03 - Part 03 - Time Complexity.pdf", "path": "1 - DSA/Lecture Materials/03 - Part 03 - Time Complexity.pdf", "size": 179516, "ext": ".pdf"}, {"name": "04 - Part 04 - Time Analysis.pdf", "path": "1 - DSA/Lecture Materials/04 - Part 04 - Time Analysis.pdf", "size": 274765, "ext": ".pdf"}, {"name": "05 - Part 05 - Data Structures.pdf", "path": "1 - DSA/Lecture Materials/05 - Part 05 - Data Structures.pdf", "size": 114238, "ext": ".pdf"}, {"name": "06 - Part 06 - Stacks.pdf", "path": "1 - DSA/Lecture Materials/06 - Part 06 - Stacks.pdf", "size": 311655, "ext": ".pdf"}, {"name": "07 - Part 07 - Queues.pdf", "path": "1 - DSA/Lecture Materials/07 - Part 07 - Queues.pdf", "size": 316788, "ext": ".pdf"}, {"name": "08 - Part 08 - Trees.pdf", "path": "1 - DSA/Lecture Materials/08 - Part 08 - Trees.pdf", "size": 264993, "ext": ".pdf"}, {"name": "09 - Prototype Questions with Answers.pdf", "path": "1 - DSA/Lecture Materials/09 - Prototype Questions with Answers.pdf", "size": 763416, "ext": ".pdf"}], "Recommnded References": [{"name": "Data Structures - A Pseudocode Approach with C.pdf", "path": "1 - DSA/Recommnded References/Data Structures - A Pseudocode Approach with C.pdf", "size": 5005984, "ext": ".pdf"}, {"name": "Data Structures, Algorithms and Applications in C++.pdf", "path": "1 - DSA/Recommnded References/Data Structures, Algorithms and Applications in C++.pdf", "size": 29425723, "ext": ".pdf"}, {"name": "Data Structures- A Pseudocode Approach with C  - A -- Richard F. Gilberg, Behrouz A. Forouzan, Richard F. Gilberg -- ( WeLib.org ).pdf", "path": "1 - DSA/Recommnded References/Data Structures- A Pseudocode Approach with C  - A -- Richard F. Gilberg, Behrouz A. Forouzan, Richard F. Gilberg -- ( WeLib.org ).pdf", "size": 31788241, "ext": ".pdf"}, {"name": "Sweden Education Shift - From Digital Learning to Pen and Paper.md", "path": "1 - DSA/Recommnded References/Sweden Education Shift - From Digital Learning to Pen and Paper.md", "size": 347, "ext": ".md"}]}}, {"folder": "2 - Mobile Applications", "categories": {"Root Materials": [{"name": "Overview.md", "path": "2 - Mobile Applications/Overview.md", "size": 2835, "ext": ".md"}], "Lecture Materials": [{"name": "00 - Lesson Plan (Updated).xlsx", "path": "2 - Mobile Applications/Lecture Materials/00 - Lesson Plan (Updated).xlsx", "size": 11189, "ext": ".xlsx"}, {"name": "01 - Introduction to Mobile Computing and Mobile Networks.pdf", "path": "2 - Mobile Applications/Lecture Materials/01 - Introduction to Mobile Computing and Mobile Networks.pdf", "size": 592951, "ext": ".pdf"}, {"name": "01 - Introduction to Mobile Computing and Mobile Networks.pptx", "path": "2 - Mobile Applications/Lecture Materials/01 - Introduction to Mobile Computing and Mobile Networks.pptx", "size": 395553, "ext": ".pptx"}, {"name": "02 - Mobile Operating Systems.pdf", "path": "2 - Mobile Applications/Lecture Materials/02 - Mobile Operating Systems.pdf", "size": 534363, "ext": ".pdf"}, {"name": "02 - Mobile Operating Systems.pptx", "path": "2 - Mobile Applications/Lecture Materials/02 - Mobile Operating Systems.pptx", "size": 372547, "ext": ".pptx"}, {"name": "03 - Mobile Development Platforms.pdf", "path": "2 - Mobile Applications/Lecture Materials/03 - Mobile Development Platforms.pdf", "size": 508350, "ext": ".pdf"}, {"name": "03 - Mobile Development Platforms.pptx", "path": "2 - Mobile Applications/Lecture Materials/03 - Mobile Development Platforms.pptx", "size": 313742, "ext": ".pptx"}, {"name": "04 - Mobile Application Architecture.pdf", "path": "2 - Mobile Applications/Lecture Materials/04 - Mobile Application Architecture.pdf", "size": 501017, "ext": ".pdf"}, {"name": "04 - Mobile Application Architecture.pptx", "path": "2 - Mobile Applications/Lecture Materials/04 - Mobile Application Architecture.pptx", "size": 316462, "ext": ".pptx"}, {"name": "05 - Android Layouts Guide.pdf", "path": "2 - Mobile Applications/Lecture Materials/05 - Android Layouts Guide.pdf", "size": 137015, "ext": ".pdf"}, {"name": "05 - Material Design Guide.pdf", "path": "2 - Mobile Applications/Lecture Materials/05 - Material Design Guide.pdf", "size": 238403, "ext": ".pdf"}, {"name": "05 - Mobile UI and Navigation Patterns.pdf", "path": "2 - Mobile Applications/Lecture Materials/05 - Mobile UI and Navigation Patterns.pdf", "size": 527795, "ext": ".pdf"}, {"name": "05 - Mobile UI and Navigation Patterns.pptx", "path": "2 - Mobile Applications/Lecture Materials/05 - Mobile UI and Navigation Patterns.pptx", "size": 246506, "ext": ".pptx"}, {"name": "06 - Android UI UX Flow Design.pdf", "path": "2 - Mobile Applications/Lecture Materials/06 - Android UI UX Flow Design.pdf", "size": 429726, "ext": ".pdf"}, {"name": "06 - Android UI UX Flow Design.pptx", "path": "2 - Mobile Applications/Lecture Materials/06 - Android UI UX Flow Design.pptx", "size": 210453, "ext": ".pptx"}, {"name": "07 - Android Web Services and APIs.pdf", "path": "2 - Mobile Applications/Lecture Materials/07 - Android Web Services and APIs.pdf", "size": 492126, "ext": ".pdf"}, {"name": "07 - Android Web Services and APIs.pptx", "path": "2 - Mobile Applications/Lecture Materials/07 - Android Web Services and APIs.pptx", "size": 185859, "ext": ".pptx"}, {"name": "07 - RecyclerView Guide.pdf", "path": "2 - Mobile Applications/Lecture Materials/07 - RecyclerView Guide.pdf", "size": 171782, "ext": ".pdf"}, {"name": "08 - Android Location Services and Smartphone Sensors.pdf", "path": "2 - Mobile Applications/Lecture Materials/08 - Android Location Services and Smartphone Sensors.pdf", "size": 455101, "ext": ".pdf"}, {"name": "08 - Android Location Services and Smartphone Sensors.pptx", "path": "2 - Mobile Applications/Lecture Materials/08 - Android Location Services and Smartphone Sensors.pptx", "size": 202024, "ext": ".pptx"}, {"name": "09 - Android Database Connectivity.pdf", "path": "2 - Mobile Applications/Lecture Materials/09 - Android Database Connectivity.pdf", "size": 480701, "ext": ".pdf"}, {"name": "09 - Android Database Connectivity.pptx", "path": "2 - Mobile Applications/Lecture Materials/09 - Android Database Connectivity.pptx", "size": 208690, "ext": ".pptx"}, {"name": "10 - Android Testing and Debugging.pdf", "path": "2 - Mobile Applications/Lecture Materials/10 - Android Testing and Debugging.pdf", "size": 407524, "ext": ".pdf"}, {"name": "10 - Android Testing and Debugging.pptx", "path": "2 - Mobile Applications/Lecture Materials/10 - Android Testing and Debugging.pptx", "size": 176564, "ext": ".pptx"}, {"name": "11 - iOS Application Development Overview (Support Notes).pdf", "path": "2 - Mobile Applications/Lecture Materials/11 - iOS Application Development Overview (Support Notes).pdf", "size": 498871, "ext": ".pdf"}, {"name": "11 - iOS Application Development Overview.pdf", "path": "2 - Mobile Applications/Lecture Materials/11 - iOS Application Development Overview.pdf", "size": 419099, "ext": ".pdf"}, {"name": "11 - iOS Application Development Overview.pptx", "path": "2 - Mobile Applications/Lecture Materials/11 - iOS Application Development Overview.pptx", "size": 185669, "ext": ".pptx"}], "Practicals & Activities": [{"name": "00 - Mobile Application Development Groups.xlsx", "path": "2 - Mobile Applications/Practicals & Activities/00 - Mobile Application Development Groups.xlsx", "size": 8751, "ext": ".xlsx"}, {"name": "01 - Practical 1 - Android Studio Kotlin Setup Lab Manual.pdf", "path": "2 - Mobile Applications/Practicals & Activities/01 - Practical 1 - Android Studio Kotlin Setup Lab Manual.pdf", "size": 1590567, "ext": ".pdf"}, {"name": "02 - In-Class Exercise 1.pdf", "path": "2 - Mobile Applications/Practicals & Activities/02 - In-Class Exercise 1.pdf", "size": 329776, "ext": ".pdf"}, {"name": "03 - Homework Activity 30-07-2026.pdf", "path": "2 - Mobile Applications/Practicals & Activities/03 - Homework Activity 30-07-2026.pdf", "size": 173384, "ext": ".pdf"}, {"name": "04 - Activity Sheet 05-08-2026.docx", "path": "2 - Mobile Applications/Practicals & Activities/04 - Activity Sheet 05-08-2026.docx", "size": 25871, "ext": ".docx"}, {"name": "05 - Practical Sheet - API Integration for Mobile App.pdf", "path": "2 - Mobile Applications/Practicals & Activities/05 - Practical Sheet - API Integration for Mobile App.pdf", "size": 241661, "ext": ".pdf"}, {"name": "06 - Android Location Services Group Activity Sheet.pdf", "path": "2 - Mobile Applications/Practicals & Activities/06 - Android Location Services Group Activity Sheet.pdf", "size": 177497, "ext": ".pdf"}, {"name": "07 - Android Database Lab Activities.pdf", "path": "2 - Mobile Applications/Practicals & Activities/07 - Android Database Lab Activities.pdf", "size": 374746, "ext": ".pdf"}, {"name": "08 - Android Testing and Debugging Practical Worksheet.pdf", "path": "2 - Mobile Applications/Practicals & Activities/08 - Android Testing and Debugging Practical Worksheet.pdf", "size": 390024, "ext": ".pdf"}, {"name": "09 - In-Class Exercise - Cross-Platform App Development.pdf", "path": "2 - Mobile Applications/Practicals & Activities/09 - In-Class Exercise - Cross-Platform App Development.pdf", "size": 143296, "ext": ".pdf"}, {"name": "10 - Activity Sheet 24-09-2026.pdf", "path": "2 - Mobile Applications/Practicals & Activities/10 - Activity Sheet 24-09-2026.pdf", "size": 168636, "ext": ".pdf"}], "Practicals & Activities/Case Study Based Mini Project": [{"name": "Case study based Mini Project.pdf", "path": "2 - Mobile Applications/Practicals & Activities/Case Study Based Mini Project/Case study based Mini Project.pdf", "size": 451793, "ext": ".pdf"}, {"name": "Mobile_UI_Navigation_Patterns.pdf", "path": "2 - Mobile Applications/Practicals & Activities/Case Study Based Mini Project/Mobile_UI_Navigation_Patterns.pdf", "size": 535615, "ext": ".pdf"}]}}, {"folder": "3 - Embedded Systems", "categories": {"Root Materials": [{"name": "Overview.md", "path": "3 - Embedded Systems/Overview.md", "size": 5372, "ext": ".md"}], "Exam Support Materials (Which will be given during the exam)": [{"name": "ATmega328P Simplified Data Sheet.pdf", "path": "3 - Embedded Systems/Exam Support Materials (Which will be given during the exam)/ATmega328P Simplified Data Sheet.pdf", "size": 269388, "ext": ".pdf"}, {"name": "Arduino Simplified Cheat Sheet.pdf", "path": "3 - Embedded Systems/Exam Support Materials (Which will be given during the exam)/Arduino Simplified Cheat Sheet.pdf", "size": 16730111, "ext": ".pdf"}, {"name": "Simplified Cheat Sheet for AVR Programming in C.pdf", "path": "3 - Embedded Systems/Exam Support Materials (Which will be given during the exam)/Simplified Cheat Sheet for AVR Programming in C.pdf", "size": 148516, "ext": ".pdf"}], "Lecture Materials": [{"name": "01 - Introduction to Embedded Systems.pdf", "path": "3 - Embedded Systems/Lecture Materials/01 - Introduction to Embedded Systems.pdf", "size": 2191938, "ext": ".pdf"}, {"name": "01 - Supplimentary - \u0db8\u0dd8\u0daf\u0dd4\u0d9a\u0dcf\u0d82\u0d9c \u0dc0\u0dd1\u0daf\u0dca\u0daf\u0dd4\u0db8\u0dca\u0d9a\u0dbb\u0dd4\u0dc0\u0db1\u0dca \u0d85\u0dc0\u0dc1\u0dca_\u0dba \u0d9a\u0dbb \u0d87\u0dad.pdf", "path": "3 - Embedded Systems/Lecture Materials/01 - Supplimentary - \u0db8\u0dd8\u0daf\u0dd4\u0d9a\u0dcf\u0d82\u0d9c \u0dc0\u0dd1\u0daf\u0dca\u0daf\u0dd4\u0db8\u0dca\u0d9a\u0dbb\u0dd4\u0dc0\u0db1\u0dca \u0d85\u0dc0\u0dc1\u0dca_\u0dba \u0d9a\u0dbb \u0d87\u0dad.pdf", "size": 209923, "ext": ".pdf"}, {"name": "02 - Introduction to Microcontrollers.pdf", "path": "3 - Embedded Systems/Lecture Materials/02 - Introduction to Microcontrollers.pdf", "size": 1970904, "ext": ".pdf"}, {"name": "02 - Story of AVR.mp4", "path": "3 - Embedded Systems/Lecture Materials/02 - Story of AVR.mp4", "size": 22644947, "ext": ".mp4"}, {"name": "03 - Answers for Exercise 1.pdf", "path": "3 - Embedded Systems/Lecture Materials/03 - Answers for Exercise 1.pdf", "size": 1344957, "ext": ".pdf"}, {"name": "03 - Atmel AVR Instruction Set Manual.pdf", "path": "3 - Embedded Systems/Lecture Materials/03 - Atmel AVR Instruction Set Manual.pdf", "size": 2527656, "ext": ".pdf"}, {"name": "03 - Exercise 1.pdf", "path": "3 - Embedded Systems/Lecture Materials/03 - Exercise 1.pdf", "size": 895662, "ext": ".pdf"}, {"name": "03 - Exercise 2.pdf", "path": "3 - Embedded Systems/Lecture Materials/03 - Exercise 2.pdf", "size": 549039, "ext": ".pdf"}, {"name": "03 - IO Port Programming.pdf", "path": "3 - Embedded Systems/Lecture Materials/03 - IO Port Programming.pdf", "size": 4240094, "ext": ".pdf"}, {"name": "04 - Exercise 3.pdf", "path": "3 - Embedded Systems/Lecture Materials/04 - Exercise 3.pdf", "size": 460886, "ext": ".pdf"}, {"name": "04 - Is AI safe to trust.pdf", "path": "3 - Embedded Systems/Lecture Materials/04 - Is AI safe to trust.pdf", "size": 348310, "ext": ".pdf"}, {"name": "04 - Polling and Interrupt Handling.pdf", "path": "3 - Embedded Systems/Lecture Materials/04 - Polling and Interrupt Handling.pdf", "size": 3158706, "ext": ".pdf"}, {"name": "05 - 10-bit ADC.xlsx", "path": "3 - Embedded Systems/Lecture Materials/05 - 10-bit ADC.xlsx", "size": 10024, "ext": ".xlsx"}, {"name": "05 - Analog to Digital Conversion.pdf", "path": "3 - Embedded Systems/Lecture Materials/05 - Analog to Digital Conversion.pdf", "size": 3377786, "ext": ".pdf"}, {"name": "05 - Arduino ADC - Should Vref be divided by 1023 or 1024.pdf", "path": "3 - Embedded Systems/Lecture Materials/05 - Arduino ADC - Should Vref be divided by 1023 or 1024.pdf", "size": 184672, "ext": ".pdf"}, {"name": "05 - Exercise 4.pdf", "path": "3 - Embedded Systems/Lecture Materials/05 - Exercise 4.pdf", "size": 485804, "ext": ".pdf"}, {"name": "05 - LM35 Temperature Sensor Datasheet.pdf", "path": "3 - Embedded Systems/Lecture Materials/05 - LM35 Temperature Sensor Datasheet.pdf", "size": 1724026, "ext": ".pdf"}, {"name": "05 - VT900 Series LDR Datasheet.pdf", "path": "3 - Embedded Systems/Lecture Materials/05 - VT900 Series LDR Datasheet.pdf", "size": 62953, "ext": ".pdf"}, {"name": "06 - 1N400X Series Rectifier Diode Datasheet.pdf", "path": "3 - Embedded Systems/Lecture Materials/06 - 1N400X Series Rectifier Diode Datasheet.pdf", "size": 70407, "ext": ".pdf"}, {"name": "06 - 2N7000 N Channel MOSFET Datasheet.PDF", "path": "3 - Embedded Systems/Lecture Materials/06 - 2N7000 N Channel MOSFET Datasheet.PDF", "size": 112445, "ext": ".pdf"}, {"name": "06 - ADXL335 Accelerometer Datasheet.pdf", "path": "3 - Embedded Systems/Lecture Materials/06 - ADXL335 Accelerometer Datasheet.pdf", "size": 436950, "ext": ".pdf"}, {"name": "06 - BC54X Series NPN Transistor Datasheet.pdf", "path": "3 - Embedded Systems/Lecture Materials/06 - BC54X Series NPN Transistor Datasheet.pdf", "size": 74539, "ext": ".pdf"}, {"name": "06 - Transducers.pdf", "path": "3 - Embedded Systems/Lecture Materials/06 - Transducers.pdf", "size": 1218659, "ext": ".pdf"}, {"name": "06- AH1815 Hall Effect Sensor Datasheet.pdf", "path": "3 - Embedded Systems/Lecture Materials/06- AH1815 Hall Effect Sensor Datasheet.pdf", "size": 568589, "ext": ".pdf"}, {"name": "07 - Exercise 5.pdf", "path": "3 - Embedded Systems/Lecture Materials/07 - Exercise 5.pdf", "size": 583925, "ext": ".pdf"}, {"name": "07 - Timing and Counting.pdf", "path": "3 - Embedded Systems/Lecture Materials/07 - Timing and Counting.pdf", "size": 2161305, "ext": ".pdf"}, {"name": "08 - Exercise 6.pdf", "path": "3 - Embedded Systems/Lecture Materials/08 - Exercise 6.pdf", "size": 461695, "ext": ".pdf"}, {"name": "08 - Pulse Width Modulation.pdf", "path": "3 - Embedded Systems/Lecture Materials/08 - Pulse Width Modulation.pdf", "size": 1940041, "ext": ".pdf"}, {"name": "09 - Exercise 7.pdf", "path": "3 - Embedded Systems/Lecture Materials/09 - Exercise 7.pdf", "size": 707350, "ext": ".pdf"}, {"name": "09 - Serial Communication.pdf", "path": "3 - Embedded Systems/Lecture Materials/09 - Serial Communication.pdf", "size": 3061795, "ext": ".pdf"}], "Recommended References": [{"name": "AVR Microcontroller and Embedded Systems.pdf", "path": "3 - Embedded Systems/Recommended References/AVR Microcontroller and Embedded Systems.pdf", "size": 44837932, "ext": ".pdf"}, {"name": "Atmel ATmega328P Datasheet.pdf", "path": "3 - Embedded Systems/Recommended References/Atmel ATmega328P Datasheet.pdf", "size": 5418032, "ext": ".pdf"}], "Web Resources & Reference Guides": [{"name": "00 - Arduino IDE.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/00 - Arduino IDE.md", "size": 133, "ext": ".md"}, {"name": "00 - Microchip Studio.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/00 - Microchip Studio.md", "size": 234, "ext": ".md"}, {"name": "03 - Go Speed Racer...Arduino Speed Test.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/03 - Go Speed Racer...Arduino Speed Test.md", "size": 227, "ext": ".md"}, {"name": "04 - Processor Interrupts with Arduino.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/04 - Processor Interrupts with Arduino.md", "size": 253, "ext": ".md"}, {"name": "06 - Applications of Diodes.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/06 - Applications of Diodes.md", "size": 244, "ext": ".md"}, {"name": "07 - Picking the Right Arduino.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/07 - Picking the Right Arduino.md", "size": 231, "ext": ".md"}, {"name": "08 - The Evils of Arduino Strings.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/08 - The Evils of Arduino Strings.md", "size": 267, "ext": ".md"}, {"name": "09 - Memories of an Arduino.md", "path": "3 - Embedded Systems/Web Resources & Reference Guides/09 - Memories of an Arduino.md", "size": 220, "ext": ".md"}]}}, {"folder": "4 - AI", "categories": {"Root Materials": [{"name": "Overview.md", "path": "4 - AI/Overview.md", "size": 4708, "ext": ".md"}], "Assignments & Labs/02 - N8N Session": [{"name": "Assignment 01.pdf", "path": "4 - AI/Assignments & Labs/02 - N8N Session/Assignment 01.pdf", "size": 199889, "ext": ".pdf"}, {"name": "Lecture Hall Booking Starter Form.json", "path": "4 - AI/Assignments & Labs/02 - N8N Session/Lecture Hall Booking Starter Form.json", "size": 4028, "ext": ".json"}, {"name": "form for demo.json", "path": "4 - AI/Assignments & Labs/02 - N8N Session/form for demo.json", "size": 166802, "ext": ".json"}, {"name": "project guide.pdf", "path": "4 - AI/Assignments & Labs/02 - N8N Session/project guide.pdf", "size": 143896, "ext": ".pdf"}], "Assignments & Labs/03 - Dengue Week Self-Learning": [{"name": "Self-Learning Activity Submission Guide.pdf", "path": "4 - AI/Assignments & Labs/03 - Dengue Week Self-Learning/Self-Learning Activity Submission Guide.pdf", "size": 166526, "ext": ".pdf"}, {"name": "Self-learning activity 20-07-2026.pdf", "path": "4 - AI/Assignments & Labs/03 - Dengue Week Self-Learning/Self-learning activity 20-07-2026.pdf", "size": 160857, "ext": ".pdf"}], "Assignments & Labs/06 - Industry Visit": [{"name": "Industry Visit Assignment -  DPL Kottawa.pdf", "path": "4 - AI/Assignments & Labs/06 - Industry Visit/Industry Visit Assignment -  DPL Kottawa.pdf", "size": 6286805, "ext": ".pdf"}], "Assignments & Labs/07 - Google ADK Lab": [{"name": "Electricity Support Assistant Lab.docx", "path": "4 - AI/Assignments & Labs/07 - Google ADK Lab/Electricity Support Assistant Lab.docx", "size": 30033, "ext": ".docx"}, {"name": "Electricity Support Assistant Project.pdf", "path": "4 - AI/Assignments & Labs/07 - Google ADK Lab/Electricity Support Assistant Project.pdf", "size": 166715, "ext": ".pdf"}, {"name": "data.zip", "path": "4 - AI/Assignments & Labs/07 - Google ADK Lab/data.zip", "size": 171566, "ext": ".zip"}, {"name": "service_tools.py", "path": "4 - AI/Assignments & Labs/07 - Google ADK Lab/service_tools.py", "size": 150636, "ext": ".py"}], "Assignments & Labs/08 - Google ADK Assignment": [{"name": "Assignment 2.docx", "path": "4 - AI/Assignments & Labs/08 - Google ADK Assignment/Assignment 2.docx", "size": 28770, "ext": ".docx"}, {"name": "data_pack.zip", "path": "4 - AI/Assignments & Labs/08 - Google ADK Assignment/data_pack.zip", "size": 4582, "ext": ".zip"}], "Assignments & Labs/09 - CNN Assignment": [{"name": "AI CNN Assignment.ipynb", "path": "4 - AI/Assignments & Labs/09 - CNN Assignment/AI CNN Assignment.ipynb", "size": 802112, "ext": ".ipynb"}], "Assignments & Labs/11 - Explainability Assignment": [{"name": "EU Case Analysis Assignment.md", "path": "4 - AI/Assignments & Labs/11 - Explainability Assignment/EU Case Analysis Assignment.md", "size": 481, "ext": ".md"}], "Lecture Materials": [{"name": "00 - Lesson Plan.png", "path": "4 - AI/Lecture Materials/00 - Lesson Plan.png", "size": 38797, "ext": ".png"}, {"name": "01 - Reading Material - AI Kitchen Guide.pdf", "path": "4 - AI/Lecture Materials/01 - Reading Material - AI Kitchen Guide.pdf", "size": 43980, "ext": ".pdf"}, {"name": "05 - Genetic Algorithms.pdf", "path": "4 - AI/Lecture Materials/05 - Genetic Algorithms.pdf", "size": 1400493, "ext": ".pdf"}, {"name": "05 - Genetic Algorithms.pptx", "path": "4 - AI/Lecture Materials/05 - Genetic Algorithms.pptx", "size": 1399223, "ext": ".pptx"}, {"name": "07 - Introduction to Google ADK.pdf", "path": "4 - AI/Lecture Materials/07 - Introduction to Google ADK.pdf", "size": 211441, "ext": ".pdf"}, {"name": "09 - Convolutional Neural Networks (CNN).pdf", "path": "4 - AI/Lecture Materials/09 - Convolutional Neural Networks (CNN).pdf", "size": 1742706, "ext": ".pdf"}, {"name": "09 - Convolutional Neural Networks (CNN).pptx", "path": "4 - AI/Lecture Materials/09 - Convolutional Neural Networks (CNN).pptx", "size": 14481030, "ext": ".pptx"}, {"name": "10 - Fuzzy Logic Systems.pdf", "path": "4 - AI/Lecture Materials/10 - Fuzzy Logic Systems.pdf", "size": 1485775, "ext": ".pdf"}, {"name": "10 - Fuzzy Logic Systems.pptx", "path": "4 - AI/Lecture Materials/10 - Fuzzy Logic Systems.pptx", "size": 2632184, "ext": ".pptx"}, {"name": "11 - Explainability and Ethics - XAI Core Theory.pdf", "path": "4 - AI/Lecture Materials/11 - Explainability and Ethics - XAI Core Theory.pdf", "size": 942831, "ext": ".pdf"}, {"name": "11 - Explainability and Ethics - XAI Core Theory.pptx", "path": "4 - AI/Lecture Materials/11 - Explainability and Ethics - XAI Core Theory.pptx", "size": 456038, "ext": ".pptx"}], "Videos": [{"name": "04 - State Space Search - A Star Search.mp4", "path": "4 - AI/Videos/04 - State Space Search - A Star Search.mp4", "size": 51536326, "ext": ".mp4"}, {"name": "04 - State Space Search - Uniform Cost Search.mp4", "path": "4 - AI/Videos/04 - State Space Search - Uniform Cost Search.mp4", "size": 38874293, "ext": ".mp4"}], "Web Resources & Videos": [{"name": "02 - Building AI Agents.md", "path": "4 - AI/Web Resources & Videos/02 - Building AI Agents.md", "size": 224, "ext": ".md"}, {"name": "04 - State Space Search - A Star Search.md", "path": "4 - AI/Web Resources & Videos/04 - State Space Search - A Star Search.md", "size": 264, "ext": ".md"}, {"name": "04 - State Space Search - Uniform Cost Search.md", "path": "4 - AI/Web Resources & Videos/04 - State Space Search - Uniform Cost Search.md", "size": 265, "ext": ".md"}]}}, {"folder": "5 - Distributed Systems", "categories": {"Root Materials": [{"name": "Overview.md", "path": "5 - Distributed Systems/Overview.md", "size": 1562, "ext": ".md"}], "Assignments & Quizzes": [{"name": "Instructions.pdf", "path": "5 - Distributed Systems/Assignments & Quizzes/Instructions.pdf", "size": 4088443, "ext": ".pdf"}], "Lecture Materials": [{"name": "Cloud_Computing_Lecture02.pdf", "path": "5 - Distributed Systems/Lecture Materials/Cloud_Computing_Lecture02.pdf", "size": 948325, "ext": ".pdf"}, {"name": "INTE 22253 - Lab 01.pdf", "path": "5 - Distributed Systems/Lecture Materials/INTE 22253 - Lab 01.pdf", "size": 90153, "ext": ".pdf"}, {"name": "Lecture 01.pdf", "path": "5 - Distributed Systems/Lecture Materials/Lecture 01.pdf", "size": 888850, "ext": ".pdf"}, {"name": "Lecture 03.pdf", "path": "5 - Distributed Systems/Lecture Materials/Lecture 03.pdf", "size": 4263308, "ext": ".pdf"}, {"name": "Lecture 05.pdf", "path": "5 - Distributed Systems/Lecture Materials/Lecture 05.pdf", "size": 674618, "ext": ".pdf"}, {"name": "Lecture 06.1.pdf", "path": "5 - Distributed Systems/Lecture Materials/Lecture 06.1.pdf", "size": 444347, "ext": ".pdf"}, {"name": "Lecture 06.pdf", "path": "5 - Distributed Systems/Lecture Materials/Lecture 06.pdf", "size": 740712, "ext": ".pdf"}]}}, {"folder": "6 - Design Patterns", "categories": {"Root Materials": [{"name": "Overview.md", "path": "6 - Design Patterns/Overview.md", "size": 4512, "ext": ".md"}], "In-Class Activities": [{"name": "04 - In-Class Individual Assessment.pdf", "path": "6 - Design Patterns/In-Class Activities/04 - In-Class Individual Assessment.pdf", "size": 1219966, "ext": ".pdf"}], "Lecture Materials": [{"name": "01 - Introduction to Design Patterns.pdf", "path": "6 - Design Patterns/Lecture Materials/01 - Introduction to Design Patterns.pdf", "size": 6628190, "ext": ".pdf"}, {"name": "01 - Introduction to Design Patterns.pptx", "path": "6 - Design Patterns/Lecture Materials/01 - Introduction to Design Patterns.pptx", "size": 45260551, "ext": ".pptx"}, {"name": "02 - Singleton Design Pattern.pdf", "path": "6 - Design Patterns/Lecture Materials/02 - Singleton Design Pattern.pdf", "size": 3674723, "ext": ".pdf"}, {"name": "02 - Singleton Design Pattern.pptx", "path": "6 - Design Patterns/Lecture Materials/02 - Singleton Design Pattern.pptx", "size": 31245694, "ext": ".pptx"}, {"name": "03 - Factory Method Design Pattern.pdf", "path": "6 - Design Patterns/Lecture Materials/03 - Factory Method Design Pattern.pdf", "size": 4597165, "ext": ".pdf"}, {"name": "03 - Factory Method Design Pattern.pptx", "path": "6 - Design Patterns/Lecture Materials/03 - Factory Method Design Pattern.pptx", "size": 35093055, "ext": ".pptx"}, {"name": "04 - Facade Design Pattern (New).pdf", "path": "6 - Design Patterns/Lecture Materials/04 - Facade Design Pattern (New).pdf", "size": 3927075, "ext": ".pdf"}, {"name": "04 - Facade Design Pattern (New).pptx", "path": "6 - Design Patterns/Lecture Materials/04 - Facade Design Pattern (New).pptx", "size": 32166045, "ext": ".pptx"}, {"name": "04 - Facade Design Pattern (Old).pdf", "path": "6 - Design Patterns/Lecture Materials/04 - Facade Design Pattern (Old).pdf", "size": 1226536, "ext": ".pdf"}, {"name": "04 - Facade Design Pattern (Old).pptx", "path": "6 - Design Patterns/Lecture Materials/04 - Facade Design Pattern (Old).pptx", "size": 10918416, "ext": ".pptx"}, {"name": "05 - Adapter Design Pattern (Last Year).pdf", "path": "6 - Design Patterns/Lecture Materials/05 - Adapter Design Pattern (Last Year).pdf", "size": 1252742, "ext": ".pdf"}, {"name": "05 - Adapter Design Pattern (Last Year).pptx", "path": "6 - Design Patterns/Lecture Materials/05 - Adapter Design Pattern (Last Year).pptx", "size": 12058366, "ext": ".pptx"}, {"name": "05 - Adapter Design Pattern (This Year).pdf", "path": "6 - Design Patterns/Lecture Materials/05 - Adapter Design Pattern (This Year).pdf", "size": 3937244, "ext": ".pdf"}, {"name": "05 - Adapter Design Pattern (This Year).pptx", "path": "6 - Design Patterns/Lecture Materials/05 - Adapter Design Pattern (This Year).pptx", "size": 31035510, "ext": ".pptx"}, {"name": "06 - Proxy Design Pattern (New).pdf", "path": "6 - Design Patterns/Lecture Materials/06 - Proxy Design Pattern (New).pdf", "size": 3890204, "ext": ".pdf"}, {"name": "06 - Proxy Design Pattern (New).pptx", "path": "6 - Design Patterns/Lecture Materials/06 - Proxy Design Pattern (New).pptx", "size": 27063892, "ext": ".pptx"}, {"name": "06 - Proxy Design Pattern (Previous).pdf", "path": "6 - Design Patterns/Lecture Materials/06 - Proxy Design Pattern (Previous).pdf", "size": 1649499, "ext": ".pdf"}, {"name": "06 - Proxy Design Pattern (Previous).pptx", "path": "6 - Design Patterns/Lecture Materials/06 - Proxy Design Pattern (Previous).pptx", "size": 13943207, "ext": ".pptx"}, {"name": "07 - Decorator Design Pattern (New).pdf", "path": "6 - Design Patterns/Lecture Materials/07 - Decorator Design Pattern (New).pdf", "size": 3460866, "ext": ".pdf"}, {"name": "07 - Decorator Design Pattern (New).pptx", "path": "6 - Design Patterns/Lecture Materials/07 - Decorator Design Pattern (New).pptx", "size": 26506383, "ext": ".pptx"}, {"name": "07 - Decorator Design Pattern (Old).pdf", "path": "6 - Design Patterns/Lecture Materials/07 - Decorator Design Pattern (Old).pdf", "size": 1537918, "ext": ".pdf"}, {"name": "07 - Decorator Design Pattern (Old).pptx", "path": "6 - Design Patterns/Lecture Materials/07 - Decorator Design Pattern (Old).pptx", "size": 17767313, "ext": ".pptx"}, {"name": "08 - Template Method Design Pattern (Generated).pdf", "path": "6 - Design Patterns/Lecture Materials/08 - Template Method Design Pattern (Generated).pdf", "size": 3066096, "ext": ".pdf"}, {"name": "08 - Template Method Design Pattern (Generated).pptx", "path": "6 - Design Patterns/Lecture Materials/08 - Template Method Design Pattern (Generated).pptx", "size": 26994107, "ext": ".pptx"}, {"name": "08 - Template Method Design Pattern (Original).pdf", "path": "6 - Design Patterns/Lecture Materials/08 - Template Method Design Pattern (Original).pdf", "size": 686666, "ext": ".pdf"}, {"name": "08 - Template Method Design Pattern (Original).pptx", "path": "6 - Design Patterns/Lecture Materials/08 - Template Method Design Pattern (Original).pptx", "size": 4248342, "ext": ".pptx"}, {"name": "09 - Chain of Responsibility (AI Generated).pdf", "path": "6 - Design Patterns/Lecture Materials/09 - Chain of Responsibility (AI Generated).pdf", "size": 5955970, "ext": ".pdf"}, {"name": "09 - Chain of Responsibility (AI Generated).pptx", "path": "6 - Design Patterns/Lecture Materials/09 - Chain of Responsibility (AI Generated).pptx", "size": 58109883, "ext": ".pptx"}, {"name": "09 - Chain of Responsibility (Detailed).pdf", "path": "6 - Design Patterns/Lecture Materials/09 - Chain of Responsibility (Detailed).pdf", "size": 606703, "ext": ".pdf"}, {"name": "09 - Chain of Responsibility (Detailed).pptx", "path": "6 - Design Patterns/Lecture Materials/09 - Chain of Responsibility (Detailed).pptx", "size": 8684325, "ext": ".pptx"}, {"name": "10 - State Design Pattern (Detailed).pdf", "path": "6 - Design Patterns/Lecture Materials/10 - State Design Pattern (Detailed).pdf", "size": 1889633, "ext": ".pdf"}, {"name": "10 - State Design Pattern (Detailed).pptx", "path": "6 - Design Patterns/Lecture Materials/10 - State Design Pattern (Detailed).pptx", "size": 20250303, "ext": ".pptx"}, {"name": "10 - State Design Pattern (Generated).pdf", "path": "6 - Design Patterns/Lecture Materials/10 - State Design Pattern (Generated).pdf", "size": 4793284, "ext": ".pdf"}, {"name": "10 - State Design Pattern (Generated).pptx", "path": "6 - Design Patterns/Lecture Materials/10 - State Design Pattern (Generated).pptx", "size": 48510269, "ext": ".pptx"}, {"name": "12 - SOLID Design Principles.pdf", "path": "6 - Design Patterns/Lecture Materials/12 - SOLID Design Principles.pdf", "size": 8120664, "ext": ".pdf"}, {"name": "12 - SOLID Design Principles.pptx", "path": "6 - Design Patterns/Lecture Materials/12 - SOLID Design Principles.pptx", "size": 77191095, "ext": ".pptx"}], "Lecture Notes & Video References": [{"name": "01 - Introduction to Design Patterns.md", "path": "6 - Design Patterns/Lecture Notes & Video References/01 - Introduction to Design Patterns.md", "size": 489, "ext": ".md"}, {"name": "02 - Singleton Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/02 - Singleton Design Pattern.md", "size": 702, "ext": ".md"}, {"name": "03 - Factory Method Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/03 - Factory Method Design Pattern.md", "size": 891, "ext": ".md"}, {"name": "04 - Facade Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/04 - Facade Design Pattern.md", "size": 653, "ext": ".md"}, {"name": "05 - Adapter Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/05 - Adapter Design Pattern.md", "size": 733, "ext": ".md"}, {"name": "06 - Proxy Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/06 - Proxy Design Pattern.md", "size": 650, "ext": ".md"}, {"name": "07 - Decorator Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/07 - Decorator Design Pattern.md", "size": 744, "ext": ".md"}, {"name": "08 - Template Method Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/08 - Template Method Design Pattern.md", "size": 767, "ext": ".md"}, {"name": "09 - Chain of Responsibility.md", "path": "6 - Design Patterns/Lecture Notes & Video References/09 - Chain of Responsibility.md", "size": 558, "ext": ".md"}, {"name": "10 - State Design Pattern.md", "path": "6 - Design Patterns/Lecture Notes & Video References/10 - State Design Pattern.md", "size": 643, "ext": ".md"}, {"name": "11 - Case Studies.md", "path": "6 - Design Patterns/Lecture Notes & Video References/11 - Case Studies.md", "size": 306, "ext": ".md"}, {"name": "12 - SOLID Design Principles.md", "path": "6 - Design Patterns/Lecture Notes & Video References/12 - SOLID Design Principles.md", "size": 304, "ext": ".md"}], "Past Papers": [{"name": "01 - Question Paper 2022.pdf", "path": "6 - Design Patterns/Past Papers/01 - Question Paper 2022.pdf", "size": 229196, "ext": ".pdf"}, {"name": "02 - Question Paper 2023.pdf", "path": "6 - Design Patterns/Past Papers/02 - Question Paper 2023.pdf", "size": 849171, "ext": ".pdf"}, {"name": "03 - Question Paper 2024.pdf", "path": "6 - Design Patterns/Past Papers/03 - Question Paper 2024.pdf", "size": 831464, "ext": ".pdf"}, {"name": "04 - Question Paper 2025.pdf", "path": "6 - Design Patterns/Past Papers/04 - Question Paper 2025.pdf", "size": 325407, "ext": ".pdf"}], "Recommended References": [{"name": "01 - Singleton Design Pattern.pdf", "path": "6 - Design Patterns/Recommended References/01 - Singleton Design Pattern.pdf", "size": 3984844, "ext": ".pdf"}, {"name": "02 - Factory Method Design Pattern.pdf", "path": "6 - Design Patterns/Recommended References/02 - Factory Method Design Pattern.pdf", "size": 3961239, "ext": ".pdf"}, {"name": "07 - Decorator Design Pattern.pdf", "path": "6 - Design Patterns/Recommended References/07 - Decorator Design Pattern.pdf", "size": 2765145, "ext": ".pdf"}, {"name": "08 - Template Method Design Pattern.pdf", "path": "6 - Design Patterns/Recommended References/08 - Template Method Design Pattern.pdf", "size": 3917929, "ext": ".pdf"}, {"name": "10 - State Design Pattern.pdf", "path": "6 - Design Patterns/Recommended References/10 - State Design Pattern.pdf", "size": 4828574, "ext": ".pdf"}, {"name": "11 - Case Studies.pdf", "path": "6 - Design Patterns/Recommended References/11 - Case Studies.pdf", "size": 802381, "ext": ".pdf"}], "Videos": [{"name": "02 - Singleton Design Pattern (Extra Reading).mp4", "path": "6 - Design Patterns/Videos/02 - Singleton Design Pattern (Extra Reading).mp4", "size": 47452967, "ext": ".mp4"}, {"name": "02 - Singleton Design Pattern (New).mp4", "path": "6 - Design Patterns/Videos/02 - Singleton Design Pattern (New).mp4", "size": 17151918, "ext": ".mp4"}, {"name": "02 - Singleton Design Pattern (Old).mp4", "path": "6 - Design Patterns/Videos/02 - Singleton Design Pattern (Old).mp4", "size": 17445544, "ext": ".mp4"}, {"name": "03 - Factory Method Design Pattern (Microsoft).mp4", "path": "6 - Design Patterns/Videos/03 - Factory Method Design Pattern (Microsoft).mp4", "size": 65086265, "ext": ".mp4"}, {"name": "03 - Factory Method Design Pattern (Old).mp4", "path": "6 - Design Patterns/Videos/03 - Factory Method Design Pattern (Old).mp4", "size": 29524945, "ext": ".mp4"}, {"name": "03 - Factory Method Design Pattern.mp4", "path": "6 - Design Patterns/Videos/03 - Factory Method Design Pattern.mp4", "size": 18990730, "ext": ".mp4"}, {"name": "04 - Facade Design Pattern (Old).mp4", "path": "6 - Design Patterns/Videos/04 - Facade Design Pattern (Old).mp4", "size": 33018132, "ext": ".mp4"}, {"name": "04 - Facade Design Pattern.mp4", "path": "6 - Design Patterns/Videos/04 - Facade Design Pattern.mp4", "size": 15699032, "ext": ".mp4"}, {"name": "05 - Adapter Design Pattern (Last Year).mp4", "path": "6 - Design Patterns/Videos/05 - Adapter Design Pattern (Last Year).mp4", "size": 42608007, "ext": ".mp4"}, {"name": "05 - Adapter Design Pattern (This Year).mp4", "path": "6 - Design Patterns/Videos/05 - Adapter Design Pattern (This Year).mp4", "size": 15973428, "ext": ".mp4"}, {"name": "06 - Proxy Design Pattern (New).mp4", "path": "6 - Design Patterns/Videos/06 - Proxy Design Pattern (New).mp4", "size": 16873848, "ext": ".mp4"}, {"name": "06 - Proxy Design Pattern (Previous).mp4", "path": "6 - Design Patterns/Videos/06 - Proxy Design Pattern (Previous).mp4", "size": 39964442, "ext": ".mp4"}, {"name": "07 - Decorator Design Pattern (Microsoft).mp4", "path": "6 - Design Patterns/Videos/07 - Decorator Design Pattern (Microsoft).mp4", "size": 97373589, "ext": ".mp4"}, {"name": "07 - Decorator Design Pattern (Old).mp4", "path": "6 - Design Patterns/Videos/07 - Decorator Design Pattern (Old).mp4", "size": 41227933, "ext": ".mp4"}, {"name": "07 - Decorator Design Pattern.mp4", "path": "6 - Design Patterns/Videos/07 - Decorator Design Pattern.mp4", "size": 17254526, "ext": ".mp4"}, {"name": "08 - Template Method Design Pattern (Generated).mp4", "path": "6 - Design Patterns/Videos/08 - Template Method Design Pattern (Generated).mp4", "size": 16382219, "ext": ".mp4"}, {"name": "08 - Template Method Design Pattern (Microsoft).mp4", "path": "6 - Design Patterns/Videos/08 - Template Method Design Pattern (Microsoft).mp4", "size": 36319218, "ext": ".mp4"}, {"name": "08 - Template Method Design Pattern (Original).mp4", "path": "6 - Design Patterns/Videos/08 - Template Method Design Pattern (Original).mp4", "size": 28837284, "ext": ".mp4"}, {"name": "09 - Chain of Responsibility (Detailed).mp4", "path": "6 - Design Patterns/Videos/09 - Chain of Responsibility (Detailed).mp4", "size": 31688549, "ext": ".mp4"}, {"name": "09 - Chain of Responsibility (Generated).mp4", "path": "6 - Design Patterns/Videos/09 - Chain of Responsibility (Generated).mp4", "size": 17041918, "ext": ".mp4"}, {"name": "10 - State Design Pattern (Detailed).mp4", "path": "6 - Design Patterns/Videos/10 - State Design Pattern (Detailed).mp4", "size": 46972445, "ext": ".mp4"}, {"name": "10 - State Design Pattern (Generated).mp4", "path": "6 - Design Patterns/Videos/10 - State Design Pattern (Generated).mp4", "size": 13932641, "ext": ".mp4"}, {"name": "11 - Case Studies (Full).mp4", "path": "6 - Design Patterns/Videos/11 - Case Studies (Full).mp4", "size": 22095452, "ext": ".mp4"}, {"name": "11 - Case Studies (Short).mp4", "path": "6 - Design Patterns/Videos/11 - Case Studies (Short).mp4", "size": 8815244, "ext": ".mp4"}, {"name": "12 - SOLID Design Principles.mp4", "path": "6 - Design Patterns/Videos/12 - SOLID Design Principles.mp4", "size": 19664439, "ext": ".mp4"}]}}, {"folder": "7 - Software Architecture", "categories": {"Root Materials": [{"name": "Overview.md", "path": "7 - Software Architecture/Overview.md", "size": 2959, "ext": ".md"}], "Group Assignment": [{"name": "01_Main_Assignment_Brief.pdf", "path": "7 - Software Architecture/Group Assignment/01_Main_Assignment_Brief.pdf", "size": 299262, "ext": ".pdf"}, {"name": "02_Apartment_Management_System_Case_Scope.pdf", "path": "7 - Software Architecture/Group Assignment/02_Apartment_Management_System_Case_Scope.pdf", "size": 292988, "ext": ".pdf"}, {"name": "03_University_Services_Platform_Case_Scope.pdf", "path": "7 - Software Architecture/Group Assignment/03_University_Services_Platform_Case_Scope.pdf", "size": 296319, "ext": ".pdf"}, {"name": "04_Group_Specific_Responsibilities.pdf", "path": "7 - Software Architecture/Group Assignment/04_Group_Specific_Responsibilities.pdf", "size": 309212, "ext": ".pdf"}, {"name": "05_Assessment_Rubric.pdf", "path": "7 - Software Architecture/Group Assignment/05_Assessment_Rubric.pdf", "size": 251072, "ext": ".pdf"}, {"name": "06_Jira_GitHub_Scrum_Submission_Guidelines.pdf", "path": "7 - Software Architecture/Group Assignment/06_Jira_GitHub_Scrum_Submission_Guidelines.pdf", "size": 301730, "ext": ".pdf"}, {"name": "07_Deliverable_Templates_Checklists.pdf", "path": "7 - Software Architecture/Group Assignment/07_Deliverable_Templates_Checklists.pdf", "size": 338033, "ext": ".pdf"}], "In-Class Activities": [{"name": "01 - In-Class Activity 01.pdf", "path": "7 - Software Architecture/In-Class Activities/01 - In-Class Activity 01.pdf", "size": 275049, "ext": ".pdf"}, {"name": "03 - In-Class Activity 03.pdf", "path": "7 - Software Architecture/In-Class Activities/03 - In-Class Activity 03.pdf", "size": 214259, "ext": ".pdf"}], "Lecture Materials": [{"name": "01 - Introduction to the Module.pdf", "path": "7 - Software Architecture/Lecture Materials/01 - Introduction to the Module.pdf", "size": 1217293, "ext": ".pdf"}, {"name": "02 - Case Study - Architecting a Ride-Hailing App.pdf", "path": "7 - Software Architecture/Lecture Materials/02 - Case Study - Architecting a Ride-Hailing App.pdf", "size": 162107, "ext": ".pdf"}, {"name": "02 - Structure for the Software - Good Design.pdf", "path": "7 - Software Architecture/Lecture Materials/02 - Structure for the Software - Good Design.pdf", "size": 654181, "ext": ".pdf"}, {"name": "03 - System Thinking and Design Thinking.pdf", "path": "7 - Software Architecture/Lecture Materials/03 - System Thinking and Design Thinking.pdf", "size": 1241432, "ext": ".pdf"}, {"name": "04 - In-Class Activity - Software Architecture in Practice.pdf", "path": "7 - Software Architecture/Lecture Materials/04 - In-Class Activity - Software Architecture in Practice.pdf", "size": 350679, "ext": ".pdf"}, {"name": "09 - Guest Session - Architecture From Problem to System Design.pdf", "path": "7 - Software Architecture/Lecture Materials/09 - Guest Session - Architecture From Problem to System Design.pdf", "size": 7532315, "ext": ".pdf"}, {"name": "10 - In-Class Case Study - University Course Registration System.pdf", "path": "7 - Software Architecture/Lecture Materials/10 - In-Class Case Study - University Course Registration System.pdf", "size": 205465, "ext": ".pdf"}, {"name": "13 - C4 Model.pdf", "path": "7 - Software Architecture/Lecture Materials/13 - C4 Model.pdf", "size": 1172740, "ext": ".pdf"}], "UniMart Full-Stack Monolithic Lab Series": [{"name": "01_UniMart_ER_and_Monolithic_Architecture_Design_Guide.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/01_UniMart_ER_and_Monolithic_Architecture_Design_Guide.pdf", "size": 571128, "ext": ".pdf"}, {"name": "02_UniMart_Frontend_Setup_Antigravity_React_TypeScript.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/02_UniMart_Frontend_Setup_Antigravity_React_TypeScript.pdf", "size": 369318, "ext": ".pdf"}, {"name": "03_UniMart_Backend_Setup_IntelliJ_Spring_Boot_MVC.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/03_UniMart_Backend_Setup_IntelliJ_Spring_Boot_MVC.pdf", "size": 362654, "ext": ".pdf"}, {"name": "04_UniMart_MySQL_and_Workbench_Setup.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/04_UniMart_MySQL_and_Workbench_Setup.pdf", "size": 352387, "ext": ".pdf"}, {"name": "05_UniMart_Database_Connection_and_Environment_Variables.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/05_UniMart_Database_Connection_and_Environment_Variables.pdf", "size": 378312, "ext": ".pdf"}, {"name": "06_UniMart_GitHub_and_Version_Control_Guide.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/06_UniMart_GitHub_and_Version_Control_Guide.pdf", "size": 358147, "ext": ".pdf"}, {"name": "07_UniMart_CRUD_APIs_and_Postman_Testing.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/07_UniMart_CRUD_APIs_and_Postman_Testing.pdf", "size": 370397, "ext": ".pdf"}, {"name": "08_UniMart_Frontend_Features_Listings_and_Reviews.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/08_UniMart_Frontend_Features_Listings_and_Reviews.pdf", "size": 369043, "ext": ".pdf"}, {"name": "09_UniMart_Full_Stack_Integration_Redux_and_Debugging.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/09_UniMart_Full_Stack_Integration_Redux_and_Debugging.pdf", "size": 368063, "ext": ".pdf"}, {"name": "10_UniMart_DigitalOcean_Deployment_and_GitHub_Actions.pdf", "path": "7 - Software Architecture/UniMart Full-Stack Monolithic Lab Series/10_UniMart_DigitalOcean_Deployment_and_GitHub_Actions.pdf", "size": 460780, "ext": ".pdf"}]}}];
+    const TIMETABLE = [{"id": "1 - DSA", "code": "INTE 22343", "title": "Data Structures & Algorithms", "date": "2026-10-19", "display_date": "19.10.2026", "time": "09:00 AM", "venue": "Department of Industrial Management", "type": "Theory Paper", "color": "#3b82f6"}, {"id": "2 - Mobile Applications", "code": "INTE 22283", "title": "Mobile Application Development", "date": "2026-10-22", "display_date": "22.10.2026", "time": "09:00 AM", "venue": "Department of Industrial Management", "type": "Theory Paper", "color": "#10b981"}, {"id": "3 - Embedded Systems", "code": "INTE 22263", "title": "Embedded Systems (Practical)", "date": "2026-10-26", "display_date": "26.10.2026", "time": "09:00 AM", "venue": "Hardware Lab", "type": "Practical Exam", "color": "#f59e0b"}, {"id": "3 - Embedded Systems", "code": "INTE 22263", "title": "Embedded Systems (Paper)", "date": "2026-10-27", "display_date": "27.10.2026", "time": "09:00 AM", "venue": "Department of Industrial Management", "type": "Theory Paper", "color": "#f59e0b"}, {"id": "4 - AI", "code": "INTE 22303", "title": "Artificial Intelligence", "date": "2026-10-30", "display_date": "30.10.2026", "time": "09:00 AM", "venue": "Department of Industrial Management", "type": "Theory Paper", "color": "#8b5cf6"}, {"id": "5 - Distributed Systems", "code": "INTE 22253", "title": "Distributed Systems & Cloud Computing", "date": "2026-11-02", "display_date": "02.11.2026", "time": "09:00 AM", "venue": "Department of Industrial Management", "type": "Theory Paper", "color": "#06b6d4"}, {"id": "6 - Design Patterns", "code": "INTE 22313", "title": "Design Patterns & Frameworks", "date": "2026-11-04", "display_date": "04.11.2026", "time": "09:00 AM", "venue": "Department of Industrial Management", "type": "Theory Paper", "color": "#ec4899"}, {"id": "7 - Software Architecture", "code": "INTE 22293", "title": "Software Architecture & Process Model", "date": "2026-11-06", "display_date": "06.11.2026", "time": "01:00 PM", "venue": "Department of Industrial Management", "type": "Theory Paper", "color": "#ef4444"}];
+
+    // State
+    let activeTab = 'timetable';
+    let tasks = JSON.parse(localStorage.getItem('y2s2_tasks') || '[]');
+    let currentTheme = localStorage.getItem('y2s2_theme') || 'dark';
+
+    // Apply theme
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    const themeBtn = document.getElementById('themeToggle');
+    themeBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    themeBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('y2s2_theme', currentTheme);
+      themeBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Tab Switching
+    function switchTab(tabId) {
+      activeTab = tabId;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.dock-btn').forEach(el => el.classList.remove('active'));
+
+      const targetTab = document.getElementById('tab-' + tabId);
+      if (targetTab) targetTab.classList.add('active');
+
+      const tabBtns = document.querySelectorAll('.nav-tabs .tab-btn');
+      const tabsMap = { 'timetable': 0, 'tasks': 1, 'resources': 2, 'notes': 3 };
+      if (tabBtns[tabsMap[tabId]]) tabBtns[tabsMap[tabId]].classList.add('active');
+
+      const dockBtns = document.querySelectorAll('.mobile-dock .dock-btn');
+      if (dockBtns[tabsMap[tabId]]) dockBtns[tabsMap[tabId]].classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Populate dropdowns
+    function populateDropdowns() {
+      const taskModSel = document.getElementById('taskModuleSelect');
+      const taskFiltSel = document.getElementById('taskFilterModule');
+      const resModFilt = document.getElementById('resourceModuleFilter');
+      const notesModSel = document.getElementById('notesModuleSelect');
+
+      taskModSel.innerHTML = '';
+      resModFilt.innerHTML = '<option value="all">📂 All Modules</option>';
+      notesModSel.innerHTML = '';
+
+      CATALOG.forEach(c => {
+        const opt1 = document.createElement('option');
+        opt1.value = c.folder;
+        opt1.textContent = c.folder;
+        taskModSel.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = c.folder;
+        opt2.textContent = c.folder;
+        taskFiltSel.appendChild(opt2);
+
+        const opt3 = document.createElement('option');
+        opt3.value = c.folder;
+        opt3.textContent = c.folder;
+        resModFilt.appendChild(opt3);
+
+        const opt4 = document.createElement('option');
+        opt4.value = c.folder;
+        opt4.textContent = c.folder;
+        notesModSel.appendChild(opt4);
+      });
+
+      // Set default date for task input to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('taskDate').value = today;
+    }
+
+    // Timetable Rendering & Countdown
+    function renderTimetable() {
+      const grid = document.getElementById('timetableGrid');
+      grid.innerHTML = '';
+
+      TIMETABLE.forEach(exam => {
+        const card = document.createElement('div');
+        card.className = 'card exam-card';
+        card.style.borderLeftColor = exam.color;
+
+        card.innerHTML = `
+          <div class="date-badge">📅 ${exam.display_date} · ${exam.time}</div>
+          <h4>${exam.code}: ${exam.title}</h4>
+          <div class="exam-meta">
+            <span>📍 ${exam.venue}</span>
+            <span>📝 ${exam.type}</span>
+          </div>
+          <div class="exam-card-actions">
+            <button class="btn-sm btn-primary" onclick="focusModuleResources('${exam.id}')">📂 View Files</button>
+            <button class="btn-sm" onclick="quickAddTaskForModule('${exam.id}', '${exam.date}')">+ Add Task</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      let nextExam = null;
+
+      for (const ex of TIMETABLE) {
+        const examTime = new Date(`${ex.date}T${ex.time === '01:00 PM' ? '13:00' : '09:00'}:00`).getTime();
+        if (examTime > now) {
+          nextExam = { ...ex, timestamp: examTime };
+          break;
+        }
+      }
+
+      if (!nextExam) {
+        document.getElementById('nextExamBadge').textContent = '🎉 All Exams Finished!';
+        document.getElementById('nextExamTitle').textContent = 'Best of luck with your results!';
+        document.getElementById('cdDays').textContent = '0';
+        document.getElementById('cdHours').textContent = '0';
+        document.getElementById('cdMins').textContent = '0';
+        document.getElementById('cdSecs').textContent = '0';
+        return;
+      }
+
+      document.getElementById('nextExamBadge').textContent = `⏳ Next Exam: ${nextExam.display_date} (${nextExam.time})`;
+      document.getElementById('nextExamTitle').textContent = `${nextExam.code} - ${nextExam.title}`;
+
+      const diff = nextExam.timestamp - now;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('cdDays').textContent = days;
+      document.getElementById('cdHours').textContent = hours;
+      document.getElementById('cdMins').textContent = mins;
+      document.getElementById('cdSecs').textContent = secs;
+    }
+
+    // Tasks Management
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      const filter = document.getElementById('taskFilterModule').value;
+      list.innerHTML = '';
+
+      const filtered = tasks.filter(t => filter === 'all' || t.module === filter);
+      const completedCount = tasks.filter(t => t.completed).length;
+
+      document.getElementById('taskStatsBadge').textContent = `${completedCount} / ${tasks.length} completed`;
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align: center; padding: 32px; color: var(--text-faint);">No tasks found. Add a new study task above!</div>`;
+        return;
+      }
+
+      filtered.forEach(task => {
+        const item = document.createElement('div');
+        item.className = 'task-item' + (task.completed ? ' completed' : '');
+
+        item.innerHTML = `
+          <div class="task-left">
+            <button class="task-check" onclick="toggleTask('${task.id}')">${task.completed ? '✓' : ''}</button>
+            <div class="task-content-details">
+              <span class="task-text">${escapeHtml(task.text)}</span>
+              <div class="task-tags">
+                <span class="tag-badge">${escapeHtml(task.module)}</span>
+                ${task.date ? `<span>📅 ${task.date}</span>` : ''}
+              </div>
+            </div>
+          </div>
+          <button class="task-delete" onclick="deleteTask('${task.id}')" title="Delete task">✕</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addTask() {
+      const textInput = document.getElementById('taskInput');
+      const text = textInput.value.trim();
+      if (!text) return;
+
+      const mod = document.getElementById('taskModuleSelect').value;
+      const date = document.getElementById('taskDate').value;
+
+      const newTask = {
+        id: Date.now().toString(),
+        text: text,
+        module: mod,
+        date: date,
+        completed: false
+      };
+
+      tasks.unshift(newTask);
+      localStorage.setItem('y2s2_tasks', JSON.stringify(tasks));
+      textInput.value = '';
+      renderTasks();
+    }
+
+    function toggleTask(id) {
+      tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+      localStorage.setItem('y2s2_tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      localStorage.setItem('y2s2_tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function clearCompletedTasks() {
+      tasks = tasks.filter(t => !t.completed);
+      localStorage.setItem('y2s2_tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function quickAddTaskForModule(modId, date) {
+      switchTab('tasks');
+      document.getElementById('taskModuleSelect').value = modId;
+      document.getElementById('taskDate').value = date;
+      document.getElementById('taskInput').focus();
+    }
+
+    // Resource Explorer
+    function getFileIcon(ext) {
+      switch (ext) {
+        case '.pdf': return '📄';
+        case '.pptx': case '.ppt': return '📊';
+        case '.mp4': case '.mkv': return '🎬';
+        case '.md': return '📝';
+        case '.zip': case '.rar': return '📦';
+        case '.py': case '.java': case '.c': case '.cpp': case '.ipynb': return '💻';
+        case '.png': case '.jpg': case '.jpeg': return '🖼️';
+        default: return '📁';
+      }
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    function renderResources() {
+      const container = document.getElementById('resourceContainer');
+      const filterMod = document.getElementById('resourceModuleFilter').value;
+      const search = document.getElementById('resourceSearch').value.toLowerCase().trim();
+      container.innerHTML = '';
+
+      let matchedTotal = 0;
+
+      CATALOG.forEach(course => {
+        if (filterMod !== 'all' && course.folder !== filterMod) return;
+
+        let courseMatches = 0;
+        const groupEl = document.createElement('div');
+        groupEl.className = 'card resource-group';
+
+        let innerHtml = `<div class="section-header" style="margin-bottom: 12px;">
+          <h3 class="section-title" style="font-size: 1.05rem;">📘 ${course.folder}</h3>
+          <a href="./${encodeURI(course.folder)}/Overview.md" class="btn-sm" style="font-size: 0.76rem;">📖 Overview.md</a>
+        </div>`;
+
+        for (const [catName, files] of Object.entries(course.categories)) {
+          const matchedFiles = files.filter(f => search === '' || f.name.toLowerCase().includes(search) || catName.toLowerCase().includes(search));
+          if (matchedFiles.length === 0) continue;
+
+          courseMatches += matchedFiles.length;
+          matchedTotal += matchedFiles.length;
+
+          innerHtml += `<div class="resource-group-title">📂 ${catName} (${matchedFiles.length})</div>`;
+          innerHtml += `<div class="file-grid" style="margin-bottom: 16px;">`;
+
+          matchedFiles.forEach(f => {
+            innerHtml += `
+              <a href="./${encodeURI(f.path)}" class="file-item" target="_blank" title="${escapeHtml(f.name)}">
+                <div class="file-icon">${getFileIcon(f.ext)}</div>
+                <div class="file-info">
+                  <div class="file-name">${escapeHtml(f.name)}</div>
+                  <div class="file-size">${formatBytes(f.size)}</div>
+                </div>
+              </a>
+            `;
+          });
+
+          innerHtml += `</div>`;
+        }
+
+        if (courseMatches > 0) {
+          groupEl.innerHTML = innerHtml;
+          container.appendChild(groupEl);
+        }
+      });
+
+      if (matchedTotal === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-faint);">No files matching "${search}" found.</div>`;
+      }
+    }
+
+    function focusModuleResources(modId) {
+      switchTab('resources');
+      document.getElementById('resourceModuleFilter').value = modId;
+      document.getElementById('resourceSearch').value = '';
+      renderResources();
+    }
+
+    // Notes Management
+    function loadNote() {
+      const mod = document.getElementById('notesModuleSelect').value;
+      const note = localStorage.getItem('y2s2_note_' + mod) || '';
+      document.getElementById('notesArea').value = note;
+      document.getElementById('noteSaveStatus').textContent = 'Saved to device';
+    }
+
+    function saveNote() {
+      const mod = document.getElementById('notesModuleSelect').value;
+      const note = document.getElementById('notesArea').value;
+      localStorage.setItem('y2s2_note_' + mod, note);
+      document.getElementById('noteSaveStatus').textContent = 'Saved just now';
+    }
+
+    function clearCurrentNote() {
+      if (confirm('Are you sure you want to clear notes for this module?')) {
+        const mod = document.getElementById('notesModuleSelect').value;
+        localStorage.removeItem('y2s2_note_' + mod);
+        document.getElementById('notesArea').value = '';
+        document.getElementById('noteSaveStatus').textContent = 'Cleared';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    // Initialize
+    populateDropdowns();
+    renderTimetable();
+    renderTasks();
+    renderResources();
+    loadNote();
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
