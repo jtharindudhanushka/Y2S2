@@ -4,18 +4,6 @@
 
 ---
 
-## 🌟 Interactive Study Dashboard & Resource Index
-A fast, responsive, mobile-friendly study planner and resource index web app is included in this repository:
-- **Open [`index.html`](./index.html)** in any browser or host on GitHub Pages.
-- **Features:**
-  - ⏳ **Real-time Exam Countdown** to each test paper.
-  - 📅 **Exam Timetable** mapped to all courses.
-  - ✅ **Daily Study Planner & To-Do List** with persistent browser storage (`localStorage`).
-  - 📂 **Offline Resource Index:** Instant search and links across all **253 lecture slides, lab exercises, videos, and references**.
-  - 📝 **Special Notes & Cheat Sheets:** Quick notepad per module with auto-save.
-
----
-
 ## 📅 Official Exam Timetable (October – November 2026)
 
 | Date | Time | Code | Course Title | Type | Folder |
@@ -63,10 +51,3 @@ A fast, responsive, mobile-friendly study planner and resource index web app is 
 
 ---
 
-## 🚀 How to Use Offline
-1. Clone or download this repository:
-   ```bash
-   git clone https://github.com/jtharindudhanushka/Y2S2.git
-   ```
-2. Double-click `index.html` in your browser.
-3. Access all PDF slides, code samples, and offline MP4 videos without requiring an internet connection!
