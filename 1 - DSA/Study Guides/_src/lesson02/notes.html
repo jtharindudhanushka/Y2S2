@@ -1,0 +1,178 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define the space complexity of an algorithm</li>
+  <li>Explain why analysing space complexity is important</li>
+  <li>List the components of space complexity</li>
+  <li>Identify what each component depends on</li>
+  <li>Distinguish sensitive from insensitive factors</li>
+  <li>Analyse the space complexity of a given algorithm</li>
+</ul>
+
+<h2>1. What is space complexity?</h2>
+<p><b>Space complexity</b> is the amount of memory (RAM) that a program written with a particular algorithm needs in order to run to completion. It belongs to <i>performance analysis</i> (Lesson 1): we work it out from the algorithm instead of measuring a running program.</p>
+
+<h3>Why are we interested?</h3>
+<table>
+  <tr><th>Reason</th><th>Meaning</th></tr>
+  <tr><td>Will it fit?</td><td>Find out whether the available memory is enough to run the program written with our algorithm.</td></tr>
+  <tr><td>Choose the lighter one</td><td>When several algorithms solve the same problem, prefer the program that uses less memory.</td></tr>
+  <tr><td>Largest problem</td><td>Estimate the largest problem our algorithm can solve with the memory available.</td></tr>
+</table>
+
+<h2>2. The three components</h2>
+<p>Memory used by a running program falls into three parts.</p>
+<table>
+  <tr><th>Component</th><th>What it is</th><th>Depends on</th></tr>
+  <tr><td><b>Instruction space</b></td><td>Memory needed to load the compiled version of the program (its instructions).</td><td>The compiler used; the compiler options used (for example code-size optimisation vs execution-time optimisation); the architecture of the target computer.</td></tr>
+  <tr><td><b>Data space</b></td><td>Memory needed to hold all the constants and variables of the program.</td><td>The data types and the number of named constants, primitive variables and structured variables used.</td></tr>
+  <tr><td><b>Environment stack space</b></td><td>Memory needed for the environment stack (also called the run-time stack or call stack).</td><td>How functions call each other, and whether they are recursive.</td></tr>
+</table>
+
+<div class="box"><b>Same source, different instruction space</b>The machine code produced from one piece of source code can differ in size depending on the compiler and its options, which is why instruction space depends on them.</div>
+
+<h3>Data space in more detail</h3>
+<table>
+  <tr><th>Item</th><th>Example</th><th>Typical size</th></tr>
+  <tr><td>Named constant</td><td><code>const double PI = 3.14;</code></td><td>8 bytes (64 bits)</td></tr>
+  <tr><td>Primitive variable</td><td><code>int r = 7;</code></td><td>4 bytes (32 bits)</td></tr>
+  <tr><td>Structured variable (array)</td><td><code>int arr[100];</code></td><td>100 &times; 4 = 400 bytes</td></tr>
+  <tr><td>Literal constant</td><td>the <code>2</code> in <code>c = 2 * PI * r</code></td><td>part of the data space too</td></tr>
+</table>
+<table>
+  <tr><th>Type</th><th>Bytes (32-bit)</th><th>Bytes (64-bit)</th></tr>
+  <tr><td>char, bool</td><td>1</td><td>1</td></tr>
+  <tr><td>short</td><td>2</td><td>2</td></tr>
+  <tr><td>int</td><td>4</td><td>4</td></tr>
+  <tr><td>long</td><td>4</td><td>8</td></tr>
+  <tr><td>float</td><td>4</td><td>4</td></tr>
+  <tr><td>double</td><td>8</td><td>8</td></tr>
+  <tr><td>pointer / address</td><td>4</td><td>8</td></tr>
+</table>
+
+<h2>3. The environment stack</h2>
+<p>The <b>environment stack</b> is a data structure that keeps the information needed to <b>resume execution of partially completed functions</b>. A stack works <b>Last In, First Out (LIFO)</b>: the newest item is removed first.</p>
+<p>When a function is called, the computer pushes a <b>frame</b> on the stack holding:</p>
+<ul>
+  <li>the <b>return address</b>: a pointer to the calling instruction in the caller, so the caller can continue when the callee returns,</li>
+  <li>the function's <b>parameters</b>,</li>
+  <li>the function's <b>local variables</b>.</li>
+</ul>
+<p>When the function returns, its frame is popped and its local variables are destroyed.</p>
+
+<h3>Example: function1 calls function2, which calls function3</h3>
+<svg viewBox="0 0 640 300" role="img" aria-label="Call stack growing and shrinking" class="dg">
+  <text x="90" y="20" text-anchor="middle" class="h">main calls function1</text>
+  <rect class="bx" x="20" y="200" width="140" height="50"/><text x="90" y="222" text-anchor="middle" class="mono">a, b, c</text><text x="90" y="240" text-anchor="middle" class="sm">return addr &rarr; main</text>
+  <text x="90" y="275" text-anchor="middle" class="sm">1 frame</text>
+
+  <text x="250" y="20" text-anchor="middle" class="h">function1 calls function2</text>
+  <rect class="bx" x="180" y="200" width="140" height="50"/><text x="250" y="222" text-anchor="middle" class="mono">a, b, c</text><text x="250" y="240" text-anchor="middle" class="sm">return addr &rarr; main</text>
+  <rect class="bx" x="180" y="150" width="140" height="50"/><text x="250" y="172" text-anchor="middle" class="mono">d, e</text><text x="250" y="190" text-anchor="middle" class="sm">return addr &rarr; function1</text>
+  <text x="250" y="275" text-anchor="middle" class="sm">2 frames</text>
+
+  <text x="420" y="20" text-anchor="middle" class="h">function2 calls function3</text>
+  <rect class="bx" x="350" y="200" width="140" height="50"/><text x="420" y="222" text-anchor="middle" class="mono">a, b, c</text><text x="420" y="240" text-anchor="middle" class="sm">return addr &rarr; main</text>
+  <rect class="bx" x="350" y="150" width="140" height="50"/><text x="420" y="172" text-anchor="middle" class="mono">d, e</text><text x="420" y="190" text-anchor="middle" class="sm">return addr &rarr; function1</text>
+  <rect class="bx" x="350" y="100" width="140" height="50"/><text x="420" y="122" text-anchor="middle" class="mono">f</text><text x="420" y="140" text-anchor="middle" class="sm">return addr &rarr; function2</text>
+  <text x="420" y="275" text-anchor="middle" class="sm">3 frames (deepest point)</text>
+
+  <path class="ar" d="M520 125 H600"/><text x="560" y="115" text-anchor="middle" class="sm">returns pop</text>
+  <text x="560" y="145" text-anchor="middle" class="sm">f, then d/e,</text><text x="560" y="161" text-anchor="middle" class="sm">then a/b/c</text>
+</svg>
+<p>Each call <b>pushes</b> a frame; each return <b>pops</b> it, newest first. If <code>function1</code> calls <code>function2</code>, the stack keeps the return address in <code>function1</code> so execution can resume there. The peak number of frames on the stack decides the environment stack space.</p>
+
+<h2>4. Sensitive and insensitive factors</h2>
+<p>Some factors are not known at the time the algorithm is developed (for example how big the input will be). So we separate the memory that stays the same from the memory that changes with the problem.</p>
+<table>
+  <tr><th></th><th>Insensitive (fixed)</th><th>Sensitive (variable)</th></tr>
+  <tr><td>Meaning</td><td>Relatively insensitive to the problem being solved: same memory whatever the input.</td><td>Sensitive to the problem being solved: memory changes with the input.</td></tr>
+  <tr><td>Instruction space</td><td>Always insensitive.</td><td>&ndash;</td></tr>
+  <tr><td>Data space</td><td>Literal constants, named constants and primitive variables.</td><td>Structured variables (arrays etc.) and dynamic memory allocation. Example: a program that sorts an array of <i>n</i> integers.</td></tr>
+  <tr><td>Environment stack space</td><td>Non-recursive functions.</td><td>Recursive functions. Example: a function that recursively computes the factorial of a given <i>n</i>.</td></tr>
+</table>
+
+<div class="box"><b>Intuition</b>If <code>int a;</code> exists, it uses the same memory whether the user enters 10 or 10 million. But <code>int arr[n];</code> uses 40 bytes when n = 10 and 4000 bytes when n = 1000: it changes with the input. The variable part is what space complexity is really about.</div>
+
+<h2>5. The formula</h2>
+<p>Space complexity is a function of <i>n</i>, the <b>instance characteristic</b> (a number describing the size of the problem, such as the number of array elements).</p>
+<p style="font-size:18px"><b>S(n) = c + S<sub>A</sub>(n)</b></p>
+<ul>
+  <li><b>c</b> = the insensitive (constant) space contribution.</li>
+  <li><b>S<sub>A</sub>(n)</b> = the sensitive space contribution of algorithm A, a function of n.</li>
+</ul>
+<table>
+  <tr><th>Case</th><th>Meaning</th></tr>
+  <tr><td>S<sub>A</sub>(n) = 0</td><td>Only fixed memory is used. Memory never grows with the input: constant space, written O(1).</td></tr>
+  <tr><td>S<sub>A</sub>(n) grows with n</td><td>More input needs more memory (arrays, dynamic allocation, recursion depth).</td></tr>
+</table>
+<p>Quick checks: <code>int sum(int a, int b, int c)</code> uses only 3 integers, memory never changes, variable space = 0. A <code>for (i = 0; i &lt; n; i++)</code> loop: n changes but no extra variables are created (only <code>i</code>), so variable space = 0 and overall space complexity is O(1).</p>
+
+<h2>6. Worked examples</h2>
+
+<h3>Example 1: iterative sum (non-recursive)</h3>
+<pre><code>ALGORITHM sum(REF a[] INTEGER, n INTEGER)
+   returns sum of integers in array
+1  s &larr; 0
+2  i &larr; 0
+3  LOOP (i &lt; n)
+4     s &larr; s + a[i]
+5     i &larr; i + 1
+6  END LOOP
+7  RETURN s
+END sum</code></pre>
+<p>Trace with <code>a = {5, 1, 3}</code>, <code>n = 3</code>: s goes 0 &rarr; 5 &rarr; 6 &rarr; 9, returns <b>9</b>.</p>
+<table>
+  <tr><th>Item</th><th>Sensitive?</th><th>Why</th></tr>
+  <tr><td><code>n</code>, <code>s</code>, <code>i</code></td><td>No</td><td>Primitive variables: always the same memory.</td></tr>
+  <tr><td>array <code>a</code></td><td>No (for this algorithm)</td><td>It is a structured variable, but it is passed <b>by reference</b> (REF), so the algorithm makes no copy of it; its memory is not charged to this algorithm.</td></tr>
+  <tr><td>Environment stack</td><td>No</td><td>The algorithm is <b>non-recursive</b>: one call, one frame.</td></tr>
+</table>
+<p>So S<sub>A</sub>(n) = 0 and <b>S(n) = c</b>: constant space, O(1).</p>
+
+<h3>Example 2: recursive sum</h3>
+<pre><code>ALGORITHM sum(REF a[] INTEGER, n INTEGER)
+   returns sum of integers in array
+1  IF (n &gt; 0)
+2     RETURN sum(a, n - 1) + a[n - 1]
+3  ELSE
+4     RETURN 0
+5  END IF
+END sum</code></pre>
+<p>Trace with <code>a = {5, 1, 3}</code>, calling <code>sum(a, 3)</code>:</p>
+<pre><code>sum(a,3) = sum(a,2) + a[2]  = ... + 3
+sum(a,2) = sum(a,1) + a[1]  = ... + 1
+sum(a,1) = sum(a,0) + a[0]  = ... + 5
+sum(a,0) = 0                (base case, n is not &gt; 0)
+Unwinding:  0 &rarr; 5 &rarr; 6 &rarr; 9      result = 9</code></pre>
+<svg viewBox="0 0 640 230" role="img" aria-label="Recursion stack for sum(a,3)" class="dg">
+  <text x="160" y="18" text-anchor="middle" class="h">Stack at the deepest point</text>
+  <rect class="bx" x="60" y="25" width="200" height="40"/><text x="160" y="43" text-anchor="middle" class="mono">sum(a, 0)  n = 0</text><text x="160" y="58" text-anchor="middle" class="sm">n, a, return address</text>
+  <rect class="bx" x="60" y="65" width="200" height="40"/><text x="160" y="83" text-anchor="middle" class="mono">sum(a, 1)  n = 1</text><text x="160" y="98" text-anchor="middle" class="sm">n, a, return address</text>
+  <rect class="bx" x="60" y="105" width="200" height="40"/><text x="160" y="123" text-anchor="middle" class="mono">sum(a, 2)  n = 2</text><text x="160" y="138" text-anchor="middle" class="sm">n, a, return address</text>
+  <rect class="bx" x="60" y="145" width="200" height="40"/><text x="160" y="163" text-anchor="middle" class="mono">sum(a, 3)  n = 3</text><text x="160" y="178" text-anchor="middle" class="sm">n, a, return address</text>
+  <text x="160" y="205" text-anchor="middle" class="sm">n + 1 = 4 frames for n = 3</text>
+  <text x="440" y="60" text-anchor="middle" class="h">Each frame keeps (32-bit machine)</text>
+  <text x="440" y="86" text-anchor="middle">n = 4 bytes</text>
+  <text x="440" y="106" text-anchor="middle">a (address of the array) = 4 bytes</text>
+  <text x="440" y="126" text-anchor="middle">return address = 4 bytes</text>
+  <text x="440" y="152" text-anchor="middle" class="h">= 12 bytes per call</text>
+  <text x="440" y="178" text-anchor="middle" class="h">total = 12 &times; (n + 1) bytes</text>
+</svg>
+<table>
+  <tr><th>Item</th><th>Sensitive?</th><th>Why</th></tr>
+  <tr><td><code>n</code></td><td>No</td><td>Primitive variable.</td></tr>
+  <tr><td><code>a[]</code></td><td>No</td><td>Declared outside the algorithm's scope and passed by reference.</td></tr>
+  <tr><td>Environment stack</td><td><b>Yes</b></td><td>The algorithm is <b>recursive</b>. For every call the stack keeps <code>n</code>, <code>a</code> and the return address. The recursion depth grows with n.</td></tr>
+</table>
+<p>Assuming a 32-bit machine (n = 4 bytes, a = 4 bytes, return address = 4 bytes), each call keeps 4 + 4 + 4 = <b>12 bytes</b>. The recursion makes n + 1 calls, so the stack needs about <b>12(n + 1)</b> bytes: space grows <b>linearly</b> with n. Compare with Example 1, which does the same job in constant space.</p>
+
+<div class="box"><b>Key takeaway</b>The same task can have very different space complexity. The iterative sum is O(1); the recursive sum is O(n) because every pending call keeps a frame on the environment stack. When memory is tight, prefer the version with the smaller sensitive part.</div>
+
+<h2>7. How to analyse an algorithm (checklist)</h2>
+<ol>
+  <li>List every variable and constant. Primitive ones and literals are insensitive (they go into <i>c</i>).</li>
+  <li>Look for arrays, structured variables and dynamic allocation whose size depends on n. These are sensitive. Check whether the array is only <i>passed in by reference</i> (then not charged to this algorithm).</li>
+  <li>Is the algorithm recursive? If so, estimate the maximum recursion depth and the size of one frame (parameters + local variables + return address). That is a sensitive contribution.</li>
+  <li>Instruction space is always treated as insensitive.</li>
+  <li>Write S(n) = c + S<sub>A</sub>(n).</li>
+</ol>

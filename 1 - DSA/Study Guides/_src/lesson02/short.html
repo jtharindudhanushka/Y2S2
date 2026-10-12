@@ -1,0 +1,17 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Space complexity</td><td>Memory a program written with a particular algorithm needs to run to completion.</td></tr>
+  <tr><td>Why</td><td>Will available memory be enough? &middot; Prefer the algorithm that uses less memory &middot; Estimate the largest problem we can solve with the memory available.</td></tr>
+  <tr><td>Components</td><td>Instruction space &middot; Data space &middot; Environment stack space</td></tr>
+  <tr><td>Instruction space</td><td>Memory for the compiled instructions. Depends on compiler, compiler options, target architecture.</td></tr>
+  <tr><td>Data space</td><td>Memory for constants and variables. Depends on data types and the number of named constants, primitive variables and structured variables.</td></tr>
+  <tr><td>Environment stack</td><td>Data structure (LIFO) keeping what is needed to resume partly completed functions: return address, parameters, local variables. If f1 calls f2, it keeps a pointer to the calling instruction in f1.</td></tr>
+  <tr><td>Insensitive factors</td><td>Instruction space &middot; literal constants, named constants, primitive variables &middot; stack space of <b>non-recursive</b> functions</td></tr>
+  <tr><td>Sensitive factors</td><td>Structured variables and dynamic allocation (e.g. sorting n integers) &middot; stack space of <b>recursive</b> functions (e.g. factorial)</td></tr>
+  <tr><td>Formula</td><td><b>S(n) = c + S<sub>A</sub>(n)</b>; c = constant part, S<sub>A</sub> = sensitive part, n = instance characteristic</td></tr>
+  <tr><td>Iterative sum</td><td>Only primitives, array by reference, non-recursive: S<sub>A</sub> = 0, so O(1)</td></tr>
+  <tr><td>Recursive sum</td><td>n + 1 calls, each keeps n, a, return address (4 + 4 + 4 = 12 bytes on 32-bit): about 12(n + 1) bytes, O(n)</td></tr>
+  <tr><td>Sizes</td><td>char 1, short 2, int 4, long 4 (32-bit) / 8 (64-bit), float 4, double 8, pointer 4 (32-bit) / 8 (64-bit)</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>When asked to analyse space: name which parts are sensitive and <i>why</i> (structured variable? recursion?), state the per-call frame size if recursive, then give S(n). Recursion is the usual source of a non-constant answer.</div>

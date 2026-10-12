@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSA Lesson 1 - Introduction to Algorithms</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; DSA study guides</a> &middot; INTE 22343 &middot; Part 01</p><button id="theme" type="button"></button></div>
+  <h1>Introduction to Algorithms</h1>
+  <p class="lead">Covers: what an algorithm is, what a program is, pseudocode, and the two ways of judging how efficient an algorithm is. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="cpp">C++ refresher</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<!-- ============ LESSON ============ -->
+<section class="panel on" id="notes">
+
+<h2>Learning outcomes</h2>
+<p>After this lesson you should be able to:</p>
+<ul>
+  <li>Define an algorithm and list the properties of a good one</li>
+  <li>Define a program and list the properties of a good one</li>
+  <li>Write algorithms in pseudocode</li>
+  <li>Explain what "efficiency" means for an algorithm</li>
+  <li>Distinguish performance measurement from performance analysis</li>
+</ul>
+
+<h2>1. What is an algorithm?</h2>
+<p>An <b>algorithm</b> is a finite, well-defined sequence of steps for solving a problem. The lecture's analogy is a <b>recipe</b>: it lists exact steps, in order, that turn inputs (ingredients) into an output (the dish).</p>
+<p>Important: <b>one problem can have many algorithms.</b> For example, finding a name in a list can be done by checking every entry from the start, or (if the list is sorted) by repeatedly halving it. Both are correct, but one is much faster. Choosing between them is the whole reason we study efficiency.</p>
+
+<h3>Properties of a good algorithm</h3>
+<table>
+  <tr><th>Property</th><th>Meaning</th><th>Example of breaking it</th></tr>
+  <tr><td>Correct</td><td>Gives the right answer for every valid input</td><td>A "find maximum" routine that fails when the max is the first element</td></tr>
+  <tr><td>Finite, well-defined steps</td><td>Made of a limited number of steps, each precise and unambiguous</td><td>"Add some salt" (how much?) or an infinite list of steps</td></tr>
+  <tr><td>Produces output</td><td>Returns/prints a result, otherwise nothing was solved</td><td>A routine that computes a sum but never returns or prints it</td></tr>
+  <tr><td>Terminates</td><td>Stops after a finite amount of time</td><td><code>LOOP (true)</code> with no exit condition</td></tr>
+  <tr><td>Efficient</td><td>Uses as little time and memory as reasonably possible</td><td>Correct, but takes hours where a better method takes milliseconds</td></tr>
+</table>
+
+<div class="box"><b>Memory aid</b>Correct, Finite well-defined steps, Output, Terminates, Efficient.</div>
+
+<h2>2. What is a program?</h2>
+<p>A <b>program</b> is an <i>implementation</i> of an algorithm in a programming language (C, Java, Python and so on). The algorithm is the idea; the program is that idea written so a computer can run it.</p>
+
+<h3>Properties of a good program</h3>
+<table>
+  <tr><th>Property</th><th>Meaning</th></tr>
+  <tr><td>Executes correctly</td><td>Does what the algorithm intends, with no bugs on valid input</td></tr>
+  <tr><td>Executes efficiently</td><td>Runs within the resource constraints (available time, memory, CPU)</td></tr>
+  <tr><td>Easy to read and understand</td><td>Clear names, layout and comments so others can follow it</td></tr>
+  <tr><td>Easy to maintain</td><td>Can be fixed or extended later without breaking everything</td></tr>
+</table>
+
+<h3>Algorithm vs program</h3>
+<table>
+  <tr><th></th><th>Algorithm</th><th>Program</th></tr>
+  <tr><td>What it is</td><td>Idea / method / steps</td><td>Implementation of that method</td></tr>
+  <tr><td>Written in</td><td>Plain language, pseudocode, flowchart</td><td>A programming language</td></tr>
+  <tr><td>Machine dependent?</td><td>No</td><td>Yes, needs a compiler/interpreter and hardware</td></tr>
+  <tr><td>Readable &amp; maintainable?</td><td>Should be clear</td><td>Explicit requirement</td></tr>
+  <tr><td>Must terminate?</td><td>Yes (part of the definition)</td><td>Not necessarily (e.g. a web server runs "forever")</td></tr>
+</table>
+
+<h2>3. Pseudocode</h2>
+<p><b>Pseudocode</b> means "fake code". It is structured English used to write down an algorithm before (or instead of) coding it.</p>
+<ul>
+  <li>Cannot be compiled or executed</li>
+  <li>No strict syntax rules, so exact wording does not matter as long as the meaning is clear</li>
+  <li>Easy to read and understand</li>
+  <li>Independent of any programming language</li>
+  <li>Designed for <b>humans</b>, not machines</li>
+</ul>
+
+<h3>The style used in this course</h3>
+<table>
+  <tr><th>Element</th><th>Meaning</th></tr>
+  <tr><td><code>ALGORITHM name (params)</code> ... <code>END name</code></td><td>Header and footer of the algorithm</td></tr>
+  <tr><td><code>REF</code></td><td>Parameter passed by reference: changes made inside are visible to the caller (used for outputs like <code>index</code>)</td></tr>
+  <tr><td><code>PRE</code></td><td>Precondition: conditions on the <b>input</b>; what must be true <i>before</i> the algorithm runs</td></tr>
+  <tr><td><code>POST</code></td><td>Postcondition: conditions on the <b>output</b>; what is guaranteed to be true <i>after</i> it runs</td></tr>
+  <tr><td><code>RETURN</code></td><td>Describes the <b>return value</b> in the header; inside the body it gives the value back and exits</td></tr>
+  <tr><td><code>&larr;</code></td><td>Assignment, e.g. <code>index &larr; 0</code> means "set index to 0"</td></tr>
+  <tr><td><code>=</code></td><td>Comparison for equality, e.g. <code>target = list[index]</code></td></tr>
+  <tr><td><code>LOOP (condition)</code> ... <code>END LOOP</code></td><td>Repeat while the condition is true</td></tr>
+  <tr><td><code>IF (condition)</code> ... <code>END IF</code></td><td>Do the steps only when the condition is true</td></tr>
+  <tr><td>Purpose line</td><td>One descriptive line under the header saying what the algorithm does (e.g. "finds target in unordered list")</td></tr>
+  <tr><td>Indentation</td><td>Statements are numbered <i>and indented</i> for clarity (bodies of LOOP / IF are indented)</td></tr>
+  <tr><td>Line numbers</td><td>Each statement is numbered so it can be referenced and counted later (used in time analysis)</td></tr>
+</table>
+
+<h3>Worked example: linear search</h3>
+<pre><code>ALGORITHM search (REF list[] INTEGER, size INTEGER,
+                  target INTEGER, REF index INTEGER)
+   finds target in unordered list
+   PRE   list is an array with at least one element
+         size is number of elements in list
+         target contains integer to find
+   POST  if found, index gives matching index
+   RETURN true if found, otherwise false
+1  index &larr; 0
+2  LOOP (index &lt; size)
+3     IF (target = list[index])
+4        RETURN true
+5     END IF
+6     index &larr; index + 1
+7  END LOOP
+8  RETURN false
+END search</code></pre>
+
+<p><b>How it works:</b> start at position 0, compare each element to the target, and move one position at a time. If a match is found, return <code>true</code> immediately (and <code>index</code> holds where it was). If the loop runs out of elements, return <code>false</code>.</p>
+
+<p><b>Trace</b> with <code>list = [7, 3, 9, 5]</code>, <code>size = 4</code>, <code>target = 9</code>:</p>
+<table>
+  <tr><th>index</th><th>index &lt; size?</th><th>list[index]</th><th>= target?</th><th>Action</th></tr>
+  <tr><td>0</td><td>yes</td><td>7</td><td>no</td><td>index &larr; 1</td></tr>
+  <tr><td>1</td><td>yes</td><td>3</td><td>no</td><td>index &larr; 2</td></tr>
+  <tr><td>2</td><td>yes</td><td>9</td><td>yes</td><td>RETURN true (index = 2)</td></tr>
+</table>
+<p>With <code>target = 4</code> nothing matches, <code>index</code> reaches 4, the loop condition fails, and line 8 returns <code>false</code>.</p>
+
+<div class="box"><b>Check against the good-algorithm properties</b>
+Correct (finds the target if present) &middot; finite steps (at most <code>size</code> iterations) &middot; produces output (<code>true</code>/<code>false</code> plus <code>index</code>) &middot; terminates (<code>index</code> grows every pass) &middot; fine for small lists, though it checks every element in the worst case.</div>
+
+<h2>4. Efficiency of an algorithm</h2>
+<p><b>Efficiency</b> is the amount of <b>memory</b> and <b>time</b> needed to run a program built on a particular algorithm. We care because when several algorithms solve the same problem, efficiency lets us <b>pick the most appropriate one</b>.</p>
+<p>There are two approaches to determining it (performance analysis is the <b>preferred</b> one):</p>
+
+<table>
+  <tr><th></th><th>Performance measurement</th><th>Performance analysis</th></tr>
+  <tr><td>Idea</td><td>Actually run the program and measure time and memory used</td><td>Work it out on paper by counting the steps and memory the algorithm needs</td></tr>
+  <tr><td>Also called</td><td>Empirical / experimental</td><td>Theoretical</td></tr>
+  <tr><td>When</td><td>After the program is written</td><td>Before coding, from the algorithm itself</td></tr>
+  <tr><td>Depends on machine, language, input?</td><td>Yes, results differ between computers and runs</td><td>No, machine independent, expressed as a function of input size <i>n</i></td></tr>
+  <tr><td>Pros</td><td>Gives real, concrete numbers</td><td>Fast, no program needed, fair comparison of algorithms</td></tr>
+  <tr><td>Cons</td><td>Needs a working program; unfair if machines or inputs differ</td><td>Gives growth trends, not exact seconds</td></tr>
+</table>
+
+<div class="box"><b>Where this leads</b>Performance analysis has two parts, covered in the next lessons: <b>space complexity</b> (memory, Part 02) and <b>time complexity</b> (running time, Parts 03 and 04).</div>
+
+</section>
+
+<!-- ============ C++ ============ -->
+<section class="panel" id="cpp">
+<p class="lead">Not on the slides: C++ points covered in class (from two sets of peer notes), explained from scratch. Every later lesson uses C++, so read this once even if you have coded before. Jump to: <a href="#c-start">Getting started</a> &middot; <a href="#c-vars">Variables</a> &middot; <a href="#c-flow">Control flow</a> &middot; <a href="#c-func">Functions</a> &middot; <a href="#c-mem">Memory</a> &middot; <a href="#c-ptr">Pointers</a> &middot; <a href="#c-par">Parameters</a> &middot; <a href="#c-struct">Structs</a></p>
+
+<h2 id="c-start">1. Getting started</h2>
+<p>C++ source is a text file (<code>test.cpp</code>) that a <b>compiler</b> turns into an executable (<code>test.exe</code>). When you run it, the operating system calls the function <code>main</code>.</p>
+<pre><code>#include &lt;iostream&gt;        // bring in input/output tools
+using namespace std;        // so we can write cout instead of std::cout
+
+int main() {                // program starts here
+    cout &lt;&lt; "Hello" &lt;&lt; endl;  // print to the screen
+    return 0;               // exit status: 0 = success
+}</code></pre>
+<table>
+  <tr><th>Part</th><th>Meaning</th></tr>
+  <tr><td><code>#include</code></td><td>Preprocessor line that pulls in a library (<code>&lt;iostream&gt;</code> for input/output, <code>&lt;cmath&gt;</code> for maths like <code>sqrt</code>).</td></tr>
+  <tr><td><code>cout</code> / <code>&lt;&lt;</code></td><td><code>cout</code> = "character out" (the screen). <code>&lt;&lt;</code> is the <b>stream insertion operator</b>: it pushes the value on its right into the stream.</td></tr>
+  <tr><td><code>cin</code> / <code>&gt;&gt;</code></td><td><code>cin</code> reads from the keyboard: <code>cin &gt;&gt; r;</code> stores what the user types in <code>r</code>.</td></tr>
+  <tr><td><code>;</code></td><td>Every statement ends with a semicolon.</td></tr>
+  <tr><td><code>//</code> and <code>/* */</code></td><td>Comments (ignored by the compiler).</td></tr>
+</table>
+
+<h3>Exit status: why <code>main</code> returns a number</h3>
+<p>The number returned by <code>main</code> goes back to the operating system. <b>0 means success; any other value means failure.</b> Other programs or scripts use it to decide what to do next.</p>
+<svg viewBox="0 0 640 110" role="img" aria-label="Antivirus chain using exit status" class="dg">
+  <rect class="bx" x="10" y="35" width="130" height="40" rx="6"/><text x="75" y="60" text-anchor="middle">scan.exe</text>
+  <path class="ar" d="M140 55 H200"/><text x="170" y="30" text-anchor="middle" class="sm">returns 1</text><text x="170" y="48" text-anchor="middle" class="sm">(virus)</text>
+  <rect class="bx" x="200" y="35" width="130" height="40" rx="6"/><text x="265" y="60" text-anchor="middle">clean.exe</text>
+  <path class="ar" d="M330 55 H390"/><text x="360" y="30" text-anchor="middle" class="sm">returns 1</text><text x="360" y="48" text-anchor="middle" class="sm">(failed)</text>
+  <rect class="bx" x="390" y="35" width="150" height="40" rx="6"/><text x="465" y="60" text-anchor="middle">quarantine.exe</text>
+  <text x="320" y="100" text-anchor="middle" class="sm">Each program's exit status decides which program runs next.</text>
+</svg>
+<p>On Windows, <code>echo %ERRORLEVEL%</code> shows the last exit status. A crash from division by zero shows up as a non-zero status (136 in the notes).</p>
+
+<h3>Namespaces</h3>
+<p>A <b>namespace</b> is a labelled container for names, so two libraries can both define <code>print()</code> without clashing.</p>
+<pre><code>namespace A { void print(); }
+namespace B { void print(); }
+A::print();   // calls A's version
+B::print();   // calls B's version
+// Two print() in the same scope with no namespace = compile error</code></pre>
+
+<h2 id="c-vars">2. Variables, types and operators</h2>
+<p>A <b>variable</b> is a named box in memory that holds a value of one <b>type</b>.</p>
+<table>
+  <tr><th>Type</th><th>Holds</th><th>Size (typical 32/64-bit PC)</th></tr>
+  <tr><td><code>char</code></td><td>One character, e.g. <code>'A'</code></td><td>1 byte</td></tr>
+  <tr><td><code>bool</code></td><td><code>true</code> / <code>false</code></td><td>1 byte</td></tr>
+  <tr><td><code>short</code></td><td>Small whole number</td><td>2 bytes</td></tr>
+  <tr><td><code>int</code></td><td>Whole number</td><td>4 bytes</td></tr>
+  <tr><td><code>long</code></td><td>Bigger whole number</td><td>4 bytes (32-bit), 8 bytes (64-bit)</td></tr>
+  <tr><td><code>float</code></td><td>Decimal number</td><td>4 bytes</td></tr>
+  <tr><td><code>double</code></td><td>More precise decimal</td><td>8 bytes</td></tr>
+  <tr><td>pointer (<code>int *</code> etc.)</td><td>A memory address</td><td>2 / 4 / 8 bytes on 16 / 32 / 64-bit machines</td></tr>
+</table>
+<p>These types (char, int, double, ...) are <b>atomic / primitive</b> types: they cannot be split into smaller parts.</p>
+
+<h3>Initialisation: giving a variable a first value</h3>
+<table>
+  <tr><th>Variable kind</th><th>Where declared</th><th>Initialised automatically?</th></tr>
+  <tr><td>Local</td><td>Inside a function</td><td><b>No.</b> You must set it.</td></tr>
+  <tr><td>Global</td><td>Outside all functions</td><td>Yes (to 0)</td></tr>
+  <tr><td><code>static</code></td><td>Local with the word <code>static</code></td><td>Yes (once), and it <b>keeps its value between calls</b></td></tr>
+</table>
+<p>An uninitialised local holds a <b>garbage value</b>: whatever random bits were left in that memory by earlier code. Using it gives unpredictable results.</p>
+<pre><code>void counter() {
+    static int count;     // starts at 0 once, then remembers
+    count++;
+    cout &lt;&lt; count &lt;&lt; "\n";
+}
+counter(); counter(); counter();   // prints 1, 2, 3
+// With a plain "int count;" you would see random leftover values instead.</code></pre>
+
+<h3>Constants</h3>
+<p>Variables can be changed anywhere, so you might overwrite a fixed value by accident. Use a constant for fixed values.</p>
+<table>
+  <tr><th></th><th><code>const float pi = 3.14;</code></th><th><code>#define PI 3.14</code></th></tr>
+  <tr><td>What it is</td><td>A real, typed variable that cannot change</td><td>A preprocessor <b>text replacement</b>: before compiling, every <code>PI</code> becomes <code>3.14</code></td></tr>
+  <tr><td>Memory</td><td>Takes memory</td><td>No memory allocated</td></tr>
+  <tr><td>Type checking / scope</td><td>Yes</td><td>None</td></tr>
+  <tr><td>Debugging</td><td>Easier</td><td>Harder, can give surprising output</td></tr>
+  <tr><td>Benefit</td><td>Safe and typed</td><td>Change the value in one line and every use updates; no run-time overhead</td></tr>
+</table>
+
+<h3>Operators worth knowing</h3>
+<table>
+  <tr><th>Operator</th><th>Meaning</th></tr>
+  <tr><td><code>+ - * / %</code></td><td>Arithmetic; <code>%</code> is the remainder (<code>25 % 2 = 1</code>).</td></tr>
+  <tr><td><code>== != &lt; &gt; &lt;= &gt;=</code></td><td>Comparison. Note <code>==</code> compares; a single <code>=</code> assigns.</td></tr>
+  <tr><td><code>&amp;&amp;  ||  !</code></td><td>Logical AND / OR / NOT. <b>Short circuit:</b> in <code>a &amp;&amp; b</code> if <code>a</code> is false, <code>b</code> is never evaluated.</td></tr>
+  <tr><td><code>&amp;  |  ~</code></td><td>Bitwise AND / OR / NOT: work bit by bit, both sides always evaluated. <code>10101010 | 00000001 = 10101011</code> (set the last bit without touching the others).</td></tr>
+  <tr><td><code>c ? a : b</code></td><td><b>Ternary</b> (three operands): if <code>c</code> is true the result is <code>a</code>, else <code>b</code>.</td></tr>
+</table>
+<pre><code>int inCity = 1;                         // 1 = in city, 0 = out of city
+const int speed = inCity ? 30 : 70;     // ternary lets a const be set by a condition
+cout &lt;&lt; "Speed is " &lt;&lt; speed &lt;&lt; " kmph";   // Speed is 30 kmph</code></pre>
+<p>Ternary pros: shorter code and handy for simple assignments. Do not nest it for complex logic.</p>
+
+<h2 id="c-flow">3. Control flow</h2>
+<pre><code>if (x &gt; 0) { ... } else { ... }
+for (int i = 0; i &lt; n; i++) { ... }    // counted loop
+while (cond) { ... }                    // loop while true</code></pre>
+<table>
+  <tr><th>Statement</th><th>What it does</th><th>Example</th></tr>
+  <tr><td><code>continue</code></td><td>Skip the rest of <i>this</i> iteration and start the next one. Less nesting, more readable.</td><td><pre style="margin:0"><code>// print sqrt of non-negative numbers only
+for (int i = 0; i &lt; 5; i++) {
+  if (num[i] &lt; 0) continue;   // skip -4 and -25
+  cout &lt;&lt; num[i] &lt;&lt; " " &lt;&lt; sqrt(num[i]);
+}
+// without the check negatives print -nan</code></pre></td></tr>
+  <tr><td><code>break</code></td><td>Leave the loop immediately. Stops unnecessary work; useful for validation (stop once a PIN matches). In nested loops it exits <b>only the inner loop</b>.</td><td><pre style="margin:0"><code>for (int i = 0; i &lt; 5; i++) {
+  if (pins[i] == 5678) {
+     cout &lt;&lt; "PIN is valid";
+     break;                    // stop searching
+  }
+}</code></pre></td></tr>
+  <tr><td><code>return</code></td><td>Leaves the whole <b>function</b> (so it also escapes every nested loop in it). In <code>main</code> it ends the program.</td><td><code>if (n &lt; 0) return;</code> in a <code>void</code> function</td></tr>
+  <tr><td><code>exit(0)</code></td><td>Ends the whole program from anywhere. Valid, but <b>not recommended</b>: resources may not be released properly.</td><td></td></tr>
+</table>
+<p>To break out of <i>all</i> nested loops: use <code>return</code>, or put the loops inside a function and return from it.</p>
+
+<h2 id="c-func">4. Functions</h2>
+<pre><code>int power(int num, int expo = 2) {    // expo has a default value
+    int result = 1;
+    for (int i = 0; i &lt; expo; i++) result = result * num;
+    return result;
+}
+cout &lt;&lt; power(2, 3);   // 8
+cout &lt;&lt; power(2);      // 4  (uses the default expo = 2)</code></pre>
+<ul>
+  <li>A function has a <b>return type</b> (<code>void</code> if it returns nothing), a <b>name</b> and <b>parameters</b>.</li>
+  <li>Defaults go on the right-most parameters: <code>greet(string name, string role = "guest")</code>. <code>greet("pipuni","admin")</code> &rarr; admin; <code>greet("pipuni")</code> &rarr; guest.</li>
+  <li>Each call gets its own local variables on the <b>stack</b> (see section 5).</li>
+</ul>
+
+<h2 id="c-mem">5. How memory is organised</h2>
+<p>When your program runs, the operating system gives it memory split into four segments:</p>
+<svg viewBox="0 0 640 250" role="img" aria-label="Four memory segments" class="dg">
+  <rect class="bx" x="20" y="15" width="290" height="100" rx="6"/>
+  <text x="165" y="40" text-anchor="middle" class="h">Text (code)</text>
+  <text x="165" y="62" text-anchor="middle" class="sm">The compiled instructions.</text>
+  <text x="165" y="80" text-anchor="middle" class="sm">Lives for the whole program.</text>
+  <rect class="bx" x="330" y="15" width="290" height="100" rx="6"/>
+  <text x="475" y="40" text-anchor="middle" class="h">Data</text>
+  <text x="475" y="62" text-anchor="middle" class="sm">Global and <tspan font-weight="700">static</tspan> variables.</text>
+  <text x="475" y="80" text-anchor="middle" class="sm">Lives for the whole program.</text>
+  <rect class="bx" x="20" y="130" width="290" height="105" rx="6"/>
+  <text x="165" y="155" text-anchor="middle" class="h">Stack</text>
+  <text x="165" y="175" text-anchor="middle" class="sm">Small (a few MB), fast.</text>
+  <text x="165" y="192" text-anchor="middle" class="sm">Function calls and local variables.</text>
+  <text x="165" y="209" text-anchor="middle" class="sm">Automatic: created on call, destroyed on return.</text>
+  <rect class="bx" x="330" y="130" width="290" height="105" rx="6"/>
+  <text x="475" y="155" text-anchor="middle" class="h">Heap</text>
+  <text x="475" y="175" text-anchor="middle" class="sm">Large, slower to allocate and free.</text>
+  <text x="475" y="192" text-anchor="middle" class="sm">new / delete, managed by YOU.</text>
+  <text x="475" y="209" text-anchor="middle" class="sm">Lifetime decided by the programmer.</text>
+</svg>
+<table>
+  <tr><th>Stack</th><th>Heap</th></tr>
+  <tr><td>Compiler manages it automatically</td><td>You allocate with <code>new</code> and release with <code>delete</code></td></tr>
+  <tr><td>Fast, but limited size</td><td>Large, but slower</td></tr>
+  <tr><td>Lives as long as the function call</td><td>Lives until you delete it (or the program ends)</td></tr>
+  <tr><td>Local variables, parameters, return addresses</td><td>Dynamic variables and dynamic arrays</td></tr>
+</table>
+
+<h3>Garbage collection</h3>
+<p>A <b>garbage collector</b> automatically frees memory that is no longer used. C++ does <b>not</b> have one; you must free heap memory yourself. Pros of GC: prevents leaks, safer, easier, more productive. Cons: slower, uses more memory, less control, unpredictable pauses.</p>
+
+<h2 id="c-ptr">6. Pointers</h2>
+<p>A <b>pointer</b> is a variable that holds a <b>memory address</b> instead of an ordinary value.</p>
+<pre><code>int *p = 0;      // 1. null pointer: holds 0, points nowhere
+int n = 5;       // 2. an ordinary variable
+p = &amp;n;          // 3. &amp; = "address of". p now holds n's address
+cout &lt;&lt; n;       // 5
+cout &lt;&lt; &amp;n;      // 0xDEADBA11   (n's address)
+cout &lt;&lt; p;       // 0xDEADBA11   (same: p holds that address)
+cout &lt;&lt; *p;      // 5            (* = "value at": follow the pointer)</code></pre>
+<svg viewBox="0 0 640 130" role="img" aria-label="Pointer p pointing at n" class="dg">
+  <text x="40" y="28" class="sm">p</text>
+  <rect class="bx" x="20" y="35" width="170" height="44" rx="4"/><text x="105" y="63" text-anchor="middle" class="mono">0xDEADBA11</text>
+  <path class="ar" d="M190 57 H330"/><text x="260" y="48" text-anchor="middle" class="sm">points to</text>
+  <text x="340" y="28" class="sm">n</text>
+  <rect class="bx" x="330" y="35" width="90" height="44" rx="4"/><text x="375" y="63" text-anchor="middle" class="mono">5</text>
+  <text x="375" y="100" text-anchor="middle" class="sm">n lives at address 0xDEADBA11</text>
+  <text x="105" y="100" text-anchor="middle" class="sm">p stores that address</text>
+</svg>
+<table>
+  <tr><th>Symbol</th><th>Read as</th><th>Example</th></tr>
+  <tr><td><code>&amp;n</code></td><td>"address of n"</td><td><code>p = &amp;n;</code></td></tr>
+  <tr><td><code>*p</code></td><td>"value at the address p holds" (dereference)</td><td><code>*p = 10;</code> changes n to 10</td></tr>
+  <tr><td><code>int *p</code> (in a declaration)</td><td>"p is a pointer to an int"</td><td>The type matters: the compiler must know how to read the data at that address.</td></tr>
+</table>
+
+<h3>Why use pointers?</h3>
+<ul>
+  <li>Modify variables that belong to another function.</li>
+  <li>Dynamic memory allocation (<code>new</code>), where size is decided at run time.</li>
+  <li>Work efficiently with arrays (no copying).</li>
+  <li>Build linked data structures (linked lists, trees): each node holds the address of the next.</li>
+</ul>
+
+<h3>Wild pointers: always initialise</h3>
+<pre><code>int *p;          // never set: wild pointer, holds a garbage address like 0x0BADDD11
+*p = 999;        // writes into a random place in memory: crash or silent corruption</code></pre>
+<p>Rule: initialise every pointer, at least to <code>0</code> (null).</p>
+
+<h3>Dynamic memory on the heap</h3>
+<pre><code>int *p = new int;        // ask the heap for one int; p holds its address
+*p = 999;
+cout &lt;&lt; *p;              // 999
+
+int *q = new int(999);   // allocate AND initialise
+delete q;                // give it back
+
+int size;
+cin &gt;&gt; size;
+int *arr = new int[size];   // dynamic array: size decided while running
+delete [] arr;              // arrays are freed with delete[]</code></pre>
+<svg viewBox="0 0 640 120" role="img" aria-label="Dynamic array on the heap" class="dg">
+  <text x="30" y="22" class="sm">arr (on the stack)</text>
+  <rect class="bx" x="20" y="30" width="150" height="40" rx="4"/><text x="95" y="56" text-anchor="middle" class="mono">0x0BADCAFE</text>
+  <path class="ar" d="M170 50 H260"/>
+  <text x="270" y="22" class="sm">new int[5] (on the heap)</text>
+  <rect class="bx" x="260" y="30" width="60" height="40"/><rect class="bx" x="320" y="30" width="60" height="40"/><rect class="bx" x="380" y="30" width="60" height="40"/><rect class="bx" x="440" y="30" width="60" height="40"/><rect class="bx" x="500" y="30" width="60" height="40"/>
+  <text x="290" y="90" text-anchor="middle" class="sm">0</text><text x="350" y="90" text-anchor="middle" class="sm">1</text><text x="410" y="90" text-anchor="middle" class="sm">2</text><text x="470" y="90" text-anchor="middle" class="sm">3</text><text x="530" y="90" text-anchor="middle" class="sm">4</text>
+  <text x="320" y="110" text-anchor="middle" class="sm">The pointer is small and on the stack; the block it points at is on the heap.</text>
+</svg>
+<div class="box"><b>Memory leak</b>Memory is allocated with <code>new</code> but never released with <code>delete</code>. The block stays reserved but nothing can reach it any more, so a long-running program slowly uses up all memory. Every <code>new</code> needs a matching <code>delete</code> (<code>new[]</code> needs <code>delete[]</code>).</div>
+<pre><code>void leakMemory() {
+    int *p = new int(999);
+    cout &lt;&lt; *p;
+    delete p;      // without this line: leak
+}</code></pre>
+<p><code>sizeof(p)</code> gives the size of the <i>pointer</i>, which depends on the machine (8 bytes on a 64-bit PC for <b>every</b> pointer type: <code>char*</code>, <code>int*</code>, <code>float*</code> all print 8). It does not depend on what they point to.</p>
+
+<h3>Pointer arithmetic and arrays</h3>
+<p>Adding to a pointer moves the <b>address</b>, in steps of the pointed-to type's size. For an <code>int*</code>, <code>p+1</code> is 4 bytes further on (example: ...f4, ...f8, ...f0 for p, p+1, p-1).</p>
+<svg viewBox="0 0 640 140" role="img" aria-label="Pointer arithmetic over an array" class="dg">
+  <text x="30" y="22" class="sm">arr / p</text>
+  <rect class="bx" x="20" y="30" width="150" height="40" rx="4"/><text x="95" y="56" text-anchor="middle" class="mono">0x0BADCAFE</text>
+  <path class="ar" d="M170 50 H260"/>
+  <rect class="bx" x="260" y="30" width="80" height="40"/><text x="300" y="56" text-anchor="middle" class="mono">2</text>
+  <rect class="bx" x="340" y="30" width="80" height="40"/><text x="380" y="56" text-anchor="middle" class="mono">4</text>
+  <rect class="bx" x="420" y="30" width="80" height="40"/><text x="460" y="56" text-anchor="middle" class="mono">8</text>
+  <text x="300" y="90" text-anchor="middle" class="sm">index 0</text><text x="380" y="90" text-anchor="middle" class="sm">index 1</text><text x="460" y="90" text-anchor="middle" class="sm">index 2</text>
+  <text x="300" y="110" text-anchor="middle" class="mono">*p</text><text x="380" y="110" text-anchor="middle" class="mono">*(p+1)</text><text x="460" y="110" text-anchor="middle" class="mono">*(p+2)</text>
+  <text x="320" y="132" text-anchor="middle" class="sm">+4 bytes per step for int. *(p+3) is past the end: garbage.</text>
+</svg>
+<ul>
+  <li>The <b>array name holds the address of its first element</b>: <code>arr == &amp;arr[0]</code>, and <code>*arr == arr[0]</code>.</li>
+  <li><code>int *p = arr;</code> then <code>arr[i]</code> and <code>*(p+i)</code> mean the same thing.</li>
+  <li>Never read or write beyond the array's last element.</li>
+</ul>
+
+<h2 id="c-par">7. Passing parameters</h2>
+<table>
+  <tr><th>Kind</th><th>Declaration / call</th><th>What happens</th></tr>
+  <tr><td>By value</td><td><code>void f(int x)</code> / <code>f(a)</code></td><td>A <b>copy</b> is passed. The caller's variable is not changed. Copying a big array is slow and uses extra memory.</td></tr>
+  <tr><td>By reference</td><td><code>void f(int &amp;x)</code> / <code>f(a)</code></td><td><code>x</code> is an <b>alias</b> (another name) for the caller's variable; changes are visible to the caller. No copy.</td></tr>
+  <tr><td>By pointer</td><td><code>void f(int *p)</code> / <code>f(&amp;a)</code></td><td>The <b>address</b> is passed; use <code>*p</code> inside. Needed when the argument may be null (a reference cannot be null).</td></tr>
+  <tr><td>Arrays</td><td><code>int f(int arr[])</code> or <code>int f(int *arr)</code> / <code>f(arr)</code></td><td>Only the address of the first element is passed (no copy).</td></tr>
+</table>
+
+<h3>The classic swap: value vs pointer</h3>
+<pre><code>void swap(int a, int b) {        // BY VALUE: swaps copies only
+    int t = a; a = b; b = t;
+}
+int main() { int x = 3, y = 5; swap(x, y); cout &lt;&lt; x &lt;&lt; " " &lt;&lt; y; }   // 3 5  (unchanged!)
+
+void swap(int *a, int *b) {      // BY POINTER: swaps the originals
+    int t = *a; *a = *b; *b = t;
+}
+int main() { int x = 3, y = 5; swap(&amp;x, &amp;y); cout &lt;&lt; x &lt;&lt; " " &lt;&lt; y; }  // 5 3</code></pre>
+<svg viewBox="0 0 640 190" role="img" aria-label="Swap by value versus by pointer" class="dg">
+  <text x="160" y="20" text-anchor="middle" class="h">By value (copies)</text>
+  <text x="30" y="40" class="sm">main</text>
+  <rect class="bx" x="30" y="46" width="50" height="34"/><text x="55" y="69" text-anchor="middle" class="mono">3</text><text x="55" y="96" text-anchor="middle" class="sm">x</text>
+  <rect class="bx" x="110" y="46" width="50" height="34"/><text x="135" y="69" text-anchor="middle" class="mono">5</text><text x="135" y="96" text-anchor="middle" class="sm">y</text>
+  <text x="30" y="122" class="sm">swap (separate boxes)</text>
+  <rect class="bx" x="30" y="128" width="50" height="34"/><text x="55" y="151" text-anchor="middle" class="mono">5</text><text x="55" y="178" text-anchor="middle" class="sm">a</text>
+  <rect class="bx" x="110" y="128" width="50" height="34"/><text x="135" y="151" text-anchor="middle" class="mono">3</text><text x="135" y="178" text-anchor="middle" class="sm">b</text>
+  <rect class="bx" x="190" y="128" width="50" height="34"/><text x="215" y="151" text-anchor="middle" class="mono">3</text><text x="215" y="178" text-anchor="middle" class="sm">t</text>
+  <text x="440" y="20" text-anchor="middle" class="h">By pointer (originals)</text>
+  <rect class="bx" x="360" y="46" width="50" height="34"/><text x="385" y="69" text-anchor="middle" class="mono">5</text><text x="385" y="96" text-anchor="middle" class="sm">x</text>
+  <rect class="bx" x="440" y="46" width="50" height="34"/><text x="465" y="69" text-anchor="middle" class="mono">3</text><text x="465" y="96" text-anchor="middle" class="sm">y</text>
+  <rect class="bx" x="360" y="128" width="50" height="34"/><text x="385" y="151" text-anchor="middle" class="mono">&amp;x</text><text x="385" y="178" text-anchor="middle" class="sm">a</text>
+  <rect class="bx" x="440" y="128" width="50" height="34"/><text x="465" y="151" text-anchor="middle" class="mono">&amp;y</text><text x="465" y="178" text-anchor="middle" class="sm">b</text>
+  <path class="ar" d="M385 128 V84"/><path class="ar" d="M465 128 V84"/>
+  <text x="560" y="105" text-anchor="middle" class="sm">a and b point at</text><text x="560" y="121" text-anchor="middle" class="sm">the real x and y</text>
+</svg>
+<p>By reference gives the same result as the pointer version with simpler syntax: <code>void swap(int &amp;a, int &amp;b)</code> called as <code>swap(x, y)</code>.</p>
+<div class="box"><b>Why have all three?</b>Value is safest (the function cannot damage your data). Reference avoids copying and lets a function modify the caller's variable. Pointer does the same but also works when the argument might be null, and is how linked structures are built.</div>
+
+<h2 id="c-struct">8. Composite types: <code>struct</code></h2>
+<p>An <b>atomic</b> type cannot be broken down. A <b>composite</b> type is built from other types and <b>can</b> be decomposed. A <code>struct</code> groups related variables (its <b>members</b>) under one name. Members may have different types (heterogeneous).</p>
+<pre><code>struct Day    { int year; int month; int date; };
+struct Person { char name[30]; int weight; Day dob; };   // contains another struct
+
+Person he;                 // he.name, he.weight, he.dob.year / .month / .date
+he.weight = 57;            // set a member
+cout &lt;&lt; he.dob.year;       // get a member
+Person *p = &amp;he;
+p-&gt;weight = 60;            // p-&gt;weight is the same as (*p).weight</code></pre>
+<svg viewBox="0 0 640 140" role="img" aria-label="Person struct layout" class="dg">
+  <text x="30" y="20" class="sm">Person he</text>
+  <rect class="bx" x="30" y="28" width="300" height="30"/><text x="180" y="48" text-anchor="middle" class="sm">name  (char name[30]: indexes 0..29)</text>
+  <rect class="bx" x="30" y="58" width="300" height="30"/><text x="180" y="78" text-anchor="middle" class="sm">weight</text>
+  <rect class="bx" x="30" y="88" width="100" height="30"/><text x="80" y="108" text-anchor="middle" class="sm">dob.year</text>
+  <rect class="bx" x="130" y="88" width="100" height="30"/><text x="180" y="108" text-anchor="middle" class="sm">dob.month</text>
+  <rect class="bx" x="230" y="88" width="100" height="30"/><text x="280" y="108" text-anchor="middle" class="sm">dob.date</text>
+  <text x="350" y="108" class="sm">dob is itself a Day (composite inside composite)</text>
+</svg>
+<p>A <b>data structure</b> is a structure that holds a set of atomic or composite data, with operations on it. A simple one is an array of structs:</p>
+<pre><code>int num[] = {3, 2, 1};              // homogeneous (all int)
+cout &lt;&lt; num[0];  num[2] = 5;        // get / set
+
+Person employee[2];                 // heterogeneous elements (name + weight + dob)
+cout &lt;&lt; employee[0].name;           // get
+employee[1].weight = 57;            // set</code></pre>
+<p>Arrays and structs are <b>linear</b> structures: the elements sit one after another.</p>
+
+<h2>Quick self-test</h2>
+<ol>
+  <li>What does <code>main</code> returning 1 tell the operating system?</li>
+  <li>Which of local, global and static variables start with a garbage value?</li>
+  <li>If <code>int n = 5; int *p = &amp;n;</code> what are <code>p</code>, <code>*p</code> and <code>&amp;n</code>?</li>
+  <li>Why does swap-by-value not change <code>x</code> and <code>y</code> in <code>main</code>?</li>
+  <li>What is the bug in <code>int *a = new int[10]; ... delete a;</code>?</li>
+</ol>
+<details><summary>Answers</summary>
+<ol>
+  <li>Failure (0 is success).</li>
+  <li>Only local variables.</li>
+  <li><code>p</code> = the address of n, <code>*p</code> = 5, <code>&amp;n</code> = the same address as <code>p</code>.</li>
+  <li>The function works on copies; the originals are untouched.</li>
+  <li>An array must be freed with <code>delete [] a;</code>.</li>
+</ol></details>
+</section>
+
+<!-- ============ QUESTIONS ============ -->
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+
+<h2>Written questions</h2>
+
+<details>
+<summary>W1. Define an algorithm and list five properties of a good algorithm.</summary>
+<p>An algorithm is a finite, well-defined set of steps for solving a problem. A good algorithm is: (1) correct, (2) composed of a finite number of well-defined steps, (3) produces output, (4) terminates in finite time, (5) efficient.</p>
+</details>
+
+<details>
+<summary>W2. State the differences between an algorithm and a program.</summary>
+<p>An algorithm is the method/idea, written in plain language or pseudocode and independent of any machine. A program is an implementation of an algorithm in a specific programming language, which must also be readable and maintainable and run within resource limits.</p>
+</details>
+
+<details>
+<summary>W3. Write pseudocode for an algorithm that returns the largest value in an integer array <code>list</code> of <code>size</code> elements (size &ge; 1).</summary>
+<pre><code>ALGORITHM findMax (list[] INTEGER, size INTEGER)
+   PRE   list has at least one element
+   RETURN the largest value in list
+1  max &larr; list[0]
+2  i &larr; 1
+3  LOOP (i &lt; size)
+4     IF (list[i] &gt; max)
+5        max &larr; list[i]
+6     END IF
+7     i &larr; i + 1
+8  END LOOP
+9  RETURN max
+END findMax</code></pre>
+<p>Terminates because <code>i</code> increases each pass; correct because <code>max</code> always holds the largest value seen so far.</p>
+</details>
+
+<details>
+<summary>W4. Explain the two approaches to determining algorithm efficiency. Why is performance analysis preferred when choosing between algorithms?</summary>
+<p>Performance measurement runs the program and records actual time/memory, so results depend on the computer, language, compiler and input. Performance analysis counts the steps and memory needed from the algorithm itself, independent of hardware, and expresses them as a function of input size. Analysis is preferred because it works before coding and gives a fair comparison between algorithms.</p>
+</details>
+
+<details>
+<summary>W5. Why is this not a valid algorithm? <code>1 x &larr; 1 &nbsp; 2 LOOP (x &gt; 0) &nbsp; 3 x &larr; x + 1 &nbsp; 4 END LOOP</code></summary>
+<p>It never terminates (x only grows, so <code>x &gt; 0</code> is always true) and it produces no output. It violates two required properties.</p>
+</details>
+</section>
+
+<!-- ============ SHORT NOTE ============ -->
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Algorithm</td><td>Finite, well-defined steps to solve a problem. Like a recipe. A problem can have many algorithms.</td></tr>
+  <tr><td>Good algorithm</td><td>Correct &middot; finite well-defined steps &middot; produces output &middot; terminates &middot; efficient</td></tr>
+  <tr><td>Program</td><td>An implementation of an algorithm in a programming language</td></tr>
+  <tr><td>Good program</td><td>Executes correctly &middot; executes efficiently (within resources) &middot; easy to read &middot; easy to maintain</td></tr>
+  <tr><td>Pseudocode</td><td>"Fake code": structured English, no strict syntax, not executable, language independent, written for humans</td></tr>
+  <tr><td>Pseudocode keywords</td><td>ALGORITHM / END, REF, PRE, POST, RETURN, LOOP / END LOOP, IF / END IF, &larr; assigns, = compares, number the lines</td></tr>
+  <tr><td>Efficiency</td><td>Memory and time needed to run a program written with an algorithm; used to choose between algorithms</td></tr>
+  <tr><td>Performance measurement</td><td>Run it and measure (machine dependent)</td></tr>
+  <tr><td>Performance analysis</td><td>Count steps and memory on paper (machine independent): space complexity + time complexity</td></tr>
+  <tr><td>C++ extras</td><td>Local vars need init (global/static are automatic); stack = automatic, heap = new/delete (delete[] for arrays); pointers: init to null, &amp; address, * value, p++ moves by type size; value vs reference vs pointer params; namespaces avoid name clashes</td></tr>
+  <tr><td>Linear search</td><td>Check elements one by one from index 0; return true on match, false after the last element</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Prototype questions ask you to write algorithms in this pseudocode style (see the postfix evaluation question). Number your lines, use &larr; for assignment, and close every LOOP and IF.</div>
+</section>
+
+</div>
+
+<script>
+const Q=[
+ {q:"Which is NOT a required property of a good algorithm?",o:["It terminates in finite time","It produces output","It is written in a programming language","It is composed of well-defined steps"],a:2,e:"An algorithm is independent of any programming language; it can be written in plain language or pseudocode."},
+ {q:"An algorithm is best described as:",o:["A finite, well-defined set of steps for solving a problem","A program stored on disk","A compiled executable","A piece of hardware"],a:0,e:"Think of a recipe: finite, precise steps from input to output."},
+ {q:"A program is:",o:["A flowchart of an algorithm","An implementation of an algorithm using a programming language","A set of requirements","The same as pseudocode"],a:1,e:"The algorithm is the method; the program is its implementation."},
+ {q:"Which is a property of a good program but not part of the definition of a good algorithm?",o:["Easy to maintain","Correct","Finite","Produces output"],a:0,e:"Readability and maintainability are program qualities. Correctness and efficiency apply to both."},
+ {q:"Pseudocode can be:",o:["Compiled by any C compiler","Executed directly","Read and understood by humans without a fixed syntax","Used only for Python"],a:2,e:"Pseudocode cannot be compiled or executed, has no strict syntax and is language independent."},
+ {q:"In the lecture's pseudocode, what does the REF keyword mean on a parameter?",o:["The parameter is a constant","The parameter is passed by reference, so changes are visible to the caller","The parameter is optional","The parameter is a reference to a book"],a:1,e:"REF parameters such as 'index' in the search algorithm carry results back to the caller."},
+ {q:"What does the POST section of an algorithm specification state?",o:["What must be true before it runs","What is guaranteed to be true after it runs","The time complexity","The programming language used"],a:1,e:"PRE = before, POST = after."},
+ {q:"For list = [4, 8, 1], target = 1, how many times is the comparison on line 3 of the search algorithm executed?",o:["1","2","3","4"],a:2,e:"index 0 (4), index 1 (8), index 2 (1 = match). Three comparisons, then RETURN true."},
+ {q:"What does the search algorithm return when the target is not in the list?",o:["true","false","The last index","It never terminates"],a:1,e:"The loop ends when index reaches size, and line 8 returns false."},
+ {q:"Efficiency of an algorithm refers to:",o:["Only the speed of the computer","The memory and time needed to run a program using it","The number of lines of code","How short the pseudocode is"],a:1,e:"Efficiency covers both memory (space) and time."},
+ {q:"Why do we study efficiency?",o:["To make programs longer","To choose the most appropriate algorithm when several exist for the same problem","To avoid writing pseudocode","To replace testing"],a:1,e:"Efficiency is the basis for comparing algorithms."},
+ {q:"Which approach runs the program and records time and memory used?",o:["Performance analysis","Performance measurement","Pseudocode tracing","Correctness proof"],a:1,e:"Measurement is empirical; analysis is done on paper."},
+ {q:"Performance analysis differs from performance measurement because it:",o:["Needs a finished program","Depends on the machine used","Is done from the algorithm and is machine independent","Gives exact seconds"],a:2,e:"Analysis counts steps/memory as a function of input size, independent of hardware."},
+ {q:"An algorithm contains LOOP (true) with no way to exit. Which property does it violate?",o:["Produces output only","Termination","Readability","Maintainability"],a:1,e:"A good algorithm must terminate in finite time."},
+ {q:"In 'index ← index + 1', the symbol ← means:",o:["Compare for equality","Assignment","Return","Less than"],a:1,e:"← assigns the right-hand value to the left-hand variable. Equality comparison is '='."},
+ {q:"In the lecture pseudocode, which header section states conditions on the INPUT?",o:["POST","PRE","RETURN","REF"],a:1,e:"PRE = conditions on input, POST = conditions on output, RETURN = description of the returned value."},
+ {q:"Which approach to determining efficiency is preferred?",o:["Performance measurement","Performance analysis","Guessing","Counting lines of code"],a:1,e:"Analysis is machine independent and can be done before coding."},
+ {q:"Which variables are NOT automatically initialised in C++?",o:["Global","Static","Local","All of them are"],a:2,e:"Local variables hold garbage values until you assign them. Global and static are automatically initialised."},
+ {q:"For int *p; what does p++ do?",o:["Adds 1 to the value p points to","Moves p to the next int (+4 bytes on typical systems)","Moves p one byte","Sets p to null"],a:1,e:"Pointer arithmetic steps by the size of the pointed-to type."},
+ {q:"Which statement frees a dynamic array allocated with new int[n]?",o:["delete arr;","free(arr);","delete[] arr;","arr = 0;"],a:2,e:"Arrays allocated with new[] must be released with delete[]."},
+ {q:"A memory leak happens when:",o:["A variable is not initialised","Memory is allocated but never released","A pointer is null","The stack is full"],a:1,e:"Forgetting delete leaves the heap memory unreachable but still reserved."},
+ {q:"Why are pointer parameters still needed when reference parameters exist?",o:["References are slower","A reference cannot be null, a pointer can","Pointers use less memory","References cannot modify variables"],a:1,e:"For nullable arguments a pointer is needed."},
+ {q:"The main purpose of a namespace is to:",o:["Speed up compilation","Prevent name collisions","Allocate heap memory","Define constants"],a:1,e:"Different libraries can reuse names safely, e.g. A::print() and B::print()."}
+,
+ {q:"Which memory segment holds global and static variables?",o:["Stack", "Heap", "Data", "Text"],a:2,e:"Data holds global and static variables for the whole program lifetime."},
+ {q:"Where do ordinary local variables live?",o:["Heap", "Stack", "Text", "Data"],a:1,e:"Locals are created on the stack when a function is called and destroyed when it returns."},
+ {q:"After int n = 5; int *p = &n; what is *p?",o:["The address of n", "5", "The address of p", "Garbage"],a:1,e:"* follows the address in p to the value stored there."},
+ {q:"A pointer declared as int *p; and never assigned is called:",o:["A null pointer", "A wild pointer", "A static pointer", "A reference"],a:1,e:"It holds a garbage address. Initialise pointers, at least to 0."},
+ {q:"swap(int a, int b) is called as swap(x, y) with x=3, y=5. After the call:",o:["x=5, y=3", "x=3, y=5", "x=5, y=5", "Compile error"],a:1,e:"Arguments are copied, so only the copies a and b are swapped."},
+ {q:"Which version of swap really exchanges the caller variables?",o:["swap(int a, int b)", "swap(int *a, int *b) called with swap(&x, &y)", "Both", "Neither"],a:1,e:"Passing addresses lets the function change the originals."},
+ {q:"On a 64-bit machine, sizeof(char *) is:",o:["1", "4", "8", "Depends on the char"],a:2,e:"All pointers are the same size on a given machine (8 bytes on 64-bit)."},
+ {q:"What does a ternary expression c ? a : b yield when c is false?",o:["a", "b", "c", "0"],a:1,e:"If the condition is true you get a, otherwise b."},
+ {q:"In a nested loop, what does break do?",o:["Exits all loops", "Exits only the innermost loop it is in", "Skips one iteration", "Ends the program"],a:1,e:"break leaves the inner loop only; return would leave the function."},
+ {q:"Why is exit(0) not recommended?",o:["It is not valid C++", "It can leave resources unreleased", "It is slower than return", "It returns 1"],a:1,e:"It ends the program abruptly from anywhere."},
+ {q:"Which statement is true about #define PI 3.14?",o:["It allocates a float in memory", "It is type checked", "It is replaced by 3.14 before compilation", "It has block scope"],a:2,e:"It is plain text substitution done by the preprocessor, with no memory and no type checking."},
+ {q:"A static local variable:",o:["Is re-initialised on every call", "Is initialised once and keeps its value between calls", "Lives on the heap", "Cannot be changed"],a:1,e:"Static variables live in the Data segment and persist."}
+];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

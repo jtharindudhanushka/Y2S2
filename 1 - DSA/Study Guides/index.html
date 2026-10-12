@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSA Study Guides</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.6;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  .crumb a{color:var(--accent);text-decoration:none}
+  h1{font-size:28px;margin:6px 0}
+  .lead{color:var(--muted);margin:4px 0 20px}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  input[type=search]{font:inherit;width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);margin-bottom:12px}
+  table{border-collapse:collapse;width:100%;font-size:15px}
+  th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td.n{width:48px;color:var(--muted)}
+  a.l{color:var(--accent);text-decoration:none;font-weight:600}a.l:hover{text-decoration:underline}
+  .soon{color:var(--muted)}
+  .tag{font-size:12px;border:1px solid var(--line);border-radius:10px;padding:1px 8px;color:var(--muted);white-space:nowrap}
+  .tag.ready{color:var(--accent);border-color:var(--accent)}
+  h2{font-size:18px;margin:32px 0 6px;border-top:1px solid var(--line);padding-top:8px}
+  ul{margin:6px 0 6px 22px;padding:0}
+  .sm{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <p class="crumb"><!-- HUB-LINK: later point this at the all-subjects hub page, e.g. <a href="../../Study Hub.html">All subjects</a> --><span>Y2S2</span> &middot; INTE 22343</p>
+    <button id="theme" type="button"></button>
+  </div>
+  <h1>Data Structures and Algorithms</h1>
+  <p class="lead">Self-contained study guide per lesson: explained notes, practice questions, short revision note. Exam: 19.10.2026, 09:00.</p>
+
+  <input type="search" id="q" placeholder="Filter lessons or topics...">
+  <table>
+    <thead><tr><th>#</th><th>Lesson</th><th>Topics</th><th>Status</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <h2>Other material</h2>
+  <ul>
+    <li><a class="l" href="../Peer%20Notes/Peer%20Notes%20(transcribed).md">Peer notes (transcribed)</a> <span class="sm">includes C++ points covered in class that are not in the slides</span></li>
+    <li><a class="l" href="../Lecture%20Materials/09%20-%20Prototype%20Questions%20with%20Answers.pdf">Prototype questions with answers (PDF)</a></li>
+    <li><a class="l" href="../Overview.md">Course overview</a></li>
+  </ul>
+</div>
+
+<script>
+/* Add a lesson: set ready:true and make sure the file exists. The all-subjects hub can reuse this same list shape. */
+const SUBJECT={code:"INTE 22343",name:"Data Structures and Algorithms",folder:"1 - DSA"};
+const LESSONS=[
+ {n:1,title:"Introduction to Algorithms",topics:"Algorithm, program, pseudocode, efficiency; C++ refresher (pointers, memory, parameters)",file:"Lesson 01 - Introduction to Algorithms.html",ready:true},
+ {n:2,title:"Space Complexity",topics:"Instruction, data and stack space; fixed vs variable parts; S(n) = c + S_A(n)",file:"Lesson 02 - Space Complexity.html",ready:true},
+ {n:3,title:"Time Complexity",topics:"Operation count, step count, T(n) = c + T_A(n)",file:"Lesson 03 - Time Complexity.html"},
+ {n:4,title:"Time Analysis",topics:"Best / worst / average case, growth functions, asymptotic notation, Big-O",file:"Lesson 04 - Time Analysis.html"},
+ {n:5,title:"Data Structures",topics:"Atomic and composite data types, data structures",file:"Lesson 05 - Data Structures.html"},
+ {n:6,title:"Stacks",topics:"LIFO, push / pop, array and linked stack, applications",file:"Lesson 06 - Stacks.html"},
+ {n:7,title:"Queues",topics:"FIFO, enqueue / dequeue, circular array and linked queue, applications",file:"Lesson 07 - Queues.html"},
+ {n:8,title:"Trees",topics:"Binary trees, traversals, binary search trees, array-based trees, applications",file:"Lesson 08 - Trees.html"}
+];
+const rows=document.getElementById('rows'),q=document.getElementById('q');
+function draw(){
+  const f=q.value.trim().toLowerCase();
+  rows.innerHTML='';
+  LESSONS.filter(l=>!f||(l.title+' '+l.topics).toLowerCase().includes(f)).forEach(l=>{
+    const tr=document.createElement('tr');
+    const num=document.createElement('td');num.className='n';num.textContent=String(l.n).padStart(2,'0');
+    const t=document.createElement('td');
+    if(l.ready){const a=document.createElement('a');a.className='l';a.href=encodeURI(l.file);a.textContent=l.title;t.appendChild(a)}
+    else{t.className='soon';t.textContent=l.title}
+    const tp=document.createElement('td');tp.textContent=l.topics;
+    const st=document.createElement('td');const tag=document.createElement('span');tag.className='tag'+(l.ready?' ready':'');tag.textContent=l.ready?'Ready':'Coming soon';st.appendChild(tag);
+    tr.append(num,t,tp,st);rows.appendChild(tr);
+  });
+}
+q.oninput=draw;draw();
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+</script>
+</body>
+</html>
