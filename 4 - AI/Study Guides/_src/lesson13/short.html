@@ -1,0 +1,21 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>What</td><td>Technique to include <b>vague human assessments</b> in computing: decision making, identification, pattern recognition, optimisation, control. Zadeh, <b>1965</b>. No accurate model needed; linguistic variables; faster, simpler controllers; decision support for managers.</td></tr>
+  <tr><td>Boolean vs fuzzy</td><td>"Is it cold?" Yes/1, No/0 vs Very much 0.9, Little 0.25, Very less 0.1. Tip rules: poor/bad &rarr; cheap, good &rarr; average, excellent/delicious &rarr; generous (non-linear surface).</td></tr>
+  <tr><td>Applications</td><td><b>Sendai Subway 1987</b>: controls acceleration, deceleration, braking; 10 % less energy; smooth ride. Air conditioners (cool / heat / no change).</td></tr>
+  <tr><td>Crisp vs fuzzy set</td><td>Crisp: member or not (0/1). Fuzzy: partial membership; &mu;<sub>X</sub>(y): X &rarr; [0, 1]. Colour with 0.38 Green. &mu;<sub>B</sub> = 1/x<sub>1</sub> + 1/x<sub>2</sub> + 1/x<sub>3</sub> + 0.7/x<sub>4</sub> + 0.3/x<sub>5</sub>. Degree is <b>not a probability</b>.</td></tr>
+  <tr><td>Terms</td><td>Fuzzy variable (fuzzy sets as values); <b>linguistic variable</b> (word values); <b>linguistic hedge</b> (very, somewhat, extremely; very = &mu;&sup2;).</td></tr>
+  <tr><td>Fuzzy propositions</td><td>Membership = truth value: 0 absolute falsity, 1 absolute truth; "Joe is short" = &mu;<sub>short</sub>(Joe). Classical laws (De Morgan, contraposition&hellip;) listed on slides; A OR NOT A is not always 1 in fuzzy logic.</td></tr>
+  <tr><td>Operations</td><td>Union <b>max</b>; intersection <b>min</b>; complement <b>1 &minus; &mu;</b>. (0.6, 0.8): AND 0.6, OR 0.8, NOT 0.4.</td></tr>
+  <tr><td>Rules</td><td>If antecedent(s) Then consequent(s). Antecedents combine fuzzy sets with logic operators; inputs fuzzified first; consequent usually one fuzzy set.</td></tr>
+  <tr><td>System</td><td>Crisp input &rarr; <b>Fuzzifier</b> &rarr; <b>Inference</b> (fuzzy sets + fuzzy rules) &rarr; <b>Defuzzifier</b> &rarr; crisp output. Rule table (fuzzy associative matrix) prepared by experts; can have N variables.</td></tr>
+  <tr><td>Membership functions</td><td>Triangular (a, m, b): (x&minus;a)/(m&minus;a), (b&minus;x)/(b&minus;m). Trapezoidal (a, b, c, d): flat 1 on b..c. L / R shoulders. Gaussian exp(&minus;(x&minus;m)&sup2;/2k&sup2;). Singleton. Piecewise linear. Triangle (20,25,30) at 23 = 0.6.</td></tr>
+  <tr><td>Fuzzify</td><td>36 &deg;F: 0.7 Freezing, 0.3 Cool (no threshold). 28 &deg;C with warm tri(20,25,30), hot 25&rarr;30: warm 0.4, hot 0.6.</td></tr>
+  <tr><td>Inference</td><td>Mamdani and Sugeno (differ in output). Antecedent: AND = min, OR = max (service 3, food 8: 0.0 OR 0.7 = 0.7). Implication: <b>min truncates</b> the consequent (or product scales). Aggregation: max, sum or probabilistic sum.</td></tr>
+  <tr><td>Defuzzify</td><td>First / middle / last / mean of maximum; <b>centre of gravity</b> COG = &Sigma; &mu;x / &Sigma; &mu; (integrals if continuous). Restaurant tip 16.7 %. (0.2, 0.5, 0.3 at 20, 50, 80) = 53.</td></tr>
+  <tr><td>Sugeno</td><td>Constant outputs: &Sigma; &alpha;z / &Sigma; &alpha;. (0.4 &times; 50 + 0.6 &times; 80)/1 = 68.</td></tr>
+  <tr><td>Fan at 28 &deg;C</td><td>Clip medium 0.4, high 0.6; combine (max); centroid 264 / 3.6 = <b>73.3</b>.</td></tr>
+  <tr><td>Heater (35 &deg;F, 1 &deg;F/h)</td><td>Rules: (LOW, LOW) FAST 0.6; (MED, MED) SLOW 0.4; (LOW, MED) FAST 0.4; (MED, LOW) MEDIUM 0.8 (strength = min). y = (0.6&times;800 + 0.4&times;300 + 0.4&times;800 + 0.8&times;500)/2.2 = <b>600 R/M</b>.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be ready to compute a triangular / trapezoidal membership value, AND / OR / NOT of two degrees, rule strengths, a clipped aggregate and a centre-of-gravity (weighted-average) output, and to explain crisp vs fuzzy, linguistic variables and the four system components.</div>
