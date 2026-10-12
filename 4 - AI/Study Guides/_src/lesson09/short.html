@@ -1,0 +1,19 @@
+<h2>Short note: revision sheet</h2>
+<div class="box"><b>Source status</b>No slides on diffusion exist in the folder. Rows marked (course) come from the image-generation slide and the colourisation assignment; rows marked (background) are standard introductory material.</div>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Image generation (course)</td><td>Create images from scratch or from a prompt; also restoration and scene reconstruction. Models: <b>Stable Diffusion</b> (AI art boom), <b>VAEs</b>, <b>GANs</b>.</td></tr>
+  <tr><td>Vision tasks</td><td>Classification (label), object detection (labels + boxes), generation (new pixels).</td></tr>
+  <tr><td>Lab (course)</td><td>L = lightness (the grayscale); a, b = colour. Colourise: <b>input L (1&times;128&times;128), predict a, b (2&times;128&times;128)</b>, recombine, convert to RGB.</td></tr>
+  <tr><td>Pipeline (course)</td><td>CIFAR-10 photos (labels ignored) &rarr; resize 128&times;128 &rarr; RGB&rarr;Lab &rarr; L/50 &minus; 1, ab/128 &rarr; batches of 64. Same scaling must be reversed when rebuilding colour.</td></tr>
+  <tr><td>U-Net (course)</td><td>Autoencoder + skip connections. Encoder 64&rarr;128&rarr;256&rarr;512 channels (max-pool halves size), bottleneck 1024 @ 8&times;8, decoder up-samples (ConvTranspose2d doubles size) and concatenates the matching encoder output; 1&times;1 conv to 2 channels + tanh. About 31 M parameters.</td></tr>
+  <tr><td>DoubleConv</td><td>Conv3&times;3 (pad 1) &rarr; BatchNorm &rarr; ReLU, twice.</td></tr>
+  <tr><td>Shapes</td><td>128&times;128 &rarr; 64 &rarr; 32 &rarr; 16 &rarr; 8 (bottleneck) &rarr; back up to 128&times;128. Skip makes decoder input twice the channels (512 + 512 = 1024).</td></tr>
+  <tr><td>Training (course)</td><td><b>MSE</b> loss, <b>Adam</b> lr 0.001, 18 epochs (15&ndash;20 asked), loop: zero grad &rarr; forward &rarr; loss &rarr; backward &rarr; step. Checkpoint every epoch; plot loss per epoch.</td></tr>
+  <tr><td>Personal photo (course)</td><td>Grayscale &rarr; 128&times;128 &rarr; L &rarr; predict a, b &rarr; recombine &rarr; show 3 panels (grayscale input, prediction, restored colour).</td></tr>
+  <tr><td>Limit (course)</td><td>Plausible not true colours (jacket red or blue?); MSE averages uncertain colours, so muted.</td></tr>
+  <tr><td>Diffusion (background)</td><td>Forward: add noise step by step to a real image until pure noise. Reverse: train a U-Net (loss = MSE on the noise) to remove noise; generate from pure noise by denoising step by step; a text prompt can guide it. Example pixel: 0.8&times;0.8 + 0.6&times;0.5 = 0.94.</td></tr>
+  <tr><td>GAN (background)</td><td>Generator (random numbers &rarr; fake image) vs discriminator (real or fake?): compete and both improve.</td></tr>
+  <tr><td>VAE (background)</td><td>Autoencoder with a random latent description; sample a new point and decode; stable but blurry.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Know the Lab setup and shapes, describe the U-Net (encoder, bottleneck, decoder, skip connections), the loss and training loop, and the limits. For diffusion, GANs and VAEs give a one-line idea each; your materials only name them.</div>

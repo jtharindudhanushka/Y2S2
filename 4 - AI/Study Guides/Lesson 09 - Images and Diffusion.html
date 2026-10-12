@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Lesson 9 - Generating Images and Diffusion Models</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; AI study guides</a> &middot; INTE 22303 &middot; Lesson 09</p><button id="theme" type="button"></button></div>
+  <h1>Generating Images and Diffusion Models</h1>
+  <p class="lead">Covers: image generation (Stable Diffusion, VAEs, GANs, restoration, scene reconstruction), colourisation in the Lab colour space, the U-Net autoencoder with skip connections (code, shapes, training, inference) from the assignment, and an introductory background on how diffusion models, GANs and VAEs work. Note: your folder has no slides on diffusion, so that part is clearly marked as background. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Describe image generation, its uses (create, restore, reconstruct) and the main model families (Stable Diffusion, VAEs, GANs)</li>
+  <li>Explain the Lab colour space and how colourisation becomes "given L, predict a and b"</li>
+  <li>Describe a U-Net (encoder, bottleneck, decoder, skip connections), read its code and follow its shapes</li>
+  <li>Describe the training and inference pipeline of the colourisation assignment (MSE loss, Adam, epochs, checkpoints)</li>
+  <li>Explain, at an introductory level, how diffusion models, GANs and VAEs generate images (background)</li>
+</ul>
+<div class="box"><b>Read this first: sources for this lesson</b>The lecture plan lists "Generating Images and Diffusion Models" (week 11). Your folder has <b>no slides on diffusion</b>. What is in your materials: the <b>image generation</b> slide (Stable Diffusion, VAEs, GANs named; restoration and scene reconstruction), the <b>colourisation assignment</b> (a U-Net in PyTorch, with its full notebook code) and the peer notes on it. Those parts are marked <b>From the course</b>. The explanation of <b>how diffusion, GANs and VAEs actually work</b> (section 6) is <b>Background</b>, standard introductory material added so the topic is complete but <b>not from your lecturer's slides</b>.</div>
+
+<h2>1. Image generation <small style="color:var(--muted);font-weight:400">(from the course)</small></h2>
+<ul>
+  <li>Training models to <b>create images, either from scratch or with a prompt</b>, has become increasingly popular in the last few years and has many applications.</li>
+  <li>The rise of <b>Stable Diffusion</b> led to an explosion of "AI art"; other models include <b>VAEs</b> and <b>Generative Adversarial Networks (GANs)</b>.</li>
+  <li>Can also be used for <b>image restoration</b> and <b>scene reconstruction</b>.</li>
+  <li>It is the "generate new content" side of AI from Lesson 8, for pixels instead of words. Compare the three vision tasks of Lesson 7: classification (one label), object detection (labels + boxes), <b>image generation (new pixels)</b>.</li>
+</ul>
+
+<h2>2. Colourising photos as a generation task <small style="color:var(--muted);font-weight:400">(from the course: assignment)</small></h2>
+<p>The assignment: build and train a <b>PyTorch U-Net autoencoder</b> on Google Colab to colourise grayscale images using the <b>Lab colour space</b>; apply it to a personal historical black-and-white photograph (such as a grandparent's); submit one notebook with the dataset code, U-Net architecture, training metrics and a final figure showing the grayscale input, the model prediction and the fully restored colour image.</p>
+<h3>The Lab colour space</h3>
+<p>RGB stores colour as red, green, blue. <b>Lab</b> splits a colour differently: <b>L</b> = lightness (this <i>is</i> the grayscale picture), and <b>a</b>, <b>b</b> = two channels that carry the colour. So colourising becomes:</p>
+<svg viewBox="0 0 660 145" role="img" aria-label="Colourisation in Lab space" class="dg"><rect class="bx" x="5" y="35" width="130" height="56" rx="8"/><text x="70.0" y="60.0" text-anchor="middle" class="h">Colour photo</text><text x="70.0" y="77.0" text-anchor="middle" class="sm">RGB, 128x128</text><path class="ar" d="M135 63 L175 63"/><text x="155" y="52" text-anchor="middle" class="sm">to Lab</text><rect class="bx" x="175" y="20" width="60" height="26" rx="8"/><text x="205.0" y="38.0" text-anchor="middle" class="h">L</text><rect class="bx" x="175" y="50" width="60" height="26" rx="8"/><text x="205.0" y="68.0" text-anchor="middle" class="h">a</text><rect class="bx" x="175" y="80" width="60" height="26" rx="8"/><text x="205.0" y="98.0" text-anchor="middle" class="h">b</text><path class="ar" d="M235 33 L290 55"/><text x="262" y="34" text-anchor="start" class="sm">input</text><rect class="bx" x="290" y="30" width="110" height="56" rx="8"/><text x="345.0" y="55.0" text-anchor="middle" class="h">U-Net</text><text x="345.0" y="72.0" text-anchor="middle" class="sm">trained with MSE</text><path class="ar" d="M400 58 L445 40"/><path class="ar" d="M400 58 L445 80"/><rect class="bx" x="445" y="25" width="60" height="26" rx="8"/><text x="475.0" y="43.0" text-anchor="middle" class="h">a'</text><rect class="bx" x="445" y="66" width="60" height="26" rx="8"/><text x="475.0" y="84.0" text-anchor="middle" class="h">b'</text><text x="520" y="62" text-anchor="start" class="sm">predicted colour</text><text x="340" y="128" text-anchor="middle" class="sm">at test time only L is known: predict a', b', then L + a' + b' -> Lab -> RGB</text></svg>
+<div class="box"><b>Task</b>input = L, shape 1 &times; 128 &times; 128; target = (a, b), shape 2 &times; 128 &times; 128 (channels first, as in PyTorch). Predict a and b, put L, a, b back together and convert to RGB.</div>
+<h3>The data pipeline (notebook, step by step)</h3>
+<table>
+  <tr><th>Step</th><th>What the code does</th><th>Why</th></tr>
+  <tr><td>Dataset</td><td>CIFAR-10 colour photos (the standard set of 50,000 training and 10,000 test images, 32&times;32); <b>labels are ignored</b></td><td>The task is colourisation, not classification: the colour image itself supplies the answer</td></tr>
+  <tr><td>Resize</td><td>Each image resized to <b>128 &times; 128</b></td><td>All inputs the same size (lecture: resizing can lose detail)</td></tr>
+  <tr><td>RGB &rarr; Lab</td><td>Divide RGB by 255, then convert to Lab</td><td>Separate lightness from colour</td></tr>
+  <tr><td>Normalise</td><td><b>L / 50 &minus; 1</b> (L runs 0 to 100, so the input is &minus;1 to 1); <b>ab / 128</b> (about &minus;1 to 1)</td><td>Small, centred numbers train well and match the network's final tanh range</td></tr>
+  <tr><td>Shapes</td><td>L &rarr; (1, 128, 128); ab &rarr; (2, 128, 128) (transpose so channels come first)</td><td>PyTorch channel-first layout</td></tr>
+  <tr><td>Loader</td><td>Batches of 64, shuffled for training</td><td>Mini-batch gradient descent</td></tr>
+</table>
+<p>The Lab scaling used in training must be reused when rebuilding the colour image (the helper reverses it: (L + 1) &times; 50 and ab &times; 128, then Lab &rarr; RGB and clip to 0&ndash;1).</p>
+
+<h2>3. The U-Net <small style="color:var(--muted);font-weight:400">(from the course: assignment code)</small></h2>
+<p>An <b>autoencoder</b> squeezes its input into a compact summary (<b>encoder</b>) and rebuilds an output from it (<b>decoder</b>). A <b>U-Net</b> is an autoencoder with <b>skip connections</b>: shortcuts that hand the detailed (high-resolution) encoder features straight to the matching decoder stage. <i>Analogy: summarise and redraw, with sticky notes of fine detail handed to the artist so nothing is forgotten.</i> The name comes from the U shape of the diagram.</p>
+<svg viewBox="0 0 660 275" role="img" aria-label="U-Net with channel counts" class="dg"><rect class="bx" x="20" y="32" width="130" height="34" rx="6"/><text x="85.0" y="53" text-anchor="middle" class="sm">enc1  64 @ 128x128</text><rect class="bx" x="70" y="82" width="130" height="34" rx="6"/><text x="135.0" y="103" text-anchor="middle" class="sm">enc2  128 @ 64x64</text><rect class="bx" x="120" y="132" width="130" height="34" rx="6"/><text x="185.0" y="153" text-anchor="middle" class="sm">enc3  256 @ 32x32</text><rect class="bx" x="170" y="182" width="130" height="34" rx="6"/><text x="235.0" y="203" text-anchor="middle" class="sm">enc4  512 @ 16x16</text><rect class="bx" x="255" y="232" width="150" height="34" rx="6" fill="var(--soft)"/><text x="330" y="253" text-anchor="middle" class="sm">bottleneck 1024 @ 8x8</text><rect class="bx" x="360" y="182" width="130" height="34" rx="6"/><text x="425" y="203" text-anchor="middle" class="sm">dec4  512 @ 16x16</text><rect class="bx" x="410" y="132" width="130" height="34" rx="6"/><text x="475" y="153" text-anchor="middle" class="sm">dec3  256 @ 32x32</text><rect class="bx" x="460" y="82" width="130" height="34" rx="6"/><text x="525" y="103" text-anchor="middle" class="sm">dec2  128 @ 64x64</text><rect class="bx" x="510" y="32" width="130" height="34" rx="6"/><text x="575" y="53" text-anchor="middle" class="sm">dec1  64 @ 128x128</text><path class="ar" d="M85 66 L105 82"/><path class="ar" d="M135 116 L155 132"/><path class="ar" d="M185 166 L205 182"/><path class="ar" d="M235 216 L280 232"/><path class="ar" d="M380 232 L410 216"/><path class="ar" d="M430 182 L455 166"/><path class="ar" d="M480 132 L505 116"/><path class="ar" d="M530 82 L555 66"/><path d="M150 49 L510 49" stroke="var(--ok)" stroke-width="2" stroke-dasharray="6 4" fill="none"/><path d="M200 99 L460 99" stroke="var(--ok)" stroke-width="2" stroke-dasharray="6 4" fill="none"/><path d="M250 149 L410 149" stroke="var(--ok)" stroke-width="2" stroke-dasharray="6 4" fill="none"/><path d="M300 199 L360 199" stroke="var(--ok)" stroke-width="2" stroke-dasharray="6 4" fill="none"/><text x="335" y="43" text-anchor="middle" class="sm">skip connections: concatenate encoder features</text><text x="10" y="20" text-anchor="start" class="sm">L in 1 @ 128x128</text><text x="640" y="20" text-anchor="end" class="sm">1x1 conv + tanh: 2 @ 128x128 (a, b)</text><text x="165" y="235" text-anchor="middle" class="sm">max-pool: halve size</text><text x="480" y="235" text-anchor="middle" class="sm">up-sample: double size</text></svg>
+<h3>Reading the code</h3>
+<ul>
+  <li><b>DoubleConv(in, out):</b> Conv2d 3&times;3 with padding 1 (keeps the size) &rarr; BatchNorm2d &rarr; ReLU, twice. <b>BatchNorm</b> keeps the numbers in a steady range so training is stable (a standard technique, not in the lecture slides).</li>
+  <li><b>Encoder:</b> four DoubleConv blocks with 64, 128, 256, 512 channels. After each block <b>MaxPool2d(2)</b> halves height and width (Lesson 7) while the channel count doubles.</li>
+  <li><b>Bottleneck:</b> DoubleConv with 1024 channels at the smallest size: the compact summary.</li>
+  <li><b>Decoder:</b> each stage is <b>ConvTranspose2d(&hellip;, 2, stride 2)</b> (a learned <b>up-sampling</b> that doubles height and width and halves the channels) followed by <b>torch.cat</b> with the matching encoder output (the <b>skip connection</b>: channels are joined, which is why a decoder block takes twice the channels, e.g. 512 + 512 = 1024) and a DoubleConv.</li>
+  <li><b>Output:</b> a 1&times;1 convolution to <b>2 channels</b> (a and b) then <b>tanh</b>, which squashes to &minus;1 to 1 to match the normalised targets.</li>
+</ul>
+<table>
+  <tr><th>Stage</th><th>Output shape (channels, h, w)</th></tr>
+  <tr><td>Input L</td><td>1, 128, 128</td></tr>
+  <tr><td>enc1</td><td>64, 128, 128</td></tr>
+  <tr><td>pool &rarr; enc2</td><td>128, 64, 64</td></tr>
+  <tr><td>pool &rarr; enc3</td><td>256, 32, 32</td></tr>
+  <tr><td>pool &rarr; enc4</td><td>512, 16, 16</td></tr>
+  <tr><td>pool &rarr; bottleneck</td><td>1024, 8, 8</td></tr>
+  <tr><td>up4 + skip e4 &rarr; dec4</td><td>512, 16, 16</td></tr>
+  <tr><td>up3 + skip e3 &rarr; dec3</td><td>256, 32, 32</td></tr>
+  <tr><td>up2 + skip e2 &rarr; dec2</td><td>128, 64, 64</td></tr>
+  <tr><td>up1 + skip e1 &rarr; dec1</td><td>64, 128, 128</td></tr>
+  <tr><td>1&times;1 conv + tanh</td><td><b>2, 128, 128</b> (predicted a and b)</td></tr>
+</table>
+<p>The notebook's own check: a random input of shape (1, 1, 128, 128) gives an output of shape (1, 2, 128, 128). Counting the learnable weights and biases (including BatchNorm's two numbers per channel) gives about <b>31 million parameters</b>. Every number, like the filters of Lesson 7, is learned by backpropagation.</p>
+
+<h2>4. Training and using the model <small style="color:var(--muted);font-weight:400">(from the course: assignment)</small></h2>
+<table>
+  <tr><th>Item</th><th>In the notebook</th></tr>
+  <tr><td>Loss</td><td><b>Mean squared error (MSE)</b> between predicted and true a, b (Lesson 5's squared error, averaged)</td></tr>
+  <tr><td>Optimiser</td><td><b>Adam</b>, learning rate 0.001 (a popular gradient-descent variant; Lesson 5 explained plain gradient descent and the learning rate)</td></tr>
+  <tr><td>Epochs</td><td>18 (the assignment asks for 15&ndash;20); one epoch = one full pass over the training images</td></tr>
+  <tr><td>Each batch</td><td>zero the old gradients &rarr; forward pass &rarr; MSE loss &rarr; <code>loss.backward()</code> (backpropagation) &rarr; <code>optimizer.step()</code> (update weights): exactly the cycle of Lesson 6</td></tr>
+  <tr><td>Checkpoints</td><td>Model and optimiser saved to Google Drive after every epoch so a stopped session resumes from the last saved epoch</td></tr>
+  <tr><td>Metrics</td><td>MSE per epoch plotted: a downward trend shows the model is learning. Keep an evaluation set aside if you can (Lesson 5: train / test)</td></tr>
+</table>
+<h3>Colourising a personal photo</h3>
+<ol>
+  <li>Open the photo, convert to grayscale and resize to 128&times;128; scale so it plays the role of L (grey value 0&ndash;1 &times; 100, then L / 50 &minus; 1).</li>
+  <li>Run the model (evaluation mode, no gradient tracking) to <b>predict a and b</b>.</li>
+  <li>Combine the original L with the predicted a, b and convert Lab &rarr; RGB.</li>
+  <li>Show <b>three panels</b>: grayscale input (L), the model's prediction (the colour channels alone), and the fully restored colour image; save the figure.</li>
+</ol>
+<div class="box"><b>An honest limit (from the peer notes)</b>One grayscale photo can match several plausible colourings (a jacket could be red or blue), so the network learns <b>plausible</b> colours, not the true historical ones. MSE also tends to <b>average</b> uncertain colours, so results often look muted. Also, a model trained on tiny 32&times;32 CIFAR-10 pictures resized to 128&times;128 sees a limited range of scenes, so an old family portrait is a stretch.</div>
+
+<h2>5. The big picture: why U-Net suits "image in, image out"</h2>
+<ul>
+  <li>A classification CNN (Lesson 7) shrinks an image to a few class scores. Colourising needs a full image out, so the decoder must <b>grow</b> the maps back.</li>
+  <li>The bottleneck forces the model to learn a compact understanding of the scene (this is sky, this is a face), while the skip connections preserve edges and fine detail, so the output lines up exactly with the input pixels.</li>
+  <li>The same shape is used for many "image to image" jobs (restoration, segmentation) and, as section 6 explains, as the denoising network inside diffusion models.</li>
+</ul>
+
+<h2>6. Background: how diffusion, GANs and VAEs generate images <small style="color:var(--muted);font-weight:400">(not from your course materials)</small></h2>
+<div class="box"><b>Background</b>The slide names Stable Diffusion, VAEs and GANs but your folder contains no explanation of them. This section is a short standard introduction, <b>not from the lecture slides</b>; learn the course facts above first.</div>
+<h3>Diffusion models (the idea behind Stable Diffusion)</h3>
+<ol>
+  <li><b>Forward process (add noise):</b> take a real image and add a little random noise, again and again, until only noise is left. This needs no learning.</li>
+  <li><b>Reverse process (remove noise):</b> train a neural network (very often a <b>U-Net</b>) to look at a noisy image and predict the noise in it. Training is just MSE between the predicted noise and the noise that was actually added.</li>
+  <li><b>Generate:</b> start from pure random noise and apply the trained network many times, removing a little noise each step, until a clean, new image appears. A text prompt can <b>guide</b> each step (this is how "AI art" from a prompt works).</li>
+</ol>
+<svg viewBox="0 0 660 175" role="img" aria-label="Diffusion adds noise then learns to remove it" class="dg"><rect x="20" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="34" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="48" y="30" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="62" y="30" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="76" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="90" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="20" y="44" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="34" y="44" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="48" y="44" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="62" y="44" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="76" y="44" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="90" y="44" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="20" y="58" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="34" y="58" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="48" y="58" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="62" y="58" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="76" y="58" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="90" y="58" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="20" y="72" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="34" y="72" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="48" y="72" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="62" y="72" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="76" y="72" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="90" y="72" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="20" y="86" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="34" y="86" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="48" y="86" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="62" y="86" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="76" y="86" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="90" y="86" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="20" y="100" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="34" y="100" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="48" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="62" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="76" y="100" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="90" y="100" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><text x="62" y="22" text-anchor="middle" class="sm">real image</text><path class="ar" d="M108 72 L138 72"/><rect x="145" y="30" width="14" height="14" fill="rgb(85,85,85)" stroke="var(--line)"/><rect x="159" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="173" y="30" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="187" y="30" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="201" y="30" width="14" height="14" fill="rgb(207,207,207)" stroke="var(--line)"/><rect x="215" y="30" width="14" height="14" fill="rgb(195,195,195)" stroke="var(--line)"/><rect x="145" y="44" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="159" y="44" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="173" y="44" width="14" height="14" fill="rgb(227,227,227)" stroke="var(--line)"/><rect x="187" y="44" width="14" height="14" fill="rgb(22,22,22)" stroke="var(--line)"/><rect x="201" y="44" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="215" y="44" width="14" height="14" fill="rgb(202,202,202)" stroke="var(--line)"/><rect x="145" y="58" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="159" y="58" width="14" height="14" fill="rgb(217,217,217)" stroke="var(--line)"/><rect x="173" y="58" width="14" height="14" fill="rgb(236,236,236)" stroke="var(--line)"/><rect x="187" y="58" width="14" height="14" fill="rgb(204,204,204)" stroke="var(--line)"/><rect x="201" y="58" width="14" height="14" fill="rgb(161,161,161)" stroke="var(--line)"/><rect x="215" y="58" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="145" y="72" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="159" y="72" width="14" height="14" fill="rgb(194,194,194)" stroke="var(--line)"/><rect x="173" y="72" width="14" height="14" fill="rgb(183,183,183)" stroke="var(--line)"/><rect x="187" y="72" width="14" height="14" fill="rgb(109,109,109)" stroke="var(--line)"/><rect x="201" y="72" width="14" height="14" fill="rgb(158,158,158)" stroke="var(--line)"/><rect x="215" y="72" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="145" y="86" width="14" height="14" fill="rgb(194,194,194)" stroke="var(--line)"/><rect x="159" y="86" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="173" y="86" width="14" height="14" fill="rgb(90,90,90)" stroke="var(--line)"/><rect x="187" y="86" width="14" height="14" fill="rgb(198,198,198)" stroke="var(--line)"/><rect x="201" y="86" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="215" y="86" width="14" height="14" fill="rgb(136,136,136)" stroke="var(--line)"/><rect x="145" y="100" width="14" height="14" fill="rgb(228,228,228)" stroke="var(--line)"/><rect x="159" y="100" width="14" height="14" fill="rgb(199,199,199)" stroke="var(--line)"/><rect x="173" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="187" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="201" y="100" width="14" height="14" fill="rgb(180,180,180)" stroke="var(--line)"/><rect x="215" y="100" width="14" height="14" fill="rgb(152,152,152)" stroke="var(--line)"/><text x="187" y="22" text-anchor="middle" class="sm">a little noise</text><path class="ar" d="M233 72 L263 72"/><rect x="270" y="30" width="14" height="14" fill="rgb(15,15,15)" stroke="var(--line)"/><rect x="284" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="298" y="30" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="312" y="30" width="14" height="14" fill="rgb(34,34,34)" stroke="var(--line)"/><rect x="326" y="30" width="14" height="14" fill="rgb(187,187,187)" stroke="var(--line)"/><rect x="340" y="30" width="14" height="14" fill="rgb(171,171,171)" stroke="var(--line)"/><rect x="270" y="44" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="284" y="44" width="14" height="14" fill="rgb(10,10,10)" stroke="var(--line)"/><rect x="298" y="44" width="14" height="14" fill="rgb(216,216,216)" stroke="var(--line)"/><rect x="312" y="44" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="326" y="44" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="340" y="44" width="14" height="14" fill="rgb(180,180,180)" stroke="var(--line)"/><rect x="270" y="58" width="14" height="14" fill="rgb(14,14,14)" stroke="var(--line)"/><rect x="284" y="58" width="14" height="14" fill="rgb(202,202,202)" stroke="var(--line)"/><rect x="298" y="58" width="14" height="14" fill="rgb(229,229,229)" stroke="var(--line)"/><rect x="312" y="58" width="14" height="14" fill="rgb(183,183,183)" stroke="var(--line)"/><rect x="326" y="58" width="14" height="14" fill="rgb(122,122,122)" stroke="var(--line)"/><rect x="340" y="58" width="14" height="14" fill="rgb(11,11,11)" stroke="var(--line)"/><rect x="270" y="72" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="284" y="72" width="14" height="14" fill="rgb(170,170,170)" stroke="var(--line)"/><rect x="298" y="72" width="14" height="14" fill="rgb(154,154,154)" stroke="var(--line)"/><rect x="312" y="72" width="14" height="14" fill="rgb(49,49,49)" stroke="var(--line)"/><rect x="326" y="72" width="14" height="14" fill="rgb(118,118,118)" stroke="var(--line)"/><rect x="340" y="72" width="14" height="14" fill="rgb(29,29,29)" stroke="var(--line)"/><rect x="270" y="86" width="14" height="14" fill="rgb(168,168,168)" stroke="var(--line)"/><rect x="284" y="86" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="298" y="86" width="14" height="14" fill="rgb(22,22,22)" stroke="var(--line)"/><rect x="312" y="86" width="14" height="14" fill="rgb(174,174,174)" stroke="var(--line)"/><rect x="326" y="86" width="14" height="14" fill="rgb(11,11,11)" stroke="var(--line)"/><rect x="340" y="86" width="14" height="14" fill="rgb(86,86,86)" stroke="var(--line)"/><rect x="270" y="100" width="14" height="14" fill="rgb(217,217,217)" stroke="var(--line)"/><rect x="284" y="100" width="14" height="14" fill="rgb(176,176,176)" stroke="var(--line)"/><rect x="298" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="312" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="326" y="100" width="14" height="14" fill="rgb(149,149,149)" stroke="var(--line)"/><rect x="340" y="100" width="14" height="14" fill="rgb(109,109,109)" stroke="var(--line)"/><text x="312" y="22" text-anchor="middle" class="sm">more noise</text><path class="ar" d="M358 72 L388 72"/><rect x="395" y="30" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="409" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="423" y="30" width="14" height="14" fill="rgb(4,4,4)" stroke="var(--line)"/><rect x="437" y="30" width="14" height="14" fill="rgb(85,85,85)" stroke="var(--line)"/><rect x="451" y="30" width="14" height="14" fill="rgb(174,174,174)" stroke="var(--line)"/><rect x="465" y="30" width="14" height="14" fill="rgb(155,155,155)" stroke="var(--line)"/><rect x="395" y="44" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="409" y="44" width="14" height="14" fill="rgb(57,57,57)" stroke="var(--line)"/><rect x="423" y="44" width="14" height="14" fill="rgb(208,208,208)" stroke="var(--line)"/><rect x="437" y="44" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="451" y="44" width="14" height="14" fill="rgb(20,20,20)" stroke="var(--line)"/><rect x="465" y="44" width="14" height="14" fill="rgb(166,166,166)" stroke="var(--line)"/><rect x="395" y="58" width="14" height="14" fill="rgb(61,61,61)" stroke="var(--line)"/><rect x="409" y="58" width="14" height="14" fill="rgb(192,192,192)" stroke="var(--line)"/><rect x="423" y="58" width="14" height="14" fill="rgb(224,224,224)" stroke="var(--line)"/><rect x="437" y="58" width="14" height="14" fill="rgb(169,169,169)" stroke="var(--line)"/><rect x="451" y="58" width="14" height="14" fill="rgb(97,97,97)" stroke="var(--line)"/><rect x="465" y="58" width="14" height="14" fill="rgb(58,58,58)" stroke="var(--line)"/><rect x="395" y="72" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="409" y="72" width="14" height="14" fill="rgb(153,153,153)" stroke="var(--line)"/><rect x="423" y="72" width="14" height="14" fill="rgb(135,135,135)" stroke="var(--line)"/><rect x="437" y="72" width="14" height="14" fill="rgb(10,10,10)" stroke="var(--line)"/><rect x="451" y="72" width="14" height="14" fill="rgb(92,92,92)" stroke="var(--line)"/><rect x="465" y="72" width="14" height="14" fill="rgb(80,80,80)" stroke="var(--line)"/><rect x="395" y="86" width="14" height="14" fill="rgb(152,152,152)" stroke="var(--line)"/><rect x="409" y="86" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="423" y="86" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="437" y="86" width="14" height="14" fill="rgb(159,159,159)" stroke="var(--line)"/><rect x="451" y="86" width="14" height="14" fill="rgb(58,58,58)" stroke="var(--line)"/><rect x="465" y="86" width="14" height="14" fill="rgb(54,54,54)" stroke="var(--line)"/><rect x="395" y="100" width="14" height="14" fill="rgb(210,210,210)" stroke="var(--line)"/><rect x="409" y="100" width="14" height="14" fill="rgb(161,161,161)" stroke="var(--line)"/><rect x="423" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="437" y="100" width="14" height="14" fill="rgb(0,0,0)" stroke="var(--line)"/><rect x="451" y="100" width="14" height="14" fill="rgb(129,129,129)" stroke="var(--line)"/><rect x="465" y="100" width="14" height="14" fill="rgb(82,82,82)" stroke="var(--line)"/><text x="437" y="22" text-anchor="middle" class="sm">mostly noise</text><path class="ar" d="M483 72 L513 72"/><rect x="520" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="534" y="30" width="14" height="14" fill="rgb(36,36,36)" stroke="var(--line)"/><rect x="548" y="30" width="14" height="14" fill="rgb(213,213,213)" stroke="var(--line)"/><rect x="562" y="30" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="576" y="30" width="14" height="14" fill="rgb(102,102,102)" stroke="var(--line)"/><rect x="590" y="30" width="14" height="14" fill="rgb(64,64,64)" stroke="var(--line)"/><rect x="520" y="44" width="14" height="14" fill="rgb(167,167,167)" stroke="var(--line)"/><rect x="534" y="44" width="14" height="14" fill="rgb(223,223,223)" stroke="var(--line)"/><rect x="548" y="44" width="14" height="14" fill="rgb(125,125,125)" stroke="var(--line)"/><rect x="562" y="44" width="14" height="14" fill="rgb(132,132,132)" stroke="var(--line)"/><rect x="576" y="44" width="14" height="14" fill="rgb(2,2,2)" stroke="var(--line)"/><rect x="590" y="44" width="14" height="14" fill="rgb(60,60,60)" stroke="var(--line)"/><rect x="520" y="58" width="14" height="14" fill="rgb(110,110,110)" stroke="var(--line)"/><rect x="534" y="58" width="14" height="14" fill="rgb(28,28,28)" stroke="var(--line)"/><rect x="548" y="58" width="14" height="14" fill="rgb(145,145,145)" stroke="var(--line)"/><rect x="562" y="58" width="14" height="14" fill="rgb(210,210,210)" stroke="var(--line)"/><rect x="576" y="58" width="14" height="14" fill="rgb(75,75,75)" stroke="var(--line)"/><rect x="590" y="58" width="14" height="14" fill="rgb(75,75,75)" stroke="var(--line)"/><rect x="520" y="72" width="14" height="14" fill="rgb(146,146,146)" stroke="var(--line)"/><rect x="534" y="72" width="14" height="14" fill="rgb(197,197,197)" stroke="var(--line)"/><rect x="548" y="72" width="14" height="14" fill="rgb(107,107,107)" stroke="var(--line)"/><rect x="562" y="72" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="576" y="72" width="14" height="14" fill="rgb(65,65,65)" stroke="var(--line)"/><rect x="590" y="72" width="14" height="14" fill="rgb(83,83,83)" stroke="var(--line)"/><rect x="520" y="86" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="534" y="86" width="14" height="14" fill="rgb(122,122,122)" stroke="var(--line)"/><rect x="548" y="86" width="14" height="14" fill="rgb(213,213,213)" stroke="var(--line)"/><rect x="562" y="86" width="14" height="14" fill="rgb(59,59,59)" stroke="var(--line)"/><rect x="576" y="86" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="590" y="86" width="14" height="14" fill="rgb(209,209,209)" stroke="var(--line)"/><rect x="520" y="100" width="14" height="14" fill="rgb(64,64,64)" stroke="var(--line)"/><rect x="534" y="100" width="14" height="14" fill="rgb(24,24,24)" stroke="var(--line)"/><rect x="548" y="100" width="14" height="14" fill="rgb(255,255,255)" stroke="var(--line)"/><rect x="562" y="100" width="14" height="14" fill="rgb(171,171,171)" stroke="var(--line)"/><rect x="576" y="100" width="14" height="14" fill="rgb(98,98,98)" stroke="var(--line)"/><rect x="590" y="100" width="14" height="14" fill="rgb(181,181,181)" stroke="var(--line)"/><text x="562" y="22" text-anchor="middle" class="sm">pure noise</text><text x="330" y="140" text-anchor="middle" class="sm">forward: add noise step by step (no learning needed)</text><text x="330" y="160" text-anchor="middle" class="sm">reverse (generation): start at pure noise, a trained U-Net removes a little noise each step</text><path d="M590 125 L60 125" stroke="var(--accent)" stroke-width="1.8" fill="none" marker-end="url(#ah)"/></svg>
+<p>Tiny arithmetic example: one pixel with true value 0.8 and a random noise value 0.5. With a noise level where the kept fraction of the image is 0.8 and the noise fraction is 0.6 (0.8&sup2; + 0.6&sup2; = 1), the noisy pixel is 0.8 &times; 0.8 + 0.6 &times; 0.5 = 0.64 + 0.30 = <b>0.94</b>; later steps keep less image and more noise. Learning to undo this is what the U-Net is trained for.</p>
+<h3>GANs (Generative Adversarial Networks)</h3>
+<svg viewBox="0 0 680 180" role="img" aria-label="GAN: generator versus discriminator" class="dg"><rect class="bx" x="5" y="30" width="90" height="50" rx="8"/><text x="50.0" y="52.0" text-anchor="middle" class="h">Random</text><text x="50.0" y="69.0" text-anchor="middle" class="sm">numbers</text><path class="ar" d="M95 55 L130 55"/><rect class="bx" x="130" y="30" width="110" height="50" rx="8"/><text x="185.0" y="52.0" text-anchor="middle" class="h">Generator</text><text x="185.0" y="69.0" text-anchor="middle" class="sm">makes a fake</text><path class="ar" d="M240 55 L275 55"/><rect class="bx" x="275" y="30" width="110" height="50" rx="8"/><text x="330.0" y="60.0" text-anchor="middle" class="h">Fake image</text><rect class="bx" x="275" y="100" width="110" height="50" rx="8"/><text x="330.0" y="130.0" text-anchor="middle" class="h">Real image</text><path class="ar" d="M385 55 L425 80"/><path class="ar" d="M385 125 L425 100"/><rect class="bx" x="425" y="60" width="120" height="60" rx="8"/><text x="485.0" y="87.0" text-anchor="middle" class="h">Discriminator</text><text x="485.0" y="104.0" text-anchor="middle" class="sm">real or fake?</text><path class="ar" d="M545 90 L575 90"/><text x="580" y="85" text-anchor="start" class="sm">feedback</text><text x="580" y="101" text-anchor="start" class="sm">to both</text><path class="ar" d="M600 108 C600 175 185 175 185 82"/></svg>
+<p>Two networks compete: a <b>generator</b> turns random numbers into fake images and a <b>discriminator</b> tries to tell real from fake. The discriminator is rewarded for catching fakes, the generator for fooling it; as both improve, the fakes become realistic. (This is the discriminative / generative pairing of Lesson 8 put in one system.)</p>
+<h3>VAEs (Variational Autoencoders)</h3>
+<p>A VAE is an autoencoder (section 3) whose encoder summarises an image as a small cloud of numbers (a <b>latent</b> description). To generate, pick a new random point in that space and let the decoder turn it into a new image. VAEs tend to be stable but a little blurry.</p>
+<table>
+  <tr><th></th><th>Diffusion</th><th>GAN</th><th>VAE</th></tr>
+  <tr><td>Idea</td><td>Learn to remove noise step by step</td><td>Generator vs discriminator</td><td>Autoencoder with random latent description</td></tr>
+  <tr><td>Strength</td><td>High quality, easy to guide with text</td><td>Sharp images, fast to sample</td><td>Stable training</td></tr>
+  <tr><td>Weakness</td><td>Many steps, so slower</td><td>Hard to train, can repeat a few outputs</td><td>Often blurry</td></tr>
+</table>
+
+<h2>Summary of related ideas</h2>
+<table>
+  <tr><th></th><th>CNN classifier (Lesson 7)</th><th>U-Net colouriser</th><th>Diffusion model (background)</th></tr>
+  <tr><td>Input</td><td>Image</td><td>L channel</td><td>Noisy image (and a prompt)</td></tr>
+  <tr><td>Output</td><td>Class probabilities</td><td>a, b colour channels</td><td>Less-noisy image / predicted noise</td></tr>
+  <tr><td>Loss</td><td>Classification loss</td><td>MSE on a, b</td><td>MSE on the noise</td></tr>
+  <tr><td>Shape</td><td>Shrinks to scores</td><td>Encoder, decoder, skips</td><td>Often a U-Net</td></tr>
+</table>
+
+<h2>Words list</h2>
+<table>
+  <tr><th>Word</th><th>Plain meaning</th></tr>
+  <tr><td>Image generation</td><td>Creating new images from scratch or from a prompt</td></tr>
+  <tr><td>Lab (L, a, b)</td><td>Colour system: L lightness (the grayscale), a and b carry colour</td></tr>
+  <tr><td>Autoencoder</td><td>Network that squeezes input into a summary and rebuilds an output</td></tr>
+  <tr><td>U-Net</td><td>Autoencoder with skip connections (U-shaped)</td></tr>
+  <tr><td>Skip connection</td><td>Shortcut carrying high-resolution detail from encoder to decoder</td></tr>
+  <tr><td>Up-sampling (ConvTranspose2d)</td><td>Learned operation that doubles the height and width</td></tr>
+  <tr><td>MSE</td><td>Mean squared error, the loss for predicting numbers</td></tr>
+  <tr><td>Diffusion / GAN / VAE</td><td>Three families of image generators (background)</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+Image generation creates new pixels (Stable Diffusion, VAEs, GANs; also restoration and scene reconstruction). Colourising is framed in Lab: input L (1&times;128&times;128), predict a and b (2&times;128&times;128), recombine and convert to RGB. The U-Net (encoder, bottleneck, decoder, skip connections; tanh output) is trained with MSE, Adam, about 15&ndash;20 epochs and checkpoints; it gives plausible, not true, colours. Diffusion (background): add noise, train a U-Net to remove it, generate by denoising from pure noise; your folder has no slides on it.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Describe how the colourisation assignment frames the problem in the Lab colour space, including the shapes of the input and target.</summary>
+<p>Lab splits colour into L (lightness, the grayscale picture) and a, b (colour). The network input is L with shape 1&times;128&times;128; the target is a and b with shape 2&times;128&times;128. Predict a and b, combine with L and convert Lab to RGB. Training images are resized to 128&times;128, converted RGB&rarr;Lab and scaled (L/50 &minus; 1, ab/128); the same scaling is reversed when rebuilding the colour image.</p>
+</details>
+<details>
+<summary>W2. Explain the U-Net used in the assignment: encoder, bottleneck, decoder, skip connections and output layer, with the shapes.</summary>
+<p>Encoder: DoubleConv blocks with 64, 128, 256, 512 channels, with max-pooling halving the size (128, 64, 32, 16). Bottleneck: 1024 channels at 8&times;8. Decoder: ConvTranspose2d doubles the size and halves channels, then the matching encoder output is concatenated (skip connection, so a block takes 512 + 512 = 1024 channels) and a DoubleConv follows, returning to 64 channels at 128&times;128. Output: 1&times;1 convolution to 2 channels with tanh, shape 2&times;128&times;128. Skip connections carry fine detail so the output lines up with the input.</p>
+</details>
+<details>
+<summary>W3. Describe the training procedure and loss for the colouriser and how you would apply it to an old black-and-white photograph.</summary>
+<p>MSE between predicted and true a, b, optimised with Adam (lr 0.001) for 15&ndash;20 epochs (18 used); for each batch zero gradients, forward pass, MSE, backward (backpropagation), optimiser step; save a checkpoint each epoch and plot the loss. For a photo: convert to grayscale, resize to 128&times;128, use as L (scaled), predict a and b, recombine with L, convert to RGB and show the grayscale input, the prediction and the restored colour image.</p>
+</details>
+<details>
+<summary>W4. Give two limits of this colouriser.</summary>
+<p>One grayscale image can match several plausible colourings (a jacket could be red or blue), so the output is plausible rather than true; MSE averages uncertain colours so results look muted. Also the training images are tiny CIFAR-10 pictures, so unusual scenes such as old portraits are harder.</p>
+</details>
+<details>
+<summary>W5. (Background) Explain in your own words how a diffusion model generates an image.</summary>
+<p>Forward process: add a little random noise to real images again and again until only noise remains. Training: a neural network (often a U-Net) learns to predict the noise in a noisy image (MSE on the noise). Generation: start from pure random noise and repeatedly apply the network to remove a little noise each step until a clean new image appears; a text prompt can guide the steps (Stable Diffusion).</p>
+</details>
+<details>
+<summary>W6. (Background) Compare GANs and VAEs as image generators.</summary>
+<p>GAN: a generator turns random numbers into fake images and a discriminator tries to tell real from fake; they compete and both improve, giving sharp images but hard training. VAE: an autoencoder whose encoder describes an image as a random latent cloud; generation samples a new point and decodes it; stable but often blurry.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<div class="box"><b>Source status</b>No slides on diffusion exist in the folder. Rows marked (course) come from the image-generation slide and the colourisation assignment; rows marked (background) are standard introductory material.</div>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Image generation (course)</td><td>Create images from scratch or from a prompt; also restoration and scene reconstruction. Models: <b>Stable Diffusion</b> (AI art boom), <b>VAEs</b>, <b>GANs</b>.</td></tr>
+  <tr><td>Vision tasks</td><td>Classification (label), object detection (labels + boxes), generation (new pixels).</td></tr>
+  <tr><td>Lab (course)</td><td>L = lightness (the grayscale); a, b = colour. Colourise: <b>input L (1&times;128&times;128), predict a, b (2&times;128&times;128)</b>, recombine, convert to RGB.</td></tr>
+  <tr><td>Pipeline (course)</td><td>CIFAR-10 photos (labels ignored) &rarr; resize 128&times;128 &rarr; RGB&rarr;Lab &rarr; L/50 &minus; 1, ab/128 &rarr; batches of 64. Same scaling must be reversed when rebuilding colour.</td></tr>
+  <tr><td>U-Net (course)</td><td>Autoencoder + skip connections. Encoder 64&rarr;128&rarr;256&rarr;512 channels (max-pool halves size), bottleneck 1024 @ 8&times;8, decoder up-samples (ConvTranspose2d doubles size) and concatenates the matching encoder output; 1&times;1 conv to 2 channels + tanh. About 31 M parameters.</td></tr>
+  <tr><td>DoubleConv</td><td>Conv3&times;3 (pad 1) &rarr; BatchNorm &rarr; ReLU, twice.</td></tr>
+  <tr><td>Shapes</td><td>128&times;128 &rarr; 64 &rarr; 32 &rarr; 16 &rarr; 8 (bottleneck) &rarr; back up to 128&times;128. Skip makes decoder input twice the channels (512 + 512 = 1024).</td></tr>
+  <tr><td>Training (course)</td><td><b>MSE</b> loss, <b>Adam</b> lr 0.001, 18 epochs (15&ndash;20 asked), loop: zero grad &rarr; forward &rarr; loss &rarr; backward &rarr; step. Checkpoint every epoch; plot loss per epoch.</td></tr>
+  <tr><td>Personal photo (course)</td><td>Grayscale &rarr; 128&times;128 &rarr; L &rarr; predict a, b &rarr; recombine &rarr; show 3 panels (grayscale input, prediction, restored colour).</td></tr>
+  <tr><td>Limit (course)</td><td>Plausible not true colours (jacket red or blue?); MSE averages uncertain colours, so muted.</td></tr>
+  <tr><td>Diffusion (background)</td><td>Forward: add noise step by step to a real image until pure noise. Reverse: train a U-Net (loss = MSE on the noise) to remove noise; generate from pure noise by denoising step by step; a text prompt can guide it. Example pixel: 0.8&times;0.8 + 0.6&times;0.5 = 0.94.</td></tr>
+  <tr><td>GAN (background)</td><td>Generator (random numbers &rarr; fake image) vs discriminator (real or fake?): compete and both improve.</td></tr>
+  <tr><td>VAE (background)</td><td>Autoencoder with a random latent description; sample a new point and decode; stable but blurry.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Know the Lab setup and shapes, describe the U-Net (encoder, bottleneck, decoder, skip connections), the loss and training loop, and the limits. For diffusion, GANs and VAEs give a one-line idea each; your materials only name them.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Image generation means:", "o": ["Labelling images", "Creating new images from scratch or from a prompt", "Detecting objects", "Compressing files"], "a": 1, "e": "It also covers restoration and scene reconstruction."}, {"q": "Which are the image-generation models named on the lecture slide?", "o": ["Stable Diffusion, VAEs and GANs", "k-means, PCA and SVM", "BFS, DFS and A*", "ReLU, tanh and sigmoid"], "a": 0, "e": "Stable Diffusion led to the AI-art boom."}, {"q": "Which vision task outputs new pixels?", "o": ["Image classification", "Object detection", "Image generation", "Pooling"], "a": 2, "e": "Classification gives a label; detection gives labels and boxes."}, {"q": "In Lab, the L channel is:", "o": ["Lightness (the grayscale picture)", "Left", "A colour channel", "Label"], "a": 0, "e": "a and b carry the colour."}, {"q": "In the colourisation task the network input is:", "o": ["a and b", "L", "RGB", "Labels"], "a": 1, "e": "Predict a and b from L."}, {"q": "The target (output) of the colouriser has shape:", "o": ["1x128x128", "2x128x128", "3x128x128", "128x128"], "a": 1, "e": "Two channels: a and b."}, {"q": "Why are the CIFAR-10 labels ignored?", "o": ["They are missing", "The task is colourisation, not classification", "They are wrong", "They are too large"], "a": 1, "e": "The colour image supplies its own answer."}, {"q": "Images are resized to 128 x 128 so that:", "o": ["All inputs have the same size", "They become colourful", "Labels fit", "The loss is zero"], "a": 0, "e": "Resizing can lose detail, though."}, {"q": "The notebook scales L with:", "o": ["L / 50 - 1", "L x 100", "L + 128", "L / 255"], "a": 0, "e": "L runs 0 to 100, so the result is -1 to 1."}, {"q": "The notebook scales a and b with:", "o": ["Divide by 128", "Multiply by 128", "Add 1", "Square them"], "a": 0, "e": "Values become about -1 to 1."}, {"q": "Why must the same scaling be used when rebuilding the colour image?", "o": ["The prediction is in the scaled range and must be reversed to get real Lab values", "It speeds training", "It adds labels", "It is optional"], "a": 0, "e": "(L + 1) x 50 and ab x 128."}, {"q": "An autoencoder:", "o": ["Squeezes input to a summary and rebuilds an output", "Only classifies", "Has no weights", "Is a search algorithm"], "a": 0, "e": "Encoder then decoder."}, {"q": "What makes a U-Net different from a plain autoencoder?", "o": ["Skip connections from encoder to decoder", "No decoder", "No convolutions", "It uses only dense layers"], "a": 0, "e": "Shortcuts carry fine detail."}, {"q": "In the notebook, the encoder channel counts are:", "o": ["64, 128, 256, 512", "3, 6, 9, 12", "10, 20, 30, 40", "512, 256, 128, 64"], "a": 0, "e": "Bottleneck 1024."}, {"q": "Max pooling in the encoder:", "o": ["Halves the height and width", "Doubles the height and width", "Adds channels", "Applies tanh"], "a": 0, "e": "Channels double in the next block instead."}, {"q": "ConvTranspose2d(kernel 2, stride 2) in the decoder:", "o": ["Doubles the height and width (learned up-sampling)", "Halves the size", "Flattens", "Pools"], "a": 0, "e": "It also halves the channels."}, {"q": "Why does a decoder block take 1024 input channels (512 + 512)?", "o": ["Skip connection: up-sampled features are concatenated with the encoder features", "Bias", "Padding", "Two filters"], "a": 0, "e": "torch.cat joins the channels."}, {"q": "The bottleneck in the notebook has:", "o": ["1024 channels at 8 x 8", "64 channels at 128 x 128", "3 channels", "2 channels"], "a": 0, "e": "The smallest, most abstract map."}, {"q": "The output layer is a 1x1 convolution to 2 channels followed by:", "o": ["tanh", "softmax", "ReLU", "max pooling"], "a": 0, "e": "Matches the -1 to 1 targets."}, {"q": "A random input of shape (1,1,128,128) produces an output of shape:", "o": ["(1,1,128,128)", "(1,2,128,128)", "(1,3,128,128)", "(1,2,64,64)"], "a": 1, "e": "The notebook's shape check."}, {"q": "The loss used for training is:", "o": ["Cross-entropy", "Mean squared error (MSE)", "Accuracy", "Softmax"], "a": 1, "e": "Between predicted and true a, b."}, {"q": "The optimiser used in the notebook is:", "o": ["Adam with learning rate 0.001", "K-means", "A* search", "Roulette selection"], "a": 0, "e": "A gradient-descent variant."}, {"q": "The assignment asks you to train for:", "o": ["1-2 epochs", "15-20 epochs", "200 epochs", "No epochs"], "a": 1, "e": "The notebook uses 18."}, {"q": "Order of one training step per batch:", "o": ["zero grad, forward, loss, backward, step", "step, loss, forward", "loss, step, zero grad", "forward, step, loss"], "a": 0, "e": "Same cycle as Lesson 6."}, {"q": "Why save a checkpoint after every epoch?", "o": ["A stopped session can resume from the last saved epoch", "It reduces the loss", "It adds labels", "It is required by PyTorch"], "a": 0, "e": "Saved to Google Drive."}, {"q": "A falling training-loss curve shows:", "o": ["The model is learning", "The model is broken", "Overfitting always", "Nothing"], "a": 0, "e": "MSE per epoch plotted."}, {"q": "To colourise a personal photo you:", "o": ["Take its L channel, predict a and b, recombine and convert to RGB", "Delete the L channel", "Train on the photo only", "Predict L from a and b"], "a": 0, "e": "Then show three panels."}, {"q": "Why are the predicted colours only 'plausible'?", "o": ["One grayscale image matches several possible colourings", "The network has no weights", "Lab is wrong", "RGB is better"], "a": 0, "e": "A jacket could be red or blue."}, {"q": "MSE tends to make colourised results look:", "o": ["Muted, because uncertain colours are averaged", "Over-saturated", "Black", "Perfect"], "a": 0, "e": "Peer notes mention this limit."}, {"q": "(Background) In a diffusion model the forward process:", "o": ["Adds noise to a real image step by step", "Removes noise", "Labels the image", "Resizes the image"], "a": 0, "e": "No learning is needed for this part."}, {"q": "(Background) In a diffusion model the network is trained to:", "o": ["Predict (and so remove) the noise in a noisy image", "Classify images", "Add colour only", "Draw boxes"], "a": 0, "e": "Often a U-Net trained with MSE on the noise."}, {"q": "(Background) A diffusion model generates a new image by:", "o": ["Starting from pure noise and removing a little noise each step", "Copying a training image", "Applying a filter once", "Max pooling"], "a": 0, "e": "A text prompt can guide each step."}, {"q": "(Background) In a GAN, the discriminator's job is to:", "o": ["Tell real images from fake ones", "Make fake images", "Resize images", "Add noise"], "a": 0, "e": "The generator tries to fool it."}, {"q": "(Background) A VAE generates by:", "o": ["Sampling a random point in its latent space and decoding it", "Adding noise 1000 times", "Max pooling", "Searching a tree"], "a": 0, "e": "Stable but a little blurry."}, {"q": "(Background) Pixel 0.8, noise 0.5, kept fraction 0.8, noise fraction 0.6. Noisy pixel?", "o": ["0.94", "1.3", "0.64", "0.30"], "a": 0, "e": "0.8 x 0.8 + 0.6 x 0.5 = 0.64 + 0.30."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
