@@ -1,0 +1,97 @@
+<h2>Learning outcomes</h2>
+<p>By the end of the module (course aims, session 1) you should be able to:</p>
+<ul>
+  <li>Describe software development <b>process models</b>, and select a suitable one and suitable tools</li>
+  <li>Apply <b>system thinking</b> and <b>design thinking</b></li>
+  <li>Describe the importance of <b>software architecture</b> and identify its essential elements</li>
+  <li>Describe different <b>architecture patterns</b></li>
+  <li>Describe <b>quality attributes</b> and the basic rules of software design; evaluate the effect of design on software quality</li>
+  <li>Design a software architecture that satisfies the system requirements</li>
+</ul>
+<p><b>Course content:</b> software process models; system thinking and design thinking (generating new ideas, problem solving, decision making); software architecture and its importance, the architect's role, architectural drivers; architectural styles; designing a suitable architecture for a given system, architecture vs design; factors that affect designs and the effect of design on quality; quality attributes; basic design rules; the design process (inputs and start point, outcome, transformation of data, satisfying and discovering constraints).</p>
+<h3>Assessment and learning approach</h3>
+<table>
+  <tr><th>Item</th><th>Detail</th></tr>
+  <tr><td>Continuous assessment (includes problem-based learning, PBL)</td><td>20&ndash;40 %</td></tr>
+  <tr><td>Final examination</td><td>60&ndash;80 %</td></tr>
+  <tr><td>Pass rule</td><td>At least <b>20 %</b> of the marks from <b>both</b> components are required to pass.</td></tr>
+  <tr><td>Student-centred learning</td><td>You hear, you forget. You see, you remember. You do, you understand.</td></tr>
+  <tr><td>At lectures</td><td>Look at what is shown, listen to what is said, think about the examples, ask questions, write what you think is important.</td></tr>
+</table>
+<p>Recommended reading: Cervantes &amp; Kazman, <i>Designing Software Architectures: A Practical Approach</i>; Richards &amp; Ford, <i>Fundamentals of Software Architecture</i>; Zhu, <i>Software Design Methodology</i>; Braude, <i>Software Design: From Programming to Architecture</i>; Sommerville, <i>Software Engineering</i> (10th ed.).</p>
+
+<h2>1. Useful terms: innovation and transformation</h2>
+<p>The session introduces literacy terms (IT literacy, data literacy, digital dexterity, AI literacy) and three families of terms.</p>
+<h3>Invention vs innovation</h3>
+<p>The lecture contrasts the high-wheeler "penny-farthing" bicycle with a modern road bicycle: an <b>invention</b> is a new thing that did not exist before; <b>innovation</b> is making something work better in practice and in the market. In the Tim Herglotz diagram quoted in the lecture, innovation is "the process of creating value by doing the same things, better".</p>
+<h3>The four paths of digital change</h3>
+<svg viewBox="0 0 640 170" role="img" aria-label="Four paths of digital change" class="dg">
+  <rect class="bx" x="10" y="20" width="145" height="110" rx="10"/><text x="82" y="44" text-anchor="middle" class="h">Innovation</text><text x="82" y="64" text-anchor="middle" class="sm">creating value by</text><text x="82" y="80" text-anchor="middle" class="sm">doing the same</text><text x="82" y="96" text-anchor="middle" class="sm">things, better</text>
+  <path class="ar" d="M155 75 H170"/>
+  <rect class="bx" x="170" y="20" width="145" height="110" rx="10"/><text x="242" y="44" text-anchor="middle" class="h">Digitization</text><text x="242" y="64" text-anchor="middle" class="sm">converting analog</text><text x="242" y="80" text-anchor="middle" class="sm">information into a</text><text x="242" y="96" text-anchor="middle" class="sm">digital format</text>
+  <path class="ar" d="M315 75 H330"/>
+  <rect class="bx" x="330" y="20" width="145" height="110" rx="10"/><text x="402" y="44" text-anchor="middle" class="h">Digitalization</text><text x="402" y="64" text-anchor="middle" class="sm">using digital tech</text><text x="402" y="80" text-anchor="middle" class="sm">to change a business</text><text x="402" y="96" text-anchor="middle" class="sm">model, new revenue</text>
+  <path class="ar" d="M475 75 H490"/>
+  <rect class="bx" x="490" y="20" width="140" height="110" rx="10"/><text x="560" y="44" text-anchor="middle" class="h">Digital</text><text x="560" y="60" text-anchor="middle" class="h">transformation</text><text x="560" y="80" text-anchor="middle" class="sm">strategically planned</text><text x="560" y="96" text-anchor="middle" class="sm">organisational change</text><text x="560" y="112" text-anchor="middle" class="sm">to stay competitive</text>
+</svg>
+<table>
+  <tr><th>Term</th><th>What it transforms</th><th>Example</th></tr>
+  <tr><td><b>Digitization</b></td><td><b>Information</b></td><td>Scanning paper records into files</td></tr>
+  <tr><td><b>Digitalization</b></td><td><b>Processes</b></td><td>An online booking process replaces a paper form</td></tr>
+  <tr><td><b>Digital transformation</b></td><td><b>Organisations</b></td><td>A whole company reshapes how it operates around digital technology</td></tr>
+  <tr><td><b>AI transformation</b></td><td><b>Decision-making</b></td><td>Decisions supported or made by AI</td></tr>
+  <tr><td><b>Human&ndash;AI transformation</b></td><td><b>How people create value</b></td><td>People and AI creating value together</td></tr>
+</table>
+<p>(The examples in the right-hand column are illustrations added for clarity; the "transforms ..." lines are the lecture's.)</p>
+
+<h2>2. In-class activity 1: what do you already think?</h2>
+<p>The session opens with four questions to answer from your own understanding: What is software architecture? What is a software process model? Who decides the architecture and the process model for a project? When are they decided during a project? The model answers follow in sections 3&ndash;5.</p>
+
+<h2>3. Software architecture</h2>
+<div class="box"><b>Definition</b>The <b>high-level structure / organisation of a software system</b>. It includes the <b>fundamental components</b>, their <b>interactions</b>, and the <b>principles guiding their design and evolution</b>.</div>
+<ul>
+  <li>It provides a <b>blueprint</b> for the project, addressing concerns such as <b>performance, scalability, security, maintainability</b>.</li>
+  <li>It is a critical framework guiding the <b>development, deployment and ongoing management</b> of the software.</li>
+</ul>
+
+<h2>4. Software process</h2>
+<div class="box"><b>Definition</b>A <b>structured set of activities, methods and practices</b> used to develop and maintain software. It defines the sequence of steps: requirements gathering, design, coding, testing, deployment and maintenance.</div>
+<ul>
+  <li>It provides a framework for managing and improving the <b>quality, efficiency and predictability</b> of development.</li>
+  <li>It often incorporates best practices and methodologies so the final product meets the specification and stakeholder needs.</li>
+</ul>
+
+<h2>5. Architecture vs process</h2>
+<svg viewBox="0 0 640 120" role="img" aria-label="Architecture vs process" class="dg">
+  <rect class="bx" x="20" y="15" width="280" height="90" rx="8"/><text x="160" y="40" text-anchor="middle" class="h">Software architecture</text><text x="160" y="62" text-anchor="middle" class="sm">WHAT the system is and</text><text x="160" y="78" text-anchor="middle" class="sm">HOW it is constructed</text>
+  <rect class="bx" x="340" y="15" width="280" height="90" rx="8"/><text x="480" y="40" text-anchor="middle" class="h">Software process</text><text x="480" y="62" text-anchor="middle" class="sm">HOW the software is</text><text x="480" y="78" text-anchor="middle" class="sm">developed, managed, delivered</text>
+  <path class="ar" d="M300 60 H340" style="marker-start:url(#ah)"/>
+</svg>
+<table>
+  <tr><th></th><th>Software architecture</th><th>Software process</th></tr>
+  <tr><td>Focus</td><td>The structure and design of the system</td><td>The sequence of activities in developing the software</td></tr>
+  <tr><td>Scope</td><td>High-level components, their relationships and guidelines for building and evolving the system; how parts interact to achieve objectives</td><td>Methodologies, practices and procedures across the life cycle: requirements, design, coding, testing, deployment</td></tr>
+  <tr><td>Concerned with</td><td>The system's technical blueprint: performance, scalability, security, maintainability</td><td>Workflow and management: efficiency, quality, timely delivery</td></tr>
+  <tr><td>Outcome</td><td>A well-defined architecture guiding developers and stakeholders so the system meets technical and business goals</td><td>A systematic approach giving consistent, repeatable results and adherence to timelines</td></tr>
+</table>
+<p>They are <b>distinct but complementary</b>: the architecture defines the technical structure; the process defines the steps to create and maintain that structure. (Process models such as waterfall and agile / Scrum are studied again in the group project, Lesson 8.)</p>
+
+<h2>6. In-class activity 01: reverse engineering a real system</h2>
+<p><b>Task (3 hours: 2 h preparation, then a 5-minute presentation per group, groups of 4&ndash;6):</b> pick a well-known system (Uber, PickMe, Instagram, WhatsApp, Netflix, Daraz, Airbnb, ChatGPT, Moodle, Google Docs ...) and <b>infer</b> how it may be structured using observation, research and reasoning (not actual source code). Cover:</p>
+<table>
+  <tr><th>#</th><th>Section</th><th>Content</th></tr>
+  <tr><td>1</td><td>System overview</td><td>Purpose, target users, core services, why chosen</td></tr>
+  <tr><td>2</td><td>Stakeholders</td><td>End users, administrators, business owners, drivers, merchants, content creators, advertisers ...</td></tr>
+  <tr><td>3</td><td>Functional requirements</td><td>e.g. for WhatsApp: registration, login, messages, voice / video calls, file sharing, group chats</td></tr>
+  <tr><td>4</td><td>Non-functional requirements</td><td>Performance, security, scalability, availability, reliability, maintainability, usability, privacy, with reasons</td></tr>
+  <tr><td>5</td><td>High-level architecture</td><td>Diagram: app, API gateway, backend services, authentication, database, cache, file storage, notification service, payment gateway, third-party APIs, cloud</td></tr>
+  <tr><td>6</td><td>Data flow</td><td>One scenario: sending a message, booking a ride, watching a movie, ordering food, uploading a photo</td></tr>
+  <tr><td>7</td><td>Scalability</td><td>Growing from 100,000 to 100 million users: load balancing, multiple servers, database replication, caching, CDN, microservices, auto-scaling, queues</td></tr>
+  <tr><td>8</td><td>Security</td><td>Authentication, authorisation, encryption, secure payments, MFA, privacy, attack protection, backup and disaster recovery</td></tr>
+  <tr><td>9</td><td>Technology stack</td><td>Frontend (React, Angular, Flutter), backend (Spring Boot, Node.js, .NET, Django), database (PostgreSQL, MySQL, MongoDB), infrastructure (AWS, Azure, GCP); need not match the real one</td></tr>
+</table>
+<p><b>Deliverables:</b> slides, one architecture diagram, one data flow diagram. <b>Marking</b> (partial): understanding of the system 10; functional and non-functional requirements 15; architecture diagram 20; data flow explanation 10; scalability and security analysis 15.</p>
+<p><b>Worked mini-example (WhatsApp-style message).</b> Sender app &rarr; load balancer / API gateway &rarr; authentication check &rarr; messaging service &rarr; queue &rarr; storage and notification service &rarr; receiver's app (push notification if offline). This is an illustrative logical design, like the activity asks for.</p>
+
+<div class="box"><b>Key takeaways</b>
+Invention = new; innovation = value by doing better; digitization changes information, digitalization processes, digital transformation organisations, AI transformation decisions. <b>Architecture = what the system is and how it is built (structure, components, interactions, principles); process = how it is developed, managed and delivered.</b> Both are needed. Pass rule: at least 20 % in both the continuous assessment and the final exam.</div>

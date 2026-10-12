@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SA Lesson 1 - Introduction: Architecture and Process</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Software Architecture study guides</a> &middot; INTE 22293 &middot; Lesson 01</p><button id="theme" type="button"></button></div>
+  <h1>Introduction: Architecture and Process</h1>
+  <p class="lead">Covers: module aims and assessment, digital innovation vocabulary (invention vs innovation, digitization, digitalization, digital transformation), what software architecture and a software process are and how they differ, and the reverse-engineering activity. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<p>By the end of the module (course aims, session 1) you should be able to:</p>
+<ul>
+  <li>Describe software development <b>process models</b>, and select a suitable one and suitable tools</li>
+  <li>Apply <b>system thinking</b> and <b>design thinking</b></li>
+  <li>Describe the importance of <b>software architecture</b> and identify its essential elements</li>
+  <li>Describe different <b>architecture patterns</b></li>
+  <li>Describe <b>quality attributes</b> and the basic rules of software design; evaluate the effect of design on software quality</li>
+  <li>Design a software architecture that satisfies the system requirements</li>
+</ul>
+<p><b>Course content:</b> software process models; system thinking and design thinking (generating new ideas, problem solving, decision making); software architecture and its importance, the architect's role, architectural drivers; architectural styles; designing a suitable architecture for a given system, architecture vs design; factors that affect designs and the effect of design on quality; quality attributes; basic design rules; the design process (inputs and start point, outcome, transformation of data, satisfying and discovering constraints).</p>
+<h3>Assessment and learning approach</h3>
+<table>
+  <tr><th>Item</th><th>Detail</th></tr>
+  <tr><td>Continuous assessment (includes problem-based learning, PBL)</td><td>20&ndash;40 %</td></tr>
+  <tr><td>Final examination</td><td>60&ndash;80 %</td></tr>
+  <tr><td>Pass rule</td><td>At least <b>20 %</b> of the marks from <b>both</b> components are required to pass.</td></tr>
+  <tr><td>Student-centred learning</td><td>You hear, you forget. You see, you remember. You do, you understand.</td></tr>
+  <tr><td>At lectures</td><td>Look at what is shown, listen to what is said, think about the examples, ask questions, write what you think is important.</td></tr>
+</table>
+<p>Recommended reading: Cervantes &amp; Kazman, <i>Designing Software Architectures: A Practical Approach</i>; Richards &amp; Ford, <i>Fundamentals of Software Architecture</i>; Zhu, <i>Software Design Methodology</i>; Braude, <i>Software Design: From Programming to Architecture</i>; Sommerville, <i>Software Engineering</i> (10th ed.).</p>
+
+<h2>1. Useful terms: innovation and transformation</h2>
+<p>The session introduces literacy terms (IT literacy, data literacy, digital dexterity, AI literacy) and three families of terms.</p>
+<h3>Invention vs innovation</h3>
+<p>The lecture contrasts the high-wheeler "penny-farthing" bicycle with a modern road bicycle: an <b>invention</b> is a new thing that did not exist before; <b>innovation</b> is making something work better in practice and in the market. In the Tim Herglotz diagram quoted in the lecture, innovation is "the process of creating value by doing the same things, better".</p>
+<h3>The four paths of digital change</h3>
+<svg viewBox="0 0 640 170" role="img" aria-label="Four paths of digital change" class="dg">
+  <rect class="bx" x="10" y="20" width="145" height="110" rx="10"/><text x="82" y="44" text-anchor="middle" class="h">Innovation</text><text x="82" y="64" text-anchor="middle" class="sm">creating value by</text><text x="82" y="80" text-anchor="middle" class="sm">doing the same</text><text x="82" y="96" text-anchor="middle" class="sm">things, better</text>
+  <path class="ar" d="M155 75 H170"/>
+  <rect class="bx" x="170" y="20" width="145" height="110" rx="10"/><text x="242" y="44" text-anchor="middle" class="h">Digitization</text><text x="242" y="64" text-anchor="middle" class="sm">converting analog</text><text x="242" y="80" text-anchor="middle" class="sm">information into a</text><text x="242" y="96" text-anchor="middle" class="sm">digital format</text>
+  <path class="ar" d="M315 75 H330"/>
+  <rect class="bx" x="330" y="20" width="145" height="110" rx="10"/><text x="402" y="44" text-anchor="middle" class="h">Digitalization</text><text x="402" y="64" text-anchor="middle" class="sm">using digital tech</text><text x="402" y="80" text-anchor="middle" class="sm">to change a business</text><text x="402" y="96" text-anchor="middle" class="sm">model, new revenue</text>
+  <path class="ar" d="M475 75 H490"/>
+  <rect class="bx" x="490" y="20" width="140" height="110" rx="10"/><text x="560" y="44" text-anchor="middle" class="h">Digital</text><text x="560" y="60" text-anchor="middle" class="h">transformation</text><text x="560" y="80" text-anchor="middle" class="sm">strategically planned</text><text x="560" y="96" text-anchor="middle" class="sm">organisational change</text><text x="560" y="112" text-anchor="middle" class="sm">to stay competitive</text>
+</svg>
+<table>
+  <tr><th>Term</th><th>What it transforms</th><th>Example</th></tr>
+  <tr><td><b>Digitization</b></td><td><b>Information</b></td><td>Scanning paper records into files</td></tr>
+  <tr><td><b>Digitalization</b></td><td><b>Processes</b></td><td>An online booking process replaces a paper form</td></tr>
+  <tr><td><b>Digital transformation</b></td><td><b>Organisations</b></td><td>A whole company reshapes how it operates around digital technology</td></tr>
+  <tr><td><b>AI transformation</b></td><td><b>Decision-making</b></td><td>Decisions supported or made by AI</td></tr>
+  <tr><td><b>Human&ndash;AI transformation</b></td><td><b>How people create value</b></td><td>People and AI creating value together</td></tr>
+</table>
+<p>(The examples in the right-hand column are illustrations added for clarity; the "transforms ..." lines are the lecture's.)</p>
+
+<h2>2. In-class activity 1: what do you already think?</h2>
+<p>The session opens with four questions to answer from your own understanding: What is software architecture? What is a software process model? Who decides the architecture and the process model for a project? When are they decided during a project? The model answers follow in sections 3&ndash;5.</p>
+
+<h2>3. Software architecture</h2>
+<div class="box"><b>Definition</b>The <b>high-level structure / organisation of a software system</b>. It includes the <b>fundamental components</b>, their <b>interactions</b>, and the <b>principles guiding their design and evolution</b>.</div>
+<ul>
+  <li>It provides a <b>blueprint</b> for the project, addressing concerns such as <b>performance, scalability, security, maintainability</b>.</li>
+  <li>It is a critical framework guiding the <b>development, deployment and ongoing management</b> of the software.</li>
+</ul>
+
+<h2>4. Software process</h2>
+<div class="box"><b>Definition</b>A <b>structured set of activities, methods and practices</b> used to develop and maintain software. It defines the sequence of steps: requirements gathering, design, coding, testing, deployment and maintenance.</div>
+<ul>
+  <li>It provides a framework for managing and improving the <b>quality, efficiency and predictability</b> of development.</li>
+  <li>It often incorporates best practices and methodologies so the final product meets the specification and stakeholder needs.</li>
+</ul>
+
+<h2>5. Architecture vs process</h2>
+<svg viewBox="0 0 640 120" role="img" aria-label="Architecture vs process" class="dg">
+  <rect class="bx" x="20" y="15" width="280" height="90" rx="8"/><text x="160" y="40" text-anchor="middle" class="h">Software architecture</text><text x="160" y="62" text-anchor="middle" class="sm">WHAT the system is and</text><text x="160" y="78" text-anchor="middle" class="sm">HOW it is constructed</text>
+  <rect class="bx" x="340" y="15" width="280" height="90" rx="8"/><text x="480" y="40" text-anchor="middle" class="h">Software process</text><text x="480" y="62" text-anchor="middle" class="sm">HOW the software is</text><text x="480" y="78" text-anchor="middle" class="sm">developed, managed, delivered</text>
+  <path class="ar" d="M300 60 H340" style="marker-start:url(#ah)"/>
+</svg>
+<table>
+  <tr><th></th><th>Software architecture</th><th>Software process</th></tr>
+  <tr><td>Focus</td><td>The structure and design of the system</td><td>The sequence of activities in developing the software</td></tr>
+  <tr><td>Scope</td><td>High-level components, their relationships and guidelines for building and evolving the system; how parts interact to achieve objectives</td><td>Methodologies, practices and procedures across the life cycle: requirements, design, coding, testing, deployment</td></tr>
+  <tr><td>Concerned with</td><td>The system's technical blueprint: performance, scalability, security, maintainability</td><td>Workflow and management: efficiency, quality, timely delivery</td></tr>
+  <tr><td>Outcome</td><td>A well-defined architecture guiding developers and stakeholders so the system meets technical and business goals</td><td>A systematic approach giving consistent, repeatable results and adherence to timelines</td></tr>
+</table>
+<p>They are <b>distinct but complementary</b>: the architecture defines the technical structure; the process defines the steps to create and maintain that structure. (Process models such as waterfall and agile / Scrum are studied again in the group project, Lesson 8.)</p>
+
+<h2>6. In-class activity 01: reverse engineering a real system</h2>
+<p><b>Task (3 hours: 2 h preparation, then a 5-minute presentation per group, groups of 4&ndash;6):</b> pick a well-known system (Uber, PickMe, Instagram, WhatsApp, Netflix, Daraz, Airbnb, ChatGPT, Moodle, Google Docs ...) and <b>infer</b> how it may be structured using observation, research and reasoning (not actual source code). Cover:</p>
+<table>
+  <tr><th>#</th><th>Section</th><th>Content</th></tr>
+  <tr><td>1</td><td>System overview</td><td>Purpose, target users, core services, why chosen</td></tr>
+  <tr><td>2</td><td>Stakeholders</td><td>End users, administrators, business owners, drivers, merchants, content creators, advertisers ...</td></tr>
+  <tr><td>3</td><td>Functional requirements</td><td>e.g. for WhatsApp: registration, login, messages, voice / video calls, file sharing, group chats</td></tr>
+  <tr><td>4</td><td>Non-functional requirements</td><td>Performance, security, scalability, availability, reliability, maintainability, usability, privacy, with reasons</td></tr>
+  <tr><td>5</td><td>High-level architecture</td><td>Diagram: app, API gateway, backend services, authentication, database, cache, file storage, notification service, payment gateway, third-party APIs, cloud</td></tr>
+  <tr><td>6</td><td>Data flow</td><td>One scenario: sending a message, booking a ride, watching a movie, ordering food, uploading a photo</td></tr>
+  <tr><td>7</td><td>Scalability</td><td>Growing from 100,000 to 100 million users: load balancing, multiple servers, database replication, caching, CDN, microservices, auto-scaling, queues</td></tr>
+  <tr><td>8</td><td>Security</td><td>Authentication, authorisation, encryption, secure payments, MFA, privacy, attack protection, backup and disaster recovery</td></tr>
+  <tr><td>9</td><td>Technology stack</td><td>Frontend (React, Angular, Flutter), backend (Spring Boot, Node.js, .NET, Django), database (PostgreSQL, MySQL, MongoDB), infrastructure (AWS, Azure, GCP); need not match the real one</td></tr>
+</table>
+<p><b>Deliverables:</b> slides, one architecture diagram, one data flow diagram. <b>Marking</b> (partial): understanding of the system 10; functional and non-functional requirements 15; architecture diagram 20; data flow explanation 10; scalability and security analysis 15.</p>
+<p><b>Worked mini-example (WhatsApp-style message).</b> Sender app &rarr; load balancer / API gateway &rarr; authentication check &rarr; messaging service &rarr; queue &rarr; storage and notification service &rarr; receiver's app (push notification if offline). This is an illustrative logical design, like the activity asks for.</p>
+
+<div class="box"><b>Key takeaways</b>
+Invention = new; innovation = value by doing better; digitization changes information, digitalization processes, digital transformation organisations, AI transformation decisions. <b>Architecture = what the system is and how it is built (structure, components, interactions, principles); process = how it is developed, managed and delivered.</b> Both are needed. Pass rule: at least 20 % in both the continuous assessment and the final exam.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Define software architecture and software process and explain how they differ.</summary>
+<p>Architecture: the high-level structure of a software system, its fundamental components, their interactions and the principles guiding design and evolution; a blueprint addressing performance, scalability, security and maintainability. Process: a structured set of activities, methods and practices to develop and maintain software (requirements, design, coding, testing, deployment, maintenance). Architecture is about what the system is and how it is constructed; process is about how it is developed, managed and delivered. They are distinct but complementary.</p>
+</details>
+<details>
+<summary>W2. Distinguish digitization, digitalization, digital transformation, AI transformation and human-AI transformation.</summary>
+<p>Digitization transforms information (analog to digital); digitalization transforms processes; digital transformation transforms organisations; AI transformation transforms decision-making; human-AI transformation transforms how people create value.</p>
+</details>
+<details>
+<summary>W3. List the sections of the reverse-engineering presentation and give two non-functional requirements for WhatsApp with reasons.</summary>
+<p>Overview, stakeholders, functional requirements, non-functional requirements, high-level architecture, data flow, scalability, security, technology stack. Examples: availability (people expect messages to be delivered at any time) and privacy/security (messages are personal, so encryption and authentication matter).</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Assessment</td><td>Continuous 20&ndash;40 % (incl. PBL), final exam 60&ndash;80 %; at least 20 % of marks needed from BOTH components.</td></tr>
+  <tr><td>Invention vs innovation</td><td>Invention = something new; innovation = creating value by doing things better.</td></tr>
+  <tr><td>Transformations</td><td>Digitization &rarr; information. Digitalization &rarr; processes. Digital transformation &rarr; organisations. AI transformation &rarr; decision-making. Human-AI transformation &rarr; how people create value.</td></tr>
+  <tr><td>Software architecture</td><td>High-level structure of a system: fundamental components, their interactions, and principles guiding design and evolution. A blueprint addressing performance, scalability, security, maintainability; guides development, deployment, management.</td></tr>
+  <tr><td>Software process</td><td>Structured set of activities, methods, practices to develop and maintain software: requirements, design, coding, testing, deployment, maintenance. Manages quality, efficiency, predictability.</td></tr>
+  <tr><td>Architecture vs process</td><td>Architecture = what the system is and how it is constructed. Process = how it is developed, managed and delivered. Distinct but complementary.</td></tr>
+  <tr><td>Reverse-engineering activity</td><td>Overview, stakeholders, FR, NFR, high-level architecture, data flow, scalability (100k to 100M users), security, tech stack; 5-minute presentation; diagrams: architecture + data flow.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>"Architecture vs process" is a classic short-answer question: use the four rows (focus, scope, concerned with, outcome) and finish with "distinct but complementary".</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "To pass the module, a student needs at least what share of marks from each component?", "o": ["10 %", "20 %", "40 %", "50 %"], "a": 1, "e": "At least 20 % from both continuous assessment and the final exam."}, {"q": "The final examination carries:", "o": ["20-40 %", "60-80 %", "100 %", "10 %"], "a": 1, "e": "Continuous assessment is 20-40 %."}, {"q": "Digitization transforms:", "o": ["Processes", "Information", "Organisations", "Decision-making"], "a": 1, "e": "Converting analog information to digital form."}, {"q": "Digitalization transforms:", "o": ["Information", "Processes", "Organisations", "People"], "a": 1, "e": "Using digital technology to change processes."}, {"q": "Digital transformation transforms:", "o": ["Information", "Processes", "Organisations", "Decisions only"], "a": 2, "e": "Strategic organisational change."}, {"q": "AI transformation transforms:", "o": ["Information", "Processes", "Organisations", "Decision-making"], "a": 3, "e": "Human-AI transformation changes how people create value."}, {"q": "Innovation in the lecture is described as:", "o": ["Inventing something new from nothing", "Creating value by doing the same things, better", "Copying a competitor", "Digitising paper"], "a": 1, "e": "Invention vs innovation (penny-farthing vs modern bicycle)."}, {"q": "Software architecture is:", "o": ["The steps used to develop software", "The high-level structure of a system: components, interactions and guiding principles", "The test plan", "The source code"], "a": 1, "e": "A blueprint for the system."}, {"q": "Which concern is addressed by architecture?", "o": ["Performance, scalability, security, maintainability", "Team meetings", "Salary", "Office layout"], "a": 0, "e": "Quality concerns of the system."}, {"q": "A software process is:", "o": ["The structure of components", "A structured set of activities, methods and practices to develop and maintain software", "A database", "A diagram"], "a": 1, "e": "Requirements, design, coding, testing, deployment, maintenance."}, {"q": "'What the system is and how it is constructed' describes:", "o": ["Software process", "Software architecture", "Project plan", "Test case"], "a": 1, "e": "Process is about how it is developed, managed and delivered."}, {"q": "'How the software is developed, managed and delivered' describes:", "o": ["Software architecture", "Software process", "Coupling", "Cohesion"], "a": 1, "e": "The workflow and management of development."}, {"q": "Which is true about architecture and process?", "o": ["They are the same", "They are distinct but complementary", "Process replaces architecture", "Architecture is only for large teams"], "a": 1, "e": "Architecture is the structure; process creates and maintains it."}, {"q": "The outcome of a good software process is:", "o": ["A blueprint of components", "Consistent, repeatable results and adherence to timelines", "A database schema", "A cache"], "a": 1, "e": "While architecture's outcome is a guide for developers and stakeholders."}, {"q": "In the reverse-engineering activity you should:", "o": ["Find the real source code", "Infer the structure using observation, research and reasoning", "Hack the system", "Copy the company's documents"], "a": 1, "e": "The diagram represents a logical design, not necessarily the real one."}, {"q": "Which scalability idea fits growing from 100,000 to 100 million users?", "o": ["Single server", "Load balancing, caching, CDN, queues, auto-scaling", "Removing the database", "Fewer features only"], "a": 1, "e": "Listed in the activity brief."}, {"q": "How long is each group's presentation in activity 01?", "o": ["2 minutes", "5 minutes", "15 minutes", "30 minutes"], "a": 1, "e": "Preparation is 2 hours."}, {"q": "Which deliverable is NOT required in activity 01?", "o": ["Presentation slides", "Architecture diagram", "Data flow diagram", "Source code repository"], "a": 3, "e": "Slides plus two diagrams."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
