@@ -1,0 +1,22 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Recursion</td><td>An algorithm that calls itself on a smaller problem; needs a base case. Tree algorithms are recursive.</td></tr>
+  <tr><td>Tree</td><td>A set of nodes holding atomic or composite data, connected by edges. <b>Root</b> = top node; <b>leaf</b> = no children; <b>order</b> = maximum children a node can have.</td></tr>
+  <tr><td>Binary tree</td><td>Order 2. A finite set of elements partitioned into root, left subtree, right subtree (each again a binary tree).</td></tr>
+  <tr><td>Traversal</td><td>Visit each node once and only once, in a predetermined sequence.</td></tr>
+  <tr><td>Preorder</td><td>Root, Left, Right (node visited when reached). Example tree: <b>a b c d e f</b></td></tr>
+  <tr><td>Inorder</td><td>Left, Root, Right (not visited until its left subtree is done). <b>c b d a e f</b></td></tr>
+  <tr><td>Postorder</td><td>Left, Right, Root (not visited until both subtrees are done). <b>c d b f e a</b></td></tr>
+  <tr><td>Binary search tree</td><td>Left subtree values &lt; root; right subtree values &ge; root; every subtree a BST. <b>Inorder traversal gives sorted order</b> (a sorting algorithm).</td></tr>
+  <tr><td>BST example</td><td>Insert 70, 50, 30, 80, 60, 40, 20. Preorder 70 50 30 20 40 60 80; inorder 20 30 40 50 60 70 80; postorder 20 40 30 60 50 80 70.</td></tr>
+  <tr><td>Array-based tree</td><td>Root at index 1; left child 2n; right child 2n + 1; 0 = empty. Create fills with 0. insert(d, n = 1) recursive. Traversals check <code>n &lt; size</code> and <code>p[n] &ne; 0</code>.</td></tr>
+  <tr><td>Array tree problem</td><td>Height h needs 2<sup>h+1</sup> elements (2<sup>h+1</sup> &minus; 1 nodes). Unbalanced: waste grows dramatically. Cannot grow, cannot shrink. OK if balanced / max height known.</td></tr>
+  <tr><td>Linked tree</td><td>Node = data, left, right (null = none); <code>root</code> pointer. Can grow and shrink. Use when height unknown or tree unbalanced.</td></tr>
+  <tr><td>addNode</td><td>addNode(REF p, d): if p = null create node (data, left = right = null); else if d &lt; p-&gt;data go left else go right. C++: <code>node *&amp;p</code>.</td></tr>
+  <tr><td>removeNode</td><td>Remove left, remove right, then release the node (children first).</td></tr>
+  <tr><td>Applications</td><td>Hierarchical data (folders / files, land registry) &middot; expression trees (parent = operator, children = operands) &middot; data compression and encoding &middot; efficient search of large dynamic data sets</td></tr>
+  <tr><td>Why a linked BST</td><td>Array + binary search: needs sorted data, inserting / deleting shifts elements. Linked list: easy insert / delete, slow search. Linked BST: insert / delete by changing addresses and fast search.</td></tr>
+  <tr><td>Expression tree orders</td><td>3 + 5 &times; 2: inorder 3 + 5 &times; 2; preorder + 3 &times; 5 2; postorder 3 5 2 &times; +</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>To build a BST, insert in the given order, comparing at each node (left if smaller, right if equal or larger). For traversals, always recurse the whole subtree before moving on; the only difference is when the root is printed. If asked for sorted output, answer: inorder traversal.</div>

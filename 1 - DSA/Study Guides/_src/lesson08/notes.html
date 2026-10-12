@@ -1,0 +1,815 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define the tree data structure</li>
+  <li>Identify the root, leaves, subtrees and order of a tree</li>
+  <li>Traverse a tree using preorder, inorder and postorder traversal</li>
+  <li>Declare array-based and linked list-based trees</li>
+  <li>Implement array-based and linked list-based trees</li>
+  <li>Use trees to solve real-world problems</li>
+</ul>
+
+<h2>1. Warm-up: recursion</h2>
+<p>Almost every tree algorithm is <b>recursive</b>, so first a quick look. A <b>recursive</b> algorithm solves a problem by calling <i>itself</i> on a smaller version of the problem, and it needs a <b>base case</b> where it stops calling itself. The alternative is <b>iteration</b> (a loop).</p>
+<table>
+  <tr><th>Iteration (loop)</th><th>Recursion</th></tr>
+  <tr><td><pre style="margin:0"><code>ALGORITHM countdown(VAL n INTEGER)
+1  LOOP (n &gt; 0)
+2     PRINT n
+3     n &larr; n - 1
+4  END LOOP
+END countdown</code></pre></td><td><pre style="margin:0"><code>ALGORITHM countdown(VAL n INTEGER)
+1  IF (n &gt; 0)
+2     PRINT n
+3     countdown(n - 1)
+4  ELSE
+5     RETURN
+6  END IF
+END countdown</code></pre></td></tr>
+</table>
+<p>Both print n, n&minus;1, ..., 1. The recursive version's base case is <code>n &le; 0</code> (do nothing and return).</p>
+<p><b>Sum of 1 to n</b> recursively (the function should accept any positive integer and return the summation):</p>
+<pre><code>ALGORITHM sum(VAL n INTEGER)
+1  IF (n &gt; 0)
+2     RETURN n + sum(n - 1)
+3  ELSE
+4     RETURN 0
+5  END IF
+END sum</code></pre>
+<p>sum(3) = 3 + sum(2) = 3 + (2 + sum(1)) = 3 + (2 + (1 + sum(0))) = 3 + 2 + 1 + 0 = <b>6</b>. Each pending call waits on the call stack (Lesson 2) until the one below it returns. A tree is a recursive structure too: a tree is a root plus smaller trees (its subtrees), which is why recursion fits so well.</p>
+
+<h2>2. What is a tree?</h2>
+<div class="box"><b>Definition</b>A <b>tree</b> is a set of <b>nodes</b> that holds atomic or composite data. Nodes are connected to other nodes with <b>edges</b>.</div>
+<svg viewBox="0 0 640 230" role="img" aria-label="A general tree of order 3" class="dg">
+<line x1="320" y1="49" x2="180" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="320" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="460" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="180" y1="117" x2="120" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="180" y1="117" x2="240" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="460" y1="117" x2="400" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="460" y1="117" x2="460" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="460" y1="117" x2="520" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="320" cy="32" r="17" class="bx"/>
+<text x="320" y="37" text-anchor="middle" class="mono">a</text>
+<circle cx="180" cy="100" r="17" class="bx"/>
+<text x="180" y="105" text-anchor="middle" class="mono">b</text>
+<circle cx="320" cy="100" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="320" y="105" text-anchor="middle" class="mono">e</text>
+<circle cx="460" cy="100" r="17" class="bx"/>
+<text x="460" y="105" text-anchor="middle" class="mono">f</text>
+<circle cx="120" cy="170" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="120" y="175" text-anchor="middle" class="mono">c</text>
+<circle cx="240" cy="170" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="240" y="175" text-anchor="middle" class="mono">d</text>
+<circle cx="400" cy="170" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="400" y="175" text-anchor="middle" class="mono">g</text>
+<circle cx="460" cy="170" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="460" y="175" text-anchor="middle" class="mono">h</text>
+<circle cx="520" cy="170" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="520" y="175" text-anchor="middle" class="mono">i</text>
+<text x="348" y="36" text-anchor="start" class="sm">root</text>
+<text x="120" y="204" text-anchor="middle" class="sm">leaf</text>
+<text x="320" y="134" text-anchor="middle" class="sm">leaf</text>
+<text x="520" y="204" text-anchor="middle" class="sm">leaf</text>
+<text x="560" y="40" class="sm">order = 3: the most children</text><text x="560" y="56" class="sm">any node has is 3 (a and f)</text>
+</svg>
+<table>
+  <tr><th>Term</th><th>Meaning</th></tr>
+  <tr><td><b>Node</b></td><td>One item of the tree (holds data).</td></tr>
+  <tr><td><b>Edge</b></td><td>A connection between two nodes.</td></tr>
+  <tr><td><b>Root</b></td><td>The top node; the only node with no parent.</td></tr>
+  <tr><td><b>Leaf</b></td><td>A node with no children (bottom of the tree).</td></tr>
+  <tr><td><b>Parent / child</b></td><td>A node directly above / below another node.</td></tr>
+  <tr><td><b>Subtree</b></td><td>A node together with everything below it; itself a tree.</td></tr>
+  <tr><td><b>Order</b></td><td>The <b>maximum number of children</b> a node can have. (The example above has order 3.)</td></tr>
+</table>
+<p>Unlike stacks and queues (linear), a tree is a <b>hierarchy</b>: one parent can lead to several children.</p>
+
+<h2>3. Binary tree</h2>
+<div class="box"><b>Definition</b>A tree with an <b>order of two</b> (each node has at most 2 children). It is a finite set of elements partitioned into three subsets: the <b>root</b>, the <b>left subtree</b> and the <b>right subtree</b>, each of which is again a binary tree.</div>
+<svg viewBox="0 0 640 220" role="img" aria-label="A binary tree with its subtrees" class="dg">
+<line x1="320" y1="49" x2="200" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="440" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="140" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="260" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="320" cy="32" r="17" class="bx"/>
+<text x="320" y="37" text-anchor="middle" class="mono">a</text>
+<circle cx="200" cy="100" r="17" class="bx"/>
+<text x="200" y="105" text-anchor="middle" class="mono">b</text>
+<circle cx="440" cy="100" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="440" y="105" text-anchor="middle" class="mono">c</text>
+<circle cx="140" cy="170" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="140" y="175" text-anchor="middle" class="mono">d</text>
+<circle cx="260" cy="170" r="17" class="bx" style="stroke-width:2.6"/>
+<text x="260" y="175" text-anchor="middle" class="mono">e</text>
+<text x="348" y="36" text-anchor="start" class="sm">root</text>
+<text x="200" y="208" text-anchor="middle" class="sm">left subtree (again a binary tree)</text><text x="440" y="140" text-anchor="middle" class="sm">right subtree</text>
+</svg>
+
+<h2>4. Binary tree traversal</h2>
+<p><b>Traversal</b> means visiting each node of a binary tree <b>once and only once</b>, in a predetermined sequence, without missing any node. "Visit" means do something with the node (here: print its data). There are three standard orders. In each, "in <i>x</i>order" on a subtree means: repeat the same rule on that subtree.</p>
+<table>
+  <tr><th>Traversal</th><th>Steps</th><th>Remember</th></tr>
+  <tr><td><b>Preorder</b></td><td>1. Visit the root &middot; 2. Traverse the left subtree in preorder &middot; 3. Traverse the right subtree in preorder</td><td>Each node is visited <b>when it is first reached</b> (root first).</td></tr>
+  <tr><td><b>Inorder</b></td><td>1. Traverse the left subtree in inorder &middot; 2. Visit the root &middot; 3. Traverse the right subtree in inorder</td><td>A node is <b>not visited until its left subtree is done</b> (root in the middle).</td></tr>
+  <tr><td><b>Postorder</b></td><td>1. Traverse the left subtree in postorder &middot; 2. Traverse the right subtree in postorder &middot; 3. Visit the root</td><td>A node is <b>not visited until both subtrees are done</b> (root last).</td></tr>
+</table>
+<p>Example tree: root <b>a</b>; a's children <b>b</b> (left) and <b>e</b> (right); b's children <b>c</b> and <b>d</b>; e has one child <b>f</b> on its right.</p>
+<svg viewBox="0 0 640 215" role="img" aria-label="pre traversal" class="dg">
+<line x1="320" y1="49" x2="200" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="440" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="140" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="260" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="440" y1="117" x2="500" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="320" cy="32" r="17" class="bx"/>
+<text x="320" y="37" text-anchor="middle" class="mono">a</text>
+<circle cx="200" cy="100" r="17" class="bx"/>
+<text x="200" y="105" text-anchor="middle" class="mono">b</text>
+<circle cx="440" cy="100" r="17" class="bx"/>
+<text x="440" y="105" text-anchor="middle" class="mono">e</text>
+<circle cx="140" cy="170" r="17" class="bx"/>
+<text x="140" y="175" text-anchor="middle" class="mono">c</text>
+<circle cx="260" cy="170" r="17" class="bx"/>
+<text x="260" y="175" text-anchor="middle" class="mono">d</text>
+<circle cx="500" cy="170" r="17" class="bx"/>
+<text x="500" y="175" text-anchor="middle" class="mono">f</text>
+<text x="340" y="20" text-anchor="start" class="sm">1</text>
+<text x="220" y="88" text-anchor="start" class="sm">2</text>
+<text x="160" y="158" text-anchor="start" class="sm">3</text>
+<text x="280" y="158" text-anchor="start" class="sm">4</text>
+<text x="460" y="88" text-anchor="start" class="sm">5</text>
+<text x="520" y="158" text-anchor="start" class="sm">6</text>
+<text x="20" y="20" class="h">Preorder: visit root, left, right  &rarr;  a b c d e f</text><text x="20" y="206" class="sm">numbers beside the nodes = order of visit</text>
+</svg>
+<p><b>Preorder walk-through:</b> visit a. Go left to b: visit b. Go left to c: visit c (no children, go back up). Back at b, go right to d: visit d. Back at a, go right to e: visit e, then its left (none), then right f: visit f. Result: <b>a b c d e f</b>.</p>
+<svg viewBox="0 0 640 215" role="img" aria-label="in traversal" class="dg">
+<line x1="320" y1="49" x2="200" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="440" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="140" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="260" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="440" y1="117" x2="500" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="320" cy="32" r="17" class="bx"/>
+<text x="320" y="37" text-anchor="middle" class="mono">a</text>
+<circle cx="200" cy="100" r="17" class="bx"/>
+<text x="200" y="105" text-anchor="middle" class="mono">b</text>
+<circle cx="440" cy="100" r="17" class="bx"/>
+<text x="440" y="105" text-anchor="middle" class="mono">e</text>
+<circle cx="140" cy="170" r="17" class="bx"/>
+<text x="140" y="175" text-anchor="middle" class="mono">c</text>
+<circle cx="260" cy="170" r="17" class="bx"/>
+<text x="260" y="175" text-anchor="middle" class="mono">d</text>
+<circle cx="500" cy="170" r="17" class="bx"/>
+<text x="500" y="175" text-anchor="middle" class="mono">f</text>
+<text x="160" y="158" text-anchor="start" class="sm">1</text>
+<text x="220" y="88" text-anchor="start" class="sm">2</text>
+<text x="280" y="158" text-anchor="start" class="sm">3</text>
+<text x="340" y="20" text-anchor="start" class="sm">4</text>
+<text x="460" y="88" text-anchor="start" class="sm">5</text>
+<text x="520" y="158" text-anchor="start" class="sm">6</text>
+<text x="20" y="20" class="h">Inorder: left, visit root, right  &rarr;  c b d a e f</text><text x="20" y="206" class="sm">numbers beside the nodes = order of visit</text>
+</svg>
+<p><b>Inorder:</b> from a, keep going left until you cannot (the first step is always the left traversal): the leftmost node c is the first output. Then its parent b, then b's right subtree d, then root a, then e's left (none), e, and f. Result: <b>c b d a e f</b>.</p>
+<svg viewBox="0 0 640 215" role="img" aria-label="post traversal" class="dg">
+<line x1="320" y1="49" x2="200" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="440" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="140" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="260" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="440" y1="117" x2="500" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="320" cy="32" r="17" class="bx"/>
+<text x="320" y="37" text-anchor="middle" class="mono">a</text>
+<circle cx="200" cy="100" r="17" class="bx"/>
+<text x="200" y="105" text-anchor="middle" class="mono">b</text>
+<circle cx="440" cy="100" r="17" class="bx"/>
+<text x="440" y="105" text-anchor="middle" class="mono">e</text>
+<circle cx="140" cy="170" r="17" class="bx"/>
+<text x="140" y="175" text-anchor="middle" class="mono">c</text>
+<circle cx="260" cy="170" r="17" class="bx"/>
+<text x="260" y="175" text-anchor="middle" class="mono">d</text>
+<circle cx="500" cy="170" r="17" class="bx"/>
+<text x="500" y="175" text-anchor="middle" class="mono">f</text>
+<text x="160" y="158" text-anchor="start" class="sm">1</text>
+<text x="280" y="158" text-anchor="start" class="sm">2</text>
+<text x="220" y="88" text-anchor="start" class="sm">3</text>
+<text x="520" y="158" text-anchor="start" class="sm">4</text>
+<text x="460" y="88" text-anchor="start" class="sm">5</text>
+<text x="340" y="20" text-anchor="start" class="sm">6</text>
+<text x="20" y="20" class="h">Postorder: left, right, visit root  &rarr;  c d b f e a</text><text x="20" y="206" class="sm">numbers beside the nodes = order of visit</text>
+</svg>
+<p><b>Postorder:</b> c and d are output before their parent b; b's subtree is complete before we go right; f is output before e; the root a comes last. Result: <b>c d b f e a</b>.</p>
+
+<h2>5. Binary search tree (BST)</h2>
+<div class="box"><b>Definition</b>A binary tree in which (1) data in any node of the <b>left subtree is less than</b> that of the root, (2) data in any node of the <b>right subtree is greater than or equal to</b> that of the root, and (3) <b>each subtree is itself a binary search tree</b>.</div>
+<svg viewBox="0 0 640 275" role="img" aria-label="Binary search tree" class="dg">
+<line x1="320" y1="49" x2="200" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="440" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="130" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="270" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="130" y1="187" x2="90" y2="223" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="130" y1="187" x2="170" y2="223" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="320" cy="32" r="17" class="bx"/>
+<text x="320" y="37" text-anchor="middle" class="mono">70</text>
+<circle cx="200" cy="100" r="17" class="bx"/>
+<text x="200" y="105" text-anchor="middle" class="mono">50</text>
+<circle cx="440" cy="100" r="17" class="bx"/>
+<text x="440" y="105" text-anchor="middle" class="mono">80</text>
+<circle cx="130" cy="170" r="17" class="bx"/>
+<text x="130" y="175" text-anchor="middle" class="mono">30</text>
+<circle cx="270" cy="170" r="17" class="bx"/>
+<text x="270" y="175" text-anchor="middle" class="mono">60</text>
+<circle cx="90" cy="240" r="17" class="bx"/>
+<text x="90" y="245" text-anchor="middle" class="mono">20</text>
+<circle cx="170" cy="240" r="17" class="bx"/>
+<text x="170" y="245" text-anchor="middle" class="mono">40</text>
+<text x="470" y="200" class="sm">left subtree: all values &lt; 70</text><text x="470" y="218" class="sm">right subtree: all values &ge; 70</text><text x="470" y="236" class="sm">every subtree is itself a BST</text>
+</svg>
+<p>Duplicates (equal values) go to the <b>right</b>. <b>Inorder traversal of a BST visits the values in sorted order</b>: 20, 30, 40, 50, 60, 70, 80. So a BST gives a <b>sorting algorithm</b>.</p>
+
+<h3>Sorting with a BST</h3>
+<pre><code>FOR each incoming data item:
+   IF tree is empty
+      create a node and insert incoming data item
+   ELSE
+      start at the root
+      label:
+      IF incoming item &lt; item stored in current node
+         visit left child node of current node
+         IF there is no left child
+            insert incoming item as left child node
+         ELSE
+            go to label
+      ELSE
+         visit right child node of current node
+         IF there is no right child
+            insert incoming item as right child node
+         ELSE
+            go to label
+traverse tree in inorder          -&gt; the data come out sorted</code></pre>
+<p>The same rule written recursively (from the lecture's prototype question 3): <code>insert(number, node)</code>: if node is empty store number in it; else if number &lt; value in node insert into the left child; else insert into the right child.</p>
+<p><b>Worked example</b> (prototype question 3): insert 70, 50, 30, 80, 60, 40, 20.</p>
+<table>
+  <tr><th>Insert</th><th>Path</th><th>Result</th></tr>
+  <tr><td>70</td><td>tree empty</td><td>root</td></tr>
+  <tr><td>50</td><td>50 &lt; 70: left</td><td>left child of 70</td></tr>
+  <tr><td>30</td><td>&lt; 70 left; &lt; 50 left</td><td>left child of 50</td></tr>
+  <tr><td>80</td><td>&ge; 70: right</td><td>right child of 70</td></tr>
+  <tr><td>60</td><td>&lt; 70 left; 60 &ge; 50 right</td><td>right child of 50</td></tr>
+  <tr><td>40</td><td>&lt; 70, &lt; 50, 40 &ge; 30 right</td><td>right child of 30</td></tr>
+  <tr><td>20</td><td>&lt; 70, &lt; 50, &lt; 30 left</td><td>left child of 30</td></tr>
+</table>
+<p>This gives the tree drawn above. <b>Preorder:</b> 70, 50, 30, 20, 40, 60, 80. <b>Inorder:</b> 20, 30, 40, 50, 60, 70, 80. <b>Postorder:</b> 20, 40, 30, 60, 50, 80, 70.</p>
+
+<h2>6. Array-based tree</h2>
+<p>Store the tree in an array using index arithmetic instead of pointers:</p>
+<ul>
+  <li>The <b>root is at index 1</b> (index 0 is unused).</li>
+  <li>A node at index <b>n</b> has its <b>left child at 2n</b> and its <b>right child at 2n + 1</b> (so n is the parent of 2n and 2n + 1).</li>
+  <li>The value <b>0 means "empty slot"</b>, so 0 cannot be stored as data.</li>
+</ul>
+<svg viewBox="0 0 640 360" role="img" aria-label="Array-based tree" class="dg">
+<line x1="320" y1="49" x2="200" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="320" y1="49" x2="440" y2="83" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="130" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="200" y1="117" x2="270" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="130" y1="187" x2="90" y2="223" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="130" y1="187" x2="170" y2="223" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="320" cy="32" r="17" class="bx"/>
+<text x="320" y="37" text-anchor="middle" class="mono">70</text>
+<circle cx="200" cy="100" r="17" class="bx"/>
+<text x="200" y="105" text-anchor="middle" class="mono">50</text>
+<circle cx="440" cy="100" r="17" class="bx"/>
+<text x="440" y="105" text-anchor="middle" class="mono">80</text>
+<circle cx="130" cy="170" r="17" class="bx"/>
+<text x="130" y="175" text-anchor="middle" class="mono">30</text>
+<circle cx="270" cy="170" r="17" class="bx"/>
+<text x="270" y="175" text-anchor="middle" class="mono">60</text>
+<circle cx="90" cy="240" r="17" class="bx"/>
+<text x="90" y="245" text-anchor="middle" class="mono">20</text>
+<circle cx="170" cy="240" r="17" class="bx"/>
+<text x="170" y="245" text-anchor="middle" class="mono">40</text>
+<text x="342" y="22" text-anchor="start" class="sm">n=1</text>
+<text x="222" y="90" text-anchor="start" class="sm">n=2</text>
+<text x="462" y="90" text-anchor="start" class="sm">n=3</text>
+<text x="152" y="160" text-anchor="start" class="sm">n=4</text>
+<text x="292" y="160" text-anchor="start" class="sm">n=5</text>
+<text x="112" y="230" text-anchor="start" class="sm">n=8</text>
+<text x="192" y="230" text-anchor="start" class="sm">n=9</text>
+<text x="20" y="296" class="sm">array p (size 12):</text>
+<rect class="bx" x="20" y="304" width="50" height="28"/>
+<text x="45" y="323" text-anchor="middle" class="mono">0</text>
+<text x="45" y="346" text-anchor="middle" class="sm">0</text>
+<rect class="bx" x="70" y="304" width="50" height="28"/>
+<text x="95" y="323" text-anchor="middle" class="mono">70</text>
+<text x="95" y="346" text-anchor="middle" class="sm">1</text>
+<rect class="bx" x="120" y="304" width="50" height="28"/>
+<text x="145" y="323" text-anchor="middle" class="mono">50</text>
+<text x="145" y="346" text-anchor="middle" class="sm">2</text>
+<rect class="bx" x="170" y="304" width="50" height="28"/>
+<text x="195" y="323" text-anchor="middle" class="mono">80</text>
+<text x="195" y="346" text-anchor="middle" class="sm">3</text>
+<rect class="bx" x="220" y="304" width="50" height="28"/>
+<text x="245" y="323" text-anchor="middle" class="mono">30</text>
+<text x="245" y="346" text-anchor="middle" class="sm">4</text>
+<rect class="bx" x="270" y="304" width="50" height="28"/>
+<text x="295" y="323" text-anchor="middle" class="mono">60</text>
+<text x="295" y="346" text-anchor="middle" class="sm">5</text>
+<rect class="bx" x="320" y="304" width="50" height="28"/>
+<text x="345" y="323" text-anchor="middle" class="mono">0</text>
+<text x="345" y="346" text-anchor="middle" class="sm">6</text>
+<rect class="bx" x="370" y="304" width="50" height="28"/>
+<text x="395" y="323" text-anchor="middle" class="mono">0</text>
+<text x="395" y="346" text-anchor="middle" class="sm">7</text>
+<rect class="bx" x="420" y="304" width="50" height="28"/>
+<text x="445" y="323" text-anchor="middle" class="mono">20</text>
+<text x="445" y="346" text-anchor="middle" class="sm">8</text>
+<rect class="bx" x="470" y="304" width="50" height="28"/>
+<text x="495" y="323" text-anchor="middle" class="mono">40</text>
+<text x="495" y="346" text-anchor="middle" class="sm">9</text>
+<rect class="bx" x="520" y="304" width="50" height="28"/>
+<text x="545" y="323" text-anchor="middle" class="mono">0</text>
+<text x="545" y="346" text-anchor="middle" class="sm">10</text>
+<rect class="bx" x="570" y="304" width="50" height="28"/>
+<text x="595" y="323" text-anchor="middle" class="mono">0</text>
+<text x="595" y="346" text-anchor="middle" class="sm">11</text>
+</svg>
+<p>Check: 70 at n = 1; its children at 2 (50) and 3 (80); 50's children at 4 (30) and 5 (60); 30's children at 8 (20) and 9 (40). Cells 6, 7, 10, 11 stay 0 (empty).</p>
+
+<h3>Pseudocode</h3>
+<pre><code>global variables
+   p POINTER to DATATYPE, size INTEGER
+
+ALGORITHM create(VAL s INTEGER)
+1  size &larr; s
+2  p &larr; ALLOCATE MEMORY DATATYPE[size]
+3  i &larr; 0
+4  LOOP (i &lt; size)
+5     p[i] &larr; 0
+6     i &larr; i + 1
+7  END LOOP
+END create
+
+ALGORITHM destroy()
+1  RELEASE MEMORY[] p
+END destroy
+
+ALGORITHM insert(VAL d DATATYPE, VAL n INTEGER &larr; 1)
+1  IF (n &lt; size)
+2     IF (p[n] = 0)
+3        p[n] &larr; d
+4        RETURN true
+5     ELSE
+6        IF (d &lt; p[n])
+7           RETURN insert(d, 2n)
+8        ELSE
+9           RETURN insert(d, 2n + 1)
+10       END IF
+11    END IF
+12 ELSE
+13    RETURN false
+14 END IF
+END insert</code></pre>
+<p><code>n &larr; 1</code> in the header is a <b>default value</b>: calling <code>insert(d)</code> starts at the root. <b>How insert works:</b> if the slot is empty store there; otherwise go left (2n) when d is smaller, right (2n + 1) otherwise; if the index runs off the end of the array (n &ge; size) return false (the tree is "full" in that direction).</p>
+<p><b>Trace</b> for 70, 50, 80, 30, 20, 40, 60 (size 12):</p>
+<table>
+  <tr><th>Call</th><th>Steps</th><th>Stored</th></tr>
+  <tr><td>insert(70, 1)</td><td>1 &lt; size, p[1] = 0: empty</td><td>p[1] = 70</td></tr>
+  <tr><td>insert(50, 1)</td><td>p[1] &ne; 0; 50 &lt; 70 &rarr; insert(50, 2); p[2] = 0</td><td>p[2] = 50</td></tr>
+  <tr><td>insert(80, 1)</td><td>80 &lt; 70 false &rarr; insert(80, 3); empty</td><td>p[3] = 80</td></tr>
+  <tr><td>insert(30, 1)</td><td>&lt; 70 &rarr; (30, 2); &lt; 50 &rarr; (30, 4); empty</td><td>p[4] = 30</td></tr>
+  <tr><td>insert(20, 1)</td><td>(20, 2) &rarr; (20, 4) &rarr; 20 &lt; 30 &rarr; (20, 8); empty</td><td>p[8] = 20</td></tr>
+  <tr><td>insert(40, 1)</td><td>(40, 2) &rarr; (40, 4): 40 &lt; 30 false &rarr; (40, 9); empty</td><td>p[9] = 40</td></tr>
+  <tr><td>insert(60, 1)</td><td>(60, 2): 60 &lt; 50 false &rarr; (60, 5); empty</td><td>p[5] = 60</td></tr>
+</table>
+
+<h3>Traversals</h3>
+<pre><code>ALGORITHM traversePreorder(VAL n INTEGER &larr; 1)
+1  IF (n &lt; size)
+2     IF (p[n] &ne; 0)
+3        PRINT(p[n])
+4        traversePreorder(2n)
+5        traversePreorder(2n + 1)
+6     END IF
+7  END IF
+END traversePreorder
+
+ALGORITHM traverseInorder(VAL n INTEGER &larr; 1)
+1  IF (n &lt; size)
+2     IF (p[n] &ne; 0)
+3        traverseInorder(2n)
+4        PRINT(p[n])
+5        traverseInorder(2n + 1)
+6     END IF
+7  END IF
+END traverseInorder
+
+ALGORITHM traversePostorder(VAL n INTEGER &larr; 1)
+1  IF (n &lt; size)
+2     IF (p[n] &ne; 0)
+3        traversePostorder(2n)
+4        traversePostorder(2n + 1)
+5        PRINT(p[n])
+6     END IF
+7  END IF
+END traversePostorder</code></pre>
+<p>The only difference between the three is <b>where the PRINT line sits</b>: before the two recursive calls (pre), between them (in) or after them (post). The checks <code>n &lt; size</code> and <code>p[n] &ne; 0</code> are the base cases: past the end of the array, or an empty slot, means "no node here": return without doing anything.</p>
+<p><b>Inorder trace</b> (size 12, tree above): traverseInorder(1) &rarr; (2) &rarr; (4) &rarr; (8): its children 16 and 17 are beyond the array (return); print <b>20</b>; back at 4 print <b>30</b>, then (9): print <b>40</b>; back at 2 print <b>50</b>, then (5): print <b>60</b>; back at 1 print <b>70</b>, then (3): left (6) is empty, print <b>80</b>, right (7) empty. Output: 20, 30, 40, 50, 60, 70, 80.</p>
+
+<h3>Test algorithm</h3>
+<pre><code>ALGORITHM test()
+1  create(treeSize)
+2  READ(data)
+3  LOOP (data &ne; 0 AND insert(data))
+4     READ(data)
+5  END LOOP
+6  traverseInorder()
+7  destroy()
+END test</code></pre>
+<p>Reads numbers until 0 (the end marker, which is why 0 cannot be data) or until an insert fails, then prints them sorted.</p>
+
+<h3>C++ implementation</h3>
+<pre><code>//ArrayTree.h
+#include &lt;iostream&gt;
+class tree
+{
+    public:
+        tree(int);                       // create()
+        ~tree();                         // destroy()
+        int insert(int, int = 1);        // second parameter has default value 1
+        void traversePreorder(int = 1);
+        void traverseInorder(int = 1);
+        void traversePostorder(int = 1);
+    private:
+        int size;
+        int *p;
+};
+
+tree::tree(int s)
+{
+    size = s;
+    p = new int[size];                   // allocates memory
+    for (int i = 0; i &lt; size; i++)
+        p[i] = 0;
+}
+tree::~tree() { delete[] p; }            // releases memory
+
+int tree::insert(int d, int n)
+{
+    if (n &lt; size)
+        if (p[n] == 0)
+        {
+            p[n] = d;
+            return 1;
+        }
+        else
+            if (d &lt; p[n])
+                return insert(d, 2 * n);
+            else
+                return insert(d, 2 * n + 1);
+    else
+        return 0;
+}
+
+void tree::traversePreorder(int n)
+{
+    if (n &lt; size)
+        if (p[n] != 0)
+        {
+            std::cout &lt;&lt; p[n] &lt;&lt; endl;
+            traversePreorder(2 * n);
+            traversePreorder(2 * n + 1);
+        }
+}
+void tree::traverseInorder(int n)
+{
+    if (n &lt; size)
+        if (p[n] != 0)
+        {
+            traverseInorder(2 * n);
+            std::cout &lt;&lt; p[n] &lt;&lt; endl;
+            traverseInorder(2 * n + 1);
+        }
+}
+void tree::traversePostorder(int n)
+{
+    if (n &lt; size)
+        if (p[n] != 0)
+        {
+            traversePostorder(2 * n);
+            traversePostorder(2 * n + 1);
+            std::cout &lt;&lt; p[n] &lt;&lt; endl;
+        }
+}</code></pre>
+<pre><code>//TestArrayTree.cpp
+#include &lt;iostream&gt;
+#include "ArrayTree.h"
+int main()
+{
+    const int treeSize = 10;
+    tree t(treeSize);
+    int data;
+    std::cin &gt;&gt; data;
+    while (data != 0 &amp;&amp; t.insert(data))
+        std::cin &gt;&gt; data;
+    std::cout &lt;&lt; endl;
+    t.traverseInorder();
+    return 0;
+}</code></pre>
+<p>The declaration <code>insert(int, int = 1)</code> gives the second parameter a <b>default argument</b> (Lesson 1): <code>t.insert(data)</code> means <code>t.insert(data, 1)</code>. The default is written only in the header (declaration), not again in the definition.</p>
+
+<h3>The problem with array-based trees</h3>
+<table>
+  <tr><th>Height h</th><th>Nodes on the last level</th><th>Total nodes (full tree)</th></tr>
+  <tr><td>0</td><td>1</td><td>1 = 2<sup>1</sup> &minus; 1</td></tr>
+  <tr><td>1</td><td>2</td><td>1 + 2 = 3 = 2<sup>2</sup> &minus; 1</td></tr>
+  <tr><td>2</td><td>4</td><td>1 + 2 + 4 = 7 = 2<sup>3</sup> &minus; 1</td></tr>
+  <tr><td>3</td><td>8</td><td>1 + 2 + 4 + 8 = 15 = 2<sup>4</sup> &minus; 1</td></tr>
+</table>
+<p>A tree of height h can hold up to <b>2<sup>h+1</sup> &minus; 1</b> nodes, so the array must have <b>2<sup>h+1</sup> elements</b> (index 0 unused). Example: 4 levels need 16 array elements for 15 nodes.</p>
+<ul>
+  <li>If the tree is <b>unbalanced</b> and its height grows, the wasted memory grows <b>dramatically</b>. For example a chain where each node is the right child of the previous one occupies indexes 1, 3, 7, 15, 31: five nodes need an array of 32 elements.</li>
+  <li><b>Disadvantages:</b> it <b>cannot grow</b>, it <b>cannot shrink</b>, and the waste can be dramatic.</li>
+  <li>It remains a valid choice when the tree is balanced, or when its maximum height is known and does not change.</li>
+  <li><b>Solution:</b> a <b>linked list-based tree</b>: it can grow and shrink. If you do not know the height, or the tree is not balanced, use the linked version.</li>
+</ul>
+
+<h2>7. Linked list-based tree</h2>
+<p>Each node stores its data and the <b>addresses of its two children</b> (null when a child is missing). A single pointer <code>root</code> holds the address of the top node. This is flexible and memory efficient.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="Linked tree node" class="dg">
+<text x="20" y="20" class="h">One node of a linked list-based tree</text>
+<rect class="bx" x="40" y="35" width="80" height="34"/><text x="80" y="57" text-anchor="middle" class="mono">left</text>
+<rect class="bx" x="120" y="35" width="80" height="34"/><text x="160" y="57" text-anchor="middle" class="mono">data</text>
+<rect class="bx" x="200" y="35" width="80" height="34"/><text x="240" y="57" text-anchor="middle" class="mono">right</text>
+<text x="80" y="92" text-anchor="middle" class="sm">address of left child</text><text x="240" y="92" text-anchor="middle" class="sm">address of right child</text>
+<text x="360" y="52" class="sm">null (0) means no child</text>
+<text x="360" y="72" class="sm">root pointer holds the address of the top node</text>
+</svg>
+
+<h3>Pseudocode</h3>
+<pre><code>TYPE node
+   data DATATYPE
+   left POINTER to node
+   right POINTER to node
+END node
+global variables
+   root POINTER to node
+
+ALGORITHM create()
+1  root &larr; null
+END create
+
+ALGORITHM destroy()
+1  removeNode(root)
+END destroy
+
+ALGORITHM removeNode(VAL p POINTER to node)
+1  IF (p &ne; null)
+2     removeNode(p-&gt;left)
+3     removeNode(p-&gt;right)
+4     RELEASE MEMORY p
+5  END IF
+END removeNode
+
+ALGORITHM insert(VAL d DATATYPE)
+1  addNode(root, d)
+END insert
+
+ALGORITHM addNode(REF p POINTER to node, VAL d DATATYPE)
+1  IF (p = null)
+2     p &larr; ALLOCATE MEMORY node
+3     p-&gt;data &larr; d
+4     p-&gt;left &larr; null
+5     p-&gt;right &larr; null
+6  ELSE
+7     IF (d &lt; p-&gt;data)
+8        addNode(p-&gt;left, d)
+9     ELSE
+10       addNode(p-&gt;right, d)
+11    END IF
+12 END IF
+END addNode</code></pre>
+<ul>
+  <li><b>addNode</b> walks down: if the current link is null, create the node <i>here</i>; otherwise go left for smaller values, right otherwise. <code>p</code> is a <b>REF</b> parameter, so when addNode creates a node and assigns it to <code>p</code> the assignment changes the actual pointer in the tree (the <code>root</code>, or some node's <code>left</code>/<code>right</code>).</li>
+  <li><b>removeNode</b> frees the children <i>before</i> the node itself (otherwise their addresses would be lost): a postorder-style deletion. destroy calls it on the root.</li>
+</ul>
+<p><b>Trace</b> of inserting 70, 50, 80, 30, 20, 40, 60: addNode(root, 70): root is null, so a node holding 70 is created and root points to it. addNode(root, 50): root not null; 50 &lt; 70, addNode(left of 70, 50): null, create. 80: 80 &ge; 70, right, create. 30: left to 50, 30 &lt; 50, left of 50, create. 20: 70 &rarr; 50 &rarr; 30 &rarr; left of 30, create. 40: 70 &rarr; 50 &rarr; 30, 40 &ge; 30 so right of 30, create. 60: 70 &rarr; 50, 60 &ge; 50 so right of 50, create. The result is the same BST as before (70; 50 and 80; 30 and 60; 20 and 40), now built from linked nodes.</p>
+
+<h3>Traversals</h3>
+<pre><code>ALGORITHM traverse(VAL n INTEGER)
+1  IF (n = 1)
+2     traversePreorder(root)
+3  ELSE
+4     IF (n = 2)
+5        traverseInorder(root)
+6     ELSE
+7        IF (n = 3)
+8           traversePostorder(root)
+9        END IF
+10    END IF
+11 END IF
+END traverse
+
+ALGORITHM traversePreorder(VAL p POINTER to node)
+1  IF (p &ne; null)
+2     PRINT(p-&gt;data)
+3     traversePreorder(p-&gt;left)
+4     traversePreorder(p-&gt;right)
+5  END IF
+END traversePreorder
+
+ALGORITHM traverseInorder(VAL p POINTER to node)
+1  IF (p &ne; null)
+2     traverseInorder(p-&gt;left)
+3     PRINT(p-&gt;data)
+4     traverseInorder(p-&gt;right)
+5  END IF
+END traverseInorder
+
+ALGORITHM traversePostorder(VAL p POINTER to node)
+1  IF (p &ne; null)
+2     traversePostorder(p-&gt;left)
+3     traversePostorder(p-&gt;right)
+4     PRINT(p-&gt;data)
+5  END IF
+END traversePostorder</code></pre>
+<p><code>traverse(n)</code> is a menu: 1 = preorder, 2 = inorder, 3 = postorder. The base case is <code>p = null</code> (no node: do nothing). Same pattern as the array version, but "go left / go right" follows pointers instead of computing 2n and 2n + 1.</p>
+
+<h3>Test algorithm</h3>
+<pre><code>ALGORITHM test()
+1  create()
+2  READ(data)
+3  LOOP (data &ne; 0)
+4     insert(data)
+5     READ(data)
+6  END LOOP
+7  traverse(2)
+8  destroy()
+END test</code></pre>
+
+<h3>C++ implementation</h3>
+<pre><code>//LinkedListTree.h
+#include &lt;iostream&gt;
+struct node
+{
+    int data;
+    node *left;
+    node *right;
+};
+class tree
+{
+    public:
+        tree();                          // create()
+        ~tree();                         // destroy()
+        void insert(int);
+        void traverse(int);
+    private:
+        void removeNode(node *);
+        void addNode(node *&amp;, int);      // reference to a pointer
+        void traversePreorder(node *);
+        void traverseInorder(node *);
+        void traversePostorder(node *);
+        node *root;
+};
+
+tree::tree() { root = 0; }               // sets to null
+tree::~tree() { removeNode(root); }
+void tree::removeNode(node *p)
+{
+    if (p)
+    {
+        removeNode(p-&gt;left);
+        removeNode(p-&gt;right);
+        delete p;
+    }
+}
+void tree::insert(int d) { addNode(root, d); }
+void tree::addNode(node *&amp;p, int d)
+{
+    if (p == 0)
+    {
+        p = new node;
+        p-&gt;data = d;
+        p-&gt;left = 0;
+        p-&gt;right = 0;
+    }
+    else
+        if (d &lt; p-&gt;data)
+            addNode(p-&gt;left, d);
+        else
+            addNode(p-&gt;right, d);
+}
+void tree::traverse(int n)
+{
+    switch (n)
+    {
+        case 1: traversePreorder(root);  break;
+        case 2: traverseInorder(root);   break;
+        case 3: traversePostorder(root); break;
+    }
+}
+void tree::traversePreorder(node *p)
+{
+    if (p != 0)
+    {
+        std::cout &lt;&lt; p-&gt;data &lt;&lt; endl;
+        traversePreorder(p-&gt;left);
+        traversePreorder(p-&gt;right);
+    }
+}
+void tree::traverseInorder(node *p)
+{
+    if (p != 0)
+    {
+        traverseInorder(p-&gt;left);
+        std::cout &lt;&lt; p-&gt;data &lt;&lt; endl;
+        traverseInorder(p-&gt;right);
+    }
+}
+void tree::traversePostorder(node *p)
+{
+    if (p != 0)
+    {
+        traversePostorder(p-&gt;left);
+        traversePostorder(p-&gt;right);
+        std::cout &lt;&lt; p-&gt;data &lt;&lt; endl;
+    }
+}</code></pre>
+<table>
+  <tr><th>Code</th><th>Meaning</th></tr>
+  <tr><td><code>node *&amp;p</code></td><td>A <b>reference to a pointer</b> (read right to left: p is a reference to a node pointer). The function can change the caller's pointer, so <code>p = new node;</code> really attaches the new node to the tree. This is the REF of the pseudocode.</td></tr>
+  <tr><td><code>if (p)</code> / <code>if (p != 0)</code></td><td>Non-null test: a pointer is "true" when it is not 0.</td></tr>
+  <tr><td><code>switch (n) { case 1: ... break; }</code></td><td>Choose the branch matching n; <code>break</code> stops execution falling into the next case.</td></tr>
+</table>
+<pre><code>//TestLinkedListTree.cpp
+#include &lt;iostream&gt;
+#include "LinkedListTree.h"
+int main()
+{
+    tree t;
+    int data;
+    std::cin &gt;&gt; data;
+    while (data != 0)
+    {
+        t.insert(data);
+        std::cin &gt;&gt; data;
+    }
+    std::cout &lt;&lt; endl;
+    t.traverse(2);
+    return 0;
+}</code></pre>
+
+<h3>Array-based vs linked list-based tree</h3>
+<table>
+  <tr><th></th><th>Array-based</th><th>Linked list-based</th></tr>
+  <tr><td>Child lookup</td><td>Computed: 2n and 2n + 1</td><td>Follow the left / right pointer</td></tr>
+  <tr><td>Memory</td><td>Needs 2<sup>h+1</sup> slots; wastes a lot if unbalanced</td><td>Only the nodes that exist (plus two pointers each)</td></tr>
+  <tr><td>Grow / shrink</td><td>No</td><td>Yes</td></tr>
+  <tr><td>Empty marker</td><td>0 in the slot (so 0 cannot be stored)</td><td>null pointer</td></tr>
+  <tr><td>Good when</td><td>Balanced tree, known maximum height</td><td>Unknown height or unbalanced; data inserted and removed often</td></tr>
+</table>
+<p>Cost of insert / search in a BST: proportional to the tree's height: about log n if the tree is balanced, up to n if it degenerates into a chain.</p>
+
+<h2>8. Tree applications</h2>
+<table>
+  <tr><th>Application</th><th>Explanation</th></tr>
+  <tr><td>Represent hierarchically related data</td><td>For example maintaining folders and files; a land registry.</td></tr>
+  <tr><td>Represent mathematical expressions</td><td>Called <b>expression trees</b>: every expression divides into operands and an operator. The <b>parent node is the operator</b> and the <b>child nodes are operands</b> (leaves are operands).</td></tr>
+  <tr><td>Support data compression and encoding</td><td>Codes can be organised as paths in a tree.</td></tr>
+  <tr><td>Efficiently search large dynamic sets of data</td><td>See below.</td></tr>
+</table>
+<svg viewBox="0 0 640 230" role="img" aria-label="Expression trees" class="dg">
+<line x1="150" y1="67" x2="100" y2="103" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="150" y1="67" x2="200" y2="103" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="150" cy="50" r="17" class="bx"/>
+<text x="150" y="55" text-anchor="middle" class="mono">+</text>
+<circle cx="100" cy="120" r="17" class="bx"/>
+<text x="100" y="125" text-anchor="middle" class="mono">3</text>
+<circle cx="200" cy="120" r="17" class="bx"/>
+<text x="200" y="125" text-anchor="middle" class="mono">5</text>
+
+<line x1="470" y1="57" x2="410" y2="88" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="470" y1="57" x2="530" y2="88" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="530" y1="122" x2="490" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<line x1="530" y1="122" x2="570" y2="153" stroke="var(--fg)" stroke-width="1.4"/>
+<circle cx="470" cy="40" r="17" class="bx"/>
+<text x="470" y="45" text-anchor="middle" class="mono">+</text>
+<circle cx="410" cy="105" r="17" class="bx"/>
+<text x="410" y="110" text-anchor="middle" class="mono">3</text>
+<circle cx="530" cy="105" r="17" class="bx"/>
+<text x="530" y="110" text-anchor="middle" class="mono">&times;</text>
+<circle cx="490" cy="170" r="17" class="bx"/>
+<text x="490" y="175" text-anchor="middle" class="mono">5</text>
+<circle cx="570" cy="170" r="17" class="bx"/>
+<text x="570" y="175" text-anchor="middle" class="mono">2</text>
+
+<text x="150" y="205" text-anchor="middle" class="sm">3 + 5</text><text x="490" y="215" text-anchor="middle" class="sm">3 + 5 &times; 2</text></svg>
+<p>In <code>3 + 5 &times; 2</code> the multiplication sits <b>below</b> the addition because it is done first. Connection with Lesson 6: traversing an expression tree gives the three notations. For the right-hand tree: <b>inorder</b> 3 + 5 &times; 2 (the usual infix form), <b>preorder</b> + 3 &times; 5 2 (prefix), <b>postorder</b> 3 5 2 &times; + (postfix, which the stack evaluator of Lesson 6 can compute: 5 &times; 2 = 10, 3 + 10 = 13).</p>
+
+<h3>Why trees search dynamic data efficiently</h3>
+<ul>
+  <li><b>Binary search</b> on an array needs the array to be <b>sorted</b>. If data is frequently inserted or deleted, every change forces shifting many elements to keep the array sorted: not efficient.</li>
+  <li>In a <b>linked list</b>, insertion and deletion are efficient (only a few addresses change), but <b>searching</b> a linked list is not (you must walk it node by node).</li>
+  <li>A <b>linked list-based binary search tree</b> gets both: inserting or removing data only means <b>changing addresses</b> (very efficient), and searching is quick because each comparison discards a whole subtree. In arrays all elements have to shift for very small changes.</li>
+</ul>
+
+<div class="box"><b>Key takeaways</b>
+Tree = nodes joined by edges; root, leaves, subtrees; order = max children. Binary tree: order 2. Traversals differ only in where the root is visited: pre (root, L, R), in (L, root, R), post (L, R, root). BST: left &lt; root &le; right, every subtree a BST; inorder gives sorted data. Array tree: root at 1, children 2n and 2n + 1, 0 = empty, wastes memory if unbalanced. Linked tree: node with data, left, right; root pointer; recursive addNode with a REF pointer.</div>
+
+<p class="sm" style="color:var(--muted)">Recommended reading from the slides: Gilberg and Forouzan, <i>Data Structures: A Pseudocode Approach with C++</i>, Chapter 7, pp. 308&ndash;310, 322&ndash;324, 327&ndash;330, 339&ndash;352.</p>

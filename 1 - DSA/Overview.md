@@ -39,4 +39,11 @@ Algorithms and programs, correctness and efficiency of an algorithm, space and t
 ### Recommended References (`Recommnded References/`)
 - `Data Structures, Algorithms and Applications in C++.pdf` (Sartaj Sahni)
 - `Data Structures - A Pseudocode Approach with C.pdf` (Forouzan & Gilberg)
-- [Sweden Education Shift - From Digital Learning to Pen and Paper](file:///c:/Users/jthar/OneDrive/Documents/UOK/Exams/Y2S2/DSA/Recommnded%20References/Sweden%20Education%20Shift%20-%20From%20Digital%20Learning%20to%20Pen%20and%20Paper.md)
+- [Sweden Education Shift - From Digital Learning to Pen and Paper](Recommnded%20References/Sweden%20Education%20Shift%20-%20From%20Digital%20Learning%20to%20Pen%20and%20Paper.md)
+
+---
+
+## Study Guides (`Study Guides/`)
+Self-contained HTML notes per lesson (explained notes, practice questions, short revision note). Open `Study Guides/index.html` to browse all 8 lessons.
+- Sources used: lecture slides, the two sets of handwritten peer notes (`Peer Notes/`, with Markdown transcriptions for reference) and the prototype questions.
+- `Study Guides/_src/` holds the content files and `build.py` that generate lessons 2-8 (see its docstring).
