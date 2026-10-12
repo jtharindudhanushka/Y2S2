@@ -1,0 +1,24 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Conway's Law (1968)</td><td>Organisations produce designs that copy their communication structures. Boundaries appear where communication is weakest. Cross-functional capability-owning teams naturally produce microservices.</td></tr>
+  <tr><td>N-tier</td><td>Presentation, business logic, data access, database; dependencies point downward only.</td></tr>
+  <tr><td>Server layers</td><td>Controller (HTTP, validation, status codes) &rarr; Service (rules) &rarr; Repository (SQL only). Never backwards, never skipping a layer. Rule in one place.</td></tr>
+  <tr><td>Folders</td><td>Package by layer vs by feature (feature usually wins for group projects).</td></tr>
+  <tr><td>HTTP request / response</td><td>Method, URL, headers (auth, format), body; response status + body.</td></tr>
+  <tr><td>REST</td><td>Nouns in URL, verbs in method. GET list/read; POST create (not repeatable); PUT replace; PATCH partial; DELETE remove (repeatable). Idempotency: double POST creates two.</td></tr>
+  <tr><td>Status codes</td><td>2xx worked (200, 201, 204); 4xx client error (400, 401, 403, 404); 5xx server error (500, 503). Don't return 200 with an error body.</td></tr>
+  <tr><td>Monolith</td><td>One app, one deployment, one DB. Simple to build, deploy, debug; one-DB transactions. Scale and deploy together; coupling can creep in.</td></tr>
+  <tr><td>Modular monolith</td><td>One deployment with clean internal boundaries: where a student project should live.</td></tr>
+  <tr><td>Microservices</td><td>Small independently deployable services, each owning one business capability and its data, talking over the network, one team end to end. Fail any of five properties = distributed monolith.</td></tr>
+  <tr><td>Forces to split</td><td>Release traffic jam; uneven load; blast radius; team autonomy (3 of 4 are people problems).</td></tr>
+  <tr><td>Do you need them?</td><td>Need: teams blocking releases, 10x scaling for one part, different tech, 24/7 ops capability, stable boundaries. Don't: one small team, changing domain, no ops, no users yet, "big companies do it".</td></tr>
+  <tr><td>CampusEats vs IslandWide</td><td>Same checklist, opposite verdicts: modular monolith vs microservices. No driver, no service. Merge where boundaries cost more than they earn (6 to 4 deployments).</td></tr>
+  <tr><td>Network costs</td><td>Network fails; no shared transaction (eventual consistency); operational weight; boundaries permanent. Six challenges: debugging, testing, consistency, API versioning, operations, local development.</td></tr>
+  <tr><td>Return trip</td><td>Prime Video 2023 (back to a monolith, 90 % cost cut); Segment 2018 (about 140 services collapsed). Fowler: don't start with microservices.</td></tr>
+  <tr><td>5 patterns</td><td>API gateway, database per service, service discovery, circuit breaker, async messaging.</td></tr>
+  <tr><td>Sync vs async</td><td>Ask: is anyone waiting? Sync (REST / gRPC) when the answer is needed now; async (events via broker) for notifications, receipts, analytics.</td></tr>
+  <tr><td>Orchestration vs choreography</td><td>Orchestrate money and critical workflows (conductor, one failure owner); choreograph broadcasts. Saga = distributed workflow pattern.</td></tr>
+  <tr><td>Sizing</td><td>Capability-sized, not code-sized. Avoid nano-services and distributed monoliths. Acid test: deploy alone on a Tuesday without a meeting.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>"Monolith or microservices for this system?" Answer with the checklist (team, load, domain stability, ops, deploy independence), give the verdict (often modular monolith for small teams) and name the costs you accept.</div>

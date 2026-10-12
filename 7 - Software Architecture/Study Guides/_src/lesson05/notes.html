@@ -1,0 +1,231 @@
+<p class="sm" style="color:var(--muted)">Source: the guest session <i>From Problem to System Design</i>, section 5 (Architecture: monolith to microservices).</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain Conway's Law and how team structure shapes architecture</li>
+  <li>Describe N-tier layering and the controller &rarr; service &rarr; repository dependency rule</li>
+  <li>Describe a request / response, REST conventions and status codes</li>
+  <li>Compare the monolith, the modular monolith and microservices; decide whether microservices are needed</li>
+  <li>Explain the costs of microservices and five microservice patterns; sync vs async; orchestration vs choreography</li>
+</ul>
+
+<h2>1. People first: how organisations are structured</h2>
+<p>Traditionally organisations form <b>functional silos</b>: a BA team, a UI/UX team, a backend team and a DB team, each with its own manager, backlog and vocabulary. Each is excellent at one specialty, and <b>every feature needs all four</b>.</p>
+<h3>N-tier architecture</h3>
+<svg viewBox="0 0 640 170" role="img" aria-label="N-tier layers" class="dg">
+  <rect class="bx" x="170" y="10" width="300" height="32" rx="6"/><text x="320" y="31" text-anchor="middle" class="h">Presentation: screens, pages, apps</text>
+  <path class="ar" d="M320 42 V52"/>
+  <rect class="bx" x="170" y="52" width="300" height="32" rx="6"/><text x="320" y="73" text-anchor="middle" class="h">Business logic: the rules of the system</text>
+  <path class="ar" d="M320 84 V94"/>
+  <rect class="bx" x="170" y="94" width="300" height="32" rx="6"/><text x="320" y="115" text-anchor="middle" class="h">Data access: queries, persistence</text>
+  <path class="ar" d="M320 126 V136"/>
+  <rect class="bx" x="170" y="136" width="300" height="30" rx="6"/><text x="320" y="156" text-anchor="middle" class="h">Database: single source of truth</text>
+  <text x="130" y="95" text-anchor="end" class="sm">dependencies</text><text x="130" y="110" text-anchor="end" class="sm">point downward only</text>
+</svg>
+<p>One style among many, common wherever teams specialise by function. Not a law of nature.</p>
+<h3>Conway's Law (1968)</h3>
+<div class="box"><b>"Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations."</b>(Melvin E. Conway, <i>How Do Committees Invent?</i>, Datamation, 1968.) System boundaries appear where communication is weakest: a UI team, a backend team and a DB team talking through tickets and hand-offs produce a UI, a backend and a database as separate pieces. <b>Choose your team structure like you choose your architecture.</b></div>
+<p><b>The modern counter-move:</b> <b>cross-functional teams own business capabilities</b>: Team A owns Ordering (backend, frontend, QA, domain knowledge) and Team B owns Payments; each capability is independently owned, built and shipped. Organisational structure can influence architectural structure. <b>Microservices are not a cure for silos; they are what capability-owning teams naturally produce.</b></p>
+
+<h2>2. Inside the server: three layers, one direction</h2>
+<table>
+  <tr><th>Layer</th><th>Does</th><th>Knows</th></tr>
+  <tr><td>1 <b>Controller</b></td><td>Receives HTTP, validates input, returns status codes. This is where the API lives.</td><td>HTTP. Nothing about SQL.</td></tr>
+  <tr><td>2 <b>Service</b></td><td>The rules of the system ("a student cannot join a full course").</td><td>Neither HTTP nor SQL.</td></tr>
+  <tr><td>3 <b>Repository</b></td><td>Reads and writes the database. The only place SQL appears.</td><td>SQL. Nothing about HTTP.</td></tr>
+</table>
+<p><b>The dependency rule:</b> arrows point one way only. Controllers call services; services call repositories; never backwards and never skipping a layer. The UI never touches the database. This is single responsibility and dependency inversion applied at project scale.</p>
+<h3>One request, end to end</h3>
+<ol>
+  <li>Browser sends <code>POST /courses/42/registrations</code>.</li>
+  <li>The framework routes it to the registration controller.</li>
+  <li>The controller reads the body and calls the service.</li>
+  <li>The service applies the rule: is the course full?</li>
+  <li>The repository inserts a row into the database.</li>
+  <li>The service returns the new registration object.</li>
+  <li>The controller replies <code>201 Created</code> with JSON.</li>
+</ol>
+<p>The rule at step 4 lives in <b>exactly one place</b>: it works the same whether the request came from a browser, a mobile app, a command-line tool or an automated test. That is the whole payoff of layering.</p>
+<h3>Day-one decision: what folders do I create?</h3>
+<table>
+  <tr><th>Package by layer</th><th>Package by feature</th></tr>
+  <tr><td><code>controllers/ services/ repositories/ models/ config/</code></td><td><code>registration/ (controller, service, repository)  courses/  shared/</code></td></tr>
+</table>
+<p>By feature usually wins for group projects (one teammate owns a folder). Either is fine; <b>no structure is the only wrong answer</b>.</p>
+
+<h2>3. How systems talk: client and server, HTTP, REST</h2>
+<svg viewBox="0 0 640 90" role="img" aria-label="Client server database" class="dg">
+  <rect class="bx" x="20" y="20" width="150" height="50" rx="8"/><text x="95" y="42" text-anchor="middle" class="h">Client</text><text x="95" y="58" text-anchor="middle" class="sm">browser / mobile app</text>
+  <path class="ar" d="M170 35 H250"/><text x="210" y="28" text-anchor="middle" class="sm">request</text><path class="ar" d="M250 58 H170"/><text x="210" y="74" text-anchor="middle" class="sm">response</text>
+  <rect class="bx" x="250" y="20" width="170" height="50" rx="8"/><text x="335" y="42" text-anchor="middle" class="h">Server</text><text x="335" y="58" text-anchor="middle" class="sm">rules, security, validation</text>
+  <path class="ar" d="M420 45 H480"/>
+  <rect class="bx" x="480" y="20" width="140" height="50" rx="8"/><text x="550" y="42" text-anchor="middle" class="h">Database</text><text x="550" y="58" text-anchor="middle" class="sm">single source of truth</text>
+</svg>
+<p><b>Why split?</b> Many clients share one server; rules and data live in one trusted place; each side is built and deployed separately. The catch: <b>the network between them is now part of your design</b> and will "charge us for everything".</p>
+<h3>Anatomy of a request and a response</h3>
+<pre><code>POST /courses/42/registrations HTTP/1.1          HTTP/1.1 201 Created
+Host: api.campus.lk                              Content-Type: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOi...              { "id": 991, "studentId": 7, "courseId": 42 }
+
+{ "studentId": 7 }</code></pre>
+<table>
+  <tr><th>Part</th><th>Method</th><th>URL</th><th>Headers</th><th>Body</th><th>Status</th></tr>
+  <tr><td>Meaning</td><td>what you want to do</td><td>which resource</td><td>who you are, what format</td><td>the data itself</td><td>what happened</td></tr>
+</table>
+<h3>REST: resources are nouns, verbs are already provided</h3>
+<table>
+  <tr><th>Verb</th><th>URL</th><th>Meaning</th><th>Retry safe?</th></tr>
+  <tr><td>GET</td><td>/courses</td><td>List all courses</td><td>Safe, repeatable</td></tr>
+  <tr><td>GET</td><td>/courses/42</td><td>Read one course</td><td>Safe, repeatable</td></tr>
+  <tr><td>POST</td><td>/courses/42/registrations</td><td>Create a registration</td><td><b>Not repeatable</b></td></tr>
+  <tr><td>PUT</td><td>/students/7</td><td>Replace a student record</td><td>Repeatable</td></tr>
+  <tr><td>PATCH</td><td>/students/7</td><td>Update part of a student</td><td>Repeatable</td></tr>
+  <tr><td>DELETE</td><td>/registrations/991</td><td>Remove a registration</td><td>Repeatable</td></tr>
+</table>
+<p><b>Idempotency in one line:</b> a double click on POST creates two registrations; on PUT or DELETE it does not.</p>
+<table>
+  <tr><th>Smell</th><th>Conventional</th></tr>
+  <tr><td><code>GET /getCourse?id=42</code></td><td><code>GET /courses/42</code></td></tr>
+  <tr><td><code>POST /createRegistration</code></td><td><code>POST /courses/42/registrations</code></td></tr>
+  <tr><td><code>POST /deleteStudentById</code></td><td><code>DELETE /students/7</code></td></tr>
+  <tr><td><code>GET /updateCourseName</code></td><td><code>PATCH /courses/42</code></td></tr>
+</table>
+<p><b>Nouns in the URL, verbs in the method.</b> REST is a set of conventions, not a technology; its value is that your teammate can guess your endpoint on the first try.</p>
+<table>
+  <tr><th>2xx: it worked</th><th>4xx: you messed up</th><th>5xx: we messed up</th></tr>
+  <tr><td>200 OK<br>201 Created<br>204 No Content</td><td>400 Bad Request<br>401 Unauthenticated<br>403 Forbidden<br>404 Not Found</td><td>500 Internal Error<br>503 Unavailable</td></tr>
+</table>
+<p>Returning <code>200</code> with an error message inside the body is the most common API mistake students make.</p>
+
+<h2>4. Style 1: the monolith</h2>
+<svg viewBox="0 0 640 100" role="img" aria-label="Monolith" class="dg">
+  <rect class="bx" x="170" y="8" width="300" height="52" rx="8"/><text x="320" y="26" text-anchor="middle" class="h">One application</text>
+  <rect class="bx" x="185" y="34" width="60" height="20" rx="4"/><text x="215" y="48" text-anchor="middle" class="sm">User</text><rect class="bx" x="255" y="34" width="60" height="20" rx="4"/><text x="285" y="48" text-anchor="middle" class="sm">Order</text><rect class="bx" x="325" y="34" width="70" height="20" rx="4"/><text x="360" y="48" text-anchor="middle" class="sm">Payment</text><rect class="bx" x="405" y="34" width="55" height="20" rx="4"/><text x="432" y="48" text-anchor="middle" class="sm">Notify</text>
+  <path class="ar" d="M320 60 V74"/><rect class="bx" x="250" y="74" width="140" height="22" rx="6"/><text x="320" y="90" text-anchor="middle" class="sm">One database</text>
+</svg>
+<table>
+  <tr><th>Advantages</th><th>Disadvantages</th></tr>
+  <tr><td>Simple to develop, deploy and debug locally<br>Simple transactions: one database<br>Low operational complexity</td><td>Codebase grows; coupling can creep in<br>Scale and deploy everything together<br>Coordination hurts as the team grows</td></tr>
+</table>
+<p>For a team of four with twelve weeks, the advantages column is worth a lot of marks. <b>Not a binary choice:</b></p>
+<table>
+  <tr><th>1 Monolith</th><th>2 Modular monolith</th><th>3 Microservices</th></tr>
+  <tr><td>One deployable unit, all code together; layers may be messy or clean. Where most projects start.</td><td>Still one deployment, but internal boundaries are clean enough to separate later. <b>Where your project should live.</b></td><td>Each module is its own deployed service with its own database, talking over the network. Where large organisations end up.</td></tr>
+</table>
+<p><b>A well-structured monolith can become services later. A tangled monolith cannot become anything.</b></p>
+
+<h2>5. Style 2: microservices</h2>
+<svg viewBox="0 0 640 150" role="img" aria-label="Microservices" class="dg">
+  <rect class="bx" x="10" y="55" width="70" height="36" rx="6"/><text x="45" y="78" text-anchor="middle" class="sm">Client</text><path class="ar" d="M80 73 H110"/>
+  <rect class="bx" x="110" y="45" width="90" height="56" rx="6"/><text x="155" y="68" text-anchor="middle" class="sm">API</text><text x="155" y="84" text-anchor="middle" class="sm">Gateway</text>
+  <path class="ar" d="M200 60 L260 25"/><path class="ar" d="M200 73 H260"/><path class="ar" d="M200 86 L260 122"/>
+  <rect class="bx" x="260" y="8" width="110" height="34" rx="6"/><text x="315" y="29" text-anchor="middle" class="sm">Course service</text><rect class="bx" x="390" y="8" width="60" height="34" rx="6"/><text x="420" y="29" text-anchor="middle" class="sm">own DB</text>
+  <rect class="bx" x="260" y="56" width="110" height="34" rx="6"/><text x="315" y="77" text-anchor="middle" class="sm">Registration svc</text><rect class="bx" x="390" y="56" width="60" height="34" rx="6"/><text x="420" y="77" text-anchor="middle" class="sm">own DB</text>
+  <rect class="bx" x="260" y="104" width="110" height="34" rx="6"/><text x="315" y="125" text-anchor="middle" class="sm">Notification svc</text>
+  <text x="560" y="60" text-anchor="middle" class="h">Gains</text><text x="560" y="76" text-anchor="middle" class="sm">independent deploys, scaling,</text><text x="560" y="90" text-anchor="middle" class="sm">failure isolation, autonomy</text>
+  <text x="560" y="112" text-anchor="middle" class="h">Costs</text><text x="560" y="128" text-anchor="middle" class="sm">network, distributed failures,</text><text x="560" y="142" text-anchor="middle" class="sm">consistency, infrastructure</text>
+</svg>
+<p>Every arrow is an HTTP call (or a queue message), which is why REST was taught first.</p>
+<div class="box"><b>Definition, precisely</b>A style where the system is a set of <b>small, independently deployable services, each owning one business capability and its own data, communicating over the network</b>.</div>
+<table>
+  <tr><th>Property</th><th>Meaning</th><th>Test</th></tr>
+  <tr><td>Independently deployable</td><td>Ship it alone, no coordination meeting</td><td>Can you release it on a Tuesday by yourselves?</td></tr>
+  <tr><td>Scoped to a business capability</td><td>Payments, ordering, delivery</td><td>Would a manager recognise its name?</td></tr>
+  <tr><td>Owns its data</td><td>Its tables are private; others use its API</td><td>Does any other service read your tables? Must be no.</td></tr>
+  <tr><td>Communicates over the network</td><td>REST, gRPC or events; never shared memory</td><td>Is every dependency an explicit call or event?</td></tr>
+  <tr><td>Owned end to end by one team</td><td>Build it, run it, get paged for it</td><td>Does exactly one team own its on-call?</td></tr>
+</table>
+<p>Fail any one of the five and you have a <b>distributed monolith</b>: network prices, no independence.</p>
+
+<h3>What pushes an organisation to split?</h3>
+<table>
+  <tr><th>Force</th><th>Meaning</th></tr>
+  <tr><td>1 Release traffic jam</td><td>Two hundred developers, one deployment pipeline: every release waits for everyone.</td></tr>
+  <tr><td>2 Uneven load</td><td>One module is hammered, the rest idle, but you must scale it all together.</td></tr>
+  <tr><td>3 Blast radius</td><td>One memory leak in one module takes the entire product offline.</td></tr>
+  <tr><td>4 Team autonomy</td><td>Teams want to ship on their own schedule with their own technology.</td></tr>
+</table>
+<p>Three of these four are people problems, not technical ones.</p>
+<h3>The honest checklist: do you actually need microservices?</h3>
+<table>
+  <tr><th>Signals you need them</th><th>Signals you do not</th></tr>
+  <tr><td>Several teams block each other's releases every week<br>One component needs 10x the scaling of the rest<br>A part genuinely needs different technology<br>You can run 24/7 monitoring, CI/CD and on-call per service<br>Domain boundaries are stable and well understood</td><td>One team that fits around one table<br>The domain is still changing every sprint<br>No dedicated ops or platform experience<br>The product has not met real users yet<br>You want it because big companies use it</td></tr>
+</table>
+<p>Score honestly. More ticks on the right: build the <b>modular monolith</b>.</p>
+<h3>Worked example: same checklist, two systems</h3>
+<table>
+  <tr><th></th><th>System A: CampusEats (university food ordering)</th><th>System B: IslandWide (national delivery platform)</th></tr>
+  <tr><td>Team</td><td>4 students, 12 weeks</td><td>9 teams, 60 engineers</td></tr>
+  <tr><td>Users / load</td><td>3,000 students, one campus; about 2 orders per minute at peak</td><td>2 million nationwide; ordering spikes 20x at lunch</td></tr>
+  <tr><td>Domain / deploys</td><td>Still changing every sprint</td><td>Payments needs same-day hotfixes</td></tr>
+  <tr><td>Ops</td><td>Nobody on call, no budget</td><td>24/7 platform + on-call teams</td></tr>
+  <tr><td><b>Verdict</b></td><td><b>Modular monolith</b>: one deployment, one database</td><td><b>Microservices</b>: spike isolation, deploy autonomy</td></tr>
+</table>
+<p>The rows that flipped the answer: team count, load shape, deploy independence, ops maturity. <b>The system decides, not the fashion.</b></p>
+<p><b>IslandWide: which capabilities earn a service?</b> Ordering (20x lunch spike must scale alone), Payments (compliance and same-day hotfixes: isolate), Delivery/dispatch (GPS ping load shape, one owning team), Restaurant and menu / Catalog (read-heavy, cache-friendly, rare deploys). Accounts/profiles and Notifications are candidates with no driver. <b>The discipline: no driver, no service.</b> <b>Reality pass:</b> merge where boundaries cost more than they earn: Accounts join the Ordering service (same team, low load), Notifications become a worker on the queue, Profile + Menu form one Catalog service (a chatty pair always fetched together); Payments and Delivery stay isolated. <b>6 deployments become 4</b>, roughly a third off the infrastructure bill, because each service has a fixed cost (DB, pipeline, monitoring, on-call). Merging without losing a boundary is architecture, not defeat.</p>
+
+<h2>6. The honest part: what the network charges you</h2>
+<ol>
+  <li><b>The network fails.</b> A method call becomes a request that can time out, arrive twice or vanish; every call site needs a failure plan.</li>
+  <li><b>No shared transaction.</b> "Registration saved but notification lost" becomes a design problem; consistency becomes <b>eventual</b>.</li>
+  <li><b>Operational weight.</b> Many deployments, service discovery, per-service configuration, debugging across scattered logs.</li>
+  <li><b>Boundaries become permanent.</b> Moving a responsibility between services is far harder than moving a class between folders.</li>
+</ol>
+<p>A distributed mess is far worse than a monolithic mess; you cannot even read it in one place.</p>
+<h3>The six challenges in practice</h3>
+<table>
+  <tr><th>#</th><th>Challenge</th><th>Note</th></tr>
+  <tr><td>1</td><td>Debugging across services</td><td>One request = logs in 6 places; needs correlation IDs and tracing</td></tr>
+  <tr><td>2</td><td>Testing</td><td>Integration tests need other services alive; contract tests help</td></tr>
+  <tr><td>3</td><td>Data consistency</td><td>No joins, no shared transactions; eventual consistency is on you</td></tr>
+  <tr><td>4</td><td>API versioning</td><td>Your change breaks their old client; now you run v1 and v2</td></tr>
+  <tr><td>5</td><td>Operations load</td><td>Every service: its own pipeline, monitoring, alerts, secrets</td></tr>
+  <tr><td>6</td><td>Local development</td><td>A day-one teammate must run 12 containers just to log in</td></tr>
+</table>
+<h3>Real world: the return trip</h3>
+<p><b>Prime Video, 2023:</b> a video-quality monitoring system built from distributed components (orchestrator, frame grabber, defect detector, aggregator) paid orchestration cost and data transfer on every hop. Collapsing the steps into <b>one process</b> (function calls, no network, no per-hop state) gave a <b>90 % cost reduction</b> and it scaled further. Also <b>Segment, 2018: "Goodbye Microservices"</b> collapsed about 140 services into fewer, bigger ones for the same reason: overhead outgrew the benefit. <b>Every boundary has a price; pay it only where it earns its keep.</b></p>
+<div class="box"><b>Microservices are not an upgrade. They are a trade-off.</b>"You shouldn't start a new project with microservices, even if you're sure your application will be big enough to make it worthwhile." (Martin Fowler, <i>MonolithFirst</i>, 2015)</div>
+
+<h2>7. If you do split: patterns and communication</h2>
+<h3>Five microservice patterns worth knowing</h3>
+<table>
+  <tr><th>Pattern</th><th>Idea</th></tr>
+  <tr><td><b>API Gateway</b></td><td>One front door: clients call the gateway, which routes to services.</td></tr>
+  <tr><td><b>Database per service</b></td><td>Each service owns its data; no shared tables, ever.</td></tr>
+  <tr><td><b>Service discovery</b></td><td>Services find each other by name through a registry, not hard-coded IPs.</td></tr>
+  <tr><td><b>Circuit breaker</b></td><td>Stop calling a service that keeps failing; fail fast to a fallback.</td></tr>
+  <tr><td><b>Async messaging</b></td><td>Send a message to a broker and move on; the receiver processes it later.</td></tr>
+</table>
+<p>Patterns are vocabulary, not obligations: name them in a report only where they earn their keep.</p>
+<h3>How services talk</h3>
+<table>
+  <tr><th>Synchronous: the caller waits</th><th>Asynchronous: fire and move on</th></tr>
+  <tr><td><b>REST</b> (simple, universal) or <b>gRPC</b> (fast, typed, internal). Use when the answer is needed now: "authorise payment" before confirming the order.</td><td><b>Events via a broker</b>: <code>OrderPlaced</code> &rarr; queue &rarr; whoever cares. Use when nobody is waiting: receipts, notifications, analytics, loyalty.</td></tr>
+</table>
+<p>Per interaction ask: <b>is anyone waiting for this answer?</b> (A system built entirely around events as its backbone is event-driven architecture, a separate style.)</p>
+<h3>Orchestration vs choreography</h3>
+<table>
+  <tr><th></th><th>Orchestration (a conductor)</th><th>Choreography (a dance)</th></tr>
+  <tr><td>How</td><td>A central orchestrator calls Payment, Kitchen, Delivery in turn</td><td>Each service reacts to the previous event: OrderPlaced &rarr; PaymentTaken &rarr; MealReady ...</td></tr>
+  <tr><td>Pros</td><td>Flow visible in one place; clear error handling</td><td>No central coupling; add steps freely</td></tr>
+  <tr><td>Cons</td><td>The conductor knows and couples to everyone</td><td>Nobody sees the whole flow; errors scatter</td></tr>
+</table>
+<p>Rule of thumb: <b>orchestrate money and critical workflows</b> (payments need one clear owner of failure); <b>choreograph broadcasts</b> (notify, analyse, reward). The pattern name for distributed workflows is <b>saga</b>. Ask of every workflow: who needs to see it, and who owns its failures?</p>
+<h3>Anatomy of one well-designed microservice (Payment service)</h3>
+<ol>
+  <li>Pick one business capability (payments, not "utils").</li>
+  <li>Define the API contract first (<code>POST /payments</code>, <code>GET /health</code>), then build in parallel.</li>
+  <li>Own your data: your tables are private.</li>
+  <li>Choose edges: sync where waiting, async where not (emits <code>PaymentTaken</code>).</li>
+  <li>Plan failure: timeouts, retries, idempotency.</li>
+</ol>
+<p>Config lives in <code>.env</code>. <b>Acid test: can you deploy it alone, on a Tuesday, without a meeting?</b></p>
+<h3>How big is "micro"?</h3>
+<table>
+  <tr><th>Nano-services</th><th>Capability-sized</th><th>Distributed monolith</th></tr>
+  <tr><td>One function per service (AddTax svc, FormatDate svc): network cost exceeds business value; ops load explodes.</td><td>Payment service: everything payments, nothing else. One team, one reason to change, deploys alone.</td><td>Services sharing a DB that must deploy together: network tax plus coupling kept; worse than a monolith.</td></tr>
+</table>
+<p>Split along capabilities the business would recognise, never along lines of code.</p>
+
+<div class="box"><b>Key takeaways</b>
+Conway's Law: systems copy the communication structure of the organisation. Layer the server (controller &rarr; service &rarr; repository), keep rules in one place. REST: nouns in URLs, verbs in methods, correct status codes, idempotency. Start with a monolith, aim for a <b>modular monolith</b>; split into microservices only when there are real drivers (release jams, uneven load, blast radius, team autonomy) and you can afford the operations. Microservices cost: network failures, eventual consistency, operational weight, permanent boundaries. Patterns: gateway, DB per service, discovery, circuit breaker, async messaging; orchestrate money, choreograph broadcasts.</div>
