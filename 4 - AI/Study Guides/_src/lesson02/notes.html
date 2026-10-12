@@ -1,0 +1,97 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define a prompt and prompt engineering, and explain why it matters</li>
+  <li>Build a prompt with the <b>TRADE</b> framework</li>
+  <li>Use the five techniques: zero-shot, few-shot, chain-of-thought, role and constraint prompting</li>
+  <li>State best practices, applications and limitations</li>
+  <li>Relate prompt engineering to context, harness and loop engineering</li>
+</ul>
+
+<h2>1. What is a prompt?</h2>
+<div class="box"><b>Definition</b>A <b>prompt</b> is the text instruction or question you give to an AI model to get a response. <b>Prompt engineering</b> is the process of creating clear and effective inputs for an AI system, structuring your instructions so the AI understands your context and delivers what you need, ideally on the first try.</div>
+<p>The AI cannot read your mind; it only knows what you tell it. Analogy: a taxi driver. "Take me somewhere" gets nowhere useful; "take me to the airport by the fastest road, I have 2 bags" gets what you need. The AI is the driver, your prompt is the directions.</p>
+
+<h3>Vague prompt vs clear prompt</h3>
+<table>
+  <tr><th>Vague</th><th>Clear</th></tr>
+  <tr><td>"Write an email about saving money."<br><br>The AI does not know who is writing, who will read it, how long it should be or what style to use, so it guesses and produces a long, dry, generic email.</td><td>"You are a friendly finance coach. Write a short email with 3 tips to save money on groceries, for busy college students. Under 150 words, casual tone, bullet points."<br><br>It answers the questions the AI would otherwise guess: who am I, what must I do, who is reading, how long, what style.</td></tr>
+</table>
+<p>Another pair: weak prompt <i>"Explain photosynthesis."</i> Improved: <i>"Explain photosynthesis in simple terms for a grade 8 student in about 100 words."</i> (it now has an audience and a length constraint).</p>
+
+<h3>Why is it important?</h3>
+<ul>
+  <li><b>Improves accuracy</b> by reducing vague or irrelevant responses.</li>
+  <li><b>Saves time</b>: useful results in fewer attempts.</li>
+  <li><b>Enhances creativity</b> when generating ideas, stories or designs.</li>
+  <li><b>Supports problem solving</b> by guiding the AI through logical steps.</li>
+  <li><b>Increases reliability</b> in tasks such as summarisation, coding and analysis.</li>
+</ul>
+
+<h2>2. The TRADE framework</h2>
+<p>To move away from generic answers, use the <b>TRADE</b> blueprint. Analogy: briefing a new employee: tell them the task, who they act as, who the customer is, the rules, and show an example of good work.</p>
+<svg viewBox="0 0 640 120" role="img" aria-label="TRADE" class="dg">
+  <rect class="bx" x="15" y="15" width="115" height="90" rx="8"/><text x="72" y="45" text-anchor="middle" class="h" style="font-size:22px">T</text><text x="72" y="68" text-anchor="middle" class="h">Task</text><text x="72" y="88" text-anchor="middle" class="sm">the WHAT</text>
+  <rect class="bx" x="140" y="15" width="115" height="90" rx="8"/><text x="197" y="45" text-anchor="middle" class="h" style="font-size:22px">R</text><text x="197" y="68" text-anchor="middle" class="h">Role</text><text x="197" y="88" text-anchor="middle" class="sm">the WHO</text>
+  <rect class="bx" x="265" y="15" width="115" height="90" rx="8"/><text x="322" y="45" text-anchor="middle" class="h" style="font-size:22px">A</text><text x="322" y="68" text-anchor="middle" class="h">Audience</text><text x="322" y="88" text-anchor="middle" class="sm">the WHOM</text>
+  <rect class="bx" x="390" y="15" width="115" height="90" rx="8"/><text x="447" y="45" text-anchor="middle" class="h" style="font-size:22px">D</text><text x="447" y="68" text-anchor="middle" class="h">Details</text><text x="447" y="88" text-anchor="middle" class="sm">the RULES</text>
+  <rect class="bx" x="515" y="15" width="110" height="90" rx="8"/><text x="570" y="45" text-anchor="middle" class="h" style="font-size:22px">E</text><text x="570" y="68" text-anchor="middle" class="h">Example</text><text x="570" y="88" text-anchor="middle" class="sm">the MODEL</text>
+</svg>
+<table>
+  <tr><th>Letter</th><th>Part</th><th>What to include</th><th>Sample</th></tr>
+  <tr><td><b>T</b></td><td>Task (the what)</td><td>Say exactly what to do with a direct, specific action verb: write, summarise, draft, analyse, reformat, brainstorm, explain.</td><td>"Write a newsletter email with 3 quick tips on saving on weekly groceries."</td></tr>
+  <tr><td><b>R</b></td><td>Role (the who)</td><td>Give the AI a persona or expert identity; it changes how it reasons and which vocabulary it uses (senior software engineer vs 5th-grade science teacher).</td><td>"You are a friendly personal finance coach for young adults."</td></tr>
+  <tr><td><b>A</b></td><td>Audience (the whom)</td><td>Who will read or use the output; sets the complexity (complete beginner vs corporate executives).</td><td>"The audience is busy college students on a tight budget."</td></tr>
+  <tr><td><b>D</b></td><td>Details (constraints)</td><td>Rules, context and format: structure (table, bullet points), length (under 200 words), tone (witty, professional, urgent).</td><td>"Under 150 words, casual encouraging tone, clear bullet points."</td></tr>
+  <tr><td><b>E</b></td><td>Example (the model)</td><td>A sample of what a successful output looks like; this is <b>few-shot prompting</b>: the pattern is mirrored.</td><td>"Format like: Tip 1: [Catchy Name] &ndash; [1-sentence action step]"</td></tr>
+</table>
+<p><b>How TRADE matches the lecturer's "elements of a good prompt":</b> clear instruction = Task; context (background) = Role and Audience; specific details (format, length, audience, style) and constraints (word count, tone, scope) = Details; examples = Example.</p>
+
+<h3>Build a prompt in 5 steps</h3>
+<table>
+  <tr><th>Step</th><th>Prompt so far</th></tr>
+  <tr><td>Task</td><td>Explain photosynthesis.</td></tr>
+  <tr><td>+ Role</td><td>You are a friendly science teacher. Explain photosynthesis.</td></tr>
+  <tr><td>+ Audience</td><td>... for Grade 6 students.</td></tr>
+  <tr><td>+ Details</td><td>... in under 120 words, using simple words and 4 bullet points.</td></tr>
+  <tr><td>+ Example</td><td>... Use this style: "Step 1: Sunlight. Leaves catch it."</td></tr>
+</table>
+<p>Each step makes the answer more exact.</p>
+<p><b>Check yourself:</b> in <i>"You are a vet. Write 5 bullet tips on feeding puppies for first-time owners, under 100 words"</i>: Role = a vet; Task = write 5 tips on feeding puppies; Audience = first-time owners; Details = 5 bullets, under 100 words.</p>
+
+<h2>3. Prompting techniques</h2>
+<table>
+  <tr><th>#</th><th>Technique</th><th>Meaning</th><th>Example</th></tr>
+  <tr><td>1</td><td><b>Zero-shot</b></td><td>Ask the AI to perform a task <b>without examples</b>.</td><td>"Say if this review is Positive or Negative: 'Love the camera'."</td></tr>
+  <tr><td>2</td><td><b>Few-shot</b></td><td>Provide a <b>few examples</b> before asking the AI to complete a similar task, so it copies the pattern.</td><td>Review "Great phone" &rarr; Positive; "Battery dies fast" &rarr; Negative; "Love the camera" &rarr; ? (answer Positive)</td></tr>
+  <tr><td>3</td><td><b>Chain-of-thought</b></td><td>Encourage the AI to <b>explain its reasoning step by step</b>.</td><td>"...Think step by step."</td></tr>
+  <tr><td>4</td><td><b>Role prompting</b></td><td>Assign a role.</td><td>"Act as a teacher" / "act as a software engineer"</td></tr>
+  <tr><td>5</td><td><b>Constraint-based</b></td><td>Add rules to limit the answer.</td><td>"Explain in 100 words."</td></tr>
+</table>
+<h3>Chain-of-thought example</h3>
+<p>Plain: "A pen costs 20 rupees. I buy 3 pens and pay with a 100 rupee note. What is my change?" Chain-of-thought adds "Think step by step", and the AI reasons: 3 pens cost 3 &times; 20 = 60 rupees; change = 100 &minus; 60 = <b>40 rupees</b>. Showing the steps makes mistakes easier to spot (like a teacher saying "show your working").</p>
+
+<h2>4. Applications, best practices and limitations</h2>
+<table>
+  <tr><th>Applications</th><th>Best practices</th><th>Limitations</th></tr>
+  <tr><td>Content generation<br>Code generation and debugging<br>Question answering and tutoring<br>Data analysis and summarisation<br>Chatbots and virtual assistants</td><td>Use simple, direct language<br>Provide enough context for the task<br>Specify the expected output format<br>Avoid ambiguous or overly broad instructions</td><td>Responses may still contain errors or outdated information<br>Poorly designed prompts can lead to biased, incomplete or irrelevant outputs<br>Prompt engineering does not guarantee perfect results (check important facts)</td></tr>
+</table>
+
+<h2>5. Beyond prompts: the four engineering skills</h2>
+<p>The lecturer's AI Kitchen guide uses a celebrity chef (who knows every recipe but has never been inside your restaurant) to show that a good prompt is only the first of <b>four pillars of AI engineering</b>.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="Four pillars" class="dg">
+  <rect class="bx" x="10" y="20" width="145" height="110" rx="8"/><text x="82" y="44" text-anchor="middle" class="h">1 Prompt</text><text x="82" y="66" text-anchor="middle" class="sm">the ORDER</text><text x="82" y="86" text-anchor="middle" class="sm">what to make,</text><text x="82" y="102" text-anchor="middle" class="sm">exactly</text>
+  <rect class="bx" x="170" y="20" width="145" height="110" rx="8"/><text x="242" y="44" text-anchor="middle" class="h">2 Context</text><text x="242" y="66" text-anchor="middle" class="sm">the RECIPE BOOK</text><text x="242" y="86" text-anchor="middle" class="sm">company facts</text><text x="242" y="102" text-anchor="middle" class="sm">to read first</text>
+  <rect class="bx" x="330" y="20" width="145" height="110" rx="8"/><text x="402" y="44" text-anchor="middle" class="h">3 Harness</text><text x="402" y="66" text-anchor="middle" class="sm">the SAFETY GEAR</text><text x="402" y="86" text-anchor="middle" class="sm">safe tools and</text><text x="402" y="102" text-anchor="middle" class="sm">guardrails</text>
+  <rect class="bx" x="490" y="20" width="140" height="110" rx="8"/><text x="560" y="44" text-anchor="middle" class="h">4 Loop</text><text x="560" y="66" text-anchor="middle" class="sm">QUALITY CHECK</text><text x="560" y="86" text-anchor="middle" class="sm">test, fix, repeat</text><text x="560" y="102" text-anchor="middle" class="sm">until it passes</text>
+</svg>
+<table>
+  <tr><th>Pillar</th><th>Kitchen story</th><th>AI world</th></tr>
+  <tr><td><b>Prompt engineering</b></td><td>Bad order: "Make me some food" (the chef might cook luxury sushi). Engineered order: "Please make a breakfast egg-and-cheese sandwich on a toasted brioche bun. Do not add bacon."</td><td>The clearer, more specific and well-structured the instruction typed into the model (ChatGPT, Gemini), the better the response.</td></tr>
+  <tr><td><b>Context engineering</b></td><td>The chef does not know your internal rules and would guess the signature burger from other restaurants. You open the company manual to page 5: "exactly two slices of cheddar and our secret house sauce."</td><td>Automatically finding the exact data, documents or database records the AI needs and embedding them in the prompt window so it does not guess or <b>hallucinate</b>. Often implemented as <b>RAG</b> (Retrieval-Augmented Generation).</td></tr>
+  <tr><td><b>Harness engineering</b></td><td>The chef is just a brain and cannot act without tools, but unmonitored access is dangerous. Build a controlled prep station: three pre-approved tools (spatula, pan, timer), lock the chemical closet, install an automatic fire extinguisher that cuts the gas.</td><td>Secure back-end infrastructure code (Python, TypeScript, isolated Docker containers) that gives the AI digital "hands" (APIs, file systems) while trapping it in a sandbox so it cannot run dangerous commands.</td></tr>
+  <tr><td><b>Loop engineering</b></td><td>Do not serve the first burger. Act (cook), Observe (scale and camera: cheese not melted), Evaluate (a Checker AI: fails the standard), Loop (send back: 30 more seconds on the grill), Terminate (leaves only when it passes all tests).</td><td>Designing agentic state workflows (e.g. with LangGraph) where an agent executes a task, checks its work against automated tests, rewrites its approach and self-corrects until a strict success criterion is met.</td></tr>
+</table>
+<p><b>Quick review (from the guide):</b> Prompt = C (the clear, specific order); Context = A (the manual to read); Harness = D (the safe workbench and tools); Loop = B (the review loop until perfect). Loop engineering leads naturally into the <i>agent loop</i> of Lesson 3.</p>
+
+<div class="box"><b>Key takeaways</b>
+A prompt is the instruction you give an AI; prompt engineering makes it clear and effective. TRADE = Task, Role, Audience, Details, Example. Techniques: zero-shot, few-shot, chain-of-thought, role, constraint. Prompts guide but never guarantee: verify facts. Prompt, context (RAG), harness (sandbox, tools) and loop (self-correction) are the four pillars of AI engineering.</div>
