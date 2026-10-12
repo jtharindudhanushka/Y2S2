@@ -1,0 +1,18 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>C4 model</td><td>Simon Brown. Four zoom levels: <b>1 Context</b> (users + external systems), <b>2 Container</b> (web/mobile apps, APIs, databases + protocols), <b>3 Component</b> (controllers, repositories, auth services inside one container), <b>4 Code</b> (classes / implementation).</td></tr>
+  <tr><td>UniMart Stage 1</td><td>Actors (seller, buyer, email verifier, payment gateway, email/SMS). 3 NFRs traced to text: availability in textbook rush; payments never lost/double-charged; low cost, fast delivery.</td></tr>
+  <tr><td>UniMart monolith</td><td>Layered (presentation, business logic with Auth, Catalog, Messaging, Orders/Payments, Reviews, Notifications; data access; single DB) on one VM. Reflection: one crash takes everything; scale everything to scale search; one-line fix goes through the whole pipeline.</td></tr>
+  <tr><td>Growth crisis causes</td><td>Search leak crashed app = shared process / failure domain. Payments vs Catalog DB = shared database. 3-day copy change = shared deploy pipeline. Conflicting changes = shared codebase.</td></tr>
+  <tr><td>Microservices</td><td>Auth, Catalog, Messaging, Orders &amp; Payments, Reviews, Notifications; each owns data; API gateway; sync Orders&rarr;Auth; async events (OrderPlaced, PriceDropped, NewMessageReceived, OrderCompleted) on the bus.</td></tr>
+  <tr><td>Trade-offs</td><td>Better: independent deploys, fault isolation, DB choice, team autonomy. Harder: six pipelines, network failures, no single ACID transaction, service discovery and monitoring, API contracts.</td></tr>
+  <tr><td>Event-driven notification</td><td>Broker (RabbitMQ / Kafka). Buys decoupling and resilience; costs traceability and eventual consistency.</td></tr>
+  <tr><td>SOA vs microservices</td><td>SOA: heavier shared middleware (ESB), coarser services. Microservices: independent, fine-grained, lightweight comms, own data. Serverless fits a nightly report, not real-time messaging.</td></tr>
+  <tr><td>Decision memo</td><td>Monolith right at Year 0; crisis from shared process/DB/pipeline/code; partial decomposition (Orders &amp; Payments first); next problem: distributed transactions and cross-service monitoring.</td></tr>
+  <tr><td>Course registration problems</td><td>Last-seat race (transaction + constraint); client tampering (server-side validation); double-click (idempotency, unique constraint); read-heavy catalogue (cache); email delay (queue / async); single DB (replica, redundant instances).</td></tr>
+  <tr><td>Registration API</td><td>GET /courses; GET /courses/42; POST /courses; PUT/PATCH /courses/42; DELETE /courses/42; GET /students/10/registrations; POST /courses/42/registrations (retry-risk: idempotency).</td></tr>
+  <tr><td>Decision chain</td><td>Requirement &rarr; problem/risk &rarr; quality attribute &rarr; architectural decision &rarr; mechanism.</td></tr>
+  <tr><td>Zippo</td><td>Problems: shared DB locks (location writes vs matching reads), synchronous payment in trip completion, no queue. NFRs: 3 s matching (95 %), 75,000 location writes/s, 99.95 %, zero double charge, data residency, 2G, extensibility, observability. Solution: separate location pipeline + geo-index, async idempotent payments with circuit breaker, per-country payments, small payloads for 2G, tracing.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>For a "monolith to microservices" question: diagnose causes first (shared process, DB, pipeline, codebase), propose boundaries by capability and data ownership, label sync vs async, and include the real costs.</div>

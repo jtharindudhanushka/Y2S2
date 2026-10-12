@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SA Lesson 8 - C4 Model and Case Studies</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Software Architecture study guides</a> &middot; INTE 22293 &middot; Lesson 08</p><button id="theme" type="button"></button></div>
+  <h1>C4 Model and Case Studies</h1>
+  <p class="lead">Covers: the C4 model (context, container, component, code), and the three case studies worked in class: UniMart (monolith, growth crisis, microservices, events, decision memo, with the model answers), the University Course Registration System, and the Zippo ride-hailing super-app. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Describe the four levels of the C4 model and draw context and container diagrams</li>
+  <li>Walk through the UniMart case: monolith, growth crisis diagnosis, microservice redesign, event-driven notification, decision memo</li>
+  <li>Diagnose and fix the problems of the University Course Registration System (concurrency, validation, idempotency, caching, async, single point of failure)</li>
+  <li>Approach the Zippo ride-hailing super-app: prioritise quality attributes, decompose, design matching, consistency, outage handling and risks</li>
+</ul>
+
+<h2>1. The C4 model</h2>
+<div class="box"><b>Definition</b>The <b>C4 model</b> is a lean, developer-friendly approach to visualising software architecture by breaking a system into <b>four hierarchical levels of detail: Context, Containers, Components and Code</b>. It was created by <b>Simon Brown</b> (see c4model.com). Each level "zooms in" on a box of the level above.</div>
+<svg viewBox="0 0 640 150" role="img" aria-label="C4 zoom levels" class="dg">
+  <rect class="bx" x="10" y="20" width="140" height="90" rx="8"/><text x="80" y="45" text-anchor="middle" class="h">Level 1</text><text x="80" y="63" text-anchor="middle" class="h">Context</text><text x="80" y="85" text-anchor="middle" class="sm">users + external</text><text x="80" y="99" text-anchor="middle" class="sm">systems</text>
+  <path class="ar" d="M150 65 H170"/><text x="160" y="58" text-anchor="middle" class="sm">zoom</text>
+  <rect class="bx" x="170" y="20" width="140" height="90" rx="8"/><text x="240" y="45" text-anchor="middle" class="h">Level 2</text><text x="240" y="63" text-anchor="middle" class="h">Containers</text><text x="240" y="85" text-anchor="middle" class="sm">apps, APIs,</text><text x="240" y="99" text-anchor="middle" class="sm">databases</text>
+  <path class="ar" d="M310 65 H330"/>
+  <rect class="bx" x="330" y="20" width="140" height="90" rx="8"/><text x="400" y="45" text-anchor="middle" class="h">Level 3</text><text x="400" y="63" text-anchor="middle" class="h">Components</text><text x="400" y="85" text-anchor="middle" class="sm">controllers,</text><text x="400" y="99" text-anchor="middle" class="sm">repositories</text>
+  <path class="ar" d="M470 65 H490"/>
+  <rect class="bx" x="490" y="20" width="140" height="90" rx="8"/><text x="560" y="45" text-anchor="middle" class="h">Level 4</text><text x="560" y="63" text-anchor="middle" class="h">Code</text><text x="560" y="85" text-anchor="middle" class="sm">classes,</text><text x="560" y="99" text-anchor="middle" class="sm">implementation</text>
+</svg>
+<table>
+  <tr><th>Level</th><th>Diagram</th><th>Shows</th><th>Lecture example (Internet Banking System)</th></tr>
+  <tr><td>1</td><td><b>System Context</b></td><td>The big picture: who uses the system (users / roles) and what external software systems it interacts with.</td><td>Personal Banking Customer uses the Internet Banking System; it sends e-mails via Amazon Web Services Simple Email Service and gets account data from the Core Banking System.</td></tr>
+  <tr><td>2</td><td><b>Container</b></td><td>Zooms into the system boundary to show high-level technical building blocks (web applications, mobile apps, API services, databases) and how they communicate over protocols.</td><td>Static content, single-page UI, Backend (JSON/HTTP API), Statement Store and Database inside the system.</td></tr>
+  <tr><td>3</td><td><b>Component</b></td><td>Zooms into a single container to show its structural components (controllers, repositories, authentication services) and their internal interactions.</td><td>Backend: Statement API, Sign-in API, Accounts Summary API, Email, Security and Core Banking adapter components.</td></tr>
+  <tr><td>4</td><td><b>Code</b></td><td>Zooms into an individual component to show implementation details (e.g. a UML class diagram).</td><td>Interfaces and classes of the Core Banking System adapter.</td></tr>
+</table>
+<p><b>What a good C4 diagram contains:</b> a title, boxes labelled with name, type and a short description, arrows labelled with the interaction ("Views account balances and makes payments using"; "Sends e-mails to customers using"), and a key/legend (person, software system, external system, relationship). In UniMart the first two levels (context and container) are what you draw; deployment and sequence diagrams complement them.</p>
+
+<h2>2. Case study A: UniMart, a student marketplace that outgrows itself</h2>
+<p>The lecturer's 3-hour workshop (progressive stages; each stage's output feeds the next, so you cannot skip the reasoning). <b>Pre-reading:</b> deployable unit, coupling vs cohesion at system level, bounded context ("a part of the business with its own vocabulary and rules"), the "-ilities", C4 context and container levels. The case: three final-year students built UniMart in a semester for ~2,000 users on one campus: register/log in with university e-mail verification; sellers post listings (title, description, price, category, photos); buyers search/browse/filter; buyer and seller message; buyers pay by card or campus wallet and orders are tracked (posted, paid, completed); reviews after a transaction; notifications (new message, price drop, order status). Launch NFRs: reliable during the two textbook-rush weeks each semester; payments never lost or double-charged; fast shipping with almost no budget by students themselves.</p>
+<p><i>The model answers below are from the student's own completed activity (In-Class Activity 03), included as a worked example.</i></p>
+<h3>Stage 1: requirements and problem immersion</h3>
+<table>
+  <tr><th>Item</th><th>Answer</th></tr>
+  <tr><td>Actors</td><td>Student as seller; student as buyer; university email verification system; payment gateway; email/SMS provider</td></tr>
+  <tr><td>Functional modules</td><td>Registration and login with email verification; catalog and listing management; search / browse / filter; messaging; orders and payments with status tracking; ratings and reviews; notifications</td></tr>
+  <tr><td>3 NFRs traced to the text</td><td><b>Availability during the textbook rush</b> ("must work reliably during the two weeks at the start of each semester"); <b>payment consistency</b> ("payments must never be lost or double-charged"); <b>low cost, fast delivery</b> ("ship it fast with almost no budget": deployability / time to market)</td></tr>
+  <tr><td>C4 Level 1</td><td>One box UniMart; Student (buyer/seller) with arrows "register, list, browse, message, pay, review" and "order and status updates"; Payment gateway ("process payment"); Email/SMS provider ("send notification")</td></tr>
+</table>
+<h3>Stage 2: the Year 0 monolith</h3>
+<svg viewBox="0 0 640 170" role="img" aria-label="UniMart monolith" class="dg">
+  <rect class="bx" x="120" y="8" width="400" height="30" rx="5"/><text x="320" y="28" text-anchor="middle" class="sm">Presentation layer: web / mobile UI</text><path class="ar" d="M320 38 V46"/>
+  <rect class="bx" x="120" y="46" width="400" height="56" rx="5"/><text x="320" y="62" text-anchor="middle" class="sm">Business logic layer</text><text x="320" y="80" text-anchor="middle" class="sm">Auth | Catalog | Messaging | Orders &amp; Payments | Reviews | Notifications</text><path class="ar" d="M320 102 V110"/>
+  <rect class="bx" x="120" y="110" width="400" height="26" rx="5"/><text x="320" y="128" text-anchor="middle" class="sm">Data access layer</text><path class="ar" d="M320 136 V144"/>
+  <rect class="bx" x="240" y="144" width="160" height="24" rx="5"/><text x="320" y="161" text-anchor="middle" class="sm">Single database</text>
+</svg>
+<ul>
+  <li><b>Deployment:</b> a single VM / container running one monolith application and one PostgreSQL database.</li>
+  <li><b>Technology justification:</b> a Node.js/Express-style monolith on one PostgreSQL database lets three students build, test and deploy one codebase without a dedicated ops person and keeps hosting cost near zero.</li>
+</ul>
+<table>
+  <tr><th>Reflection</th><th>Answer</th></tr>
+  <tr><td>A messaging bug crashes the server: what else goes down?</td><td>Everything (catalog, payments, auth...) because all modules run in the same process on the same machine; one unhandled exception takes the whole application down.</td></tr>
+  <tr><td>Textbook-rush traffic hits only search: options?</td><td>Scale the whole VM vertically or run more copies of the whole app horizontally: awkward because catalog, payments and every other module are duplicated though only search needs capacity.</td></tr>
+  <tr><td>Time for a one-line reviews fix to reach production?</td><td>Could be hours rather than minutes: it passes through the same build, test and deploy pipeline as the whole app.</td></tr>
+</table>
+<p><b>Lesson:</b> monolith-first is often correct, not a mistake to avoid.</p>
+<h3>Stage 3: the growth crisis (18 months later, 5 campuses, 60,000 users, four squads)</h3>
+<p>Squads: Catalog &amp; Search, Messaging, Payments &amp; Orders, Platform (auth, notifications). Map each symptom to its architectural cause, <b>before</b> solutioning:</p>
+<table>
+  <tr><th>Pain point</th><th>Architectural cause</th></tr>
+  <tr><td>A search memory leak crashed the whole app, including payments mid-transaction (students charged with no confirmation)</td><td><b>Shared process / failure domain</b>: one module's failure takes down the entire app</td></tr>
+  <tr><td>Payments wants a strict-consistency database, Catalog a search-optimised one; neither can move</td><td><b>Shared database</b>: one schema / instance serves all modules</td></tr>
+  <tr><td>A copy change to a listing page takes 3 days to reach production</td><td><b>Shared deploy pipeline</b>: every change rides the same build, test and release cycle as payments code</td></tr>
+  <tr><td>Two squads shipped conflicting changes to the same file twice this month</td><td><b>Shared codebase</b>: unrelated features collide during merges (merge contention)</td></tr>
+</table>
+<h3>Stage 4: redesign as microservices</h3>
+<p>Identify service boundaries by bounded-context reasoning: each service maps to one squad and owns its own data. Expected services: Auth/Identity, Catalog, Messaging, Orders &amp; Payments, Reviews, Notifications (justification matters more than matching the list).</p>
+<table>
+  <tr><th>Service</th><th>Responsibility</th><th>Data owned</th><th>Sample endpoints</th><th>Communication</th></tr>
+  <tr><td>Auth / Identity</td><td>Registration, login, university email verification</td><td>User accounts, credentials, verification status</td><td><code>POST /auth/register</code> <code>POST /auth/login</code></td><td>Called <b>synchronously</b> (REST) by others: an action must not proceed on an unverified user</td></tr>
+  <tr><td>Catalog</td><td>Create, update, search and filter listings</td><td>Listings, categories, photo metadata</td><td><code>POST /catalog/listings</code> <code>GET /catalog/listings?query=</code></td><td>Publishes <b>ListingCreated</b>, <b>PriceDropped</b> asynchronously (a slow Notification must not block a listing update)</td></tr>
+  <tr><td>Messaging</td><td>Buyer / seller negotiation messages</td><td>Conversations, messages</td><td><code>POST /messaging/conversations/{id}/messages</code> <code>GET /messaging/conversations/{id}</code></td><td>Publishes <b>NewMessageReceived</b> asynchronously</td></tr>
+  <tr><td>Orders &amp; Payments</td><td>Process payment and track order status (posted, paid, completed)</td><td>Orders, payment transactions</td><td><code>POST /orders</code> <code>POST /orders/{id}/pay</code></td><td>Calls Auth <b>synchronously</b> to confirm identity before charging; publishes <b>OrderPlaced</b> asynchronously</td></tr>
+  <tr><td>Reviews</td><td>Collect and display ratings after a completed transaction</td><td>Reviews, ratings</td><td><code>POST /reviews</code> <code>GET /reviews?sellerId=</code></td><td>Subscribes <b>asynchronously</b> to OrderCompleted (prompting a review need not block completion)</td></tr>
+  <tr><td>Notifications</td><td>Alerts for messages, price drops, order status</td><td>Preferences, delivery logs</td><td><code>GET /notifications/{userId}</code> <code>POST /notifications/preferences</code></td><td>Subscribes <b>asynchronously</b> to events from Catalog, Messaging, Orders/Payments</td></tr>
+</table>
+<svg viewBox="0 0 640 210" role="img" aria-label="UniMart C4 container diagram" class="dg">
+  <rect class="bx" x="230" y="5" width="180" height="26" rx="5"/><text x="320" y="23" text-anchor="middle" class="sm">Student client (web / mobile)</text><path class="ar" d="M320 31 V40"/>
+  <rect class="bx" x="270" y="40" width="100" height="24" rx="5"/><text x="320" y="57" text-anchor="middle" class="sm">API Gateway</text>
+  <g class="sm">
+  <rect class="bx" x="10" y="90" width="95" height="36" rx="5"/><text x="57" y="112" text-anchor="middle">Catalog svc</text>
+  <rect class="bx" x="115" y="90" width="95" height="36" rx="5"/><text x="162" y="112" text-anchor="middle">Messaging svc</text>
+  <rect class="bx" x="220" y="90" width="115" height="36" rx="5"/><text x="277" y="107" text-anchor="middle">Orders &amp; Payments</text><text x="277" y="120" text-anchor="middle">svc</text>
+  <rect class="bx" x="345" y="90" width="85" height="36" rx="5"/><text x="387" y="112" text-anchor="middle">Reviews svc</text>
+  <rect class="bx" x="440" y="90" width="95" height="36" rx="5"/><text x="487" y="112" text-anchor="middle">Auth svc</text>
+  <rect class="bx" x="545" y="90" width="90" height="36" rx="5"/><text x="590" y="107" text-anchor="middle">Notification</text><text x="590" y="120" text-anchor="middle">svc</text>
+  <text x="57" y="150" text-anchor="middle">Catalog DB</text><text x="57" y="162" text-anchor="middle">(search-optimised)</text>
+  <text x="162" y="150" text-anchor="middle">Messaging DB</text>
+  <text x="277" y="150" text-anchor="middle">Orders DB</text><text x="277" y="162" text-anchor="middle">(strict consistency)</text>
+  <text x="387" y="150" text-anchor="middle">Reviews DB</text><text x="487" y="150" text-anchor="middle">Auth DB</text><text x="590" y="150" text-anchor="middle">Notification DB</text>
+  </g>
+  <path class="ar" d="M270 55 L57 90"/><path class="ar" d="M300 64 L162 90"/><path class="ar" d="M320 64 L277 90"/><path class="ar" d="M340 64 L387 90"/>
+  <path class="ar" d="M335 108 L440 108" style="stroke-dasharray:5 3"/><text x="388" y="100" text-anchor="middle" class="sm">sync verify</text>
+  <rect class="bx" x="170" y="180" width="300" height="24" rx="5" style="stroke-width:2.5"/><text x="320" y="197" text-anchor="middle" class="sm">Event bus (async events: OrderPlaced, PriceDropped, NewMessageReceived)</text>
+</svg>
+<p>The container diagram: all services behind an <b>API gateway</b>, each with its own datastore, arrows labelled sync (e.g. Orders &rarr; Auth) vs async (events on the bus, all feeding Notification). <b>Sequence "student buys a used textbook":</b> student selects listing and checks out &rarr; gateway &rarr; Catalog (<code>GET listing details</code>) &rarr; Orders &amp; Payments (<code>POST /orders</code>: verify identity and process payment) &rarr; "order confirmed" &rarr; publish <b>OrderPlaced</b> on the event bus &rarr; Notification service sends the order confirmation.</p>
+<h3>Trade-off table (what got better / what got harder)</h3>
+<table>
+  <tr><th>Dimension</th><th>Better</th><th>Harder</th></tr>
+  <tr><td>Deployability</td><td>Catalog can ship a listing copy change without waiting on the payments release cycle</td><td>Six separate pipelines to build and maintain instead of one</td></tr>
+  <tr><td>Fault isolation</td><td>A search memory leak in Catalog no longer takes down Payments (separate processes)</td><td>Synchronous calls (Orders verifying identity with Auth) add network failure as a new failure mode</td></tr>
+  <tr><td>Data consistency</td><td>Payments can use a strict-consistency financial DB without Catalog's requirements holding it back</td><td>An order across Orders, Payments and Notification can no longer be one ACID transaction; partial failures need handling</td></tr>
+  <tr><td>Operational complexity</td><td>Platform squad focuses operations effort only on Auth and Notifications</td><td>Needs service discovery, per-service monitoring and network failure handling across six deployables</td></tr>
+  <tr><td>Team autonomy</td><td>Catalog squad can adopt a search-optimised database independently of Payments</td><td>Squads must agree on and maintain stable API contracts</td></tr>
+</table>
+<p>Grounded statements score well ("Catalog can now scale its search index independently of Payments during textbook rush"); generic ones ("microservices are more scalable") score poorly. Microservices are not a strict upgrade.</p>
+<h3>Stage 5: event-driven notification</h3>
+<p>Introduce a <b>message broker</b> (e.g. RabbitMQ, Kafka, a cloud pub/sub). Catalog (PriceDropped), Messaging (NewMessageReceived) and Orders &amp; Payments (OrderPlaced) <b>publish</b> events without knowing who listens; Notification <b>subscribes</b> and acts independently. <b>Buys:</b> decoupling (producers need not know Notification exists) and resilience (Notification slow or down during the rush blocks neither a purchase nor a message). <b>Costs:</b> traceability ("what happened and when" across producer, broker and consumer is harder than one call stack) and <b>eventual consistency</b> (a purchase may complete seconds before the confirmation arrives).</p>
+<h3>Take-home: SOA and serverless</h3>
+<ul>
+  <li><b>SOA vs microservices:</b> SOA typically relies on heavier shared middleware, an <b>Enterprise Service Bus</b>, to route messages and enforce contracts centrally, and its services are coarser-grained (e.g. one "Order Management" service covering several sub-functions). Microservices are independently deployed, much finer-grained, use lightweight communication (REST or events) without a central bus owning business logic, and each strictly owns its data store.</li>
+  <li><b>Serverless fit:</b> a nightly sales / top-category report for the founders suits a serverless function (runs briefly on a schedule, needs no permanently running service); Messaging is a poor fit (it must stay available and stateful for real-time conversations).</li>
+  <li><b>Optional stretch (build it):</b> implement two services (e.g. Catalog and Orders) as separate applications with their own local database talking over HTTP, containerised with Docker, to feel redeploying one without touching the other.</li>
+</ul>
+<h3>Stage 6: the decision memo (150&ndash;200 words to the non-architect co-founders)</h3>
+<p>It must answer: (1) was a Year-0 monolith the right call? (2) what triggered the change (cite the pain points)? (3) is full microservices right at 60,000 users, or something in between? (4) what new problem comes next? <b>Model answer summary:</b> yes, the monolith was right (one semester, no budget, no ops person: ship fast at near-zero cost). Growth exposed shared process, database, pipeline and codebase. Full microservices is not necessary yet: <b>partially decompose</b>: pull out <b>Orders and Payments</b> first (hardest consistency requirement and biggest blast radius) and keep Catalog, Messaging, Reviews and Notifications as a modular monolith until each squad's pain justifies splitting. <b>Next problem:</b> distributed transaction handling and cross-service monitoring.</p>
+<table>
+  <tr><th>Rubric (out of 100)</th><th>Weight</th></tr>
+  <tr><td>Requirements grounding (Stage 1)</td><td>10 %</td></tr><tr><td>Monolith design quality (Stage 2)</td><td>15 %</td></tr><tr><td>Pain-point diagnosis (Stage 3)</td><td>10 %</td></tr>
+  <tr><td>Service decomposition reasoning (Stage 4)</td><td>25 %</td></tr><tr><td>Diagram correctness and clarity</td><td>15 %</td></tr><tr><td>Trade-off depth</td><td>15 %</td></tr><tr><td>Decision memo</td><td>10 %</td></tr><tr><td>Stretch prototype</td><td>bonus 5&ndash;10 %</td></tr>
+</table>
+
+<h2>3. Case study B: University Course Registration System</h2>
+<p><b>Scenario:</b> a university needs a Course Registration System for about <b>10,000 students</b>: log in, view courses, register, drop, view registrations; administrators manage course information. <b>Requirements:</b> a course has a maximum capacity (e.g. Database Systems at most 100); capacity must <b>never</b> be exceeded; a student must not register twice for the same course; only authenticated and authorised students may register; registration data stored reliably; confirmation email after successful registration; course information is read very frequently but changes rarely; during registration week several thousand students use it simultaneously. <b>Starting point (no planned architecture):</b> Browser &rarr; one application (login, registration, validation, email, reporting and DB access mixed together) &rarr; one database. Do not redesign yet: first investigate.</p>
+<h3>Steps 1&ndash;2: problems matched to concepts</h3>
+<table>
+  <tr><th>Scenario</th><th>What could go wrong</th><th>Relevant concept</th><th>Solution</th></tr>
+  <tr><td>Two students take the last seat</td><td>Both read "1 seat", both register: capacity exceeded</td><td><b>Concurrency / race condition</b></td><td>Atomic check + decrement in one database transaction (row lock or optimistic version) with a constraint as backstop</td></tr>
+  <tr><td>Client edits a value in Developer Tools</td><td>Server trusts forged data</td><td><b>Server-side validation</b></td><td>Never trust the client; validate and compute on the server</td></tr>
+  <tr><td>Student double-clicks Register</td><td>Duplicate registrations</td><td><b>Idempotency / duplicate prevention</b></td><td>Unique constraint (student, course) and an idempotency key on POST</td></tr>
+  <tr><td>Thousands of course reads</td><td>Database overloaded by repeated identical reads</td><td><b>Caching / performance</b></td><td>Cache the course catalogue (read-heavy, rarely changing); invalidate on change</td></tr>
+  <tr><td>Waiting for the confirmation email</td><td>Student waits; email slowness delays or fails registration</td><td><b>Asynchronous messaging</b></td><td>Put the email on a queue; a worker sends it later</td></tr>
+  <tr><td>The only database fails</td><td>The whole system is down</td><td><b>Single point of failure / reliability</b></td><td>Primary + replica, redundant app instances behind a load balancer</td></tr>
+</table>
+<p>(The first two columns are the worksheet's questions; the answers follow the concepts named in the worksheet.)</p>
+<h3>Step 3: the improved architecture</h3>
+<p>Start with <b>responsibilities</b>, not technologies. It should show: client / UI; REST API; business logic / registration rules; data access and database; a cache for read-heavy course data; a message queue and email service for asynchronous confirmation; an authentication / authorisation boundary; a mechanism for safe concurrent registration; a mechanism to prevent duplicate registration; an availability / scalability approach.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="Registration improved architecture" class="dg">
+  <rect class="bx" x="5" y="60" width="70" height="30" rx="5"/><text x="40" y="79" text-anchor="middle" class="sm">Browser</text><path class="ar" d="M75 75 H95"/>
+  <rect class="bx" x="95" y="60" width="85" height="30" rx="5"/><text x="137" y="79" text-anchor="middle" class="sm">Load balancer</text><path class="ar" d="M180 75 H200"/>
+  <rect class="bx" x="200" y="40" width="190" height="70" rx="5"/><text x="295" y="57" text-anchor="middle" class="sm">REST API (2+ stateless instances)</text><text x="295" y="73" text-anchor="middle" class="sm">auth check &rarr; registration service</text><text x="295" y="89" text-anchor="middle" class="sm">(validate, capacity, duplicate)</text>
+  <path class="ar" d="M390 52 L430 28"/><path class="ar" d="M390 75 L430 78"/><path class="ar" d="M390 98 L430 125"/>
+  <rect class="bx" x="430" y="10" width="100" height="30" rx="5"/><text x="480" y="29" text-anchor="middle" class="sm">Cache (courses)</text>
+  <rect class="bx" x="430" y="62" width="100" height="32" rx="5"/><text x="480" y="76" text-anchor="middle" class="sm">DB primary</text><text x="480" y="89" text-anchor="middle" class="sm">(transactions)</text><path class="ar" d="M530 78 H550"/><rect class="bx" x="550" y="62" width="82" height="32" rx="5"/><text x="591" y="82" text-anchor="middle" class="sm">DB replica</text>
+  <rect class="bx" x="430" y="108" width="70" height="30" rx="5"/><text x="465" y="127" text-anchor="middle" class="sm">Queue</text><path class="ar" d="M500 123 H520"/><rect class="bx" x="520" y="108" width="112" height="30" rx="5"/><text x="576" y="127" text-anchor="middle" class="sm">Email worker</text>
+</svg>
+<h3>Steps 4&ndash;7</h3>
+<ul>
+  <li><b>Label responsibilities</b> (and what each component should <i>not</i> do): e.g. the controller handles HTTP only; the service holds registration rules; the repository holds SQL; the cache holds course reads only; the queue worker sends email and never blocks registration.</li>
+  <li><b>REST API:</b> all courses <code>GET /courses</code>; Course 42 <code>GET /courses/42</code>; create <code>POST /courses</code>; update <code>PUT/PATCH /courses/42</code>; delete <code>DELETE /courses/42</code>; registrations of Student 10 <code>GET /students/10/registrations</code>; register Student 10 for Course 42 <code>POST /courses/42/registrations</code> (body <code>{studentId: 10}</code>). <b>Challenge:</b> the POST registration endpoint is affected by a double-click or retry; prevent duplicates with a unique (student, course) constraint plus an <b>idempotency key</b>.</li>
+  <li><b>Critical scenario:</b> one seat left in Course 42; A and B submit at almost the same time. Race: both read 1 free seat, both insert, 101/100. Prevention: one database transaction that checks capacity and inserts/decrements atomically (row lock or optimistic locking) with a DB constraint; one gets a clean "course full".</li>
+  <li><b>Justify each decision</b> with the chain: Requirement &rarr; Problem/Risk &rarr; Quality attribute &rarr; Architectural decision &rarr; Mechanism. Example: "capacity never exceeded" &rarr; race on last seat &rarr; consistency &rarr; transactional DB &rarr; atomic check + insert with constraint.</li>
+</ul>
+<h3>Step 8: challenge your architecture (update only if necessary)</h3>
+<table>
+  <tr><th>Change</th><th>Does the architecture need to change?</th></tr>
+  <tr><td>Traffic grows from hundreds to several thousand simultaneous users</td><td>Not structurally: add stateless API instances behind the load balancer; the transaction protects capacity.</td></tr>
+  <tr><td>Catalogue becomes even more read-heavy</td><td>Strengthen the cache (and read replicas); no structural change.</td></tr>
+  <tr><td>Email service temporarily unavailable</td><td>No: the queue holds messages and retries; registration is unaffected (this is why email is async).</td></tr>
+  <tr><td>University launches a mobile application</td><td>No: a second client of the same REST API; server-side rules and auth are reused.</td></tr>
+  <tr><td>A second campus uses the same system</td><td>Mostly data/config (campus identifier, per-campus courses, capacity); scale the same components; revisit capacity of the database.</td></tr>
+</table>
+<p><b>Final group check:</b> major components identified with clear responsibilities; the client never touches the database; business rules enforced on the server; concurrent registration cannot exceed capacity; duplicates prevented; course reads efficient; email does not delay registration; availability and single points of failure considered; each decision explainable. <b>3-minute presentation:</b> diagram, component responsibilities, last-seat race handling, duplicate prevention, caching and async messaging use, one remaining risk or trade-off. <b>Key takeaway:</b> architecture connects requirements and quality attributes to decisions about structure, responsibilities, communication, data and failure handling; it is not just a diagram or a list of technologies.</p>
+
+<h2>4. Case study C: Zippo ride-hailing and delivery super-app</h2>
+<p><b>Role:</b> you are the Lead Software Architect for Zippo, a ride-hailing and food-delivery "super-app" in South and Southeast Asia. <b>Context:</b> 50,000 &rarr; 5 million monthly active riders and 300,000 active drivers across 6 countries in 18 months; approved expansion into 10 more countries within a year (including unreliable mobile networks); investors want a food/grocery vertical on the same platform reusing the driver fleet; a promotion caused a <b>3-hour outage</b> at peak surge (drivers could not receive offers, riders double-charged, about $400,000 lost). CEO: "this cannot happen again, and it has to work in villages with 2G."</p>
+<p><b>Current broken system:</b> one monolithic backend, one PostgreSQL database in a single AWS region; driver location updates written to the same rows the matching logic reads (read/write locks are the bottleneck); payments processed <b>synchronously</b> inside the trip-completion request (a slow gateway hangs the whole flow); no message queue, only direct HTTP calls between internal modules.</p>
+<table>
+  <tr><th>Functional</th><th>Non-functional (with numbers)</th></tr>
+  <tr><td>F1 request a ride / food order and see nearby drivers in real time<br>F2 match to the best driver within a target time<br>F3 drivers get offers and accept/reject within a countdown<br>F4 live location tracking<br>F5 payment at completion (cards, wallets, cash)<br>F6 surge pricing from real-time supply/demand<br>F7 shared driver/courier pool for rides and food</td><td><b>Matching latency:</b> matched driver within 3 s for 95 % of requests<br><b>Location throughput:</b> 300,000 drivers pinging every 4 s = 75,000 writes/s steady, up to 3x in surge<br><b>Availability:</b> 99.95 % for trip-critical services (matching, payments)<br><b>Payment consistency:</b> zero double or lost charges, strongly consistent<br><b>Geographic scale:</b> 16 countries, some with data-residency laws (payment data stays in-country)<br><b>Network tolerance:</b> driver apps acceptable on 2G/3G, intermittent<br><b>Extensibility:</b> new vertical without rewriting matching or payment core<br><b>Observability:</b> full trip lifecycle traceable for disputes<br><b>Constraint:</b> cost-aware cloud budget</td></tr>
+</table>
+<p><b>The six tasks</b> (the case provides the tasks; the suggestions below are a worked approach built from the lecture concepts, not an official answer):</p>
+<table>
+  <tr><th>Task</th><th>Suggested approach</th></tr>
+  <tr><td>1 Prioritise quality attributes: which 3 conflict?</td><td><b>Availability + latency vs strong payment consistency vs cost</b> (and data residency). Prioritise availability and matching latency for the trip-critical path and strong consistency for money; deliberately sacrifice strict consistency for location data (eventual is fine) and accept higher infrastructure cost only where the numbers demand it.</td></tr>
+  <tr><td>2 Decompose</td><td>Services by capability: rider/driver apps and API gateway; <b>Location</b> service (high-volume pings); <b>Matching / Dispatch</b>; <b>Trip</b>; <b>Pricing / surge</b>; <b>Payments</b> (isolated, per-country); <b>Notification/offers</b>; <b>Catalog/Orders</b> for the food vertical reusing the driver pool; observability (tracing). Payment data and location data must not cross each other's boundary; no shared tables.</td></tr>
+  <tr><td>3 Real-time matching flow</td><td>Rider taps Request &rarr; gateway &rarr; Trip service creates a request (write) &rarr; Matching reads <b>nearby drivers from an in-memory geo-index fed by location pings</b> (reads, not the main DB) &rarr; sends offers to top candidates over push &rarr; first accept wins (atomic assignment) &rarr; rider notified. If none within 3 s: widen the radius, keep searching asynchronously, show an honest "still looking", and degrade gracefully (surge price or queue).</td></tr>
+  <tr><td>4 Data consistency strategy</td><td><b>Location data:</b> high-volume, short-lived, losing a ping is harmless: append to a stream / in-memory geo store, eventual consistency, batched writes, TTL. <b>Payment data:</b> strongly consistent relational store with transactions, unique idempotency keys, per-country residency. Different stores, different guarantees.</td></tr>
+  <tr><td>5 The outage that already happened</td><td>(a) <b>Surge overload:</b> load balancers, autoscaling, separate location pipeline from matching (no shared locks), caching, queues to absorb spikes, load shedding. (b) <b>Slow payment gateway:</b> take payment <b>asynchronously</b> after trip end via a queue; timeout + circuit breaker; idempotent retries so no double charge; complete the trip first. (c) <b>2G:</b> small payloads, compact protocols, retry with backoff, offline buffering of location in the app, push over lightweight channels.</td></tr>
+  <tr><td>6 Top 3 risks</td><td>Examples: distributed-transaction bugs between trip and payment (mitigate with sagas, idempotency, reconciliation); hot-spot overload of the geo-index in a city (shard by region, replicate); data-residency / multi-region complexity and cost (per-country payment deployments, cost monitoring); operational complexity of many services (tracing, SLOs, on-call).</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+C4 = Context, Containers, Components, Code (zoom in). UniMart shows why a monolith is right first and why shared process, database, pipeline and codebase cause growth pain; the redesign gives each service its own data, mixes sync (identity) and async (events) and honestly lists new costs (distributed transactions, monitoring); a partial decomposition (Payments first) may fit better than full microservices. Course registration: concurrency (atomic transaction), server-side validation, idempotency, caching, async email, no single point of failure. Zippo: separate location from payments, async payments, geo-index matching, 2G tolerance.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Describe the four levels of the C4 model with what each shows.</summary>
+<p>Level 1 System Context: the big picture, who uses the system and what external software systems it interacts with. Level 2 Container: zooms into the system boundary to show high-level technical building blocks (web and mobile apps, API services, databases) and how they communicate over protocols. Level 3 Component: zooms into one container to show its structural components (controllers, repositories, authentication services) and internal interactions. Level 4 Code: zooms into one component to show implementation details such as a class diagram.</p>
+</details>
+<details>
+<summary>W2. For UniMart, map each growth-crisis symptom to its architectural cause and describe the redesign trade-offs.</summary>
+<p>Search leak crashing payments: shared process / failure domain. Payments and Catalog needing different databases: shared database. 3-day copy change: shared deploy pipeline. Conflicting commits: shared codebase. Redesign into Auth, Catalog, Messaging, Orders and Payments, Reviews, Notifications with their own data, API gateway, sync identity checks and async events. Better: independent deploys, fault isolation, database choice, team autonomy. Harder: six pipelines, network failures, no single ACID transaction, service discovery and monitoring, API contracts.</p>
+</details>
+<details>
+<summary>W3. Explain how the university course registration architecture handles the last-seat race, duplicate registration, read load and email delay.</summary>
+<p>Last seat: the registration service performs the capacity check and insert/decrement in one atomic database transaction (row lock or optimistic locking) with a DB constraint as a backstop, so one student succeeds and the other gets 'course full'. Duplicates: a unique (student, course) constraint plus an idempotency key on the POST. Read load: cache the course catalogue (read-heavy, rarely changing) and use a replica. Email: place confirmation on a queue processed by a worker, so registration is not delayed and an email outage does not affect it.</p>
+</details>
+<details>
+<summary>W4. Outline an architecture for the Zippo ride-hailing app that prevents a repeat of the 3-hour outage and works on 2G.</summary>
+<p>Decompose into location, matching/dispatch, trip, pricing, payments (isolated, per country), notifications and a food vertical reusing the driver pool, behind an API gateway. Separate the location pipeline (in-memory geo index, batched eventual writes) from matching so there are no read/write locks. Make payments asynchronous after trip completion with a queue, timeouts, circuit breaker and idempotency keys so a slow gateway never blocks trips and no double charges occur. Autoscale and shed load under surge. For 2G use small payloads, retries with backoff and offline buffering of location in the app. Add tracing for dispute resolution.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>C4 model</td><td>Simon Brown. Four zoom levels: <b>1 Context</b> (users + external systems), <b>2 Container</b> (web/mobile apps, APIs, databases + protocols), <b>3 Component</b> (controllers, repositories, auth services inside one container), <b>4 Code</b> (classes / implementation).</td></tr>
+  <tr><td>UniMart Stage 1</td><td>Actors (seller, buyer, email verifier, payment gateway, email/SMS). 3 NFRs traced to text: availability in textbook rush; payments never lost/double-charged; low cost, fast delivery.</td></tr>
+  <tr><td>UniMart monolith</td><td>Layered (presentation, business logic with Auth, Catalog, Messaging, Orders/Payments, Reviews, Notifications; data access; single DB) on one VM. Reflection: one crash takes everything; scale everything to scale search; one-line fix goes through the whole pipeline.</td></tr>
+  <tr><td>Growth crisis causes</td><td>Search leak crashed app = shared process / failure domain. Payments vs Catalog DB = shared database. 3-day copy change = shared deploy pipeline. Conflicting changes = shared codebase.</td></tr>
+  <tr><td>Microservices</td><td>Auth, Catalog, Messaging, Orders &amp; Payments, Reviews, Notifications; each owns data; API gateway; sync Orders&rarr;Auth; async events (OrderPlaced, PriceDropped, NewMessageReceived, OrderCompleted) on the bus.</td></tr>
+  <tr><td>Trade-offs</td><td>Better: independent deploys, fault isolation, DB choice, team autonomy. Harder: six pipelines, network failures, no single ACID transaction, service discovery and monitoring, API contracts.</td></tr>
+  <tr><td>Event-driven notification</td><td>Broker (RabbitMQ / Kafka). Buys decoupling and resilience; costs traceability and eventual consistency.</td></tr>
+  <tr><td>SOA vs microservices</td><td>SOA: heavier shared middleware (ESB), coarser services. Microservices: independent, fine-grained, lightweight comms, own data. Serverless fits a nightly report, not real-time messaging.</td></tr>
+  <tr><td>Decision memo</td><td>Monolith right at Year 0; crisis from shared process/DB/pipeline/code; partial decomposition (Orders &amp; Payments first); next problem: distributed transactions and cross-service monitoring.</td></tr>
+  <tr><td>Course registration problems</td><td>Last-seat race (transaction + constraint); client tampering (server-side validation); double-click (idempotency, unique constraint); read-heavy catalogue (cache); email delay (queue / async); single DB (replica, redundant instances).</td></tr>
+  <tr><td>Registration API</td><td>GET /courses; GET /courses/42; POST /courses; PUT/PATCH /courses/42; DELETE /courses/42; GET /students/10/registrations; POST /courses/42/registrations (retry-risk: idempotency).</td></tr>
+  <tr><td>Decision chain</td><td>Requirement &rarr; problem/risk &rarr; quality attribute &rarr; architectural decision &rarr; mechanism.</td></tr>
+  <tr><td>Zippo</td><td>Problems: shared DB locks (location writes vs matching reads), synchronous payment in trip completion, no queue. NFRs: 3 s matching (95 %), 75,000 location writes/s, 99.95 %, zero double charge, data residency, 2G, extensibility, observability. Solution: separate location pipeline + geo-index, async idempotent payments with circuit breaker, per-country payments, small payloads for 2G, tracing.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>For a "monolith to microservices" question: diagnose causes first (shared process, DB, pipeline, codebase), propose boundaries by capability and data ownership, label sync vs async, and include the real costs.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "The C4 model's four levels are:", "o": ["Context, Containers, Components, Code", "Class, Control, Cache, Cloud", "Client, Core, Component, Code", "Context, Class, Cluster, Connection"], "a": 0, "e": "Created by Simon Brown."}, {"q": "Which C4 level shows who uses the system and what external systems it interacts with?", "o": ["Level 1 Context", "Level 2 Container", "Level 3 Component", "Level 4 Code"], "a": 0, "e": "The big picture."}, {"q": "Web apps, mobile apps, API services and databases appear at:", "o": ["Context", "Container", "Component", "Code"], "a": 1, "e": "Level 2 zooms into the system boundary."}, {"q": "Controllers, repositories and authentication services inside one container appear at:", "o": ["Context", "Container", "Component", "Code"], "a": 2, "e": "Level 3."}, {"q": "A UML class diagram of one component is level:", "o": ["1", "2", "3", "4"], "a": 3, "e": "Code level."}, {"q": "UniMart's Year-0 launch NFR 'payments must never be lost or double-charged' is a:", "o": ["Deployability requirement", "Consistency / reliability requirement on payments", "Usability requirement", "Availability of search"], "a": 1, "e": "Traced to the case text."}, {"q": "A search memory leak crashing the whole UniMart app reveals which cause?", "o": ["Shared database", "Shared process / failure domain", "Shared pipeline", "Shared codebase"], "a": 1, "e": "All modules run in one process."}, {"q": "Payments and Catalog needing different databases but sharing one is a:", "o": ["Shared process", "Shared database", "Shared pipeline", "Shared UI"], "a": 1, "e": "Neither squad can move."}, {"q": "A copy change taking 3 days to reach production is caused by:", "o": ["Shared process", "Shared database", "Shared deploy pipeline", "Network latency"], "a": 2, "e": "It rides the same build, test and release cycle as payments code."}, {"q": "Two squads editing the same file in the same week is:", "o": ["Shared database", "Shared codebase (merge contention)", "Shared pipeline", "Shared process"], "a": 1, "e": "Unrelated features collide in merges."}, {"q": "In the microservice redesign, Orders & Payments calls Auth:", "o": ["Asynchronously", "Synchronously, to confirm identity before charging", "Never", "Via the database"], "a": 1, "e": "An action must not proceed on an unverified user."}, {"q": "Catalog publishes PriceDropped events asynchronously because:", "o": ["Events are faster to code", "A slow Notification service should not block a listing update", "REST is banned", "It owns no data"], "a": 1, "e": "Decoupling producers from consumers."}, {"q": "Which is a real cost of the UniMart microservice redesign?", "o": ["One pipeline", "No single ACID transaction across Orders, Payments and Notification", "Fewer deployables", "Less monitoring"], "a": 1, "e": "Partial failures need extra handling."}, {"q": "A benefit of event-driven notification is:", "o": ["Easier tracing", "Decoupling and resilience when Notification is slow or down", "Strong consistency", "Fewer messages"], "a": 1, "e": "Cost: traceability and eventual consistency."}, {"q": "SOA differs from microservices in that SOA typically uses:", "o": ["A heavier shared middleware layer (ESB) and coarser services", "No services", "Independent databases", "Only serverless"], "a": 0, "e": "Microservices are fine-grained, lightweight, own their data."}, {"q": "Which fits serverless best?", "o": ["Real-time messaging", "A nightly report-generation job", "The payments database", "The API gateway"], "a": 1, "e": "Short, scheduled, infrequent."}, {"q": "The model decision memo recommends first extracting:", "o": ["Reviews", "Orders and Payments", "Notifications", "Messaging"], "a": 1, "e": "Hardest consistency requirement and biggest blast radius."}, {"q": "In the registration case, two students taking the last seat is a:", "o": ["Caching problem", "Race condition / concurrency problem", "Latency problem", "Security problem only"], "a": 1, "e": "Fix with an atomic transaction and a constraint."}, {"q": "A student editing a value in Developer Tools should be handled by:", "o": ["Client-side validation", "Server-side validation", "Bigger servers", "A cache"], "a": 1, "e": "Never trust the client."}, {"q": "Double-click on Register is prevented by:", "o": ["Idempotency (unique constraint and idempotency key)", "A faster server", "Caching", "Load balancing"], "a": 0, "e": "POST is not retry-safe."}, {"q": "Course reads are frequent and rarely change, so:", "o": ["Cache them", "Never cache", "Move to NoSQL", "Use async"], "a": 0, "e": "Invalidate when courses change."}, {"q": "The confirmation email should be sent:", "o": ["Synchronously before replying", "Asynchronously via a queue", "By the browser", "Never"], "a": 1, "e": "It must not delay registration."}, {"q": "POST /courses/42/registrations registers a student. The correct REST style is:", "o": ["POST /registerStudent", "POST /courses/42/registrations", "GET /register?course=42", "PUT /register"], "a": 1, "e": "Nouns in the URL, verbs in the method."}, {"q": "The email service becoming unavailable requires an architecture change?", "o": ["Yes, rewrite everything", "No: the queue holds messages and registration is unaffected", "Yes, remove emails", "Yes, add a monolith"], "a": 1, "e": "That is why email is asynchronous."}, {"q": "Zippo's payment problem was that payments were:", "o": ["Asynchronous", "Processed synchronously inside the trip-completion request", "Cached", "Encrypted"], "a": 1, "e": "A slow gateway hung the whole flow."}, {"q": "Zippo's matching bottleneck came from:", "o": ["Location updates writing to the same DB rows read by matching (locks)", "Too many developers", "Weak passwords", "CDN"], "a": 0, "e": "Separate the location pipeline."}, {"q": "The Zippo location-update load is about:", "o": ["750 writes/s", "75,000 writes/s steady, up to 3x in surge", "7 writes/s", "1 million per day"], "a": 1, "e": "300,000 drivers pinging every 4 seconds."}, {"q": "Location data and payment data should be:", "o": ["Stored the same way", "Treated with different consistency (eventual vs strong)", "Shared in one table", "Cached together"], "a": 1, "e": "Losing a ping is harmless; a lost charge is not."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
