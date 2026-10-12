@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SA Lesson 3 - Systems Thinking and Design Thinking</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Software Architecture study guides</a> &middot; INTE 22293 &middot; Lesson 03</p><button id="theme" type="button"></button></div>
+  <h1>Systems Thinking and Design Thinking</h1>
+  <p class="lead">Covers: traditional vs systems thinking, the iceberg model, problem space vs solution space, design thinking beyond digital, the ten design-thinking mindsets, the right team, divergent and convergent thinking (the groan zone) and the double-diamond process. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Contrast traditional thinking with <b>systems thinking</b> and explain the iceberg model</li>
+  <li>Explain how systems thinking and design thinking connect <b>problem framing</b> to a <b>solution-oriented</b> approach</li>
+  <li>Describe design thinking beyond digital and its ten mindsets</li>
+  <li>Explain what a team needs to develop new ideas</li>
+  <li>Distinguish <b>divergent</b> and <b>convergent</b> thinking and describe the double-diamond process</li>
+</ul>
+
+<h2>1. Problem space and solution space</h2>
+<p>Software work moves from understanding a <b>problem</b> to building a <b>solution</b> (the SDLC). The lecture's Venn diagram shows three regions: <b>problem framing</b>, <b>solution oriented</b>, and where they overlap, <b>systems thinking + design thinking</b>. In other words, before jumping to a solution you must frame the problem properly, and both thinking styles help you move between the two spaces.</p>
+<svg viewBox="0 0 640 170" role="img" aria-label="Problem vs solution Venn" class="dg">
+  <ellipse cx="200" cy="85" rx="160" ry="70" class="bx" style="fill:var(--soft)"/><ellipse cx="440" cy="85" rx="160" ry="70" class="bx" style="fill:var(--soft)"/>
+  <text x="125" y="90" text-anchor="middle" class="h">Problem</text><text x="125" y="108" text-anchor="middle" class="h">framing</text>
+  <text x="515" y="90" text-anchor="middle" class="h">Solution</text><text x="515" y="108" text-anchor="middle" class="h">oriented</text>
+  <text x="320" y="72" text-anchor="middle" class="sm">Systems thinking</text><text x="320" y="90" text-anchor="middle" class="h">+</text><text x="320" y="108" text-anchor="middle" class="sm">Design thinking</text>
+</svg>
+
+<h2>2. Traditional thinking vs systems thinking</h2>
+<svg viewBox="0 0 640 150" role="img" aria-label="Traditional vs systems thinking" class="dg">
+  <text x="150" y="18" text-anchor="middle" class="h">Traditional thinking</text>
+  <circle cx="70" cy="85" r="18" class="bx"/><circle cx="230" cy="85" r="18" class="bx"/><path class="ar" d="M88 85 H212"/><text x="150" y="130" text-anchor="middle" class="sm">one cause &rarr; one effect</text>
+  <text x="470" y="18" text-anchor="middle" class="h">Systems thinking</text>
+  <circle cx="400" cy="50" r="14" class="bx"/><circle cx="540" cy="45" r="14" class="bx"/><circle cx="470" cy="100" r="14" class="bx"/><circle cx="395" cy="115" r="14" class="bx"/><circle cx="555" cy="110" r="14" class="bx"/>
+  <path class="ar" d="M414 50 H526"/><path class="ar" d="M533 59 L482 88"/><path class="ar" d="M456 100 L407 112"/><path class="ar" d="M394 101 V64"/><path class="ar" d="M484 100 H541"/><path class="ar" d="M550 96 V59"/>
+  <text x="470" y="140" text-anchor="middle" class="sm">a network of causes and effects</text>
+</svg>
+<p>Traditional thinking looks at a simple one-way link between a cause and an effect. <b>Systems thinking</b> asks us to look <b>beyond surface-level "fixes"</b> toward the <b>network of underlying causes and effects</b>.</p>
+
+<h3>The iceberg model</h3>
+<svg viewBox="0 0 640 260" role="img" aria-label="Iceberg model" class="dg">
+  <path d="M10 70 H630" stroke="var(--muted)" stroke-dasharray="6 4"/><text x="620" y="62" text-anchor="end" class="sm">waterline</text>
+  <polygon points="250,70 285,25 320,70" class="bx"/><text x="285" y="57" text-anchor="middle" class="h">Events</text>
+  <polygon points="230,70 340,70 365,115 205,115" class="bx"/><text x="285" y="97" text-anchor="middle" class="h">Patterns</text>
+  <polygon points="205,115 365,115 395,165 175,165" class="bx"/><text x="285" y="145" text-anchor="middle" class="h">Structures</text>
+  <polygon points="175,165 395,165 430,235 140,235" class="bx"/><text x="285" y="205" text-anchor="middle" class="h">Mental models</text>
+  <text x="410" y="45" class="sm">What happened?</text><text x="420" y="97" class="sm">What is happening over time?</text><text x="440" y="145" class="sm">What is enabling this pattern to continue?</text><text x="450" y="205" class="sm">In what ways did our mental models</text><text x="450" y="220" class="sm">create or sustain the structures in place?</text>
+  <path class="ar" d="M60 60 V230"/><text x="25" y="150" class="sm" transform="rotate(-90 40 150)">Analyse and understand (down)</text>
+  <path class="ar" d="M610 235 V70"/><text x="605" y="150" class="sm" text-anchor="middle" transform="rotate(90 600 150)">Innovate and transform (up)</text>
+</svg>
+<table>
+  <tr><th>Level</th><th>Question</th></tr>
+  <tr><td><b>Events</b></td><td>What happened?</td></tr>
+  <tr><td><b>Patterns</b></td><td>What is happening over time?</td></tr>
+  <tr><td><b>Structures</b></td><td>What is enabling this pattern to continue?</td></tr>
+  <tr><td><b>Mental models</b></td><td>In what ways have our mental models created or sustained the structures in place?</td></tr>
+</table>
+<p>You <b>analyse and understand</b> by working <b>down</b> the iceberg (from visible events to hidden beliefs) and you <b>innovate and transform</b> by working back <b>up</b>. In the lecture's second Venn diagram, systems thinking is about <i>what was?</i> (the past), design thinking about <i>what can be?</i> (the future) and where they overlap is <i>what is?</i> (the present).</p>
+<p><i>Software example (illustrative):</i> event = the site crashed on sale day; pattern = it crashes every sale; structure = one database and no caching; mental model = "traffic will stay small, we will optimise later". Fixing the event alone (restarting the server) is a surface fix.</p>
+
+<h2>3. Design thinking beyond digital</h2>
+<p>The lecture frames <b>design thinking</b> as going beyond digital products to radical innovation: "keep up the design thinking mindset and start hunting for the next big opportunity". It is a human-centred way of finding and solving problems, built on a set of mindsets (next section) and a process of exploring and then focusing (section 5).</p>
+
+<h2>4. The design-thinking mindsets (Design Thinking Playbook)</h2>
+<table>
+  <tr><th>#</th><th>Mindset</th><th>Meaning</th></tr>
+  <tr><td>1</td><td><b>Driven by curiosity</b></td><td>Ask "WH questions" continuously and change perspective to see things from various sides.</td></tr>
+  <tr><td>2</td><td><b>Focus on the people</b></td><td>Focus on the human being, build empathy, be mindful of their needs.</td></tr>
+  <tr><td>3</td><td><b>Accept complexity</b></td><td>Explore complex systems; accept uncertainty and the fact that complex problems demand complex solutions.</td></tr>
+  <tr><td>4</td><td><b>Visualise and show</b></td><td>Use stories, visualisations and simple language to share findings and create a clear value proposition.</td></tr>
+  <tr><td>5</td><td><b>Experiment and iterate</b></td><td>Build and test prototypes iteratively to understand, learn and solve problems in the context of the user.</td></tr>
+  <tr><td>6</td><td><b>Co-create, grow and scale</b></td><td>Continuously expand capabilities to create scalable market opportunities in a digital world and in ecosystems.</td></tr>
+  <tr><td>7</td><td><b>With varying mental states</b></td><td>Combine design thinking with data analytics, systems thinking and lean start-up as the situation requires.</td></tr>
+  <tr><td>8</td><td><b>Develop process awareness</b></td><td>Know where you stand in the design-thinking process and sense the "groan zone"; change the mindset through facilitation in a targeted way.</td></tr>
+  <tr><td>9</td><td><b>Networked collaboration</b></td><td>Collaborate on an ad hoc, agile and networked basis with T-shaped people and U-shaped teams across departments and companies.</td></tr>
+  <tr><td>10</td><td><b>Reflect on actions</b></td><td>Reflect on ways of thinking, actions and attitudes, because they affect what we do and the assumptions we make.</td></tr>
+</table>
+<p><b>"New mindset. New paradigm. Better solutions."</b></p>
+
+<h3>The right team for new ideas</h3>
+<p>New ideas are developed by people with great energy, tireless commitment and heads filled with visions. To succeed we usually need: <b>a (customer) need; an interdisciplinary team; the right mindset; the necessary leeway for experimentation; creativity; and the courage to question what exists</b>.</p>
+<h3>Three things important to us</h3>
+<table>
+  <tr><th>Principle</th><th>Meaning</th></tr>
+  <tr><td><b>Keep your personality</b></td><td>No one needs to mutate into another person: we already have creativity and room for development.</td></tr>
+  <tr><td><b>Love it, change it, or leave it!</b></td><td>Use the concepts and tips you like and adapt them to your needs.</td></tr>
+  <tr><td><b>Don't do it alone!</b></td><td>Get the necessary skills, technologies and attitudes to succeed, and think in business ecosystems.</td></tr>
+</table>
+
+<h2>5. Divergent and convergent thinking</h2>
+<svg viewBox="0 0 640 210" role="img" aria-label="Diverge and converge with groan zone" class="dg">
+  <polygon points="20,105 220,30 220,180" class="bx" style="fill:var(--soft)"/><text x="130" y="108" text-anchor="middle" class="h">Divergent</text><text x="130" y="125" text-anchor="middle" class="sm">open up: ideas,</text><text x="130" y="140" text-anchor="middle" class="sm">perspectives, options</text>
+  <rect class="bx" x="220" y="60" width="200" height="90" rx="40"/><text x="320" y="100" text-anchor="middle" class="h">GROAN ZONE</text><text x="320" y="120" text-anchor="middle" class="sm">confusion before clarity</text>
+  <polygon points="620,105 420,30 420,180" class="bx" style="fill:var(--soft)"/><text x="520" y="108" text-anchor="middle" class="h">Convergent</text><text x="520" y="125" text-anchor="middle" class="sm">narrow down: discuss,</text><text x="520" y="140" text-anchor="middle" class="sm">prioritise, select, decide</text>
+  <text x="20" y="20" class="sm">new problem statement</text><text x="620" y="20" text-anchor="end" class="sm">point of decision</text>
+</svg>
+<ul>
+  <li><b>Divergent thinking</b> opens up: identify, discuss, collect known options and different perspectives.</li>
+  <li><b>Convergent thinking</b> narrows down: prioritise, select, identify actions, refine and consolidate.</li>
+  <li>Between them lies the <b>groan zone</b>: the uncomfortable, messy middle where many ideas are on the table. Teams must be aware of it and be facilitated through it to a <b>point of decision</b>.</li>
+</ul>
+
+<h3>The double diamond: think like a system, act like an entrepreneur</h3>
+<svg viewBox="0 0 640 230" role="img" aria-label="Double diamond" class="dg">
+  <text x="160" y="16" text-anchor="middle" class="h">THINK LIKE A SYSTEM</text><text x="480" y="16" text-anchor="middle" class="h">ACT LIKE AN ENTREPRENEUR</text>
+  <polygon points="10,100 90,35 170,100 90,165" class="bx"/><polygon points="170,100 250,35 330,100 250,165" class="bx"/>
+  <polygon points="330,100 410,35 490,100 410,165" class="bx"/><polygon points="490,100 570,35 630,100 570,165" class="bx"/>
+  <text x="90" y="104" text-anchor="middle" class="sm">diverge</text><text x="250" y="104" text-anchor="middle" class="sm">converge</text><text x="410" y="104" text-anchor="middle" class="sm">diverge</text><text x="570" y="104" text-anchor="middle" class="sm">converge</text>
+  <text x="90" y="190" text-anchor="middle" class="h">Discover</text><text x="90" y="206" text-anchor="middle" class="sm">behaviour-led research</text>
+  <text x="250" y="190" text-anchor="middle" class="h">Define</text><text x="250" y="206" text-anchor="middle" class="sm">workshops, idea generation</text>
+  <text x="410" y="190" text-anchor="middle" class="h">Develop</text><text x="410" y="206" text-anchor="middle" class="sm">review ideas through</text><text x="410" y="220" text-anchor="middle" class="sm">culture and design</text>
+  <text x="570" y="190" text-anchor="middle" class="h">Deliver</text><text x="570" y="206" text-anchor="middle" class="sm">prototyping, selection,</text><text x="570" y="220" text-anchor="middle" class="sm">mentoring</text>
+  <text x="330" y="140" text-anchor="middle" class="h" fill="var(--accent)">PROBLEM DEFINITION</text>
+</svg>
+<table>
+  <tr><th>Diamond</th><th>Phase</th><th>Activity</th></tr>
+  <tr><td rowspan="2">1: the problem (think like a system)</td><td>Discover (diverge)</td><td>Behaviour-led design research</td></tr>
+  <tr><td>Define (converge)</td><td>Workshops and idea generation, ending in the <b>problem definition</b></td></tr>
+  <tr><td rowspan="2">2: the solution (act like an entrepreneur)</td><td>Develop (diverge)</td><td>Review ideas through culture and design thinking</td></tr>
+  <tr><td>Deliver (converge)</td><td>Prototyping, selection and mentoring</td></tr>
+</table>
+<p>Link to architecture: the first diamond is <b>problem space</b> (requirements, stakeholders, quality attributes); the second is <b>solution space</b> (components, patterns, prototypes). Lesson 4 turns this into a method for going from problem domain to system design.</p>
+
+<div class="box"><b>Key takeaways</b>
+Systems thinking looks at the network of causes and effects (iceberg: events, patterns, structures, mental models). Design thinking is human-centred, built on mindsets such as curiosity, empathy, iteration and co-creation. Diverge to open up, converge to decide, expect the groan zone in between. Double diamond: Discover, Define (problem), Develop, Deliver (solution). Teams need a customer need, interdisciplinary people, the right mindset, room to experiment and courage to question.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain systems thinking using the iceberg model and give a software example.</summary>
+<p>Systems thinking looks beyond surface fixes to the network of causes and effects. Iceberg levels: events (what happened), patterns (what is happening over time), structures (what enables the pattern), mental models (beliefs that sustain the structures). Example: a site crashes (event) every sale (pattern) because there is one database and no cache (structure), due to the belief that traffic will stay small (mental model). Fix the structure and the belief, not just restart the server.</p>
+</details>
+<details>
+<summary>W2. List and explain five design-thinking mindsets.</summary>
+<p>Driven by curiosity (ask WH questions, change perspective); focus on the people (empathy, human needs); accept complexity (uncertainty, complex problems need complex solutions); experiment and iterate (prototype and test with users); networked collaboration (agile, ad hoc work with T-shaped people and U-shaped teams). Others: visualise and show, co-create grow and scale, varying mental states, process awareness, reflect on actions.</p>
+</details>
+<details>
+<summary>W3. Describe divergent and convergent thinking, the groan zone and the double-diamond process.</summary>
+<p>Divergent thinking opens up options and perspectives; convergent thinking prioritises, selects and refines. The groan zone is the uncomfortable middle that needs facilitation before the point of decision. Double diamond: think like a system (Discover: behaviour-led research; Define: workshops and idea generation, producing the problem definition) then act like an entrepreneur (Develop: review ideas; Deliver: prototyping, selection, mentoring).</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Problem vs solution</td><td>Problem framing and solution-oriented work overlap in systems thinking + design thinking (SDLC context).</td></tr>
+  <tr><td>Systems thinking</td><td>Look beyond surface "fixes" to the <b>network of underlying causes and effects</b> (traditional thinking = simple cause &rarr; effect).</td></tr>
+  <tr><td>Iceberg</td><td>Events (what happened?) &rarr; Patterns (what is happening over time?) &rarr; Structures (what enables the pattern?) &rarr; Mental models. Down = analyse and understand; up = innovate and transform.</td></tr>
+  <tr><td>Time view</td><td>Systems thinking = what was; design thinking = what can be; overlap = what is.</td></tr>
+  <tr><td>Design thinking mindsets (10)</td><td>Curiosity &middot; focus on people &middot; accept complexity &middot; visualise and show &middot; experiment and iterate &middot; co-create, grow, scale &middot; varying mental states &middot; process awareness &middot; networked collaboration &middot; reflect on actions.</td></tr>
+  <tr><td>Right team</td><td>Customer need &middot; interdisciplinary team &middot; right mindset &middot; leeway for experimentation &middot; creativity &middot; courage to question.</td></tr>
+  <tr><td>3 things important</td><td>Keep your personality &middot; love it, change it or leave it &middot; don't do it alone.</td></tr>
+  <tr><td>Diverge / converge</td><td>Diverge: identify, discuss, different perspectives. Converge: prioritise, select, refine. <b>Groan zone</b> in between, then point of decision.</td></tr>
+  <tr><td>Double diamond</td><td>Think like a system: Discover, Define (problem definition). Act like an entrepreneur: Develop, Deliver (prototyping, selection, mentoring).</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be ready to explain systems thinking with the iceberg and to apply it to a software failure; and to name the four double-diamond phases with their activities.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Systems thinking asks us to look beyond surface-level fixes toward:", "o": ["Faster coding", "The network of underlying causes and effects", "A single root cause only", "More meetings"], "a": 1, "e": "Traditional thinking sees a simple cause-effect link."}, {"q": "Which is the top (visible) level of the iceberg model?", "o": ["Mental models", "Structures", "Patterns", "Events"], "a": 3, "e": "Events: what happened?"}, {"q": "'What is enabling this pattern to continue?' is the question for:", "o": ["Events", "Patterns", "Structures", "Mental models"], "a": 2, "e": "Events, patterns, structures, mental models."}, {"q": "'What is happening over time?' relates to:", "o": ["Events", "Patterns", "Structures", "Mental models"], "a": 1, "e": "Trends across events."}, {"q": "The deepest level of the iceberg is:", "o": ["Events", "Patterns", "Structures", "Mental models"], "a": 3, "e": "The beliefs that sustain the structures."}, {"q": "Working down the iceberg is for:", "o": ["Innovating and transforming", "Analysing and understanding", "Deployment", "Testing"], "a": 1, "e": "Working back up is to innovate and transform."}, {"q": "In the overlap of systems thinking and design thinking sits:", "o": ["What was?", "What is?", "What can be?", "What will never be?"], "a": 1, "e": "Systems thinking: what was; design thinking: what can be."}, {"q": "Which mindset asks 'WH questions' continuously?", "o": ["Focus on the people", "Driven by curiosity", "Accept complexity", "Reflect on actions"], "a": 1, "e": "Curiosity changes perspective."}, {"q": "'Build and test prototypes iteratively' is:", "o": ["Visualise and show", "Experiment and iterate", "Co-create", "Accept complexity"], "a": 1, "e": "One of the ten mindsets."}, {"q": "Building empathy and being mindful of people's needs is:", "o": ["Focus on the people", "Accept complexity", "Develop process awareness", "Networked collaboration"], "a": 0, "e": "Human-centred."}, {"q": "T-shaped people and U-shaped teams appear in:", "o": ["Networked collaboration", "Reflect on actions", "Visualise and show", "Driven by curiosity"], "a": 0, "e": "Collaboration across departments and companies."}, {"q": "Which is NOT listed as needed to develop new ideas?", "o": ["A customer need", "An interdisciplinary team", "The right mindset", "A large budget only"], "a": 3, "e": "Also leeway for experimentation, creativity and courage to question."}, {"q": "'Love it, change it, or leave it' means:", "o": ["Quit the module", "Use the concepts you like and adapt them to your needs", "Copy exactly", "Ignore everything"], "a": 1, "e": "Adapt the playbook."}, {"q": "Divergent thinking is about:", "o": ["Narrowing to a decision", "Opening up: identifying options and perspectives", "Testing", "Deploying"], "a": 1, "e": "Convergent thinking prioritises and selects."}, {"q": "The 'groan zone' is:", "o": ["The final delivery", "The uncomfortable messy middle between diverging and converging", "A test environment", "A server"], "a": 1, "e": "Teams need facilitation to get through it."}, {"q": "The four phases of the double diamond are:", "o": ["Discover, Define, Develop, Deliver", "Plan, Do, Check, Act", "Analyse, Design, Code, Test", "Think, Make, Break, Fix"], "a": 0, "e": "Discover/Define = problem; Develop/Deliver = solution."}, {"q": "Behaviour-led design research belongs to:", "o": ["Discover", "Define", "Develop", "Deliver"], "a": 0, "e": "The first diverge phase."}, {"q": "Prototyping, selection and mentoring belong to:", "o": ["Discover", "Define", "Develop", "Deliver"], "a": 3, "e": "The final converge phase."}, {"q": "The first diamond is labelled:", "o": ["Act like an entrepreneur", "Think like a system", "Deliver", "Test"], "a": 1, "e": "The second diamond is act like an entrepreneur."}, {"q": "A site crashes every sale day because everything runs on one database. Restarting the server only addresses which iceberg level?", "o": ["Events", "Structures", "Mental models", "None"], "a": 0, "e": "The pattern and structure remain."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
