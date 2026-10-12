@@ -1,0 +1,165 @@
+<p class="sm" style="color:var(--muted)">Source: the guest session <i>From Problem to System Design</i>, section 6 (designing for quality attributes) and the technology decisions that follow it.</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Distinguish latency from throughput; use caching and load balancing</li>
+  <li>Explain vertical vs horizontal scaling, stateless design, parallel and asynchronous execution</li>
+  <li>Explain reliability, the "nines", single points of failure and the timeout / retry / circuit breaker tools</li>
+  <li>Apply security as an architectural concern (authn vs authz, never trust the client, TLS, hashing, SQL injection, secrets)</li>
+  <li>Choose between a library and a framework and between SQL and NoSQL stores; agree team conventions</li>
+</ul>
+<p><b>Quality attributes you already use daily:</b> Google search feels instant (caching + replication across the planet: performance); WhatsApp ticks sent/delivered (async message queues); Netflix at 8 pm never buffers (popular titles cached inside your ISP, a CDN: performance; load balancer + many stateless servers: reliability); a bank transfer never half-happens (transactions, all or nothing); flash sales survive the stampede (scalability); you stay logged in on every device (tokens, not server memory: stateless).</p>
+
+<h2>1. Quality 1: performance</h2>
+<div class="box"><b>Latency vs throughput</b><b>Latency</b> = how long one user waits for one operation (a request and its response, e.g. 200 ms). <b>Throughput</b> = how much work the whole system does per unit time (e.g. 1,000 requests per second). Low latency does not imply high throughput.</div>
+<p>A bus moves fifty people an hour (great throughput) but each waits at every stop (poor latency); a sports car is instant for one person and useless for a crowd. Architecture constantly trades one for the other: <b>batching buys throughput with latency</b>. <b>Performance is money:</b> Amazon measured about 1 % of sales lost per extra 100 ms of latency; Google measured about 20 % less traffic when results took 500 ms longer (widely cited experiments, 2006&ndash;09).</p>
+<h3>Why systems actually get slow</h3>
+<table>
+  <tr><th>#</th><th>Cause</th><th>#</th><th>Cause</th></tr>
+  <tr><td>1</td><td>Slow database queries (missing indexes, N+1 loops)</td><td>2</td><td>Too many network calls (chatty APIs, one call per item)</td></tr>
+  <tr><td>3</td><td>Sequential processing (waiting for work that could overlap)</td><td>4</td><td>Large payloads (data nobody asked for)</td></tr>
+  <tr><td>5</td><td>Inefficient algorithms (an O(n&sup2;) hiding in a loop)</td><td>6</td><td>Resource contention (everyone queuing for one lock)</td></tr>
+  <tr><td>7</td><td>External dependencies (your speed is their speed)</td><td></td><td></td></tr>
+</table>
+<p><b>Measure before you optimise; the slow part is almost never where you guessed.</b></p>
+<h3>Caching: the fastest query is the one you never run</h3>
+<svg viewBox="0 0 640 100" role="img" aria-label="Cache hit and miss" class="dg">
+  <rect class="bx" x="10" y="35" width="80" height="34" rx="6"/><text x="50" y="57" text-anchor="middle" class="sm">Request</text><path class="ar" d="M90 52 H150"/>
+  <rect class="bx" x="150" y="35" width="90" height="34" rx="6"/><text x="195" y="57" text-anchor="middle" class="h">Cache</text>
+  <path class="ar" d="M240 45 H330"/><text x="285" y="38" text-anchor="middle" class="sm">hit: ~1 ms</text>
+  <path class="ar" d="M240 62 H300 V85 H360"/><text x="270" y="97" text-anchor="middle" class="sm">miss</text>
+  <rect class="bx" x="360" y="68" width="100" height="30" rx="6"/><text x="410" y="88" text-anchor="middle" class="sm">Database</text>
+  <text x="520" y="52" text-anchor="middle" class="sm">store the result</text><text x="520" y="68" text-anchor="middle" class="sm">for next time</text>
+</svg>
+<p><b>Cache what is:</b> read often, changed rarely, expensive to compute, tolerant of being slightly stale. <b>The catch is invalidation:</b> when the real data changes the cached copy is a lie until refreshed; decide acceptable staleness per data type (menu: 5 minutes; order status: never cache it). Tools: Redis, Memcached, HTTP caching headers, CDN caching.</p>
+<h3>Load balancing: many hands, one front door</h3>
+<p>Clients &rarr; <b>load balancer</b> &rarr; Server 1, 2, 3. It <b>spreads requests, health-checks servers and hides failures from users</b>; a dead server simply stops getting traffic (so it is also your first reliability tool). The catch: <b>any server must be able to answer any request</b>, which is the stateless idea below.</p>
+
+<h2>2. Quality 2: scalability</h2>
+<table>
+  <tr><th>Vertical scaling (scale up)</th><th>Horizontal scaling (scale out)</th></tr>
+  <tr><td>A bigger server. Simple, no code changes. But: a ceiling, a price curve, still one point of failure.</td><td>Keep adding machines as load grows. But: needs a load balancer and stateless design.</td></tr>
+</table>
+<p>Cloud pricing made the choice for you: ten small machines are cheaper than one huge one.</p>
+<h3>The server does not remember you (stateless)</h3>
+<pre><code>// wrong: dies on restart, breaks with 2 instances
+let loggedInUser = null;
+
+// right: prove it every time
+GET /me
+Authorization: Bearer &lt;token&gt;</code></pre>
+<p>Each request must carry everything the server needs to understand it: your token is sent on every request; any server instance can answer any request; nothing user-specific may live in a server variable. <b>The second point is the entire secret of horizontal scaling.</b></p>
+<h3>Stateful vs stateless: the session trap</h3>
+<p>If the session lives in Server A's memory, the next request that lands on Server B finds "no session" and the user is logged out. Fixes: <b>A: a shared session store</b> (e.g. Redis) used by all servers; <b>B: stateless tokens</b> (JWT): the request itself proves who you are and any server can verify it locally. If servers hold no per-user state, any server can answer any request and scaling out becomes trivial.</p>
+<h3>Execution shapes</h3>
+<table>
+  <tr><th>Sequential</th><th>Parallel</th></tr>
+  <tr><td>A &rarr; B &rarr; C &rarr; D: total time = A + B + C + D (e.g. 3 &times; 200 ms = 600 ms)</td><td>Independent work at the same time: total time = the slowest branch (200 ms). Example: a dashboard needs courses, grades and notices (three independent queries): fire them together; 600 ms becomes 200 ms. Parallelism is free speed, but only for work that is truly independent.</td></tr>
+</table>
+<table>
+  <tr><th>Synchronous: the caller waits</th><th>Asynchronous: fire and move on</th></tr>
+  <tr><td>A is blocked until B answers.</td><td>A returns immediately; B works later. Classic example: <b>email after an order</b>: save the order, put the email on a queue, return success (~50 ms); the email service delivers seconds later and nobody is waiting.</td></tr>
+</table>
+<p><b>Never make the user wait for work they do not need to see.</b></p>
+
+<h2>3. Quality 3: reliability</h2>
+<div class="box"><b>Reliability</b>The ability of a system to continue providing its intended service correctly over time, including when components fail. <b>Availability = uptime / total time.</b> Failure is not an exception: at scale something is always failing, so design for it.</div>
+<table>
+  <tr><th>Availability</th><th>Downtime per year</th></tr>
+  <tr><td>99 %</td><td>3.65 days</td></tr>
+  <tr><td>99.9 % ("three nines")</td><td>8.8 hours</td></tr>
+  <tr><td>99.99 %</td><td>53 minutes</td></tr>
+  <tr><td>99.999 %</td><td>5 minutes</td></tr>
+</table>
+<p>Each extra nine costs roughly 10&times; the engineering effort: redundancy, failover, monitoring, on-call, rehearsed recovery.</p>
+<h3>Single points of failure and redundancy</h3>
+<svg viewBox="0 0 640 130" role="img" aria-label="SPOF vs redundancy" class="dg">
+  <text x="130" y="14" text-anchor="middle" class="h">One of everything</text>
+  <rect class="bx" x="70" y="30" width="120" height="30" rx="6"/><text x="130" y="50" text-anchor="middle" class="sm">App server</text><path class="ar" d="M130 60 V72"/>
+  <rect class="bx" x="70" y="72" width="120" height="30" rx="6"/><text x="130" y="92" text-anchor="middle" class="sm">Database</text>
+  <text x="130" y="122" text-anchor="middle" class="sm">DB dies = system dies</text>
+  <text x="470" y="14" text-anchor="middle" class="h">Redundancy: no single point of failure</text>
+  <rect class="bx" x="330" y="50" width="90" height="30" rx="6"/><text x="375" y="70" text-anchor="middle" class="sm">Load balancer</text>
+  <path class="ar" d="M420 60 L470 38"/><path class="ar" d="M420 70 L470 88"/>
+  <rect class="bx" x="470" y="25" width="70" height="28" rx="6"/><text x="505" y="43" text-anchor="middle" class="sm">App 1</text>
+  <rect class="bx" x="470" y="78" width="70" height="28" rx="6"/><text x="505" y="96" text-anchor="middle" class="sm">App 2</text>
+  <path class="ar" d="M540 40 L575 55"/><path class="ar" d="M540 92 L575 70"/>
+  <rect class="bx" x="575" y="38" width="60" height="26" rx="6"/><text x="605" y="55" text-anchor="middle" class="sm">DB primary</text>
+  <rect class="bx" x="575" y="72" width="60" height="26" rx="6"/><text x="605" y="89" text-anchor="middle" class="sm">DB replica</text>
+</svg>
+<p>Ask of every box and every arrow: <b>"What happens when this dies?"</b> If the answer is "everything stops", you found a single point of failure (SPOF). A replica follows the primary and takes over if it dies.</p>
+<h3>When giants fall</h3>
+<table>
+  <tr><th>AWS S3, February 2017</th><th>Meta, October 2021</th></tr>
+  <tr><td>One mistyped command during routine debugging removed too many servers. 4 hours down in the main US region; thousands of sites broke; even status dashboards depended on S3.<br><b>Lessons: humans are a failure mode; a shared dependency is a shared SPOF.</b></td><td>One network configuration change withdrew the routes telling the internet where Facebook lives. 6 hours: Facebook, WhatsApp, Instagram gone; internal tools on the same network; even office badge readers affected.<br><b>Lessons: blast radius is a design choice; recovery paths must be independent.</b></td></tr>
+</table>
+<h3>Partial failure and three coping tools</h3>
+<p>In a monolith everything fails together; on a network things fail one at a time. If Service B is down and A is not, that is a <b>partial failure</b>, the normal failure mode of a distributed system. A must decide: wait, retry, give up, or degrade gracefully.</p>
+<table>
+  <tr><th>Tool</th><th>Meaning</th></tr>
+  <tr><td><b>1 Timeout</b></td><td>Do not wait forever: give every call a deadline (e.g. give up after 2 s). A request that hangs is worse than one that fails: it holds a thread, a connection, a user.</td></tr>
+  <tr><td><b>2 Retry</b></td><td>Try again, carefully. Good for transient blips; only safe on <b>idempotent</b> operations, with a limit and a growing delay (retry &times;3 with backoff 1 s, 2 s, 4 s).</td></tr>
+  <tr><td><b>3 Circuit breaker</b></td><td>"Stop kicking a dead horse": after repeated failures stop calling B and fail fast to a fallback; occasionally let one probe through to see if B recovered. States: <b>closed &rarr; open &rarr; half-open</b>. (From Michael Nygard's <i>Release It!</i>, 2007.)</td></tr>
+</table>
+
+<h2>4. Quality 4: security</h2>
+<p><b>Security is not something added at the end; it is an architectural concern from day one.</b> (For further reading: XSS, CSRF, SSRF and friends: the OWASP Top 10.)</p>
+<table>
+  <tr><th>Authentication: "Who are you?"</th><th>Authorisation: "What are you allowed to do?"</th></tr>
+  <tr><td>Login with a (hashed) password<br>Tokens prove identity on every request<br>Multi-factor for sensitive systems</td><td>Roles: student, lecturer, admin<br>Checked on the server, every request<br>A student must not see others' grades</td></tr>
+</table>
+<h3>Security rule number one: never trust the client</h3>
+<pre><code>// IN THE BROWSER: anyone can edit this in devtools
+let price = 4999;
+if (form.coupon === "STAFF") price = 0;
+sendOrder({ total: price });
+
+// ON THE SERVER: the only version that counts
+const item = await repo.findById(id);
+const total = pricing.apply(item, user);
+order.create({ total });</code></pre>
+<p>Client-side checks are for user experience; <b>server-side checks are for correctness and security</b>. Anything the client sends can be forged (prices, user ids, roles, quantities, hidden fields): validate on arrival, every time, even if the form already checked it.</p>
+<h3>Protecting data</h3>
+<table>
+  <tr><th>Where</th><th>How</th></tr>
+  <tr><td>In transit</td><td>HTTPS / TLS on every connection (free certificates such as Let's Encrypt removed the last excuse).</td></tr>
+  <tr><td>At rest</td><td>Encrypt the database volume and the backups: a stolen disk should be a useless disk.</td></tr>
+  <tr><td>Passwords</td><td>Never stored, never encrypted: <b>hashed with a slow one-way function (bcrypt or argon2)</b>. Why hash, not encrypt? Encryption has a key, and keys leak; a hash has no way back.</td></tr>
+</table>
+<h3>SQL injection: when input becomes code</h3>
+<pre><code>// VULNERABLE: user input pasted into the query
+const q = "SELECT * FROM students WHERE name = '" + input + "'";
+// input:  '; DROP TABLE students;--   -> goodbye, students table
+
+// SAFE: parameterised, input stays data
+db.query("SELECT * FROM students WHERE name = ?", [input]);</code></pre>
+<p>One habit fixes it forever: <b>parameterised queries</b> (your ORM already does this; do not bypass it).</p>
+<h3>Configuration and secrets</h3>
+<p>Config changes between machines; code does not. Never hard-code <code>postgres://admin:P@ss123@localhost/app</code>; use <code>connect(process.env.DATABASE_URL)</code> with <code>.env</code> locally and real values on the server. <b>Secrets never enter Git</b>: once pushed, a secret is public forever (deleting the file does not delete history). In the repo: <code>.gitignore</code> lists <code>.env</code> and <code>node_modules</code>; a committed <code>.env.example</code> template lists names only (DATABASE_URL=, JWT_SECRET=).</p>
+
+<h2>5. Technology: the last decision, not the first</h2>
+<p>Only after the domain, components, communication style and quality attributes are understood are we equipped to choose tools.</p>
+<h3>The reuse ladder</h3>
+<table>
+  <tr><th>1 Module</th><th>2 Package</th><th>3 Library</th><th>4 Framework</th></tr>
+  <tr><td>One file of related code; smallest unit (<code>utils/dates.js</code>)</td><td>Modules bundled with a name and version so others can install them (npm: date-fns)</td><td>Code you call; you stay in control of the flow (axios, requests)</td><td>Code that calls you; owns the skeleton, you fill the gaps (Express, Spring, Django)</td></tr>
+</table>
+<p>All four are the same idea at different sizes: do not rewrite what exists. <b>Inversion of control: who calls whom?</b> With a library your code is the main character (<code>const res = await axios.get(url)</code>); with a framework your code is a plug-in (<code>app.get("/courses", (req, res) =&gt; ...)</code>: Express called this). A framework gives structure for free and takes some freedom in return; that trade is the decision.</p>
+<h3>SQL or NoSQL: decided by requirements</h3>
+<table>
+  <tr><th>Relational (SQL): Postgres, MySQL, SQLite</th><th>Document (NoSQL): MongoDB, Firestore, DynamoDB</th></tr>
+  <tr><td>Data has a stable, known shape<br>You need joins across entities<br>Integrity matters (no orphan registrations)<br>Transactions across several tables</td><td>Shape varies or changes fast<br>Documents read whole, rarely joined<br>Schema flexibility beats strict integrity<br>Very high write volume</td></tr>
+</table>
+<p>Most student projects have relational data: choose NoSQL because the data is document-shaped, not because it sounds modern.</p>
+<table>
+  <tr><th>Data set</th><th>Reason</th><th>Store</th></tr>
+  <tr><td>Orders + payments</td><td>Joins users, orders, payments; money must never orphan; transactions</td><td><b>SQL (Postgres)</b>: integrity + joins</td></tr>
+  <tr><td>Restaurant menus</td><td>Nested tree, read whole, shape differs per restaurant, rarely joined</td><td><b>Document (MongoDB)</b>: flexible shape</td></tr>
+  <tr><td>Carts + sessions</td><td>Tiny, fetched by key, expire in minutes, must be instant</td><td><b>Key-value (Redis)</b>: speed by key</td></tr>
+  <tr><td>Driver GPS pings</td><td>Huge append-only stream, queried by recent time window</td><td><b>Wide-column (Cassandra)</b>: write volume</td></tr>
+</table>
+<p>One system, four stores, each earned by a requirement: choose per data shape, never "one DB for the system".</p>
+<h3>Team agreements: conventions are architecture too</h3>
+<p>Agree in week 1 (twenty minutes saves days): <b>1 Naming</b> (one casing style for files, classes, endpoints); <b>2 Formatting</b> (a formatter like Prettier or Black); <b>3 Errors</b> (where caught, what the client sees, what is logged); <b>4 Definition of done</b> (merged, reviewed, tested, documented; not "works on my laptop").</p>
+
+<div class="box"><b>Key takeaways</b>
+Performance: latency vs throughput; measure first; cache read-heavy, rarely changing data (mind invalidation); load-balance. Scalability: scale out with stateless servers (tokens or a shared session store); parallelise independent work; make slow work asynchronous. Reliability: availability nines, remove single points of failure, plan for partial failure with timeout, retry (idempotent only) and circuit breaker. Security: authentication vs authorisation; never trust the client; TLS, encryption at rest, hashed passwords; parameterised queries; no secrets in Git. Choose technology last; frameworks invert control; choose SQL/NoSQL per data shape.</div>

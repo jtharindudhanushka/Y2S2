@@ -6,7 +6,7 @@ Lecture 01-03 and C4 (13) slide images already viewed (invention vs innovation, 
 
 ## Plan (revised; lessons 1-5 DONE and pushed)
 1 Introduction, 2 Good design + architect + SOLID, 3 Systems/design thinking, 4 Problem to system design (guest slides 1-41), 5 Monolith to microservices (guest slides 42-72): DONE
-6 Quality attributes + technology decisions: guest session slides 73-99 (performance, caching, load balancing, scalability, stateless, sequential/parallel, sync/async, reliability and nines, SPOF, outages, timeout/retry/circuit breaker, security: authn/authz, never trust client, TLS/hashing, SQL injection, config/secrets, reuse ladder, library vs framework, SQL vs NoSQL, team agreements). Text already extracted earlier in session; re-run: pdftotext -f 73 -l 99 -layout on lecture 09.
+6 DONE. (was: guest session slides 73-99 (performance, caching, load balancing, scalability, stateless, sequential/parallel, sync/async, reliability and nines, SPOF, outages, timeout/retry/circuit breaker, security: authn/authz, never trust client, TLS/hashing, SQL injection, config/secrets, reuse ladder, library vs framework, SQL vs NoSQL, team agreements). Text already extracted earlier in session; re-run: pdftotext -f 73 -l 99 -layout on lecture 09.
 7 Worked designs: guest slides 100-126 (13-question worksheet, University Registration exercise, Food Delivery at Scale, Ticket Booking, putting it together, 7-question checklist). Read with pdftotext -f 100 -l 126.
 8 C4 model (lecture 13; viewed) + case studies: lecture 04 UniMart workshop (+ In-Class Activity 03 student answers), lecture 10 course registration, lecture 02 Zippo ride-hailing (read all tasks)
 9 Practical: UniMart lab series (10 guides; read all) + Group assignment (7 docs; read all)

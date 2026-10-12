@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SA Lesson 6 - Quality Attributes and Technology Choices</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Software Architecture study guides</a> &middot; INTE 22293 &middot; Lesson 06</p><button id="theme" type="button"></button></div>
+  <h1>Quality Attributes and Technology Choices</h1>
+  <p class="lead">Covers (guest session, part 3): designing for performance (latency vs throughput, caching, load balancing), scalability (scale up vs out, stateless servers, parallel and asynchronous work), reliability (availability nines, single points of failure, timeouts, retries, circuit breakers), security (authentication, authorisation, never trust the client, encryption, hashing, SQL injection, secrets), reuse (library vs framework), SQL vs NoSQL and team agreements. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<p class="sm" style="color:var(--muted)">Source: the guest session <i>From Problem to System Design</i>, section 6 (designing for quality attributes) and the technology decisions that follow it.</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Distinguish latency from throughput; use caching and load balancing</li>
+  <li>Explain vertical vs horizontal scaling, stateless design, parallel and asynchronous execution</li>
+  <li>Explain reliability, the "nines", single points of failure and the timeout / retry / circuit breaker tools</li>
+  <li>Apply security as an architectural concern (authn vs authz, never trust the client, TLS, hashing, SQL injection, secrets)</li>
+  <li>Choose between a library and a framework and between SQL and NoSQL stores; agree team conventions</li>
+</ul>
+<p><b>Quality attributes you already use daily:</b> Google search feels instant (caching + replication across the planet: performance); WhatsApp ticks sent/delivered (async message queues); Netflix at 8 pm never buffers (popular titles cached inside your ISP, a CDN: performance; load balancer + many stateless servers: reliability); a bank transfer never half-happens (transactions, all or nothing); flash sales survive the stampede (scalability); you stay logged in on every device (tokens, not server memory: stateless).</p>
+
+<h2>1. Quality 1: performance</h2>
+<div class="box"><b>Latency vs throughput</b><b>Latency</b> = how long one user waits for one operation (a request and its response, e.g. 200 ms). <b>Throughput</b> = how much work the whole system does per unit time (e.g. 1,000 requests per second). Low latency does not imply high throughput.</div>
+<p>A bus moves fifty people an hour (great throughput) but each waits at every stop (poor latency); a sports car is instant for one person and useless for a crowd. Architecture constantly trades one for the other: <b>batching buys throughput with latency</b>. <b>Performance is money:</b> Amazon measured about 1 % of sales lost per extra 100 ms of latency; Google measured about 20 % less traffic when results took 500 ms longer (widely cited experiments, 2006&ndash;09).</p>
+<h3>Why systems actually get slow</h3>
+<table>
+  <tr><th>#</th><th>Cause</th><th>#</th><th>Cause</th></tr>
+  <tr><td>1</td><td>Slow database queries (missing indexes, N+1 loops)</td><td>2</td><td>Too many network calls (chatty APIs, one call per item)</td></tr>
+  <tr><td>3</td><td>Sequential processing (waiting for work that could overlap)</td><td>4</td><td>Large payloads (data nobody asked for)</td></tr>
+  <tr><td>5</td><td>Inefficient algorithms (an O(n&sup2;) hiding in a loop)</td><td>6</td><td>Resource contention (everyone queuing for one lock)</td></tr>
+  <tr><td>7</td><td>External dependencies (your speed is their speed)</td><td></td><td></td></tr>
+</table>
+<p><b>Measure before you optimise; the slow part is almost never where you guessed.</b></p>
+<h3>Caching: the fastest query is the one you never run</h3>
+<svg viewBox="0 0 640 100" role="img" aria-label="Cache hit and miss" class="dg">
+  <rect class="bx" x="10" y="35" width="80" height="34" rx="6"/><text x="50" y="57" text-anchor="middle" class="sm">Request</text><path class="ar" d="M90 52 H150"/>
+  <rect class="bx" x="150" y="35" width="90" height="34" rx="6"/><text x="195" y="57" text-anchor="middle" class="h">Cache</text>
+  <path class="ar" d="M240 45 H330"/><text x="285" y="38" text-anchor="middle" class="sm">hit: ~1 ms</text>
+  <path class="ar" d="M240 62 H300 V85 H360"/><text x="270" y="97" text-anchor="middle" class="sm">miss</text>
+  <rect class="bx" x="360" y="68" width="100" height="30" rx="6"/><text x="410" y="88" text-anchor="middle" class="sm">Database</text>
+  <text x="520" y="52" text-anchor="middle" class="sm">store the result</text><text x="520" y="68" text-anchor="middle" class="sm">for next time</text>
+</svg>
+<p><b>Cache what is:</b> read often, changed rarely, expensive to compute, tolerant of being slightly stale. <b>The catch is invalidation:</b> when the real data changes the cached copy is a lie until refreshed; decide acceptable staleness per data type (menu: 5 minutes; order status: never cache it). Tools: Redis, Memcached, HTTP caching headers, CDN caching.</p>
+<h3>Load balancing: many hands, one front door</h3>
+<p>Clients &rarr; <b>load balancer</b> &rarr; Server 1, 2, 3. It <b>spreads requests, health-checks servers and hides failures from users</b>; a dead server simply stops getting traffic (so it is also your first reliability tool). The catch: <b>any server must be able to answer any request</b>, which is the stateless idea below.</p>
+
+<h2>2. Quality 2: scalability</h2>
+<table>
+  <tr><th>Vertical scaling (scale up)</th><th>Horizontal scaling (scale out)</th></tr>
+  <tr><td>A bigger server. Simple, no code changes. But: a ceiling, a price curve, still one point of failure.</td><td>Keep adding machines as load grows. But: needs a load balancer and stateless design.</td></tr>
+</table>
+<p>Cloud pricing made the choice for you: ten small machines are cheaper than one huge one.</p>
+<h3>The server does not remember you (stateless)</h3>
+<pre><code>// wrong: dies on restart, breaks with 2 instances
+let loggedInUser = null;
+
+// right: prove it every time
+GET /me
+Authorization: Bearer &lt;token&gt;</code></pre>
+<p>Each request must carry everything the server needs to understand it: your token is sent on every request; any server instance can answer any request; nothing user-specific may live in a server variable. <b>The second point is the entire secret of horizontal scaling.</b></p>
+<h3>Stateful vs stateless: the session trap</h3>
+<p>If the session lives in Server A's memory, the next request that lands on Server B finds "no session" and the user is logged out. Fixes: <b>A: a shared session store</b> (e.g. Redis) used by all servers; <b>B: stateless tokens</b> (JWT): the request itself proves who you are and any server can verify it locally. If servers hold no per-user state, any server can answer any request and scaling out becomes trivial.</p>
+<h3>Execution shapes</h3>
+<table>
+  <tr><th>Sequential</th><th>Parallel</th></tr>
+  <tr><td>A &rarr; B &rarr; C &rarr; D: total time = A + B + C + D (e.g. 3 &times; 200 ms = 600 ms)</td><td>Independent work at the same time: total time = the slowest branch (200 ms). Example: a dashboard needs courses, grades and notices (three independent queries): fire them together; 600 ms becomes 200 ms. Parallelism is free speed, but only for work that is truly independent.</td></tr>
+</table>
+<table>
+  <tr><th>Synchronous: the caller waits</th><th>Asynchronous: fire and move on</th></tr>
+  <tr><td>A is blocked until B answers.</td><td>A returns immediately; B works later. Classic example: <b>email after an order</b>: save the order, put the email on a queue, return success (~50 ms); the email service delivers seconds later and nobody is waiting.</td></tr>
+</table>
+<p><b>Never make the user wait for work they do not need to see.</b></p>
+
+<h2>3. Quality 3: reliability</h2>
+<div class="box"><b>Reliability</b>The ability of a system to continue providing its intended service correctly over time, including when components fail. <b>Availability = uptime / total time.</b> Failure is not an exception: at scale something is always failing, so design for it.</div>
+<table>
+  <tr><th>Availability</th><th>Downtime per year</th></tr>
+  <tr><td>99 %</td><td>3.65 days</td></tr>
+  <tr><td>99.9 % ("three nines")</td><td>8.8 hours</td></tr>
+  <tr><td>99.99 %</td><td>53 minutes</td></tr>
+  <tr><td>99.999 %</td><td>5 minutes</td></tr>
+</table>
+<p>Each extra nine costs roughly 10&times; the engineering effort: redundancy, failover, monitoring, on-call, rehearsed recovery.</p>
+<h3>Single points of failure and redundancy</h3>
+<svg viewBox="0 0 640 130" role="img" aria-label="SPOF vs redundancy" class="dg">
+  <text x="130" y="14" text-anchor="middle" class="h">One of everything</text>
+  <rect class="bx" x="70" y="30" width="120" height="30" rx="6"/><text x="130" y="50" text-anchor="middle" class="sm">App server</text><path class="ar" d="M130 60 V72"/>
+  <rect class="bx" x="70" y="72" width="120" height="30" rx="6"/><text x="130" y="92" text-anchor="middle" class="sm">Database</text>
+  <text x="130" y="122" text-anchor="middle" class="sm">DB dies = system dies</text>
+  <text x="470" y="14" text-anchor="middle" class="h">Redundancy: no single point of failure</text>
+  <rect class="bx" x="330" y="50" width="90" height="30" rx="6"/><text x="375" y="70" text-anchor="middle" class="sm">Load balancer</text>
+  <path class="ar" d="M420 60 L470 38"/><path class="ar" d="M420 70 L470 88"/>
+  <rect class="bx" x="470" y="25" width="70" height="28" rx="6"/><text x="505" y="43" text-anchor="middle" class="sm">App 1</text>
+  <rect class="bx" x="470" y="78" width="70" height="28" rx="6"/><text x="505" y="96" text-anchor="middle" class="sm">App 2</text>
+  <path class="ar" d="M540 40 L575 55"/><path class="ar" d="M540 92 L575 70"/>
+  <rect class="bx" x="575" y="38" width="60" height="26" rx="6"/><text x="605" y="55" text-anchor="middle" class="sm">DB primary</text>
+  <rect class="bx" x="575" y="72" width="60" height="26" rx="6"/><text x="605" y="89" text-anchor="middle" class="sm">DB replica</text>
+</svg>
+<p>Ask of every box and every arrow: <b>"What happens when this dies?"</b> If the answer is "everything stops", you found a single point of failure (SPOF). A replica follows the primary and takes over if it dies.</p>
+<h3>When giants fall</h3>
+<table>
+  <tr><th>AWS S3, February 2017</th><th>Meta, October 2021</th></tr>
+  <tr><td>One mistyped command during routine debugging removed too many servers. 4 hours down in the main US region; thousands of sites broke; even status dashboards depended on S3.<br><b>Lessons: humans are a failure mode; a shared dependency is a shared SPOF.</b></td><td>One network configuration change withdrew the routes telling the internet where Facebook lives. 6 hours: Facebook, WhatsApp, Instagram gone; internal tools on the same network; even office badge readers affected.<br><b>Lessons: blast radius is a design choice; recovery paths must be independent.</b></td></tr>
+</table>
+<h3>Partial failure and three coping tools</h3>
+<p>In a monolith everything fails together; on a network things fail one at a time. If Service B is down and A is not, that is a <b>partial failure</b>, the normal failure mode of a distributed system. A must decide: wait, retry, give up, or degrade gracefully.</p>
+<table>
+  <tr><th>Tool</th><th>Meaning</th></tr>
+  <tr><td><b>1 Timeout</b></td><td>Do not wait forever: give every call a deadline (e.g. give up after 2 s). A request that hangs is worse than one that fails: it holds a thread, a connection, a user.</td></tr>
+  <tr><td><b>2 Retry</b></td><td>Try again, carefully. Good for transient blips; only safe on <b>idempotent</b> operations, with a limit and a growing delay (retry &times;3 with backoff 1 s, 2 s, 4 s).</td></tr>
+  <tr><td><b>3 Circuit breaker</b></td><td>"Stop kicking a dead horse": after repeated failures stop calling B and fail fast to a fallback; occasionally let one probe through to see if B recovered. States: <b>closed &rarr; open &rarr; half-open</b>. (From Michael Nygard's <i>Release It!</i>, 2007.)</td></tr>
+</table>
+
+<h2>4. Quality 4: security</h2>
+<p><b>Security is not something added at the end; it is an architectural concern from day one.</b> (For further reading: XSS, CSRF, SSRF and friends: the OWASP Top 10.)</p>
+<table>
+  <tr><th>Authentication: "Who are you?"</th><th>Authorisation: "What are you allowed to do?"</th></tr>
+  <tr><td>Login with a (hashed) password<br>Tokens prove identity on every request<br>Multi-factor for sensitive systems</td><td>Roles: student, lecturer, admin<br>Checked on the server, every request<br>A student must not see others' grades</td></tr>
+</table>
+<h3>Security rule number one: never trust the client</h3>
+<pre><code>// IN THE BROWSER: anyone can edit this in devtools
+let price = 4999;
+if (form.coupon === "STAFF") price = 0;
+sendOrder({ total: price });
+
+// ON THE SERVER: the only version that counts
+const item = await repo.findById(id);
+const total = pricing.apply(item, user);
+order.create({ total });</code></pre>
+<p>Client-side checks are for user experience; <b>server-side checks are for correctness and security</b>. Anything the client sends can be forged (prices, user ids, roles, quantities, hidden fields): validate on arrival, every time, even if the form already checked it.</p>
+<h3>Protecting data</h3>
+<table>
+  <tr><th>Where</th><th>How</th></tr>
+  <tr><td>In transit</td><td>HTTPS / TLS on every connection (free certificates such as Let's Encrypt removed the last excuse).</td></tr>
+  <tr><td>At rest</td><td>Encrypt the database volume and the backups: a stolen disk should be a useless disk.</td></tr>
+  <tr><td>Passwords</td><td>Never stored, never encrypted: <b>hashed with a slow one-way function (bcrypt or argon2)</b>. Why hash, not encrypt? Encryption has a key, and keys leak; a hash has no way back.</td></tr>
+</table>
+<h3>SQL injection: when input becomes code</h3>
+<pre><code>// VULNERABLE: user input pasted into the query
+const q = "SELECT * FROM students WHERE name = '" + input + "'";
+// input:  '; DROP TABLE students;--   -> goodbye, students table
+
+// SAFE: parameterised, input stays data
+db.query("SELECT * FROM students WHERE name = ?", [input]);</code></pre>
+<p>One habit fixes it forever: <b>parameterised queries</b> (your ORM already does this; do not bypass it).</p>
+<h3>Configuration and secrets</h3>
+<p>Config changes between machines; code does not. Never hard-code <code>postgres://admin:P@ss123@localhost/app</code>; use <code>connect(process.env.DATABASE_URL)</code> with <code>.env</code> locally and real values on the server. <b>Secrets never enter Git</b>: once pushed, a secret is public forever (deleting the file does not delete history). In the repo: <code>.gitignore</code> lists <code>.env</code> and <code>node_modules</code>; a committed <code>.env.example</code> template lists names only (DATABASE_URL=, JWT_SECRET=).</p>
+
+<h2>5. Technology: the last decision, not the first</h2>
+<p>Only after the domain, components, communication style and quality attributes are understood are we equipped to choose tools.</p>
+<h3>The reuse ladder</h3>
+<table>
+  <tr><th>1 Module</th><th>2 Package</th><th>3 Library</th><th>4 Framework</th></tr>
+  <tr><td>One file of related code; smallest unit (<code>utils/dates.js</code>)</td><td>Modules bundled with a name and version so others can install them (npm: date-fns)</td><td>Code you call; you stay in control of the flow (axios, requests)</td><td>Code that calls you; owns the skeleton, you fill the gaps (Express, Spring, Django)</td></tr>
+</table>
+<p>All four are the same idea at different sizes: do not rewrite what exists. <b>Inversion of control: who calls whom?</b> With a library your code is the main character (<code>const res = await axios.get(url)</code>); with a framework your code is a plug-in (<code>app.get("/courses", (req, res) =&gt; ...)</code>: Express called this). A framework gives structure for free and takes some freedom in return; that trade is the decision.</p>
+<h3>SQL or NoSQL: decided by requirements</h3>
+<table>
+  <tr><th>Relational (SQL): Postgres, MySQL, SQLite</th><th>Document (NoSQL): MongoDB, Firestore, DynamoDB</th></tr>
+  <tr><td>Data has a stable, known shape<br>You need joins across entities<br>Integrity matters (no orphan registrations)<br>Transactions across several tables</td><td>Shape varies or changes fast<br>Documents read whole, rarely joined<br>Schema flexibility beats strict integrity<br>Very high write volume</td></tr>
+</table>
+<p>Most student projects have relational data: choose NoSQL because the data is document-shaped, not because it sounds modern.</p>
+<table>
+  <tr><th>Data set</th><th>Reason</th><th>Store</th></tr>
+  <tr><td>Orders + payments</td><td>Joins users, orders, payments; money must never orphan; transactions</td><td><b>SQL (Postgres)</b>: integrity + joins</td></tr>
+  <tr><td>Restaurant menus</td><td>Nested tree, read whole, shape differs per restaurant, rarely joined</td><td><b>Document (MongoDB)</b>: flexible shape</td></tr>
+  <tr><td>Carts + sessions</td><td>Tiny, fetched by key, expire in minutes, must be instant</td><td><b>Key-value (Redis)</b>: speed by key</td></tr>
+  <tr><td>Driver GPS pings</td><td>Huge append-only stream, queried by recent time window</td><td><b>Wide-column (Cassandra)</b>: write volume</td></tr>
+</table>
+<p>One system, four stores, each earned by a requirement: choose per data shape, never "one DB for the system".</p>
+<h3>Team agreements: conventions are architecture too</h3>
+<p>Agree in week 1 (twenty minutes saves days): <b>1 Naming</b> (one casing style for files, classes, endpoints); <b>2 Formatting</b> (a formatter like Prettier or Black); <b>3 Errors</b> (where caught, what the client sees, what is logged); <b>4 Definition of done</b> (merged, reviewed, tested, documented; not "works on my laptop").</p>
+
+<div class="box"><b>Key takeaways</b>
+Performance: latency vs throughput; measure first; cache read-heavy, rarely changing data (mind invalidation); load-balance. Scalability: scale out with stateless servers (tokens or a shared session store); parallelise independent work; make slow work asynchronous. Reliability: availability nines, remove single points of failure, plan for partial failure with timeout, retry (idempotent only) and circuit breaker. Security: authentication vs authorisation; never trust the client; TLS, encryption at rest, hashed passwords; parameterised queries; no secrets in Git. Choose technology last; frameworks invert control; choose SQL/NoSQL per data shape.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain latency vs throughput and describe caching and load balancing as performance tools.</summary>
+<p>Latency is how long one operation takes for one user; throughput is how much work the system does per unit time. Caching stores the result of expensive reads so later requests are answered in about 1 ms; cache read-often, change-rarely data and manage invalidation. A load balancer spreads requests over servers, health-checks them and hides failures, but requires any server to answer any request.</p>
+</details>
+<details>
+<summary>W2. Explain why stateless servers enable horizontal scaling and how sessions are handled.</summary>
+<p>If servers keep per-user state in memory, a request routed to another instance finds no session. Making requests carry everything needed (a token on every request) means any instance can answer any request, so machines can be added behind a load balancer. Sessions are handled with a shared session store such as Redis or with stateless tokens (JWT) verified locally.</p>
+</details>
+<details>
+<summary>W3. Describe reliability: availability nines, single points of failure and the timeout, retry and circuit-breaker tools.</summary>
+<p>Availability is uptime over total time: 99.9 % allows 8.8 hours of downtime a year, 99.99 % 53 minutes. Remove single points of failure with redundancy (several app servers, DB primary and replica). Partial failure is handled with timeouts (deadline on every call), retries (idempotent operations only, limited with backoff) and a circuit breaker (after repeated failures open and fail fast to a fallback, probing in a half-open state).</p>
+</details>
+<details>
+<summary>W4. List security measures an architect should apply, including the first rule and how to stop SQL injection.</summary>
+<p>Authentication and server-side authorisation on every request; never trust the client (validate everything on the server); HTTPS/TLS in transit; encryption at rest including backups; passwords hashed with bcrypt/argon2; parameterised queries against SQL injection; secrets in environment variables, never in Git, with a committed .env.example.</p>
+</details>
+<details>
+<summary>W5. Choose a data store for orders and payments, restaurant menus, carts and GPS pings, with reasons.</summary>
+<p>Orders and payments: SQL (joins, integrity, transactions). Menus: document store (nested, flexible shape, read whole). Carts and sessions: key-value such as Redis (tiny, by key, expiring, instant). GPS pings: wide-column such as Cassandra (huge append-only write volume). Choose per data shape, not one DB for the whole system.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Latency vs throughput</td><td>Latency = wait for one operation (200 ms). Throughput = work per unit time (1,000 req/s). Batching buys throughput with latency. 100 ms extra latency about 1 % of sales (Amazon).</td></tr>
+  <tr><td>Why slow</td><td>Slow queries, chatty calls, sequential work, large payloads, O(n&sup2;) algorithms, contention, external dependencies. Measure before optimising.</td></tr>
+  <tr><td>Caching</td><td>Hit ~1 ms, miss goes to the DB then stores the result. Cache read-often, change-rarely, expensive, stale-tolerant data. Catch: invalidation (menu 5 min; order status never). Redis, Memcached, CDN.</td></tr>
+  <tr><td>Load balancer</td><td>Spreads requests, health-checks, hides failures. Needs any server to answer any request (stateless).</td></tr>
+  <tr><td>Scaling</td><td>Up (bigger server; ceiling, still a SPOF) vs out (more machines; needs load balancer + stateless design).</td></tr>
+  <tr><td>Stateless</td><td>Each request carries what the server needs (token). Fix session trap by shared session store (Redis) or stateless tokens (JWT).</td></tr>
+  <tr><td>Parallel / async</td><td>Sequential time = sum; parallel = slowest branch (600 ms to 200 ms). Async: queue email after order; never make the user wait for unseen work.</td></tr>
+  <tr><td>Availability</td><td>99 % = 3.65 days; 99.9 % = 8.8 h; 99.99 % = 53 min; 99.999 % = 5 min per year. Each nine about 10x effort.</td></tr>
+  <tr><td>SPOF / redundancy</td><td>Ask "what happens when this dies?" Load balancer + several app servers + DB primary/replica.</td></tr>
+  <tr><td>Outages</td><td>AWS S3 2017 (mistyped command; shared dependency = shared SPOF); Meta 2021 (network config; blast radius, independent recovery paths).</td></tr>
+  <tr><td>Partial failure tools</td><td>Timeout (deadline); retry (idempotent only, limit, backoff 1-2-4 s); circuit breaker (closed, open, half-open; Nygard, <i>Release It!</i>).</td></tr>
+  <tr><td>Security</td><td>AuthN = who; AuthZ = what allowed (server-side every request). Never trust the client. TLS in transit, encrypt at rest, hash passwords (bcrypt / argon2: no way back). Parameterised queries stop SQL injection. Secrets in env, never in Git (.env ignored, .env.example committed).</td></tr>
+  <tr><td>Reuse ladder</td><td>Module, package, library (you call it), framework (it calls you: inversion of control).</td></tr>
+  <tr><td>SQL vs NoSQL</td><td>SQL: stable shape, joins, integrity, transactions. Document: varying shape, read whole. Key-value (Redis): carts, sessions. Wide-column (Cassandra): GPS streams. Choose per data shape.</td></tr>
+  <tr><td>Team agreements</td><td>Naming, formatting (Prettier / Black), error handling, definition of done (merged, reviewed, tested, documented).</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>For a quality-attribute question, name the tactic and its catch: cache (invalidation), horizontal scaling (needs stateless), retry (needs idempotency), circuit breaker (fail fast to a fallback), async (eventual completion).</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Latency is:", "o": ["Work per unit time", "How long one user waits for one operation", "The number of servers", "Database size"], "a": 1, "e": "Throughput is work per unit time."}, {"q": "Batching typically buys:", "o": ["Latency with throughput", "Throughput with latency", "Security", "Nothing"], "a": 1, "e": "Architecture trades one for the other."}, {"q": "Which is a common cause of slow systems?", "o": ["Missing indexes and N+1 query loops", "Too few comments", "Short variable names", "Dark mode"], "a": 0, "e": "Also chatty APIs, sequential work, large payloads, contention."}, {"q": "Before optimising performance you should:", "o": ["Guess the slow part", "Measure", "Add servers", "Rewrite everything"], "a": 1, "e": "The slow part is almost never where you guessed."}, {"q": "What is the main catch of caching?", "o": ["It is slow", "Invalidation: the cached copy can be stale", "It needs more users", "It removes security"], "a": 1, "e": "Decide acceptable staleness per data type."}, {"q": "Which data should NOT be cached?", "o": ["Restaurant menu for 5 minutes", "Order status", "Static images", "Popular titles at a CDN"], "a": 1, "e": "Order status must be fresh."}, {"q": "A load balancer:", "o": ["Stores data", "Spreads requests, health-checks servers and hides failures", "Encrypts passwords", "Replaces the database"], "a": 1, "e": "A dead server simply stops getting traffic."}, {"q": "Vertical scaling means:", "o": ["Adding more machines", "A bigger server", "Removing servers", "Using caches"], "a": 1, "e": "It has a ceiling and is still a single point of failure."}, {"q": "Horizontal scaling requires:", "o": ["A load balancer and stateless design", "A bigger CPU", "No network", "One database only"], "a": 0, "e": "Any server must answer any request."}, {"q": "Storing the logged-in user in a server variable breaks:", "o": ["Nothing", "Horizontal scaling (and restarts)", "HTTP", "Caching only"], "a": 1, "e": "Use tokens or a shared session store."}, {"q": "Which is a fix for the session trap?", "o": ["Shared session store (Redis) or stateless JWT tokens", "Bigger server memory", "Sticky only forever", "Disable login"], "a": 0, "e": "Servers hold no per-user state."}, {"q": "Three independent 200 ms queries run in parallel take about:", "o": ["600 ms", "200 ms", "400 ms", "800 ms"], "a": 1, "e": "Total time is the slowest branch."}, {"q": "Sending the confirmation email by queue after saving an order is:", "o": ["Synchronous", "Asynchronous", "Sequential blocking", "Stateful"], "a": 1, "e": "The user is done in about 50 ms."}, {"q": "99.9 % availability allows about ___ downtime per year.", "o": ["3.65 days", "8.8 hours", "53 minutes", "5 minutes"], "a": 1, "e": "99 % = 3.65 days; 99.99 % = 53 min; 99.999 % = 5 min."}, {"q": "Each extra nine costs roughly:", "o": ["Nothing", "10x the engineering effort", "2x", "1 %"], "a": 1, "e": "Redundancy, failover, monitoring, on-call, rehearsed recovery."}, {"q": "A single point of failure is:", "o": ["A component whose failure stops the whole system", "A fast server", "A cache", "A queue"], "a": 0, "e": "Ask what happens when each box dies."}, {"q": "Redundancy for the database means:", "o": ["One bigger DB", "A primary with a replica that can take over", "No backups", "Caching"], "a": 1, "e": "The replica follows the primary."}, {"q": "The AWS S3 2017 outage taught that:", "o": ["Humans are a failure mode and a shared dependency is a shared SPOF", "S3 is unreliable", "Never use cloud", "Caches fail"], "a": 0, "e": "One mistyped command removed too many servers."}, {"q": "The Meta 2021 outage taught that:", "o": ["Blast radius is a design choice and recovery paths must be independent", "Use only monoliths", "Passwords are weak", "Retry always works"], "a": 0, "e": "Even office badge readers were affected."}, {"q": "A partial failure is when:", "o": ["Everything fails together", "One service is down while others are fine", "The user logs out", "The DB is empty"], "a": 1, "e": "Normal in distributed systems."}, {"q": "Why give every remote call a timeout?", "o": ["To save money", "A hanging request holds a thread, connection and user", "Timeouts are required by HTTP", "To avoid logging"], "a": 1, "e": "Better to fail than hang."}, {"q": "Retries are only safe on:", "o": ["Any operation", "Idempotent operations, with a limit and backoff", "Payments always", "POST only"], "a": 1, "e": "Otherwise a retry may double-charge."}, {"q": "A circuit breaker states are:", "o": ["Closed, open, half-open", "On, off", "Red, green", "Hit, miss"], "a": 0, "e": "After repeated failures it opens and fails fast to a fallback."}, {"q": "Authentication answers:", "o": ["What may you do?", "Who are you?", "How fast?", "Where stored?"], "a": 1, "e": "Authorisation answers what you may do."}, {"q": "'Never trust the client' means:", "o": ["Client validation is enough", "Validate on the server every time since anything the client sends can be forged", "Do not build clients", "Use only HTTPS"], "a": 1, "e": "Client checks are for UX; server checks for security."}, {"q": "Passwords should be:", "o": ["Stored in plain text", "Encrypted with a key", "Hashed with bcrypt or argon2", "Emailed"], "a": 2, "e": "A hash has no way back; keys leak."}, {"q": "SQL injection is prevented by:", "o": ["Longer passwords", "Parameterised queries", "Caching", "Load balancing"], "a": 1, "e": "Input stays data and cannot become SQL."}, {"q": "Which belongs in Git?", "o": [".env with real secrets", "A .env.example template with names only", "API keys", "Passwords"], "a": 1, "e": "Once pushed, a secret is public forever."}, {"q": "With a framework, who calls whom?", "o": ["You call the framework", "The framework calls your code (inversion of control)", "Neither", "The database"], "a": 1, "e": "With a library you call it."}, {"q": "Driver GPS pings (huge append-only stream) best fit:", "o": ["Relational SQL", "Wide-column (Cassandra)", "Key-value (Redis)", "Document store"], "a": 1, "e": "Write volume is the deciding need."}, {"q": "Orders and payments (joins, integrity) best fit:", "o": ["SQL (Postgres)", "Document store", "Key-value", "Wide-column"], "a": 0, "e": "Money must never orphan."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

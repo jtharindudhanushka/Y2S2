@@ -1,0 +1,42 @@
+{
+ "mcq": [
+  {"q":"Latency is:","o":["Work per unit time","How long one user waits for one operation","The number of servers","Database size"],"a":1,"e":"Throughput is work per unit time."},
+  {"q":"Batching typically buys:","o":["Latency with throughput","Throughput with latency","Security","Nothing"],"a":1,"e":"Architecture trades one for the other."},
+  {"q":"Which is a common cause of slow systems?","o":["Missing indexes and N+1 query loops","Too few comments","Short variable names","Dark mode"],"a":0,"e":"Also chatty APIs, sequential work, large payloads, contention."},
+  {"q":"Before optimising performance you should:","o":["Guess the slow part","Measure","Add servers","Rewrite everything"],"a":1,"e":"The slow part is almost never where you guessed."},
+  {"q":"What is the main catch of caching?","o":["It is slow","Invalidation: the cached copy can be stale","It needs more users","It removes security"],"a":1,"e":"Decide acceptable staleness per data type."},
+  {"q":"Which data should NOT be cached?","o":["Restaurant menu for 5 minutes","Order status","Static images","Popular titles at a CDN"],"a":1,"e":"Order status must be fresh."},
+  {"q":"A load balancer:","o":["Stores data","Spreads requests, health-checks servers and hides failures","Encrypts passwords","Replaces the database"],"a":1,"e":"A dead server simply stops getting traffic."},
+  {"q":"Vertical scaling means:","o":["Adding more machines","A bigger server","Removing servers","Using caches"],"a":1,"e":"It has a ceiling and is still a single point of failure."},
+  {"q":"Horizontal scaling requires:","o":["A load balancer and stateless design","A bigger CPU","No network","One database only"],"a":0,"e":"Any server must answer any request."},
+  {"q":"Storing the logged-in user in a server variable breaks:","o":["Nothing","Horizontal scaling (and restarts)","HTTP","Caching only"],"a":1,"e":"Use tokens or a shared session store."},
+  {"q":"Which is a fix for the session trap?","o":["Shared session store (Redis) or stateless JWT tokens","Bigger server memory","Sticky only forever","Disable login"],"a":0,"e":"Servers hold no per-user state."},
+  {"q":"Three independent 200 ms queries run in parallel take about:","o":["600 ms","200 ms","400 ms","800 ms"],"a":1,"e":"Total time is the slowest branch."},
+  {"q":"Sending the confirmation email by queue after saving an order is:","o":["Synchronous","Asynchronous","Sequential blocking","Stateful"],"a":1,"e":"The user is done in about 50 ms."},
+  {"q":"99.9 % availability allows about ___ downtime per year.","o":["3.65 days","8.8 hours","53 minutes","5 minutes"],"a":1,"e":"99 % = 3.65 days; 99.99 % = 53 min; 99.999 % = 5 min."},
+  {"q":"Each extra nine costs roughly:","o":["Nothing","10x the engineering effort","2x","1 %"],"a":1,"e":"Redundancy, failover, monitoring, on-call, rehearsed recovery."},
+  {"q":"A single point of failure is:","o":["A component whose failure stops the whole system","A fast server","A cache","A queue"],"a":0,"e":"Ask what happens when each box dies."},
+  {"q":"Redundancy for the database means:","o":["One bigger DB","A primary with a replica that can take over","No backups","Caching"],"a":1,"e":"The replica follows the primary."},
+  {"q":"The AWS S3 2017 outage taught that:","o":["Humans are a failure mode and a shared dependency is a shared SPOF","S3 is unreliable","Never use cloud","Caches fail"],"a":0,"e":"One mistyped command removed too many servers."},
+  {"q":"The Meta 2021 outage taught that:","o":["Blast radius is a design choice and recovery paths must be independent","Use only monoliths","Passwords are weak","Retry always works"],"a":0,"e":"Even office badge readers were affected."},
+  {"q":"A partial failure is when:","o":["Everything fails together","One service is down while others are fine","The user logs out","The DB is empty"],"a":1,"e":"Normal in distributed systems."},
+  {"q":"Why give every remote call a timeout?","o":["To save money","A hanging request holds a thread, connection and user","Timeouts are required by HTTP","To avoid logging"],"a":1,"e":"Better to fail than hang."},
+  {"q":"Retries are only safe on:","o":["Any operation","Idempotent operations, with a limit and backoff","Payments always","POST only"],"a":1,"e":"Otherwise a retry may double-charge."},
+  {"q":"A circuit breaker states are:","o":["Closed, open, half-open","On, off","Red, green","Hit, miss"],"a":0,"e":"After repeated failures it opens and fails fast to a fallback."},
+  {"q":"Authentication answers:","o":["What may you do?","Who are you?","How fast?","Where stored?"],"a":1,"e":"Authorisation answers what you may do."},
+  {"q":"'Never trust the client' means:","o":["Client validation is enough","Validate on the server every time since anything the client sends can be forged","Do not build clients","Use only HTTPS"],"a":1,"e":"Client checks are for UX; server checks for security."},
+  {"q":"Passwords should be:","o":["Stored in plain text","Encrypted with a key","Hashed with bcrypt or argon2","Emailed"],"a":2,"e":"A hash has no way back; keys leak."},
+  {"q":"SQL injection is prevented by:","o":["Longer passwords","Parameterised queries","Caching","Load balancing"],"a":1,"e":"Input stays data and cannot become SQL."},
+  {"q":"Which belongs in Git?","o":[".env with real secrets","A .env.example template with names only","API keys","Passwords"],"a":1,"e":"Once pushed, a secret is public forever."},
+  {"q":"With a framework, who calls whom?","o":["You call the framework","The framework calls your code (inversion of control)","Neither","The database"],"a":1,"e":"With a library you call it."},
+  {"q":"Driver GPS pings (huge append-only stream) best fit:","o":["Relational SQL","Wide-column (Cassandra)","Key-value (Redis)","Document store"],"a":1,"e":"Write volume is the deciding need."},
+  {"q":"Orders and payments (joins, integrity) best fit:","o":["SQL (Postgres)","Document store","Key-value","Wide-column"],"a":0,"e":"Money must never orphan."}
+ ],
+ "written": [
+  {"q":"Explain latency vs throughput and describe caching and load balancing as performance tools.","a":"<p>Latency is how long one operation takes for one user; throughput is how much work the system does per unit time. Caching stores the result of expensive reads so later requests are answered in about 1 ms; cache read-often, change-rarely data and manage invalidation. A load balancer spreads requests over servers, health-checks them and hides failures, but requires any server to answer any request.</p>"},
+  {"q":"Explain why stateless servers enable horizontal scaling and how sessions are handled.","a":"<p>If servers keep per-user state in memory, a request routed to another instance finds no session. Making requests carry everything needed (a token on every request) means any instance can answer any request, so machines can be added behind a load balancer. Sessions are handled with a shared session store such as Redis or with stateless tokens (JWT) verified locally.</p>"},
+  {"q":"Describe reliability: availability nines, single points of failure and the timeout, retry and circuit-breaker tools.","a":"<p>Availability is uptime over total time: 99.9 % allows 8.8 hours of downtime a year, 99.99 % 53 minutes. Remove single points of failure with redundancy (several app servers, DB primary and replica). Partial failure is handled with timeouts (deadline on every call), retries (idempotent operations only, limited with backoff) and a circuit breaker (after repeated failures open and fail fast to a fallback, probing in a half-open state).</p>"},
+  {"q":"List security measures an architect should apply, including the first rule and how to stop SQL injection.","a":"<p>Authentication and server-side authorisation on every request; never trust the client (validate everything on the server); HTTPS/TLS in transit; encryption at rest including backups; passwords hashed with bcrypt/argon2; parameterised queries against SQL injection; secrets in environment variables, never in Git, with a committed .env.example.</p>"},
+  {"q":"Choose a data store for orders and payments, restaurant menus, carts and GPS pings, with reasons.","a":"<p>Orders and payments: SQL (joins, integrity, transactions). Menus: document store (nested, flexible shape, read whole). Carts and sessions: key-value such as Redis (tiny, by key, expiring, instant). GPS pings: wide-column such as Cassandra (huge append-only write volume). Choose per data shape, not one DB for the whole system.</p>"}
+ ]
+}

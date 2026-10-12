@@ -1,0 +1,20 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Latency vs throughput</td><td>Latency = wait for one operation (200 ms). Throughput = work per unit time (1,000 req/s). Batching buys throughput with latency. 100 ms extra latency about 1 % of sales (Amazon).</td></tr>
+  <tr><td>Why slow</td><td>Slow queries, chatty calls, sequential work, large payloads, O(n&sup2;) algorithms, contention, external dependencies. Measure before optimising.</td></tr>
+  <tr><td>Caching</td><td>Hit ~1 ms, miss goes to the DB then stores the result. Cache read-often, change-rarely, expensive, stale-tolerant data. Catch: invalidation (menu 5 min; order status never). Redis, Memcached, CDN.</td></tr>
+  <tr><td>Load balancer</td><td>Spreads requests, health-checks, hides failures. Needs any server to answer any request (stateless).</td></tr>
+  <tr><td>Scaling</td><td>Up (bigger server; ceiling, still a SPOF) vs out (more machines; needs load balancer + stateless design).</td></tr>
+  <tr><td>Stateless</td><td>Each request carries what the server needs (token). Fix session trap by shared session store (Redis) or stateless tokens (JWT).</td></tr>
+  <tr><td>Parallel / async</td><td>Sequential time = sum; parallel = slowest branch (600 ms to 200 ms). Async: queue email after order; never make the user wait for unseen work.</td></tr>
+  <tr><td>Availability</td><td>99 % = 3.65 days; 99.9 % = 8.8 h; 99.99 % = 53 min; 99.999 % = 5 min per year. Each nine about 10x effort.</td></tr>
+  <tr><td>SPOF / redundancy</td><td>Ask "what happens when this dies?" Load balancer + several app servers + DB primary/replica.</td></tr>
+  <tr><td>Outages</td><td>AWS S3 2017 (mistyped command; shared dependency = shared SPOF); Meta 2021 (network config; blast radius, independent recovery paths).</td></tr>
+  <tr><td>Partial failure tools</td><td>Timeout (deadline); retry (idempotent only, limit, backoff 1-2-4 s); circuit breaker (closed, open, half-open; Nygard, <i>Release It!</i>).</td></tr>
+  <tr><td>Security</td><td>AuthN = who; AuthZ = what allowed (server-side every request). Never trust the client. TLS in transit, encrypt at rest, hash passwords (bcrypt / argon2: no way back). Parameterised queries stop SQL injection. Secrets in env, never in Git (.env ignored, .env.example committed).</td></tr>
+  <tr><td>Reuse ladder</td><td>Module, package, library (you call it), framework (it calls you: inversion of control).</td></tr>
+  <tr><td>SQL vs NoSQL</td><td>SQL: stable shape, joins, integrity, transactions. Document: varying shape, read whole. Key-value (Redis): carts, sessions. Wide-column (Cassandra): GPS streams. Choose per data shape.</td></tr>
+  <tr><td>Team agreements</td><td>Naming, formatting (Prettier / Black), error handling, definition of done (merged, reviewed, tested, documented).</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>For a quality-attribute question, name the tactic and its catch: cache (invalidation), horizontal scaling (needs stateless), retry (needs idempotency), circuit breaker (fail fast to a fallback), async (eventual completion).</div>
