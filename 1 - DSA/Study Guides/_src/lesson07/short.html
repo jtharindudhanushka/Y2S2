@@ -1,0 +1,20 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Queue</td><td>Linear data structure; additions at one end (<b>rear</b>), removals at the other end (<b>front</b>). <b>FIFO</b>: First In First Out.</td></tr>
+  <tr><td>Operations</td><td><code>enqueue()</code> adds at rear; <code>dequeue()</code> removes from front.</td></tr>
+  <tr><td>Errors</td><td><b>Overflow</b>: add to a full queue. <b>Underflow</b>: remove from an empty queue.</td></tr>
+  <tr><td>Array-based variables</td><td><code>p</code>, <code>size</code>, <code>count</code>, <code>front</code> (first element), <code>rear</code> (cell after the last element)</td></tr>
+  <tr><td>Why count?</td><td>front = rear both when empty and when full; count (0 / size) tells them apart.</td></tr>
+  <tr><td>Circular array</td><td>Imagine the array bent into a ring. After enqueue: <code>rear &larr; rear + 1; rear &larr; rear MOD size</code>. After dequeue: <code>front &larr; front + 1; front &larr; front MOD size</code>.</td></tr>
+  <tr><td>Array create</td><td>size &larr; s; front = rear = count = 0; allocate array</td></tr>
+  <tr><td>Array enqueue</td><td>if full: false. p[rear] &larr; d; rear++; count++; rear MOD size; true</td></tr>
+  <tr><td>Array dequeue</td><td>if empty: false. d &larr; p[front]; front++; count&minus;&minus;; front MOD size; true</td></tr>
+  <tr><td>Linked queue</td><td>Node = data + next. front = first node, rear = last node. Empty: front = null. No fixed capacity.</td></tr>
+  <tr><td>Linked enqueue</td><td>new node p, data = d, next = null. If front &ne; null: rear-&gt;next &larr; p, else front &larr; p. Then rear &larr; p.</td></tr>
+  <tr><td>Linked dequeue</td><td>if empty: false. d &larr; front-&gt;data; p &larr; front; if front = rear then front = rear = null, else front &larr; front-&gt;next; release p.</td></tr>
+  <tr><td>C++ bits</td><td><code>p[rear++] = d</code>, <code>d = p[front++]</code>, <code>rear % size</code>, <code>(front ? rear-&gt;next : front) = p;</code></td></tr>
+  <tr><td>Cost</td><td>enqueue and dequeue: O(1)</td></tr>
+  <tr><td>Applications</td><td>Process scheduling in an OS &middot; printer spooling &middot; network traffic handling &middot; many data processing and service-providing applications (e.g. SMS gateway: linked list-based queue)</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Stack = reverse / most recent first; queue = arrival order. If the question says "any number of items" choose the linked list-based version. When drawing a queue in memory show front and rear pointers and null at the end.</div>

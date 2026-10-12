@@ -1,0 +1,460 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define the queue data structure</li>
+  <li>Identify the access rules, operations and error conditions of a queue</li>
+  <li>Declare array-based and linked list-based queues</li>
+  <li>Implement array-based and linked list-based queues</li>
+  <li>Use queues to solve real-world problems</li>
+</ul>
+
+<h2>1. What is a queue?</h2>
+<div class="box"><b>Definition</b>A <b>linear</b> data structure in which data <b>additions</b> are restricted to one end, the <b>rear</b>, and <b>removals</b> can only be done from the other end, the <b>front</b>. The rule is <b>First In, First Out (FIFO)</b>: the item that arrived first leaves first.</div>
+<p>Think of a line at a ticket counter: people join at the back and are served from the front, in order of arrival.</p>
+<svg viewBox="0 0 640 120" role="img" aria-label="Queue front and rear" class="dg">
+  <rect class="bx" x="120" y="40" width="70" height="36"/><text x="155" y="64" text-anchor="middle" class="mono">a</text>
+  <rect class="bx" x="190" y="40" width="70" height="36"/><text x="225" y="64" text-anchor="middle" class="mono">b</text>
+  <rect class="bx" x="260" y="40" width="70" height="36"/><text x="295" y="64" text-anchor="middle" class="mono">c</text>
+  <rect class="bx" x="330" y="40" width="70" height="36"/><text x="365" y="64" text-anchor="middle" class="mono">d</text>
+  <rect class="bx" x="400" y="40" width="70" height="36"/><text x="435" y="64" text-anchor="middle" class="mono">e</text>
+  <rect class="bx" x="470" y="40" width="70" height="36"/><text x="505" y="64" text-anchor="middle" class="mono">f</text>
+  <text x="155" y="100" text-anchor="middle" class="h">front</text><text x="505" y="100" text-anchor="middle" class="h">rear</text>
+  <path class="ar" d="M20 58 H110"/><text x="65" y="46" text-anchor="middle" class="sm">dequeue</text>
+  <path class="ar" d="M600 58 H550"/><text x="590" y="46" text-anchor="middle" class="sm">enqueue</text>
+</svg>
+
+<h3>Operations and errors</h3>
+<table>
+  <tr><th>Item</th><th>Meaning</th></tr>
+  <tr><td><code>enqueue(d)</code></td><td>Add item d at the <b>rear</b>.</td></tr>
+  <tr><td><code>dequeue(d)</code></td><td>Remove the item at the <b>front</b> and hand it back.</td></tr>
+  <tr><td><b>Overflow</b></td><td>Trying to add an item to a <b>full</b> queue.</td></tr>
+  <tr><td><b>Underflow</b></td><td>Attempting to remove an item from an <b>empty</b> queue.</td></tr>
+</table>
+
+<h3>Stack vs queue</h3>
+<table>
+  <tr><th></th><th>Stack</th><th>Queue</th></tr>
+  <tr><td>Rule</td><td>LIFO</td><td>FIFO</td></tr>
+  <tr><td>Ends used</td><td>One (top)</td><td>Two (rear to add, front to remove)</td></tr>
+  <tr><td>Operations</td><td>push, pop</td><td>enqueue, dequeue</td></tr>
+  <tr><td>Typical use</td><td>Undo, reversing, backtracking</td><td>Serving in arrival order (scheduling, spooling)</td></tr>
+</table>
+
+<h2>2. Array-based queue</h2>
+<p>Arrays are finite, but imagine for a moment that they were not: <b>front</b> would be the left end and <b>rear</b> the right end, and with insertions and removals <b>both would move to the right</b>. The problem: they eventually fall off the right end of the array while free cells sit unused at the left. The fix is to treat the array as a <b>circle</b> (circular array): after the last cell, wrap around to cell 0.</p>
+
+<p>The queue needs these variables:</p>
+<table>
+  <tr><th>Variable</th><th>Meaning</th></tr>
+  <tr><td><code>p</code></td><td>Pointer to the array (the storage).</td></tr>
+  <tr><td><code>size</code></td><td>Capacity of the array.</td></tr>
+  <tr><td><code>front</code></td><td>Index of the <b>first</b> element (where dequeue takes from).</td></tr>
+  <tr><td><code>rear</code></td><td>Index of the cell <b>after the last</b> element, i.e. where the next enqueued item goes.</td></tr>
+  <tr><td><code>count</code></td><td>Number of items currently in the queue.</td></tr>
+</table>
+<div class="box"><b>Why do we need <code>count</code>?</b>When the queue is <b>empty</b> front and rear are at the same place; when it is <b>full</b> they are again at the same place. Looking at front and rear alone cannot tell the two apart, so <code>count</code> does (0 = empty, size = full).</div>
+
+<h3>Worked example (size 10)</h3>
+<table>
+  <tr><th>Situation</th><th>Cells 0 1 2 3 4 5 6 7 8 9</th><th>front</th><th>rear</th><th>count</th></tr>
+  <tr><td>Initial queue a..g</td><td>a b c d e f g . . .</td><td>0</td><td>7</td><td>7</td></tr>
+  <tr><td>Remove an item (a)</td><td>. b c d e f g . . .</td><td>1</td><td>7</td><td>6</td></tr>
+  <tr><td>Remove 5 more (b..f)</td><td>. . . . . . g . . .</td><td>6</td><td>7</td><td>1</td></tr>
+  <tr><td>Remove the last (g): empty</td><td>. . . . . . . . . .</td><td>7</td><td>7</td><td>0</td></tr>
+  <tr><td>Insert h</td><td>. . . . . . . h . .</td><td>7</td><td>8</td><td>1</td></tr>
+  <tr><td>Insert 8 more (i..p): wraps around</td><td>k l m n o p . h i j</td><td>7</td><td>6</td><td>9</td></tr>
+  <tr><td>Insert one more (q): full</td><td>k l m n o p q h i j</td><td>7</td><td>7</td><td>10</td></tr>
+</table>
+<p>Notice how i and j fill cells 8 and 9, then k..p go into cells 0&ndash;5: the rear <b>wrapped around</b>. In the last row front = rear, but count = size = 10 shows the queue is full (in the empty row front = rear too, but count = 0).</p>
+<svg viewBox="0 0 640 280" role="img" aria-label="Circular array queue" class="dg">
+<circle cx="349" cy="45" r="22" class="bx"/>
+<text x="349" y="50" text-anchor="middle" class="mono">k</text>
+<text x="361" y="13" text-anchor="middle" class="sm">0</text>
+<circle cx="397" cy="79" r="22" class="bx"/>
+<text x="397" y="84" text-anchor="middle" class="mono">l</text>
+<text x="428" y="61" text-anchor="middle" class="sm">1</text>
+<circle cx="415" cy="135" r="22" class="bx"/>
+<text x="415" y="140" text-anchor="middle" class="mono">m</text>
+<text x="453" y="139" text-anchor="middle" class="sm">2</text>
+<circle cx="397" cy="191" r="22" class="bx"/>
+<text x="397" y="196" text-anchor="middle" class="mono">n</text>
+<text x="428" y="217" text-anchor="middle" class="sm">3</text>
+<circle cx="349" cy="225" r="22" class="bx"/>
+<text x="349" y="230" text-anchor="middle" class="mono">o</text>
+<text x="361" y="265" text-anchor="middle" class="sm">4</text>
+<circle cx="291" cy="225" r="22" class="bx"/>
+<text x="291" y="230" text-anchor="middle" class="mono">p</text>
+<text x="279" y="265" text-anchor="middle" class="sm">5</text>
+<circle cx="243" cy="191" r="22" class="bx" style="fill:var(--bg);stroke-dasharray:3 3"/>
+<text x="243" y="196" text-anchor="middle" class="mono"></text>
+<text x="212" y="217" text-anchor="middle" class="sm">6</text>
+<circle cx="225" cy="135" r="22" class="bx"/>
+<text x="225" y="140" text-anchor="middle" class="mono">h</text>
+<text x="187" y="139" text-anchor="middle" class="sm">7</text>
+<circle cx="243" cy="79" r="22" class="bx"/>
+<text x="243" y="84" text-anchor="middle" class="mono">i</text>
+<text x="212" y="61" text-anchor="middle" class="sm">8</text>
+<circle cx="291" cy="45" r="22" class="bx"/>
+<text x="291" y="50" text-anchor="middle" class="mono">j</text>
+<text x="279" y="13" text-anchor="middle" class="sm">9</text>
+<text x="320" y="139" text-anchor="middle" class="h">count = 9</text>
+<text x="151" y="149" text-anchor="end" class="h">front (cell 7)</text>
+<text x="183" y="240" text-anchor="end" class="h">rear (cell 6)</text>
+</svg>
+<p>Picture the array bent into a ring with its two ends joined. Above: 9 items, front at cell 7 (item h), rear at cell 6 (the free cell where the next item goes).</p>
+
+<h3>Pseudocode</h3>
+<pre><code>global variables
+   p POINTER to DATATYPE, size INTEGER, count INTEGER,
+   front INTEGER, rear INTEGER
+
+ALGORITHM create(VAL s INTEGER)
+1  size &larr; s
+2  front &larr; rear &larr; count &larr; 0
+3  p &larr; ALLOCATE MEMORY DATATYPE[size]
+END create
+
+ALGORITHM destroy()
+1  RELEASE MEMORY[] p
+END destroy
+
+ALGORITHM isFull()
+1  IF (count = size)
+2     RETURN true
+3  ELSE
+4     RETURN false
+5  END IF
+END isFull
+
+ALGORITHM isEmpty()
+1  IF (count = 0)
+2     RETURN true
+3  ELSE
+4     RETURN false
+5  END IF
+END isEmpty
+
+ALGORITHM enqueue(VAL d DATATYPE)
+1  IF (isFull())
+2     RETURN false           // overflow
+3  ELSE
+4     p[rear] &larr; d
+5     rear &larr; rear + 1
+6     count &larr; count + 1
+7     rear &larr; rear MOD size
+8     RETURN true
+9  END IF
+END enqueue
+
+ALGORITHM dequeue(REF d DATATYPE)
+1  IF (isEmpty())
+2     RETURN false           // underflow
+3  ELSE
+4     d &larr; p[front]
+5     front &larr; front + 1
+6     count &larr; count - 1
+7     front &larr; front MOD size
+8     RETURN true
+9  END IF
+END dequeue</code></pre>
+<p><b><code>MOD size</code> is what makes the array circular</b> (line 7 of both algorithms): when rear (or front) reaches <code>size</code>, <code>size MOD size = 0</code> sends it back to cell 0. The index is first incremented, <i>then</i> reduced with MOD.</p>
+
+<h3>Test algorithm</h3>
+<pre><code>ALGORITHM test()
+1  create(queueSize)
+2  READ(data)
+3  LOOP (data &ne; endOfData AND enqueue(data))
+4     READ(data)
+5  END LOOP
+6  LOOP (dequeue(data))
+7     PRINT(data)
+8  END LOOP
+9  destroy()
+END test</code></pre>
+<p>Unlike the stack test, the output comes out in the <b>same order</b> as the input (FIFO).</p>
+
+<h3>Trace with wrap-around (size 4)</h3>
+<table>
+  <tr><th>Operation</th><th>Cells 0 1 2 3</th><th>front</th><th>rear</th><th>count</th></tr>
+  <tr><td>create(4)</td><td>. . . .</td><td>0</td><td>0</td><td>0</td></tr>
+  <tr><td>enqueue A, B, C</td><td>A B C .</td><td>0</td><td>3</td><td>3</td></tr>
+  <tr><td>enqueue D</td><td>A B C D</td><td>0</td><td>4 MOD 4 = <b>0</b></td><td>4 (full)</td></tr>
+  <tr><td>enqueue X</td><td colspan="4">isFull: returns false (overflow)</td></tr>
+  <tr><td>dequeue &rarr; A</td><td>. B C D</td><td>1</td><td>0</td><td>3</td></tr>
+  <tr><td>enqueue E</td><td>E B C D</td><td>1</td><td>1</td><td>4 (full)</td></tr>
+  <tr><td>dequeue &rarr; B, C, D</td><td>E . . .</td><td>0 (4 MOD 4)</td><td>1</td><td>1</td></tr>
+  <tr><td>dequeue &rarr; E</td><td>. . . .</td><td>1</td><td>1</td><td>0 (empty)</td></tr>
+</table>
+
+<h3>C++ implementation</h3>
+<pre><code>//ArrayQueue.h
+class queue
+{
+    public:
+        queue(int);              // create()
+        ~queue();                // destroy()
+        int enqueue(char);
+        int dequeue(char &amp;);
+    private:
+        int isEmpty();
+        int isFull();
+        int size, count, front, rear;
+        char *p;
+};
+
+queue::queue(int s)
+{
+    size = s; front = rear = count = 0;
+    p = new char[size];          // allocates memory
+}
+queue::~queue()
+{
+    delete[] p;                  // releases memory
+}
+int queue::isFull()  { return (count == size) ? 1 : 0; }
+int queue::isEmpty() { return (count == 0) ? 1 : 0; }
+
+int queue::enqueue(char d)            int queue::dequeue(char &amp;d)
+{                                     {
+    if (isFull())                         if (isEmpty())
+        return 0;                             return 0;
+    else                                  else
+    {                                     {
+        p[rear++] = d;                        d = p[front++];
+        count++;                              count--;
+        rear = rear % size;                   front = front % size;
+        return 1;                             return 1;
+    }                                     }
+}                                     }</code></pre>
+<ul>
+  <li><code>p[rear++] = d;</code>: store at rear, <i>then</i> increment rear (post-increment). <code>d = p[front++];</code>: read at front, then increment front.</li>
+  <li><code>rear = rear % size;</code> is the C++ form of <code>rear MOD size</code>: the remainder after dividing by size.</li>
+</ul>
+<pre><code>//TestArrayQueue.cpp
+#include &lt;iostream&gt;
+#include "ArrayQueue.h"
+int main()
+{
+    const int queueSize = 10;
+    queue q(queueSize);
+    char data;
+    std::cin &gt;&gt; data;
+    while (data != '.' &amp;&amp; q.enqueue(data))
+        std::cin &gt;&gt; data;
+    std::cout &lt;&lt; std::endl;
+    while (q.dequeue(data))
+        std::cout &lt;&lt; data;
+    return 0;
+}</code></pre>
+<p>Typing <code>abc.</code> prints <code>abc</code>.</p>
+
+<h2>3. Linked list-based queue</h2>
+<p>Each item is a <b>node</b> (data + next). <code>front</code> points to the first node and <code>rear</code> points to the <b>last</b> node (note: unlike the array version, here rear is the last element itself). The last node's <code>next</code> is null. Both pointers are null when the queue is empty.</p>
+<svg viewBox="0 0 640 130" role="img" aria-label="Linked list queue" class="dg">
+  <text x="40" y="22" class="mono">front</text><path class="ar" d="M70 28 V50"/>
+  <rect class="bx" x="40" y="55" width="60" height="30"/><text x="70" y="75" text-anchor="middle" class="mono">a</text><rect class="bx" x="100" y="55" width="36" height="30"/><path class="ar" d="M118 70 H165"/>
+  <rect class="bx" x="170" y="55" width="60" height="30"/><text x="200" y="75" text-anchor="middle" class="mono">b</text><rect class="bx" x="230" y="55" width="36" height="30"/><path class="ar" d="M248 70 H295"/>
+  <rect class="bx" x="300" y="55" width="60" height="30"/><text x="330" y="75" text-anchor="middle" class="mono">c</text><rect class="bx" x="360" y="55" width="36" height="30"/><text x="420" y="75" class="sm">null</text>
+  <text x="330" y="22" class="mono">rear</text><path class="ar" d="M330 28 V50"/>
+  <text x="320" y="115" text-anchor="middle" class="sm">dequeue removes at front; enqueue links a new node after rear</text>
+</svg>
+<p>No size or <code>isFull</code> is needed: nodes are created on enqueue and released on dequeue, so the queue can hold any number of items (it grows and shrinks at run time).</p>
+
+<h3>Pseudocode</h3>
+<pre><code>TYPE node
+   data DATATYPE
+   next POINTER to node
+END node
+global variables
+   front POINTER to node, rear POINTER to node
+
+ALGORITHM create()
+1  front &larr; null
+2  rear &larr; null
+END create
+
+ALGORITHM destroy()
+1  LOOP (front &ne; null)
+2     p &larr; front
+3     front &larr; front-&gt;next
+4     RELEASE MEMORY p
+5  END LOOP
+END destroy
+
+ALGORITHM isEmpty()
+1  IF (front = null)
+2     RETURN true
+3  ELSE
+4     RETURN false
+5  END IF
+END isEmpty
+
+ALGORITHM enqueue(VAL d DATATYPE)
+1  p &larr; ALLOCATE MEMORY node
+2  p-&gt;data &larr; d
+3  p-&gt;next &larr; null
+4  IF (front &ne; null)
+5     rear-&gt;next &larr; p
+6  ELSE
+7     front &larr; p
+8  END IF
+9  rear &larr; p
+END enqueue
+
+ALGORITHM dequeue(REF d DATATYPE)
+1  IF (isEmpty())
+2     RETURN false
+3  ELSE
+4     d &larr; front-&gt;data
+5     p &larr; front
+6     IF (front = rear)
+7        front &larr; rear &larr; null
+8     ELSE
+9        front &larr; front-&gt;next
+10    END IF
+11    RELEASE MEMORY p
+12    RETURN true
+13 END IF
+END dequeue</code></pre>
+<h3>How enqueue and dequeue work</h3>
+<ul>
+  <li><b>enqueue</b>: make a new node holding d with <code>next = null</code>. If the queue is <b>not empty</b>, link it after the current last node (<code>rear-&gt;next &larr; p</code>); if it <b>is empty</b>, it becomes the front too (<code>front &larr; p</code>). In both cases it becomes the new rear.</li>
+  <li><b>dequeue</b>: read the front's data and remember that node in p. If front and rear are the <b>same</b> node, it was the only one, so the queue becomes empty (both set to null); otherwise move front to the next node. Finally release p.</li>
+</ul>
+<svg viewBox="0 0 640 210" role="img" aria-label="Linked queue enqueue and dequeue" class="dg">
+  <text x="20" y="18" class="h">enqueue(c) on a queue holding a, b</text>
+  <text x="20" y="44" class="mono">front</text><path class="ar" d="M60 48 V60"/>
+  <rect class="bx" x="30" y="62" width="50" height="28"/><text x="55" y="81" text-anchor="middle" class="mono">a</text><path class="ar" d="M80 76 H120"/>
+  <rect class="bx" x="125" y="62" width="50" height="28"/><text x="150" y="81" text-anchor="middle" class="mono">b</text><path class="ar" d="M175 76 H215" stroke-dasharray="4 3"/>
+  <rect class="bx" x="220" y="62" width="50" height="28" style="stroke-dasharray:4 3"/><text x="245" y="81" text-anchor="middle" class="mono">c</text><text x="290" y="81" class="sm">&larr; new node, next = null; rear-&gt;next &larr; p, then rear &larr; p</text>
+  <text x="150" y="112" class="mono">rear (before)</text><path class="ar" d="M150 116 V92"/>
+  <text x="20" y="150" class="h">dequeue() on a, b, c</text>
+  <text x="20" y="176" class="sm">d &larr; front-&gt;data (a); p &larr; front; front &larr; front-&gt;next (now b); release p</text>
+  <text x="20" y="198" class="sm">If front = rear (one node left) the queue becomes empty: front = rear = null.</text>
+</svg>
+
+<h3>Test algorithm</h3>
+<pre><code>ALGORITHM test()
+1  create()
+2  READ(data)
+3  LOOP (data &ne; endOfData)
+4     enqueue(data)
+5     READ(data)
+6  END LOOP
+7  LOOP (dequeue(data))
+8     PRINT(data)
+9  END LOOP
+10 destroy()
+END test</code></pre>
+
+<h3>C++ implementation</h3>
+<pre><code>//LinkedListQueue.h
+struct node
+{
+    char data;
+    node *next;
+};
+class queue
+{
+    public:
+        queue();                 // create()
+        ~queue();                // destroy()
+        void enqueue(char);
+        int dequeue(char &amp;);
+    private:
+        int isEmpty();
+        node *front, *rear;
+};
+
+queue::queue() { front = rear = 0; }        // sets to null
+queue::~queue()
+{
+    while (front)
+    {
+        node *p = front;
+        front = front-&gt;next;
+        delete p;                            // releases memory
+    }
+}
+int queue::isEmpty() { return (front == 0) ? 1 : 0; }
+
+void queue::enqueue(char d)
+{
+    node *p = new node;                      // allocates memory
+    p-&gt;data = d;
+    p-&gt;next = 0;
+    (front ? rear-&gt;next : front) = p;
+    rear = p;
+}
+int queue::dequeue(char &amp;d)
+{
+    if (isEmpty())
+        return 0;
+    else
+    {
+        d = front-&gt;data;
+        node *p = front;
+        if (front == rear)
+            front = rear = 0;
+        else
+            front = front-&gt;next;
+        delete p;
+        return 1;
+    }
+}</code></pre>
+<p>The line <code>(front ? rear-&gt;next : front) = p;</code> is the pseudocode's <code>IF (front &ne; null) rear-&gt;next &larr; p ELSE front &larr; p</code> written with the ternary operator: if <code>front</code> is non-null assign to <code>rear-&gt;next</code>, otherwise assign to <code>front</code>. Also <code>front = rear = 0;</code> sets both to null (chained assignment).</p>
+<pre><code>//TestLinkedListQueue.cpp
+#include &lt;iostream&gt;
+#include "LinkedListQueue.h"
+int main()
+{
+    queue q;
+    char data;
+    std::cin &gt;&gt; data;
+    while (data != '.')
+    {
+        q.enqueue(data);
+        std::cin &gt;&gt; data;
+    }
+    std::cout &lt;&lt; std::endl;
+    while (q.dequeue(data))
+        std::cout &lt;&lt; data;
+    return 0;
+}</code></pre>
+
+<h3>Array-based vs linked list-based</h3>
+<table>
+  <tr><th></th><th>Array-based (circular)</th><th>Linked list-based</th></tr>
+  <tr><td>Capacity</td><td>Fixed (<code>size</code>)</td><td>Grows and shrinks at run time</td></tr>
+  <tr><td>Variables</td><td><code>p</code>, <code>size</code>, <code>count</code>, <code>front</code>, <code>rear</code> (indexes)</td><td><code>front</code>, <code>rear</code> (pointers)</td></tr>
+  <tr><td>Full test</td><td>count = size</td><td>None needed</td></tr>
+  <tr><td>Empty test</td><td>count = 0</td><td>front = null</td></tr>
+  <tr><td>enqueue / dequeue cost</td><td colspan="2">Constant number of steps: O(1).</td></tr>
+</table>
+
+<h2>4. Queue applications</h2>
+<table>
+  <tr><th>Application</th><th>Why a queue fits</th></tr>
+  <tr><td>Process scheduling in an operating system</td><td>Processes waiting for the CPU are served in the order they arrived.</td></tr>
+  <tr><td>Printer spooling</td><td>Print jobs wait and are printed first come, first served.</td></tr>
+  <tr><td>Network traffic handling</td><td>Packets are buffered and forwarded in the order received.</td></tr>
+  <tr><td>Other data processing and service-providing applications</td><td>Anything that must serve requests in arrival order.</td></tr>
+</table>
+
+<h3>Worked example: SMS gateway (lecture prototype question 2)</h3>
+<p>An SMS gateway feeds incoming text messages from different mobile networks into one end of a data structure and releases them from the other end to their own network for delivery, <b>in the order they arrive</b>. It must handle <b>any number</b> of incoming messages.</p>
+<ul>
+  <li><b>Suitable data structure:</b> a <b>linked list-based queue</b>: FIFO gives the arrival order, and the linked list has no fixed capacity.</li>
+  <li><b>Overview in memory</b> after feeding MSG1, MSG2 and MSG3:</li>
+</ul>
+<svg viewBox="0 0 640 130" role="img" aria-label="SMS gateway queue" class="dg">
+  <text x="30" y="22" class="mono">front</text><path class="ar" d="M65 28 V50"/>
+  <rect class="bx" x="30" y="55" width="80" height="30"/><text x="70" y="75" text-anchor="middle" class="mono">MSG1</text><rect class="bx" x="110" y="55" width="36" height="30"/><path class="ar" d="M128 70 H190"/>
+  <rect class="bx" x="195" y="55" width="80" height="30"/><text x="235" y="75" text-anchor="middle" class="mono">MSG2</text><rect class="bx" x="275" y="55" width="36" height="30"/><path class="ar" d="M293 70 H355"/>
+  <rect class="bx" x="360" y="55" width="80" height="30"/><text x="400" y="75" text-anchor="middle" class="mono">MSG3</text><rect class="bx" x="440" y="55" width="36" height="30"/><text x="500" y="75" class="sm">null</text>
+  <text x="400" y="22" class="mono">rear</text><path class="ar" d="M400 28 V50"/>
+  <text x="320" y="115" text-anchor="middle" class="sm">release (dequeue) gives MSG1, then MSG2, then MSG3</text>
+</svg>
+
+<div class="box"><b>Key takeaways</b>
+Queue = linear, FIFO: enqueue at the rear, dequeue from the front. Overflow = add to a full queue; underflow = remove from an empty queue. Array-based: circular array with p, size, count, front, rear; <code>MOD size</code> wraps indexes; count distinguishes full from empty. Linked: front and rear pointers, no capacity limit; when the last node is dequeued set both to null. Applications: process scheduling, printer spooling, network traffic.</div>

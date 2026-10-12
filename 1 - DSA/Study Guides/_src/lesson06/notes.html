@@ -1,0 +1,530 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define the stack data structure</li>
+  <li>Identify the access rule, operations and error conditions of a stack</li>
+  <li>Declare array-based and linked list-based stacks</li>
+  <li>Implement array-based and linked list-based stacks</li>
+  <li>Use stacks to solve real-world problems</li>
+</ul>
+
+<h2>1. What is a stack?</h2>
+<div class="box"><b>Definition</b>A <b>linear</b> data structure in which all data additions (<b>push</b>) and removals (<b>pop</b>) are restricted to <b>one end</b>, called the <b>top</b>. The rule is <b>Last In, First Out (LIFO)</b>: the item pushed most recently is the first one popped.</div>
+<p>Think of a pile of plates: you put a plate on top and take a plate from the top; you never pull one from the middle or bottom.</p>
+<svg viewBox="0 0 640 210" role="img" aria-label="Stack push and pop" class="dg">
+  <text x="100" y="16" text-anchor="middle" class="h">Start</text>
+  <rect class="bx" x="50" y="150" width="100" height="26"/><text x="100" y="168" text-anchor="middle" class="mono">a</text>
+  <rect class="bx" x="50" y="124" width="100" height="26"/><text x="100" y="142" text-anchor="middle" class="mono">b</text>
+  <text x="165" y="141" class="sm">&larr; top</text>
+  <path class="ar" d="M215 120 H265"/><text x="240" y="108" text-anchor="middle" class="sm">push(c)</text>
+  <text x="330" y="16" text-anchor="middle" class="h">After push</text>
+  <rect class="bx" x="280" y="150" width="100" height="26"/><text x="330" y="168" text-anchor="middle" class="mono">a</text>
+  <rect class="bx" x="280" y="124" width="100" height="26"/><text x="330" y="142" text-anchor="middle" class="mono">b</text>
+  <rect class="bx" x="280" y="98" width="100" height="26"/><text x="330" y="116" text-anchor="middle" class="mono">c</text>
+  <text x="395" y="115" class="sm">&larr; top</text>
+  <path class="ar" d="M445 120 H495"/><text x="470" y="108" text-anchor="middle" class="sm">pop() &rarr; c</text>
+  <text x="560" y="16" text-anchor="middle" class="h">After pop</text>
+  <rect class="bx" x="510" y="150" width="100" height="26"/><text x="560" y="168" text-anchor="middle" class="mono">a</text>
+  <rect class="bx" x="510" y="124" width="100" height="26"/><text x="560" y="142" text-anchor="middle" class="mono">b</text>
+  <text x="400" y="200" text-anchor="middle" class="sm">c went in last and came out first: LIFO</text>
+</svg>
+
+<h3>Operations</h3>
+<table>
+  <tr><th>Operation</th><th>What it does</th></tr>
+  <tr><td><code>push(d)</code></td><td>Add item d on the top of the stack.</td></tr>
+  <tr><td><code>pop(d)</code></td><td>Remove the top item and hand it back.</td></tr>
+  <tr><td><code>isFull()</code></td><td>Is there no room left? Check <b>before</b> a push (array-based).</td></tr>
+  <tr><td><code>isEmpty()</code></td><td>Is the stack empty? Check <b>before</b> a pop.</td></tr>
+  <tr><td><code>create()</code> / <code>destroy()</code></td><td>Set the stack up / release its memory.</td></tr>
+</table>
+
+<h3>Error conditions</h3>
+<table>
+  <tr><th>Error</th><th>Happens when</th></tr>
+  <tr><td><b>Overflow</b></td><td>Trying to <b>push</b> an item onto a <b>full</b> stack.</td></tr>
+  <tr><td><b>Underflow</b></td><td>Attempting to <b>pop</b> an item from an <b>empty</b> stack.</td></tr>
+</table>
+
+<h2>2. Array-based stack</h2>
+<p>The stack lives in an array. Conceptually it is a vertical pile; physically it is a row of cells with a <b>top</b> index that tracks the most recent item.</p>
+<svg viewBox="0 0 640 170" role="img" aria-label="Array-based stack conceptual and physical" class="dg">
+  <text x="30" y="20" class="h">Physical stack</text>
+  <text x="30" y="52" class="mono">p</text>
+  <path class="ar" d="M50 48 H85"/>
+  <rect class="bx" x="90" y="34" width="44" height="30"/><text x="112" y="55" text-anchor="middle" class="mono">a</text>
+  <rect class="bx" x="134" y="34" width="44" height="30"/><text x="156" y="55" text-anchor="middle" class="mono">b</text>
+  <rect class="bx" x="178" y="34" width="44" height="30"/><text x="200" y="55" text-anchor="middle" class="mono">c</text>
+  <rect class="bx" x="222" y="34" width="44" height="30"/><text x="244" y="55" text-anchor="middle" class="mono">d</text>
+  <rect class="bx" x="266" y="34" width="44" height="30"/><text x="288" y="55" text-anchor="middle" class="mono">e</text>
+  <rect class="bx" x="310" y="34" width="44" height="30"/><text x="332" y="55" text-anchor="middle" class="mono">f</text>
+  <rect class="bx" x="354" y="34" width="44" height="30"/><rect class="bx" x="398" y="34" width="44" height="30"/><rect class="bx" x="442" y="34" width="44" height="30"/><rect class="bx" x="486" y="34" width="44" height="30"/>
+  <text x="112" y="82" text-anchor="middle" class="sm">0</text><text x="156" y="82" text-anchor="middle" class="sm">1</text><text x="200" y="82" text-anchor="middle" class="sm">2</text><text x="244" y="82" text-anchor="middle" class="sm">3</text><text x="288" y="82" text-anchor="middle" class="sm">4</text><text x="332" y="82" text-anchor="middle" class="sm">5</text><text x="376" y="82" text-anchor="middle" class="sm">6</text><text x="420" y="82" text-anchor="middle" class="sm">7</text><text x="464" y="82" text-anchor="middle" class="sm">8</text><text x="508" y="82" text-anchor="middle" class="sm">9</text>
+  <path class="ar" d="M332 120 V90"/><text x="332" y="136" text-anchor="middle" class="sm">top = 5</text>
+  <rect class="bx" x="560" y="40" width="50" height="28"/><text x="585" y="58" text-anchor="middle" class="mono">10</text><text x="585" y="34" text-anchor="middle" class="sm">size</text>
+  <rect class="bx" x="560" y="96" width="50" height="28"/><text x="585" y="114" text-anchor="middle" class="mono">5</text><text x="585" y="92" text-anchor="middle" class="sm">top</text>
+  <text x="30" y="160" class="sm">Cells 6&ndash;9 are free. top = &minus;1 means empty; top = size &minus; 1 means full.</text>
+</svg>
+<p>Three variables describe the stack: <code>p</code> (pointer to the array), <code>size</code> (capacity) and <code>top</code> (index of the top item; <b>&minus;1 when empty</b>). The conceptual stack of the slide (a at the bottom, f at the top) is the same data seen vertically.</p>
+
+<h3>Pseudocode</h3>
+<pre><code>global variables
+   p POINTER to DATATYPE, size INTEGER, top INTEGER
+
+ALGORITHM create(VAL s INTEGER)
+1  size &larr; s
+2  top &larr; -1
+3  p &larr; ALLOCATE MEMORY DATATYPE[size]
+END create
+
+ALGORITHM destroy()
+1  RELEASE MEMORY[] p
+END destroy
+
+ALGORITHM isFull()
+1  IF (top = size - 1)
+2     RETURN true
+3  ELSE
+4     RETURN false
+5  END IF
+END isFull
+
+ALGORITHM isEmpty()
+1  IF (top = -1)
+2     RETURN true
+3  ELSE
+4     RETURN false
+5  END IF
+END isEmpty
+
+ALGORITHM push(VAL d DATATYPE)
+1  IF (isFull())
+2     RETURN false           // overflow
+3  ELSE
+4     top &larr; top + 1
+5     p[top] &larr; d
+6     RETURN true
+7  END IF
+END push
+
+ALGORITHM pop(REF d DATATYPE)
+1  IF (isEmpty())
+2     RETURN false           // underflow
+3  ELSE
+4     d &larr; p[top]
+5     top &larr; top - 1
+6     RETURN true
+7  END IF
+END pop</code></pre>
+<ul>
+  <li><b>push</b>: move top up one, <i>then</i> store. <b>pop</b>: read the item, <i>then</i> move top down.</li>
+  <li>Both return <code>true/false</code> so the caller knows whether the operation succeeded (false = overflow / underflow).</li>
+  <li>pop does not erase the cell; the cell is simply considered free again and is overwritten by the next push.</li>
+</ul>
+
+<h3>Test algorithm</h3>
+<pre><code>ALGORITHM test()
+1  create(stackSize)
+2  READ(data)
+3  LOOP (data &ne; endOfData AND push(data))
+4     READ(data)
+5  END LOOP
+6  LOOP (pop(data))
+7     PRINT(data)
+8  END LOOP
+9  destroy()
+END test</code></pre>
+<p>It reads data and pushes it until the end marker is read <b>or the stack is full</b> (push returned false), then pops and prints everything. The output is the input in <b>reverse order</b>.</p>
+<p><b>Trace</b> with stackSize = 5 and input A, B, C then end:</p>
+<table>
+  <tr><th>Step</th><th>Action</th><th>top</th><th>Stack (bottom &rarr; top)</th><th>Output</th></tr>
+  <tr><td>create(5)</td><td>size = 5, top = &minus;1</td><td>&minus;1</td><td>(empty)</td><td></td></tr>
+  <tr><td>push A</td><td>isFull? top = &minus;1 &ne; 4: no. top &larr; 0, p[0] = A</td><td>0</td><td>A</td><td></td></tr>
+  <tr><td>push B</td><td>top &larr; 1</td><td>1</td><td>A B</td><td></td></tr>
+  <tr><td>push C</td><td>top &larr; 2</td><td>2</td><td>A B C</td><td></td></tr>
+  <tr><td>pop</td><td>d = p[2] = C, top &larr; 1</td><td>1</td><td>A B</td><td>C</td></tr>
+  <tr><td>pop</td><td>d = B, top &larr; 0</td><td>0</td><td>A</td><td>C B</td></tr>
+  <tr><td>pop</td><td>d = A, top &larr; &minus;1</td><td>&minus;1</td><td>(empty)</td><td>C B A</td></tr>
+  <tr><td>pop</td><td>isEmpty: top = &minus;1, return false: loop ends</td><td>&minus;1</td><td></td><td>C B A</td></tr>
+</table>
+
+<h3>C++ implementation</h3>
+<p><b>Header file</b> <code>ArrayStack.h</code>: the <b>class</b> bundles the data (<code>size</code>, <code>top</code>, <code>p</code>) with the operations. <code>public</code> members can be used by any program; <code>private</code> ones (<code>isEmpty</code>, <code>isFull</code> and the data) are hidden inside the class.</p>
+<pre><code>//ArrayStack.h
+class stack
+{
+    public:
+        stack(int);        // constructor: the create() operation
+        ~stack();          // destructor:  the destroy() operation
+        int push(char);
+        int pop(char &amp;);   // reference parameter: pop can hand the item back
+    private:
+        int isEmpty();
+        int isFull();
+        int size, top;
+        char *p;
+};</code></pre>
+<p><b>Source file</b>: the member functions (<code>stack::</code> says "this function belongs to class stack").</p>
+<pre><code>stack::stack(int s)
+{
+    size = s; top = -1;
+    p = new char[size];          // allocates memory
+}
+stack::~stack()
+{
+    delete[] p;                  // releases memory
+}
+int stack::isFull()  { return (top == size - 1) ? 1 : 0; }
+int stack::isEmpty() { return (top == -1) ? 1 : 0; }
+
+int stack::push(char d)          int stack::pop(char &amp;d)
+{                                {
+    if (isFull())                    if (isEmpty())
+        return 0;                        return 0;
+    else                             else
+    {                                {
+        p[++top] = d;                    d = p[top--];
+        return 1;                        return 1;
+    }                                }
+}                                }</code></pre>
+<table>
+  <tr><th>Code</th><th>Meaning</th></tr>
+  <tr><td><code>p[++top] = d;</code></td><td><b>Pre</b>-increment: add 1 to top <i>first</i>, then store at the new top. Same as <code>top = top + 1; p[top] = d;</code>.</td></tr>
+  <tr><td><code>d = p[top--];</code></td><td><b>Post</b>-decrement: use the current top, <i>then</i> subtract 1. Same as <code>d = p[top]; top = top - 1;</code>.</td></tr>
+  <tr><td><code>int pop(char &amp;d)</code></td><td><code>d</code> is a reference parameter, so assigning to it changes the caller's variable (the REF of the pseudocode).</td></tr>
+  <tr><td>constructor / destructor</td><td>Run automatically when the stack object is created / goes out of scope.</td></tr>
+</table>
+<p><b>Test program</b> <code>TestArrayStack.cpp</code>:</p>
+<pre><code>#include &lt;iostream&gt;
+#include "ArrayStack.h"
+int main()
+{
+    const int stackSize = 10;
+    stack s(stackSize);
+    char data;
+    std::cin &gt;&gt; data;
+    while (data != '.' &amp;&amp; s.push(data))
+        std::cin &gt;&gt; data;
+    std::cout &lt;&lt; std::endl;
+    while (s.pop(data))
+        std::cout &lt;&lt; data;
+    return 0;
+}</code></pre>
+<p>Typing <code>abc.</code> prints <code>cba</code>. Because <code>&amp;&amp;</code> is short-circuit, <code>s.push(data)</code> is only evaluated when <code>data</code> is not '.'.</p>
+
+<div class="box"><b>Drawback of the array-based stack</b>It needs a <b>predefined maximum capacity</b>, even if the whole capacity is not used. With static arrays the capacity is fixed at compile time; with dynamic arrays memory is allocated at run time but the capacity is still fixed after allocation. This <b>wastes memory in most cases</b>. The waste can be avoided with a <b>linked list</b> that grows and shrinks during run time.</div>
+
+<h2>3. Linked list-based stack</h2>
+<p>Each item lives in its own <b>node</b> that holds the data and a pointer to the node below it. A single pointer <code>top</code> points at the head node; the bottom node's <code>next</code> is <b>null</b>.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="Linked list stack" class="dg">
+  <text x="40" y="40" class="mono">top</text>
+  <path class="ar" d="M70 36 H100"/>
+  <g>
+    <rect class="bx" x="105" y="20" width="70" height="30"/><text x="140" y="40" text-anchor="middle" class="mono">f</text>
+    <rect class="bx" x="175" y="20" width="40" height="30"/><path class="ar" d="M195 35 H235"/>
+    <rect class="bx" x="240" y="20" width="70" height="30"/><text x="275" y="40" text-anchor="middle" class="mono">e</text>
+    <rect class="bx" x="310" y="20" width="40" height="30"/><path class="ar" d="M330 35 H370"/>
+    <rect class="bx" x="375" y="20" width="70" height="30"/><text x="410" y="40" text-anchor="middle" class="mono">d</text>
+    <rect class="bx" x="445" y="20" width="40" height="30"/><text x="505" y="40" class="sm">...</text>
+  </g>
+  <rect class="bx" x="105" y="95" width="70" height="30"/><text x="140" y="115" text-anchor="middle" class="mono">a</text>
+  <rect class="bx" x="175" y="95" width="40" height="30"/><text x="195" y="115" text-anchor="middle" class="mono">null</text>
+  <text x="300" y="115" class="sm">&larr; bottom node: next is null</text>
+  <text x="105" y="80" class="sm">data | next</text>
+  <text x="300" y="140" text-anchor="middle" class="sm">top is the only pointer kept; every node points to the one beneath it</text>
+</svg>
+<p>No size or full check is needed: a node is allocated whenever an item is pushed and released when it is popped, so the stack is as big as the data it holds.</p>
+
+<h3>Pseudocode</h3>
+<pre><code>TYPE node
+   data DATATYPE
+   next POINTER to node
+END node
+global variables
+   top POINTER to node
+
+ALGORITHM create()
+1  top &larr; null
+END create
+
+ALGORITHM destroy()
+1  LOOP (top &ne; null)
+2     p &larr; top
+3     top &larr; top-&gt;next
+4     RELEASE MEMORY p
+5  END LOOP
+END destroy
+
+ALGORITHM isEmpty()
+1  IF (top = null)
+2     RETURN true
+3  ELSE
+4     RETURN false
+5  END IF
+END isEmpty
+
+ALGORITHM push(VAL d DATATYPE)
+1  p &larr; top
+2  top &larr; ALLOCATE MEMORY node
+3  top-&gt;data &larr; d
+4  top-&gt;next &larr; p
+END push
+
+ALGORITHM pop(REF d DATATYPE)
+1  IF (isEmpty())
+2     RETURN false
+3  ELSE
+4     d &larr; top-&gt;data
+5     p &larr; top
+6     top &larr; top-&gt;next
+7     RELEASE MEMORY p
+8     RETURN true
+9  END IF
+END pop</code></pre>
+<p><code>top-&gt;data</code> means "go to the node top points to and take its <code>data</code>" (same as <code>(*top).data</code>).</p>
+
+<h3>How push and pop move the pointers</h3>
+<svg viewBox="0 0 640 230" role="img" aria-label="Linked stack push steps" class="dg">
+  <text x="20" y="18" class="h">push(c) onto a stack holding b, a</text>
+  <text x="20" y="46" class="sm">1. p &larr; top</text>
+  <text x="40" y="76" class="mono">top</text><path class="ar" d="M70 72 H100"/><rect class="bx" x="105" y="58" width="60" height="28"/><text x="135" y="77" text-anchor="middle" class="mono">b</text><path class="ar" d="M165 72 H215"/><rect class="bx" x="220" y="58" width="60" height="28"/><text x="250" y="77" text-anchor="middle" class="mono">a</text>
+  <text x="140" y="104" class="mono">p</text><path class="ar" d="M135 108 V88"/>
+  <text x="20" y="140" class="sm">2&ndash;4. allocate a node, put c in it, link it to p, move top to it</text>
+  <text x="40" y="172" class="mono">top</text><path class="ar" d="M70 168 H100"/><rect class="bx" x="105" y="154" width="60" height="28"/><text x="135" y="173" text-anchor="middle" class="mono">c</text><path class="ar" d="M165 168 H215"/><rect class="bx" x="220" y="154" width="60" height="28"/><text x="250" y="173" text-anchor="middle" class="mono">b</text><path class="ar" d="M280 168 H330"/><rect class="bx" x="335" y="154" width="60" height="28"/><text x="365" y="173" text-anchor="middle" class="mono">a</text>
+  <text x="300" y="214" text-anchor="middle" class="sm">pop reverses it: read top's data, remember top in p, move top to top-&gt;next, release p</text>
+</svg>
+<p>Push order matters: <b>save the old top first</b> (<code>p &larr; top</code>), then create the new node, then link it. If you moved <code>top</code> before saving it you would lose the rest of the stack.</p>
+
+<h3>Test algorithm</h3>
+<pre><code>ALGORITHM test()
+1  create()
+2  READ(data)
+3  LOOP (data &ne; endOfData)
+4     push(data)
+5     READ(data)
+6  END LOOP
+7  LOOP (pop(data))
+8     PRINT(data)
+9  END LOOP
+10 destroy()
+END test</code></pre>
+<p>Here <code>push</code> never fails (there is no capacity limit), so the loop only checks the end marker.</p>
+
+<h3>C++ implementation</h3>
+<pre><code>//LinkedListStack.h
+struct node
+{
+    char data;
+    node *next;
+};
+class stack
+{
+    public:
+        stack();            // create()
+        ~stack();           // destroy()
+        void push(char);
+        int pop(char &amp;);
+    private:
+        int isEmpty();
+        node *top;
+};
+
+stack::stack()  { top = 0; }              // sets to null
+stack::~stack()
+{
+    while (top)
+    {
+        node *p = top;
+        top = top-&gt;next;
+        delete p;                          // releases memory
+    }
+}
+int stack::isEmpty() { return (top == 0) ? 1 : 0; }
+
+void stack::push(char d)
+{
+    node *p = top;
+    top = new node;                        // allocates memory
+    top-&gt;data = d;
+    top-&gt;next = p;
+}
+int stack::pop(char &amp;d)
+{
+    if (isEmpty())
+        return 0;
+    else
+    {
+        d = top-&gt;data;
+        node *p = top;
+        top = top-&gt;next;
+        delete p;
+        return 1;
+    }
+}</code></pre>
+<pre><code>//TestLinkedListStack.cpp
+#include &lt;iostream&gt;
+#include "LinkedListStack.h"
+int main()
+{
+    stack s;
+    char data;
+    std::cin &gt;&gt; data;
+    while (data != '.')
+    {
+        s.push(data);
+        std::cin &gt;&gt; data;
+    }
+    std::cout &lt;&lt; std::endl;
+    while (s.pop(data))
+        std::cout &lt;&lt; data;
+    return 0;
+}</code></pre>
+
+<h3>Array-based vs linked list-based</h3>
+<table>
+  <tr><th></th><th>Array-based</th><th>Linked list-based</th></tr>
+  <tr><td>Capacity</td><td>Fixed maximum (<code>size</code>)</td><td>Grows and shrinks at run time</td></tr>
+  <tr><td>Overflow possible?</td><td>Yes (<code>isFull</code> needed)</td><td>Only if the computer itself runs out of memory</td></tr>
+  <tr><td>Memory use</td><td>Reserves the whole array even if mostly unused</td><td>Only what the items need, plus one pointer per node</td></tr>
+  <tr><td>Variables</td><td><code>p</code>, <code>size</code>, <code>top</code> (index)</td><td><code>top</code> (pointer)</td></tr>
+  <tr><td>push / pop cost</td><td colspan="2">Both do a constant number of steps, independent of how many items are stored: O(1).</td></tr>
+</table>
+
+<h2>4. Stack applications</h2>
+<table>
+  <tr><th>Application</th><th>Why a stack fits</th></tr>
+  <tr><td>Reversing data</td><td>Push everything, pop everything: it comes out backwards.</td></tr>
+  <tr><td>Converting numbers</td><td>Digits are produced in reverse order; popping puts them right.</td></tr>
+  <tr><td>Parsing data</td><td>Match the most recent opening symbol with each closing symbol.</td></tr>
+  <tr><td>Converting mathematical expressions</td><td>Hold operators until their operands are done.</td></tr>
+  <tr><td>Evaluating mathematical expressions</td><td>Hold operands until an operator needs them.</td></tr>
+  <tr><td>Backtracking</td><td>Remember the path so you can go back one step at a time.</td></tr>
+</table>
+
+<h3>4.1 Reversing data</h3>
+<p><b>Problem:</b> accept a null-terminated string (text) and print it in reverse order. (In C++ a char array's last element is automatically the null character <code>'\0'</code>.)</p>
+<pre><code>ALGORITHM reverseText(REF text[] CHAR)
+1  s &larr; stack()
+2  i &larr; 0
+3  ch &larr; text[i]
+4  LOOP (ch &ne; '\0' AND s.push(ch))
+5     i &larr; i + 1
+6     ch &larr; text[i]
+7  END LOOP
+8  LOOP (s.pop(ch))
+9     PRINT ch
+10 END LOOP
+END reverseText</code></pre>
+<p>Using <code>s.push(ch)</code> <b>inside the loop condition</b> is much safer than a plain <code>LOOP (ch &ne; '\0')</code> with a separate push, because push reports failure when the stack is full. Trace for "CAT": push C, A, T; pop T, A, C; prints <b>TAC</b>.</p>
+<p><b>Real uses of reversing:</b> the undo feature of editors, and the back button in a browser. These are implemented with a stack.</p>
+
+<h3>4.2 Converting numbers (decimal to binary)</h3>
+<p><b>Problem:</b> accept a decimal number, convert it to binary, print the binary number. Repeatedly divide by 2; the <b>remainders</b> are the bits, but they come out <b>last bit first</b>, so push them and pop to print in the correct order.</p>
+<pre><code>ALGORITHM dtob(n INTEGER)
+1  s &larr; stack()
+2  LOOP (n &gt; 0)
+3     bit &larr; n MOD 2
+4     s.push(bit)
+5     n &larr; n / 2
+6  END LOOP
+7  LOOP (s.pop(bit))
+8     PRINT bit
+9  END LOOP
+10 s.destroy()
+END dtob</code></pre>
+<table>
+  <tr><th>n</th><th>n MOD 2 (pushed)</th><th>n / 2</th></tr>
+  <tr><td>25</td><td>1</td><td>12</td></tr>
+  <tr><td>12</td><td>0</td><td>6</td></tr>
+  <tr><td>6</td><td>0</td><td>3</td></tr>
+  <tr><td>3</td><td>1</td><td>1</td></tr>
+  <tr><td>1</td><td>1</td><td>0</td></tr>
+</table>
+<p>Pushed: 1, 0, 0, 1, 1 (the last 1 is on top). Popping prints <b>11001</b>, which is 25 in binary.</p>
+
+<h3>4.3 Parsing data (bracket matching)</h3>
+<p><b>Problem:</b> accept a mathematical expression and check whether there is any bracket mismatch. Example: <code>(a+b)&times;c=</code> stored in a char array that ends with <code>=</code>.</p>
+<pre><code>ALGORITHM isBracketOk(REF exp[] CHAR)
+1  s &larr; stack()
+2  i &larr; 0
+3  ch &larr; exp[i]
+4  LOOP (ch &ne; '=')
+5     IF (ch = '(')
+6        s.push(ch)
+7     ELSE
+8        IF (ch = ')')
+9           IF (NOT s.pop(ch))
+10             RETURN false
+11          END IF
+12       END IF
+13    END IF
+14    i &larr; i + 1
+15    ch &larr; exp[i]
+16 END LOOP
+17 IF (s.pop(ch))
+18    RETURN false
+19 ELSE
+20    RETURN true
+21 END IF
+END isBracketOk</code></pre>
+<p><b>Idea:</b> push every opening bracket; on a closing bracket pop one (if the pop fails there is a closing bracket with no opener: mismatch); at the end the stack must be empty (a leftover opener means mismatch). A first draft of the same idea: read data; if opening bracket push; if closing bracket pop; at the end print "No mismatch" if the stack is empty, else "Mismatch".</p>
+<table>
+  <tr><th>Expression</th><th>Result</th><th>Why</th></tr>
+  <tr><td><code>(a+b)*c=</code></td><td>OK</td><td>push, then pop on ')': empty at the end</td></tr>
+  <tr><td><code>(a+b*c=</code></td><td>Mismatch</td><td>stack still holds '(' at the end</td></tr>
+  <tr><td><code>a+b)*c=</code></td><td>Mismatch</td><td>pop on ')' with an empty stack fails</td></tr>
+</table>
+
+<h3>4.4 Evaluating mathematical expressions (postfix)</h3>
+<p>In <b>postfix</b> form the operators appear <b>after</b> their operands: <code>1 2 +</code> means 1 + 2 = 3. There are no brackets and no precedence rules to apply. <b>Problem (lecture prototype question 1):</b> read a postfix expression and print its result when the user enters the equality operator <code>=</code>; for example <code>12+34+*=</code> prints 21.</p>
+<ul>
+  <li>Suitable data structure: an <b>integer stack</b>.</li>
+  <li>Assumptions: operands are single digits (0&ndash;9); operators are + &minus; * /; the expression is valid.</li>
+</ul>
+<pre><code>ALGORITHM evaluatePostfix()
+1  create an empty integer Stack
+2  READ character
+3  LOOP (character not equals to =)
+4     IF (character is an operator)
+5        operand2 &larr; POP from Stack
+6        operand1 &larr; POP from Stack
+7        result &larr; operand1 operator operand2
+8        PUSH result onto Stack
+9     ELSE
+10       convert character to integer
+11       push integer into stack
+12    END IF
+13    READ character
+14 END LOOP
+15 evaluatedResult &larr; POP from Stack
+16 PRINT evaluatedResult
+END evaluatePostfix</code></pre>
+<p>Note the order: the <b>first</b> pop is <b>operand2</b>, the second is operand1 (matters for &minus; and /). Trace for <code>12+34+*=</code> (that is (1 + 2) &times; (3 + 4)):</p>
+<table>
+  <tr><th>Read</th><th>Action</th><th>Stack (bottom &rarr; top)</th></tr>
+  <tr><td>1</td><td>push 1</td><td>1</td></tr>
+  <tr><td>2</td><td>push 2</td><td>1 2</td></tr>
+  <tr><td>+</td><td>operand2 = 2, operand1 = 1, push 1 + 2</td><td>3</td></tr>
+  <tr><td>3</td><td>push 3</td><td>3 3</td></tr>
+  <tr><td>4</td><td>push 4</td><td>3 3 4</td></tr>
+  <tr><td>+</td><td>operand2 = 4, operand1 = 3, push 3 + 4</td><td>3 7</td></tr>
+  <tr><td>*</td><td>operand2 = 7, operand1 = 3, push 3 &times; 7</td><td>21</td></tr>
+  <tr><td>=</td><td>pop and print</td><td>(empty): prints <b>21</b></td></tr>
+</table>
+
+<h3>4.5 Converting mathematical expressions (infix to postfix)</h3>
+<p>People write <b>infix</b> (operator between operands: <code>3 + 5 * 2</code>); the postfix evaluator above needs <b>postfix</b> (<code>3 5 2 * +</code>). The lecture lists this conversion as a stack application but gives no algorithm; the standard idea is:</p>
+<ul>
+  <li>Operands go straight to the output.</li>
+  <li>Operators wait on a stack; before pushing an operator, pop (to the output) any operator on top that has higher or equal precedence.</li>
+  <li>An opening bracket is pushed; a closing bracket pops operators to the output until the opening bracket.</li>
+  <li>At the end pop everything left to the output.</li>
+</ul>
+<p>Example: <code>3 + 5 * 2</code> &rarr; output 3; push +; output 5; <code>*</code> has higher precedence than <code>+</code>, so push it; output 2; pop * then +: <code>3 5 2 * +</code>. Evaluate: 5 &times; 2 = 10, 3 + 10 = 13.</p>
+
+<h3>4.6 Backtracking</h3>
+<p>When searching for a solution (a path through a maze, a move in a game) you keep going forward and push each decision on a stack. At a dead end you <b>pop</b> the last decision and try the next alternative. The stack remembers exactly the path taken, in the order needed to retrace it. The undo feature and the browser back button work the same way.</p>
+
+<div class="box"><b>Key takeaways</b>
+A stack is a linear structure with LIFO access at the top: push adds, pop removes. Overflow = push on a full stack; underflow = pop on an empty stack. Array-based: p, size, top (&minus;1 = empty), fixed capacity. Linked: nodes with data and next, only top, no fixed capacity. Applications: reverse, convert numbers, parse brackets, evaluate and convert expressions, backtrack.</div>
+
+<p class="sm" style="color:var(--muted)">Recommended reading from the slides: Gilberg and Forouzan, <i>Data Structures: A Pseudocode Approach with C</i>, Chapter 3, pp. 102&ndash;125; Deitel and Deitel, <i>C++ How to Program</i>, Chapter 21, pp. 1038&ndash;1039.</p>

@@ -1,0 +1,22 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Stack</td><td>Linear data structure; all additions (<b>push</b>) and removals (<b>pop</b>) at one end (<b>top</b>). <b>LIFO</b>: Last In First Out.</td></tr>
+  <tr><td>Errors</td><td><b>Overflow</b>: push on a full stack. <b>Underflow</b>: pop from an empty stack.</td></tr>
+  <tr><td>Checks</td><td>isFull() before push (array-based); isEmpty() before pop.</td></tr>
+  <tr><td>Operations</td><td>create, destroy, isEmpty, isFull (array only), push, pop</td></tr>
+  <tr><td>Array-based variables</td><td><code>p</code> (array pointer), <code>size</code>, <code>top</code>. Empty: top = &minus;1. Full: top = size &minus; 1.</td></tr>
+  <tr><td>Array push / pop</td><td>push: top &larr; top + 1; p[top] &larr; d. pop: d &larr; p[top]; top &larr; top &minus; 1. Both return false on overflow / underflow.</td></tr>
+  <tr><td>Array drawback</td><td>Predefined maximum capacity even if unused (static array: fixed at compile time; dynamic array: fixed after allocation). Wastes memory in most cases.</td></tr>
+  <tr><td>Linked stack</td><td>Node = data + next. Only <code>top</code> pointer; bottom node's next = null; empty when top = null. Grows and shrinks at run time.</td></tr>
+  <tr><td>Linked push</td><td>p &larr; top; top &larr; new node; top-&gt;data &larr; d; top-&gt;next &larr; p</td></tr>
+  <tr><td>Linked pop</td><td>d &larr; top-&gt;data; p &larr; top; top &larr; top-&gt;next; release p</td></tr>
+  <tr><td>C++ bits</td><td>class with constructor (create) and destructor (destroy); <code>p[++top] = d</code> (pre-increment); <code>d = p[top--]</code> (post-decrement); <code>int pop(char &amp;d)</code> reference parameter; <code>new[]</code> / <code>delete[]</code>; <code>top-&gt;data</code></td></tr>
+  <tr><td>Cost</td><td>push and pop: constant number of steps, O(1)</td></tr>
+  <tr><td>Applications</td><td>Reversing data &middot; converting numbers &middot; parsing data &middot; converting expressions &middot; evaluating expressions &middot; backtracking</td></tr>
+  <tr><td>Reversing</td><td>push each char until '\0' (use <code>s.push(ch)</code> in the loop condition), then pop and print. Real uses: undo, browser back.</td></tr>
+  <tr><td>Decimal to binary</td><td>push n MOD 2, n &larr; n / 2 until 0; pop to print. 25 &rarr; 11001.</td></tr>
+  <tr><td>Bracket check</td><td>push '(' ; on ')' pop (fail = mismatch); at end stack must be empty.</td></tr>
+  <tr><td>Postfix evaluation</td><td>operand &rarr; push. Operator &rarr; pop operand2 first, then operand1, push (operand1 op operand2). At '=' pop the result. <code>12+34+*=</code> &rarr; 21. Integer stack.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>When asked for the data structure for a problem, justify it: "reverse order / most recent first / undo" means a stack. In postfix evaluation remember operand2 is popped first. Know both the array-based and the linked pseudocode by heart, including create and destroy.</div>
