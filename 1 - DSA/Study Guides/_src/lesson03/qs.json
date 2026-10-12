@@ -1,0 +1,32 @@
+{
+ "mcq": [
+  {"q":"Time complexity measures:","o":["Actual seconds on your computer","The amount of time a program with a particular algorithm needs, expressed as a function of input size","The number of lines of code","The memory used"],"a":1,"e":"It does not measure actual seconds."},
+  {"q":"Which is NOT a reason to study time complexity?","o":["Some problems need real-time responses","To prefer the faster algorithm among several","To guarantee completion without time-out","To reduce the compiled instruction size"],"a":3,"e":"Instruction size is part of space complexity."},
+  {"q":"In T(n) = c + T_A(n), what does c represent?","o":["Time that depends on n","Constant time that does not depend on the input size","The number of loops","The compiler time"],"a":1,"e":"c is the insensitive part; T_A(n) is the sensitive part."},
+  {"q":"Which is the main factor on which time complexity depends?","o":["Colour of the screen","Input size n","Programmer's name","Operating system version only"],"a":1,"e":"Input size is the main factor."},
+  {"q":"The two approaches to determine time complexity are:","o":["Best case and worst case","Operation count and step count","Space count and time count","Compile and run"],"a":1,"e":"Operation count and step count."},
+  {"q":"In the operation count approach we:","o":["Count every line","Count how many times the key operation(s) are performed","Run the program and time it","Count the variables"],"a":1,"e":"Only the operation(s) that contribute most to time are counted."},
+  {"q":"A weakness of the operation count approach is:","o":["It needs a stopwatch","Choosing the key operation may be difficult and it does not measure actual execution time","It cannot be used for loops","It always gives O(1)"],"a":1,"e":"Success depends on identifying the operations that contribute most."},
+  {"q":"For max(a, n) the key operation a[i] < a[c] is executed how many times?","o":["n","n - 1","n + 1","2n"],"a":1,"e":"c runs from 1 to n-1, giving n - 1 comparisons for any data."},
+  {"q":"For a = {16, 11, 2, 19, 6}, what does max return?","o":["19","3","4","0"],"a":1,"e":"It returns the INDEX of the largest value: 19 is at index 3."},
+  {"q":"For find(a, n, x), the best case number of comparisons x != a[c] is:","o":["0","1","n","n/2"],"a":1,"e":"If x is at index 0, one comparison is enough."},
+  {"q":"For find, the worst case number of comparisons is:","o":["1","n/2","n","n + 1"],"a":2,"e":"When x is last or not present all n elements are compared."},
+  {"q":"If x is present and equally likely at every position, the average number of comparisons in find is:","o":["n","(n + 1) / 2","n / 4","1"],"a":1,"e":"(1 + 2 + ... + n) / n = (n + 1) / 2."},
+  {"q":"1 + 2 + 3 + ... + n equals:","o":["n","n(n + 1) / 2","n squared","2n"],"a":1,"e":"The standard arithmetic series sum."},
+  {"q":"In the step count approach, how often is a LOOP (c < n) test evaluated if the body runs n times?","o":["n","n - 1","n + 1","2n"],"a":2,"e":"True n times plus one final false evaluation."},
+  {"q":"Step count T(n) of the iterative sum algorithm (s <- 0, c <- 0, loop, s <- s + a[c], c <- c + 1, RETURN s):","o":["2n + 2","3n + 4","3n","n + 4"],"a":1,"e":"1 + 1 + (n + 1) + n + n + 1 = 3n + 4."},
+  {"q":"T(n) of the iterative sum for n = 3 is:","o":["9","12","13","15"],"a":2,"e":"3 x 3 + 4 = 13."},
+  {"q":"Step count T(n) of the recursive sum (IF n > 0 / RETURN a[n-1] + sum(a, n-1) / RETURN 0):","o":["2n + 2","3n + 4","n + 1","2n"],"a":0,"e":"(n + 1) + n + 1 = 2n + 2."},
+  {"q":"Programming instrumentation means:","o":["Compiling with optimisation","Adding extra code to a program to collect information about its execution","Deleting unused code","Playing an instrument"],"a":1,"e":"E.g. a global counter g incremented at each step."},
+  {"q":"In the instrumented iterative sum, how many times is g++ executed for the last evaluation of c < n?","o":["n","n + 1","1","0"],"a":2,"e":"Only once, after the loop, for the final false test; the n true tests are counted inside the loop."},
+  {"q":"Which pair is correct?","o":["Space complexity: S(n) = c + S_A(n); time complexity: T(n) = c + T_A(n)","Space: T(n); time: S(n)","Both are constants","Neither depends on n"],"a":0,"e":"Both follow the same constant-plus-sensitive form."}
+ ],
+ "written": [
+  {"q":"Define time complexity and give three reasons for being interested in it.","a":"<p>Time complexity is the amount of time a program written with a particular algorithm needs to run to completion. Reasons: some problems require a real-time response; we prefer the program that runs fast when several algorithms solve a problem; we must guarantee users that the program completes without time-out.</p>"},
+  {"q":"Explain the two approaches to determining time complexity.","a":"<p><b>Operation count:</b> identify one or more key operations (those contributing most to time) and count how many times they are performed. Its weaknesses: it does not measure actual execution time and choosing the key operation may be difficult. <b>Step count:</b> estimate T(n) by accounting for the time spent on all program steps, i.e. the number of steps the program takes to complete.</p>"},
+  {"q":"Using the operation count approach, find T(n) for the <code>max</code> algorithm (loop c from 1 to n-1 with IF a[i] &lt; a[c]).","a":"<p>Key operation: the comparison a[i] &lt; a[c], which needs memory fetches of i, c, a[i], a[c] and a comparison. The loop variable c takes the values 1 to n&minus;1, so the comparison is executed n &minus; 1 times: T(n) = n &minus; 1 for all inputs.</p>"},
+  {"q":"Find the step count of the iterative sum algorithm and verify it for n = 3.","a":"<p>Lines: s &larr; 0 (1), c &larr; 0 (1), loop test (n + 1), s &larr; s + a[c] (n), c &larr; c + 1 (n), RETURN s (1). T(n) = 3n + 4. For n = 3: 13. Check by trace: tests 0&lt;3, 1&lt;3, 2&lt;3, 3&lt;3 = 4; body lines 3 + 3; plus 3 single lines = 13.</p>"},
+  {"q":"Find the step count of the recursive sum algorithm.","a":"<p>IF (n &gt; 0) is evaluated n + 1 times; the recursive RETURN line runs n times; RETURN 0 runs once. T(n) = (n + 1) + n + 1 = 2n + 2.</p>"},
+  {"q":"What is programming instrumentation? Show how it would count steps in a loop.","a":"<p>Modifying a program by adding extra code to collect information about its execution. Declare a global counter g = 0 and write g++ beside each step (declarations, each loop test, the loop body statements, the final failing test, the return). At the end g holds the step count, e.g. 3n + 4 for the iterative sum.</p>"}
+ ]
+}

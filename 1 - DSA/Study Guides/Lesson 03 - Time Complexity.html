@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSA Lesson 3 - Time Complexity</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; DSA study guides</a> &middot; INTE 22343 &middot; Part 03</p><button id="theme" type="button"></button></div>
+  <h1>Time Complexity</h1>
+  <p class="lead">Covers: what time complexity is, why it matters, what it depends on, T(n) = c + T<sub>A</sub>(n), and the two ways to work it out: operation count and step count (plus programming instrumentation). No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define the time complexity of an algorithm</li>
+  <li>Explain why analysing time complexity is important</li>
+  <li>Identify the factors time complexity depends on</li>
+  <li>Determine time complexity with the <b>operation count</b> and <b>step count</b> approaches</li>
+  <li>Analyse the time complexity of a given algorithm</li>
+</ul>
+
+<h2>1. What is time complexity?</h2>
+<p><b>Time complexity</b> is the amount of time that a program written with a particular algorithm needs to run to completion. Like space complexity (Lesson 2) it is part of <i>performance analysis</i>.</p>
+<div class="box"><b>Not seconds</b>Time complexity does <b>not</b> measure actual seconds. It counts how much work the algorithm does as a function of the input size, so the answer does not change from one computer to another.</div>
+
+<h3>Why are we interested?</h3>
+<table>
+  <tr><th>Reason</th><th>Meaning</th></tr>
+  <tr><td>Real-time response</td><td>Some problems need an answer in real time; some systems must respond instantly.</td></tr>
+  <tr><td>Pick the faster one</td><td>When several algorithms solve the same problem, prefer the program that runs fast.</td></tr>
+  <tr><td>Avoid time-out</td><td>Guarantee users that the program will run to completion without timing out, especially for large data.</td></tr>
+</table>
+
+<h2>2. What does it depend on?</h2>
+<p>Time complexity depends on the same factors as space complexity, and like space complexity some factors are <b>sensitive</b> to the problem being solved (for example, a program that sorts an array of <i>n</i> integers). It is therefore a function of <i>n</i>, the <b>instance characteristic</b> (the size of the problem).</p>
+<table>
+  <tr><th>Factor</th><th>Note</th></tr>
+  <tr><td>Input size <i>n</i></td><td>The main factor. More data means more work.</td></tr>
+  <tr><td>Hardware and software</td><td>Why raw seconds are unreliable; counting steps avoids this.</td></tr>
+  <tr><td>Types of operations</td><td>Arithmetic, comparison, assignment... cost differs.</td></tr>
+</table>
+
+<h2>3. The formula</h2>
+<p style="font-size:18px"><b>T(n) = c + T<sub>A</sub>(n)</b></p>
+<ul>
+  <li><b>c</b> = insensitive (constant) time contribution: does <b>not</b> depend on the input size.</li>
+  <li><b>T<sub>A</sub>(n)</b> = sensitive time contribution of algorithm A: <b>does</b> depend on the instance characteristic n.</li>
+</ul>
+<p>This is the same shape as S(n) = c + S<sub>A</sub>(n) from Lesson 2.</p>
+
+<h2>4. Two approaches</h2>
+<table>
+  <tr><th></th><th>Operation count</th><th>Step count</th></tr>
+  <tr><td>Idea</td><td>Pick one or more <b>key operations</b> and count how many times they are performed.</td><td>Count the number of <b>steps</b> (statement executions) the whole program takes.</td></tr>
+  <tr><td>Counts</td><td>Only the most time-consuming operation(s).</td><td>Every step in the algorithm.</td></tr>
+  <tr><td>Success depends on</td><td>Choosing the operation(s) that contribute most to time.</td><td>Counting every statement and loop test correctly.</td></tr>
+  <tr><td>Weakness</td><td>Does not measure actual execution time; choosing the key operation can be difficult.</td><td>More work to count.</td></tr>
+</table>
+
+<h2>5. Operation count approach</h2>
+<p>A <b>key operation</b> is the most time-consuming operation; other operations are ignored. Typical choices: comparisons, additions, multiplications. We estimate T(n) by counting how many times the key operation runs.</p>
+
+<h3>Example 1: <code>max</code></h3>
+<pre><code>ALGORITHM max(REF a[] INTEGER, n INTEGER)
+   locates max integer in array and returns index
+1  i &larr; 0
+2  c &larr; 1
+3  LOOP (c &lt; n)
+4     IF (a[i] &lt; a[c])
+5        i &larr; c
+6     END IF
+7     c &larr; c + 1
+8  END LOOP
+9  RETURN i
+END max</code></pre>
+<p>Trace with <code>a = {16, 11, 2, 19, 6}</code>, <code>n = 5</code>. <code>i</code> remembers the index of the biggest value so far; <code>c</code> is the index being examined.</p>
+<table>
+  <tr><th>c</th><th>a[i] &lt; a[c] ?</th><th>Result</th><th>i after</th></tr>
+  <tr><td>1</td><td>16 &lt; 11</td><td>no</td><td>0</td></tr>
+  <tr><td>2</td><td>16 &lt; 2</td><td>no</td><td>0</td></tr>
+  <tr><td>3</td><td>16 &lt; 19</td><td>yes: i &larr; 3</td><td>3</td></tr>
+  <tr><td>4</td><td>19 &lt; 6</td><td>no</td><td>3</td></tr>
+</table>
+<p>The function returns <b>3</b> (index of 19).</p>
+<p><b>Choosing the key operation.</b> The comparison <code>a[i] &lt; a[c]</code> is the key operation: to perform it the computer fetches i, c, a[i] and a[c] from memory and compares them, which costs more than the other lines. How many times does it run? c takes the values 1, 2, ..., n&minus;1, so</p>
+<p style="font-size:17px"><b>T(n) = n &minus; 1</b>, regardless of the data (best, worst and average are all the same).</p>
+
+<h3>Example 2: <code>find</code></h3>
+<pre><code>ALGORITHM find(REF a[] INTEGER, n INTEGER, x INTEGER)
+   finds x in array and returns index if found, else -1
+1  i &larr; -1
+2  c &larr; 0
+3  LOOP (c &lt; n AND x &ne; a[c])
+4     c &larr; c + 1
+5  END LOOP
+6  IF (c &ne; n)
+7     i &larr; c
+8  END IF
+9  RETURN i
+END find</code></pre>
+<p>It scans from the start and stops as soon as <code>x = a[c]</code> or the end is reached. If the loop stopped before the end (<code>c &ne; n</code>), x was found at index c.</p>
+<svg viewBox="0 0 640 140" role="img" aria-label="find scanning an array" class="dg">
+  <text x="20" y="20" class="sm">find(a, 4, 9): x = 9</text>
+  <rect class="bx" x="40" y="40" width="70" height="40"/><text x="75" y="66" text-anchor="middle" class="mono">7</text>
+  <rect class="bx" x="110" y="40" width="70" height="40"/><text x="145" y="66" text-anchor="middle" class="mono">3</text>
+  <rect class="bx" x="180" y="40" width="70" height="40"/><text x="215" y="66" text-anchor="middle" class="mono">9</text>
+  <rect class="bx" x="250" y="40" width="70" height="40"/><text x="285" y="66" text-anchor="middle" class="mono">5</text>
+  <text x="75" y="100" text-anchor="middle" class="sm">c=0</text><text x="145" y="100" text-anchor="middle" class="sm">c=1</text><text x="215" y="100" text-anchor="middle" class="sm">c=2</text><text x="285" y="100" text-anchor="middle" class="sm">c=3</text>
+  <text x="75" y="125" text-anchor="middle" class="sm">9&ne;7 yes</text><text x="145" y="125" text-anchor="middle" class="sm">9&ne;3 yes</text><text x="215" y="125" text-anchor="middle" class="sm">9&ne;9 no: stop</text>
+  <text x="470" y="60" text-anchor="middle" class="h">3 comparisons x &ne; a[c]</text>
+  <text x="470" y="82" text-anchor="middle" class="sm">found at index 2 (c &ne; n), returns 2</text>
+</svg>
+<p>Key operation: the comparison <code>x &ne; a[c]</code>. Its count depends on <b>where x is</b>, so now the best, worst and average cases differ (this is studied in depth in Lesson 4):</p>
+<table>
+  <tr><th>Case</th><th>When</th><th>Comparisons</th></tr>
+  <tr><td>Best</td><td>x is at index 0</td><td>1</td></tr>
+  <tr><td>Worst</td><td>x is at the last index, or not in the array</td><td>n</td></tr>
+  <tr><td>Average</td><td>x is present and equally likely at any position: (1 + 2 + ... + n) / n</td><td>(n + 1) / 2</td></tr>
+</table>
+<p>The average works out as <code>(1/n) &middot; n(n+1)/2 = (n+1)/2</code>, using 1 + 2 + ... + n = n(n+1)/2.</p>
+
+<h2>6. Step count approach</h2>
+<p>T(n) is estimated by accounting for the time spent on <b>all</b> program steps, that is, the number of steps the program takes to complete. We count how many times each numbered line executes and add them up.</p>
+<div class="box"><b>Counting rule for loops</b>A <code>LOOP (c &lt; n)</code> line is evaluated <b>n + 1</b> times if the body runs n times: it is true n times and false once (the exit test). Example n = 3: 0&lt;3, 1&lt;3, 2&lt;3 true, 3&lt;3 false: 4 evaluations. The body lines run n times each.</div>
+
+<h3>Algorithm 1: iterative <code>sum</code></h3>
+<pre><code>ALGORITHM sum(REF a[] INTEGER, n INTEGER)
+   returns sum of n integers in array
+                              times
+1  s &larr; 0                      1
+2  c &larr; 0                      1
+3  LOOP (c &lt; n)                 n + 1
+4     s &larr; s + a[c]            n
+5     c &larr; c + 1               n
+6  END LOOP                    (not counted)
+7  RETURN s                      1
+END sum
+                  T(n) = 3n + 4</code></pre>
+<p>Check with <code>num = {3, 6, 1}</code>, <code>n = 3</code>: s goes 0 &rarr; 3 &rarr; 9 &rarr; 10 and c goes 1, 2, 3 (three body executions), so T(3) = 3&times;3 + 4 = <b>13</b>.</p>
+
+<h3>Algorithm 2: recursive <code>sum</code></h3>
+<pre><code>ALGORITHM sum(REF a[] INTEGER, n INTEGER)
+   returns sum of n integers in array
+                                    times
+1  IF (n &gt; 0)                        n + 1
+2     RETURN a[n-1] + sum(a, n-1)     n
+3  END IF
+4  RETURN 0                            1
+END sum
+                  T(n) = 2n + 2</code></pre>
+<p>The IF is tested for n, n&minus;1, ..., 1 (true, n times) and finally 0 (false): n + 1 tests. The recursive line runs n times; the base-case <code>RETURN 0</code> runs once.</p>
+
+<h3>Step count of <code>max</code> (for comparison)</h3>
+<table>
+  <tr><th>Line</th><th>Times</th></tr>
+  <tr><td>1 <code>i &larr; 0</code></td><td>1</td></tr>
+  <tr><td>2 <code>c &larr; 1</code></td><td>1</td></tr>
+  <tr><td>3 <code>LOOP (c &lt; n)</code></td><td>n (c = 1..n)</td></tr>
+  <tr><td>4 <code>IF (a[i] &lt; a[c])</code></td><td>n &minus; 1</td></tr>
+  <tr><td>5 <code>i &larr; c</code></td><td>0 to n &minus; 1 (depends on the data)</td></tr>
+  <tr><td>7 <code>c &larr; c + 1</code></td><td>n &minus; 1</td></tr>
+  <tr><td>9 <code>RETURN i</code></td><td>1</td></tr>
+  <tr><td><b>Total</b></td><td>between 3n + 1 (max is first) and 4n (array increasing)</td></tr>
+</table>
+<p>(Worked here from the algorithm above; line 5 is why the step count of <code>max</code> is a range while its key-operation count is exactly n &minus; 1.)</p>
+
+<h2>7. Programming instrumentation</h2>
+<p><b>Programming instrumentation</b> means modifying a program by adding extra code to collect information about its execution. To check a step count, add a global counter <code>g</code> and increment it wherever a step executes. After the run, <code>g</code> equals T(n).</p>
+
+<h3>Program 1 (instrumented iterative sum)</h3>
+<pre><code>int g = 0;                 // global step counter
+int sum(int a[], int n)
+{
+    int s = 0;
+    g++;                   // declaration and initialisation of s
+    int c = 0;
+    g++;                   // declaration and initialisation of c
+    while (c &lt; n)
+    {
+        g++;               // evaluation of c &lt; n  (true)
+        s += a[c];
+        g++;               // addition and assignment s += a[c]
+        c++;
+        g++;               // increment c++
+    }
+    g++;                   // last evaluation of c &lt; n  (false)
+    g++;                   // return s
+    return s;
+}</code></pre>
+<p>Total g = 1 + 1 + n + n + n + 1 + 1 = <b>3n + 4</b>, matching the step count.</p>
+
+<h3>Program 2 (instrumented recursive sum)</h3>
+<pre><code>int g = 0;
+int sum(int a[], int n)
+{
+    g++;                   // if condition evaluation
+    if (n &gt; 0)
+    {
+        g++;               // addition, recursive call and return
+        return a[n-1] + sum(a, n-1);
+    }
+    g++;                   // return statement
+    return 0;
+}</code></pre>
+<p>The condition is evaluated n + 1 times, the true branch runs n times and the base return once: g = <b>2n + 2</b>, matching the step count.</p>
+
+<div class="box"><b>Key takeaways</b>
+Operation count: pick the costly operation, count it (<code>max</code>: T(n) = n &minus; 1). Step count: count every statement (iterative sum: 3n + 4; recursive sum: 2n + 2). Both give a function of n, not seconds. The next lesson turns such functions into growth rates (Big-O).</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Define time complexity and give three reasons for being interested in it.</summary>
+<p>Time complexity is the amount of time a program written with a particular algorithm needs to run to completion. Reasons: some problems require a real-time response; we prefer the program that runs fast when several algorithms solve a problem; we must guarantee users that the program completes without time-out.</p>
+</details>
+<details>
+<summary>W2. Explain the two approaches to determining time complexity.</summary>
+<p><b>Operation count:</b> identify one or more key operations (those contributing most to time) and count how many times they are performed. Its weaknesses: it does not measure actual execution time and choosing the key operation may be difficult. <b>Step count:</b> estimate T(n) by accounting for the time spent on all program steps, i.e. the number of steps the program takes to complete.</p>
+</details>
+<details>
+<summary>W3. Using the operation count approach, find T(n) for the <code>max</code> algorithm (loop c from 1 to n-1 with IF a[i] &lt; a[c]).</summary>
+<p>Key operation: the comparison a[i] &lt; a[c], which needs memory fetches of i, c, a[i], a[c] and a comparison. The loop variable c takes the values 1 to n&minus;1, so the comparison is executed n &minus; 1 times: T(n) = n &minus; 1 for all inputs.</p>
+</details>
+<details>
+<summary>W4. Find the step count of the iterative sum algorithm and verify it for n = 3.</summary>
+<p>Lines: s &larr; 0 (1), c &larr; 0 (1), loop test (n + 1), s &larr; s + a[c] (n), c &larr; c + 1 (n), RETURN s (1). T(n) = 3n + 4. For n = 3: 13. Check by trace: tests 0&lt;3, 1&lt;3, 2&lt;3, 3&lt;3 = 4; body lines 3 + 3; plus 3 single lines = 13.</p>
+</details>
+<details>
+<summary>W5. Find the step count of the recursive sum algorithm.</summary>
+<p>IF (n &gt; 0) is evaluated n + 1 times; the recursive RETURN line runs n times; RETURN 0 runs once. T(n) = (n + 1) + n + 1 = 2n + 2.</p>
+</details>
+<details>
+<summary>W6. What is programming instrumentation? Show how it would count steps in a loop.</summary>
+<p>Modifying a program by adding extra code to collect information about its execution. Declare a global counter g = 0 and write g++ beside each step (declarations, each loop test, the loop body statements, the final failing test, the return). At the end g holds the step count, e.g. 3n + 4 for the iterative sum.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Time complexity</td><td>Amount of time a program written with a particular algorithm needs to run to completion. It counts work as a function of n; it is not actual seconds.</td></tr>
+  <tr><td>Why</td><td>Real-time response &middot; prefer the faster algorithm &middot; guarantee completion without time-out</td></tr>
+  <tr><td>Depends on</td><td>Input size n (main), hardware and software, types of operations. Same factors as space complexity; some are sensitive to the problem.</td></tr>
+  <tr><td>Formula</td><td><b>T(n) = c + T<sub>A</sub>(n)</b>; c = constant time, T<sub>A</sub>(n) = time that depends on n</td></tr>
+  <tr><td>Two approaches</td><td>Operation count &middot; Step count</td></tr>
+  <tr><td>Operation count</td><td>Count how many times the key (most time-consuming) operation runs. Weaknesses: does not measure actual time; picking the key operation can be hard.</td></tr>
+  <tr><td>Step count</td><td>Count the steps (statement executions) of the whole program.</td></tr>
+  <tr><td>Loop rule</td><td>LOOP test runs n + 1 times for n iterations; body lines run n times.</td></tr>
+  <tr><td>max (operation count)</td><td>Key operation a[i] &lt; a[c]: <b>T(n) = n &minus; 1</b></td></tr>
+  <tr><td>find (comparison x &ne; a[c])</td><td>Best 1, worst n, average (n + 1) / 2</td></tr>
+  <tr><td>Iterative sum (step count)</td><td><b>T(n) = 3n + 4</b> (T(3) = 13)</td></tr>
+  <tr><td>Recursive sum (step count)</td><td><b>T(n) = 2n + 2</b></td></tr>
+  <tr><td>Programming instrumentation</td><td>Add extra code (a global counter g, g++ at each step) to collect information about execution; g = T(n) at the end.</td></tr>
+  <tr><td>Useful sum</td><td>1 + 2 + ... + n = n(n + 1) / 2</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Show the table of lines and how many times each runs, then add them up. Remember the extra +1 for the loop's final failing test, and the single execution of lines before and after the loop.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Time complexity measures:", "o": ["Actual seconds on your computer", "The amount of time a program with a particular algorithm needs, expressed as a function of input size", "The number of lines of code", "The memory used"], "a": 1, "e": "It does not measure actual seconds."}, {"q": "Which is NOT a reason to study time complexity?", "o": ["Some problems need real-time responses", "To prefer the faster algorithm among several", "To guarantee completion without time-out", "To reduce the compiled instruction size"], "a": 3, "e": "Instruction size is part of space complexity."}, {"q": "In T(n) = c + T_A(n), what does c represent?", "o": ["Time that depends on n", "Constant time that does not depend on the input size", "The number of loops", "The compiler time"], "a": 1, "e": "c is the insensitive part; T_A(n) is the sensitive part."}, {"q": "Which is the main factor on which time complexity depends?", "o": ["Colour of the screen", "Input size n", "Programmer's name", "Operating system version only"], "a": 1, "e": "Input size is the main factor."}, {"q": "The two approaches to determine time complexity are:", "o": ["Best case and worst case", "Operation count and step count", "Space count and time count", "Compile and run"], "a": 1, "e": "Operation count and step count."}, {"q": "In the operation count approach we:", "o": ["Count every line", "Count how many times the key operation(s) are performed", "Run the program and time it", "Count the variables"], "a": 1, "e": "Only the operation(s) that contribute most to time are counted."}, {"q": "A weakness of the operation count approach is:", "o": ["It needs a stopwatch", "Choosing the key operation may be difficult and it does not measure actual execution time", "It cannot be used for loops", "It always gives O(1)"], "a": 1, "e": "Success depends on identifying the operations that contribute most."}, {"q": "For max(a, n) the key operation a[i] < a[c] is executed how many times?", "o": ["n", "n - 1", "n + 1", "2n"], "a": 1, "e": "c runs from 1 to n-1, giving n - 1 comparisons for any data."}, {"q": "For a = {16, 11, 2, 19, 6}, what does max return?", "o": ["19", "3", "4", "0"], "a": 1, "e": "It returns the INDEX of the largest value: 19 is at index 3."}, {"q": "For find(a, n, x), the best case number of comparisons x != a[c] is:", "o": ["0", "1", "n", "n/2"], "a": 1, "e": "If x is at index 0, one comparison is enough."}, {"q": "For find, the worst case number of comparisons is:", "o": ["1", "n/2", "n", "n + 1"], "a": 2, "e": "When x is last or not present all n elements are compared."}, {"q": "If x is present and equally likely at every position, the average number of comparisons in find is:", "o": ["n", "(n + 1) / 2", "n / 4", "1"], "a": 1, "e": "(1 + 2 + ... + n) / n = (n + 1) / 2."}, {"q": "1 + 2 + 3 + ... + n equals:", "o": ["n", "n(n + 1) / 2", "n squared", "2n"], "a": 1, "e": "The standard arithmetic series sum."}, {"q": "In the step count approach, how often is a LOOP (c < n) test evaluated if the body runs n times?", "o": ["n", "n - 1", "n + 1", "2n"], "a": 2, "e": "True n times plus one final false evaluation."}, {"q": "Step count T(n) of the iterative sum algorithm (s <- 0, c <- 0, loop, s <- s + a[c], c <- c + 1, RETURN s):", "o": ["2n + 2", "3n + 4", "3n", "n + 4"], "a": 1, "e": "1 + 1 + (n + 1) + n + n + 1 = 3n + 4."}, {"q": "T(n) of the iterative sum for n = 3 is:", "o": ["9", "12", "13", "15"], "a": 2, "e": "3 x 3 + 4 = 13."}, {"q": "Step count T(n) of the recursive sum (IF n > 0 / RETURN a[n-1] + sum(a, n-1) / RETURN 0):", "o": ["2n + 2", "3n + 4", "n + 1", "2n"], "a": 0, "e": "(n + 1) + n + 1 = 2n + 2."}, {"q": "Programming instrumentation means:", "o": ["Compiling with optimisation", "Adding extra code to a program to collect information about its execution", "Deleting unused code", "Playing an instrument"], "a": 1, "e": "E.g. a global counter g incremented at each step."}, {"q": "In the instrumented iterative sum, how many times is g++ executed for the last evaluation of c < n?", "o": ["n", "n + 1", "1", "0"], "a": 2, "e": "Only once, after the loop, for the final false test; the n true tests are counted inside the loop."}, {"q": "Which pair is correct?", "o": ["Space complexity: S(n) = c + S_A(n); time complexity: T(n) = c + T_A(n)", "Space: T(n); time: S(n)", "Both are constants", "Neither depends on n"], "a": 0, "e": "Both follow the same constant-plus-sensitive form."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

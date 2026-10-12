@@ -1,0 +1,20 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Best / worst / average</td><td>Minimum / maximum / average of T(n) over the instance characteristic n.</td></tr>
+  <tr><td>T(n) properties</td><td>Function of n; n &ge; 0; T(n) &ge; 0. We want to know if it gets reasonably or incredibly slow as the problem grows.</td></tr>
+  <tr><td>Linear</td><td>Counter <b>adds</b>: T(n) = 2n + 2 (y = mx + c). Sequential search.</td></tr>
+  <tr><td>Logarithmic</td><td>Counter <b>doubles</b>: T(n) = 6 log<sub>2</sub> n + 2. Binary search. 2<sup>iterations</sup> = n, so iterations = log<sub>2</sub> n.</td></tr>
+  <tr><td>n log n</td><td>Linear loop around a doubling loop: T(n) = 2n log<sub>2</sub> n + 4n + 2.</td></tr>
+  <tr><td>Quadratic</td><td>Two nested n-loops: T(n) = 2n<sup>2</sup> + 4n + 2.</td></tr>
+  <tr><td>Growth order</td><td>1 &lt; log n &lt; n &lt; n log n &lt; n<sup>2</sup> &lt; n<sup>3</sup> (polynomial) &lt; 2<sup>n</sup> (exponential) &lt; n! (factorial)</td></tr>
+  <tr><td>Asymptotic notation</td><td>Running time as a growth rate: drop less significant terms and constant coefficients (3n<sup>2</sup> + 50n + 200 grows like n<sup>2</sup>).</td></tr>
+  <tr><td>Big-O</td><td>Asymptotic notation for the <b>worst case</b>. T(n) = O(f(n)) if there exist positive c and n<sub>0</sub> with <b>T(n) &le; c f(n) for all n &ge; n<sub>0</sub></b>.</td></tr>
+  <tr><td>Proof examples</td><td>3n + 2 &le; 4n (c = 4, n<sub>0</sub> = 2): O(n) &middot; 10n<sup>2</sup> + 4n + 2 &le; 11n<sup>2</sup> (c = 11, n<sub>0</sub> = 5): O(n<sup>2</sup>) &middot; 4n<sup>3</sup> + 2n<sup>2</sup> &le; 5n<sup>3</sup> (c = 5, n<sub>0</sub> = 2): O(n<sup>3</sup>) &middot; &frac12;(n + 1) &le; n (c = 1, n<sub>0</sub> = 1): O(n)</td></tr>
+  <tr><td>Sequential search</td><td>Unordered list. Best 1, worst n, average (n + 1) / 2. O(n).</td></tr>
+  <tr><td>Binary search</td><td><b>Sorted list only.</b> Compare with the middle, discard half. Worst O(log n). Faster than sequential search.</td></tr>
+  <tr><td>Selection sort</td><td>Find the smallest of the unsorted part, swap into place. n(n &minus; 1)/2 comparisons always, n &minus; 1 swaps. O(n<sup>2</sup>).</td></tr>
+  <tr><td>Bubble sort</td><td>Swap neighbours that are out of order; largest bubbles to the end each pass. n(n &minus; 1)/2 comparisons (this version), swaps vary. O(n<sup>2</sup>).</td></tr>
+  <tr><td>Useful sum</td><td>(n &minus; 1) + (n &minus; 2) + ... + 1 = n(n &minus; 1)/2</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>For a Big-O proof write the chain of inequalities, state c and n<sub>0</sub> explicitly, then conclude T(n) = O(f(n)). For a loop, ask: does the counter add (n), double (log n), or is it nested (multiply the counts)?</div>

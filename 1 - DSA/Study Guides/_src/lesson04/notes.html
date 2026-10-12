@@ -1,0 +1,329 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Describe the best, average and worst case running times of an algorithm</li>
+  <li>Explain linear, logarithmic, linear logarithmic, quadratic, polynomial, exponential and factorial time functions</li>
+  <li>Express a running time in asymptotic notation</li>
+  <li>Express the worst case running time in Big-O notation</li>
+  <li>Analyse classical searching and sorting algorithms</li>
+</ul>
+
+<h2>1. Best, worst and average case</h2>
+<p>For the same <i>n</i> an algorithm can take different amounts of time depending on the data. We therefore talk about three running times.</p>
+<table>
+  <tr><th>Case</th><th>Meaning</th><th>T(n) is</th></tr>
+  <tr><td><b>Best case</b></td><td>Time taken when the best possible thing happens.</td><td>the <b>minimum</b> over the instance characteristic n</td></tr>
+  <tr><td><b>Worst case</b></td><td>Time taken when the worst possible thing happens.</td><td>the <b>maximum</b> over n</td></tr>
+  <tr><td><b>Average case</b></td><td>Time taken for some probability distribution of the instance characteristic n.</td><td>the <b>average</b> over n (more complicated to analyse)</td></tr>
+</table>
+<p>Example: in a sequential search, the best case is finding the target at the first position; the worst case is finding it last (or not at all).</p>
+
+<h2>2. Functions of time complexity</h2>
+<ul>
+  <li>The time complexity of an algorithm is a <b>function of n</b>.</li>
+  <li>n is the instance characteristic, so always n &ge; 0.</li>
+  <li>Time cannot be negative, so T(n) &ge; 0 for all n.</li>
+  <li><b>Why do we care?</b> We want to know whether the algorithm becomes <i>reasonably</i> or <i>incredibly</i> slow when the problem grows.</li>
+</ul>
+<p>Below, the right-hand column counts how many times each line runs (loop tests run one more time than the body).</p>
+
+<h3>Linear (example 1)</h3>
+<pre><code>                         times
+1  i &larr; 1                 1
+2  LOOP (i &lt;= n)          n + 1
+3     i &larr; i + 1          n
+4  END LOOP
+        T(n) = 2n + 2      (like y = mx + c: a straight line)</code></pre>
+<p>The loop counter grows by <b>adding</b> 1, so the body runs n times.</p>
+
+<h3>Logarithmic (example 2)</h3>
+<pre><code>                         times
+1  i &larr; 1                 1
+2  LOOP (i &lt;= n)       log<sub>2</sub>(n) + 1
+3     instruction 1     log<sub>2</sub>(n)
+4     instruction 2     log<sub>2</sub>(n)
+5     instruction 3     log<sub>2</sub>(n)
+6     instruction 4     log<sub>2</sub>(n)
+7     i &larr; i * 2        log<sub>2</sub>(n)
+8  END LOOP
+        T(n) = 6 log<sub>2</sub>(n) + 2</code></pre>
+<p>Here the counter is <b>multiplied</b> by 2, so i takes the values 1, 2, 4, 8, ... After k passes i = 2<sup>k</sup>. The loop stops when 2<sup>k</sup> exceeds n, i.e. at the terminating point 2<sup>maxIterations</sup> = n, so <b>maxIterations = log<sub>2</sub>(n)</b>. Doubling the input adds only <i>one</i> more pass.</p>
+<p>Recall: log<sub>x</sub>(m) = y means x<sup>y</sup> = m. Binary search (below) behaves like this.</p>
+
+<h3>Linear logarithmic, n log n (example 3)</h3>
+<pre><code>                                times
+1  i &larr; 1                        1
+2  LOOP (i &lt;= n)                 n + 1
+3     j &larr; 1                     n
+4     LOOP (j &lt;= n)       n (log<sub>2</sub>(n) + 1)
+5        j &larr; j * 2         n log<sub>2</sub>(n)
+6     END LOOP
+7     i &larr; i + 1                 n
+8  END LOOP
+        T(n) = 2n log<sub>2</sub>(n) + 4n + 2</code></pre>
+<p>A linear outer loop (n times) containing a logarithmic inner loop (log n times): n &times; log n.</p>
+
+<h3>Quadratic (example 4)</h3>
+<pre><code>                                times
+1  i &larr; 1                        1
+2  LOOP (i &lt;= n)                 n + 1
+3     j &larr; 1                     n
+4     LOOP (j &lt;= n)            n (n + 1)
+5        j &larr; j + 1            n &middot; n
+6     END LOOP
+7     i &larr; i + 1                 n
+8  END LOOP
+        T(n) = 2n<sup>2</sup> + 4n + 2</code></pre>
+<p>Two nested loops that <b>both</b> run n times: n &times; n = n<sup>2</sup>.</p>
+
+<h3>Polynomial, exponential, factorial</h3>
+<table>
+  <tr><th>Name</th><th>Form</th><th>Typical source</th></tr>
+  <tr><td>Polynomial</td><td>n<sup>k</sup> for a constant k (n, n<sup>2</sup>, n<sup>3</sup>, ...)</td><td>k nested loops of n iterations each</td></tr>
+  <tr><td>Exponential</td><td>c<sup>n</sup>, e.g. 2<sup>n</sup></td><td>Work that doubles when n grows by one</td></tr>
+  <tr><td>Factorial</td><td>n! = n &times; (n &minus; 1) &times; ... &times; 1</td><td>Trying every ordering (permutation) of n items</td></tr>
+</table>
+
+<h3>How fast do they grow?</h3>
+<svg viewBox="0 0 640 270" role="img" aria-label="Growth of common functions" class="dg">
+<path d="M60 230 H590 M60 230 V20" stroke="var(--fg)" fill="none"/>
+<text x="594" y="234" class="sm">n</text><text x="60" y="14" class="sm">T(n)</text>
+<text x="60" y="246" text-anchor="middle" class="sm">0</text>
+<text x="164" y="246" text-anchor="middle" class="sm">2</text>
+<text x="268" y="246" text-anchor="middle" class="sm">4</text>
+<text x="372" y="246" text-anchor="middle" class="sm">6</text>
+<text x="476" y="246" text-anchor="middle" class="sm">8</text>
+<text x="580" y="246" text-anchor="middle" class="sm">10</text>
+<text x="54" y="234" text-anchor="end" class="sm">0</text>
+<text x="54" y="134" text-anchor="end" class="sm">50</text>
+<text x="54" y="34" text-anchor="end" class="sm">100</text>
+<polyline points="112.0,230.0 117.2,229.7 122.4,229.5 127.6,229.2 132.8,229.0 138.0,228.8 143.2,228.6 148.4,228.5 153.6,228.3 158.8,228.1 164.0,228.0 169.2,227.9 174.4,227.7 179.6,227.6 184.8,227.5 190.0,227.4 195.2,227.2 200.4,227.1 205.6,227.0 210.8,226.9 216.0,226.8 221.2,226.7 226.4,226.6 231.6,226.6 236.8,226.5 242.0,226.4 247.2,226.3 252.4,226.2 257.6,226.1 262.8,226.1 268.0,226.0 273.2,225.9 278.4,225.9 283.6,225.8 288.8,225.7 294.0,225.7 299.2,225.6 304.4,225.5 309.6,225.5 314.8,225.4 320.0,225.4 325.2,225.3 330.4,225.2 335.6,225.2 340.8,225.1 346.0,225.1 351.2,225.0 356.4,225.0 361.6,224.9 366.8,224.9 372.0,224.8 377.2,224.8 382.4,224.7 387.6,224.7 392.8,224.6 398.0,224.6 403.2,224.6 408.4,224.5 413.6,224.5 418.8,224.4 424.0,224.4 429.2,224.3 434.4,224.3 439.6,224.3 444.8,224.2 450.0,224.2 455.2,224.1 460.4,224.1 465.6,224.1 470.8,224.0 476.0,224.0 481.2,224.0 486.4,223.9 491.6,223.9 496.8,223.9 502.0,223.8 507.2,223.8 512.4,223.8 517.6,223.7 522.8,223.7 528.0,223.7 533.2,223.6 538.4,223.6 543.6,223.6 548.8,223.5 554.0,223.5 559.2,223.5 564.4,223.4 569.6,223.4 574.8,223.4 580.0,223.4" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<polyline points="112.0,228.0 117.2,227.8 122.4,227.6 127.6,227.4 132.8,227.2 138.0,227.0 143.2,226.8 148.4,226.6 153.6,226.4 158.8,226.2 164.0,226.0 169.2,225.8 174.4,225.6 179.6,225.4 184.8,225.2 190.0,225.0 195.2,224.8 200.4,224.6 205.6,224.4 210.8,224.2 216.0,224.0 221.2,223.8 226.4,223.6 231.6,223.4 236.8,223.2 242.0,223.0 247.2,222.8 252.4,222.6 257.6,222.4 262.8,222.2 268.0,222.0 273.2,221.8 278.4,221.6 283.6,221.4 288.8,221.2 294.0,221.0 299.2,220.8 304.4,220.6 309.6,220.4 314.8,220.2 320.0,220.0 325.2,219.8 330.4,219.6 335.6,219.4 340.8,219.2 346.0,219.0 351.2,218.8 356.4,218.6 361.6,218.4 366.8,218.2 372.0,218.0 377.2,217.8 382.4,217.6 387.6,217.4 392.8,217.2 398.0,217.0 403.2,216.8 408.4,216.6 413.6,216.4 418.8,216.2 424.0,216.0 429.2,215.8 434.4,215.6 439.6,215.4 444.8,215.2 450.0,215.0 455.2,214.8 460.4,214.6 465.6,214.4 470.8,214.2 476.0,214.0 481.2,213.8 486.4,213.6 491.6,213.4 496.8,213.2 502.0,213.0 507.2,212.8 512.4,212.6 517.6,212.4 522.8,212.2 528.0,212.0 533.2,211.8 538.4,211.6 543.6,211.4 548.8,211.2 554.0,211.0 559.2,210.8 564.4,210.6 569.6,210.4 574.8,210.2 580.0,210.0" fill="none" stroke="var(--fg)" stroke-width="2"/>
+<polyline points="112.0,230.0 117.2,229.7 122.4,229.4 127.6,229.0 132.8,228.6 138.0,228.2 143.2,227.8 148.4,227.4 153.6,226.9 158.8,226.5 164.0,226.0 169.2,225.5 174.4,225.0 179.6,224.5 184.8,223.9 190.0,223.4 195.2,222.8 200.4,222.3 205.6,221.7 210.8,221.1 216.0,220.5 221.2,219.9 226.4,219.3 231.6,218.6 236.8,218.0 242.0,217.3 247.2,216.7 252.4,216.0 257.6,215.4 262.8,214.7 268.0,214.0 273.2,213.3 278.4,212.6 283.6,211.9 288.8,211.2 294.0,210.5 299.2,209.7 304.4,209.0 309.6,208.3 314.8,207.5 320.0,206.8 325.2,206.0 330.4,205.3 335.6,204.5 340.8,203.7 346.0,202.9 351.2,202.2 356.4,201.4 361.6,200.6 366.8,199.8 372.0,199.0 377.2,198.2 382.4,197.4 387.6,196.5 392.8,195.7 398.0,194.9 403.2,194.1 408.4,193.2 413.6,192.4 418.8,191.5 424.0,190.7 429.2,189.8 434.4,189.0 439.6,188.1 444.8,187.3 450.0,186.4 455.2,185.5 460.4,184.6 465.6,183.8 470.8,182.9 476.0,182.0 481.2,181.1 486.4,180.2 491.6,179.3 496.8,178.4 502.0,177.5 507.2,176.6 512.4,175.7 517.6,174.8 522.8,173.9 528.0,172.9 533.2,172.0 538.4,171.1 543.6,170.2 548.8,169.2 554.0,168.3 559.2,167.3 564.4,166.4 569.6,165.5 574.8,164.5 580.0,163.6" fill="none" stroke="var(--accent)" stroke-width="2"/>
+<polyline points="112.0,228.0 117.2,227.6 122.4,227.1 127.6,226.6 132.8,226.1 138.0,225.5 143.2,224.9 148.4,224.2 153.6,223.5 158.8,222.8 164.0,222.0 169.2,221.2 174.4,220.3 179.6,219.4 184.8,218.5 190.0,217.5 195.2,216.5 200.4,215.4 205.6,214.3 210.8,213.2 216.0,212.0 221.2,210.8 226.4,209.5 231.6,208.2 236.8,206.9 242.0,205.5 247.2,204.1 252.4,202.6 257.6,201.1 262.8,199.6 268.0,198.0 273.2,196.4 278.4,194.7 283.6,193.0 288.8,191.3 294.0,189.5 299.2,187.7 304.4,185.8 309.6,183.9 314.8,182.0 320.0,180.0 325.2,178.0 330.4,175.9 335.6,173.8 340.8,171.7 346.0,169.5 351.2,167.3 356.4,165.0 361.6,162.7 366.8,160.4 372.0,158.0 377.2,155.6 382.4,153.1 387.6,150.6 392.8,148.1 398.0,145.5 403.2,142.9 408.4,140.2 413.6,137.5 418.8,134.8 424.0,132.0 429.2,129.2 434.4,126.3 439.6,123.4 444.8,120.5 450.0,117.5 455.2,114.5 460.4,111.4 465.6,108.3 470.8,105.2 476.0,102.0 481.2,98.8 486.4,95.5 491.6,92.2 496.8,88.9 502.0,85.5 507.2,82.1 512.4,78.6 517.6,75.1 522.8,71.6 528.0,68.0 533.2,64.4 538.4,60.7 543.6,57.0 548.8,53.3 554.0,49.5 559.2,45.7 564.4,41.8 569.6,37.9 574.8,34.0 580.0,30.0" fill="none" stroke="#cf222e" stroke-width="2"/>
+<polyline points="112.0,226.0 117.2,225.7 122.4,225.4 127.6,225.1 132.8,224.7 138.0,224.3 143.2,223.9 148.4,223.5 153.6,223.0 158.8,222.5 164.0,222.0 169.2,221.4 174.4,220.8 179.6,220.2 184.8,219.4 190.0,218.7 195.2,217.9 200.4,217.0 205.6,216.1 210.8,215.1 216.0,214.0 221.2,212.9 226.4,211.6 231.6,210.3 236.8,208.9 242.0,207.4 247.2,205.7 252.4,204.0 257.6,202.1 262.8,200.1 268.0,198.0 273.2,195.7 278.4,193.2 283.6,190.6 288.8,187.8 294.0,184.7 299.2,181.5 304.4,178.0 309.6,174.3 314.8,170.3 320.0,166.0 325.2,161.4 330.4,156.5 335.6,151.2 340.8,145.6 346.0,139.5 351.2,133.0 356.4,126.0 361.6,118.6 366.8,110.6 372.0,102.0 377.2,92.8 382.4,83.0 387.6,72.4 392.8,61.1 398.0,49.0 403.2,36.0 408.4,30.0" fill="none" stroke="#8250df" stroke-width="2"/>
+<text x="586" y="227" font-size="13" fill="var(--muted)">log n</text>
+<text x="586" y="214" font-size="13" fill="var(--fg)">n</text>
+<text x="586" y="168" font-size="13" fill="var(--accent)">n log n</text>
+<text x="586" y="34" font-size="13" fill="#cf222e">n&#178;</text>
+<text x="373" y="24" font-size="13" fill="#8250df">2&#8319;</text>
+<text x="320" y="262" text-anchor="middle" class="sm">Curves leaving the top of the chart (n&#178; at n = 10, 2&#8319; at n = 7) keep rising far beyond it.</text>
+</svg>
+<table>
+  <tr><th>n</th><th>log<sub>2</sub> n</th><th>n log<sub>2</sub> n</th><th>n<sup>2</sup></th><th>n<sup>3</sup></th><th>2<sup>n</sup></th><th>n!</th></tr>
+  <tr><td>10</td><td>3.3</td><td>33</td><td>100</td><td>1,000</td><td>1,024</td><td>3,628,800</td></tr>
+  <tr><td>20</td><td>4.3</td><td>86</td><td>400</td><td>8,000</td><td>1,048,576</td><td>about 2.4 &times; 10<sup>18</sup></td></tr>
+  <tr><td>100</td><td>6.6</td><td>664</td><td>10,000</td><td>1,000,000</td><td>about 1.3 &times; 10<sup>30</sup></td><td>about 9.3 &times; 10<sup>157</sup></td></tr>
+</table>
+<p>Order of growth, slowest to fastest: <b>1 &lt; log n &lt; n &lt; n log n &lt; n<sup>2</sup> &lt; n<sup>3</sup> &lt; 2<sup>n</sup> &lt; n!</b>. A logarithmic algorithm barely slows down as the problem grows; exponential and factorial ones become incredibly slow even for modest n.</p>
+
+<h2>3. Asymptotic notation</h2>
+<p><b>Asymptotic notation</b> expresses an algorithm's running time as its <b>growth rate</b> by dropping the less significant terms and the constant coefficients. The <b>growth rate</b> says how fast the function grows with the input size. We do this to make the equations simple so that algorithms can be compared easily.</p>
+
+<h3>Why dropping terms is safe: T(n) = 3n<sup>2</sup> + 50n + 200</h3>
+<table>
+  <tr><th>n</th><th>3n&sup2;</th><th>50n + 200</th><th>3n&sup2; &ge; 50n + 200 ?</th></tr>
+  <tr><td>19</td><td>1083</td><td>1150</td><td>no</td></tr>
+  <tr><td>20</td><td>1200</td><td>1200</td><td>yes (equal)</td></tr>
+  <tr><td>21</td><td>1323</td><td>1250</td><td>yes</td></tr>
+</table>
+<p>For n &ge; 20 the 3n<sup>2</sup> term is the more significant one. Now compare n<sup>2</sup> alone with 50n + 200:</p>
+<table>
+  <tr><th>n</th><th>n&sup2;</th><th>50n + 200</th><th>n&sup2; &ge; 50n + 200 ?</th></tr>
+  <tr><td>52</td><td>2704</td><td>2800</td><td>no</td></tr>
+  <tr><td>53</td><td>2809</td><td>2850</td><td>no</td></tr>
+  <tr><td>54</td><td>2916</td><td>2900</td><td>yes</td></tr>
+</table>
+<p>For n &gt; 53, n<sup>2</sup> dominates, so the constant coefficient 3 can be ignored. Also (50n + 200) / (3n<sup>2</sup>) &rarr; 0 as n &rarr; &infin;: the smaller terms become irrelevant. So this T(n) grows like n<sup>2</sup>.</p>
+
+<h2>4. Big-O notation</h2>
+<p><b>Big-O</b> is the asymptotic notation for the <b>worst case</b> running time of an algorithm: an upper bound on growth.</p>
+<div class="box"><b>Definition</b>For T(n) &ge; 0 and f(n) &ge; 0, T(n) is said to be <b>O(f(n))</b> ("big oh of f of n") if there exist positive constants <b>c</b> and <b>n<sub>0</sub></b> such that
+<b>T(n) &le; c &middot; f(n) for all n &ge; n<sub>0</sub></b>.</div>
+<svg viewBox="0 0 640 260" role="img" aria-label="Big-O definition graph" class="dg">
+  <path d="M60 220 H600 M60 220 V20" stroke="var(--fg)" fill="none"/>
+  <text x="590" y="240" class="sm">n</text><text x="30" y="30" class="sm">Time</text>
+  <path d="M60 200 C160 140 260 110 360 90 S520 60 580 50" stroke="var(--accent)" stroke-width="2" fill="none"/>
+  <text x="520" y="42" fill="var(--accent)" font-size="13">c &middot; f(n)</text>
+  <path d="M60 205 C100 190 130 170 160 175 S220 150 260 140 S320 130 360 118 S440 100 480 98 S540 82 580 78" stroke="var(--fg)" stroke-width="2" fill="none"/>
+  <text x="530" y="108" font-size="13">T(n)</text>
+  <path d="M60 215 C160 190 260 160 360 140 S520 120 580 112" stroke="var(--muted)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+  <text x="520" y="132" class="sm">f(n)</text>
+  <path d="M160 220 V20" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="160" y="238" text-anchor="middle" class="sm">n&#8320;</text>
+  <text x="400" y="200" text-anchor="middle" class="sm">Beyond n&#8320;, T(n) never rises above c &middot; f(n)</text>
+</svg>
+<p><b>How to prove T(n) = O(f(n))</b>: replace each lower term by something bigger that contains the leading term, then find c and n<sub>0</sub>.</p>
+
+<h3>Example 1: T(n) = 3n + 2</h3>
+<pre><code>3n + 2 &le; 3n + n = 4n        for n &ge; 2     (since 2 &le; n)
+So T(n) &le; 4n = c &middot; f(n) with c = 4, n&#8320; = 2        &rArr; T(n) = O(n)</code></pre>
+<table>
+  <tr><th>n</th><th>T(n) = 3n + 2</th><th>4n</th><th>T &le; 4n ?</th></tr>
+  <tr><td>1</td><td>5</td><td>4</td><td>no (so n&#8320; is not 1)</td></tr>
+  <tr><td>2</td><td>8</td><td>8</td><td>yes</td></tr>
+  <tr><td>3</td><td>11</td><td>12</td><td>yes</td></tr>
+</table>
+
+<h3>Example 2: T(n) = 10n<sup>2</sup> + 4n + 2</h3>
+<pre><code>10n&sup2; + 4n + 2 &le; 10n&sup2; + 5n     for n &ge; 2   (since 2 &le; n)
+                  &le; 10n&sup2; + n&sup2;     for n &ge; 5   (since 5n &le; n&sup2;)
+                   = 11n&sup2;
+c = 11, n&#8320; = 5                                        &rArr; T(n) = O(n&sup2;)</code></pre>
+
+<h3>Example 3: T(n) = 4n<sup>3</sup> + 2n<sup>2</sup></h3>
+<pre><code>4n&sup3; + 2n&sup2; &le; 4n&sup3; + n&sup3; = 5n&sup3;    for n &ge; 2   (since 2n&sup2; &le; n&sup3;)
+c = 5, n&#8320; = 2                                        &rArr; T(n) = O(n&sup3;)</code></pre>
+
+<h3>Example 4: T(n) = &frac12;(n + 1)</h3>
+<pre><code>&frac12;(n + 1) &le; &frac12;(n + n) = n               for n &ge; 1
+c = 1, n&#8320; = 1                                        &rArr; T(n) = O(n)</code></pre>
+<p>(This is the average-case count of a sequential search.)</p>
+
+<div class="box"><b>Shortcut</b>Keep only the fastest-growing term and drop its coefficient: 3n + 2 &rarr; O(n); 10n&sup2; + 4n + 2 &rarr; O(n&sup2;); 4n&sup3; + 2n&sup2; &rarr; O(n&sup3;); 6 log n + 2 &rarr; O(log n); 2n log n + 4n + 2 &rarr; O(n log n). The proofs above show <i>why</i> this is allowed. Ranking: O(log n) is best, O(n) better, O(n&sup2;) worst of these three.</div>
+
+<h2>5. Searching algorithms</h2>
+
+<h3>Sequential (linear) search</h3>
+<pre><code>ALGORITHM Search(REF list[] INTEGER, size INTEGER, target INTEGER)
+   Searches target in unordered list and returns location if found, else -1
+1  location &larr; -1
+2  i &larr; 0
+3  LOOP (i &lt; size AND target &ne; list[i])
+4     i &larr; i + 1
+5  END LOOP
+6  IF (i &ne; size)
+7     location &larr; i
+8  END IF
+9  RETURN location
+END Search</code></pre>
+<p>Works on an <b>unordered</b> list: examine each element from the start until the target is found or the list ends. Key operation: the comparison <code>target &ne; list[i]</code>.</p>
+<table>
+  <tr><th>Case</th><th>Comparisons</th><th>Big-O</th></tr>
+  <tr><td>Best (target at index 0)</td><td>1</td><td>O(1)</td></tr>
+  <tr><td>Worst (last element or absent)</td><td>n</td><td><b>O(n)</b></td></tr>
+  <tr><td>Average (present, equally likely anywhere)</td><td>(n + 1) / 2</td><td>O(n)</td></tr>
+</table>
+
+<h3>Binary search</h3>
+<pre><code>ALGORITHM Search(REF list[] INTEGER, size INTEGER, target INTEGER)
+   Searches target in ordered list and returns location if found, else -1
+1  first &larr; 0
+2  last &larr; size - 1
+3  LOOP (first &le; last)
+4     mid &larr; (first + last) / 2
+5     IF (target &gt; list[mid])
+6        first &larr; mid + 1
+7     ELSE IF (target &lt; list[mid])
+8        last &larr; mid - 1
+9     ELSE
+10       first &larr; last + 1
+11    END IF
+12 END LOOP
+13 IF (target &ne; list[mid])
+14    mid &larr; -1
+15 END IF
+16 RETURN mid
+END Search</code></pre>
+<p><b>Requirement: the list must be sorted.</b> Idea: look at the middle element. If the target is bigger, it can only be in the right half; if smaller, in the left half; if equal, done. Each step throws away half of what is left. (Integer division: <code>(first + last) / 2</code> drops the fraction. Line 10 forces the loop to end once the target is found. Lines 13&ndash;14 turn "not found" into &minus;1.)</p>
+<p><b>Trace:</b> list = {2, 5, 8, 12, 16, 23, 38}, target = 23 (indexes 0 to 6)</p>
+<table>
+  <tr><th>first</th><th>last</th><th>mid</th><th>list[mid]</th><th>Decision</th></tr>
+  <tr><td>0</td><td>6</td><td>3</td><td>12</td><td>23 &gt; 12: first &larr; 4</td></tr>
+  <tr><td>4</td><td>6</td><td>5</td><td>23</td><td>equal: stop, return 5</td></tr>
+</table>
+<p><b>Not found:</b> target = 10 in the same list: mid = 3 (12): 10 &lt; 12, last &larr; 2; mid = 1 (5): 10 &gt; 5, first &larr; 2; mid = 2 (8): 10 &gt; 8, first &larr; 3; now first &gt; last, the loop ends; list[mid] = 8 &ne; 10 so return &minus;1.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="Binary search halving" class="dg">
+  <text x="20" y="18" class="sm">search 23: range shrinks by half each step</text>
+  <g>
+    <rect class="bx" x="40" y="28" width="60" height="30"/><text x="70" y="48" text-anchor="middle" class="mono">2</text>
+    <rect class="bx" x="100" y="28" width="60" height="30"/><text x="130" y="48" text-anchor="middle" class="mono">5</text>
+    <rect class="bx" x="160" y="28" width="60" height="30"/><text x="190" y="48" text-anchor="middle" class="mono">8</text>
+    <rect class="bx" x="220" y="28" width="60" height="30" style="stroke-width:3"/><text x="250" y="48" text-anchor="middle" class="mono">12</text>
+    <rect class="bx" x="280" y="28" width="60" height="30"/><text x="310" y="48" text-anchor="middle" class="mono">16</text>
+    <rect class="bx" x="340" y="28" width="60" height="30"/><text x="370" y="48" text-anchor="middle" class="mono">23</text>
+    <rect class="bx" x="400" y="28" width="60" height="30"/><text x="430" y="48" text-anchor="middle" class="mono">38</text>
+    <text x="250" y="78" text-anchor="middle" class="sm">mid = 3: 23 &gt; 12, go right</text>
+  </g>
+  <g opacity="0.45">
+    <rect class="bx" x="40" y="88" width="60" height="30"/><text x="70" y="108" text-anchor="middle" class="mono">2</text>
+    <rect class="bx" x="100" y="88" width="60" height="30"/><text x="130" y="108" text-anchor="middle" class="mono">5</text>
+    <rect class="bx" x="160" y="88" width="60" height="30"/><text x="190" y="108" text-anchor="middle" class="mono">8</text>
+    <rect class="bx" x="220" y="88" width="60" height="30"/><text x="250" y="108" text-anchor="middle" class="mono">12</text>
+  </g>
+  <rect class="bx" x="280" y="88" width="60" height="30"/><text x="310" y="108" text-anchor="middle" class="mono">16</text>
+  <rect class="bx" x="340" y="88" width="60" height="30" style="stroke-width:3"/><text x="370" y="108" text-anchor="middle" class="mono">23</text>
+  <rect class="bx" x="400" y="88" width="60" height="30"/><text x="430" y="108" text-anchor="middle" class="mono">38</text>
+  <text x="370" y="138" text-anchor="middle" class="sm">mid = 5: found</text>
+</svg>
+<table>
+  <tr><th>Case</th><th>Iterations</th><th>Big-O</th></tr>
+  <tr><td>Best (target is the first middle)</td><td>1</td><td>O(1)</td></tr>
+  <tr><td>Worst (absent, or found last)</td><td>the range halves each time: about log<sub>2</sub>(n) + 1</td><td><b>O(log n)</b></td></tr>
+</table>
+<p>For 1,000,000 elements binary search needs about 20 steps; sequential search up to 1,000,000. <b>Binary search is more efficient than sequential search</b>, but only on a <b>sorted</b> list. If data is inserted or deleted often, keeping an array sorted means shifting elements (see Trees in Lesson 8).</p>
+
+<h2>6. Sorting algorithms</h2>
+
+<h3>Selection sort</h3>
+<pre><code>ALGORITHM Sort(REF list[] INTEGER, size INTEGER)
+   Sorts integers in array
+1  i &larr; 0
+2  LOOP (i &lt; size - 1)
+3     smallest &larr; i
+4     j &larr; i + 1
+5     LOOP (j &lt; size)
+6        IF (list[j] &lt; list[smallest])
+7           smallest &larr; j
+8        END IF
+9        j &larr; j + 1
+10    END LOOP
+11    Swap(list[smallest], list[i])
+12    i &larr; i + 1
+13 END LOOP
+END Sort</code></pre>
+<p>Idea: for each position i, find the <b>smallest</b> element in the unsorted part (positions i..end) and swap it into position i. The sorted part grows from the left.</p>
+<p><b>Trace</b> {64, 25, 12, 22, 11}:</p>
+<table>
+  <tr><th>i</th><th>Smallest found in positions i..4</th><th>Array after swap</th></tr>
+  <tr><td>0</td><td>11 (index 4)</td><td>11, 25, 12, 22, 64</td></tr>
+  <tr><td>1</td><td>12 (index 2)</td><td>11, 12, 25, 22, 64</td></tr>
+  <tr><td>2</td><td>22 (index 3)</td><td>11, 12, 22, 25, 64</td></tr>
+  <tr><td>3</td><td>25 (already in place)</td><td>11, 12, 22, 25, 64</td></tr>
+</table>
+<p><b>Analysis.</b> Key operation: the comparison <code>list[j] &lt; list[smallest]</code>. For each i the inner loop makes (n &minus; 1 &minus; i) comparisons, so the total is (n&minus;1) + (n&minus;2) + ... + 1 = <b>n(n &minus; 1)/2</b>, whatever the data (it cannot stop early). That is (n&sup2; &minus; n)/2, so <b>O(n&sup2;)</b> in best, average and worst cases. It does exactly n &minus; 1 swaps.</p>
+
+<h3>Bubble sort</h3>
+<pre><code>ALGORITHM Sort(REF list[] INTEGER, size INTEGER)
+   Sorts integers in array
+1  i &larr; 1
+2  LOOP (i &lt; size)
+3     j &larr; 0
+4     LOOP (j &lt; size - i)
+5        IF (list[j] &gt; list[j + 1])
+6           Swap(list[j], list[j + 1])
+7        END IF
+8        j &larr; j + 1
+9     END LOOP
+10    i &larr; i + 1
+11 END LOOP
+END Sort</code></pre>
+<p>Idea: repeatedly compare <b>neighbouring</b> elements and swap them if they are in the wrong order. After each pass the largest remaining value has "bubbled" to the end, so the inner loop gets one shorter each time.</p>
+<p><b>Trace</b> {5, 1, 4, 2, 8}:</p>
+<table>
+  <tr><th>Pass (i)</th><th>Comparisons (j)</th><th>Array after the pass</th></tr>
+  <tr><td>1</td><td>(5,1) swap; (5,4) swap; (5,2) swap; (5,8) no</td><td>1, 4, 2, 5, 8</td></tr>
+  <tr><td>2</td><td>(1,4) no; (4,2) swap; (4,5) no</td><td>1, 2, 4, 5, 8</td></tr>
+  <tr><td>3</td><td>(1,2) no; (2,4) no</td><td>1, 2, 4, 5, 8</td></tr>
+  <tr><td>4</td><td>(1,2) no</td><td>1, 2, 4, 5, 8</td></tr>
+</table>
+<p><b>Analysis.</b> Key operation: the comparison <code>list[j] &gt; list[j+1]</code>. Pass i makes (n &minus; i) comparisons, for i = 1 to n &minus; 1: (n&minus;1) + (n&minus;2) + ... + 1 = <b>n(n &minus; 1)/2</b> comparisons, always (this version has no early exit; the trace above shows 4 + 3 + 2 + 1 = 10 for n = 5). The number of <i>swaps</i> varies: 0 if already sorted, up to n(n&minus;1)/2 if in reverse order. Overall <b>O(n&sup2;)</b>.</p>
+
+<table>
+  <tr><th>Algorithm</th><th>Needs sorted input?</th><th>Best</th><th>Worst</th></tr>
+  <tr><td>Sequential search</td><td>No</td><td>O(1)</td><td>O(n)</td></tr>
+  <tr><td>Binary search</td><td><b>Yes</b></td><td>O(1)</td><td>O(log n)</td></tr>
+  <tr><td>Selection sort</td><td>&ndash;</td><td>O(n&sup2;)</td><td>O(n&sup2;)</td></tr>
+  <tr><td>Bubble sort (as given)</td><td>&ndash;</td><td>O(n&sup2;) comparisons</td><td>O(n&sup2;)</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+(1) Count how many times lines run, as a function of n. (2) Keep the dominant term, drop constants: that is asymptotic notation. (3) Big-O is the worst-case upper bound T(n) &le; c f(n) for n &ge; n<sub>0</sub>. (4) Single loop adding &rarr; n; loop doubling &rarr; log n; nested loops &rarr; n<sup>2</sup> or n log n.</div>
