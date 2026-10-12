@@ -184,6 +184,23 @@ END search</code></pre>
 </table>
 <p>With <code>target = 4</code> nothing matches, <code>index</code> reaches 4, the loop condition fails, and line 8 returns <code>false</code>.</p>
 
+<h3>Calling an algorithm: REF parameters in action</h3>
+<p>The <code>search</code> algorithm has two <b>REF</b> parameters: <code>list</code> (the array, not copied) and <code>index</code> (an <i>output</i>: the caller reads the position back from it). A caller declares the variables and calls it:</p>
+<pre><code>INTEGER location
+BOOLEAN outcome
+outcome &larr; search(arr, 5, 2, location)       // arr = {35, 7, 19, 2, 0}, size 5, target 2
+IF (outcome)
+   PRINT location
+END IF</code></pre>
+<table>
+  <tr><th>index</th><th>index &lt; 5 ?</th><th>2 = arr[index] ?</th><th>Action</th></tr>
+  <tr><td>0</td><td>yes</td><td>2 = 35 no</td><td>index &larr; 1</td></tr>
+  <tr><td>1</td><td>yes</td><td>2 = 7 no</td><td>index &larr; 2</td></tr>
+  <tr><td>2</td><td>yes</td><td>2 = 19 no</td><td>index &larr; 3</td></tr>
+  <tr><td>3</td><td>yes</td><td>2 = 2 yes</td><td>RETURN true</td></tr>
+</table>
+<p>Because <code>index</code> is REF, the caller's <code>location</code> is now 3 and <code>outcome</code> is true, so it prints <b>3</b>.</p>
+<p><b>Target not present</b> (target 25 in the same array): every comparison fails (25 = 35, 7, 19, 2, 0 all no), index climbs 0, 1, 2, 3, 4, 5; at index = 5 the test <code>5 &lt; 5</code> fails, the loop ends and line 8 returns <b>false</b>. Here <code>outcome</code> is false (location holds 5, the final index, which is meaningless because nothing was found), so the caller must check <code>outcome</code> before using <code>location</code>.</p>
 <div class="box"><b>Check against the good-algorithm properties</b>
 Correct (finds the target if present) &middot; finite steps (at most <code>size</code> iterations) &middot; produces output (<code>true</code>/<code>false</code> plus <code>index</code>) &middot; terminates (<code>index</code> grows every pass) &middot; fine for small lists, though it checks every element in the worst case.</div>
 
@@ -326,6 +343,26 @@ for (int i = 0; i &lt; 5; i++) {
 </table>
 <p>To break out of <i>all</i> nested loops: use <code>return</code>, or put the loops inside a function and return from it.</p>
 
+<h3>Worked example: <code>break</code> vs <code>return</code> in nested loops</h3>
+<p>A PIN checker gives the user 3 attempts (outer loop) and compares each entry with the stored PINs (inner loop).</p>
+<pre><code>const int attempts = 3, size = 5;
+int pins[size] = {1234, 3456, 5678, 7890, 9012};
+for (int a = 1; a &lt;= attempts; a++)             // outer loop: attempts
+{
+    int entered;
+    cin &gt;&gt; entered;
+    for (int i = 0; i &lt; size; i++)              // inner loop: stored PINs
+    {
+        cout &lt;&lt; "Checking\n";
+        if (pins[i] == entered)
+        {
+            cout &lt;&lt; "PIN is valid\n";
+            break;                               // leaves ONLY the inner loop
+            // return 0;  here would end the whole program instead
+        }
+    }
+}</code></pre>
+<p>If the user enters 5678 on the first attempt: "Checking" prints three times (1234, 3456, 5678), then "PIN is valid" and <code>break</code> leaves the inner loop; the outer loop then continues to attempt 2. Replacing <code>break</code> with <code>return 0;</code> would end the program immediately (both loops). A <code>void</code> function can use plain <code>return;</code> to stop early in the same way, e.g. <code>if (n &lt; 0) return;</code> to skip printing a square root of a negative number.</p>
 <h2 id="c-func">4. Functions</h2>
 <pre><code>int power(int num, int expo = 2) {    // expo has a default value
     int result = 1;
@@ -440,6 +477,22 @@ delete [] arr;              // arrays are freed with delete[]</code></pre>
 }</code></pre>
 <p><code>sizeof(p)</code> gives the size of the <i>pointer</i>, which depends on the machine (8 bytes on a 64-bit PC for <b>every</b> pointer type: <code>char*</code>, <code>int*</code>, <code>float*</code> all print 8). It does not depend on what they point to.</p>
 
+<h3>Worked example: a dynamic array of marks</h3>
+<p>The number of students is only known at run time, so the array must be allocated on the heap:</p>
+<pre><code>int n;
+double sum = 0;
+cout &lt;&lt; "No of students: ";
+cin &gt;&gt; n;
+int *marks = new int[n];                 // size decided now, while running
+for (int i = 0; i &lt; n; i++)
+{
+    cout &lt;&lt; "Marks of student " &lt;&lt; i + 1 &lt;&lt; ": ";
+    cin &gt;&gt; marks[i];                    // marks behaves like a normal array
+    sum += marks[i];
+}
+cout &lt;&lt; "Average: " &lt;&lt; sum / n;
+delete [] marks;                         // release the heap block</code></pre>
+<p>With n = 3 and marks 70, 80, 90 the program prints Average: 80. (The class notes show the allocation and input loop; the sum, average and <code>delete []</code> lines complete the example.) A fixed array such as <code>int marks[100];</code> would waste memory for small classes and fail for large ones.</p>
 <h3>Pointer arithmetic and arrays</h3>
 <p>Adding to a pointer moves the <b>address</b>, in steps of the pointed-to type's size. For an <code>int*</code>, <code>p+1</code> is 4 bytes further on (example: ...f4, ...f8, ...f0 for p, p+1, p-1).</p>
 <svg viewBox="0 0 640 140" role="img" aria-label="Pointer arithmetic over an array" class="dg">

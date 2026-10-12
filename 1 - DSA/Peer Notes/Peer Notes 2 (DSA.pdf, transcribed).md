@@ -395,4 +395,4 @@ p.63 ends with a "Recommended References" heading (empty). p.62 is the linked-tr
 ---
 
 ## Still to do for this set
-Verification: pp. 1-29 and 30-45 were checked against the page images; pp. 47, 52, 57, 58, 62, 63 were spot-checked and match. Remaining tree pages (46, 48-51, 53-56, 59-61) were transcribed in an earlier pass and not re-verified.
+Verification: pp. 1-29 and 30-45 were checked against the page images; pp. 47, 52, 57, 58, 62, 63 were spot-checked and match. Pages 46, 48-51, 54, 56, 59, 60 were then also checked against the images and match (insertion order 70, 50, 80, 30, 20, 40, 60 in both array and linked traces; page 46 also shows the `tot` first draft of sum). Pages 53, 55, 61 are further steps of the same traces and were not individually re-opened.
