@@ -1,0 +1,163 @@
+<p class="sm" style="color:var(--muted)">Source: the guest session <i>From Problem to System Design</i>, hands-on exercises (three systems revealed step by step) and the "putting it all together" section. This is the heart of the lecture: it applies Lessons 4&ndash;6.</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Use the 13-question worksheet and the "We chose X because A, accepting B and C" answer shape</li>
+  <li>Follow how new facts (scale, teams, money, concurrency) change an architecture</li>
+  <li>Design an online food delivery system in eight steps and justify it</li>
+  <li>Apply the seven-question checklist before drawing any box</li>
+</ul>
+
+<h2>1. The method: seven steps and a 13-question worksheet</h2>
+<svg viewBox="0 0 640 110" role="img" aria-label="Seven steps" class="dg">
+  <g class="sm">
+  <rect class="bx" x="5" y="10" width="150" height="34" rx="6"/><text x="80" y="32" text-anchor="middle">1 Understand the problem</text>
+  <rect class="bx" x="165" y="10" width="150" height="34" rx="6"/><text x="240" y="32" text-anchor="middle">2 Users &amp; user stories</text>
+  <rect class="bx" x="325" y="10" width="150" height="34" rx="6"/><text x="400" y="32" text-anchor="middle">3 Functional reqs</text>
+  <rect class="bx" x="485" y="10" width="150" height="34" rx="6"/><text x="560" y="32" text-anchor="middle">4 Non-functional reqs</text>
+  <rect class="bx" x="485" y="62" width="150" height="34" rx="6"/><text x="560" y="84" text-anchor="middle">5 Constraints &amp; budget</text>
+  <rect class="bx" x="325" y="62" width="150" height="34" rx="6"/><text x="400" y="84" text-anchor="middle">6 Architecture decisions</text>
+  <rect class="bx" x="165" y="62" width="150" height="34" rx="6"/><text x="240" y="84" text-anchor="middle">7 Diagram + trade-offs</text>
+  </g>
+</svg>
+<h3>The architecture worksheet: 13 questions per system</h3>
+<table>
+  <tr><th>#</th><th>Question</th><th>#</th><th>Question</th></tr>
+  <tr><td>1</td><td>Who are the users?</td><td>8</td><td>Monolith or microservices? Why?</td></tr>
+  <tr><td>2</td><td>What are the main user stories?</td><td>9</td><td>How do components communicate?</td></tr>
+  <tr><td>3</td><td>What are the main domain concepts?</td><td>10</td><td>What happens when load increases?</td></tr>
+  <tr><td>4</td><td>What are the functional requirements?</td><td>11</td><td>What happens when something fails?</td></tr>
+  <tr><td>5</td><td>What are the important NFRs?</td><td>12</td><td>What security controls are required?</td></tr>
+  <tr><td>6</td><td>What are the architectural drivers?</td><td>13</td><td>What are the major trade-offs?</td></tr>
+  <tr><td>7</td><td>What are the major components?</td><td></td><td></td></tr>
+</table>
+<div class="box"><b>Required answer shape for Q13</b>"We chose <b>X</b> because <b>A</b>, accepting <b>B</b> and <b>C</b>." "We chose microservices" is not an answer.</div>
+<p>The three exercises share a pattern: commit to the simplest design the evidence supports, then <b>reveal a new fact</b> that attacks it. The numbers, teams and money, not fashion, change the architecture.</p>
+
+<h2>2. Exercise 1: university registration</h2>
+<p><b>Users:</b> students (view courses and free seats, register, drop, view timetable), lecturers (create courses, set capacity, view enrolled students), administrators (manage students and courses, generate reports). <b>Concepts:</b> Student, Enrollment, Course, Lecturer, Timetable, Department. <b>Capabilities from the stories:</b> authentication, course management, registration, student management, reporting.</p>
+<p><b>Committed design v1:</b> one application (modules auth, courses, registration, reports) with one database behind a UI. "Given what we know now, is there any reason <i>not</i> to build this simple monolith?" It is right for the evidence so far.</p>
+<h3>Step 4 reveal: 9:00 AM changes everything</h3>
+<table>
+  <tr><th>New facts (NFRs)</th><th>The seat race</th></tr>
+  <tr><td>20,000 students, 2,000 concurrent normally; registration opens 9:00 AM for everyone, up to <b>15,000 at once</b>; capacity must <b>never</b> be exceeded; under 2 s; 99.9 % availability. Is this still just CRUD? No.</td><td>Course capacity 100, one seat left. Student A sees "1 free"; Student B sees "1 free"; both register and the count becomes <b>101/100</b>.<br><b>The fix:</b> a <b>transaction</b>: check + decrement as ONE atomic step; a <b>constraint in the database</b> (<code>seats &gt;= 0</code>) as the last line of defence. Result: one of A or B gets a clean "course full" message.</td></tr>
+</table>
+<p>One business rule (never exceed capacity) reached down and chose <b>transactional SQL</b> for us.</p>
+<h3>Step 5 reveal: the budget</h3>
+<p>Resources: <b>three developers and $500 a month</b>: 2 app servers, 1 PostgreSQL, 1 Redis, one team, no DevOps. <b>Microservices? No</b>: one team means no coordination problem to solve; strong transactions mean one database is a feature; no ops capacity for many deployments; the 9 AM spike is solved by <b>2 stateless servers + cache</b>.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="Registration final architecture" class="dg">
+  <rect class="bx" x="10" y="55" width="70" height="34" rx="6"/><text x="45" y="77" text-anchor="middle" class="sm">Users</text><path class="ar" d="M80 72 H110"/>
+  <rect class="bx" x="110" y="55" width="100" height="34" rx="6"/><text x="160" y="77" text-anchor="middle" class="sm">Load balancer</text>
+  <path class="ar" d="M210 65 L270 35"/><path class="ar" d="M210 80 L270 112"/>
+  <rect class="bx" x="270" y="15" width="200" height="40" rx="6"/><text x="370" y="32" text-anchor="middle" class="sm">App 1 (modular monolith)</text><text x="370" y="47" text-anchor="middle" class="sm">auth/ students/ courses/ registration/ reports/</text>
+  <rect class="bx" x="270" y="95" width="200" height="40" rx="6"/><text x="370" y="112" text-anchor="middle" class="sm">App 2 (stateless)</text><text x="370" y="127" text-anchor="middle" class="sm">same code</text>
+  <path class="ar" d="M470 35 L520 25"/><path class="ar" d="M470 110 L520 118"/><path class="ar" d="M470 40 L520 100"/>
+  <rect class="bx" x="520" y="8" width="115" height="34" rx="6"/><text x="577" y="30" text-anchor="middle" class="sm">Redis cache (browsing)</text>
+  <rect class="bx" x="520" y="95" width="115" height="44" rx="6"/><text x="577" y="113" text-anchor="middle" class="sm">PostgreSQL</text><text x="577" y="128" text-anchor="middle" class="sm">(registrations, atomic)</text>
+</svg>
+<p><b>Good architecture is not the most sophisticated architecture. It is the one that fits.</b></p>
+
+<h2>3. Exercise 2: food delivery at scale</h2>
+<p><b>Users:</b> customers (search restaurants, browse menus, order, pay, track), restaurants (manage menus, accept orders, update status), drivers (accept deliveries, update location, complete). <b>Capabilities:</b> Restaurant, Customer, Order, Delivery, Payment, Notification. <b>v1 with today's evidence: one modular monolith, one DB</b> (the same answer as the university, and rightly so for now).</p>
+<h3>Step 2 reveal: the scale</h3>
+<p>5M registered users, 500k daily active, 50k concurrent, 10k orders per minute at peak, 10 cities. Do all parts feel this load the same way?</p>
+<table>
+  <tr><th>Part</th><th>Load shape</th><th>Answer</th></tr>
+  <tr><td>Restaurant search</td><td>huge READS</td><td>cache + replicas</td></tr>
+  <tr><td>Ordering</td><td>heavy WRITES, lunch spike</td><td>scale out horizontally</td></tr>
+  <tr><td>Payment</td><td>low volume, must NEVER fail</td><td>isolate</td></tr>
+  <tr><td>Delivery tracking</td><td>GPS firehose, every few seconds</td><td>isolate + protect; own write pipeline</td></tr>
+</table>
+<p>Four load shapes, one box, one scaling answer: <b>that mismatch is the real pressure to split</b>.</p>
+<h3>Steps 3&ndash;4 reveal: teams and money</h3>
+<p>Five teams (Customer, Restaurant, Orders, Payments, Delivery), 20 developers, dedicated DevOps, CI/CD, monitoring, <b>$15,000 a month</b>. <b>Conway:</b> the system will mirror this org chart; plan the mirror instead of fighting it. Run the checklist: several teams blocking each other; load shapes needing different scaling; deploy independence wanted; ops maturity to run it. <b>Every box ticks for the first time today: microservices, said with reasons.</b></p>
+<h3>Steps 5&ndash;7: the result</h3>
+<svg viewBox="0 0 640 190" role="img" aria-label="Food delivery microservices" class="dg">
+  <rect class="bx" x="5" y="70" width="60" height="30" rx="6"/><text x="35" y="90" text-anchor="middle" class="sm">Clients</text><path class="ar" d="M65 85 H80"/>
+  <rect class="bx" x="80" y="62" width="80" height="46" rx="6"/><text x="120" y="82" text-anchor="middle" class="sm">API</text><text x="120" y="96" text-anchor="middle" class="sm">Gateway</text>
+  <path class="ar" d="M160 75 L200 25"/><path class="ar" d="M160 80 L200 62"/><path class="ar" d="M160 88 L200 100"/><path class="ar" d="M160 95 L200 140"/>
+  <g class="sm">
+  <rect class="bx" x="200" y="8" width="170" height="30" rx="5"/><text x="285" y="27" text-anchor="middle">Customer svc x2 (own DB)</text>
+  <rect class="bx" x="200" y="45" width="170" height="30" rx="5"/><text x="285" y="64" text-anchor="middle">Restaurant svc x4 (own DB)</text>
+  <rect class="bx" x="200" y="82" width="170" height="30" rx="5"/><text x="285" y="101" text-anchor="middle">Order svc x8 (own DB)</text>
+  <rect class="bx" x="200" y="119" width="170" height="30" rx="5"/><text x="285" y="138" text-anchor="middle">Payment svc x2 (own DB)</text>
+  <rect class="bx" x="200" y="156" width="170" height="30" rx="5"/><text x="285" y="175" text-anchor="middle">Delivery svc x10 (own DB)</text>
+  </g>
+  <path class="ar" d="M370 97 H420"/><rect class="bx" x="420" y="75" width="90" height="46" rx="6"/><text x="465" y="95" text-anchor="middle" class="sm">Broker</text><text x="465" y="110" text-anchor="middle" class="sm">OrderPlaced</text>
+  <path class="ar" d="M510 85 L550 60"/><path class="ar" d="M510 110 L550 135"/>
+  <rect class="bx" x="550" y="42" width="85" height="30" rx="5"/><text x="592" y="61" text-anchor="middle" class="sm">Notification</text><rect class="bx" x="550" y="125" width="85" height="30" rx="5"/><text x="592" y="144" text-anchor="middle" class="sm">Analytics</text>
+</svg>
+<p>The &times;N numbers are instances at peak: <b>scaling per service, not per system</b>. Patterns used: <b>API gateway</b>, <b>database per service</b>, <b>events via broker</b> (sync: order, pay; async: everything after OrderPlaced), <b>independent scaling</b>. "Nobody memorised these patterns. The problem demanded every one of them."</p>
+
+<h2>4. Exercise 3: ticket booking rush</h2>
+<p>Concerts, 50,000 seats; search events, view seats, select, reserve, pay, receive tickets. Load about 1,000 users a day. v1 = app + DB: correct. <b>Reveal:</b> a global star announces one show; tickets open 10:00 AM; at 10:00:01 there are <b>500,000 users</b> on the site. What fails first? <b>Same system, new number, dead design. Numbers are architecture.</b></p>
+<h3>Steps 3&ndash;4: scale out, cache the reads</h3>
+<p>Adding 100 servers behind a load balancer is <b>necessary, not sufficient</b>: the database is still one, and 100 app servers can hammer it even harder. Look at what they read: 500,000 people load the <b>same event page and the same seat map</b>. One cache entry serves 500,000 requests; DB reads collapse to almost nothing. <b>Caveat:</b> a seat map 5 seconds stale is fine to <i>look</i> at, never fine to <i>sell</i> from. <b>Cache the browsing. Never the buying.</b> Browsing reads come from cache; the purchase decision happens only inside the database transaction.</p>
+<h3>Steps 5&ndash;6: the last seat and a failing payment</h3>
+<table>
+  <tr><th>Problem</th><th>Fix</th></tr>
+  <tr><td><b>1 The last-seat race:</b> buyers A and B, same seat, same millisecond</td><td>Atomic check + write in one transaction, constraint as backstop: exactly one winner, one clean "sold out".</td></tr>
+  <tr><td><b>2 The winner still has to pay:</b> payment takes a minute and can fail. Marking the seat sold too early strands seats on failed payments; never holding it lets someone else buy it mid-payment.</td><td>A <b>reservation state machine with a clock</b>: <b>Available &rarr; (select seat) Reserved with a 10-minute hold &rarr; (payment) SOLD</b>; on failure or timeout &rarr; <b>Released</b> and the seat returns to Available.</td></tr>
+</table>
+<svg viewBox="0 0 640 100" role="img" aria-label="Seat state machine" class="dg">
+  <rect class="bx" x="10" y="30" width="110" height="40" rx="20"/><text x="65" y="55" text-anchor="middle" class="h">Available</text>
+  <path class="ar" d="M120 50 H210"/><text x="165" y="42" text-anchor="middle" class="sm">select seat</text>
+  <rect class="bx" x="210" y="30" width="130" height="40" rx="20"/><text x="275" y="48" text-anchor="middle" class="h">Reserved</text><text x="275" y="63" text-anchor="middle" class="sm">10 min hold</text>
+  <path class="ar" d="M340 50 H430"/><text x="385" y="42" text-anchor="middle" class="sm">payment ok</text>
+  <rect class="bx" x="430" y="30" width="90" height="40" rx="20"/><text x="475" y="55" text-anchor="middle" class="h">SOLD</text>
+  <path class="ar" d="M275 70 V90 H540 V70"/><text x="410" y="86" text-anchor="middle" class="sm">fail / timeout</text>
+  <rect class="bx" x="540" y="30" width="95" height="40" rx="20"/><text x="587" y="55" text-anchor="middle" class="h">Released</text>
+</svg>
+<p>Every arrow is a business rule the system enforces: who may move a seat between states, and when. <b>Architecture must handle concurrency and time, not just boxes and lines.</b></p>
+<h3>Step 7: the result</h3>
+<p><b>Browsing path:</b> Users &rarr; CDN + cache &rarr; done (never touches the DB). <b>Buying path:</b> Users &rarr; load balancer &rarr; app servers (1&ndash;3) &rarr; PostgreSQL transaction (bookings, atomic) &rarr; payment gateway (with timeout + circuit breaker). Redis holds events and seat maps. One problem taught seven concepts: performance, scalability, load balancing, caching, concurrency, transactions, reliability. <b>Every box has a "birthday": the exact moment in the story that forced it.</b></p>
+
+<h2>5. Putting it all together: design an online food delivery system</h2>
+<p><b>The brief.</b> Functional: customer browses restaurants and menus, places an order, pays online; the restaurant receives and confirms the order; a driver delivers; the customer tracks the order. Non-functional: 100,000 registered users; response time under 2 seconds; 99.9 % availability; payments must be secure. <b>Eight steps; each is one section of the lecture.</b></p>
+<table>
+  <tr><th>Step</th><th>Do this</th><th>Result</th></tr>
+  <tr><td><b>1 Problem</b></td><td>Major concepts (no technology!)</td><td>Customer, Restaurant, Driver, Order, Payment, Delivery</td></tr>
+  <tr><td><b>2 Functional requirements</b></td><td>Major actions</td><td>Browse, Order, Pay, Deliver, Track. Concepts + actions = raw material for components and APIs.</td></tr>
+  <tr><td><b>3 Architectural drivers</b></td><td>Requirement &rarr; quality attribute &rarr; concrete structure</td><td>100,000 users &rarr; <b>scalability</b>: load balancer, stateless app servers, caching.<br>Under 2 s &rarr; <b>performance</b>: cache hot reads, async for slow work, parallel queries.<br>99.9 % &rarr; <b>reliability</b>: no SPOF, replicas, timeouts and fallbacks.<br>Secure payment &rarr; <b>security</b>: HTTPS, never trust the client, delegate card data to a payment provider.<br>This chain is your report's "justification" section.</td></tr>
+  <tr><td><b>4 Components</b></td><td>From domain concepts</td><td>Customer app, Restaurant app, Driver app; API; Order, Restaurant &amp; Menu, Payment, Delivery, Notification. Each has a clear responsibility, a domain name and owns its data.</td></tr>
+  <tr><td><b>5 The style decision</b></td><td>Interrogate the drivers: how many requests per second is 100,000 users at peak? One team of four or many? Does any component need to scale or deploy independently today? What does the network cost if we split?</td><td>A <b>modular monolith</b>. "The marks are in the justification, not the diagram."</td></tr>
+  <tr><td><b>6 Communication</b></td><td>Is the customer waiting?</td><td><b>Sync:</b> browse restaurants and menus, place the order, authorise the payment (keep fast). <b>Async via queue:</b> email the receipt, notify the restaurant, update analytics, assign a driver.</td></tr>
+  <tr><td><b>7 Performance additions</b></td><td>The quality machinery</td><td>Load balancer in front of 2+ stateless app instances; cache for menus and restaurant lists; queue for all async work; DB replica (reads scale and reliability improves for free).</td></tr>
+  <tr><td><b>8 Failure drill</b></td><td>"What happens if the payment service goes down?"</td><td>Timeout (fail in 2 s, not never); circuit breaker (stop hammering it); degrade (save the order as pending-payment and tell the user honestly). Ask the failure question of every arrow.</td></tr>
+</table>
+<svg viewBox="0 0 640 200" role="img" aria-label="Food delivery result" class="dg">
+  <rect class="bx" x="5" y="55" width="75" height="22" rx="4"/><text x="42" y="70" text-anchor="middle" class="sm">Customer</text>
+  <rect class="bx" x="5" y="82" width="75" height="22" rx="4"/><text x="42" y="97" text-anchor="middle" class="sm">Restaurant</text>
+  <rect class="bx" x="5" y="109" width="75" height="22" rx="4"/><text x="42" y="124" text-anchor="middle" class="sm">Driver</text>
+  <path class="ar" d="M80 93 H110"/>
+  <rect class="bx" x="110" y="70" width="80" height="46" rx="6"/><text x="150" y="97" text-anchor="middle" class="sm">Load balancer</text>
+  <path class="ar" d="M190 85 L230 55"/><path class="ar" d="M190 100 L230 130"/>
+  <rect class="bx" x="230" y="35" width="150" height="40" rx="6"/><text x="305" y="52" text-anchor="middle" class="sm">App instance</text><text x="305" y="66" text-anchor="middle" class="sm">(modular monolith)</text>
+  <rect class="bx" x="230" y="110" width="150" height="40" rx="6"/><text x="305" y="127" text-anchor="middle" class="sm">App instance</text><text x="305" y="141" text-anchor="middle" class="sm">(modular monolith)</text>
+  <path class="ar" d="M380 45 L440 30"/><path class="ar" d="M380 60 L440 85"/><path class="ar" d="M380 135 L440 95"/>
+  <rect class="bx" x="440" y="15" width="80" height="30" rx="5"/><text x="480" y="34" text-anchor="middle" class="sm">Cache</text>
+  <rect class="bx" x="440" y="70" width="80" height="30" rx="5"/><text x="480" y="89" text-anchor="middle" class="sm">DB primary</text>
+  <path class="ar" d="M520 85 H545"/><rect class="bx" x="545" y="70" width="85" height="30" rx="5"/><text x="587" y="89" text-anchor="middle" class="sm">DB replica</text>
+  <path class="ar" d="M380 150 L440 165"/><rect class="bx" x="440" y="150" width="70" height="30" rx="5"/><text x="475" y="169" text-anchor="middle" class="sm">Queue</text>
+  <path class="ar" d="M510 165 H540"/><rect class="bx" x="540" y="150" width="90" height="30" rx="5"/><text x="585" y="164" text-anchor="middle" class="sm">Workers: email,</text><text x="585" y="176" text-anchor="middle" class="sm">notify, analytics</text>
+  <path class="ar" d="M305 75 L305 100" style="stroke-dasharray:4 3"/><text x="250" y="194" class="sm">Payment provider (external, HTTPS): timeout + circuit breaker on this arrow</text>
+</svg>
+<p><b>Every box exists because a driver demanded it. Nothing here is decoration.</b> This is one defensible answer, not the only one.</p>
+
+<h2>6. How to architect any system</h2>
+<p><b>Problem &rarr; Requirements &rarr; Domain &rarr; Quality attributes &rarr; Components &rarr; Architecture &rarr; Communication &rarr; Technology &rarr; Trade-offs.</b> Problem first; requirements split into functional and non-functional; the domain gives you components, the drivers give you structure; choose communication styles; choose technology last; write down every trade-off you accepted.</p>
+<h3>The seven-question checklist (before you draw a single box)</h3>
+<ol>
+  <li>What problem are we solving?</li>
+  <li>What are the functional requirements?</li>
+  <li>What are the important non-functional requirements?</li>
+  <li>What are the major concepts and components in the domain?</li>
+  <li>How should those components communicate?</li>
+  <li>What happens when the system gets slow, overloaded or fails?</li>
+  <li>Why did we choose this architecture over the alternatives?</li>
+</ol>
+<p>Answering these seven well is worth more than knowing thirty architecture patterns.</p>
+<h3>Where to go next</h3>
+<p><b>Books and articles:</b> <i>Clean Architecture</i> (Robert C. Martin); <i>Domain-Driven Design</i> (Eric Evans, 2003); <i>Release It!</i> (Michael Nygard); Fowler's "MonolithFirst" and microservices guide; The Twelve-Factor App; Conway's "How Do Committees Invent?" (1968). <b>Concepts only named:</b> bounded contexts, aggregates, domain events, hexagonal and clean architecture, sagas and eventual consistency, distributed tracing, CAP theorem, CQRS, event sourcing (later courses), OWASP Top 10. <b>Tools:</b> Postman / Thunder Client, Swagger and OpenAPI, Prettier / ESLint / Black, GitHub Actions, draw.io / Excalidraw.</p>
+
+<div class="box"><b>Key takeaways</b>
+Start with the simplest design the evidence supports, and let numbers (concurrency, scale), teams and money drive changes. Registration: modular monolith + transactional SQL + 2 stateless servers + cache, because capacity must never be exceeded and the team is small. Food delivery at scale: microservices only when teams, load shapes and ops all demand it. Ticket booking: cache the browsing, never the buying; a reservation state machine with a clock handles concurrency and time. Always give the answer shape "We chose X because A, accepting B and C".</div>

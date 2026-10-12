@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SA Lesson 7 - Worked Designs: Putting It All Together</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Software Architecture study guides</a> &middot; INTE 22293 &middot; Lesson 07</p><button id="theme" type="button"></button></div>
+  <h1>Worked Designs: Putting It All Together</h1>
+  <p class="lead">Covers (guest session, part 4): the 13-question architecture worksheet and three worked systems (university registration, food delivery at scale, ticket booking), then the full eight-step design of an online food delivery system and the seven-question checklist. Shows how the facts of a problem (numbers, teams, money) change the architecture. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<p class="sm" style="color:var(--muted)">Source: the guest session <i>From Problem to System Design</i>, hands-on exercises (three systems revealed step by step) and the "putting it all together" section. This is the heart of the lecture: it applies Lessons 4&ndash;6.</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Use the 13-question worksheet and the "We chose X because A, accepting B and C" answer shape</li>
+  <li>Follow how new facts (scale, teams, money, concurrency) change an architecture</li>
+  <li>Design an online food delivery system in eight steps and justify it</li>
+  <li>Apply the seven-question checklist before drawing any box</li>
+</ul>
+
+<h2>1. The method: seven steps and a 13-question worksheet</h2>
+<svg viewBox="0 0 640 110" role="img" aria-label="Seven steps" class="dg">
+  <g class="sm">
+  <rect class="bx" x="5" y="10" width="150" height="34" rx="6"/><text x="80" y="32" text-anchor="middle">1 Understand the problem</text>
+  <rect class="bx" x="165" y="10" width="150" height="34" rx="6"/><text x="240" y="32" text-anchor="middle">2 Users &amp; user stories</text>
+  <rect class="bx" x="325" y="10" width="150" height="34" rx="6"/><text x="400" y="32" text-anchor="middle">3 Functional reqs</text>
+  <rect class="bx" x="485" y="10" width="150" height="34" rx="6"/><text x="560" y="32" text-anchor="middle">4 Non-functional reqs</text>
+  <rect class="bx" x="485" y="62" width="150" height="34" rx="6"/><text x="560" y="84" text-anchor="middle">5 Constraints &amp; budget</text>
+  <rect class="bx" x="325" y="62" width="150" height="34" rx="6"/><text x="400" y="84" text-anchor="middle">6 Architecture decisions</text>
+  <rect class="bx" x="165" y="62" width="150" height="34" rx="6"/><text x="240" y="84" text-anchor="middle">7 Diagram + trade-offs</text>
+  </g>
+</svg>
+<h3>The architecture worksheet: 13 questions per system</h3>
+<table>
+  <tr><th>#</th><th>Question</th><th>#</th><th>Question</th></tr>
+  <tr><td>1</td><td>Who are the users?</td><td>8</td><td>Monolith or microservices? Why?</td></tr>
+  <tr><td>2</td><td>What are the main user stories?</td><td>9</td><td>How do components communicate?</td></tr>
+  <tr><td>3</td><td>What are the main domain concepts?</td><td>10</td><td>What happens when load increases?</td></tr>
+  <tr><td>4</td><td>What are the functional requirements?</td><td>11</td><td>What happens when something fails?</td></tr>
+  <tr><td>5</td><td>What are the important NFRs?</td><td>12</td><td>What security controls are required?</td></tr>
+  <tr><td>6</td><td>What are the architectural drivers?</td><td>13</td><td>What are the major trade-offs?</td></tr>
+  <tr><td>7</td><td>What are the major components?</td><td></td><td></td></tr>
+</table>
+<div class="box"><b>Required answer shape for Q13</b>"We chose <b>X</b> because <b>A</b>, accepting <b>B</b> and <b>C</b>." "We chose microservices" is not an answer.</div>
+<p>The three exercises share a pattern: commit to the simplest design the evidence supports, then <b>reveal a new fact</b> that attacks it. The numbers, teams and money, not fashion, change the architecture.</p>
+
+<h2>2. Exercise 1: university registration</h2>
+<p><b>Users:</b> students (view courses and free seats, register, drop, view timetable), lecturers (create courses, set capacity, view enrolled students), administrators (manage students and courses, generate reports). <b>Concepts:</b> Student, Enrollment, Course, Lecturer, Timetable, Department. <b>Capabilities from the stories:</b> authentication, course management, registration, student management, reporting.</p>
+<p><b>Committed design v1:</b> one application (modules auth, courses, registration, reports) with one database behind a UI. "Given what we know now, is there any reason <i>not</i> to build this simple monolith?" It is right for the evidence so far.</p>
+<h3>Step 4 reveal: 9:00 AM changes everything</h3>
+<table>
+  <tr><th>New facts (NFRs)</th><th>The seat race</th></tr>
+  <tr><td>20,000 students, 2,000 concurrent normally; registration opens 9:00 AM for everyone, up to <b>15,000 at once</b>; capacity must <b>never</b> be exceeded; under 2 s; 99.9 % availability. Is this still just CRUD? No.</td><td>Course capacity 100, one seat left. Student A sees "1 free"; Student B sees "1 free"; both register and the count becomes <b>101/100</b>.<br><b>The fix:</b> a <b>transaction</b>: check + decrement as ONE atomic step; a <b>constraint in the database</b> (<code>seats &gt;= 0</code>) as the last line of defence. Result: one of A or B gets a clean "course full" message.</td></tr>
+</table>
+<p>One business rule (never exceed capacity) reached down and chose <b>transactional SQL</b> for us.</p>
+<h3>Step 5 reveal: the budget</h3>
+<p>Resources: <b>three developers and $500 a month</b>: 2 app servers, 1 PostgreSQL, 1 Redis, one team, no DevOps. <b>Microservices? No</b>: one team means no coordination problem to solve; strong transactions mean one database is a feature; no ops capacity for many deployments; the 9 AM spike is solved by <b>2 stateless servers + cache</b>.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="Registration final architecture" class="dg">
+  <rect class="bx" x="10" y="55" width="70" height="34" rx="6"/><text x="45" y="77" text-anchor="middle" class="sm">Users</text><path class="ar" d="M80 72 H110"/>
+  <rect class="bx" x="110" y="55" width="100" height="34" rx="6"/><text x="160" y="77" text-anchor="middle" class="sm">Load balancer</text>
+  <path class="ar" d="M210 65 L270 35"/><path class="ar" d="M210 80 L270 112"/>
+  <rect class="bx" x="270" y="15" width="200" height="40" rx="6"/><text x="370" y="32" text-anchor="middle" class="sm">App 1 (modular monolith)</text><text x="370" y="47" text-anchor="middle" class="sm">auth/ students/ courses/ registration/ reports/</text>
+  <rect class="bx" x="270" y="95" width="200" height="40" rx="6"/><text x="370" y="112" text-anchor="middle" class="sm">App 2 (stateless)</text><text x="370" y="127" text-anchor="middle" class="sm">same code</text>
+  <path class="ar" d="M470 35 L520 25"/><path class="ar" d="M470 110 L520 118"/><path class="ar" d="M470 40 L520 100"/>
+  <rect class="bx" x="520" y="8" width="115" height="34" rx="6"/><text x="577" y="30" text-anchor="middle" class="sm">Redis cache (browsing)</text>
+  <rect class="bx" x="520" y="95" width="115" height="44" rx="6"/><text x="577" y="113" text-anchor="middle" class="sm">PostgreSQL</text><text x="577" y="128" text-anchor="middle" class="sm">(registrations, atomic)</text>
+</svg>
+<p><b>Good architecture is not the most sophisticated architecture. It is the one that fits.</b></p>
+
+<h2>3. Exercise 2: food delivery at scale</h2>
+<p><b>Users:</b> customers (search restaurants, browse menus, order, pay, track), restaurants (manage menus, accept orders, update status), drivers (accept deliveries, update location, complete). <b>Capabilities:</b> Restaurant, Customer, Order, Delivery, Payment, Notification. <b>v1 with today's evidence: one modular monolith, one DB</b> (the same answer as the university, and rightly so for now).</p>
+<h3>Step 2 reveal: the scale</h3>
+<p>5M registered users, 500k daily active, 50k concurrent, 10k orders per minute at peak, 10 cities. Do all parts feel this load the same way?</p>
+<table>
+  <tr><th>Part</th><th>Load shape</th><th>Answer</th></tr>
+  <tr><td>Restaurant search</td><td>huge READS</td><td>cache + replicas</td></tr>
+  <tr><td>Ordering</td><td>heavy WRITES, lunch spike</td><td>scale out horizontally</td></tr>
+  <tr><td>Payment</td><td>low volume, must NEVER fail</td><td>isolate</td></tr>
+  <tr><td>Delivery tracking</td><td>GPS firehose, every few seconds</td><td>isolate + protect; own write pipeline</td></tr>
+</table>
+<p>Four load shapes, one box, one scaling answer: <b>that mismatch is the real pressure to split</b>.</p>
+<h3>Steps 3&ndash;4 reveal: teams and money</h3>
+<p>Five teams (Customer, Restaurant, Orders, Payments, Delivery), 20 developers, dedicated DevOps, CI/CD, monitoring, <b>$15,000 a month</b>. <b>Conway:</b> the system will mirror this org chart; plan the mirror instead of fighting it. Run the checklist: several teams blocking each other; load shapes needing different scaling; deploy independence wanted; ops maturity to run it. <b>Every box ticks for the first time today: microservices, said with reasons.</b></p>
+<h3>Steps 5&ndash;7: the result</h3>
+<svg viewBox="0 0 640 190" role="img" aria-label="Food delivery microservices" class="dg">
+  <rect class="bx" x="5" y="70" width="60" height="30" rx="6"/><text x="35" y="90" text-anchor="middle" class="sm">Clients</text><path class="ar" d="M65 85 H80"/>
+  <rect class="bx" x="80" y="62" width="80" height="46" rx="6"/><text x="120" y="82" text-anchor="middle" class="sm">API</text><text x="120" y="96" text-anchor="middle" class="sm">Gateway</text>
+  <path class="ar" d="M160 75 L200 25"/><path class="ar" d="M160 80 L200 62"/><path class="ar" d="M160 88 L200 100"/><path class="ar" d="M160 95 L200 140"/>
+  <g class="sm">
+  <rect class="bx" x="200" y="8" width="170" height="30" rx="5"/><text x="285" y="27" text-anchor="middle">Customer svc x2 (own DB)</text>
+  <rect class="bx" x="200" y="45" width="170" height="30" rx="5"/><text x="285" y="64" text-anchor="middle">Restaurant svc x4 (own DB)</text>
+  <rect class="bx" x="200" y="82" width="170" height="30" rx="5"/><text x="285" y="101" text-anchor="middle">Order svc x8 (own DB)</text>
+  <rect class="bx" x="200" y="119" width="170" height="30" rx="5"/><text x="285" y="138" text-anchor="middle">Payment svc x2 (own DB)</text>
+  <rect class="bx" x="200" y="156" width="170" height="30" rx="5"/><text x="285" y="175" text-anchor="middle">Delivery svc x10 (own DB)</text>
+  </g>
+  <path class="ar" d="M370 97 H420"/><rect class="bx" x="420" y="75" width="90" height="46" rx="6"/><text x="465" y="95" text-anchor="middle" class="sm">Broker</text><text x="465" y="110" text-anchor="middle" class="sm">OrderPlaced</text>
+  <path class="ar" d="M510 85 L550 60"/><path class="ar" d="M510 110 L550 135"/>
+  <rect class="bx" x="550" y="42" width="85" height="30" rx="5"/><text x="592" y="61" text-anchor="middle" class="sm">Notification</text><rect class="bx" x="550" y="125" width="85" height="30" rx="5"/><text x="592" y="144" text-anchor="middle" class="sm">Analytics</text>
+</svg>
+<p>The &times;N numbers are instances at peak: <b>scaling per service, not per system</b>. Patterns used: <b>API gateway</b>, <b>database per service</b>, <b>events via broker</b> (sync: order, pay; async: everything after OrderPlaced), <b>independent scaling</b>. "Nobody memorised these patterns. The problem demanded every one of them."</p>
+
+<h2>4. Exercise 3: ticket booking rush</h2>
+<p>Concerts, 50,000 seats; search events, view seats, select, reserve, pay, receive tickets. Load about 1,000 users a day. v1 = app + DB: correct. <b>Reveal:</b> a global star announces one show; tickets open 10:00 AM; at 10:00:01 there are <b>500,000 users</b> on the site. What fails first? <b>Same system, new number, dead design. Numbers are architecture.</b></p>
+<h3>Steps 3&ndash;4: scale out, cache the reads</h3>
+<p>Adding 100 servers behind a load balancer is <b>necessary, not sufficient</b>: the database is still one, and 100 app servers can hammer it even harder. Look at what they read: 500,000 people load the <b>same event page and the same seat map</b>. One cache entry serves 500,000 requests; DB reads collapse to almost nothing. <b>Caveat:</b> a seat map 5 seconds stale is fine to <i>look</i> at, never fine to <i>sell</i> from. <b>Cache the browsing. Never the buying.</b> Browsing reads come from cache; the purchase decision happens only inside the database transaction.</p>
+<h3>Steps 5&ndash;6: the last seat and a failing payment</h3>
+<table>
+  <tr><th>Problem</th><th>Fix</th></tr>
+  <tr><td><b>1 The last-seat race:</b> buyers A and B, same seat, same millisecond</td><td>Atomic check + write in one transaction, constraint as backstop: exactly one winner, one clean "sold out".</td></tr>
+  <tr><td><b>2 The winner still has to pay:</b> payment takes a minute and can fail. Marking the seat sold too early strands seats on failed payments; never holding it lets someone else buy it mid-payment.</td><td>A <b>reservation state machine with a clock</b>: <b>Available &rarr; (select seat) Reserved with a 10-minute hold &rarr; (payment) SOLD</b>; on failure or timeout &rarr; <b>Released</b> and the seat returns to Available.</td></tr>
+</table>
+<svg viewBox="0 0 640 100" role="img" aria-label="Seat state machine" class="dg">
+  <rect class="bx" x="10" y="30" width="110" height="40" rx="20"/><text x="65" y="55" text-anchor="middle" class="h">Available</text>
+  <path class="ar" d="M120 50 H210"/><text x="165" y="42" text-anchor="middle" class="sm">select seat</text>
+  <rect class="bx" x="210" y="30" width="130" height="40" rx="20"/><text x="275" y="48" text-anchor="middle" class="h">Reserved</text><text x="275" y="63" text-anchor="middle" class="sm">10 min hold</text>
+  <path class="ar" d="M340 50 H430"/><text x="385" y="42" text-anchor="middle" class="sm">payment ok</text>
+  <rect class="bx" x="430" y="30" width="90" height="40" rx="20"/><text x="475" y="55" text-anchor="middle" class="h">SOLD</text>
+  <path class="ar" d="M275 70 V90 H540 V70"/><text x="410" y="86" text-anchor="middle" class="sm">fail / timeout</text>
+  <rect class="bx" x="540" y="30" width="95" height="40" rx="20"/><text x="587" y="55" text-anchor="middle" class="h">Released</text>
+</svg>
+<p>Every arrow is a business rule the system enforces: who may move a seat between states, and when. <b>Architecture must handle concurrency and time, not just boxes and lines.</b></p>
+<h3>Step 7: the result</h3>
+<p><b>Browsing path:</b> Users &rarr; CDN + cache &rarr; done (never touches the DB). <b>Buying path:</b> Users &rarr; load balancer &rarr; app servers (1&ndash;3) &rarr; PostgreSQL transaction (bookings, atomic) &rarr; payment gateway (with timeout + circuit breaker). Redis holds events and seat maps. One problem taught seven concepts: performance, scalability, load balancing, caching, concurrency, transactions, reliability. <b>Every box has a "birthday": the exact moment in the story that forced it.</b></p>
+
+<h2>5. Putting it all together: design an online food delivery system</h2>
+<p><b>The brief.</b> Functional: customer browses restaurants and menus, places an order, pays online; the restaurant receives and confirms the order; a driver delivers; the customer tracks the order. Non-functional: 100,000 registered users; response time under 2 seconds; 99.9 % availability; payments must be secure. <b>Eight steps; each is one section of the lecture.</b></p>
+<table>
+  <tr><th>Step</th><th>Do this</th><th>Result</th></tr>
+  <tr><td><b>1 Problem</b></td><td>Major concepts (no technology!)</td><td>Customer, Restaurant, Driver, Order, Payment, Delivery</td></tr>
+  <tr><td><b>2 Functional requirements</b></td><td>Major actions</td><td>Browse, Order, Pay, Deliver, Track. Concepts + actions = raw material for components and APIs.</td></tr>
+  <tr><td><b>3 Architectural drivers</b></td><td>Requirement &rarr; quality attribute &rarr; concrete structure</td><td>100,000 users &rarr; <b>scalability</b>: load balancer, stateless app servers, caching.<br>Under 2 s &rarr; <b>performance</b>: cache hot reads, async for slow work, parallel queries.<br>99.9 % &rarr; <b>reliability</b>: no SPOF, replicas, timeouts and fallbacks.<br>Secure payment &rarr; <b>security</b>: HTTPS, never trust the client, delegate card data to a payment provider.<br>This chain is your report's "justification" section.</td></tr>
+  <tr><td><b>4 Components</b></td><td>From domain concepts</td><td>Customer app, Restaurant app, Driver app; API; Order, Restaurant &amp; Menu, Payment, Delivery, Notification. Each has a clear responsibility, a domain name and owns its data.</td></tr>
+  <tr><td><b>5 The style decision</b></td><td>Interrogate the drivers: how many requests per second is 100,000 users at peak? One team of four or many? Does any component need to scale or deploy independently today? What does the network cost if we split?</td><td>A <b>modular monolith</b>. "The marks are in the justification, not the diagram."</td></tr>
+  <tr><td><b>6 Communication</b></td><td>Is the customer waiting?</td><td><b>Sync:</b> browse restaurants and menus, place the order, authorise the payment (keep fast). <b>Async via queue:</b> email the receipt, notify the restaurant, update analytics, assign a driver.</td></tr>
+  <tr><td><b>7 Performance additions</b></td><td>The quality machinery</td><td>Load balancer in front of 2+ stateless app instances; cache for menus and restaurant lists; queue for all async work; DB replica (reads scale and reliability improves for free).</td></tr>
+  <tr><td><b>8 Failure drill</b></td><td>"What happens if the payment service goes down?"</td><td>Timeout (fail in 2 s, not never); circuit breaker (stop hammering it); degrade (save the order as pending-payment and tell the user honestly). Ask the failure question of every arrow.</td></tr>
+</table>
+<svg viewBox="0 0 640 200" role="img" aria-label="Food delivery result" class="dg">
+  <rect class="bx" x="5" y="55" width="75" height="22" rx="4"/><text x="42" y="70" text-anchor="middle" class="sm">Customer</text>
+  <rect class="bx" x="5" y="82" width="75" height="22" rx="4"/><text x="42" y="97" text-anchor="middle" class="sm">Restaurant</text>
+  <rect class="bx" x="5" y="109" width="75" height="22" rx="4"/><text x="42" y="124" text-anchor="middle" class="sm">Driver</text>
+  <path class="ar" d="M80 93 H110"/>
+  <rect class="bx" x="110" y="70" width="80" height="46" rx="6"/><text x="150" y="97" text-anchor="middle" class="sm">Load balancer</text>
+  <path class="ar" d="M190 85 L230 55"/><path class="ar" d="M190 100 L230 130"/>
+  <rect class="bx" x="230" y="35" width="150" height="40" rx="6"/><text x="305" y="52" text-anchor="middle" class="sm">App instance</text><text x="305" y="66" text-anchor="middle" class="sm">(modular monolith)</text>
+  <rect class="bx" x="230" y="110" width="150" height="40" rx="6"/><text x="305" y="127" text-anchor="middle" class="sm">App instance</text><text x="305" y="141" text-anchor="middle" class="sm">(modular monolith)</text>
+  <path class="ar" d="M380 45 L440 30"/><path class="ar" d="M380 60 L440 85"/><path class="ar" d="M380 135 L440 95"/>
+  <rect class="bx" x="440" y="15" width="80" height="30" rx="5"/><text x="480" y="34" text-anchor="middle" class="sm">Cache</text>
+  <rect class="bx" x="440" y="70" width="80" height="30" rx="5"/><text x="480" y="89" text-anchor="middle" class="sm">DB primary</text>
+  <path class="ar" d="M520 85 H545"/><rect class="bx" x="545" y="70" width="85" height="30" rx="5"/><text x="587" y="89" text-anchor="middle" class="sm">DB replica</text>
+  <path class="ar" d="M380 150 L440 165"/><rect class="bx" x="440" y="150" width="70" height="30" rx="5"/><text x="475" y="169" text-anchor="middle" class="sm">Queue</text>
+  <path class="ar" d="M510 165 H540"/><rect class="bx" x="540" y="150" width="90" height="30" rx="5"/><text x="585" y="164" text-anchor="middle" class="sm">Workers: email,</text><text x="585" y="176" text-anchor="middle" class="sm">notify, analytics</text>
+  <path class="ar" d="M305 75 L305 100" style="stroke-dasharray:4 3"/><text x="250" y="194" class="sm">Payment provider (external, HTTPS): timeout + circuit breaker on this arrow</text>
+</svg>
+<p><b>Every box exists because a driver demanded it. Nothing here is decoration.</b> This is one defensible answer, not the only one.</p>
+
+<h2>6. How to architect any system</h2>
+<p><b>Problem &rarr; Requirements &rarr; Domain &rarr; Quality attributes &rarr; Components &rarr; Architecture &rarr; Communication &rarr; Technology &rarr; Trade-offs.</b> Problem first; requirements split into functional and non-functional; the domain gives you components, the drivers give you structure; choose communication styles; choose technology last; write down every trade-off you accepted.</p>
+<h3>The seven-question checklist (before you draw a single box)</h3>
+<ol>
+  <li>What problem are we solving?</li>
+  <li>What are the functional requirements?</li>
+  <li>What are the important non-functional requirements?</li>
+  <li>What are the major concepts and components in the domain?</li>
+  <li>How should those components communicate?</li>
+  <li>What happens when the system gets slow, overloaded or fails?</li>
+  <li>Why did we choose this architecture over the alternatives?</li>
+</ol>
+<p>Answering these seven well is worth more than knowing thirty architecture patterns.</p>
+<h3>Where to go next</h3>
+<p><b>Books and articles:</b> <i>Clean Architecture</i> (Robert C. Martin); <i>Domain-Driven Design</i> (Eric Evans, 2003); <i>Release It!</i> (Michael Nygard); Fowler's "MonolithFirst" and microservices guide; The Twelve-Factor App; Conway's "How Do Committees Invent?" (1968). <b>Concepts only named:</b> bounded contexts, aggregates, domain events, hexagonal and clean architecture, sagas and eventual consistency, distributed tracing, CAP theorem, CQRS, event sourcing (later courses), OWASP Top 10. <b>Tools:</b> Postman / Thunder Client, Swagger and OpenAPI, Prettier / ESLint / Black, GitHub Actions, draw.io / Excalidraw.</p>
+
+<div class="box"><b>Key takeaways</b>
+Start with the simplest design the evidence supports, and let numbers (concurrency, scale), teams and money drive changes. Registration: modular monolith + transactional SQL + 2 stateless servers + cache, because capacity must never be exceeded and the team is small. Food delivery at scale: microservices only when teams, load shapes and ops all demand it. Ticket booking: cache the browsing, never the buying; a reservation state machine with a clock handles concurrency and time. Always give the answer shape "We chose X because A, accepting B and C".</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Walk through the university registration exercise and explain why microservices were rejected.</summary>
+<p>v1 is a modular monolith with one DB (auth, courses, registration, reports). The 9 AM reveal (15,000 simultaneous registrations, capacity never exceeded) exposes the seat race (two students see '1 free', result 101/100); fixed by an atomic transaction (check + decrement) with a DB constraint seats &gt;= 0, which selects transactional SQL. With three developers and $500 a month the design is 2 stateless app servers behind a load balancer, PostgreSQL and a Redis cache. Microservices rejected: one team means no coordination problem, one database gives strong transactions, no ops capacity for many deployments, and the spike is solved by stateless servers + cache.</p>
+</details>
+<details>
+<summary>W2. Explain how the facts changed the food delivery architecture from a monolith to microservices.</summary>
+<p>With today's evidence one modular monolith fits. Then 5M users, 50k concurrent and 10k orders/minute create four different load shapes (search reads, ordering write spike, payment must never fail, GPS firehose) that a single box can only scale in one way. Five teams, 20 developers, DevOps and $15,000/month tick every checklist item (teams blocking each other, different scaling needs, deploy independence, ops maturity), so microservices are justified: API gateway, database per service, events via a broker (sync order and pay, async after OrderPlaced) and per-service scaling.</p>
+</details>
+<details>
+<summary>W3. Design the ticket booking system for a 500,000-user spike and explain the seat reservation state machine.</summary>
+<p>Browsing path: users, CDN and cache (event page and seat map), never touching the DB. Buying path: load balancer, several app servers, one PostgreSQL transaction with a constraint (atomic last-seat check), then a payment gateway with timeout and circuit breaker. Cache the browsing, never the buying. Reservation state machine: Available, select seat gives Reserved with a 10-minute hold, payment gives SOLD, failure or timeout gives Released and the seat returns to Available; this prevents both stranded seats and mid-payment double sales.</p>
+</details>
+<details>
+<summary>W4. Apply the eight steps to an online food delivery system for 100,000 users and justify a modular monolith.</summary>
+<p>Concepts: customer, restaurant, driver, order, payment, delivery. Actions: browse, order, pay, deliver, track. Drivers: scalability (load balancer, stateless servers, caching), performance (cache, async, parallel), reliability (no SPOF, replicas, timeouts), security (HTTPS, never trust client, delegate card data). Components: order, restaurant and menu, payment, delivery, notification. Style: one small team and no component needing independent scaling today, so a modular monolith. Sync: browse, order, authorise payment; async: receipts, notify restaurant, analytics, driver assignment. Add load balancer with 2+ app instances, cache, queue, DB replica. Failure drill for payment: timeout, circuit breaker, pending-payment order.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Answer shape (Q13)</td><td>"We chose X because A, accepting B and C." Never just "we chose microservices".</td></tr>
+  <tr><td>13-question worksheet</td><td>Users, user stories, domain concepts, FRs, NFRs, drivers, components, monolith vs microservices, communication, load, failure, security, trade-offs.</td></tr>
+  <tr><td>Ex 1 University registration</td><td>v1 modular monolith. Reveal: 15,000 hit register at 9 AM, capacity never exceeded &rarr; seat race (101/100) fixed by atomic transaction (check + decrement) + DB constraint seats &gt;= 0 &rarr; transactional SQL. Budget: 3 devs, $500/month, 2 app servers + PostgreSQL + Redis: modular monolith, stateless servers + cache, NOT microservices.</td></tr>
+  <tr><td>Ex 2 Food delivery at scale</td><td>v1 monolith. Reveal: 5M users, 50k concurrent, 10k orders/min: four load shapes (search = reads: cache + replicas; ordering = write spike: scale out; payment = never fail: isolate; GPS = firehose: own pipeline). Five teams, 20 devs, DevOps, $15,000/month: microservices (gateway, DB per service, broker events, per-service scaling x2/x4/x8/x2/x10).</td></tr>
+  <tr><td>Ex 3 Ticket booking</td><td>1,000 users/day then 500,000 at 10:00:01. Adding app servers is necessary, not sufficient (one DB). Cache the browsing, never the buying. Last-seat race: atomic transaction + constraint. Payment: reservation state machine with a clock (Available &rarr; Reserved 10-min hold &rarr; SOLD / Released). Concurrency and time are architecture.</td></tr>
+  <tr><td>Numbers are architecture</td><td>Same system, new number, dead design. Every box has a "birthday".</td></tr>
+  <tr><td>Food delivery brief</td><td>100,000 users, under 2 s, 99.9 %, secure payments. 8 steps: concepts; actions; drivers (requirement &rarr; quality attribute &rarr; structure); components; style decision (modular monolith); communication (sync vs async); performance additions (LB, cache, queue, replica); failure drill (timeout, circuit breaker, pending-payment).</td></tr>
+  <tr><td>Sync vs async (food delivery)</td><td>Sync: browse, place order, authorise payment. Async: receipt email, notify restaurant, analytics, assign driver.</td></tr>
+  <tr><td>7-question checklist</td><td>Problem; FRs; NFRs; concepts and components; communication; slow/overloaded/failing; why this over alternatives.</td></tr>
+  <tr><td>Method</td><td>Problem &rarr; requirements &rarr; domain &rarr; quality attributes &rarr; components &rarr; architecture &rarr; communication &rarr; technology (last) &rarr; trade-offs.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>In a design question: list concepts, drivers (requirement &rarr; attribute &rarr; structure), pick the style by the checklist, say what is sync vs async, add LB / cache / queue / replica where drivers demand them, answer "what if X fails?", and end with the trade-off sentence.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "The required answer shape for the major trade-offs question is:", "o": ["We chose microservices", "We chose X because A, accepting B and C", "It depends", "Use the cloud"], "a": 1, "e": "'We chose microservices' is not an answer."}, {"q": "How many questions are in the architecture worksheet?", "o": ["7", "10", "13", "20"], "a": 2, "e": "From users to major trade-offs."}, {"q": "University registration v1 (before the reveal) is best:", "o": ["Microservices", "One simple modular monolith with one database", "Serverless", "Event sourcing"], "a": 1, "e": "Right for the evidence so far."}, {"q": "What problem does the 9:00 AM reveal expose?", "o": ["Slow typing", "Two students seeing '1 free' and both registering (101/100)", "Weak passwords", "Missing images"], "a": 1, "e": "The seat race on course capacity."}, {"q": "The fix for the seat race is:", "o": ["Hope", "An atomic transaction (check + decrement) with a DB constraint seats >= 0", "Client-side check", "More servers only"], "a": 1, "e": "One of the two gets a clean 'course full' message."}, {"q": "Why is the DB constraint seats >= 0 included?", "o": ["It is faster", "It is the last line of defence", "It replaces transactions", "It caches"], "a": 1, "e": "Backstop for the business rule."}, {"q": "With 3 developers and $500 a month, registration should use:", "o": ["Microservices", "2 stateless app servers + PostgreSQL + Redis cache", "Many databases", "A service mesh"], "a": 1, "e": "One team, strong transactions, no ops capacity."}, {"q": "Why is one database a feature for registration?", "o": ["It is cheap only", "Strong transactions are needed", "Databases are fashionable", "It avoids caching"], "a": 1, "e": "Capacity must never be exceeded."}, {"q": "In food delivery at scale, the real pressure to split comes from:", "o": ["Four load shapes in one box with one scaling answer", "Fashion", "Cheaper servers", "Big teams only"], "a": 0, "e": "Reads, write spikes, payments, GPS firehose."}, {"q": "Restaurant search (huge reads) is best handled with:", "o": ["Cache + replicas", "A single write queue", "Orchestration", "No cache"], "a": 0, "e": "Ordering scales out horizontally."}, {"q": "Conway's law in Exercise 2 means:", "o": ["The system will mirror the five-team org chart; plan the mirror", "Teams do not matter", "Avoid microservices", "One team only"], "a": 0, "e": "Plan the mirror instead of fighting it."}, {"q": "In the microservice result, ×10 on the Delivery service means:", "o": ["10 teams", "Instances at peak: scaling per service, not per system", "10 databases", "10 cities"], "a": 1, "e": "Independent scaling."}, {"q": "Which patterns did Exercise 2 use?", "o": ["Gateway, DB per service, events via broker, independent scaling", "Singleton and Visitor", "Monolith only", "Saga only"], "a": 0, "e": "The problem demanded every one of them."}, {"q": "Ticket booking: 500,000 users hit one event page. Adding 100 app servers is:", "o": ["Sufficient", "Necessary but not sufficient: the DB is still one", "Harmful always", "Unneeded"], "a": 1, "e": "App servers can hammer the database even harder."}, {"q": "'Cache the browsing. Never the buying.' means:", "o": ["Never cache", "A seat map 5 s stale is fine to look at but not to sell from; purchase decisions happen in the DB transaction", "Cache payments", "Cache everything"], "a": 1, "e": "Reads from cache, sales from the transactional DB."}, {"q": "The reservation state machine for seats is:", "o": ["Available, Reserved (10-minute hold), SOLD or Released", "Open, Closed", "Draft, Final", "On, Off"], "a": 0, "e": "A state machine with a clock."}, {"q": "Why not mark a seat SOLD as soon as the buyer selects it?", "o": ["Failed payments would strand seats", "It is slow", "SQL forbids it", "Caches fail"], "a": 0, "e": "Never holding it lets someone buy it mid-payment."}, {"q": "'Numbers are architecture' means:", "o": ["Count lines of code", "The same features with different load numbers need a different design", "Use IDs", "Avoid math"], "a": 1, "e": "1,000 users a day vs 500,000 at 10:00:01."}, {"q": "In the food delivery brief step 3, '100,000 users' maps to which attribute and structure?", "o": ["Scalability: load balancer, stateless app servers, caching", "Security: TLS", "Reliability: replicas", "Usability: colours"], "a": 0, "e": "Requirement, attribute, concrete structure."}, {"q": "Secure payment maps to:", "o": ["HTTPS, never trust the client, delegate card data to a payment provider", "Caching menus", "A queue", "Parallel queries"], "a": 0, "e": "Security measures."}, {"q": "In the brief, which is asynchronous?", "o": ["Place the order", "Authorise the payment", "Email the receipt", "Browse menus"], "a": 2, "e": "Also notify restaurant, analytics, assign a driver."}, {"q": "The style decision for 100,000 users and one team of four is:", "o": ["Microservices", "Modular monolith", "Nano-services", "Peer-to-peer"], "a": 1, "e": "The marks are in the justification, not the diagram."}, {"q": "If the payment service goes down the drill says:", "o": ["Crash", "Timeout, circuit breaker, degrade by saving the order as pending-payment", "Retry forever", "Hide the error"], "a": 1, "e": "Tell the user honestly."}, {"q": "Which is NOT in the seven-question checklist?", "o": ["What problem are we solving?", "Which logo to use?", "What happens when the system gets slow, overloaded or fails?", "Why this architecture over the alternatives?"], "a": 1, "e": "The checklist is about problem, requirements, components, communication, failure and justification."}, {"q": "Technology is chosen:", "o": ["First", "Last, after domain, components, communication and quality attributes", "Never", "Randomly"], "a": 1, "e": "'Technology: the last decision, not the first.'"}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

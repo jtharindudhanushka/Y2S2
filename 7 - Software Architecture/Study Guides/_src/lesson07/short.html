@@ -1,0 +1,15 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Answer shape (Q13)</td><td>"We chose X because A, accepting B and C." Never just "we chose microservices".</td></tr>
+  <tr><td>13-question worksheet</td><td>Users, user stories, domain concepts, FRs, NFRs, drivers, components, monolith vs microservices, communication, load, failure, security, trade-offs.</td></tr>
+  <tr><td>Ex 1 University registration</td><td>v1 modular monolith. Reveal: 15,000 hit register at 9 AM, capacity never exceeded &rarr; seat race (101/100) fixed by atomic transaction (check + decrement) + DB constraint seats &gt;= 0 &rarr; transactional SQL. Budget: 3 devs, $500/month, 2 app servers + PostgreSQL + Redis: modular monolith, stateless servers + cache, NOT microservices.</td></tr>
+  <tr><td>Ex 2 Food delivery at scale</td><td>v1 monolith. Reveal: 5M users, 50k concurrent, 10k orders/min: four load shapes (search = reads: cache + replicas; ordering = write spike: scale out; payment = never fail: isolate; GPS = firehose: own pipeline). Five teams, 20 devs, DevOps, $15,000/month: microservices (gateway, DB per service, broker events, per-service scaling x2/x4/x8/x2/x10).</td></tr>
+  <tr><td>Ex 3 Ticket booking</td><td>1,000 users/day then 500,000 at 10:00:01. Adding app servers is necessary, not sufficient (one DB). Cache the browsing, never the buying. Last-seat race: atomic transaction + constraint. Payment: reservation state machine with a clock (Available &rarr; Reserved 10-min hold &rarr; SOLD / Released). Concurrency and time are architecture.</td></tr>
+  <tr><td>Numbers are architecture</td><td>Same system, new number, dead design. Every box has a "birthday".</td></tr>
+  <tr><td>Food delivery brief</td><td>100,000 users, under 2 s, 99.9 %, secure payments. 8 steps: concepts; actions; drivers (requirement &rarr; quality attribute &rarr; structure); components; style decision (modular monolith); communication (sync vs async); performance additions (LB, cache, queue, replica); failure drill (timeout, circuit breaker, pending-payment).</td></tr>
+  <tr><td>Sync vs async (food delivery)</td><td>Sync: browse, place order, authorise payment. Async: receipt email, notify restaurant, analytics, assign driver.</td></tr>
+  <tr><td>7-question checklist</td><td>Problem; FRs; NFRs; concepts and components; communication; slow/overloaded/failing; why this over alternatives.</td></tr>
+  <tr><td>Method</td><td>Problem &rarr; requirements &rarr; domain &rarr; quality attributes &rarr; components &rarr; architecture &rarr; communication &rarr; technology (last) &rarr; trade-offs.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>In a design question: list concepts, drivers (requirement &rarr; attribute &rarr; structure), pick the style by the checklist, say what is sync vs async, add LB / cache / queue / replica where drivers demand them, answer "what if X fails?", and end with the trade-off sentence.</div>
