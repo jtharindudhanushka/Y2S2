@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Lesson 3 - Intelligent Agents</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; AI study guides</a> &middot; INTE 22303 &middot; Lesson 03</p><button id="theme" type="button"></button></div>
+  <h1>Intelligent Agents</h1>
+  <p class="lead">Covers: what an agent is (sense, decide, act), how an AI agent differs from a chatbot, building workflow automations with n8n (form trigger, IF, LLM chain, Gmail / Calendar), and the Google Agent Development Kit (ADK): LLM agents, root and sub-agents, tools, sessions, workflow agents, and safe read / write design. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Describe an agent as a sense &rarr; decide &rarr; act loop, and say how an AI agent differs from a chatbot</li>
+  <li>Explain what workflow automation with <b>n8n</b> does and name the nodes used in the lecture hall booking assignment</li>
+  <li>Explain Google <b>ADK</b> concepts: LLM agent, root agent, sub-agent, tool, session, event</li>
+  <li>Distinguish <b>workflow agents</b> (sequential, parallel, loop) from LLM agents</li>
+  <li>Decide what belongs to the language model and what belongs to a deterministic tool, and design safe write operations</li>
+</ul>
+
+<h2>1. What is an agent?</h2>
+<p>In Lesson 1 an AI system was drawn as a loop: it <b>senses</b> the environment through sensors, <b>decides</b>, then <b>acts</b> on the environment through actuators, and repeats. A system built around that loop is an <b>agent</b>.</p>
+<svg viewBox="0 0 640 130" role="img" aria-label="Agent loop" class="dg">
+  <rect class="bx" x="20" y="35" width="120" height="55" rx="8"/><text x="80" y="58" text-anchor="middle" class="h">Environment</text><text x="80" y="76" text-anchor="middle" class="sm">users, data, apps</text>
+  <path class="ar" d="M140 52 H235"/><text x="188" y="45" text-anchor="middle" class="sm">percepts / goal</text>
+  <rect class="bx" x="240" y="25" width="170" height="75" rx="8"/><text x="325" y="50" text-anchor="middle" class="h">Agent</text><text x="325" y="68" text-anchor="middle" class="sm">interprets instructions,</text><text x="325" y="84" text-anchor="middle" class="sm">picks a tool or answer</text>
+  <path class="ar" d="M410 52 H505"/><text x="458" y="45" text-anchor="middle" class="sm">actions (tool calls)</text>
+  <rect class="bx" x="510" y="35" width="110" height="55" rx="8"/><text x="565" y="58" text-anchor="middle" class="h">Tools</text><text x="565" y="76" text-anchor="middle" class="sm">APIs, files, email</text>
+  <path class="ar" d="M565 90 C565 120 80 120 80 92"/><text x="320" y="122" text-anchor="middle" class="sm">results come back; the agent observes and repeats</text>
+</svg>
+<div class="box"><b>Agent vs chatbot</b>An <b>AI agent</b> is more than a chatbot: it receives a <b>goal</b>, interprets instructions, may <b>call tools</b>, and may <b>coordinate with other agents</b> to complete a task. (A chatbot only replies with text.)</div>
+<p>Examples from Lesson 1: embodied agents (self-driving car, robot vacuum) and disembodied agents (ChatGPT-style assistants). Loop engineering (Lesson 2) is the idea of making an agent <i>act, observe, evaluate</i> and correct itself.</p>
+
+<h2>2. Workflow automation with n8n</h2>
+<p><b>n8n</b> is a visual workflow tool: you connect <b>nodes</b> (each does one job) into a flow that starts from a <b>trigger</b> (a form submission, a webhook call) and can call AI models and other apps. The course used it to orchestrate AI agents, webhooks and tool calling.</p>
+
+<h3>Example 1: doctor appointment booking demo (project guide)</h3>
+<table>
+  <tr><th>Step</th><th>Node</th><th>What it does</th></tr>
+  <tr><td>1</td><td>New workflow</td><td>Named "Doctor Appointment Booking Demo".</td></tr>
+  <tr><td>2</td><td><b>Form Trigger</b></td><td>Starts the workflow when someone submits the form "Doctor Appointment Request": fields Patient Name (text), Patient Email (email), Appointment Date (date), Time Slot (dropdown 09:00&ndash;09:30 ... 14:30&ndash;15:00), Appointment Type (dropdown: General Consultation, Follow-up, Prescription Discussion, Routine Check-up), Short Note (textarea). Button "Submit Appointment Request"; path <code>doctor-appointment-demo</code>.</td></tr>
+  <tr><td>3</td><td><b>Edit Fields</b></td><td>Prepares the appointment data (renames and builds fields) for later nodes.</td></tr>
+</table>
+
+<h3>Example 2: Assignment 1, lecture hall booking</h3>
+<p>A requester submits a form (requesterName, requesterEmail, bookingDate, startTime 8:00 to 17:00 by hour, endTime 9:00 to 18:00 by hour) to book <b>Lecture Hall A</b>. The workflow checks availability for the chosen date and time.</p>
+<svg viewBox="0 0 640 200" role="img" aria-label="Booking workflow" class="dg">
+  <rect class="bx" x="10" y="20" width="90" height="40" rx="6"/><text x="55" y="45" text-anchor="middle" class="sm">Form</text>
+  <path class="ar" d="M100 40 H125"/>
+  <rect class="bx" x="125" y="20" width="90" height="40" rx="6"/><text x="170" y="38" text-anchor="middle" class="sm">Edit Fields</text><text x="170" y="52" text-anchor="middle" class="sm">start/endDateTime</text>
+  <path class="ar" d="M215 40 H240"/>
+  <rect class="bx" x="240" y="20" width="100" height="40" rx="6"/><text x="290" y="38" text-anchor="middle" class="sm">Google Calendar</text><text x="290" y="52" text-anchor="middle" class="sm">check events</text>
+  <path class="ar" d="M340 40 H365"/>
+  <rect class="bx" x="365" y="20" width="70" height="40" rx="6"/><text x="400" y="45" text-anchor="middle" class="h">IF free?</text>
+  <path class="ar" d="M435 30 L470 30"/><text x="452" y="22" text-anchor="middle" class="sm">yes</text>
+  <rect class="bx" x="470" y="10" width="160" height="40" rx="6"/><text x="550" y="27" text-anchor="middle" class="sm">Calendar: create event</text><text x="550" y="42" text-anchor="middle" class="sm">(booking details inside)</text>
+  <path class="ar" d="M550 50 V75"/>
+  <rect class="bx" x="470" y="75" width="160" height="50" rx="6"/><text x="550" y="92" text-anchor="middle" class="sm">Basic LLM Chain +</text><text x="550" y="107" text-anchor="middle" class="sm">Gemini Chat Model:</text><text x="550" y="119" text-anchor="middle" class="sm">write confirmation</text>
+  <path class="ar" d="M550 125 V145"/>
+  <rect class="bx" x="470" y="145" width="160" height="40" rx="6"/><text x="550" y="162" text-anchor="middle" class="sm">Gmail: send email</text><text x="550" y="177" text-anchor="middle" class="sm">then Form Ending: success</text>
+  <path class="ar" d="M400 60 L400 150 L250 150"/><text x="325" y="143" text-anchor="middle" class="sm">no</text>
+  <rect class="bx" x="100" y="130" width="150" height="40" rx="6"/><text x="175" y="147" text-anchor="middle" class="sm">Form Ending:</text><text x="175" y="162" text-anchor="middle" class="sm">"unavailable" message</text>
+</svg>
+<table>
+  <tr><th>Branch</th><th>Steps</th></tr>
+  <tr><td><b>Available</b></td><td>1. Create a Google Calendar event. 2. Store the booking details in the event. 3. Use <b>Gemini</b> to generate a short confirmation email. 4. Send it with <b>Gmail</b>. 5. Show a success page.</td></tr>
+  <tr><td><b>Unavailable</b></td><td>Show an unavailable message to the requester.</td></tr>
+</table>
+<p><b>Required nodes (8):</b> Edit Fields, Google Calendar (check), IF, Google Calendar (create), Basic LLM Chain, Google Gemini Chat Model, Gmail, Form Ending. <b>Question 1</b> builds two fields in Edit Fields with the timezone <code>Asia/Colombo</code>: <code>startDateTime</code> = <code>DateTime.fromISO(bookingDate + 'T' + startTime, {zone:'Asia/Colombo'}).toISO()</code> and <code>endDateTime</code> likewise from endTime. <b>Submission:</b> exported JSON, screenshots of the workflow, form, calendar event and confirmation email, and evidence for both an available and an unavailable booking.</p>
+<p><b>The language model's role here:</b> only to write the friendly email text (Basic LLM Chain + Gemini); the decision "is the hall free?" is made by a deterministic node (IF on the calendar result). This mirrors the ADK rule in section 6.</p>
+
+<h2>3. Google Agent Development Kit (ADK)</h2>
+<div class="box"><b>Definition</b><b>Google ADK</b> is an <b>open-source framework</b> for building, testing, evaluating and deploying AI agents. It supports several languages; the lab uses the <b>Python</b> version and the <b>ADK Web Visual Builder</b> (an experimental feature of the ADK web interface for creating and connecting agents visually).</div>
+
+<h3>Why use an agent framework?</h3>
+<p>A normal program follows rules written in code. A language model understands natural language but must not be trusted to invent factual records or take unrestricted actions. ADK combines both:</p>
+<table>
+  <tr><th>Part</th><th>Responsibility</th></tr>
+  <tr><td>Language model</td><td>Interprets the user's intention</td></tr>
+  <tr><td>Instructions</td><td>Define the agent's responsibility and boundaries</td></tr>
+  <tr><td>Tools</td><td>Perform controlled, deterministic operations</td></tr>
+  <tr><td>Specialist agents</td><td>Divide a large task into smaller responsibilities</td></tr>
+  <tr><td>Workflow agents</td><td>Control the order or pattern of execution</td></tr>
+</table>
+<p>This separation makes the application easier to understand, test and improve.</p>
+
+<h3>Core concepts</h3>
+<svg viewBox="0 0 640 230" role="img" aria-label="ADK multi-agent structure" class="dg">
+  <rect class="bx" x="240" y="10" width="160" height="46" rx="8"/><text x="320" y="30" text-anchor="middle" class="h">Root agent</text><text x="320" y="46" text-anchor="middle" class="sm">coordinator, no tools</text>
+  <path class="ar" d="M280 56 L90 100"/><path class="ar" d="M305 56 L240 100"/><path class="ar" d="M335 56 L400 100"/><path class="ar" d="M360 56 L550 100"/>
+  <text x="330" y="82" text-anchor="middle" class="sm">transfer_to_agent</text>
+  <rect class="bx" x="20" y="100" width="140" height="50" rx="8"/><text x="90" y="120" text-anchor="middle" class="h">Intake</text><text x="90" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <rect class="bx" x="170" y="100" width="140" height="50" rx="8"/><text x="240" y="120" text-anchor="middle" class="h">Classification</text><text x="240" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <rect class="bx" x="330" y="100" width="140" height="50" rx="8"/><text x="400" y="120" text-anchor="middle" class="h">Outage</text><text x="400" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <rect class="bx" x="480" y="100" width="140" height="50" rx="8"/><text x="550" y="120" text-anchor="middle" class="h">Billing</text><text x="550" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <path class="ar" d="M400 150 V180"/><path class="ar" d="M550 150 V180"/>
+  <rect class="bx" x="340" y="180" width="120" height="38" rx="6"/><text x="400" y="204" text-anchor="middle" class="mono">check_outage_status</text>
+  <rect class="bx" x="480" y="180" width="140" height="38" rx="6"/><text x="550" y="204" text-anchor="middle" class="mono">get_bill_summary</text>
+  <text x="20" y="190" class="sm">Each tool is registered on the</text><text x="20" y="206" class="sm">agent that owns the job.</text>
+</svg>
+<table>
+  <tr><th>Concept</th><th>Meaning</th></tr>
+  <tr><td><b>LLM agent</b> (<code>LlmAgent</code>)</td><td>An agent controlled by a language model. Normally has: a unique <b>name</b>, a <b>model</b>, <b>instructions</b>, an optional <b>description</b>, optional <b>tools</b> and optional <b>sub-agents</b>. Example: a billing agent interprets a bill request, gets an account alias, calls a bill-summary tool and explains the result. Names must be valid, useful identifiers because routing refers to them.</td></tr>
+  <tr><td><b>Root agent</b></td><td>The application's <b>main entry point</b>; receives the user's message first. In a multi-agent system it acts as <b>coordinator</b>: understands the request type, selects one suitable child agent or workflow, transfers the request, and <b>avoids doing specialist work itself</b>. Keeping specialist tools off the root reduces accidental tool calls and makes event traces easier to read.</td></tr>
+  <tr><td><b>Sub-agent</b></td><td>A child of another agent, e.g. intake, classification, outage, billing and response agents. An LLM parent can transfer a request to a child; the event history may show a <code>transfer_to_agent</code> action.</td></tr>
+  <tr><td><b>Tool</b></td><td>Gives an agent a controlled capability. A Python <b>Function tool</b> wraps a function and exposes its parameters and result. Examples: <code>classify_issue(issue_description, area="")</code>, <code>check_outage_status(area)</code>, <code>get_bill_summary(account_alias)</code>. Tools should have narrow responsibilities and structured results. A read-only lookup must not modify a file; a write tool must <b>validate inputs and enforce authorisation</b> itself instead of relying only on an LLM instruction.</td></tr>
+  <tr><td><b>Built-in tool</b></td><td>Provided by ADK in addition to custom functions. In the project <code>get_user_choice</code> shows controlled options to collect <b>explicit consent</b>, which is better than treating any user text as permission for a write.</td></tr>
+  <tr><td><b>Session</b></td><td>One conversation. Start a <b>new session for every independent test</b> so earlier messages do not influence the next.</td></tr>
+  <tr><td><b>Events</b></td><td>ADK Web shows events: which agent ran, whether control was transferred, which tool was called, its input and output, and where an error occurred. The interface supports session management, event inspection and state inspection.</td></tr>
+</table>
+<div class="box"><b>Important rule</b>Register a tool on the agent that <b>owns the responsibility</b>, not on the root or an unrelated specialist.</div>
+<h4 style="font-size:15px;margin:14px 0 4px">What a good LLM-agent instruction states</h4>
+<ol>
+  <li>its responsibility; 2. the information it needs; 3. the information it must <b>not</b> request or handle; 4. the tools it owns; 5. what to do when information is missing; 6. its expected response style; 7. its authority and side-effect boundaries.</li>
+</ol>
+
+<h3>Workflow agents</h3>
+<p>Workflow agents are <b>deterministic controllers</b>: unlike an <code>LlmAgent</code> they do <b>not</b> use a model to choose the execution pattern.</p>
+<svg viewBox="0 0 640 170" role="img" aria-label="Workflow agents" class="dg">
+  <text x="100" y="16" text-anchor="middle" class="h">SequentialAgent</text>
+  <rect class="bx" x="10" y="26" width="180" height="26" rx="4"/><text x="100" y="44" text-anchor="middle" class="sm">1 understand request</text>
+  <rect class="bx" x="10" y="62" width="180" height="26" rx="4"/><text x="100" y="80" text-anchor="middle" class="sm">2 classify issue</text>
+  <rect class="bx" x="10" y="98" width="180" height="26" rx="4"/><text x="100" y="116" text-anchor="middle" class="sm">3 retrieve record</text>
+  <rect class="bx" x="10" y="134" width="180" height="26" rx="4"/><text x="100" y="152" text-anchor="middle" class="sm">4 explain result</text>
+  <text x="330" y="16" text-anchor="middle" class="h">ParallelAgent</text>
+  <rect class="bx" x="270" y="50" width="120" height="26" rx="4"/><text x="330" y="68" text-anchor="middle" class="sm">outage lookup</text>
+  <rect class="bx" x="270" y="100" width="120" height="26" rx="4"/><text x="330" y="118" text-anchor="middle" class="sm">bill lookup</text>
+  <text x="330" y="156" text-anchor="middle" class="sm">independent, run together</text>
+  <text x="540" y="16" text-anchor="middle" class="h">LoopAgent</text>
+  <rect class="bx" x="480" y="36" width="120" height="60" rx="8"/><text x="540" y="62" text-anchor="middle" class="sm">child workflow</text><text x="540" y="78" text-anchor="middle" class="sm">repeats</text>
+  <path class="ar" d="M600 66 C640 66 640 120 540 120 C440 120 440 66 480 66"/>
+  <text x="540" y="148" text-anchor="middle" class="sm">until stop condition or</text><text x="540" y="163" text-anchor="middle" class="sm">max iterations</text>
+</svg>
+<table>
+  <tr><th>Agent</th><th>Behaviour</th><th>Use when</th></tr>
+  <tr><td><b>SequentialAgent</b></td><td>Runs its children <b>one after another</b> in the order added (order is essential).</td><td>Later stages depend on earlier ones: understand request &rarr; classify issue &rarr; retrieve record &rarr; explain result.</td></tr>
+  <tr><td><b>ParallelAgent</b></td><td>Runs its children <b>concurrently</b>.</td><td>Branches are independent and all inputs are ready (outage lookup and bill lookup). Not when one child must wait for another's output.</td></tr>
+  <tr><td><b>LoopAgent</b></td><td><b>Repeats</b> its child workflow until a stopping condition or a <b>maximum iteration count</b> is reached.</td><td>Repeated refinement; in a classroom prototype use a small maximum to prevent endless questioning or an accidental infinite loop.</td></tr>
+</table>
+<p><b>Parent limitation (Visual Builder):</b> the "Sub Agents +" menu creates a <i>new</i> LlmAgent, SequentialAgent, ParallelAgent or LoopAgent; it cannot select an existing agent. ADK also gives each agent instance <b>one parent</b>, so an instance cannot belong to several parents. Workflow-specific copies therefore need unique names, e.g. <code>seq_triage_agent</code> and <code>par_triage_agent</code>: same instruction pattern and Python tool, separate instances.</p>
+
+<h2>4. Model versus tool responsibilities</h2>
+<table>
+  <tr><th>Language model is good at</th><th>A deterministic Python tool is good at</th></tr>
+  <tr><td>Understanding natural-language requests<br>Deciding which known intent applies<br>Asking a concise follow-up question<br>Explaining structured results</td><td>Reading a CSV file<br>Applying exact matching rules<br>Checking for a duplicate<br>Allocating an identifier<br>Appending a validated row</td></tr>
+</table>
+<p><b>Do not ask an LLM to calculate or invent a value already stored in an authoritative record.</b></p>
+
+<h2>5. Read-only operations and side effects</h2>
+<p>A <b>side effect</b> changes something outside the current response (writing a CSV row, sending a message, processing a payment). The lab separates <b>read-only tools</b> (retrieve or classify) from <b>write tools</b> (modify <code>support_cases.csv</code>). A safe write flow:</p>
+<svg viewBox="0 0 640 60" role="img" aria-label="Safe write flow" class="dg">
+  <rect class="bx" x="5" y="12" width="95" height="38" rx="6"/><text x="52" y="28" text-anchor="middle" class="sm">present</text><text x="52" y="42" text-anchor="middle" class="sm">proposed data</text>
+  <path class="ar" d="M100 31 H115"/>
+  <rect class="bx" x="115" y="12" width="95" height="38" rx="6"/><text x="162" y="28" text-anchor="middle" class="sm">explicit</text><text x="162" y="42" text-anchor="middle" class="sm">choice</text>
+  <path class="ar" d="M210 31 H225"/>
+  <rect class="bx" x="225" y="12" width="95" height="38" rx="6"/><text x="272" y="28" text-anchor="middle" class="sm">check</text><text x="272" y="42" text-anchor="middle" class="sm">duplicate</text>
+  <path class="ar" d="M320 31 H335"/>
+  <rect class="bx" x="335" y="12" width="95" height="38" rx="6"/><text x="382" y="28" text-anchor="middle" class="sm">validate</text><text x="382" y="42" text-anchor="middle" class="sm">again</text>
+  <path class="ar" d="M430 31 H445"/>
+  <rect class="bx" x="445" y="12" width="85" height="38" rx="6"/><text x="487" y="28" text-anchor="middle" class="sm">perform</text><text x="487" y="42" text-anchor="middle" class="sm">ONE write</text>
+  <path class="ar" d="M530 31 H545"/>
+  <rect class="bx" x="545" y="12" width="90" height="38" rx="6"/><text x="590" y="28" text-anchor="middle" class="sm">report tool's</text><text x="590" y="42" text-anchor="middle" class="sm">result</text>
+</svg>
+
+<h2>6. ADK development workflow</h2>
+<ol>
+  <li>Define the application scope. 2. Design tool contracts. 3. Design specialist responsibilities. 4. Create and test the Python functions. 5. Create the root and specialists. 6. Attach every tool to its owning agent. 7. Test each specialist separately. 8. Create and test workflows. 9. Inspect events and side effects. 10. Correct <b>one problem at a time</b>. 11. Retest in a <b>new session</b>.</li>
+</ol>
+<p><b>Lab project (Electricity Support Assistant):</b> a support assistant with intake, classification, outage, billing and response agents; tools such as <code>classify_issue</code>, <code>check_outage_status</code>, <code>get_bill_summary</code> and a write tool that appends validated rows to <code>support_cases.csv</code> only after explicit consent (<code>get_user_choice</code>). The ADK assignment (Assignment 2) reuses these ideas with a data pack.</p>
+
+<div class="box"><b>Key takeaways</b>
+An agent senses, decides and acts; an AI agent takes a goal, uses tools and may coordinate with other agents. n8n builds visual workflows from a trigger and nodes (form, edit fields, IF, LLM chain, Gmail / Calendar). In ADK: root agent routes, sub-agents specialise, tools do deterministic work and are registered on their owner, sessions and events are for testing. Workflow agents (sequential, parallel, loop) control execution without a model. Let the model understand and explain; let tools compute, look up and write, with explicit consent and validation.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain the difference between an AI agent and a chatbot, and describe the agent loop.</summary>
+<p>A chatbot replies with text. An AI agent receives a goal, interprets instructions, may call tools and may coordinate with other agents to complete a task. The agent loop: sense the environment (percepts or user goal), decide, act through tools/actuators, observe the result and repeat.</p>
+</details>
+<details>
+<summary>W2. Describe the n8n lecture hall booking workflow for both outcomes.</summary>
+<p>Form trigger (requester name, email, date, start and end time) &rarr; Edit Fields builds startDateTime / endDateTime in Asia/Colombo &rarr; Google Calendar checks the slot &rarr; IF available: create a Calendar event with the booking details, a Basic LLM Chain with a Gemini Chat Model writes a short confirmation email, Gmail sends it, Form Ending shows success; if unavailable: Form Ending shows an unavailable message.</p>
+</details>
+<details>
+<summary>W3. Explain root agent, sub-agent, tool, session and event in Google ADK.</summary>
+<p>Root agent: main entry point and coordinator that routes to one child without doing specialist work. Sub-agent: a specialist child (intake, billing, outage...). Tool: a controlled deterministic capability (Python function) registered on the agent that owns it. Session: one conversation, new one per test. Events: trace of which agent ran, transfers, tool calls with input and output, and errors.</p>
+</details>
+<details>
+<summary>W4. Compare SequentialAgent, ParallelAgent and LoopAgent with a use for each.</summary>
+<p>All are deterministic workflow agents. Sequential runs children in order (understand request &rarr; classify &rarr; retrieve record &rarr; explain). Parallel runs independent children concurrently (outage and bill lookup). Loop repeats a child workflow until a stop condition or maximum iterations (use a small maximum to avoid infinite loops).</p>
+</details>
+<details>
+<summary>W5. What should the language model do and what should tools do? Give a safe flow for writing a record.</summary>
+<p>Model: understand requests, decide intent, ask concise follow-ups, explain structured results. Tools: read files, apply exact rules, check duplicates, allocate identifiers, append validated rows; never let the LLM invent stored values. Safe write: present proposed data, obtain explicit choice, check for duplicate, validate again, perform one write, report the tool's result.</p>
+</details>
+<details>
+<summary>W6. List what a good LLM-agent instruction should state.</summary>
+<p>Its responsibility; the information it needs; the information it must not request or handle; the tools it owns; what to do when information is missing; the expected response style; its authority and side-effect boundaries.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Agent</td><td>Senses the environment, decides, acts through actuators/tools, repeats. AI agent &ne; chatbot: takes a goal, interprets instructions, may call tools, may coordinate with other agents.</td></tr>
+  <tr><td>n8n</td><td>Visual workflow tool: trigger + connected nodes; can call LLMs and apps (Gmail, Google Calendar).</td></tr>
+  <tr><td>Booking assignment</td><td>Form &rarr; Edit Fields (start/endDateTime, Asia/Colombo) &rarr; Calendar check &rarr; IF free: create event &rarr; Basic LLM Chain + Gemini writes email &rarr; Gmail &rarr; success page; else "unavailable" message. 8 required nodes.</td></tr>
+  <tr><td>Google ADK</td><td>Open-source framework to build, test, evaluate, deploy agents. Lab: Python + ADK Web Visual Builder (experimental).</td></tr>
+  <tr><td>Why a framework</td><td>Model interprets intent &middot; instructions set boundaries &middot; tools do controlled deterministic work &middot; specialist agents split the task &middot; workflow agents control order.</td></tr>
+  <tr><td>LlmAgent</td><td>Name, model, instructions, optional description / tools / sub-agents.</td></tr>
+  <tr><td>Root agent</td><td>Entry point and coordinator: identify request, pick one child, transfer (<code>transfer_to_agent</code>); do not do specialist work; keep tools off it.</td></tr>
+  <tr><td>Sub-agent</td><td>Specialist child (intake, classification, outage, billing, response).</td></tr>
+  <tr><td>Tool</td><td>Controlled capability (Python Function tool). Narrow, structured results. Read-only tools never modify; write tools validate and enforce authorisation themselves. Register on the agent that owns the responsibility.</td></tr>
+  <tr><td>Built-in tool</td><td><code>get_user_choice</code>: explicit consent before writes.</td></tr>
+  <tr><td>Session / events</td><td>Session = one conversation (new one per test). Events show agent run, transfers, tool calls with input/output, errors.</td></tr>
+  <tr><td>Workflow agents</td><td>Deterministic (no model decides). <b>Sequential</b>: in order. <b>Parallel</b>: concurrent, independent branches. <b>Loop</b>: repeat until stop or max iterations.</td></tr>
+  <tr><td>One-parent rule</td><td>An agent instance has one parent; use uniquely named copies (seq_triage_agent, par_triage_agent). Visual Builder only creates new sub-agents.</td></tr>
+  <tr><td>Model vs tool</td><td>Model: understand, pick intent, ask follow-ups, explain. Tool: CSV reads, exact matching, duplicate checks, IDs, validated appends. Never let the LLM invent stored values.</td></tr>
+  <tr><td>Safe write flow</td><td>Present data &rarr; explicit choice &rarr; duplicate check &rarr; validate again &rarr; one write &rarr; report result.</td></tr>
+  <tr><td>Dev cycle</td><td>Scope, tool contracts, specialists, test functions, create agents, attach tools, test each specialist, workflows, inspect events, fix one problem at a time, retest in new session.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Likely questions: draw the multi-agent structure with tools on the right owners; choose sequential vs parallel vs loop for a scenario; say what the model does and what the tool does; describe a safe write flow.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "An AI agent differs from a simple chatbot because it:", "o": ["Only replies with text", "Receives a goal, may call tools and coordinate with other agents", "Has no model", "Cannot use instructions"], "a": 1, "e": "Agents act on goals using tools."}, {"q": "The agent loop is:", "o": ["Train, test, deploy", "Sense, decide, act, repeat", "Read, write, delete", "Input, output"], "a": 1, "e": "Sensors in, decision, actuators out."}, {"q": "n8n is mainly used to:", "o": ["Train neural networks", "Build visual workflow automations from a trigger and nodes", "Compile C", "Draw diagrams"], "a": 1, "e": "Nodes connected from a trigger."}, {"q": "In the booking workflow, which node starts the flow?", "o": ["Gmail", "Form trigger", "IF", "Basic LLM Chain"], "a": 1, "e": "The booking form."}, {"q": "Which node decides whether the hall is available?", "o": ["Gemini Chat Model", "IF", "Form Ending", "Gmail"], "a": 1, "e": "A deterministic IF on the calendar result."}, {"q": "What is the role of the LLM in the booking workflow?", "o": ["Decide availability", "Create the calendar event", "Generate a short confirmation email", "Store the form"], "a": 2, "e": "Basic LLM Chain with Gemini writes the email."}, {"q": "Which timezone did the assignment require?", "o": ["UTC", "Asia/Colombo", "America/New_York", "Asia/Tokyo"], "a": 1, "e": "Used when building startDateTime and endDateTime."}, {"q": "If the hall is unavailable the workflow should:", "o": ["Create an event anyway", "Show an unavailable message", "Send a Gmail", "Restart"], "a": 1, "e": "Form Ending with an unavailable message."}, {"q": "Google ADK is:", "o": ["A closed commercial IDE", "An open-source framework for building, testing, evaluating and deploying AI agents", "A database", "A chip"], "a": 1, "e": "The lab uses the Python version."}, {"q": "ADK Web Visual Builder is:", "o": ["A stable core library", "An experimental feature to create and connect agents visually", "A compiler", "A language model"], "a": 1, "e": "Part of the ADK web interface."}, {"q": "Which is NOT a normal part of an LlmAgent?", "o": ["Name", "Model", "Instructions", "Hardware driver"], "a": 3, "e": "Name, model, instructions, description, tools, sub-agents."}, {"q": "The root agent should:", "o": ["Do all specialist work itself", "Understand the request type, pick one child and transfer, avoiding specialist work", "Own every tool", "Never receive messages"], "a": 1, "e": "It is a coordinator."}, {"q": "Why keep specialist tools off the root agent?", "o": ["To save memory", "To reduce accidental tool calls and make traces easier to read", "Tools cannot be on the root", "It is faster"], "a": 1, "e": "Cleaner routing and events."}, {"q": "The event that shows a request being handed to a child agent is:", "o": ["start_agent", "transfer_to_agent", "call_root", "run_child"], "a": 1, "e": "Visible in the event history."}, {"q": "A tool should be registered on:", "o": ["The root agent always", "The agent that owns the responsibility", "Any agent", "The session"], "a": 1, "e": "Important ADK rule."}, {"q": "A read-only lookup tool must:", "o": ["Modify a file", "Not modify anything", "Send email", "Delete rows"], "a": 1, "e": "Read-only means no side effects."}, {"q": "A write tool should:", "o": ["Rely only on the LLM instruction for authorisation", "Validate its inputs and enforce authorisation itself", "Skip validation", "Run in parallel"], "a": 1, "e": "Do not depend only on instructions."}, {"q": "get_user_choice is used to:", "o": ["Classify issues", "Collect explicit consent via controlled options", "Read CSV", "Check outages"], "a": 1, "e": "Better than treating arbitrary text as permission."}, {"q": "Why start a new session for each independent test?", "o": ["Sessions expire", "Earlier messages could influence the next test", "Required by Python", "To save tokens"], "a": 1, "e": "A session is one conversation."}, {"q": "Workflow agents differ from LlmAgents because they:", "o": ["Use a model to choose the pattern", "Are deterministic controllers that do not use a model to decide execution", "Cannot have children", "Are slower"], "a": 1, "e": "Sequential, parallel, loop."}, {"q": "Which agent runs children one after another in order?", "o": ["ParallelAgent", "LoopAgent", "SequentialAgent", "RootAgent"], "a": 2, "e": "Order is essential."}, {"q": "Outage lookup and bill lookup are independent. Best workflow agent?", "o": ["SequentialAgent", "ParallelAgent", "LoopAgent", "None"], "a": 1, "e": "Parallel for independent branches."}, {"q": "When must you NOT use a ParallelAgent?", "o": ["Branches are independent", "One child must wait for another's output", "Inputs are ready", "There are two branches"], "a": 1, "e": "Use sequential then."}, {"q": "A LoopAgent stops when:", "o": ["A stopping condition or maximum iteration count is reached", "It runs once", "The root says so", "The CSV is empty"], "a": 0, "e": "A small max prevents infinite loops."}, {"q": "Why do workflow-specific copies like seq_triage_agent and par_triage_agent need unique names?", "o": ["For style", "An agent instance can have only one parent", "ADK forbids names with numbers", "Speed"], "a": 1, "e": "One instance cannot belong to several parents."}, {"q": "Which is a job for the language model?", "o": ["Appending a validated CSV row", "Allocating an identifier", "Explaining structured results", "Checking for duplicates"], "a": 2, "e": "Understanding, intent, follow-ups and explaining."}, {"q": "Which is a job for a deterministic tool?", "o": ["Asking a follow-up question", "Exact matching rules and reading a CSV", "Interpreting intent", "Explaining results"], "a": 1, "e": "Do not let the LLM invent stored values."}, {"q": "A side effect is:", "o": ["A bug", "A change outside the current response such as writing a row or sending a message", "A prompt", "A tool name"], "a": 1, "e": "Hence safe write flows."}, {"q": "Which is the correct safe write order?", "o": ["Write, then ask", "Present data, explicit choice, duplicate check, validate, one write, report", "Validate, write twice, ask", "Report, write"], "a": 1, "e": "One write, then report the tool's result."}, {"q": "In the development workflow, you should correct:", "o": ["Everything at once", "One problem at a time and retest in a new session", "Only the root", "Nothing"], "a": 1, "e": "Reliable ADK cycle."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Agent</td><td>Senses the environment, decides, acts through actuators/tools, repeats. AI agent &ne; chatbot: takes a goal, interprets instructions, may call tools, may coordinate with other agents.</td></tr>
+  <tr><td>n8n</td><td>Visual workflow tool: trigger + connected nodes; can call LLMs and apps (Gmail, Google Calendar).</td></tr>
+  <tr><td>Booking assignment</td><td>Form &rarr; Edit Fields (start/endDateTime, Asia/Colombo) &rarr; Calendar check &rarr; IF free: create event &rarr; Basic LLM Chain + Gemini writes email &rarr; Gmail &rarr; success page; else "unavailable" message. 8 required nodes.</td></tr>
+  <tr><td>Google ADK</td><td>Open-source framework to build, test, evaluate, deploy agents. Lab: Python + ADK Web Visual Builder (experimental).</td></tr>
+  <tr><td>Why a framework</td><td>Model interprets intent &middot; instructions set boundaries &middot; tools do controlled deterministic work &middot; specialist agents split the task &middot; workflow agents control order.</td></tr>
+  <tr><td>LlmAgent</td><td>Name, model, instructions, optional description / tools / sub-agents.</td></tr>
+  <tr><td>Root agent</td><td>Entry point and coordinator: identify request, pick one child, transfer (<code>transfer_to_agent</code>); do not do specialist work; keep tools off it.</td></tr>
+  <tr><td>Sub-agent</td><td>Specialist child (intake, classification, outage, billing, response).</td></tr>
+  <tr><td>Tool</td><td>Controlled capability (Python Function tool). Narrow, structured results. Read-only tools never modify; write tools validate and enforce authorisation themselves. Register on the agent that owns the responsibility.</td></tr>
+  <tr><td>Built-in tool</td><td><code>get_user_choice</code>: explicit consent before writes.</td></tr>
+  <tr><td>Session / events</td><td>Session = one conversation (new one per test). Events show agent run, transfers, tool calls with input/output, errors.</td></tr>
+  <tr><td>Workflow agents</td><td>Deterministic (no model decides). <b>Sequential</b>: in order. <b>Parallel</b>: concurrent, independent branches. <b>Loop</b>: repeat until stop or max iterations.</td></tr>
+  <tr><td>One-parent rule</td><td>An agent instance has one parent; use uniquely named copies (seq_triage_agent, par_triage_agent). Visual Builder only creates new sub-agents.</td></tr>
+  <tr><td>Model vs tool</td><td>Model: understand, pick intent, ask follow-ups, explain. Tool: CSV reads, exact matching, duplicate checks, IDs, validated appends. Never let the LLM invent stored values.</td></tr>
+  <tr><td>Safe write flow</td><td>Present data &rarr; explicit choice &rarr; duplicate check &rarr; validate again &rarr; one write &rarr; report result.</td></tr>
+  <tr><td>Dev cycle</td><td>Scope, tool contracts, specialists, test functions, create agents, attach tools, test each specialist, workflows, inspect events, fix one problem at a time, retest in new session.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Likely questions: draw the multi-agent structure with tools on the right owners; choose sequential vs parallel vs loop for a scenario; say what the model does and what the tool does; describe a safe write flow.</div>

@@ -1,0 +1,161 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Describe an agent as a sense &rarr; decide &rarr; act loop, and say how an AI agent differs from a chatbot</li>
+  <li>Explain what workflow automation with <b>n8n</b> does and name the nodes used in the lecture hall booking assignment</li>
+  <li>Explain Google <b>ADK</b> concepts: LLM agent, root agent, sub-agent, tool, session, event</li>
+  <li>Distinguish <b>workflow agents</b> (sequential, parallel, loop) from LLM agents</li>
+  <li>Decide what belongs to the language model and what belongs to a deterministic tool, and design safe write operations</li>
+</ul>
+
+<h2>1. What is an agent?</h2>
+<p>In Lesson 1 an AI system was drawn as a loop: it <b>senses</b> the environment through sensors, <b>decides</b>, then <b>acts</b> on the environment through actuators, and repeats. A system built around that loop is an <b>agent</b>.</p>
+<svg viewBox="0 0 640 130" role="img" aria-label="Agent loop" class="dg">
+  <rect class="bx" x="20" y="35" width="120" height="55" rx="8"/><text x="80" y="58" text-anchor="middle" class="h">Environment</text><text x="80" y="76" text-anchor="middle" class="sm">users, data, apps</text>
+  <path class="ar" d="M140 52 H235"/><text x="188" y="45" text-anchor="middle" class="sm">percepts / goal</text>
+  <rect class="bx" x="240" y="25" width="170" height="75" rx="8"/><text x="325" y="50" text-anchor="middle" class="h">Agent</text><text x="325" y="68" text-anchor="middle" class="sm">interprets instructions,</text><text x="325" y="84" text-anchor="middle" class="sm">picks a tool or answer</text>
+  <path class="ar" d="M410 52 H505"/><text x="458" y="45" text-anchor="middle" class="sm">actions (tool calls)</text>
+  <rect class="bx" x="510" y="35" width="110" height="55" rx="8"/><text x="565" y="58" text-anchor="middle" class="h">Tools</text><text x="565" y="76" text-anchor="middle" class="sm">APIs, files, email</text>
+  <path class="ar" d="M565 90 C565 120 80 120 80 92"/><text x="320" y="122" text-anchor="middle" class="sm">results come back; the agent observes and repeats</text>
+</svg>
+<div class="box"><b>Agent vs chatbot</b>An <b>AI agent</b> is more than a chatbot: it receives a <b>goal</b>, interprets instructions, may <b>call tools</b>, and may <b>coordinate with other agents</b> to complete a task. (A chatbot only replies with text.)</div>
+<p>Examples from Lesson 1: embodied agents (self-driving car, robot vacuum) and disembodied agents (ChatGPT-style assistants). Loop engineering (Lesson 2) is the idea of making an agent <i>act, observe, evaluate</i> and correct itself.</p>
+
+<h2>2. Workflow automation with n8n</h2>
+<p><b>n8n</b> is a visual workflow tool: you connect <b>nodes</b> (each does one job) into a flow that starts from a <b>trigger</b> (a form submission, a webhook call) and can call AI models and other apps. The course used it to orchestrate AI agents, webhooks and tool calling.</p>
+
+<h3>Example 1: doctor appointment booking demo (project guide)</h3>
+<table>
+  <tr><th>Step</th><th>Node</th><th>What it does</th></tr>
+  <tr><td>1</td><td>New workflow</td><td>Named "Doctor Appointment Booking Demo".</td></tr>
+  <tr><td>2</td><td><b>Form Trigger</b></td><td>Starts the workflow when someone submits the form "Doctor Appointment Request": fields Patient Name (text), Patient Email (email), Appointment Date (date), Time Slot (dropdown 09:00&ndash;09:30 ... 14:30&ndash;15:00), Appointment Type (dropdown: General Consultation, Follow-up, Prescription Discussion, Routine Check-up), Short Note (textarea). Button "Submit Appointment Request"; path <code>doctor-appointment-demo</code>.</td></tr>
+  <tr><td>3</td><td><b>Edit Fields</b></td><td>Prepares the appointment data (renames and builds fields) for later nodes.</td></tr>
+</table>
+
+<h3>Example 2: Assignment 1, lecture hall booking</h3>
+<p>A requester submits a form (requesterName, requesterEmail, bookingDate, startTime 8:00 to 17:00 by hour, endTime 9:00 to 18:00 by hour) to book <b>Lecture Hall A</b>. The workflow checks availability for the chosen date and time.</p>
+<svg viewBox="0 0 640 200" role="img" aria-label="Booking workflow" class="dg">
+  <rect class="bx" x="10" y="20" width="90" height="40" rx="6"/><text x="55" y="45" text-anchor="middle" class="sm">Form</text>
+  <path class="ar" d="M100 40 H125"/>
+  <rect class="bx" x="125" y="20" width="90" height="40" rx="6"/><text x="170" y="38" text-anchor="middle" class="sm">Edit Fields</text><text x="170" y="52" text-anchor="middle" class="sm">start/endDateTime</text>
+  <path class="ar" d="M215 40 H240"/>
+  <rect class="bx" x="240" y="20" width="100" height="40" rx="6"/><text x="290" y="38" text-anchor="middle" class="sm">Google Calendar</text><text x="290" y="52" text-anchor="middle" class="sm">check events</text>
+  <path class="ar" d="M340 40 H365"/>
+  <rect class="bx" x="365" y="20" width="70" height="40" rx="6"/><text x="400" y="45" text-anchor="middle" class="h">IF free?</text>
+  <path class="ar" d="M435 30 L470 30"/><text x="452" y="22" text-anchor="middle" class="sm">yes</text>
+  <rect class="bx" x="470" y="10" width="160" height="40" rx="6"/><text x="550" y="27" text-anchor="middle" class="sm">Calendar: create event</text><text x="550" y="42" text-anchor="middle" class="sm">(booking details inside)</text>
+  <path class="ar" d="M550 50 V75"/>
+  <rect class="bx" x="470" y="75" width="160" height="50" rx="6"/><text x="550" y="92" text-anchor="middle" class="sm">Basic LLM Chain +</text><text x="550" y="107" text-anchor="middle" class="sm">Gemini Chat Model:</text><text x="550" y="119" text-anchor="middle" class="sm">write confirmation</text>
+  <path class="ar" d="M550 125 V145"/>
+  <rect class="bx" x="470" y="145" width="160" height="40" rx="6"/><text x="550" y="162" text-anchor="middle" class="sm">Gmail: send email</text><text x="550" y="177" text-anchor="middle" class="sm">then Form Ending: success</text>
+  <path class="ar" d="M400 60 L400 150 L250 150"/><text x="325" y="143" text-anchor="middle" class="sm">no</text>
+  <rect class="bx" x="100" y="130" width="150" height="40" rx="6"/><text x="175" y="147" text-anchor="middle" class="sm">Form Ending:</text><text x="175" y="162" text-anchor="middle" class="sm">"unavailable" message</text>
+</svg>
+<table>
+  <tr><th>Branch</th><th>Steps</th></tr>
+  <tr><td><b>Available</b></td><td>1. Create a Google Calendar event. 2. Store the booking details in the event. 3. Use <b>Gemini</b> to generate a short confirmation email. 4. Send it with <b>Gmail</b>. 5. Show a success page.</td></tr>
+  <tr><td><b>Unavailable</b></td><td>Show an unavailable message to the requester.</td></tr>
+</table>
+<p><b>Required nodes (8):</b> Edit Fields, Google Calendar (check), IF, Google Calendar (create), Basic LLM Chain, Google Gemini Chat Model, Gmail, Form Ending. <b>Question 1</b> builds two fields in Edit Fields with the timezone <code>Asia/Colombo</code>: <code>startDateTime</code> = <code>DateTime.fromISO(bookingDate + 'T' + startTime, {zone:'Asia/Colombo'}).toISO()</code> and <code>endDateTime</code> likewise from endTime. <b>Submission:</b> exported JSON, screenshots of the workflow, form, calendar event and confirmation email, and evidence for both an available and an unavailable booking.</p>
+<p><b>The language model's role here:</b> only to write the friendly email text (Basic LLM Chain + Gemini); the decision "is the hall free?" is made by a deterministic node (IF on the calendar result). This mirrors the ADK rule in section 6.</p>
+
+<h2>3. Google Agent Development Kit (ADK)</h2>
+<div class="box"><b>Definition</b><b>Google ADK</b> is an <b>open-source framework</b> for building, testing, evaluating and deploying AI agents. It supports several languages; the lab uses the <b>Python</b> version and the <b>ADK Web Visual Builder</b> (an experimental feature of the ADK web interface for creating and connecting agents visually).</div>
+
+<h3>Why use an agent framework?</h3>
+<p>A normal program follows rules written in code. A language model understands natural language but must not be trusted to invent factual records or take unrestricted actions. ADK combines both:</p>
+<table>
+  <tr><th>Part</th><th>Responsibility</th></tr>
+  <tr><td>Language model</td><td>Interprets the user's intention</td></tr>
+  <tr><td>Instructions</td><td>Define the agent's responsibility and boundaries</td></tr>
+  <tr><td>Tools</td><td>Perform controlled, deterministic operations</td></tr>
+  <tr><td>Specialist agents</td><td>Divide a large task into smaller responsibilities</td></tr>
+  <tr><td>Workflow agents</td><td>Control the order or pattern of execution</td></tr>
+</table>
+<p>This separation makes the application easier to understand, test and improve.</p>
+
+<h3>Core concepts</h3>
+<svg viewBox="0 0 640 230" role="img" aria-label="ADK multi-agent structure" class="dg">
+  <rect class="bx" x="240" y="10" width="160" height="46" rx="8"/><text x="320" y="30" text-anchor="middle" class="h">Root agent</text><text x="320" y="46" text-anchor="middle" class="sm">coordinator, no tools</text>
+  <path class="ar" d="M280 56 L90 100"/><path class="ar" d="M305 56 L240 100"/><path class="ar" d="M335 56 L400 100"/><path class="ar" d="M360 56 L550 100"/>
+  <text x="330" y="82" text-anchor="middle" class="sm">transfer_to_agent</text>
+  <rect class="bx" x="20" y="100" width="140" height="50" rx="8"/><text x="90" y="120" text-anchor="middle" class="h">Intake</text><text x="90" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <rect class="bx" x="170" y="100" width="140" height="50" rx="8"/><text x="240" y="120" text-anchor="middle" class="h">Classification</text><text x="240" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <rect class="bx" x="330" y="100" width="140" height="50" rx="8"/><text x="400" y="120" text-anchor="middle" class="h">Outage</text><text x="400" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <rect class="bx" x="480" y="100" width="140" height="50" rx="8"/><text x="550" y="120" text-anchor="middle" class="h">Billing</text><text x="550" y="138" text-anchor="middle" class="sm">sub-agent</text>
+  <path class="ar" d="M400 150 V180"/><path class="ar" d="M550 150 V180"/>
+  <rect class="bx" x="340" y="180" width="120" height="38" rx="6"/><text x="400" y="204" text-anchor="middle" class="mono">check_outage_status</text>
+  <rect class="bx" x="480" y="180" width="140" height="38" rx="6"/><text x="550" y="204" text-anchor="middle" class="mono">get_bill_summary</text>
+  <text x="20" y="190" class="sm">Each tool is registered on the</text><text x="20" y="206" class="sm">agent that owns the job.</text>
+</svg>
+<table>
+  <tr><th>Concept</th><th>Meaning</th></tr>
+  <tr><td><b>LLM agent</b> (<code>LlmAgent</code>)</td><td>An agent controlled by a language model. Normally has: a unique <b>name</b>, a <b>model</b>, <b>instructions</b>, an optional <b>description</b>, optional <b>tools</b> and optional <b>sub-agents</b>. Example: a billing agent interprets a bill request, gets an account alias, calls a bill-summary tool and explains the result. Names must be valid, useful identifiers because routing refers to them.</td></tr>
+  <tr><td><b>Root agent</b></td><td>The application's <b>main entry point</b>; receives the user's message first. In a multi-agent system it acts as <b>coordinator</b>: understands the request type, selects one suitable child agent or workflow, transfers the request, and <b>avoids doing specialist work itself</b>. Keeping specialist tools off the root reduces accidental tool calls and makes event traces easier to read.</td></tr>
+  <tr><td><b>Sub-agent</b></td><td>A child of another agent, e.g. intake, classification, outage, billing and response agents. An LLM parent can transfer a request to a child; the event history may show a <code>transfer_to_agent</code> action.</td></tr>
+  <tr><td><b>Tool</b></td><td>Gives an agent a controlled capability. A Python <b>Function tool</b> wraps a function and exposes its parameters and result. Examples: <code>classify_issue(issue_description, area="")</code>, <code>check_outage_status(area)</code>, <code>get_bill_summary(account_alias)</code>. Tools should have narrow responsibilities and structured results. A read-only lookup must not modify a file; a write tool must <b>validate inputs and enforce authorisation</b> itself instead of relying only on an LLM instruction.</td></tr>
+  <tr><td><b>Built-in tool</b></td><td>Provided by ADK in addition to custom functions. In the project <code>get_user_choice</code> shows controlled options to collect <b>explicit consent</b>, which is better than treating any user text as permission for a write.</td></tr>
+  <tr><td><b>Session</b></td><td>One conversation. Start a <b>new session for every independent test</b> so earlier messages do not influence the next.</td></tr>
+  <tr><td><b>Events</b></td><td>ADK Web shows events: which agent ran, whether control was transferred, which tool was called, its input and output, and where an error occurred. The interface supports session management, event inspection and state inspection.</td></tr>
+</table>
+<div class="box"><b>Important rule</b>Register a tool on the agent that <b>owns the responsibility</b>, not on the root or an unrelated specialist.</div>
+<h4 style="font-size:15px;margin:14px 0 4px">What a good LLM-agent instruction states</h4>
+<ol>
+  <li>its responsibility; 2. the information it needs; 3. the information it must <b>not</b> request or handle; 4. the tools it owns; 5. what to do when information is missing; 6. its expected response style; 7. its authority and side-effect boundaries.</li>
+</ol>
+
+<h3>Workflow agents</h3>
+<p>Workflow agents are <b>deterministic controllers</b>: unlike an <code>LlmAgent</code> they do <b>not</b> use a model to choose the execution pattern.</p>
+<svg viewBox="0 0 640 170" role="img" aria-label="Workflow agents" class="dg">
+  <text x="100" y="16" text-anchor="middle" class="h">SequentialAgent</text>
+  <rect class="bx" x="10" y="26" width="180" height="26" rx="4"/><text x="100" y="44" text-anchor="middle" class="sm">1 understand request</text>
+  <rect class="bx" x="10" y="62" width="180" height="26" rx="4"/><text x="100" y="80" text-anchor="middle" class="sm">2 classify issue</text>
+  <rect class="bx" x="10" y="98" width="180" height="26" rx="4"/><text x="100" y="116" text-anchor="middle" class="sm">3 retrieve record</text>
+  <rect class="bx" x="10" y="134" width="180" height="26" rx="4"/><text x="100" y="152" text-anchor="middle" class="sm">4 explain result</text>
+  <text x="330" y="16" text-anchor="middle" class="h">ParallelAgent</text>
+  <rect class="bx" x="270" y="50" width="120" height="26" rx="4"/><text x="330" y="68" text-anchor="middle" class="sm">outage lookup</text>
+  <rect class="bx" x="270" y="100" width="120" height="26" rx="4"/><text x="330" y="118" text-anchor="middle" class="sm">bill lookup</text>
+  <text x="330" y="156" text-anchor="middle" class="sm">independent, run together</text>
+  <text x="540" y="16" text-anchor="middle" class="h">LoopAgent</text>
+  <rect class="bx" x="480" y="36" width="120" height="60" rx="8"/><text x="540" y="62" text-anchor="middle" class="sm">child workflow</text><text x="540" y="78" text-anchor="middle" class="sm">repeats</text>
+  <path class="ar" d="M600 66 C640 66 640 120 540 120 C440 120 440 66 480 66"/>
+  <text x="540" y="148" text-anchor="middle" class="sm">until stop condition or</text><text x="540" y="163" text-anchor="middle" class="sm">max iterations</text>
+</svg>
+<table>
+  <tr><th>Agent</th><th>Behaviour</th><th>Use when</th></tr>
+  <tr><td><b>SequentialAgent</b></td><td>Runs its children <b>one after another</b> in the order added (order is essential).</td><td>Later stages depend on earlier ones: understand request &rarr; classify issue &rarr; retrieve record &rarr; explain result.</td></tr>
+  <tr><td><b>ParallelAgent</b></td><td>Runs its children <b>concurrently</b>.</td><td>Branches are independent and all inputs are ready (outage lookup and bill lookup). Not when one child must wait for another's output.</td></tr>
+  <tr><td><b>LoopAgent</b></td><td><b>Repeats</b> its child workflow until a stopping condition or a <b>maximum iteration count</b> is reached.</td><td>Repeated refinement; in a classroom prototype use a small maximum to prevent endless questioning or an accidental infinite loop.</td></tr>
+</table>
+<p><b>Parent limitation (Visual Builder):</b> the "Sub Agents +" menu creates a <i>new</i> LlmAgent, SequentialAgent, ParallelAgent or LoopAgent; it cannot select an existing agent. ADK also gives each agent instance <b>one parent</b>, so an instance cannot belong to several parents. Workflow-specific copies therefore need unique names, e.g. <code>seq_triage_agent</code> and <code>par_triage_agent</code>: same instruction pattern and Python tool, separate instances.</p>
+
+<h2>4. Model versus tool responsibilities</h2>
+<table>
+  <tr><th>Language model is good at</th><th>A deterministic Python tool is good at</th></tr>
+  <tr><td>Understanding natural-language requests<br>Deciding which known intent applies<br>Asking a concise follow-up question<br>Explaining structured results</td><td>Reading a CSV file<br>Applying exact matching rules<br>Checking for a duplicate<br>Allocating an identifier<br>Appending a validated row</td></tr>
+</table>
+<p><b>Do not ask an LLM to calculate or invent a value already stored in an authoritative record.</b></p>
+
+<h2>5. Read-only operations and side effects</h2>
+<p>A <b>side effect</b> changes something outside the current response (writing a CSV row, sending a message, processing a payment). The lab separates <b>read-only tools</b> (retrieve or classify) from <b>write tools</b> (modify <code>support_cases.csv</code>). A safe write flow:</p>
+<svg viewBox="0 0 640 60" role="img" aria-label="Safe write flow" class="dg">
+  <rect class="bx" x="5" y="12" width="95" height="38" rx="6"/><text x="52" y="28" text-anchor="middle" class="sm">present</text><text x="52" y="42" text-anchor="middle" class="sm">proposed data</text>
+  <path class="ar" d="M100 31 H115"/>
+  <rect class="bx" x="115" y="12" width="95" height="38" rx="6"/><text x="162" y="28" text-anchor="middle" class="sm">explicit</text><text x="162" y="42" text-anchor="middle" class="sm">choice</text>
+  <path class="ar" d="M210 31 H225"/>
+  <rect class="bx" x="225" y="12" width="95" height="38" rx="6"/><text x="272" y="28" text-anchor="middle" class="sm">check</text><text x="272" y="42" text-anchor="middle" class="sm">duplicate</text>
+  <path class="ar" d="M320 31 H335"/>
+  <rect class="bx" x="335" y="12" width="95" height="38" rx="6"/><text x="382" y="28" text-anchor="middle" class="sm">validate</text><text x="382" y="42" text-anchor="middle" class="sm">again</text>
+  <path class="ar" d="M430 31 H445"/>
+  <rect class="bx" x="445" y="12" width="85" height="38" rx="6"/><text x="487" y="28" text-anchor="middle" class="sm">perform</text><text x="487" y="42" text-anchor="middle" class="sm">ONE write</text>
+  <path class="ar" d="M530 31 H545"/>
+  <rect class="bx" x="545" y="12" width="90" height="38" rx="6"/><text x="590" y="28" text-anchor="middle" class="sm">report tool's</text><text x="590" y="42" text-anchor="middle" class="sm">result</text>
+</svg>
+
+<h2>6. ADK development workflow</h2>
+<ol>
+  <li>Define the application scope. 2. Design tool contracts. 3. Design specialist responsibilities. 4. Create and test the Python functions. 5. Create the root and specialists. 6. Attach every tool to its owning agent. 7. Test each specialist separately. 8. Create and test workflows. 9. Inspect events and side effects. 10. Correct <b>one problem at a time</b>. 11. Retest in a <b>new session</b>.</li>
+</ol>
+<p><b>Lab project (Electricity Support Assistant):</b> a support assistant with intake, classification, outage, billing and response agents; tools such as <code>classify_issue</code>, <code>check_outage_status</code>, <code>get_bill_summary</code> and a write tool that appends validated rows to <code>support_cases.csv</code> only after explicit consent (<code>get_user_choice</code>). The ADK assignment (Assignment 2) reuses these ideas with a data pack.</p>
+
+<div class="box"><b>Key takeaways</b>
+An agent senses, decides and acts; an AI agent takes a goal, uses tools and may coordinate with other agents. n8n builds visual workflows from a trigger and nodes (form, edit fields, IF, LLM chain, Gmail / Calendar). In ADK: root agent routes, sub-agents specialise, tools do deterministic work and are registered on their owner, sessions and events are for testing. Workflow agents (sequential, parallel, loop) control execution without a model. Let the model understand and explain; let tools compute, look up and write, with explicit consent and validation.</div>
