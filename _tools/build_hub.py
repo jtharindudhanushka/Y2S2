@@ -26,7 +26,7 @@ SUBJECTS = [
     ("4 - AI", "INTE 22303", "Artificial Intelligence", [("Paper", "2026-10-30T09:00")], 14),
     ("5 - Distributed Systems", "INTE 22253", "Distributed Systems & Cloud Computing", [("Paper", "2026-11-02T09:00")], 0),
     ("6 - Design Patterns", "INTE 22313", "Design Patterns & Frameworks", [("Paper (open book)", "2026-11-04T09:00")], 0),
-    ("7 - Software Architecture", "INTE 22293", "Software Architecture & Process Model", [("Paper", "2026-11-06T13:00")], 0),
+    ("7 - Software Architecture", "INTE 22293", "Software Architecture & Process Model", [("Paper", "2026-11-06T13:00")], 10),
 ]
 
 

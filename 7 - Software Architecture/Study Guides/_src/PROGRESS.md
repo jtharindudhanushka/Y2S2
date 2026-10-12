@@ -11,3 +11,6 @@ Lecture 01-03 and C4 (13) slide images already viewed (invention vs innovation, 
 8 DONE. (was: C4 model (lecture 13; viewed) + case studies: lecture 04 UniMart workshop (+ In-Class Activity 03 student answers), lecture 10 course registration, lecture 02 Zippo ride-hailing (read all tasks)
 9 DONE (UniMart labs). (was: UniMart lab series (10 guides; read all) + Group assignment (7 docs; read all)
 Then: SA index page (copy AI index.html pattern; LESSONS list), set notes count in `_tools/build_hub.py` (7 - Software Architecture), run it, commit.
+
+## STATUS: ALL DONE (lessons 1-10 built, index page created, hub notes count = 10)
+Lesson 10 = group project (7 docs read). Not yet viewed visually in a browser. Items to double check if time: images of lecture 02 slides 7-8 and C4 slides were viewed; peer/other notes none for this subject.

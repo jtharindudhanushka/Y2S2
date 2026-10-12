@@ -1,0 +1,253 @@
+<p class="sm" style="color:var(--muted)">Source: the seven Group Assignment documents (main brief, two case scopes, group responsibilities, rubric, Jira/GitHub/Scrum guidelines, deliverable templates). This lesson applies <b>software process</b> (Lesson 1) and <b>architecture</b> (Lessons 2&ndash;9) to a team project.</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Describe the structure, aims and rules of the cross-functional microservices project</li>
+  <li>Explain the mandatory architecture requirements and cross-team governance</li>
+  <li>Apply Scrum, Jira and GitHub rules: stories, acceptance criteria, Definition of Ready / Done, pull requests</li>
+  <li>List the deliverables, templates and assessment criteria</li>
+</ul>
+
+<h2>0. Background: software process models (short recap)</h2>
+<p class="sm" style="color:var(--muted)">The lectures list "software process models" as already discussed and the project uses Scrum; this table is a brief background summary, not slide content.</p>
+<table>
+  <tr><th>Model</th><th>Idea</th><th>Fits when</th></tr>
+  <tr><td>Waterfall</td><td>Sequential phases: requirements, design, implementation, testing, deployment, maintenance</td><td>Requirements are stable and well understood</td></tr>
+  <tr><td>Iterative / incremental</td><td>Build in repeated cycles, each adding working functionality</td><td>Risk reduction and early feedback needed</td></tr>
+  <tr><td>Agile (Scrum)</td><td>Short time-boxed sprints, backlog, sprint planning, review and retrospective, working increments</td><td>Requirements change; teams want frequent feedback (as in this project)</td></tr>
+</table>
+<p>This links to Lesson 4: <b>incremental design</b> (fix the expensive decisions early, decide the rest per increment) is the architecture counterpart of Scrum iterations.</p>
+
+<h2>1. Project overview</h2>
+<table>
+  <tr><th>Item</th><th>Detail</th></tr>
+  <tr><td>Module</td><td>Software Architecture and Process Models, Level 2</td></tr>
+  <tr><td>Duration</td><td><b>7 weeks</b></td></tr>
+  <tr><td>Cohort</td><td><b>56 students: 8 teams of 7</b> (the brief also refers to eight-member teams in some places); <b>2 projects, 4 teams collaborating on each</b></td></tr>
+  <tr><td>Project A</td><td><b>Apartment Management System</b>: Groups 1, 2, 3, 4</td></tr>
+  <tr><td>Project B</td><td><b>University Services Management Platform</b>: Groups 5, 6, 7, 8</td></tr>
+  <tr><td>Product</td><td>An integrated web-based <b>functional prototype</b> (not a commercial production system) using synthetic data</td></tr>
+</table>
+<p><b>Scope covered:</b> project initiation, requirements, architecture, iterative development, cross-functional teamwork, cross-team integration, testing, deployment and closure. <b>Core expectation:</b> each team owns a clearly bounded business domain and its microservices, but all four teams on a project are jointly responsible for the integrated product; <b>a team cannot get full marks by delivering an isolated service</b> that does not integrate.</p>
+<h3>Learning objectives</h3>
+<ul>
+  <li>Apply initiation, scope definition, risk management and iterative planning</li>
+  <li>Translate a case into functional and non-functional requirements, user stories and acceptance criteria</li>
+  <li>Design a secure microservice architecture (boundaries, databases, APIs, deployment)</li>
+  <li>Build a modular React + TypeScript frontend on Spring Boot REST APIs</li>
+  <li>Use Jira (work) and GitHub (collaboration, review, integration, individual contribution)</li>
+  <li>Plan unit, API, integration, system, security and user acceptance testing</li>
+  <li>Collaborate across roles and across four teams to release one coherent system; evaluate via demonstrations, reports, retrospectives and lessons learned</li>
+</ul>
+
+<h2>2. The two cases</h2>
+<h3>Project A: Apartment Management System</h3>
+<p><b>Scenario:</b> a medium-sized complex with multiple buildings, units, owners, tenants, staff, technicians, shared facilities, monthly charges, maintenance work, visitor records and announcements, run today with spreadsheets, paper and messaging apps (duplicated data, delayed maintenance, unclear payment status, poor visibility). <b>Roles:</b> system administrator, apartment manager, owner, tenant/resident, finance officer, maintenance coordinator, technician/service staff, security officer.</p>
+<table>
+  <tr><th>Group</th><th>Domain</th><th>Owned microservices</th><th>Frontend feature area</th></tr>
+  <tr><td>1</td><td>Identity, access, residents, user relationships</td><td>identity-access-service; resident-management-service</td><td>Login, profile, role-aware navigation, resident/owner/tenant administration</td></tr>
+  <tr><td>2</td><td>Property, units, leases, occupancy</td><td>property-unit-service; lease-occupancy-service</td><td>Building/unit administration, ownership, lease, occupancy and availability</td></tr>
+  <tr><td>3</td><td>Billing, charges, invoices, payments</td><td>billing-payment-service; utility-charge-service</td><td>Invoices, charges, payment recording, receipts, arrears, financial summaries</td></tr>
+  <tr><td>4</td><td>Operations, maintenance, facilities, visitors, communications</td><td>operations-service; community-service</td><td>Maintenance and complaints, facility booking, visitors, announcements, notifications</td></tr>
+</table>
+<h3>Project B: University Services Management Platform</h3>
+<p><b>Scenario:</b> services run through separate offices, paper, email and spreadsheets: reserving halls, labs and equipment; reporting facility/IT problems; event registration; announcements; request tracking. It must <b>not</b> replace the student information, learning management, finance or HR systems. <b>Roles:</b> system administrator, student, academic staff, administrative staff, service desk officer, technician / maintenance staff, resource manager, event organiser.</p>
+<table>
+  <tr><th>Group</th><th>Domain</th><th>Owned microservices</th><th>Frontend feature area</th></tr>
+  <tr><td>5</td><td>Identity, access, university directory, role relationships</td><td>identity-access-service; university-directory-service</td><td>Login, profile, role-aware navigation, directory and department/service-unit administration</td></tr>
+  <tr><td>6</td><td>Facilities, equipment, availability, reservations</td><td>facility-resource-service; reservation-service</td><td>Resource search, calendars, reservations, approvals, cancellations, utilisation</td></tr>
+  <tr><td>7</td><td>Service requests, incidents, maintenance, work orders</td><td>service-request-service; work-order-service</td><td>Request submission, triage, assignment, tracking, technician workspace, summaries</td></tr>
+  <tr><td>8</td><td>Events, announcements, feedback, engagement</td><td>event-service; communication-feedback-service</td><td>Events, registrations, announcements, notifications, feedback, engagement dashboards</td></tr>
+</table>
+<p>The API gateway, shared frontend shell, Docker Compose integration and common release documentation are jointly governed by all four teams.</p>
+
+<h3>Cross-team dependencies and minimum "definition of done" (per group)</h3>
+<table>
+  <tr><th>Group</th><th>Consumes / provides</th><th>Key business rules and done-checks</th></tr>
+  <tr><td>1 Identity (Apt)</td><td>Consumes unit/occupancy validation from G2; provides identity, role, user-relationship validation to G2&ndash;4</td><td>JWT through the gateway; 3+ roles; a user may be owner of one unit and resident of another (role + verified relationship); stable validation APIs</td></tr>
+  <tr><td>2 Property</td><td>Consumes user validation from G1; provides unit and occupancy validation to G1, G3, G4</td><td>No invalid or overlapping active leases; availability and occupancy history visible; status transitions tested</td></tr>
+  <tr><td>3 Billing</td><td>Consumes identity (G1) and unit/occupancy (G2); provides payment/balance status</td><td>Invoices keep line items and compute balances correctly; simulated payments produce auditable records and receipts; no overpayment; summaries reconcile</td></tr>
+  <tr><td>4 Operations</td><td>Consumes identity and resident validation (G1), unit status (G2); balance status (G3) only if a documented booking rule needs it</td><td>Maintenance request to work-order closure end to end; facility conflict and eligibility rules; role-restricted visitors and announcements; in-app notifications</td></tr>
+  <tr><td>5 Identity (Univ)</td><td>Provides identity, role, department, service-unit validation to G6&ndash;8; consumes no domain DB</td><td>JWT through the gateway; 4+ role types; searchable directory and affiliations</td></tr>
+  <tr><td>6 Facilities</td><td>Consumes user/role/department (G5); provides resource and reservation data to G7, G8</td><td>Conflict, operating-hour, capacity and eligibility rules; approve / reject / cancel with reason; calendar views</td></tr>
+  <tr><td>7 Requests</td><td>Consumes G5 and facility validation (G6); provides completion status for feedback (G8)</td><td>Submission through closure; protected status transitions with required reasons; traceable assignments and action logs</td></tr>
+  <tr><td>8 Events</td><td>Consumes G5, optional venue (G6) and completed request status (G7); provides notifications to workflows</td><td>Capacity, date, status and eligibility rules; audience-targeted announcements; feedback only for eligible completed activities</td></tr>
+</table>
+
+<h2>3. Team roles</h2>
+<table>
+  <tr><th>Member</th><th>Suggested primary role</th><th>Mandatory secondary contribution</th></tr>
+  <tr><td>1</td><td>Scrum Master</td><td>Jira administration, progress evidence, risks, plus one technical or testing task</td></tr>
+  <tr><td>2</td><td>BA / Product Manager</td><td>SRS, acceptance criteria, traceability, plus one frontend/backend/testing task</td></tr>
+  <tr><td>3</td><td>Team Lead</td><td>API contracts, ADRs, integration, plus implementation or automated testing</td></tr>
+  <tr><td>4</td><td>UI/UX and Frontend Developer</td><td>Design consistency, shared frontend reviews, feature implementation</td></tr>
+  <tr><td>5</td><td>Frontend Developer</td><td>Feature module, Redux/API integration, validation, frontend tests</td></tr>
+  <tr><td>6</td><td>Backend Developer 1</td><td>Primary microservice, persistence, validation, unit tests</td></tr>
+  <tr><td>7</td><td>Backend Developer 2</td><td>Second microservice, integration, API docs, unit tests</td></tr>
+  <tr><td>8</td><td>QA / DevOps</td><td>Test coordination, defects, CI, Docker, deployment, release checks</td></tr>
+</table>
+<p>A <b>Team Lead is mandatory</b>; roles may be combined or rotated but changes must be visible in Jira or progress reports, and <b>no student may hold only a ceremonial role</b>: every student must contribute to technical or quality deliverables. Role allocation is recorded in the proposal.</p>
+<h3>Common responsibilities of every team</h3>
+<ul>
+  <li>Appoint a Team Lead for weekly cross-team synchronisation; maintain one Jira project (epics, stories, acceptance criteria, tasks, bugs, sprint evidence, reports, dependencies).</li>
+  <li>Develop the allocated microservices and frontend feature modules; own the DB/schema of each service with versioned scripts or migrations.</li>
+  <li>Publish and maintain <b>OpenAPI</b> specs and announce breaking API changes before implementation.</li>
+  <li>Use pull requests and code review (no direct commits to protected main); provide Postman tests, execution evidence and defect records; take part in shared frontend integration, gateway routing, Docker Compose integration, deployment and release validation; submit team documentation and individual contribution evidence.</li>
+</ul>
+
+<h2>4. Required technology and architecture</h2>
+<table>
+  <tr><th>Area</th><th>Required standard</th></tr>
+  <tr><td>Frontend</td><td>One shared React + TypeScript + Redux application; teams own feature modules in the shared codebase; consistent component library and design system</td></tr>
+  <tr><td>Backend</td><td>Spring Boot microservices exposing REST APIs; controller-service-repository/domain organisation; Hibernate/JPA</td></tr>
+  <tr><td>Database</td><td>MySQL; <b>each microservice owns a separate database or schema</b> and may not read another service's database</td></tr>
+  <tr><td>Security</td><td>JWT authentication, role-based authorisation, secure password storage, request validation, safe error responses, protected endpoints</td></tr>
+  <tr><td>API docs and testing</td><td>OpenAPI/Swagger and Postman collections</td></tr>
+  <tr><td>Containers</td><td>Docker images per service; Docker Compose for local integrated execution</td></tr>
+  <tr><td>Version control</td><td>One GitHub organisation per project; one repository per microservice; one shared frontend repository</td></tr>
+  <tr><td>Tracking</td><td>One Jira project per team (its own backlog; dependencies synchronised with the other three teams)</td></tr>
+  <tr><td>CI/CD</td><td>GitHub Actions must at minimum build and test on pull requests; automated deployment encouraged, not required</td></tr>
+  <tr><td>Deployment</td><td>A working integrated release on an instructor-approved cloud or university environment</td></tr>
+</table>
+<h3>Mandatory microservice architecture requirements</h3>
+<ul>
+  <li>Business capabilities separated into <b>independently deployable microservices with explicit ownership</b>.</li>
+  <li>An <b>API Gateway</b> as the controlled entry point routing frontend requests to services.</li>
+  <li>A <b>centralised authentication service</b> issuing JWTs; services validate authorisation for protected operations.</li>
+  <li>Each service owns its data store; <b>cross-service database access is prohibited</b>.</li>
+  <li>Inter-service communication through <b>documented REST APIs</b>; teams define timeout, error and failure behaviour.</li>
+  <li>Consistent response conventions, validation rules, HTTP status codes and centralised exception handling.</li>
+  <li><b>Docker Compose</b> runs the complete local system including services and databases.</li>
+  <li>Health information and usable logs for diagnosing failures; versioned OpenAPI contracts maintained throughout.</li>
+  <li>An integrated frontend with modular feature ownership sharing navigation, authentication state and design conventions.</li>
+</ul>
+<p><b>Optional advanced features</b> (extra technical merit, never replacing the mandatory scope): RabbitMQ or Kafka, service discovery, distributed tracing, Kubernetes, centralised log aggregation, circuit breakers, automated cloud deployment.</p>
+<svg viewBox="0 0 640 200" role="img" aria-label="Project architecture" class="dg">
+  <rect class="bx" x="10" y="75" width="90" height="40" rx="6"/><text x="55" y="92" text-anchor="middle" class="sm">Shared React</text><text x="55" y="106" text-anchor="middle" class="sm">frontend (4 teams)</text><path class="ar" d="M100 95 H130"/>
+  <rect class="bx" x="130" y="75" width="90" height="40" rx="6"/><text x="175" y="92" text-anchor="middle" class="sm">API Gateway</text><text x="175" y="106" text-anchor="middle" class="sm">+ JWT check</text>
+  <path class="ar" d="M220 85 L275 25"/><path class="ar" d="M220 92 L275 65"/><path class="ar" d="M220 100 L275 120"/><path class="ar" d="M220 108 L275 170"/>
+  <g class="sm">
+  <rect class="bx" x="275" y="8" width="170" height="34" rx="5"/><text x="360" y="29" text-anchor="middle">Identity / Auth service (G1 or G5)</text>
+  <rect class="bx" x="275" y="48" width="170" height="34" rx="5"/><text x="360" y="69" text-anchor="middle">Domain services (G2)</text>
+  <rect class="bx" x="275" y="104" width="170" height="34" rx="5"/><text x="360" y="125" text-anchor="middle">Domain services (G3)</text>
+  <rect class="bx" x="275" y="152" width="170" height="34" rx="5"/><text x="360" y="173" text-anchor="middle">Domain services (G4)</text>
+  <rect class="bx" x="480" y="8" width="150" height="26" rx="5"/><text x="555" y="26" text-anchor="middle">own MySQL schema</text>
+  <rect class="bx" x="480" y="48" width="150" height="26" rx="5"/><text x="555" y="66" text-anchor="middle">own MySQL schema</text>
+  <rect class="bx" x="480" y="108" width="150" height="26" rx="5"/><text x="555" y="126" text-anchor="middle">own MySQL schema</text>
+  <rect class="bx" x="480" y="156" width="150" height="26" rx="5"/><text x="555" y="174" text-anchor="middle">own MySQL schema</text>
+  </g>
+  <text x="360" y="148" text-anchor="middle" class="sm" style="font-style:italic"> </text>
+  <path class="ar" d="M445 25 H480"/><path class="ar" d="M445 65 H480"/><path class="ar" d="M445 121 H480"/><path class="ar" d="M445 169 H480"/>
+  <text x="45" y="170" class="sm">services call each other only through documented REST APIs, never each other's DB</text>
+</svg>
+
+<h2>5. Prototype scope standard</h2>
+<p>A functional prototype that still demonstrates secure design, meaningful business rules, persistence, integrated workflows, error handling, testing and deployment.</p>
+<table>
+  <tr><th>Minimum capability</th><th>Evidence expected</th></tr>
+  <tr><td>Authentication and authorisation</td><td>Login, JWT use, role restrictions, protected API evidence</td></tr>
+  <tr><td>Core business workflows</td><td>At least <b>two end-to-end workflows that cross team or service boundaries</b></td></tr>
+  <tr><td>Data operations</td><td>Validated create, read, update and relevant status transitions for core entities</td></tr>
+  <tr><td>Search and usability</td><td>Filtering, search, pagination, clear navigation, validation messages, responsive layouts</td></tr>
+  <tr><td>Integration</td><td>Shared frontend, API Gateway, documented API contracts, cross-team dependency handling</td></tr>
+  <tr><td>Quality</td><td>Automated tests, Postman collection, execution evidence, defect tracking, security checks, simulated UAT</td></tr>
+  <tr><td>Deployment</td><td>Accessible integrated release, deployment guide, release notes, reproducible configuration</td></tr>
+</table>
+<h3>Cross-team governance</h3>
+<ul>
+  <li>A <b>Project Integration Council</b> of the four Team Leads meets <b>weekly</b>, recording decisions, dependencies, interface changes, integration risks and action owners.</li>
+  <li><b>API contract changes</b> are communicated before implementation, documented in the project-documentation repository and reflected in dependent Jira issues. <b>No team may silently change</b> shared authentication, gateway routes, common data definitions or response formats.</li>
+  <li>Shared frontend changes follow pull-request review and must not break other teams' modules.</li>
+  <li>Integration responsibility is shared by all four teams; the Team Lead coordinates but is not solely responsible.</li>
+  <li>Teams choose their own sprint duration (justified, time-boxed, visible in Jira) with <b>at least two completed development iterations</b> before the final release and closure.</li>
+</ul>
+<p><b>Weekly liaison checklist:</b> unresolved dependencies and blocked Jira issues; API or shared-model changes; shared frontend integration status and merge risks; Docker Compose and environment compatibility; integration defects with owners, dates and retest status; shared architecture decisions and contract registry; a concise status update to the full team. <b>Shared integration duties for all eight teams:</b> contribute to the frontend only by reviewed PRs; register gateway routes and test unavailable-service responses; publish OpenAPI definitions with examples and change notes before dependent work; never access another service's database; provide image, environment variables, health checks, dependencies, ports and startup instructions for Compose; write at least one test of a workflow involving another team's service; support release-candidate validation and the tagged final release; maintain READMEs.</p>
+
+<h2>6. Jira, Scrum and GitHub rules</h2>
+<h3>Jira</h3>
+<table>
+  <tr><th>Team</th><th>Jira key</th></tr>
+  <tr><td>Groups 1&ndash;4</td><td>AMS-G1 &hellip; AMS-G4</td></tr>
+  <tr><td>Groups 5&ndash;8</td><td>USM-G5 &hellip; USM-G8</td></tr>
+</table>
+<table>
+  <tr><th>Issue type</th><th>Use / required content</th></tr>
+  <tr><td>Epic</td><td>Major business capability or release objective: purpose, scope, owner, linked requirements, completion condition</td></tr>
+  <tr><td>Story</td><td>User-valued behaviour: story statement, acceptance criteria, priority, estimate, dependency links, owner, test evidence</td></tr>
+  <tr><td>Task / Subtask</td><td>Technical, design, documentation, deployment or process work; a small part of a story (clear outcome, owner, estimate, linked to story/epic)</td></tr>
+  <tr><td>Bug</td><td>Deviation from expected behaviour: environment, steps, expected vs actual, severity, evidence, owner, fix version, retest result</td></tr>
+  <tr><td>Change Request</td><td>Approved scope or contract change: reason, impact, decision, approver, affected stories/APIs, implementation plan</td></tr>
+</table>
+<div class="box"><b>User story format</b>"As a [role], I want [capability], so that [benefit]." Acceptance criteria must be testable (bullets or <b>Given-When-Then</b>). Example: <i>Given an eligible user and an available facility, when the user submits a valid reservation request, then the reservation is created with Pending status and becomes visible to the resource manager.</i> Avoid "Create backend" or "Do frontend" (no user value); split stories that cannot be completed, tested and reviewed within a sprint; link tasks and tests to the story; add dependency links when another team's API is needed.</div>
+<p><b>Workflow statuses:</b> Backlog (defined, not committed) &rarr; Ready (meets Definition of Ready) &rarr; In Progress &rarr; Code Review (PR awaiting review) &rarr; QA / Verification (tested against acceptance criteria) &rarr; Done (meets Definition of Done with linked evidence); <b>Blocked</b> records blocker, dependency, owner and next action.</p>
+<h3>Scrum guidance</h3>
+<ul>
+  <li>Sprint length is the team's choice (1 or 2 weeks recommended), justified in the plan and used consistently unless a documented retrospective changes it.</li>
+  <li>Hold sprint planning, short progress coordination meetings, sprint review and retrospective; keep the sprint goal visible in Jira; do not overload the sprint with unestimated work; move unfinished items back or to a justified next sprint (never mark incomplete work Done); keep a final stabilisation window for integration, defects, deployment, documentation and demo preparation.</li>
+</ul>
+<table>
+  <tr><th>Definition of Ready</th><th>Definition of Done</th></tr>
+  <tr><td>Purpose and user value are clear<br>Acceptance criteria are testable<br>Dependencies and API assumptions identified<br>Design or contract information sufficient<br>Estimate and owner assigned<br>Can reasonably finish within the sprint</td><td>Acceptance criteria pass and evidence is linked<br>Code reviewed and merged by pull request<br>Automated and relevant manual tests pass<br>Swagger/API docs and README updated<br>No secrets or prohibited data committed<br>Integrated environment not broken; Jira status updated</td></tr>
+</table>
+<p>Shared milestone dates, <b>API freeze</b>, release candidate and final release must be aligned across the four Jira projects; each team stays responsible for testing its behaviour in the complete system.</p>
+<h3>GitHub</h3>
+<ul>
+  <li><b>Organisation per project</b> with repositories: <code>shared-frontend, api-gateway, identity-access-service,</code> the team services, <code>deployment-infrastructure, project-docs</code> (names may be shortened but ownership and purpose must be clear; do not duplicate repos to avoid integration).</li>
+  <li><b>Branching and PRs:</b> main protected, no direct pushes; feature branches such as <code>feature/AMS-G3-invoice-generation</code> or <code>fix/USM-G7-status-validation</code>; each PR states purpose, linked Jira issue, screenshots or API evidence, testing performed and known limitations; at least one meaningful peer review (shared frontend, gateway, security or integration changes reviewed by the relevant liaison or owner); resolve comments or record a justified decision; keep PRs focused; keep a clear release tag history.</li>
+  <li><b>Commit traceability:</b> concise coherent commits that reference the Jira key (e.g. <code>AMS-G3-24 add invoice balance calculation</code>); do not mix unrelated features, generated folders, secrets and documentation; no artificial commits to inflate activity; <b>contribution quality, review behaviour, testing and integration work matter more than raw commit count</b>.</li>
+  <li><b>Hygiene:</b> proper <code>.gitignore</code>; commit <code>.env.example</code> never real secrets; synthetic data only; enable dependency and code scanning where available; remove debug credentials, hard-coded tokens and sensitive logging before release; document third-party dependencies and licences.</li>
+  <li><b>CI and releases:</b> each service builds on PRs with GitHub Actions; the shared frontend runs type checking, build and available tests; a failed required check must be fixed before merge unless the teaching team approves; at least one <b>release-candidate tag</b> and one <b>final release tag</b> identifying compatible frontend, gateway, service, database and infrastructure versions; deployment must be reproducible.</li>
+</ul>
+
+<h2>7. Deliverables</h2>
+<table>
+  <tr><th>Category</th><th>Team-level</th><th>Project-level shared</th></tr>
+  <tr><td>Project management</td><td>Team plan, backlog, sprint backlogs, user stories, progress reports, risk log, change log, sprint reviews, retrospectives</td><td>Proposal/charter, integration plan, shared milestone plan, dependency log, closure report</td></tr>
+  <tr><td>Requirements</td><td>Domain SRS sections, FR and NFR, use cases/user flows, business rules, traceability</td><td>Consolidated scope, cross-domain workflows, shared glossary, system-wide NFRs</td></tr>
+  <tr><td>Design and architecture</td><td>Service design, ERD/data model, API spec, UI module designs, ADRs, threat considerations</td><td>System context, microservice architecture, deployment architecture, security model, API contract registry, shared UX conventions</td></tr>
+  <tr><td>Software</td><td>Owned microservices, DB scripts, frontend modules, tests, config examples, Docker files</td><td>Integrated web app, API Gateway, authentication integration, Docker Compose, deployment scripts, tagged release</td></tr>
+  <tr><td>QA</td><td>Test cases, unit/API test evidence, defect records, service integration results</td><td>Test strategy, end-to-end test report, security review, performance observations, simulated UAT report</td></tr>
+  <tr><td>Documentation and release</td><td>Service README, setup instructions, technical notes, contribution evidence</td><td>Swagger index, Postman collection, user guide, administrator guide, deployment guide, release notes, dependency list</td></tr>
+  <tr><td>Academic package</td><td>Individual contribution statement and team evidence</td><td>Repository list, DB scripts, config templates without secrets, final presentation, demonstration, closure and lessons learned</td></tr>
+</table>
+<h3>Templates provided</h3>
+<table>
+  <tr><th>Template</th><th>Key contents</th></tr>
+  <tr><td>Project proposal / charter</td><td>Title and 150&ndash;250 word summary, objectives, scope, stakeholders, team allocation, technology and architecture direction, milestones, risks, success criteria</td></tr>
+  <tr><td>Plan and milestones</td><td>Weeks 1&ndash;7: goal, epics/stories, dependencies, owners, evidence / exit condition</td></tr>
+  <tr><td>Risk register</td><td>ID, risk, probability, impact, mitigation, owner, status / review date</td></tr>
+  <tr><td>SRS</td><td>Introduction, overall description, system context, functional requirements, business rules, external interfaces, data, NFRs, traceability matrix, exclusions, version history</td></tr>
+  <tr><td>Functional requirement</td><td>ID (e.g. AMS-BILL-FR-01), title, statement ("The system shall ..."), preconditions, inputs, main outcome, exceptions, priority (Must/Should/Could), linked story and tests</td></tr>
+  <tr><td>Traceability matrix</td><td>Requirement &rarr; Jira story &rarr; service/UI module &rarr; API/design reference &rarr; test cases &rarr; status</td></tr>
+  <tr><td>Architecture document</td><td>Goals and quality attributes, context diagram, microservice diagram, boundaries and APIs, data ownership/ERDs, gateway and auth flow, frontend architecture, deployment diagram, error handling/timeouts/logging, security, decisions and trade-offs, limitations</td></tr>
+  <tr><td><b>ADR</b></td><td>ID and title (e.g. ADR-003: Separate reservation and facility services), status (Proposed / Accepted / Superseded), context, decision, <b>alternatives considered</b>, consequences, date and participants, related evidence</td></tr>
+  <tr><td>API design specification</td><td>Service and version, endpoint, purpose and owner, authentication and roles, request and response schemas, validation rules, status codes (201, 400, 401, 403, 409, 503), dependencies and failure behaviour, change notes, tests</td></tr>
+  <tr><td>UI/UX checklist</td><td>User flows, low-fi wireframes, hi-fi designs, shared navigation and conventions, role-aware dashboards, responsive behaviour, accessibility, empty/loading/success/warning/error states, design-to-implementation review</td></tr>
+  <tr><td>Test plan, test case, defect log, execution report</td><td>Levels (unit, API, integration, system, security, performance observation, simulated UAT); entry / exit criteria; test case fields (ID, story, steps, expected / actual, status Pass/Fail/Blocked/Not Run, evidence, defect ID); defect log (ID, summary, severity, owner, fix PR, retest); report (build, counts, results by workflow, critical defects, security, performance, UAT, residual risks)</td></tr>
+  <tr><td>Progress report, change request, sprint review, retrospective</td><td>Completed / in progress / blocked / quality / risks / next / evidence; change ID, impact on scope, architecture, schedule, testing; sprint goal, increment, feedback; "what helped, what slowed us down, what will we change next sprint"</td></tr>
+  <tr><td>Release notes, deployment guide, user and admin guides</td><td>Tag, compatible versions, features, fixes, migrations, config, limitations, rollback; prerequisites, env variables, DB, Docker/Compose startup order, cloud steps, smoke tests, troubleshooting; roles, workflows, administration</td></tr>
+</table>
+<h3>Final submission package</h3>
+<p>Repository index (organisation URL, repos, owners, default branches, tags, setup status); Jira evidence (project URL, backlog export or screenshots, sprint reports, completed issues, bugs, changes, dependencies); project documents (charter, plan, SRS, architecture, ERDs, API design, test documents, guides, release notes, closure report, retrospective); software release (integrated tagged code, migrations, Docker files, Compose, config examples, dependency list); API and testing (Swagger access, Postman collection without secrets, automated test reports, execution report, defect log); deployment (URL, guide, health-check evidence, known limitations); presentation and live demonstration with synthetic data; contribution evidence (role table and one individual statement per student with GitHub/Jira links).</p>
+
+<h2>8. Assessment</h2>
+<table>
+  <tr><th>Criterion</th><th>Marks</th><th>Type</th><th>Primary evidence</th></tr>
+  <tr><td>Project initiation, planning, cross-team coordination, Jira usage</td><td>15</td><td>Team</td><td>Proposal, plan, backlog quality, sprint evidence, risks, dependency coordination, progress visibility</td></tr>
+  <tr><td>Requirements analysis</td><td>15</td><td>Team</td><td>SRS, stories, acceptance criteria, use cases, business rules, traceability</td></tr>
+  <tr><td>Architecture and technical design</td><td>20</td><td>Team</td><td>Service boundaries, data ownership, API contracts, security, deployment design, UX architecture, ADRs</td></tr>
+  <tr><td>Software implementation and integration</td><td>25</td><td>Team</td><td>Working features, code quality, secure APIs, frontend modules, cross-service workflows, GitHub collaboration, integrated release</td></tr>
+  <tr><td>Testing and quality assurance</td><td>15</td><td>Team</td><td>Test plan, automated and Postman tests, integration/system tests, defects, security, UAT</td></tr>
+  <tr><td>Deployment, demonstration, documentation</td><td>5</td><td>Team</td><td>Deployed release, demo, guides</td></tr>
+  <tr><td>Individual contribution</td><td>5</td><td>Individual</td><td>Contribution statement, GitHub/Jira evidence</td></tr>
+  <tr><td><b>Total</b></td><td><b>100</b></td><td>Team 95 + individual 5</td><td></td></tr>
+</table>
+<p>Performance bands: Excellent (complete, coherent, evidence-based; strong decisions; reliable integration), Good (substantially complete; minor gaps), Satisfactory (minimum met with limitations or incomplete evidence), Limited (major gaps, weak justification, unreliable integration), Inadequate (little relevant evidence or serious integrity issues). Example top band for architecture (17&ndash;20 of 20): well-justified microservice boundaries, independent data ownership, API Gateway and JWT design, clear APIs, robust error and security approach, deployment architecture, ERDs, consistent diagrams.</p>
+<h3>Demonstration checklist</h3>
+<ul>
+  <li>Use a <b>stable tagged release</b>, not uncommitted local changes; prepare synthetic data showing roles, business rules, successes and validation failures.</li>
+  <li>Demonstrate at least <b>two cross-team end-to-end workflows</b>; show Jira planning and progress, selected PRs, reviews, CI checks and contribution evidence; show Swagger/Postman and representative automated tests.</li>
+  <li>Explain a meaningful <b>architecture decision</b> and one <b>integration problem</b> the teams resolved; keep a fallback local environment in case the cloud deployment is down.</li>
+</ul>
+
+<div class="box"><b>Key takeaways</b>
+The project is a 7-week, 8-team, two-product microservices build in which every team owns bounded services and data but all are accountable for the integrated release. Mandatory: shared React frontend, Spring Boot services with their own MySQL schemas, API gateway, central JWT auth, documented REST contracts, Docker Compose, health checks, OpenAPI. Process: Scrum with Jira stories and Given-When-Then criteria, Definition of Ready / Done, protected main, PRs with review and Jira keys, CI on every PR, tagged releases. Governance: weekly Integration Council, contracts changed only with notice. Marks: planning 15, requirements 15, architecture 20, implementation 25, testing 15, deployment/docs 5, individual 5.</div>
