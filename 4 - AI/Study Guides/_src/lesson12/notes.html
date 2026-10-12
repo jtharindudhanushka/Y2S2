@@ -1,0 +1,67 @@
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Say what swarm intelligence (SI) is and where it sits on the AI map</li>
+  <li>Compare it with genetic algorithms (both population-based, nature-inspired)</li>
+  <li>Describe, at an introductory level, ant colony optimisation (pheromone) and particle swarm optimisation (velocity update) with a worked number each (background)</li>
+</ul>
+<div class="box"><b>Read this first: this lesson has almost no source material</b>The lecture plan lists <b>Swarm Intelligence</b> (week 14), and the handwritten outline of the course includes it ("9. Swarm Intelligence"), but your folder contains <b>no slides, no assignment and no peer notes</b> on it. The official course-topic list in the course overview (introduction and prompt engineering, agents, search, genetic algorithms, ADK, CNNs, fuzzy logic, XAI and ethics) does not list it either. So:
+<br>&bull; Section 1 is everything your materials say (marked <b>From the course</b>); it is short.
+<br>&bull; Sections 2&ndash;4 are <b>Background</b>: standard introductory material added so the topic is not empty. It is <b>not from your lecturer</b>; do not assume the exam asks for it. Learn section 1 first, then skim the rest.</div>
+
+<h2>1. What your materials say <small style="color:var(--muted);font-weight:400">(from the course)</small></h2>
+<ul>
+  <li>The AI map: <b>SI = Swarm Intelligence: behaviour inspired by ants, birds, etc.</b> ("copy ants and birds"). It is one of the classical and complementary techniques under the AI umbrella, next to <b>GA</b> (genetic algorithms: optimisation inspired by evolution), <b>FL</b> (fuzzy logic) and <b>RB</b> (rule-based systems), and beside machine learning.</li>
+  <li>The lecturer's "AI from the lens of science" diagram shows AI containing GA, SI, FL and ML.</li>
+  <li>Course outline item 9: Swarm Intelligence (after fuzzy logic systems, before the basics of reinforcement learning).</li>
+  <li>These methods can be <b>hybridised</b>: for example Learning Classifier Systems (LCS) combine ideas from genetic algorithms and machine learning.</li>
+  <li>The GA lesson (Lesson 11) lists the swarm methods (particle swarm optimisation, ant colony optimisation) on the slide's map of <b>meta-heuristic</b> optimisers, next to the genetic algorithm.</li>
+</ul>
+<svg viewBox="0 0 640 190" role="img" aria-label="SI on the AI map" class="dg"><rect class="bx" x="10" y="10" width="620" height="170" rx="14" fill="none"/><text x="50" y="30" text-anchor="middle" class="h">AI</text><rect class="bx" x="25" y="60" width="112" height="80" rx="10" fill="var(--soft)"/><text x="81" y="85" text-anchor="middle" class="h">GA</text><text x="81" y="104" text-anchor="middle" class="sm">Genetic algorithms</text><text x="81" y="121" text-anchor="middle" class="sm">evolution</text><rect class="bx" x="145" y="60" width="112" height="80" rx="10" fill="var(--okbg)"/><text x="201" y="85" text-anchor="middle" class="h">SI</text><text x="201" y="104" text-anchor="middle" class="sm">Swarm intelligence</text><text x="201" y="121" text-anchor="middle" class="sm">ants, birds</text><rect class="bx" x="265" y="60" width="112" height="80" rx="10" fill="var(--soft)"/><text x="321" y="85" text-anchor="middle" class="h">FL</text><text x="321" y="104" text-anchor="middle" class="sm">Fuzzy logic</text><text x="321" y="121" text-anchor="middle" class="sm">degrees of truth</text><rect class="bx" x="385" y="60" width="112" height="80" rx="10" fill="var(--soft)"/><text x="441" y="85" text-anchor="middle" class="h">ML</text><text x="441" y="104" text-anchor="middle" class="sm">Machine learning</text><text x="441" y="121" text-anchor="middle" class="sm">learns from data</text><rect class="bx" x="505" y="60" width="112" height="80" rx="10" fill="var(--soft)"/><text x="561" y="85" text-anchor="middle" class="h">RB</text><text x="561" y="104" text-anchor="middle" class="sm">Rule-based</text><text x="561" y="121" text-anchor="middle" class="sm">GOFAI</text><text x="320" y="165" text-anchor="middle" class="sm">SI is one of the nature-inspired techniques under the AI umbrella</text></svg>
+
+<h2>2. Background: the swarm idea <small style="color:var(--muted);font-weight:400">(not from your course materials)</small></h2>
+<p>A <b>swarm</b> is a group of simple agents with no leader that follow simple local rules, yet together solve a hard problem: ants find the shortest path to food, birds flock, fish school. <b>Swarm intelligence</b> turns that behaviour into search and optimisation algorithms. Key features: many simple agents, local interaction, indirect communication, and a result no single agent plans. Like a GA it keeps a <b>population</b> of solutions, so it is a population-based meta-heuristic (Lesson 11); unlike a GA, the agents stay alive and <b>learn from each other</b> instead of being selected, crossed and replaced.</p>
+<table>
+  <tr><th></th><th>Genetic algorithm (Lesson 11)</th><th>Swarm intelligence</th></tr>
+  <tr><td>Inspiration</td><td>Evolution (survival of the fittest)</td><td>Ants, birds, fish: collective behaviour</td></tr>
+  <tr><td>Population</td><td>Chromosomes</td><td>Agents: ants, particles</td></tr>
+  <tr><td>How the population changes</td><td>Selection, crossover, mutation, replacement</td><td>Each agent moves, guided by its own experience and its neighbours'</td></tr>
+  <tr><td>Fitness</td><td>Fitness function</td><td>Objective function value at the agent's position</td></tr>
+</table>
+
+<h2>3. Background: ant colony optimisation (ACO)</h2>
+<svg viewBox="0 0 640 205" role="img" aria-label="Ants prefer the path with more pheromone" class="dg"><circle cx="60" cy="100" r="22" fill="var(--soft)" stroke="var(--fg)" stroke-width="1.2"/><text x="60" y="104" text-anchor="middle" class="sm">nest</text><circle cx="560" cy="100" r="22" fill="var(--soft)" stroke="var(--fg)" stroke-width="1.2"/><text x="560" y="104" text-anchor="middle" class="sm">food</text><path d="M82 100 C200 60 420 60 538 100" stroke="var(--ok)" stroke-width="9" fill="none" opacity="0.8"/><text x="310" y="50" text-anchor="middle" class="sm">short path: pheromone 4  ->  P = 0.8</text><path d="M82 100 C150 180 470 180 538 100" stroke="var(--bad)" stroke-width="2.5" fill="none" opacity="0.8"/><text x="310" y="190" text-anchor="middle" class="sm">long path: pheromone 1  ->  P = 0.2</text><circle cx="173.2" cy="74.7" r="3.5" fill="var(--fg)"/><circle cx="264.4" cy="60.9" r="3.5" fill="var(--fg)"/><circle cx="355.6" cy="60.9" r="3.5" fill="var(--fg)"/><circle cx="446.8" cy="74.7" r="3.5" fill="var(--fg)"/></svg>
+<ul>
+  <li>Real ants leave a chemical trail, <b>pheromone</b>, as they walk. Other ants prefer paths with stronger pheromone. On a <b>shorter</b> path ants make round trips faster, so pheromone builds up faster there: <b>positive feedback</b>. Pheromone also <b>evaporates</b>, so old, poor paths fade.</li>
+  <li><b>Algorithm idea:</b> each ant builds a route (e.g. a travelling-salesman tour) choosing the next step with probability proportional to the pheromone (and usually the shortness of the step); then pheromone evaporates and the ants deposit more on short routes.</li>
+  <li><b>Choice rule (simple form):</b> P(path) = pheromone on the path / total pheromone. <b>Update:</b> &tau; &larr; (1 &minus; &rho;) &tau; + deposits, where &rho; is the evaporation rate and a shorter route L deposits more (e.g. Q / L).</li>
+</ul>
+<p><b>Illustrative numbers:</b> two paths: short (L = 2) with pheromone 4, long (L = 4) with pheromone 1. P(short) = 4 / (4 + 1) = <b>0.8</b>. Say 8 ants walk: about 6 take the short path and 2 the long one. With &rho; = 0.5 and deposit Q / L (Q = 2: 1 per ant on the short path, 0.5 per ant on the long path): short: 0.5 &times; 4 + 6 &times; 1 = <b>8</b>; long: 0.5 &times; 1 + 2 &times; 0.5 = <b>1.5</b>. Now P(short) = 8 / 9.5 = <b>0.84</b>: the colony drifts to the shorter path.</p>
+
+<h2>4. Background: particle swarm optimisation (PSO)</h2>
+<svg viewBox="0 0 640 170" role="img" aria-label="One PSO velocity update on a number line" class="dg"><path d="M40 110 H600" stroke="var(--fg)" fill="none"/><line x1="90.9" y1="106" x2="90.9" y2="114" stroke="var(--fg)"/><text x="90.9090909090909" y="130" text-anchor="middle" class="sm">0</text><line x1="192.7" y1="106" x2="192.7" y2="114" stroke="var(--fg)"/><text x="192.72727272727272" y="130" text-anchor="middle" class="sm">1</text><line x1="294.5" y1="106" x2="294.5" y2="114" stroke="var(--fg)"/><text x="294.5454545454545" y="130" text-anchor="middle" class="sm">2</text><line x1="396.4" y1="106" x2="396.4" y2="114" stroke="var(--fg)"/><text x="396.3636363636364" y="130" text-anchor="middle" class="sm">3</text><line x1="498.2" y1="106" x2="498.2" y2="114" stroke="var(--fg)"/><text x="498.1818181818182" y="130" text-anchor="middle" class="sm">4</text><circle cx="498.2" cy="110" r="7" fill="var(--bad)"/><text x="498.1818181818182" y="95" text-anchor="middle" class="sm">x = 4 (f = 16)</text><circle cx="213.1" cy="110" r="7" fill="var(--accent)"/><text x="213.0909090909091" y="95" text-anchor="middle" class="sm">new x = 1.2 (f = 1.44)</text><circle cx="396.4" cy="110" r="5" fill="none" stroke="var(--ok)" stroke-width="2.5"/><text x="396.3636363636364" y="152" text-anchor="middle" class="sm">pbest = 3</text><circle cx="192.7" cy="110" r="5" fill="none" stroke="#d98e04" stroke-width="2.5"/><text x="192.72727272727272" y="152" text-anchor="middle" class="sm">gbest = 1</text><path class="ar" d="M498.2 70 L218.2 70"/><text x="355.6363636363636" y="62" text-anchor="middle" class="sm">v_new = -2.8</text><text x="320" y="18" text-anchor="middle" class="sm">PSO step: inertia + pull to own best + pull to swarm best</text></svg>
+<ul>
+  <li>Each <b>particle</b> is a candidate solution with a <b>position x</b> and a <b>velocity v</b> flying through the search space. It remembers its own best position (<b>pbest</b>) and knows the best position found by the swarm (<b>gbest</b>), like birds heading for where the flock found food.</li>
+  <li><b>Velocity update:</b> v<sub>new</sub> = w &middot; v + c<sub>1</sub> r<sub>1</sub> (pbest &minus; x) + c<sub>2</sub> r<sub>2</sub> (gbest &minus; x); <b>position update:</b> x<sub>new</sub> = x + v<sub>new</sub>. Here w is inertia (keep going), c<sub>1</sub> is the pull to its own best (memory), c<sub>2</sub> the pull to the swarm's best (social), r<sub>1</sub>, r<sub>2</sub> random numbers in (0, 1).</li>
+</ul>
+<p><b>Worked example (illustrative):</b> minimise f(x) = x&sup2;. A particle at x = 4 (f = 16) with v = 1, pbest = 3, swarm best gbest = 1; w = 0.5, c<sub>1</sub> = c<sub>2</sub> = 1.5, r<sub>1</sub> = 0.4, r<sub>2</sub> = 0.6. v<sub>new</sub> = 0.5 &times; 1 + 1.5 &times; 0.4 &times; (3 &minus; 4) + 1.5 &times; 0.6 &times; (1 &minus; 4) = 0.5 &minus; 0.6 &minus; 2.7 = <b>&minus;2.8</b>. x<sub>new</sub> = 4 + (&minus;2.8) = <b>1.2</b>, so f falls from 16 to 1.44. Repeat for every particle until the swarm converges; the answer is gbest.</p>
+<table>
+  <tr><th></th><th>ACO</th><th>PSO</th></tr>
+  <tr><td>Agents</td><td>Ants</td><td>Particles</td></tr>
+  <tr><td>Shared memory</td><td>Pheromone trails (indirect)</td><td>pbest and gbest</td></tr>
+  <tr><td>Typical use</td><td>Routes and orderings (TSP)</td><td>Continuous numerical optimisation</td></tr>
+</table>
+
+<h2>Words list</h2>
+<table>
+  <tr><th>Word</th><th>Plain meaning</th></tr>
+  <tr><td>Swarm intelligence (SI)</td><td>Behaviour inspired by ants, birds and other groups (course)</td></tr>
+  <tr><td>Swarm / agent</td><td>A group of simple agents with no leader</td></tr>
+  <tr><td>Pheromone</td><td>Chemical trail ants leave; stronger = more attractive</td></tr>
+  <tr><td>Evaporation</td><td>Pheromone fades so poor paths are forgotten</td></tr>
+  <tr><td>Particle, velocity</td><td>A candidate solution and how it moves (PSO)</td></tr>
+  <tr><td>pbest / gbest</td><td>Particle's own best / swarm's best position</td></tr>
+  <tr><td>Hybridisation</td><td>Combining AI methods (e.g. LCS = GA + ML)</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+From your course: swarm intelligence is AI inspired by ants and birds, sitting beside GA, fuzzy logic and rule-based systems (and ML) under the AI umbrella, and can be hybridised. Nothing more is in your materials. Background only: ACO uses pheromone with positive feedback and evaporation to find short routes; PSO moves particles using inertia plus pulls toward their own best and the swarm's best.</div>

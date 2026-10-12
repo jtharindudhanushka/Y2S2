@@ -18,7 +18,7 @@ Converted peer notes (read these, not the raw PDFs): `../Peer Notes/Notes - Yasi
 9 DONE. Course parts: image-generation slide + colourisation assignment notebook (U-Net code, read fully). Diffusion/GAN/VAE section labelled Background (no source).
 10 DONE (no slides; peer-made L12 + lecturer statements in Geethma).
 11 DONE (slides 05 read as images + peer L4, Yasiru 4, Geethma AI 4; exact roulette % used; slide typo 0.59 noted).
-12 Swarm Intelligence (NO source material: placeholder)
+12 DONE (short: course facts + Background ACO/PSO, clearly flagged; not in official topic list).
 13 Fuzzy Logic (slides 10; peer-made L9)
 14 XAI and Ethics (slides 11; peer-made L11; EU case assignment md)
 Then: AI index page (copy DSA index.html pattern; LESSONS list), set SUBJECTS notes count in `_tools/build_hub.py`, run it, commit.
