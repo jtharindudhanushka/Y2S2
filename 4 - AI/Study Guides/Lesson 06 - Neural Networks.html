@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Lesson 6 - Artificial Neural Networks</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; AI study guides</a> &middot; INTE 22303 &middot; Lesson 06</p><button id="theme" type="button"></button></div>
+  <h1>Artificial Neural Networks</h1>
+  <p class="lead">Covers: why a straight line is not enough, the neuron (aggregation and activation) and its biological parallel, building a squiggle with hidden nodes, activation functions (linear, sigmoid, tanh, ReLU, SoftPlus), how a network learns (forward pass, loss, backpropagation, gradient descent, epochs), AND vs XOR and linear separability, and hidden layers and the multi-layer perceptron. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain what a neural network is and why a straight line is not enough (the drug-dose "squiggle")</li>
+  <li>Describe a neuron: aggregation (z = &Sigma; w x + b) then activation (a = f(z)), and link it to a biological neuron</li>
+  <li>Know the activation functions (linear, sigmoid, tanh, ReLU, SoftPlus), their ranges, uses and weaknesses</li>
+  <li>Explain how a network learns: forward pass, loss, backpropagation, gradient descent, epochs</li>
+  <li>Show why one neuron can learn AND but not XOR, and how a hidden layer (an MLP) solves XOR; count the weights of an MLP</li>
+</ul>
+
+<h2>1. The big idea: a squiggle-fitting machine</h2>
+<div class="box"><b>Definition</b>An <b>artificial neural network (ANN)</b> is a network of simple processing units called <b>neurons</b> (nodes) wired together in layers, loosely inspired by the brain. Together they can fit curvy, non-linear patterns that a straight line cannot.</div>
+<p><b>Link to Lesson 5:</b> logistic regression is simply a neural network with <b>one neuron</b>: inputs, a weighted sum plus bias, then a sigmoid giving a probability. A neural network duplicates that building block many times and arranges the neurons in layers.</p>
+<p><b>The problem a straight line cannot solve.</b> A drug is tested at three doses:</p>
+<table>
+  <tr><th>Dose</th><th>Effective?</th><th>Value</th></tr>
+  <tr><td>Low</td><td>No</td><td>0</td></tr>
+  <tr><td>Medium</td><td>Yes</td><td>1</td></tr>
+  <tr><td>High</td><td>No (too much)</td><td>0</td></tr>
+</table>
+<p>The pattern 0, 1, 0 rises then falls like a hill. A straight line (linear regression) can only go up or down, so it cannot follow a hill. <i>Analogy: a ruler cannot trace a hill, but bendy wires can be stretched, flipped and joined into almost any shape. Each neuron makes one bendy wire; the network joins them into a squiggle.</i></p>
+<h3>The parts, in plain words</h3>
+<table>
+  <tr><th>Part</th><th>Meaning</th></tr>
+  <tr><td><b>Neuron (node)</b></td><td>One tiny calculator: numbers in, one number out</td></tr>
+  <tr><td><b>Layer</b></td><td>A row of neurons. <b>Input layer</b> receives the data; <b>hidden layer(s)</b> sit in the middle (hidden because we do not see their values directly); <b>output layer</b> gives the answer</td></tr>
+  <tr><td><b>Weight (w)</b></td><td>A number multiplying an input; a big weight means that input matters more</td></tr>
+  <tr><td><b>Bias (b)</b></td><td>A number added afterwards, shifting the result up or down</td></tr>
+  <tr><td><b>Activation function</b></td><td>A curved function that bends the neuron's number; it is what lets the network make curves</td></tr>
+</table>
+
+<h2>2. Inside one neuron: two steps</h2>
+<svg viewBox="0 0 640 190" role="img" aria-label="One artificial neuron" class="dg">
+<text x="40" y="45" class="mono">x1</text><text x="40" y="100" class="mono">x2</text><text x="40" y="155" class="mono">1</text>
+<path class="ar" d="M65 42 L250 88"/><path class="ar" d="M65 97 L248 97"/><path class="ar" d="M65 152 L250 108"/>
+<text x="130" y="55" class="sm">w1</text><text x="130" y="90" class="sm">w2</text><text x="110" y="148" class="sm">b (bias weight)</text>
+<circle class="bx" cx="285" cy="97" r="38"/><text x="285" y="92" text-anchor="middle" class="h">&Sigma;</text><text x="285" y="110" text-anchor="middle" class="sm">z</text>
+<path class="ar" d="M323 97 L400 97"/>
+<rect class="bx" x="402" y="67" width="95" height="60" rx="8"/><text x="450" y="92" text-anchor="middle" class="h">f(z)</text><text x="450" y="110" text-anchor="middle" class="sm">activation</text>
+<path class="ar" d="M497 97 L575 97"/><text x="590" y="102" class="mono">a</text>
+<text x="285" y="40" text-anchor="middle" class="sm">1. aggregate: z = w1x1 + w2x2 + b</text><text x="450" y="55" text-anchor="middle" class="sm">2. activate: a = f(z)</text>
+</svg>
+<ol>
+  <li><b>Aggregation (weighted sum):</b> <b>z = w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub> + &hellip; + b = &Sigma; w<sub>i</sub>x<sub>i</sub> + b</b>. Each input has its own weight (amplifies or suppresses it); the bias is a baseline offset. In Lesson 5 notation the bias is a weight W<sub>0</sub> on a fixed input x<sub>0</sub> = 1, so z = &Sigma; W<sub>i</sub>x<sub>i</sub>.</li>
+  <li><b>Activation:</b> <b>a = f(z)</b>. The activation function decides how strongly the neuron "fires" to the next layer. <i>Analogy: deciding about a party: friends' opinions (inputs) count more or less (weights); add your mood (bias) to get z; then decide how excited to feel (activation).</i></li>
+</ol>
+<p>With one input it is simply z = w x + b, the same line as linear regression. A neuron with a linear activation <b>is</b> linear regression (c = W<sub>0</sub>, m = W<sub>1</sub>); a neuron with a sigmoid activation <b>is</b> logistic regression.</p>
+<h3>Worked example</h3>
+<p>Inputs x<sub>1</sub> = 2, x<sub>2</sub> = 3; weights w<sub>1</sub> = 0.5, w<sub>2</sub> = &minus;1; bias b = 1. Then z = (0.5 &times; 2) + (&minus;1 &times; 3) + 1 = 1 &minus; 3 + 1 = <b>&minus;1</b>.</p>
+<table>
+  <tr><th>Activation</th><th>Output f(&minus;1)</th></tr>
+  <tr><td>Linear f(z) = z</td><td>&minus;1</td></tr>
+  <tr><td>Sigmoid 1/(1 + e<sup>1</sup>)</td><td>1 / 3.718 = 0.269</td></tr>
+  <tr><td>Tanh</td><td>&minus;0.762</td></tr>
+  <tr><td>ReLU max(0, z)</td><td>0</td></tr>
+  <tr><td>SoftPlus ln(1 + e<sup>z</sup>)</td><td>ln(1.368) = 0.313</td></tr>
+</table>
+<p>The same z gives different outputs: the activation function you choose changes what the neuron does.</p>
+
+<h3>The biological parallel</h3>
+<svg viewBox="0 0 640 110" role="img" aria-label="Biological neuron parts and their artificial counterparts" class="dg">
+<rect class="bx" x="5" y="15" width="115" height="60" rx="8"/><text x="62" y="37" text-anchor="middle" class="h">Dendrites</text><text x="62" y="56" text-anchor="middle" class="sm">= inputs x</text>
+<rect class="bx" x="140" y="15" width="115" height="60" rx="8"/><text x="197" y="37" text-anchor="middle" class="h">Synapses</text><text x="197" y="56" text-anchor="middle" class="sm">= weights w</text>
+<rect class="bx" x="275" y="15" width="115" height="60" rx="8"/><text x="332" y="37" text-anchor="middle" class="h">Cell body</text><text x="332" y="56" text-anchor="middle" class="sm">= sum &Sigma;</text>
+<rect class="bx" x="410" y="15" width="115" height="60" rx="8"/><text x="467" y="37" text-anchor="middle" class="h">Axon hillock</text><text x="467" y="56" text-anchor="middle" class="sm">= f(z) and bias</text>
+<rect class="bx" x="545" y="15" width="90" height="60" rx="8"/><text x="590" y="37" text-anchor="middle" class="h">Axon</text><text x="590" y="56" text-anchor="middle" class="sm">= output a</text>
+<path class="ar" d="M120 45 L138 45"/><path class="ar" d="M255 45 L273 45"/><path class="ar" d="M390 45 L408 45"/><path class="ar" d="M525 45 L543 45"/>
+<text x="320" y="100" text-anchor="middle" class="sm">each real part of the neuron and its artificial counterpart; the hillock fires above about -55 mV</text>
+</svg>
+<table>
+  <tr><th>Biological part</th><th>What it does</th><th>Artificial version</th></tr>
+  <tr><td>Dendrites</td><td>Receive chemical signals from neighbouring cells</td><td>Inputs x</td></tr>
+  <tr><td>Synapse strength</td><td>How strong the connection is; grows or shrinks with experience</td><td>Weights w</td></tr>
+  <tr><td>Cell body (soma)</td><td>Pools the electrical charges from all dendrites</td><td>Sum &Sigma;</td></tr>
+  <tr><td>Axon hillock</td><td>Checks whether the total charge crosses a threshold (about &minus;55 mV)</td><td>Activation function and bias</td></tr>
+  <tr><td>Axon</td><td>Fires a spike (action potential) to the next cells</td><td>Output a</td></tr>
+</table>
+<p><b>Warm mug vs hot stove:</b> a warm mug gives weak signals that barely reach the threshold, so the neuron fires slowly; a hot stove gives huge input, the total blows past the threshold, and the neuron fires at full strength so you pull your hand away. Real neurons obey the <b>all-or-none law</b> (fire completely or not at all); activation functions are a smoother mathematical version of this.</p>
+
+<h2>3. Building the squiggle (the drug network)</h2>
+<p>Network: 1 input (dose, scaled 0 to 1), <b>2 hidden nodes</b>, 1 output. Both hidden nodes use the <b>SoftPlus</b> curve f(x) = ln(1 + e<sup>x</sup>) (a smooth ReLU: almost 0 for negative x, then rising), but with different weights and biases, so they make differently shaped curves. The network scales and flips them, adds them and adds a bias.</p>
+<table>
+  <tr><th>Connection</th><th>Weight</th><th>Bias</th></tr>
+  <tr><td>Input &rarr; hidden node 1</td><td>&minus;34.4</td><td>2.14</td></tr>
+  <tr><td>Input &rarr; hidden node 2</td><td>&minus;2.52</td><td>1.29</td></tr>
+  <tr><td>Hidden node 1 &rarr; output</td><td>&minus;1.3</td><td></td></tr>
+  <tr><td>Hidden node 2 &rarr; output</td><td>2.28</td><td></td></tr>
+  <tr><td>Final bias on the output</td><td></td><td>&minus;0.58</td></tr>
+</table>
+<p><b>Dose 0:</b> node 1: x = &minus;34.4 &times; 0 + 2.14 = 2.14, SoftPlus 2.25; node 2: x = 1.29, SoftPlus 1.53. Scale: 2.25 &times; (&minus;1.3) = &minus;2.93; 1.53 &times; 2.28 = 3.49. Output = &minus;2.93 + 3.49 &minus; 0.58 = <b>&minus;0.01 &asymp; 0</b> (not effective).</p>
+<p><b>Dose 0.5:</b> node 1: x = &minus;34.4 &times; 0.5 + 2.14 = &minus;15.06, SoftPlus &asymp; 0; node 2: x = &minus;2.52 &times; 0.5 + 1.29 = 0.03, SoftPlus 0.71. Output = 0 + 0.71 &times; 2.28 &minus; 0.58 = <b>1.03 &asymp; 1</b> (effective).</p>
+<table>
+  <tr><th>Dose</th><th>Node 1 (after SoftPlus)</th><th>Node 2 (after SoftPlus)</th><th>Output = &minus;1.3 &times; n1 + 2.28 &times; n2 &minus; 0.58</th></tr>
+  <tr><td>0</td><td>2.25</td><td>1.53</td><td>&minus;0.01</td></tr>
+  <tr><td>0.25</td><td>0.00</td><td>1.08</td><td>1.87</td></tr>
+  <tr><td>0.5</td><td>0.00</td><td>0.71</td><td>1.03</td></tr>
+  <tr><td>0.75</td><td>0.00</td><td>0.44</td><td>0.42</td></tr>
+  <tr><td>1</td><td>0.00</td><td>0.26</td><td>0.00</td></tr>
+</table>
+<svg viewBox="0 0 640 215" role="img" aria-label="Squiggle fitted by the drug network" class="dg"><path d="M70 170 H580 M70 170 V15" stroke="var(--fg)" fill="none"/><polyline points="70.0,155.1 76.1,132.7 82.2,112.0 88.4,93.4 94.5,77.4 100.6,64.3 106.8,54.2 112.9,47.1 119.0,42.5 125.1,40.0 131.2,39.1 137.4,39.3 143.5,40.3 149.6,41.8 155.8,43.7 161.9,45.8 168.0,48.1 174.1,50.4 180.2,52.8 186.4,55.2 192.5,57.6 198.6,60.0 204.8,62.4 210.9,64.8 217.0,67.1 223.1,69.4 229.2,71.7 235.4,74.0 241.5,76.2 247.6,78.5 253.8,80.7 259.9,82.8 266.0,84.9 272.1,87.0 278.2,89.1 284.4,91.2 290.5,93.2 296.6,95.2 302.8,97.1 308.9,99.1 315.0,101.0 321.1,102.8 327.2,104.7 333.4,106.5 339.5,108.3 345.6,110.0 351.8,111.7 357.9,113.4 364.0,115.1 370.1,116.7 376.2,118.4 382.4,119.9 388.5,121.5 394.6,123.0 400.8,124.5 406.9,126.0 413.0,127.4 419.1,128.8 425.2,130.2 431.4,131.6 437.5,132.9 443.6,134.2 449.8,135.5 455.9,136.7 462.0,137.9 468.1,139.1 474.2,140.3 480.4,141.5 486.5,142.6 492.6,143.7 498.8,144.8 504.9,145.8 511.0,146.8 517.1,147.8 523.2,148.8 529.4,149.8 535.5,150.7 541.6,151.6 547.8,152.5 553.9,153.4 560.0,154.2" fill="none" stroke="var(--accent)" stroke-width="2.4"/><circle cx="70.0" cy="154.5" r="6" fill="var(--bad)"/><circle cx="315.0" cy="102.8" r="6" fill="var(--bad)"/><circle cx="560.0" cy="154.5" r="6" fill="var(--bad)"/><text x="70" y="190" class="sm" text-anchor="middle">0 (low)</text><text x="315" y="190" class="sm" text-anchor="middle">0.5 (medium)</text><text x="560" y="190" class="sm" text-anchor="middle">1 (high)</text><text x="62" y="106.8" class="sm" text-anchor="end">1</text><text x="62" y="158.5" class="sm" text-anchor="end">0</text><text x="320" y="208" text-anchor="middle" class="sm">dose  |  red dots = data, blue line = network output</text></svg>
+<p>The output starts near 0, rises above 1, then falls back to 0: a hill, exactly what the data needs (at the three data doses it gives about 0, 1, 0). Node 1's curve is high at the start and drops to 0; its weight &minus;1.3 <b>flips</b> it. Node 2's gentle falling curve is <b>stretched</b> by 2.28. Adding them and sliding with the bias gives the hill. A bigger network with more nodes makes a more detailed squiggle. Training (section 5) is what finds these weights and biases.</p>
+
+<h2>4. Activation functions</h2>
+<h3>Why we need them: layers would collapse</h3>
+<p>If layer 1 is z<sub>1</sub> = 2x + 1 and layer 2 is z<sub>2</sub> = 3z<sub>1</sub> &minus; 2, then z<sub>2</sub> = 3(2x + 1) &minus; 2 = 6x + 1: two layers became one straight line (check x = 2: 3 &times; 5 &minus; 2 = 13 = 6 &times; 2 + 1). A network of only straight-line steps is still a straight line however deep. An activation function bends the signal and prevents this.</p>
+<svg viewBox="0 0 680 165" role="img" aria-label="Four activation functions" class="dg"><text x="80" y="20" text-anchor="middle" class="h">Linear</text><path d="M20 85.0 H140 M80 40 V130" stroke="var(--muted)" fill="none"/><polyline points="20.0,130.0 21.5,128.9 23.0,127.8 24.5,126.6 26.0,125.5 27.5,124.4 29.0,123.2 30.5,122.1 32.0,121.0 33.5,119.9 35.0,118.8 36.5,117.6 38.0,116.5 39.5,115.4 41.0,114.2 42.5,113.1 44.0,112.0 45.5,110.9 47.0,109.8 48.5,108.6 50.0,107.5 51.5,106.4 53.0,105.2 54.5,104.1 56.0,103.0 57.5,101.9 59.0,100.8 60.5,99.6 62.0,98.5 63.5,97.4 65.0,96.2 66.5,95.1 68.0,94.0 69.5,92.9 71.0,91.8 72.5,90.6 74.0,89.5 75.5,88.4 77.0,87.2 78.5,86.1 80.0,85.0 81.5,83.9 83.0,82.8 84.5,81.6 86.0,80.5 87.5,79.4 89.0,78.2 90.5,77.1 92.0,76.0 93.5,74.9 95.0,73.8 96.5,72.6 98.0,71.5 99.5,70.4 101.0,69.2 102.5,68.1 104.0,67.0 105.5,65.9 107.0,64.8 108.5,63.6 110.0,62.5 111.5,61.4 113.0,60.2 114.5,59.1 116.0,58.0 117.5,56.9 119.0,55.8 120.5,54.6 122.0,53.5 123.5,52.4 125.0,51.2 126.5,50.1 128.0,49.0 129.5,47.9 131.0,46.8 132.5,45.6 134.0,44.5 135.5,43.4 137.0,42.2 138.5,41.1 140.0,40.0" fill="none" stroke="var(--accent)" stroke-width="2.2"/><text x="80" y="150" text-anchor="middle" class="sm">range -inf to +inf</text><text x="250" y="20" text-anchor="middle" class="h">Sigmoid</text><path d="M190 122.5 H310 M250 40 V130" stroke="var(--muted)" fill="none"/><polyline points="190.0,121.2 191.5,121.0 193.0,120.9 194.5,120.7 196.0,120.5 197.5,120.3 199.0,120.1 200.5,119.8 202.0,119.6 203.5,119.3 205.0,118.9 206.5,118.6 208.0,118.2 209.5,117.8 211.0,117.3 212.5,116.8 214.0,116.3 215.5,115.7 217.0,115.0 218.5,114.3 220.0,113.6 221.5,112.7 223.0,111.9 224.5,110.9 226.0,109.9 227.5,108.8 229.0,107.7 230.5,106.4 232.0,105.1 233.5,103.8 235.0,102.3 236.5,100.8 238.0,99.2 239.5,97.6 241.0,95.9 242.5,94.2 244.0,92.4 245.5,90.6 247.0,88.7 248.5,86.9 250.0,85.0 251.5,83.1 253.0,81.3 254.5,79.4 256.0,77.6 257.5,75.8 259.0,74.1 260.5,72.4 262.0,70.8 263.5,69.2 265.0,67.7 266.5,66.2 268.0,64.9 269.5,63.6 271.0,62.3 272.5,61.2 274.0,60.1 275.5,59.1 277.0,58.1 278.5,57.3 280.0,56.4 281.5,55.7 283.0,55.0 284.5,54.3 286.0,53.7 287.5,53.2 289.0,52.7 290.5,52.2 292.0,51.8 293.5,51.4 295.0,51.1 296.5,50.7 298.0,50.4 299.5,50.2 301.0,49.9 302.5,49.7 304.0,49.5 305.5,49.3 307.0,49.1 308.5,49.0 310.0,48.8" fill="none" stroke="var(--accent)" stroke-width="2.2"/><text x="250" y="150" text-anchor="middle" class="sm">range 0 to 1</text><text x="420" y="20" text-anchor="middle" class="h">Tanh</text><path d="M360 85.0 H480 M420 40 V130" stroke="var(--muted)" fill="none"/><polyline points="360.0,122.5 361.5,122.5 363.0,122.5 364.5,122.5 366.0,122.4 367.5,122.4 369.0,122.4 370.5,122.4 372.0,122.4 373.5,122.3 375.0,122.3 376.5,122.3 378.0,122.2 379.5,122.2 381.0,122.1 382.5,122.0 384.0,121.9 385.5,121.8 387.0,121.6 388.5,121.4 390.0,121.2 391.5,120.9 393.0,120.5 394.5,120.1 396.0,119.6 397.5,118.9 399.0,118.2 400.5,117.3 402.0,116.3 403.5,115.0 405.0,113.6 406.5,111.9 408.0,109.9 409.5,107.7 411.0,105.1 412.5,102.3 414.0,99.2 415.5,95.9 417.0,92.4 418.5,88.7 420.0,85.0 421.5,81.3 423.0,77.6 424.5,74.1 426.0,70.8 427.5,67.7 429.0,64.9 430.5,62.3 432.0,60.1 433.5,58.1 435.0,56.4 436.5,55.0 438.0,53.7 439.5,52.7 441.0,51.8 442.5,51.1 444.0,50.4 445.5,49.9 447.0,49.5 448.5,49.1 450.0,48.8 451.5,48.6 453.0,48.4 454.5,48.2 456.0,48.1 457.5,48.0 459.0,47.9 460.5,47.8 462.0,47.8 463.5,47.7 465.0,47.7 466.5,47.7 468.0,47.6 469.5,47.6 471.0,47.6 472.5,47.6 474.0,47.6 475.5,47.5 477.0,47.5 478.5,47.5 480.0,47.5" fill="none" stroke="var(--accent)" stroke-width="2.2"/><text x="420" y="150" text-anchor="middle" class="sm">range -1 to 1</text><text x="590" y="20" text-anchor="middle" class="h">ReLU</text><path d="M530 120.0 H650 M590 40 V130" stroke="var(--muted)" fill="none"/><polyline points="530.0,120.0 531.5,120.0 533.0,120.0 534.5,120.0 536.0,120.0 537.5,120.0 539.0,120.0 540.5,120.0 542.0,120.0 543.5,120.0 545.0,120.0 546.5,120.0 548.0,120.0 549.5,120.0 551.0,120.0 552.5,120.0 554.0,120.0 555.5,120.0 557.0,120.0 558.5,120.0 560.0,120.0 561.5,120.0 563.0,120.0 564.5,120.0 566.0,120.0 567.5,120.0 569.0,120.0 570.5,120.0 572.0,120.0 573.5,120.0 575.0,120.0 576.5,120.0 578.0,120.0 579.5,120.0 581.0,120.0 582.5,120.0 584.0,120.0 585.5,120.0 587.0,120.0 588.5,120.0 590.0,120.0 591.5,118.0 593.0,116.0 594.5,114.0 596.0,112.0 597.5,110.0 599.0,108.0 600.5,106.0 602.0,104.0 603.5,102.0 605.0,100.0 606.5,98.0 608.0,96.0 609.5,94.0 611.0,92.0 612.5,90.0 614.0,88.0 615.5,86.0 617.0,84.0 618.5,82.0 620.0,80.0 621.5,78.0 623.0,76.0 624.5,74.0 626.0,72.0 627.5,70.0 629.0,68.0 630.5,66.0 632.0,64.0 633.5,62.0 635.0,60.0 636.5,58.0 638.0,56.0 639.5,54.0 641.0,52.0 642.5,50.0 644.0,48.0 645.5,46.0 647.0,44.0 648.5,42.0 650.0,40.0" fill="none" stroke="var(--accent)" stroke-width="2.2"/><text x="590" y="150" text-anchor="middle" class="sm">range 0 to +inf</text></svg>
+<table>
+  <tr><th>Name</th><th>Formula</th><th>Output range</th><th>Shape</th></tr>
+  <tr><td>Linear</td><td>f(z) = z</td><td>&minus;&infin; to +&infin;</td><td>Straight line</td></tr>
+  <tr><td>Sigmoid</td><td>f(z) = 1 / (1 + e<sup>&minus;z</sup>)</td><td>0 to 1</td><td>S-shape</td></tr>
+  <tr><td>Tanh</td><td>(e<sup>z</sup> &minus; e<sup>&minus;z</sup>) / (e<sup>z</sup> + e<sup>&minus;z</sup>)</td><td>&minus;1 to 1</td><td>S-shape through (0, 0)</td></tr>
+  <tr><td>ReLU</td><td>f(z) = max(0, z)</td><td>0 to +&infin;</td><td>Flat then a rising line</td></tr>
+  <tr><td>SoftPlus</td><td>f(z) = ln(1 + e<sup>z</sup>)</td><td>0 to +&infin;</td><td>A smooth version of ReLU</td></tr>
+</table>
+<table>
+  <tr><th>z</th><th>Linear</th><th>Sigmoid</th><th>Tanh</th><th>ReLU</th></tr>
+  <tr><td>&minus;2</td><td>&minus;2</td><td>0.119</td><td>&minus;0.964</td><td>0</td></tr>
+  <tr><td>0</td><td>0</td><td>0.5</td><td>0</td><td>0</td></tr>
+  <tr><td>2</td><td>2</td><td>0.881</td><td>0.964</td><td>2</td></tr>
+</table>
+<ul>
+  <li><b>Linear:</b> what goes in comes out. Use: <b>output layer for regression</b> (house price, temperature). Limit: in hidden layers it makes layers collapse into one line.</li>
+  <li><b>Sigmoid:</b> squashes to 0 to 1 (big positive &rarr; 1, big negative &rarr; 0, 0 &rarr; 0.5). Use: <b>output layer for binary classification</b> (a probability: 0.88 = 88 % chance). Limits: <b>vanishing gradient</b> (flat at the extremes; the slope is &sigma;(1 &minus; &sigma;): 0.25 at z = 0, 0.105 at z = 2, 0.0066 at z = 5, so gradient descent takes tiny steps and early layers almost stop learning) and <b>not zero-centred</b> (all outputs positive, so weight updates zig-zag).</li>
+  <li><b>Tanh:</b> a scaled, shifted sigmoid with range &minus;1 to +1 through (0, 0). Advantage: <b>zero-centred</b>, which balances updates and speeds training. Limit: still flattens at the extremes (vanishing gradient).</li>
+  <li><b>ReLU:</b> a one-way valve: z &le; 0 gives 0, z &gt; 0 gives z. Why it dominates modern deep learning: <b>cheap</b> (an if-check, no exponentials), <b>no flat part for positives</b> (slope exactly 1, so gradients do not vanish) and <b>sparse</b> (negatives become 0 so many neurons stay quiet). Limit: <b>dying ReLU</b>: if a neuron's input is always negative it outputs 0 with slope 0 and stops learning for good.</li>
+  <li><b>SoftPlus:</b> a smooth ReLU with no sharp corner (used in the drug network).</li>
+</ul>
+<table>
+  <tr><th>Function</th><th>Zero-centred?</th><th>Vanishing gradient?</th><th>Typical use</th></tr>
+  <tr><td>Linear</td><td>Yes (if the input is)</td><td>No</td><td>Output layer, regression</td></tr>
+  <tr><td>Sigmoid</td><td>No</td><td>Yes, at the extremes</td><td>Output layer, yes/no</td></tr>
+  <tr><td>Tanh</td><td>Yes</td><td>Yes, at the extremes</td><td>Hidden layers (older style)</td></tr>
+  <tr><td>ReLU / SoftPlus</td><td>No</td><td>None for z &gt; 0 (ReLU freezes if z &le; 0)</td><td>Hidden layers (most common today)</td></tr>
+</table>
+<div class="box"><b>Rule of thumb</b>Hidden layers: usually ReLU. Output layer: linear for regression, sigmoid for yes/no classification.</div>
+
+<h2>5. How a network learns</h2>
+<p>A network does not start out smart; it learns by trial, error and repetition. <i>Analogy: practising with past papers: attempt a paper (forward pass), get your marks (loss), work out which misunderstanding lost each mark (backpropagation), restudy those parts (update the weights). Doing the whole pile once is one epoch.</i></p>
+<svg viewBox="0 0 640 150" role="img" aria-label="The training loop" class="dg">
+<rect class="bx" x="10" y="35" width="105" height="55" rx="8"/><text x="62" y="58" text-anchor="middle" class="h">1. Forward</text><text x="62" y="76" text-anchor="middle" class="sm">make a guess</text>
+<rect class="bx" x="140" y="35" width="105" height="55" rx="8"/><text x="192" y="58" text-anchor="middle" class="h">2. Loss</text><text x="192" y="76" text-anchor="middle" class="sm">how wrong?</text>
+<rect class="bx" x="270" y="35" width="115" height="55" rx="8"/><text x="327" y="58" text-anchor="middle" class="h">3. Backprop</text><text x="327" y="76" text-anchor="middle" class="sm">blame per weight</text>
+<rect class="bx" x="410" y="35" width="105" height="55" rx="8"/><text x="462" y="58" text-anchor="middle" class="h">4. Update</text><text x="462" y="76" text-anchor="middle" class="sm">gradient descent</text>
+<path class="ar" d="M115 62 L138 62"/><path class="ar" d="M245 62 L268 62"/><path class="ar" d="M385 62 L408 62"/>
+<path class="ar" d="M462 90 L462 125 L62 125 L62 92"/>
+<text x="580" y="58" text-anchor="middle" class="sm">repeat for</text><text x="580" y="76" text-anchor="middle" class="sm">every epoch</text>
+</svg>
+<ol>
+  <li>Start with small random weights and biases.</li>
+  <li><b>Forward pass:</b> send data from input to output to get predictions.</li>
+  <li><b>Loss:</b> measure the error with a loss function (sum of squared residuals, SSR = SSE from Lesson 5).</li>
+  <li><b>Backpropagation:</b> work backward to find the slope of the loss for every weight and bias (each weight's share of the error), using the chain rule.</li>
+  <li><b>Gradient descent:</b> new value = old value &minus; learning rate &times; slope.</li>
+</ol>
+<p>Backpropagation <i>finds</i> the slopes; gradient descent <i>uses</i> them to update.</p>
+<p><b>Chain rule in plain words:</b> if A changes B and B changes C, then A changes C by (A&rarr;B) &times; (B&rarr;C). 1 hour of work earns 10 dollars, 1 dollar buys 3 sweets, so 1 hour buys 10 &times; 3 = 30 sweets.</p>
+<p>Weight update written another way (Geethma's notes): W<sub>new</sub> = W<sub>old</sub> + &Delta;W, with &Delta;W = &minus;&eta; &middot; dE/dW (her sheet writes &Delta;W = &eta; &middot; dE/dW with the minus sign hidden in the slope). Either way weights move to lower the error.</p>
+<h3>Worked example A: optimise only the last bias b<sub>3</sub></h3>
+<p>Drug network, data: dose 0 &rarr; 0, 0.5 &rarr; 1, 1 &rarr; 0. Keep everything fixed except the final bias. Before b<sub>3</sub> is added the predictions are 0.569, 1.615, 0.585. Adding b<sub>3</sub> raises each prediction one-for-one, so by the chain rule <b>slope = &Sigma; &minus;2 &times; (observed &minus; predicted) &times; 1</b>. Learning rate 0.1, start b<sub>3</sub> = 0:</p>
+<table>
+  <tr><th>Round</th><th>b<sub>3</sub></th><th>SSR</th><th>Slope</th><th>New b<sub>3</sub> = b<sub>3</sub> &minus; 0.1 &times; slope</th></tr>
+  <tr><td>1</td><td>0</td><td>1.044</td><td>3.538</td><td>&minus;0.354</td></tr>
+  <tr><td>2</td><td>&minus;0.354</td><td>0.168</td><td>1.415</td><td>&minus;0.495</td></tr>
+  <tr><td>3</td><td>&minus;0.495</td><td>0.028</td><td>0.566</td><td>&minus;0.552</td></tr>
+  <tr><td>4</td><td>&minus;0.552</td><td>0.005</td><td>0.226</td><td>&minus;0.575</td></tr>
+</table>
+<p>Round 1 in full: residuals (observed &minus; predicted) = &minus;0.569, &minus;0.615, &minus;0.585; SSR = 0.324 + 0.378 + 0.342 = 1.04; slope = &minus;2 &times; (&minus;1.769) = 3.54; step = 0.1 &times; 3.54 = 0.354; new b<sub>3</sub> = 0 &minus; 0.354. The error falls from 1.04 towards 0 and the slope shrinks towards 0 as b<sub>3</sub> settles near &minus;0.58 (the value used above). Stop when steps are tiny.</p>
+<h3>Worked example B: one learning step on one neuron</h3>
+<p>One sigmoid neuron, inputs x<sub>1</sub> = x<sub>2</sub> = 1 and bias input x<sub>0</sub> = 1, target y = 1, all weights start at 0, &eta; = 1, error E = (y &minus; &#375;)&sup2;.</p>
+<ul>
+  <li>Forward: z = 0, &#375; = &sigma;(0) = 0.5. Loss = (1 &minus; 0.5)&sup2; = 0.25.</li>
+  <li>Slope for each weight = &minus;2(y &minus; &#375;) &times; &#375;(1 &minus; &#375;) &times; x (three chain-rule parts: error vs &#375;, slope of the sigmoid, effect of the weight on z) = &minus;2 &times; 0.5 &times; 0.25 &times; 1 = <b>&minus;0.25</b>.</li>
+  <li>Update: new w = 0 &minus; 1 &times; (&minus;0.25) = <b>0.25</b> for every weight.</li>
+  <li>Check: new z = 0.75, &#375; = &sigma;(0.75) = 0.679: moved from 0.5 towards 1.</li>
+</ul>
+<h3>Epochs</h3>
+<p>One <b>epoch</b> is one complete pass of the whole training set through the network, forward and backward. With 1,000 samples, seeing all 1,000 once is 1 epoch; training for 20 epochs is 20 passes. We need many because one pass cannot learn everything (like reading a textbook chapter several times).</p>
+
+<h2>6. Logic gates: AND, XOR and why we need hidden layers</h2>
+<p>A logic gate takes 0/1 inputs and gives a 0/1 output, so a neuron can be trained on its rows: z = w<sub>0</sub> + w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub>, &#375; = f(z), error E = &Sigma;(y &minus; &#375;)&sup2; = f(w<sub>0</sub>, w<sub>1</sub>, w<sub>2</sub>), minimised by gradient descent.</p>
+<table>
+  <tr><th>x<sub>1</sub></th><th>x<sub>2</sub></th><th>AND</th><th>XOR</th></tr>
+  <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+  <tr><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+  <tr><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+  <tr><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+</table>
+<svg viewBox="0 0 640 225" role="img" aria-label="AND is linearly separable, XOR is not" class="dg"><text x="110" y="18" text-anchor="middle" class="h">AND: one line separates</text><rect x="20" y="30" width="180" height="150" fill="none" stroke="var(--fg)" stroke-width="1.2"/><circle cx="50" cy="150" r="11" fill="var(--bad)"/><text x="50" y="154" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">0</text><text x="50" y="178" text-anchor="middle" class="sm">(0,0)</text><circle cx="160" cy="150" r="11" fill="var(--bad)"/><text x="160" y="154" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">0</text><text x="160" y="178" text-anchor="middle" class="sm">(1,0)</text><circle cx="50" cy="60" r="11" fill="var(--bad)"/><text x="50" y="64" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">0</text><text x="50" y="43" text-anchor="middle" class="sm">(0,1)</text><circle cx="160" cy="60" r="11" fill="var(--accent)"/><text x="160" y="64" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">1</text><text x="160" y="43" text-anchor="middle" class="sm">(1,1)</text><path d="M100 40 L190 118" stroke="var(--ok)" stroke-width="2.6" stroke-dasharray="6 4" fill="none"/><text x="430" y="18" text-anchor="middle" class="h">XOR: no single line works</text><rect x="340" y="30" width="180" height="150" fill="none" stroke="var(--fg)" stroke-width="1.2"/><circle cx="370" cy="150" r="11" fill="var(--bad)"/><text x="370" y="154" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">0</text><text x="370" y="178" text-anchor="middle" class="sm">(0,0)</text><circle cx="480" cy="150" r="11" fill="var(--accent)"/><text x="480" y="154" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">1</text><text x="480" y="178" text-anchor="middle" class="sm">(1,0)</text><circle cx="370" cy="60" r="11" fill="var(--accent)"/><text x="370" y="64" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">1</text><text x="370" y="43" text-anchor="middle" class="sm">(0,1)</text><circle cx="480" cy="60" r="11" fill="var(--bad)"/><text x="480" y="64" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">0</text><text x="480" y="43" text-anchor="middle" class="sm">(1,1)</text><text x="110" y="215" text-anchor="middle" class="sm">green line: class 1 alone on one side</text><text x="430" y="215" text-anchor="middle" class="sm">class 1 sit on one diagonal, class 0 on the other</text></svg>
+<h3>AND: one neuron is enough</h3>
+<p>Suppose training ends with w<sub>0</sub> = &minus;6, w<sub>1</sub> = 4, w<sub>2</sub> = 4 and a sigmoid:</p>
+<table>
+  <tr><th>x<sub>1</sub></th><th>x<sub>2</sub></th><th>z = &minus;6 + 4x<sub>1</sub> + 4x<sub>2</sub></th><th>&sigma;(z)</th><th>Rounded</th></tr>
+  <tr><td>0</td><td>0</td><td>&minus;6</td><td>0.0025</td><td>0</td></tr>
+  <tr><td>0</td><td>1</td><td>&minus;2</td><td>0.119</td><td>0</td></tr>
+  <tr><td>1</td><td>0</td><td>&minus;2</td><td>0.119</td><td>0</td></tr>
+  <tr><td>1</td><td>1</td><td>2</td><td>0.881</td><td>1</td></tr>
+</table>
+<p>All four match. The class 0 points (0,0), (0,1), (1,0) and the class 1 point (1,1) can be split by <b>one straight line</b>, so AND is <b>linearly separable</b> and a single neuron can learn it.</p>
+<h3>XOR: one neuron cannot</h3>
+<p>XOR means "exactly one input is 1". Class 1 points (0,1) and (1,0) sit on one diagonal of the square, class 0 points (0,0) and (1,1) on the other. No single straight line puts both class 1 points on one side and both class 0 points on the other, so <b>XOR is not linearly separable</b> and a single neuron (or basic logistic regression) cannot solve it. This was a famous problem in AI history; a trained network that does solve it gives outputs like 0.03, 0.97, 0.96, 0.04, rounding to 0, 1, 1, 0. <i>Analogy: separating the two colours of a chess-board with one ruler: you need two cuts.</i></p>
+<h3>How a hidden layer solves XOR</h3>
+<p>XOR = (x<sub>1</sub> OR x<sub>2</sub>) AND NOT (x<sub>1</sub> AND x<sub>2</sub>). Use 2 hidden neurons (one for OR, one for AND) and an output neuron meaning "OR on, AND off". Example weights: hidden 1 (OR): a<sub>1</sub> = &sigma;(20x<sub>1</sub> + 20x<sub>2</sub> &minus; 10); hidden 2 (AND): a<sub>2</sub> = &sigma;(20x<sub>1</sub> + 20x<sub>2</sub> &minus; 30); output: &sigma;(20a<sub>1</sub> &minus; 20a<sub>2</sub> &minus; 10).</p>
+<table>
+  <tr><th>x<sub>1</sub></th><th>x<sub>2</sub></th><th>a<sub>1</sub> (OR)</th><th>a<sub>2</sub> (AND)</th><th>z = 20a<sub>1</sub> &minus; 20a<sub>2</sub> &minus; 10</th><th>Output</th></tr>
+  <tr><td>0</td><td>0</td><td>&asymp;0</td><td>&asymp;0</td><td>&minus;10</td><td>&asymp;0</td></tr>
+  <tr><td>0</td><td>1</td><td>&asymp;1</td><td>&asymp;0</td><td>10</td><td>&asymp;1</td></tr>
+  <tr><td>1</td><td>0</td><td>&asymp;1</td><td>&asymp;0</td><td>10</td><td>&asymp;1</td></tr>
+  <tr><td>1</td><td>1</td><td>&asymp;1</td><td>&asymp;1</td><td>&minus;10</td><td>&asymp;0</td></tr>
+</table>
+<p>Outputs 0, 1, 1, 0 = XOR. Check (1,1): a<sub>1</sub> = &sigma;(30) &asymp; 1, a<sub>2</sub> = &sigma;(10) &asymp; 1, z = 20 &minus; 20 &minus; 10 = &minus;10, output &sigma;(&minus;10) &asymp; 0. Each hidden neuron draws one straight boundary; the output neuron combines the two boundaries into a shape no single line can make. This is why more neurons become necessary.</p>
+
+<h2>7. Hidden layers and the Multi-Layer Perceptron (MLP)</h2>
+<div class="box"><b>Definition</b>A <b>hidden layer</b> is a middle layer between input and output. A <b>Multi-Layer Perceptron (MLP)</b> is a neural network with an input layer, <b>at least one</b> hidden layer and an output layer. The drug network (1 input, 2 hidden, 1 output) is a small MLP.</div>
+<svg viewBox="0 0 640 260" role="img" aria-label="A 2-3-1 multi-layer perceptron" class="dg"><path d="M130 90 L290 60" stroke="var(--muted)" stroke-width="1.2" fill="none"/><path d="M130 90 L290 130" stroke="var(--muted)" stroke-width="1.2" fill="none"/><path d="M130 90 L290 200" stroke="var(--muted)" stroke-width="1.2" fill="none"/><path d="M130 170 L290 60" stroke="var(--muted)" stroke-width="1.2" fill="none"/><path d="M130 170 L290 130" stroke="var(--muted)" stroke-width="1.2" fill="none"/><path d="M130 170 L290 200" stroke="var(--muted)" stroke-width="1.2" fill="none"/><path d="M330 60 L490 130" stroke="var(--accent)" stroke-width="1.4" fill="none"/><path d="M330 130 L490 130" stroke="var(--accent)" stroke-width="1.4" fill="none"/><path d="M330 200 L490 130" stroke="var(--accent)" stroke-width="1.4" fill="none"/><circle class="bx" cx="110" cy="90" r="20"/><text x="110" y="94" text-anchor="middle" class="mono">x1</text><circle class="bx" cx="110" cy="170" r="20"/><text x="110" y="174" text-anchor="middle" class="mono">x2</text><circle class="bx" cx="310" cy="60" r="20"/><text x="310" y="64" text-anchor="middle" class="mono">a1</text><circle class="bx" cx="310" cy="130" r="20"/><text x="310" y="134" text-anchor="middle" class="mono">a2</text><circle class="bx" cx="310" cy="200" r="20"/><text x="310" y="204" text-anchor="middle" class="mono">a3</text><circle class="bx" cx="510" cy="130" r="20"/><text x="510" y="134" text-anchor="middle" class="mono">y&#770;</text><text x="110" y="55" text-anchor="middle" class="h">Input layer</text><text x="310" y="20" text-anchor="middle" class="h">Hidden layer</text><text x="510" y="85" text-anchor="middle" class="h">Output layer</text><text x="210" y="248" text-anchor="middle" class="sm">6 weights (w1-w6)</text><text x="410" y="248" text-anchor="middle" class="sm">3 weights (w7-w9)</text><text x="510" y="175" text-anchor="middle" class="sm">+ bias, then sigmoid</text></svg>
+<p>For 2 inputs, 3 hidden neurons and 1 output: output z = a<sub>1</sub>w<sub>7</sub> + a<sub>2</sub>w<sub>8</sub> + a<sub>3</sub>w<sub>9</sub> + bias, then &#375; = 1 / (1 + e<sup>&minus;z</sup>).</p>
+<p><b>Counting parameters:</b> input&rarr;hidden 2 &times; 3 = 6 weights (w<sub>1</sub>&ndash;w<sub>6</sub>); hidden&rarr;output 3 &times; 1 = 3 weights (w<sub>7</sub>&ndash;w<sub>9</sub>); total <b>9 weights</b>; biases 3 (hidden) + 1 (output) = <b>4</b>; so <b>13 numbers</b> are trained. Quick check: 2 inputs, 4 hidden, 1 output = 2&times;4 + 4&times;1 = 12 weights.</p>
+<h3>Worked forward pass</h3>
+<p>Input x = (1, 2); ReLU hidden layer, no hidden biases; hidden weights (for x<sub>1</sub>, x<sub>2</sub>): n1 = (0.5, &minus;1), n2 = (1, 1), n3 = (&minus;0.5, 0.5); output weights (1, 0.5, 2), output bias &minus;1, sigmoid output.</p>
+<ul>
+  <li>Hidden 1: z = 0.5 &minus; 2 = &minus;1.5 &rarr; ReLU 0. Hidden 2: z = 1 + 2 = 3 &rarr; 3. Hidden 3: z = &minus;0.5 + 1 = 0.5 &rarr; 0.5.</li>
+  <li>Output: z = 0 &times; 1 + 3 &times; 0.5 + 0.5 &times; 2 &minus; 1 = 1.5; &#375; = &sigma;(1.5) = 1 / (1 + 0.223) = <b>0.818</b> (about an 82 % chance of class 1).</li>
+</ul>
+<h3>What hidden neurons do</h3>
+<ul>
+  <li>One neuron = one linear boundary; hidden neuron 1 makes boundary 1, hidden neuron 2 makes boundary 2, and the output neuron combines them. Hidden layers let a network solve XOR and fit squiggles.</li>
+  <li>Activation functions add the non-linear behaviour; without them all layers collapse into one line.</li>
+  <li>Neural networks work well with both numerical data (prices) and categorical data (Pass/Fail).</li>
+</ul>
+<h3>Simple models cannot fit every dataset</h3>
+<p>Data shaped like a bump cannot be followed by a straight line or a basic S-curve. A model too simple to capture the pattern <b>underfits</b>; one so complex that it memorises the training data and noise <b>overfits</b>. So use enough neurons to capture the pattern but not so many that it memorises (Lesson 5: bias&ndash;variance).</p>
+
+<h2>Summary of related ideas</h2>
+<table>
+  <tr><th></th><th>Linear regression</th><th>Logistic regression</th><th>Neural network</th></tr>
+  <tr><td>Neurons</td><td>1 (linear activation)</td><td>1 (sigmoid activation)</td><td>Many, in layers</td></tr>
+  <tr><td>Shape it can fit</td><td>Straight line</td><td>Single S-curve / one boundary</td><td>Squiggles, XOR, complex boundaries</td></tr>
+  <tr><td>Fitted by</td><td>Least squares / gradient descent</td><td>Maximum likelihood / gradient descent</td><td>Backpropagation + gradient descent</td></tr>
+</table>
+
+<h2>Words list</h2>
+<table>
+  <tr><th>Word</th><th>Plain meaning</th></tr>
+  <tr><td>Neuron (node)</td><td>One tiny calculator: numbers in, one out</td></tr>
+  <tr><td>Aggregation</td><td>Adding the weighted inputs plus the bias</td></tr>
+  <tr><td>Activation function</td><td>Curve that bends the sum into the neuron's output</td></tr>
+  <tr><td>Forward pass</td><td>Sending data input &rarr; output to get a prediction</td></tr>
+  <tr><td>Loss</td><td>Score of how wrong the predictions are (SSR / SSE)</td></tr>
+  <tr><td>Backpropagation</td><td>Working backward to find each weight's share of the error (chain rule)</td></tr>
+  <tr><td>Epoch</td><td>One full pass of the whole training data</td></tr>
+  <tr><td>Linearly separable</td><td>Two groups that one straight line can split</td></tr>
+  <tr><td>Vanishing gradient</td><td>Slope near 0, so learning stops</td></tr>
+  <tr><td>MLP</td><td>Multi-Layer Perceptron: input, at least one hidden, output layer</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+A neural network is many neurons in layers; each neuron computes z = &Sigma; w x + b then a = f(z). Activation functions give curves (ReLU in hidden layers; linear or sigmoid at the output). Learning = forward pass, loss, backpropagation, gradient descent, over many epochs. One neuron can learn AND (linearly separable) but not XOR; a hidden layer (an MLP) solves XOR. Logistic regression is a one-neuron network.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain what happens inside one artificial neuron and relate each part to a biological neuron.</summary>
+<p>Aggregation: z = &Sigma; w<sub>i</sub>x<sub>i</sub> + b (weights scale inputs, bias shifts the total). Activation: a = f(z) decides how strongly it fires. Dendrites = inputs, synapse strength = weights, cell body = the sum, axon hillock (threshold about &minus;55 mV) = activation function and bias, axon = output. Biological neurons obey the all-or-none law; activation functions are a smoother version.</p>
+</details>
+<details>
+<summary>W2. Why must hidden layers use a non-linear activation function? Illustrate with an example.</summary>
+<p>Without it, stacked layers collapse into a single linear function: layer 1 z<sub>1</sub> = 2x + 1, layer 2 z<sub>2</sub> = 3z<sub>1</sub> &minus; 2 gives 6x + 1, one straight line, however deep the network. A non-linear activation bends the signal so the network can fit curves and complex boundaries.</p>
+</details>
+<details>
+<summary>W3. Compare linear, sigmoid, tanh and ReLU: formula, range, typical use and main weakness.</summary>
+<p>Linear f(z) = z, range &minus;&infin; to +&infin;, output layer for regression, collapses layers if hidden. Sigmoid 1/(1+e<sup>&minus;z</sup>), 0 to 1, output layer for binary classification, vanishing gradient and not zero-centred. Tanh, &minus;1 to 1, zero-centred but still vanishing gradient. ReLU max(0, z), 0 to +&infin;, cheap and no vanishing gradient for z &gt; 0 so the default in hidden layers; weakness: dying ReLU.</p>
+</details>
+<details>
+<summary>W4. Describe how a neural network learns: forward pass, loss, backpropagation, gradient descent and epochs.</summary>
+<p>Start with small random weights. Forward pass: data flows to the output giving a prediction. Loss: measure the error (SSR). Backpropagation: using the chain rule, work backward to get the slope of the loss for every weight and bias. Gradient descent: new value = old value &minus; learning rate &times; slope. Repeat; one epoch is a full pass over the training data, and many epochs are needed.</p>
+</details>
+<details>
+<summary>W5. One sigmoid neuron has weights w<sub>0</sub> = w<sub>1</sub> = w<sub>2</sub> = 0, inputs x<sub>1</sub> = x<sub>2</sub> = 1 (and x<sub>0</sub> = 1), target 1, learning rate 1, E = (y &minus; &#375;)&sup2;. Perform one update.</summary>
+<p>z = 0, &#375; = 0.5, E = 0.25. Slope per weight = &minus;2(y &minus; &#375;)&#375;(1 &minus; &#375;)x = &minus;2 &times; 0.5 &times; 0.25 &times; 1 = &minus;0.25. New w = 0 &minus; 1 &times; (&minus;0.25) = 0.25 each. New z = 0.75, &#375; = &sigma;(0.75) = 0.679, closer to 1.</p>
+</details>
+<details>
+<summary>W6. Explain why a single neuron can learn AND but not XOR, and how a hidden layer fixes this.</summary>
+<p>AND has one class 1 point (1,1) and three class 0 points, separable by one straight line, so it is linearly separable (e.g. w<sub>0</sub> = &minus;6, w<sub>1</sub> = w<sub>2</sub> = 4 gives 0.0025, 0.119, 0.119, 0.881). XOR's class 1 points (0,1), (1,0) and class 0 points (0,0), (1,1) lie on opposite diagonals, so no single line separates them. A hidden layer with an OR neuron and an AND neuron, combined by an output neuron (OR on, AND off) gives 0, 1, 1, 0: each hidden neuron makes one boundary and the output combines them.</p>
+</details>
+<details>
+<summary>W7. A 2-3-1 MLP uses ReLU in the hidden layer. Hidden weights (for x<sub>1</sub>, x<sub>2</sub>): (0.5, &minus;1), (1, 1), (&minus;0.5, 0.5); output weights (1, 0.5, 2), output bias &minus;1, sigmoid output. Find the output for x = (1, 2) and the number of weights and biases.</summary>
+<p>Hidden z: &minus;1.5, 3, 0.5, so ReLU outputs 0, 3, 0.5. Output z = 0 &times; 1 + 3 &times; 0.5 + 0.5 &times; 2 &minus; 1 = 1.5, &#375; = &sigma;(1.5) = 0.818. Weights 2&times;3 + 3&times;1 = 9; biases 3 + 1 = 4.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>ANN</td><td>Network of simple neurons in layers (input, hidden, output). Fits squiggles a straight line cannot. Logistic regression = a one-neuron network.</td></tr>
+  <tr><td>Neuron</td><td>Step 1 aggregation: z = &Sigma; w<sub>i</sub>x<sub>i</sub> + b. Step 2 activation: a = f(z). Weight = importance of an input; bias = baseline shift.</td></tr>
+  <tr><td>Brain parallel</td><td>Dendrites = inputs; synapse strength = weights; cell body = sum; axon hillock (threshold about &minus;55 mV) = activation + bias; axon = output. All-or-none law.</td></tr>
+  <tr><td>Worked z</td><td>x = (2, 3), w = (0.5, &minus;1), b = 1: z = &minus;1. Sigmoid 0.269; tanh &minus;0.762; ReLU 0; SoftPlus 0.313.</td></tr>
+  <tr><td>Why activations</td><td>Without them layers collapse into one straight line (2x+1 then 3z&minus;2 = 6x+1).</td></tr>
+  <tr><td>Linear</td><td>f(z) = z; (&minus;&infin;, +&infin;); output layer for <b>regression</b>.</td></tr>
+  <tr><td>Sigmoid</td><td>1/(1+e<sup>&minus;z</sup>); (0, 1); output layer for <b>binary classification</b>; vanishing gradient, not zero-centred. Slope &sigma;(1&minus;&sigma;): 0.25 at 0.</td></tr>
+  <tr><td>Tanh</td><td>(&minus;1, 1), zero-centred; still vanishing gradient.</td></tr>
+  <tr><td>ReLU</td><td>max(0, z); [0, &infin;); cheap, no vanishing for z &gt; 0, sparse; <b>dying ReLU</b> if always negative. Default for hidden layers. SoftPlus = smooth ReLU.</td></tr>
+  <tr><td>Learning</td><td>Random start &rarr; forward pass &rarr; loss (SSR) &rarr; backpropagation (chain rule gives each slope) &rarr; gradient descent: new = old &minus; &eta; &times; slope. Epoch = one full pass of the data.</td></tr>
+  <tr><td>Chain rule</td><td>A&rarr;B times B&rarr;C = A&rarr;C (10 dollars/hour &times; 3 sweets/dollar = 30 sweets/hour).</td></tr>
+  <tr><td>Neuron step</td><td>All weights 0, x = 1,1,1, y = 1, &eta; = 1: &#375; = 0.5, slope &minus;0.25, new w = 0.25, new &#375; = 0.679.</td></tr>
+  <tr><td>AND</td><td>Linearly separable (one line); one neuron learns it (e.g. w = &minus;6, 4, 4).</td></tr>
+  <tr><td>XOR</td><td><b>Not</b> linearly separable; one neuron cannot. Needs a hidden layer: XOR = (OR) AND NOT (AND).</td></tr>
+  <tr><td>MLP</td><td>Input + at least one hidden + output layer. 2-3-1: 6 + 3 = 9 weights, 3 + 1 = 4 biases, 13 numbers. 2-4-1: 12 weights. Forward-pass example gives &#375; = 0.818.</td></tr>
+  <tr><td>Fit</td><td>Too simple = underfit; too complex = overfit.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be ready to compute z and each activation output, do one gradient-descent update, explain why XOR needs a hidden layer, and count the weights and biases of an MLP.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Logistic regression is the same as a neural network with:", "o": ["No neurons", "One neuron with a sigmoid activation", "Two hidden layers", "A ReLU output"], "a": 1, "e": "Weighted sum plus bias, then sigmoid, gives a probability."}, {"q": "A drug works at a medium dose but not at low or high doses. Why can't linear regression fit it?", "o": ["Too many features", "A straight line can only go up or down, not rise then fall", "The data are categorical", "Doses are negative"], "a": 1, "e": "The 0, 1, 0 pattern is a hill."}, {"q": "The layer between the input and output layers is the:", "o": ["Hidden layer", "Bias layer", "Epoch", "Loss layer"], "a": 0, "e": "Hidden because its values are not seen directly."}, {"q": "The first step inside a neuron is:", "o": ["Activation", "Aggregation: z = sum of w x plus b", "Backpropagation", "Normalisation"], "a": 1, "e": "Then a = f(z)."}, {"q": "x = (2, 3), w = (0.5, -1), b = 1. What is z?", "o": ["-1", "1", "0", "2"], "a": 0, "e": "1 - 3 + 1 = -1."}, {"q": "With z = -1, the sigmoid output is about:", "o": ["0.269", "0.731", "-1", "0"], "a": 0, "e": "1 / (1 + e^1) = 1 / 3.718."}, {"q": "With z = -1, ReLU gives:", "o": ["-1", "0", "1", "0.368"], "a": 1, "e": "max(0, -1) = 0."}, {"q": "In a biological neuron the synapse strength corresponds to:", "o": ["Inputs", "Weights", "The output", "The loss"], "a": 1, "e": "Strong or weak connections are the weights."}, {"q": "The axon hillock (threshold about -55 mV) corresponds to:", "o": ["Inputs", "The activation function and bias", "The weights", "The epoch"], "a": 1, "e": "It decides whether the neuron fires."}, {"q": "The all-or-none law says a biological neuron:", "o": ["Fires partially", "Either fires completely or not at all", "Never fires", "Fires only for sums"], "a": 1, "e": "Activation functions are a smoother version."}, {"q": "Why can't a network use only linear activations in its hidden layers?", "o": ["It would be too slow", "Stacked linear layers collapse into one straight line", "Linear is not allowed", "Weights would be zero"], "a": 1, "e": "2x+1 then 3z-2 gives 6x+1."}, {"q": "Which activation suits the output of a house-price regression?", "o": ["Sigmoid", "Linear", "Tanh", "ReLU only"], "a": 1, "e": "The target is an unbounded number."}, {"q": "Which activation suits the output of a yes/no classifier?", "o": ["Linear", "Sigmoid", "ReLU", "None"], "a": 1, "e": "Its 0 to 1 output is a probability."}, {"q": "The output range of tanh is:", "o": ["0 to 1", "-1 to 1", "0 to infinity", "-infinity to infinity"], "a": 1, "e": "Zero-centred S-curve."}, {"q": "The output range of ReLU is:", "o": ["0 to 1", "-1 to 1", "0 to +infinity", "-infinity to +infinity"], "a": 2, "e": "Negatives become 0; positives pass unchanged."}, {"q": "sigmoid(0) equals:", "o": ["0", "0.5", "1", "-1"], "a": 1, "e": "1 / (1 + e^0) = 1/2."}, {"q": "The vanishing gradient problem happens when:", "o": ["The slope is almost 0 in flat regions, so learning stops", "Weights are too large", "The data are missing", "The learning rate is 1"], "a": 0, "e": "Sigmoid and tanh flatten at the extremes."}, {"q": "The dying ReLU problem is when:", "o": ["A neuron's input is always negative so it outputs 0 and stops learning", "ReLU is too slow", "Outputs exceed 1", "Weights are positive"], "a": 0, "e": "Slope 0 means no updates."}, {"q": "Why is ReLU popular in deep networks?", "o": ["It is cheap and has slope 1 for positive inputs", "It is zero-centred", "It gives probabilities", "It never dies"], "a": 0, "e": "No exponentials and no vanishing gradient for z > 0."}, {"q": "Sigmoid slope at z = 0 is:", "o": ["0", "0.25", "0.5", "1"], "a": 1, "e": "sigma(1 - sigma) = 0.5 x 0.5."}, {"q": "The forward pass is:", "o": ["Updating weights", "Sending data from input to output to get predictions", "Computing the chain rule", "Stopping training"], "a": 1, "e": "First step of each training round."}, {"q": "Backpropagation computes:", "o": ["The slope of the loss for every weight and bias", "The final answer", "The epoch count", "The activation"], "a": 0, "e": "Using the chain rule, working backward."}, {"q": "Gradient descent updates a weight by:", "o": ["w + slope", "w - learning rate x slope", "w x slope", "slope only"], "a": 1, "e": "Step downhill."}, {"q": "Slope 2, learning rate 0.1, b = 1. New b?", "o": ["0.8", "1.2", "0.2", "1.1"], "a": 0, "e": "1 - 0.1 x 2."}, {"q": "One epoch is:", "o": ["One weight update", "One complete pass of the whole training set", "One neuron", "One layer"], "a": 1, "e": "1,000 samples seen once = 1 epoch."}, {"q": "Why train for many epochs?", "o": ["One pass cannot learn all the patterns", "To waste time", "To remove bias", "To add layers"], "a": 0, "e": "Like rereading a chapter."}, {"q": "If A changes B and B changes C, the chain rule says A changes C by:", "o": ["The sum of the two changes", "The product of the two changes", "The difference", "Neither"], "a": 1, "e": "10 dollars/hour x 3 sweets/dollar = 30 sweets/hour."}, {"q": "One sigmoid neuron, all weights 0, inputs 1,1,1, target 1. Initial prediction?", "o": ["0", "0.5", "1", "0.25"], "a": 1, "e": "z = 0, sigma(0) = 0.5."}, {"q": "Which gate can a single neuron NOT learn?", "o": ["AND", "OR", "XOR", "All of them"], "a": 2, "e": "XOR is not linearly separable."}, {"q": "AND is linearly separable because:", "o": ["Its classes can be split by one straight line", "It has 3 inputs", "It has no output", "It uses ReLU"], "a": 0, "e": "Only (1,1) is class 1."}, {"q": "XOR gives 1 when:", "o": ["Both inputs are 1", "Exactly one input is 1", "Both are 0", "Either is 0"], "a": 1, "e": "(0,1) and (1,0) give 1."}, {"q": "To make XOR with hidden neurons you combine:", "o": ["OR and AND (OR on, AND off)", "NOT and NOT", "Two ANDs", "Two ORs"], "a": 0, "e": "XOR = (x1 OR x2) AND NOT (x1 AND x2)."}, {"q": "An MLP has:", "o": ["Only an input layer", "An input layer, at least one hidden layer and an output layer", "Only hidden layers", "No weights"], "a": 1, "e": "Multi-Layer Perceptron."}, {"q": "A 2-3-1 MLP has how many weights?", "o": ["6", "9", "12", "13"], "a": 1, "e": "2x3 + 3x1 = 9 (plus 4 biases = 13 numbers)."}, {"q": "A 2-4-1 MLP has how many weights?", "o": ["8", "12", "6", "14"], "a": 1, "e": "2x4 + 4x1."}, {"q": "In the drug network, the weight -1.3 on hidden node 1 does what to its curve?", "o": ["Scales and flips it upside down", "Deletes it", "Adds a bias", "Makes it steeper only"], "a": 0, "e": "Negative weight flips; magnitude scales."}, {"q": "SoftPlus is best described as:", "o": ["A smooth version of ReLU", "A step function", "A linear function", "A probability"], "a": 0, "e": "ln(1 + e^x)."}, {"q": "A model so complex that it memorises training noise is:", "o": ["Underfitting", "Overfitting", "Linear", "Balanced"], "a": 1, "e": "High variance."}, {"q": "Compared with logistic regression, a neural network can:", "o": ["Only fit straight lines", "Fit complex non-linear patterns using hidden layers", "Not use sigmoid", "Not be trained"], "a": 1, "e": "It duplicates the neuron into layers."}, {"q": "Which is used to measure the error in the worked examples?", "o": ["Sum of squared residuals", "Accuracy", "Epochs", "Dropout"], "a": 0, "e": "SSR = SSE from Lesson 5."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

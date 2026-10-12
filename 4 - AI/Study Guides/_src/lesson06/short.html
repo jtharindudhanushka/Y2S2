@@ -1,0 +1,21 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>ANN</td><td>Network of simple neurons in layers (input, hidden, output). Fits squiggles a straight line cannot. Logistic regression = a one-neuron network.</td></tr>
+  <tr><td>Neuron</td><td>Step 1 aggregation: z = &Sigma; w<sub>i</sub>x<sub>i</sub> + b. Step 2 activation: a = f(z). Weight = importance of an input; bias = baseline shift.</td></tr>
+  <tr><td>Brain parallel</td><td>Dendrites = inputs; synapse strength = weights; cell body = sum; axon hillock (threshold about &minus;55 mV) = activation + bias; axon = output. All-or-none law.</td></tr>
+  <tr><td>Worked z</td><td>x = (2, 3), w = (0.5, &minus;1), b = 1: z = &minus;1. Sigmoid 0.269; tanh &minus;0.762; ReLU 0; SoftPlus 0.313.</td></tr>
+  <tr><td>Why activations</td><td>Without them layers collapse into one straight line (2x+1 then 3z&minus;2 = 6x+1).</td></tr>
+  <tr><td>Linear</td><td>f(z) = z; (&minus;&infin;, +&infin;); output layer for <b>regression</b>.</td></tr>
+  <tr><td>Sigmoid</td><td>1/(1+e<sup>&minus;z</sup>); (0, 1); output layer for <b>binary classification</b>; vanishing gradient, not zero-centred. Slope &sigma;(1&minus;&sigma;): 0.25 at 0.</td></tr>
+  <tr><td>Tanh</td><td>(&minus;1, 1), zero-centred; still vanishing gradient.</td></tr>
+  <tr><td>ReLU</td><td>max(0, z); [0, &infin;); cheap, no vanishing for z &gt; 0, sparse; <b>dying ReLU</b> if always negative. Default for hidden layers. SoftPlus = smooth ReLU.</td></tr>
+  <tr><td>Learning</td><td>Random start &rarr; forward pass &rarr; loss (SSR) &rarr; backpropagation (chain rule gives each slope) &rarr; gradient descent: new = old &minus; &eta; &times; slope. Epoch = one full pass of the data.</td></tr>
+  <tr><td>Chain rule</td><td>A&rarr;B times B&rarr;C = A&rarr;C (10 dollars/hour &times; 3 sweets/dollar = 30 sweets/hour).</td></tr>
+  <tr><td>Neuron step</td><td>All weights 0, x = 1,1,1, y = 1, &eta; = 1: &#375; = 0.5, slope &minus;0.25, new w = 0.25, new &#375; = 0.679.</td></tr>
+  <tr><td>AND</td><td>Linearly separable (one line); one neuron learns it (e.g. w = &minus;6, 4, 4).</td></tr>
+  <tr><td>XOR</td><td><b>Not</b> linearly separable; one neuron cannot. Needs a hidden layer: XOR = (OR) AND NOT (AND).</td></tr>
+  <tr><td>MLP</td><td>Input + at least one hidden + output layer. 2-3-1: 6 + 3 = 9 weights, 3 + 1 = 4 biases, 13 numbers. 2-4-1: 12 weights. Forward-pass example gives &#375; = 0.818.</td></tr>
+  <tr><td>Fit</td><td>Too simple = underfit; too complex = overfit.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be ready to compute z and each activation output, do one gradient-descent update, explain why XOR needs a hidden layer, and count the weights and biases of an MLP.</div>
