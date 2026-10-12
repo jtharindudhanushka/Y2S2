@@ -17,7 +17,7 @@ Converted peer notes (read these, not the raw PDFs): `../Peer Notes/Notes - Yasi
 8 DONE. No slides exist; course facts (discriminative vs generative, next-word prediction, AI map, 3-stage training) are marked; attention/transformer-block sections are labelled Background (not from course).
 9 DONE. Course parts: image-generation slide + colourisation assignment notebook (U-Net code, read fully). Diffusion/GAN/VAE section labelled Background (no source).
 10 DONE (no slides; peer-made L12 + lecturer statements in Geethma).
-11 Genetic Algorithms (slides 05; peer-made L4; Yasiru 4; Geethma AI 4 pp1-7; fix the roulette % error in Geethma)
+11 DONE (slides 05 read as images + peer L4, Yasiru 4, Geethma AI 4; exact roulette % used; slide typo 0.59 noted).
 12 Swarm Intelligence (NO source material: placeholder)
 13 Fuzzy Logic (slides 10; peer-made L9)
 14 XAI and Ethics (slides 11; peer-made L11; EU case assignment md)

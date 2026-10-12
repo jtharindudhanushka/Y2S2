@@ -1,0 +1,22 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Optimisation</td><td>Decision variables + objective function (min f(x)) + constraints (hard g<sub>i</sub>(x) = c<sub>i</sub>; inequality h<sub>j</sub>(x) &ge; d<sub>j</sub>). Example: Max z = x&sup2;, 0 &le; x &lt; 32.</td></tr>
+  <tr><td>Calculus way</td><td>f&prime;(x*) = 0; f&Prime; &lt; 0 maxima, f&Prime; &gt; 0 minima. Fails when f&prime; is unknown / intractable.</td></tr>
+  <tr><td>Hill climbing</td><td>Start x<sub>1</sub>, try small changes &Delta;x, take the best; stop when no lesser local solution. Sensitive to initial conditions; traps in <b>local</b> minima.</td></tr>
+  <tr><td>Meta-heuristic</td><td>Start with a <b>population</b> of feasible solutions, generate new ones in the neighbourhood, repeat until no improvement; answer = best in population at convergence. GA is one (others: PSO, ACO, SA, tabu&hellip;).</td></tr>
+  <tr><td>GA words</td><td>Population N, chromosome (string), gene, allele (character values), phenotype (slides: each string), fitness = objective function, generation. Operators: selection, crossover, mutation. Holland's GA = binary strings.</td></tr>
+  <tr><td>Encode</td><td>10010 = 16 + 2 = 18. n bits = 2<sup>n</sup> numbers. Donors 11011; real-coded (0.25, 1.73, &hellip;); TSP random keys. Shortest route fitness = 1 / distance.</td></tr>
+  <tr><td>Loop</td><td>N, encoding, fitness &rarr; (selection &rarr; crossover &rarr; mutation) until population full &rarr; new population (kill weakest, constant size) &rarr; stop?</td></tr>
+  <tr><td>Roulette</td><td>P(i) = f(i)/F. Slide: 20, 36, 16, 84, 124 (F = 280) = 7.1, 12.9, 5.7, 30.0, 44.3 %. Computer: running totals + random r. Max x&sup2; (4, 49, 256, 324; F = 633) = 0.6, 7.7, 40.4, 51.2 %.</td></tr>
+  <tr><td>Tournament</td><td>Pick two at random, keep the fitter.</td></tr>
+  <tr><td>Crossover</td><td>Random cut; swap tails. 11000|000 &times; 11001|001 &rarr; 11000001, 11001000. D 10|010 &times; B 00|111 &rarr; 10111 (23), 00010. Cut point matters; only reshuffles existing genes.</td></tr>
+  <tr><td>Mutation</td><td>Very small p<sub>m</sub>; flip a gene (11000001 &rarr; 11010001). Needed to create new gene values (11110 can never become 11111 by crossover). Too little = stuck; too much = random.</td></tr>
+  <tr><td>Termination</td><td>Solution meets criteria; fixed generations; budget (time / money); fitness plateau; manual inspection; or a combination.</td></tr>
+  <tr><td>Worked x&sup2;</td><td>01101, 11000, 01000, 10011: fitness 169, 576, 64, 361 (total 1170, avg 292.5); after one generation 12, 25, 27, 16: 144, 625, 729, 256 (total 1754, avg 438.5, best 729).</td></tr>
+  <tr><td>Knapsack</td><td>Weights 1, 3, 5, 7, 9, 12; values 100, 300, 200, 500, 150, 400; cap 15. Chromosome 6 bits; fitness = value if weight &le; 15 else 0. Best 011100 = 1000.</td></tr>
+  <tr><td>TSP</td><td>One-point crossover makes invalid routes (repeats / missing cities). <b>Random keys</b>: key in (0,1) per city, sort ascending: 0.42, 0.06, 0.38, 0.48, 0.81 &rarr; 2&rarr;3&rarr;1&rarr;4&rarr;5. Parameterised uniform crossover (gene from parent 1 with prob. p). Mutation = <b>immigration</b> (replace worst with new random set; avoids premature convergence).</td></tr>
+  <tr><td>Optima</td><td><b>Global</b> best overall; <b>local</b> best nearby; <b>near</b> very close to global. Population + roulette + mutation help escape local hills.</td></tr>
+  <tr><td>Multi-objective</td><td>Two or more goals; conflict: f<sub>1</sub> min at (1,1) where f<sub>2</sub> = 13; f<sub>2</sub> min at (0,&minus;2) where f<sub>1</sub> = 7; trade-offs, no single best.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be able to decode chromosomes, compute fitness and roulette probabilities, perform one crossover and mutation, run one generation and compare average fitness, decode random keys, and explain why a GA beats hill climbing (population, mutation, no derivative needed).</div>
