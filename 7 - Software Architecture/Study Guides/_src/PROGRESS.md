@@ -8,7 +8,7 @@ Lecture 01-03 and C4 (13) slide images already viewed (invention vs innovation, 
 1 Introduction (DONE)
 2 DONE. (was: lecture 02 (cohesion, coupling, architecture vs design vs patterns, architect role table, quality attributes, ATAM, pattern list) + SOLID (lecture 03 slides 12-19)
 3 DONE. (was: lecture 03 slides 1-11; images viewed: iceberg, mindsets, groan zone, double diamond)
-4 Requirements to architecture: guest session 09 slides 1-41 (+ domain->components, FR/NFR, drivers, SOLID real-world, over-engineering)
+4 DONE (slides 1-41). (was: guest session 09 slides 1-41 (+ domain->components, FR/NFR, drivers, SOLID real-world, over-engineering)
 5 Monolith vs microservices + quality attributes: guest session slides 42-126 (Conway, REST, patterns, performance, scalability, reliability, security, SQL/NoSQL, worked exercises)
 6 C4 model + case studies: lecture 13 C4, lecture 04 UniMart workshop (+ In-Class Activity 03 student answers), lecture 10 course registration, lecture 02 Zippo ride-hailing (read all tasks)
 7 Practical: UniMart lab series (10 guides; read all) + Group assignment (7 docs; read all) + index page

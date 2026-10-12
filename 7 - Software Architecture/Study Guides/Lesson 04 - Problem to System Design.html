@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SA Lesson 4 - From Problem to System Design</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Software Architecture study guides</a> &middot; INTE 22293 &middot; Lesson 04</p><button id="theme" type="button"></button></div>
+  <h1>From Problem to System Design</h1>
+  <p class="lead">Covers (guest session, part 1): where architecture sits in the SDLC, what counts as an architectural decision, big up-front vs incremental design, functional and non-functional requirements, architectural drivers, designing around the problem domain, cohesion / coupling / SOLID in practice, and YAGNI. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<p class="sm" style="color:var(--muted)">Source: the guest session <i>Software Architecture: From Problem to System Design</i> (Ravindu Deshan), sections 1&ndash;4. Its spine: <b>Problem &rarr; Requirements &rarr; Domain &rarr; Architecture &rarr; Quality attributes &rarr; Components &rarr; Trade-offs &rarr; Communication &rarr; Technology</b>. "Architecture is a chain of reasoning, not a diagram you draw at the end."</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Place architecture in the life cycle and decide which decisions are architectural</li>
+  <li>Compare big up-front design with incremental design</li>
+  <li>Separate functional from non-functional requirements and identify <b>architectural drivers</b></li>
+  <li>Move from a problem domain to components, data and APIs</li>
+  <li>Apply cohesion, coupling and SOLID at project scale, and avoid over-engineering (YAGNI)</li>
+</ul>
+
+<h2>0. Why bother? Two codebases</h2>
+<p>You join a team in week 6. <b>Project A</b>: <code>app.js</code> (2,400 lines), <code>helpers.js</code> (900), <code>stuff.js</code>, <code>final_v3.js</code>, <code>test_backup.js</code>: everything talks to everything. <b>Project B</b>: <code>controllers/ services/ repositories/ models/ tests/ docs/decisions/</code>: each part has one job. Which do you want? Also: <b>under 10 %</b> of a typical modern application is code its own developers wrote; the rest is frameworks, libraries and packages. <b>Knowing what to reuse, what to build and where to deploy is an architectural decision.</b></p>
+
+<h2>1. From SDLC to software architecture</h2>
+<svg viewBox="0 0 640 100" role="img" aria-label="SDLC" class="dg">
+  <g class="sm">
+  <rect class="bx" x="5" y="20" width="70" height="36" rx="5"/><text x="40" y="43" text-anchor="middle">Problem</text>
+  <rect class="bx" x="85" y="20" width="85" height="36" rx="5"/><text x="127" y="43" text-anchor="middle">Requirements</text>
+  <rect class="bx" x="180" y="20" width="65" height="36" rx="5"/><text x="212" y="43" text-anchor="middle">Analysis</text>
+  <rect class="bx" x="255" y="20" width="100" height="36" rx="5" style="stroke-width:3"/><text x="305" y="36" text-anchor="middle">Design /</text><text x="305" y="50" text-anchor="middle">Architecture</text>
+  <rect class="bx" x="365" y="20" width="90" height="36" rx="5"/><text x="410" y="43" text-anchor="middle">Implement</text>
+  <rect class="bx" x="465" y="20" width="60" height="36" rx="5"/><text x="495" y="43" text-anchor="middle">Testing</text>
+  <rect class="bx" x="535" y="20" width="95" height="36" rx="5"/><text x="582" y="43" text-anchor="middle">Deploy / maintain</text>
+  <text x="320" y="85" text-anchor="middle">the cycle repeats; the highlighted box is where architecture is most concentrated, not where it is contained</text>
+  </g>
+</svg>
+<p>Architecture is <b>not one isolated phase</b>. It begins when we ask "what kind of system do we need to build to solve this problem?" and decisions continue through implementation, testing and maintenance. <b>Requirements and domain understanding flow down</b> (client: what needs solving &rarr; architect: how to solve it well &rarr; developers: building it); <b>feedback from building flows back up</b>.</p>
+
+<h3>What is an architectural decision?</h3>
+<div class="box"><b>Definition</b>Architecture is <b>the set of decisions that are expensive to change later</b>. Test: <i>how expensive would this decision be to change in week 10?</i> There is no universal best architecture, only better and worse fits for a given problem. <b>Architecture exists whether you plan it or not; unplanned just means accidental.</b></div>
+<table>
+  <tr><th>Architecture</th><th>Implementation detail</th></tr>
+  <tr><td>SQL or NoSQL for our data</td><td>List or dictionary for this variable</td></tr>
+  <tr><td>Where the business rules live</td><td>Name of a private method</td></tr>
+  <tr><td>How the frontend talks to the backend</td><td>Whether this loop is a for or a while</td></tr>
+  <tr><td>Which framework we build on</td><td>Button colour on the dashboard</td></tr>
+</table>
+
+<h3>Big up-front design vs incremental design</h3>
+<table>
+  <tr><th></th><th>Traditional: big up-front design</th><th>Incremental</th></tr>
+  <tr><td>Idea</td><td>Requirements &rarr; specify UI + business logic + database completely &rarr; implement &rarr; test</td><td>Problem &rarr; user story &rarr; understand the domain &rarr; design &rarr; implement &rarr; feedback, next increment</td></tr>
+  <tr><td>Problems / strengths</td><td>Many decisions made before you have enough knowledge; users see nothing until the end, so feedback arrives when change is most expensive; wrong assumptions are discovered in testing, not in week two</td><td><b>Stays up front:</b> the expensive-to-change decisions (language, framework, data-model style, system boundaries). <b>Decided per increment:</b> endpoints, schemas, screens, internal structure</td></tr>
+</table>
+<p><b>The failure mode is not planning; it is pretending early guesses are certain knowledge.</b> Modern architecture is not "don't design upfront" but "don't pretend you know everything upfront".</p>
+<h3>There is no best architecture, only trade-offs</h3>
+<p>Four forces shape every choice: <b>1 Requirements</b> (what must it do, how well?), <b>2 Team</b> (e.g. four people, mixed skills, limited hours), <b>3 Time</b> (e.g. twelve weeks including testing and demo), <b>4 Change</b> (what is most likely to change?). Every choice buys something and costs something else; your job is to know what you paid and why.</p>
+
+<h2>2. Requirements: functional and non-functional</h2>
+<table>
+  <tr><th>Functional (what the system does)</th><th>Non-functional (how it should behave)</th></tr>
+  <tr><td>User can register and log in<br>Customer can place an order<br>Admin can generate reports<br>User can make a payment</td><td>Response time under 2 seconds<br>Support 10,000 concurrent users<br>99.9 % availability<br>Secure payment processing<br>System must recover after failure</td></tr>
+</table>
+<p><b>Functional requirements shape features. Non-functional requirements shape architecture.</b></p>
+<svg viewBox="0 0 640 170" role="img" aria-label="Same features different systems" class="dg">
+  <text x="130" y="16" text-anchor="middle" class="h">500 users, one campus</text>
+  <rect class="bx" x="20" y="50" width="70" height="40" rx="6"/><text x="55" y="75" text-anchor="middle" class="sm">Client</text><path class="ar" d="M90 70 H125"/>
+  <rect class="bx" x="125" y="50" width="80" height="40" rx="6"/><text x="165" y="75" text-anchor="middle" class="sm">One server</text><path class="ar" d="M205 70 H235"/>
+  <rect class="bx" x="235" y="50" width="45" height="40" rx="6"/><text x="257" y="75" text-anchor="middle" class="sm">DB</text>
+  <text x="130" y="125" text-anchor="middle" class="sm">Simple wins.</text>
+  <text x="470" y="16" text-anchor="middle" class="h">1,000,000 users, 24/7, under 2 s, 99.9 %</text>
+  <rect class="bx" x="330" y="60" width="60" height="30" rx="5"/><text x="360" y="80" text-anchor="middle" class="sm">Clients</text><path class="ar" d="M390 75 H410"/>
+  <rect class="bx" x="410" y="60" width="70" height="30" rx="5"/><text x="445" y="80" text-anchor="middle" class="sm">Load bal.</text><path class="ar" d="M480 75 H500"/>
+  <rect class="bx" x="500" y="30" width="70" height="26" rx="5"/><text x="535" y="48" text-anchor="middle" class="sm">App server</text>
+  <rect class="bx" x="500" y="64" width="70" height="26" rx="5"/><text x="535" y="82" text-anchor="middle" class="sm">App server</text>
+  <rect class="bx" x="500" y="98" width="70" height="26" rx="5"/><text x="535" y="116" text-anchor="middle" class="sm">App server</text>
+  <rect class="bx" x="580" y="30" width="55" height="26" rx="5"/><text x="607" y="48" text-anchor="middle" class="sm">Cache</text>
+  <rect class="bx" x="580" y="75" width="55" height="26" rx="5"/><text x="607" y="93" text-anchor="middle" class="sm">DB primary</text>
+  <rect class="bx" x="580" y="108" width="55" height="26" rx="5"/><text x="607" y="126" text-anchor="middle" class="sm">DB replica</text>
+  <text x="470" y="155" text-anchor="middle" class="sm">Identical features: the NFRs forced every new box.</text>
+</svg>
+<p>If someone asks "why is your architecture so complex?", the answer is always an NFR.</p>
+<h3>Architectural drivers</h3>
+<p>Not all requirements are equal. "User can change their profile picture" probably does not drive architecture (any reasonable structure absorbs it). "System must support 1 million users" absolutely does: it forces load balancing, stateless servers, caching, replication. <b>A requirement is a driver if changing it would change your diagram.</b> Hint: ask "if this requirement doubled or vanished, would my diagram change?"</p>
+<table>
+  <tr><th>Exercise item</th><th>Driver?</th><th>Reason</th></tr>
+  <tr><td>1 Users can export a report as PDF</td><td>No (feature)</td><td>Any structure can add it</td></tr>
+  <tr><td>2 Handle 10,000 orders per minute during flash sales</td><td><b>Yes</b></td><td>Forces scaling, queues, caching</td></tr>
+  <tr><td>3 Admin dashboard shows a pie chart of sales</td><td>No</td><td>A feature</td></tr>
+  <tr><td>4 A payment must never be recorded twice</td><td><b>Yes</b></td><td>Consistency / idempotency design</td></tr>
+  <tr><td>5 Search results in under 300 ms</td><td><b>Yes</b></td><td>Indexing, caching, performance design</td></tr>
+  <tr><td>6 Sign-up button text says "Join now"</td><td>No</td><td>Trivial UI text</td></tr>
+</table>
+<p>(The slide gives the exercise; the verdicts follow its hint.)</p>
+
+<h2>3. From problem domain to system design</h2>
+<p><b>Design around the problem, not the technology.</b> Technology-first thinking gives a pile of tools (React, C#, .NET, Node.js, PostgreSQL, Redis, AWS, Docker) and still no idea what to build. Domain-first thinking lists the concepts of the problem (for a university: student, course, lecturer, enrolment, assignment, examination, payment), which exist in every implementation. <b>The structure of your software should reflect the structure of the problem you are solving.</b></p>
+<svg viewBox="0 0 640 90" role="img" aria-label="Domain to components" class="dg">
+  <g class="sm">
+  <rect class="bx" x="5" y="20" width="105" height="50" rx="6"/><text x="57" y="42" text-anchor="middle" class="h">Problem domain</text><text x="57" y="58" text-anchor="middle">online university</text>
+  <path class="ar" d="M110 45 H125"/>
+  <rect class="bx" x="125" y="20" width="115" height="50" rx="6"/><text x="182" y="40" text-anchor="middle" class="h">Entities &amp; concepts</text><text x="182" y="58" text-anchor="middle">Student, Course ...</text>
+  <path class="ar" d="M240 45 H255"/>
+  <rect class="bx" x="255" y="20" width="115" height="50" rx="6"/><text x="312" y="40" text-anchor="middle" class="h">Responsibilities</text><text x="312" y="58" text-anchor="middle">checks prerequisites</text>
+  <path class="ar" d="M370 45 H385"/>
+  <rect class="bx" x="385" y="20" width="110" height="50" rx="6"/><text x="440" y="40" text-anchor="middle" class="h">Relationships</text><text x="440" y="58" text-anchor="middle">student enrols in course</text>
+  <path class="ar" d="M495 45 H510"/>
+  <rect class="bx" x="510" y="20" width="125" height="50" rx="6"/><text x="572" y="40" text-anchor="middle" class="h">System components</text><text x="572" y="58" text-anchor="middle">Enrolment, Payment</text>
+  </g>
+</svg>
+<p>Why it works: requirements talk about the domain ("a student enrols in a course"), code lives in components, and this pipeline translates between them, giving every component a name your client already understands. <b>Name your components after the problem and the code explains itself.</b></p>
+<h3>Domain concepts do not automatically become services</h3>
+<p>Customer, Order and Payment can be <b>Option A: three modules in one monolith</b> (<code>customer/ order/ payment/</code>, one deployable app) or <b>Option B: three microservices</b> each with its own database. Both are valid; the trade-offs decide. <b>The architecture should reflect the important concepts and boundaries of the domain, not mirror every noun as a service.</b></p>
+<h3>Exercise: design a food delivery system</h3>
+<p>Identify: 1 major users, 2 major entities, 3 major actions, 4 business areas. Likely concepts: Customer, Restaurant, Menu, Driver, Order, Payment, Delivery. "If these are the major concepts in the problem, shouldn't our software structure reflect them?"</p>
+<table>
+  <tr><th>Concept</th><th>Responsibility</th><th>Data only it owns</th></tr>
+  <tr><td>Order</td><td>Accepts orders, enforces order rules, tracks status</td><td>orders, order items, status history</td></tr>
+  <tr><td>Payment</td><td>Charges cards, refunds, records every money movement</td><td>transactions, refunds</td></tr>
+  <tr><td>Delivery</td><td>Assigns drivers, tracks the trip to the door</td><td>assignments, GPS trail</td></tr>
+  <tr><td>Menu</td><td>What each restaurant sells, at what price, when</td><td>menus, items, prices, availability</td></tr>
+  <tr><td>Customer</td><td>Who is ordering, where they live, how to reach them</td><td>profiles, addresses</td></tr>
+</table>
+<h3>One concept unfolded: everything "Order" generates before any code</h3>
+<table>
+  <tr><th>Artefact</th><th>For Order</th></tr>
+  <tr><td>1 Component</td><td><code>OrderService</code> module (today a folder, someday maybe a service)</td></tr>
+  <tr><td>2 Data</td><td><code>orders(id, customerId, restaurantId, status, total, placedAt)</code></td></tr>
+  <tr><td>3 API (responsibilities as verbs)</td><td><code>POST /orders</code>, <code>GET /orders/42</code>, <code>PATCH /orders/42/status</code></td></tr>
+  <tr><td>4 Interactions</td><td>calls Payment (<b>sync</b>: answer needed); notifies Restaurant (<b>async</b>: queue); emits <code>OrderPlaced</code> for whoever cares</td></tr>
+</table>
+<p>Nobody "designed an API" here: it was hiding inside the domain analysis all along.</p>
+
+<h2>4. Design principles at project scale</h2>
+<table>
+  <tr><th>Cohesion</th><th>Coupling</th></tr>
+  <tr><td>How strongly related the things inside one unit are. <b>High cohesion = one module does one job well.</b></td><td>How much one unit depends on another. <b>Low coupling = change one thing without breaking five others.</b></td></tr>
+</table>
+<p>Coupling is the reason two teammates cannot work in parallel: it shows up as merge conflicts, "your change broke my feature", and one person being the only human who understands a file. <b>Count the arrows: every arrow is a way for a change to spread</b> ("every edge is a reason to have a meeting"). Low cohesion example: <code>UserService</code> with login, createInvoice, sendEmail, calculateTax, generateReport, processPayment. High cohesion: AuthenticationService, PaymentService, InvoiceService, EmailService, ReportingService.</p>
+<h3>Anti-example and fix</h3>
+<pre><code>class Student {                       // 4 jobs, endless pain
+   save()             { db.query("INSERT INTO students ...") }   // knows SQL
+   sendWelcomeEmail() { sendgrid.send({to: this.email}) }        // knows the email provider
+   toHtml()           { return `&lt;div class="card"&gt;${this.name}&lt;/div&gt;` } // knows the UI
+}
+// Fix: one reason to change per unit
+class Student { constructor(name, email) {...} }        // just data and rules
+class StudentRepository { save(student) {...} }         // only this knows SQL
+class EmailService     { sendWelcome(student) {...} }   // only this knows SendGrid
+class StudentView      { render(student) {...} }        // only this knows HTML</code></pre>
+<p>Ask yourself: the email provider changes, how many files do you touch? Can you test the registration rule without a database? Two teammates edit this file, what happens at merge time? <b>Gains:</b> swap the email provider by editing one file; test rules without a database; four teammates in four files; newcomers find things by name.</p>
+
+<h3>SOLID, weighted by how much it helps you now</h3>
+<table>
+  <tr><th>Principle</th><th>In one line</th><th>Real-world picture and example</th></tr>
+  <tr><td><b>S</b> Single Responsibility</td><td>One class, one reason to change. "The one you will break daily."</td><td>A restaurant where one person takes orders, cooks, delivers and bills works when quiet; at lunch rush everything fails at once. <code>OrderManager</code> with placeOrder, calcDiscount, chargeCard, sendInvoiceEmail, logAnalytics has 5 reasons to change; split into OrderService, PricingService, PaymentGateway, InvoiceMailer, AnalyticsClient. Test: "how many different reasons does this class have to change?"</td></tr>
+  <tr><td><b>O</b> Open / Closed</td><td>Add behaviour by extension, without editing tested code.</td><td>Phone apps: you install new apps every week without re-soldering the board. <code>pay(order, type)</code> with if card / paypal / crypto must be reopened and retested for each new method; instead an interface <code>PaymentMethod { pay(order) }</code> with CardPayment, PayPalPayment, CryptoPayment: a new method is a new file only.</td></tr>
+  <tr><td><b>L</b> Liskov Substitution</td><td>A subtype must behave correctly wherever its parent is expected: "a subclass must not lie".</td><td>Bird.fly(); Penguin throws "cannot fly" so every caller must check. Project version: <code>CashOnDelivery extends Payment</code> whose <code>refundToCard()</code> throws, so <code>refund(payment)</code> crashes for COD. Fix: a <code>Refundable</code> interface, or <code>refund()</code> returning a result instead of throwing; split the promise (FlyingBird, SwimmingBird).</td></tr>
+  <tr><td><b>I</b> Interface Segregation</td><td>Many small interfaces beat one fat one.</td><td><code>OfficeMachine { print scan fax staple }</code> forces SimplePrinter to stub fax() and staple(); instead Printable, Scannable, Faxable. Project: if the driver app must implement restaurant callbacks it never uses, every driver release depends on restaurant changes; split the interface.</td></tr>
+  <tr><td><b>D</b> Dependency Inversion</td><td>Depend on a promise, not a product. High-level logic should not depend on low-level details.</td><td><code>RegistrationService</code> doing <code>new MySqlDatabase()</code> is locked in forever. Inject a <code>Repository</code> interface: production uses MySqlRepository, fast tests use InMemoryRepository, a later swap is one line (PostgresRepository). "The arrows flip": business logic and MySQL both depend on the abstraction. Leads to dependency injection, clean architecture, hexagonal architecture. Another example: OrderService depends on a <code>Notifier</code> interface (EmailNotifier, SmsNotifier, PushNotifier, FakeNotifier for tests).</td></tr>
+</table>
+<p><b>Treat SOLID as habits that reduce coupling, not as rules to obey.</b> Five principles, one enemy: coupling.</p>
+
+<h3>Do not over-engineer: YAGNI</h3>
+<div class="box"><b>Abstraction has a cost</b>Fifteen interfaces and a factory for a to-do list app is a worse crime than none: every layer of indirection is another file a teammate must read. <b>Add abstraction when it hurts</b>: feel the coupling first, then remove it. Two implementations existing today is a reason for an interface; one hypothetical future one is not. <b>YAGNI: "You Aren't Gonna Need It"</b>: build for the requirements you have, in a way that does not block the requirements you might get.</div>
+
+<div class="box"><b>Key takeaways</b>
+Architecture = decisions that are expensive to change; it exists whether planned or not. Design incrementally: fix the expensive decisions early, defer the rest. NFRs (not features) shape architecture; find the <b>drivers</b> by asking whether changing the requirement changes the diagram. Start from the <b>problem domain</b>: concept &rarr; responsibility &rarr; data &rarr; API &rarr; interactions. Aim for high cohesion and low coupling; use SOLID as habits and respect YAGNI.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. What makes a decision architectural? Give two architectural and two implementation decisions.</summary>
+<p>An architectural decision is one that is expensive to change later (test: how costly would it be to change in week 10?). Architectural: SQL vs NoSQL; where the business rules live; how the frontend talks to the backend; which framework. Implementation: name of a private method; for vs while; list vs dictionary; button colour.</p>
+</details>
+<details>
+<summary>W2. Explain why non-functional requirements shape architecture, using the 500-user vs 1,000,000-user example, and what an architectural driver is.</summary>
+<p>The same features need one server and one DB for 500 users but load balancing, several app servers, a cache and a primary/replica DB for 1M users at 24/7, under 2 s and 99.9 % availability. The NFRs forced every extra component. An architectural driver is a requirement whose change would change the architecture diagram (e.g. 10,000 orders per minute); a PDF export or button text is not.</p>
+</details>
+<details>
+<summary>W3. Describe the method for going from a problem domain to system components and unfold the Order concept.</summary>
+<p>Problem domain, then identify entities and concepts, responsibilities, relationships and finally system components. For Order: component OrderService; data orders(id, customerId, restaurantId, status, total, placedAt); API POST /orders, GET /orders/42, PATCH /orders/42/status; interactions: synchronous call to Payment, asynchronous notification to the restaurant, an OrderPlaced event.</p>
+</details>
+<details>
+<summary>W4. Explain SOLID with a project-scale example for each principle and explain YAGNI.</summary>
+<p>SRP: split OrderManager into ordering, pricing, payment, mailing and analytics classes. OCP: PaymentMethod interface so new methods are new files. LSP: CashOnDelivery must honour Payment's contract (use Refundable). ISP: small Printable/Scannable/Faxable instead of OfficeMachine. DIP: inject a Repository so MySQL, in-memory test or Postgres can be swapped. YAGNI: abstractions cost, so add them when coupling hurts, not for hypothetical futures.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Architecture in the SDLC</td><td>Not one phase: begins at "what system do we need?" and continues through implementation, testing, maintenance. Requirements flow down; feedback flows up.</td></tr>
+  <tr><td>Definition</td><td>Architecture = the set of decisions that are <b>expensive to change later</b>. Exists whether planned or not (unplanned = accidental). No best architecture, only trade-offs (requirements, team, time, change).</td></tr>
+  <tr><td>Architectural vs implementation decisions</td><td>SQL/NoSQL, where business rules live, frontend-backend communication, framework vs list/dictionary, private method name, for/while, button colour.</td></tr>
+  <tr><td>Big up-front vs incremental</td><td>Up-front: decisions before knowledge, late feedback. Incremental: fix expensive decisions early (language, framework, data-model style, boundaries); decide the rest per increment. "Don't pretend you know everything upfront."</td></tr>
+  <tr><td>FR vs NFR</td><td>FR shape features; <b>NFR shape architecture</b>. 500 users = one server; 1M users 24/7 &lt;2 s 99.9 % = load balancer, many servers, cache, replica.</td></tr>
+  <tr><td>Architectural driver</td><td>A requirement that would change your diagram if it changed (1M users, 10,000 orders/min, payment never twice, search under 300 ms). Not: PDF export, pie chart, button text.</td></tr>
+  <tr><td>Domain-first design</td><td>Problem domain &rarr; entities/concepts &rarr; responsibilities &rarr; relationships &rarr; components. Name components after the problem. Domain concepts do not automatically become services (modules in a monolith vs microservices).</td></tr>
+  <tr><td>One concept unfolded (Order)</td><td>Component (OrderService), data (orders table), API (POST /orders, GET /orders/42, PATCH /orders/42/status), interactions (sync Payment, async Restaurant, event OrderPlaced).</td></tr>
+  <tr><td>Cohesion / coupling</td><td>High cohesion (one job well), low coupling (change one thing without breaking five). Every arrow is a way for a change to spread.</td></tr>
+  <tr><td>SOLID (project scale)</td><td>S: one reason to change (OrderManager split). O: PaymentMethod interface. L: CashOnDelivery refund throws, fix with Refundable. I: small Printable / Scannable / Faxable. D: inject Repository (MySQL / InMemory). Habits, not rules.</td></tr>
+  <tr><td>YAGNI</td><td>Abstraction has a cost; add it when it hurts; two real implementations justify an interface, one hypothetical does not.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be able to (1) say what makes a decision architectural, (2) pick drivers out of a requirement list, and (3) turn a domain into components with responsibilities and data.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Architecture is best described as:", "o": ["The set of decisions that are expensive to change later", "The folder layout only", "The programming language", "The test plan"], "a": 0, "e": "Ask how expensive it would be to change in week 10."}, {"q": "Which is an architectural decision?", "o": ["Button colour", "Name of a private method", "SQL or NoSQL for our data", "for or while loop"], "a": 2, "e": "Where business rules live, framework choice, frontend-backend communication are also architectural."}, {"q": "'Architecture exists whether you plan it or not.' Unplanned architecture is:", "o": ["Impossible", "Accidental", "Better", "Agile"], "a": 1, "e": "Unplanned just means accidental."}, {"q": "Where does architecture happen in the SDLC?", "o": ["Only in the design phase", "Begins early and continues through implementation, testing and maintenance", "Only at deployment", "Only at the end"], "a": 1, "e": "The design box is where it is most concentrated, not contained."}, {"q": "The main problem with big up-front design is:", "o": ["It uses diagrams", "Many decisions are made before enough knowledge exists, and feedback arrives late", "It is too fast", "It needs no requirements"], "a": 1, "e": "The failure mode is pretending early guesses are certain."}, {"q": "In incremental design which decisions stay up front?", "o": ["Screens and endpoints", "Language, framework, data-model style, system boundaries", "Variable names", "Button text"], "a": 1, "e": "Everything else is decided per increment."}, {"q": "Which is NOT one of the four forces shaping a trade-off?", "o": ["Requirements", "Team", "Time", "Office colour"], "a": 3, "e": "The fourth is change: what is most likely to change."}, {"q": "Non-functional requirements:", "o": ["Shape features", "Shape architecture", "Are optional", "Describe the UI only"], "a": 1, "e": "Functional requirements shape features."}, {"q": "'Support 10,000 concurrent users' is a:", "o": ["Functional requirement", "Non-functional requirement", "Test case", "Design pattern"], "a": 1, "e": "It describes how the system should behave."}, {"q": "Why is a 1,000,000-user system's architecture more complex than a 500-user one with identical features?", "o": ["Different programmers", "The NFRs forced every new box", "Features differ", "It is not"], "a": 1, "e": "Load balancers, replicas and caches come from NFRs."}, {"q": "A requirement is an architectural driver if:", "o": ["It is long", "Changing it would change your diagram", "It is in the UI", "It is first in the list"], "a": 1, "e": "Ask if it doubled or vanished would the diagram change."}, {"q": "Which is most likely an architectural driver?", "o": ["Sign-up button says Join now", "A payment must never be recorded twice", "Admin pie chart", "Export report as PDF"], "a": 1, "e": "It forces consistency and idempotency design."}, {"q": "Domain-first design starts from:", "o": ["The list of tools", "The concepts of the problem (student, course, enrolment ...)", "The database vendor", "The cloud provider"], "a": 1, "e": "Technology-first gives a pile of tools."}, {"q": "The pipeline from domain to components is:", "o": ["Entities, responsibilities, relationships, components", "Code, test, deploy", "Tools, servers, users", "UI, DB, API"], "a": 0, "e": "Name components after the problem."}, {"q": "Customer, Order and Payment could be:", "o": ["Only microservices", "Only modules in a monolith", "Either modules in a monolith or microservices, depending on trade-offs", "Neither"], "a": 2, "e": "Do not mirror every noun as a service."}, {"q": "For the Order concept, 'calls Payment' is best:", "o": ["Asynchronous", "Synchronous (an answer is needed)", "Skipped", "Cached"], "a": 1, "e": "Notifying the restaurant is async via a queue."}, {"q": "POST /orders, GET /orders/42, PATCH /orders/42/status are the ___ of the Order concept.", "o": ["Data", "API (responsibilities as verbs)", "Tests", "Layers"], "a": 1, "e": "The API was hiding inside the domain analysis."}, {"q": "Low coupling means:", "o": ["One module does many jobs", "You can change one thing without breaking five others", "Modules share data", "Many dependencies"], "a": 1, "e": "Every arrow is a way for a change to spread."}, {"q": "A UserService with login, invoice, email, tax, report and payment has:", "o": ["High cohesion", "Low cohesion", "Low coupling", "SOLID compliance"], "a": 1, "e": "Six unrelated jobs."}, {"q": "A Student class that saves to SQL, sends email and renders HTML violates:", "o": ["SRP", "LSP", "OCP", "DIP only"], "a": 0, "e": "Four jobs, four reasons to change."}, {"q": "Adding a new payment method as a new class implementing PaymentMethod follows:", "o": ["SRP", "Open/Closed", "LSP", "ISP"], "a": 1, "e": "Extension without editing tested code."}, {"q": "CashOnDelivery extends Payment with a refundToCard that throws. Which principle is broken?", "o": ["SRP", "OCP", "LSP", "DIP"], "a": 2, "e": "A subclass must not lie about the parent's promise."}, {"q": "Injecting a Repository interface into RegistrationService illustrates:", "o": ["SRP", "OCP", "ISP", "DIP"], "a": 3, "e": "Production MySQL, tests in-memory, swap with one line."}, {"q": "YAGNI means:", "o": ["You Always Gotta Need It", "You Aren't Gonna Need It", "Yet Another Good New Idea", "Your API Gets Neater Instantly"], "a": 1, "e": "Build for the requirements you have."}, {"q": "When should you add an interface according to the lecture?", "o": ["Always, for every class", "When two implementations exist today (feel the coupling first)", "Never", "Only for hypothetical futures"], "a": 1, "e": "One hypothetical future one is not a reason."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

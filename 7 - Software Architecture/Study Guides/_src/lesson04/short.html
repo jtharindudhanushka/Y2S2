@@ -1,0 +1,16 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Architecture in the SDLC</td><td>Not one phase: begins at "what system do we need?" and continues through implementation, testing, maintenance. Requirements flow down; feedback flows up.</td></tr>
+  <tr><td>Definition</td><td>Architecture = the set of decisions that are <b>expensive to change later</b>. Exists whether planned or not (unplanned = accidental). No best architecture, only trade-offs (requirements, team, time, change).</td></tr>
+  <tr><td>Architectural vs implementation decisions</td><td>SQL/NoSQL, where business rules live, frontend-backend communication, framework vs list/dictionary, private method name, for/while, button colour.</td></tr>
+  <tr><td>Big up-front vs incremental</td><td>Up-front: decisions before knowledge, late feedback. Incremental: fix expensive decisions early (language, framework, data-model style, boundaries); decide the rest per increment. "Don't pretend you know everything upfront."</td></tr>
+  <tr><td>FR vs NFR</td><td>FR shape features; <b>NFR shape architecture</b>. 500 users = one server; 1M users 24/7 &lt;2 s 99.9 % = load balancer, many servers, cache, replica.</td></tr>
+  <tr><td>Architectural driver</td><td>A requirement that would change your diagram if it changed (1M users, 10,000 orders/min, payment never twice, search under 300 ms). Not: PDF export, pie chart, button text.</td></tr>
+  <tr><td>Domain-first design</td><td>Problem domain &rarr; entities/concepts &rarr; responsibilities &rarr; relationships &rarr; components. Name components after the problem. Domain concepts do not automatically become services (modules in a monolith vs microservices).</td></tr>
+  <tr><td>One concept unfolded (Order)</td><td>Component (OrderService), data (orders table), API (POST /orders, GET /orders/42, PATCH /orders/42/status), interactions (sync Payment, async Restaurant, event OrderPlaced).</td></tr>
+  <tr><td>Cohesion / coupling</td><td>High cohesion (one job well), low coupling (change one thing without breaking five). Every arrow is a way for a change to spread.</td></tr>
+  <tr><td>SOLID (project scale)</td><td>S: one reason to change (OrderManager split). O: PaymentMethod interface. L: CashOnDelivery refund throws, fix with Refundable. I: small Printable / Scannable / Faxable. D: inject Repository (MySQL / InMemory). Habits, not rules.</td></tr>
+  <tr><td>YAGNI</td><td>Abstraction has a cost; add it when it hurts; two real implementations justify an interface, one hypothetical does not.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be able to (1) say what makes a decision architectural, (2) pick drivers out of a requirement list, and (3) turn a domain into components with responsibilities and data.</div>
