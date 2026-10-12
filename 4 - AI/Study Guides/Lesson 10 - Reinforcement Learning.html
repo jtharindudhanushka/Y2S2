@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Lesson 10 - Reinforcement Learning</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; AI study guides</a> &middot; INTE 22303 &middot; Lesson 10</p><button id="theme" type="button"></button></div>
+  <h1>Reinforcement Learning</h1>
+  <p class="lead">Covers: what reinforcement learning is and how it differs from supervised and unsupervised learning, the agent-environment loop and vocabulary (state, action, reward, policy, episode), return and the discount factor, exploration vs exploitation (epsilon-greedy), Q-learning with a worked corridor example, policy gradients (the fries story), uses and problems such as reward hacking. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define reinforcement learning (RL) and contrast it with supervised and unsupervised learning</li>
+  <li>Use the vocabulary: agent, environment, state, action, reward, policy &pi;(s, a) = p, episode, return, value</li>
+  <li>Compute a discounted return and explain the discount factor &gamma;</li>
+  <li>Explain exploration vs exploitation and compute &epsilon;-greedy probabilities</li>
+  <li>Do Q-learning updates by hand: Q &larr; Q + &alpha;[r + &gamma; max Q' &minus; Q]</li>
+  <li>Explain policy gradients (the "fries" story), reward hacking and where RL is used</li>
+</ul>
+<div class="box"><b>Source note</b>The lecture plan lists Reinforcement Learning in week 12; your folder holds no slides for it. This guide uses the lecturer's own statements recorded in the peer notes (RL definition, state / action / policy and the formula &pi;(s, a<sub>i</sub>) = P<sub>i</sub>, Boston Dynamics) plus the full peer-made lesson (return, discount, &epsilon;-greedy, Q-learning, policy gradients), which follows StatQuest videos. Peer-made content is marked <b>(peer notes)</b>.</div>
+
+<h2>1. What is reinforcement learning?</h2>
+<div class="box"><b>Definition</b><b>Reinforcement learning (RL)</b> is a type of machine learning in which an <b>agent</b> learns by interacting with an <b>environment</b> and receiving feedback as <b>rewards (+)</b> or <b>penalties (&minus;)</b>. A positive reward means a desirable action; a negative reward (penalty) means an undesirable one.</div>
+<p><i>Analogy: training a puppy. You give no rule book: if it sits, a treat (reward); if it jumps on the sofa, "no" (penalty). After many tries it learns which actions lead to treats.</i> A game character falling in lava loses points; riding a bike you learn by trying and falling.</p>
+<table>
+  <tr><th>Type</th><th>What the machine gets</th><th>Picture</th></tr>
+  <tr><td>Supervised</td><td>Examples <b>with the correct answers</b></td><td>A teacher with an answer sheet</td></tr>
+  <tr><td>Unsupervised</td><td>Data with <b>no answers</b></td><td>Sorting buttons into groups</td></tr>
+  <tr><td><b>Reinforcement</b></td><td>Only a <b>reward or penalty after it acts</b></td><td>Learning to ride a bike by trying and falling</td></tr>
+</table>
+<p>In RL nobody tells the agent the right action; it must discover good actions by trying them, and a good action may only pay off later (a chess move that wins 30 moves later). That is why RL is harder than supervised learning.</p>
+<h3>Real examples</h3>
+<ul>
+  <li><b>Robots:</b> Boston Dynamics (first built for military use; four-legged robots like dogs) can use RL ideas to learn suitable movements through interaction and feedback.</li>
+  <li><b>Games:</b> programs play millions of games and are rewarded for winning. <b>Driving and control:</b> steering, braking, route planning.</li>
+  <li><b>Chatbots:</b> reward signals from human feedback make answers more helpful and human-like (the reinforcement-learning stage of Lesson 8's recipe for generative models).</li>
+</ul>
+
+<h2>2. The RL loop and its vocabulary</h2>
+<svg viewBox="0 0 600 140" role="img" aria-label="The reinforcement learning loop" class="dg"><rect class="bx" x="40" y="40" width="150" height="60" rx="8"/><text x="115.0" y="67.0" text-anchor="middle" class="h">Agent</text><text x="115.0" y="84.0" text-anchor="middle" class="sm">chooses an action</text><rect class="bx" x="380" y="40" width="170" height="60" rx="8"/><text x="465.0" y="67.0" text-anchor="middle" class="h">Environment</text><text x="465.0" y="84.0" text-anchor="middle" class="sm">reacts to the action</text><path class="ar" d="M190 58 L380 58"/><text x="285" y="50" text-anchor="middle" class="sm">action a</text><path class="ar" d="M380 85 L190 85"/><text x="285" y="105" text-anchor="middle" class="sm">new state s' and reward r</text><text x="115" y="125" text-anchor="middle" class="sm">learns, then acts again</text></svg>
+<table>
+  <tr><th>Word</th><th>Symbol</th><th>Meaning</th><th>Robot example</th></tr>
+  <tr><td>Agent</td><td></td><td>The learner that acts</td><td>The robot</td></tr>
+  <tr><td>Environment</td><td></td><td>Everything the agent interacts with</td><td>Floor, steps, obstacles</td></tr>
+  <tr><td>State</td><td>s</td><td>The current situation (s<sub>1</sub>, s<sub>2</sub>, &hellip;)</td><td>Standing in front of a step</td></tr>
+  <tr><td>Action</td><td>a</td><td>What the agent does (a<sub>1</sub>, a<sub>2</sub>, &hellip;)</td><td>Lift the leg, turn, wait</td></tr>
+  <tr><td>Reward</td><td>r</td><td>Feedback number after an action</td><td>+1 for climbing, &minus;1 for falling</td></tr>
+  <tr><td>Policy</td><td>&pi;</td><td>The rule for choosing actions</td><td>"In front of a step, usually lift the leg"</td></tr>
+  <tr><td>Episode</td><td></td><td>One full try from start to end</td><td>One walk across the room</td></tr>
+</table>
+<p>The loop: the agent sees a <b>state</b>, picks an <b>action</b>; the environment returns a <b>new state and a reward</b>; the agent learns and acts again. The agent learns which action is best for a particular state.</p>
+<div class="box"><b>Policy: &pi;(s, a<sub>i</sub>) = P<sub>i</sub></b>"In state s, the policy &pi; chooses action a<sub>i</sub> with probability P<sub>i</sub>." The probabilities for a state add up to 1.</div>
+<svg viewBox="0 0 640 145" role="img" aria-label="A policy as probabilities" class="dg"><text x="10" y="20" text-anchor="start" class="h">State s1: in front of a step</text><text x="90" y="50" text-anchor="end" class="sm">lift leg</text><rect x="100" y="35" width="280" height="20" fill="var(--ok)" opacity="0.8"/><text x="388.0" y="50" text-anchor="start" class="sm">pi(s1, lift leg) = 0.7</text><text x="90" y="80" text-anchor="end" class="sm">turn</text><rect x="100" y="65" width="80" height="20" fill="var(--accent)" opacity="0.8"/><text x="188.0" y="80" text-anchor="start" class="sm">pi(s1, turn) = 0.2</text><text x="90" y="110" text-anchor="end" class="sm">wait</text><rect x="100" y="95" width="40" height="20" fill="var(--bad)" opacity="0.8"/><text x="148.0" y="110" text-anchor="start" class="sm">pi(s1, wait) = 0.1</text><text x="10" y="135" text-anchor="start" class="sm">0.7 + 0.2 + 0.1 = 1: the probabilities for one state always add up to 1</text></svg>
+<p>Example in state s<sub>1</sub> (in front of a step): &pi;(s<sub>1</sub>, lift leg) = 0.7, &pi;(s<sub>1</sub>, turn) = 0.2, &pi;(s<sub>1</sub>, wait) = 0.1 (total 1.0). Learning means changing these probabilities so rewarded actions become more likely. (0.5, 0.4, 0.3 is not a valid policy: it adds up to 1.2.)</p>
+<h3>The tiny world used for the examples</h3>
+<svg viewBox="0 0 600 150" role="img" aria-label="Three-square corridor world" class="dg"><rect class="bx" x="60" y="40" width="120" height="60" rx="8" fill="var(--soft)"/><text x="120" y="68" text-anchor="middle" class="h">A</text><text x="120" y="88" text-anchor="middle" class="sm">start</text><rect class="bx" x="230" y="40" width="120" height="60" rx="8" fill="var(--soft)"/><text x="290" y="68" text-anchor="middle" class="h">B</text><text x="290" y="88" text-anchor="middle" class="sm"></text><rect class="bx" x="400" y="40" width="120" height="60" rx="8" fill="var(--okbg)"/><text x="460" y="68" text-anchor="middle" class="h">C</text><text x="460" y="88" text-anchor="middle" class="sm">goal  +10</text><path class="ar" d="M180 60 L230 60"/><path class="ar" d="M350 60 L400 60"/><path class="ar" d="M410 100 C410 130 330 130 290 102"/><text x="335" y="135" text-anchor="middle" class="sm">B can also go left (to A)</text><text x="205" y="52" text-anchor="middle" class="sm">right</text><text x="375" y="52" text-anchor="middle" class="sm">right</text></svg>
+<p>A corridor of three squares: <b>A</b> (start), <b>B</b>, and <b>C</b> (goal, reward +10). From A the robot can only go right to B; from B it can go left (to A) or right (to C). The best policy is "always go right".</p>
+
+<h2>3. Reward, return and the discount factor <small style="color:var(--muted);font-weight:400">(peer notes)</small></h2>
+<p>A single reward is not the goal; the goal is the total reward over an episode, the <b>return</b>. A chess move that wins a piece now might lose the game later, and a move that gives nothing now might set up a win.</p>
+<p>A reward now is usually worth more than the same reward later, so later rewards are multiplied by the <b>discount factor &gamma;</b> (0 to 1):</p>
+<div class="box"><b>G = r<sub>1</sub> + &gamma; r<sub>2</sub> + &gamma;&sup2; r<sub>3</sub> + &hellip;</b>&gamma; close to 1: patient agent; &gamma; close to 0: cares only about rewards right now.</div>
+<ul>
+  <li>Corridor rewards 0, 0, then +10 on reaching C: with <b>&gamma; = 0.9</b>, G = 0 + 0.9&times;0 + 0.81&times;10 = <b>8.1</b>; with <b>&gamma; = 0.5</b>, G = 0 + 0.5&times;0 + 0.25&times;10 = <b>2.5</b>.</li>
+  <li>Rewards 0, 5 with &gamma; = 0.8: G = 0 + 0.8 &times; 5 = 4.</li>
+</ul>
+<svg viewBox="0 0 640 190" role="img" aria-label="Discount weights gamma^n" class="dg"><path d="M70 150 H575 M70 150 V15" stroke="var(--fg)" fill="none"/><circle cx="70.0" cy="20.0" r="4" fill="var(--accent)"/><circle cx="119.0" cy="33.0" r="4" fill="var(--accent)"/><circle cx="168.0" cy="44.7" r="4" fill="var(--accent)"/><circle cx="217.0" cy="55.2" r="4" fill="var(--accent)"/><circle cx="266.0" cy="64.7" r="4" fill="var(--accent)"/><circle cx="315.0" cy="73.2" r="4" fill="var(--accent)"/><circle cx="364.0" cy="80.9" r="4" fill="var(--accent)"/><circle cx="413.0" cy="87.8" r="4" fill="var(--accent)"/><circle cx="462.0" cy="94.0" r="4" fill="var(--accent)"/><circle cx="511.0" cy="99.6" r="4" fill="var(--accent)"/><circle cx="560.0" cy="104.7" r="4" fill="var(--accent)"/><polyline points="70.0,20.0 82.2,23.4 94.5,26.7 106.8,29.9 119.0,33.0 131.2,36.0 143.5,39.0 155.8,41.9 168.0,44.7 180.2,47.4 192.5,50.1 204.8,52.7 217.0,55.2 229.2,57.7 241.5,60.1 253.8,62.4 266.0,64.7 278.2,66.9 290.5,69.1 302.8,71.2 315.0,73.2 327.2,75.2 339.5,77.2 351.8,79.1 364.0,80.9 376.2,82.7 388.5,84.5 400.8,86.2 413.0,87.8 425.2,89.4 437.5,91.0 449.8,92.5 462.0,94.0 474.2,95.5 486.5,96.9 498.8,98.3 511.0,99.6 523.2,100.9 535.5,102.2 547.8,103.5 560.0,104.7" fill="none" stroke="var(--accent)" stroke-width="2"/><circle cx="70.0" cy="20.0" r="4" fill="var(--bad)"/><circle cx="119.0" cy="85.0" r="4" fill="var(--bad)"/><circle cx="168.0" cy="117.5" r="4" fill="var(--bad)"/><circle cx="217.0" cy="133.8" r="4" fill="var(--bad)"/><circle cx="266.0" cy="141.9" r="4" fill="var(--bad)"/><circle cx="315.0" cy="145.9" r="4" fill="var(--bad)"/><circle cx="364.0" cy="148.0" r="4" fill="var(--bad)"/><circle cx="413.0" cy="149.0" r="4" fill="var(--bad)"/><circle cx="462.0" cy="149.5" r="4" fill="var(--bad)"/><circle cx="511.0" cy="149.7" r="4" fill="var(--bad)"/><circle cx="560.0" cy="149.9" r="4" fill="var(--bad)"/><polyline points="70.0,20.0 82.2,40.7 94.5,58.1 106.8,72.7 119.0,85.0 131.2,95.3 143.5,104.0 155.8,111.4 168.0,117.5 180.2,122.7 192.5,127.0 204.8,130.7 217.0,133.8 229.2,136.3 241.5,138.5 253.8,140.3 266.0,141.9 278.2,143.2 290.5,144.3 302.8,145.2 315.0,145.9 327.2,146.6 339.5,147.1 351.8,147.6 364.0,148.0 376.2,148.3 388.5,148.6 400.8,148.8 413.0,149.0 425.2,149.1 437.5,149.3 449.8,149.4 462.0,149.5 474.2,149.6 486.5,149.6 498.8,149.7 511.0,149.7 523.2,149.8 535.5,149.8 547.8,149.8 560.0,149.9" fill="none" stroke="var(--bad)" stroke-width="2"/><text x="330" y="175" text-anchor="middle" class="sm">steps into the future (n)</text><text x="62" y="25" text-anchor="end" class="sm">1</text><text x="62" y="152" text-anchor="end" class="sm">0</text><rect x="400" y="28" width="14" height="4" fill="var(--accent)"/><text x="420" y="33" text-anchor="start" class="sm">gamma = 0.9 (patient)</text><rect x="400" y="46" width="14" height="4" fill="var(--bad)"/><text x="420" y="51" text-anchor="start" class="sm">gamma = 0.5 (short-sighted)</text><text x="70" y="12" text-anchor="start" class="sm">weight of a reward n steps away = gamma^n</text></svg>
+<p><i>Analogy: 100 rupees today is worth more than 100 rupees in a year; &gamma; says how much less.</i></p>
+<p><b>Value</b> of a state = the return the agent can expect from that state if it follows its policy. Under "always go right": B is one step from the goal, so V(B) = 10; A is two steps away, so V(A) = 0.9 &times; 10 = 9. States nearer the reward have higher value.</p>
+
+<h2>4. Exploration versus exploitation <small style="color:var(--muted);font-weight:400">(peer notes)</small></h2>
+<p>Should the agent <b>exploit</b> (repeat the action that has worked best so far) or <b>explore</b> (try something different that might be even better)? <i>Analogy: your favourite restaurant versus the new one down the street.</i> Too much exploiting misses better options; too much exploring wastes time.</p>
+<div class="box"><b>&epsilon;-greedy rule</b>With probability &epsilon; the agent explores (random action); otherwise (probability 1 &minus; &epsilon;) it picks the action it currently thinks is best.</div>
+<svg viewBox="0 0 620 108" role="img" aria-label="Epsilon-greedy probabilities" class="dg"><text x="10" y="20" text-anchor="start" class="h">epsilon = 0.3, three actions</text><rect x="20.0" y="35" width="448.0" height="36" fill="var(--ok)" opacity="0.8" stroke="var(--bg)"/><text x="244.0" y="58" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">best known 0.8</text><rect x="468.0" y="35" width="56.0" height="36" fill="var(--accent)" opacity="0.8" stroke="var(--bg)"/><text x="496.0" y="58" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">0.1</text><rect x="524.0" y="35" width="56.0" height="36" fill="var(--bad)" opacity="0.8" stroke="var(--bg)"/><text x="552.0" y="58" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">0.1</text><text x="300" y="95" text-anchor="middle" class="sm">exploit: 0.7 for the best + explore: 0.3 shared as 0.1 each</text></svg>
+<p>Example: 3 actions, &epsilon; = 0.3. Random exploration is shared among all 3 actions: 0.3 / 3 = 0.1 each. Best-known action: (1 &minus; 0.3) + 0.1 = 0.8. Each other action: 0.1. Check: 0.8 + 0.1 + 0.1 = 1.0. With &epsilon; = 0.1 and 2 actions the best action has 0.9 + 0.05 = 0.95. A common plan: start with a large &epsilon; and shrink it as the agent learns. If it never explores, it can stay stuck with a mediocre action.</p>
+
+<h2>5. Q-learning <small style="color:var(--muted);font-weight:400">(peer notes)</small></h2>
+<p>Q-learning keeps a table of <b>Q-values</b>: <b>Q(s, a)</b> = how good it is to take action a in state s (the expected return). The agent then picks the action with the highest Q.</p>
+<div class="box"><b>Q(s, a) &larr; Q(s, a) + &alpha; [ r + &gamma; &middot; max Q(s&prime;, a&prime;) &minus; Q(s, a) ]</b>&alpha; = learning rate (step size); r = reward just received; &gamma; = discount; max Q(s&prime;, a&prime;) = best Q-value in the next state s&prime;. The bracket is the error: "what I just saw" minus "what I expected"; Q moves a fraction &alpha; of the way toward what was seen.</div>
+<h3>Worked example in the corridor</h3>
+<p>&alpha; = 0.5, &gamma; = 0.9, all Q start at 0. The agent walks A &rarr; B &rarr; C each episode; reaching C gives +10 and ends the episode.</p>
+<ul>
+  <li><b>Episode 1:</b> A&rarr;B (reward 0): Q(A, right) = 0 + 0.5 &times; [0 + 0.9&times;0 &minus; 0] = 0. B&rarr;C (reward 10): Q(B, right) = 0 + 0.5 &times; [10 + 0 &minus; 0] = <b>5</b>.</li>
+  <li><b>Episode 2:</b> A&rarr;B: Q(A, right) = 0 + 0.5 &times; [0 + 0.9&times;5 &minus; 0] = 0.5 &times; 4.5 = <b>2.25</b>. B&rarr;C: Q(B, right) = 5 + 0.5 &times; [10 &minus; 5] = <b>7.5</b>.</li>
+</ul>
+<table>
+  <tr><th>After episode</th><th>Q(B, right)</th><th>Q(A, right)</th></tr>
+  <tr><td>1</td><td>5</td><td>0</td></tr>
+  <tr><td>2</td><td>7.5</td><td>2.25</td></tr>
+  <tr><td>3</td><td>8.75</td><td>4.5</td></tr>
+  <tr><td>4</td><td>9.375</td><td>6.19</td></tr>
+  <tr><td>5</td><td>9.69</td><td>7.31</td></tr>
+  <tr><td>True values</td><td>10</td><td>9</td></tr>
+</table>
+<svg viewBox="0 0 640 190" role="img" aria-label="Q-values climbing toward the true values" class="dg"><path d="M70 150 H585 M70 150 V15" stroke="var(--fg)" fill="none"/><path d="M70 26.2 H570" stroke="var(--accent)" stroke-dasharray="5 4" fill="none"/><path d="M70 38.6 H570" stroke="var(--ok)" stroke-dasharray="5 4" fill="none"/><circle cx="111.7" cy="88.1" r="3.5" fill="var(--accent)"/><circle cx="153.3" cy="57.1" r="3.5" fill="var(--accent)"/><circle cx="195.0" cy="41.7" r="3.5" fill="var(--accent)"/><circle cx="236.7" cy="33.9" r="3.5" fill="var(--accent)"/><circle cx="278.3" cy="30.1" r="3.5" fill="var(--accent)"/><circle cx="320.0" cy="28.1" r="3.5" fill="var(--accent)"/><circle cx="361.7" cy="27.2" r="3.5" fill="var(--accent)"/><circle cx="403.3" cy="26.7" r="3.5" fill="var(--accent)"/><circle cx="445.0" cy="26.4" r="3.5" fill="var(--accent)"/><circle cx="486.7" cy="26.3" r="3.5" fill="var(--accent)"/><circle cx="528.3" cy="26.3" r="3.5" fill="var(--accent)"/><circle cx="570.0" cy="26.2" r="3.5" fill="var(--accent)"/><polyline points="111.7,88.1 153.3,57.1 195.0,41.7 236.7,33.9 278.3,30.1 320.0,28.1 361.7,27.2 403.3,26.7 445.0,26.4 486.7,26.3 528.3,26.3 570.0,26.2" fill="none" stroke="var(--accent)" stroke-width="2"/><circle cx="111.7" cy="150.0" r="3.5" fill="var(--ok)"/><circle cx="153.3" cy="122.1" r="3.5" fill="var(--ok)"/><circle cx="195.0" cy="94.3" r="3.5" fill="var(--ok)"/><circle cx="236.7" cy="73.4" r="3.5" fill="var(--ok)"/><circle cx="278.3" cy="59.5" r="3.5" fill="var(--ok)"/><circle cx="320.0" cy="50.8" r="3.5" fill="var(--ok)"/><circle cx="361.7" cy="45.5" r="3.5" fill="var(--ok)"/><circle cx="403.3" cy="42.5" r="3.5" fill="var(--ok)"/><circle cx="445.0" cy="40.7" r="3.5" fill="var(--ok)"/><circle cx="486.7" cy="39.8" r="3.5" fill="var(--ok)"/><circle cx="528.3" cy="39.2" r="3.5" fill="var(--ok)"/><circle cx="570.0" cy="38.9" r="3.5" fill="var(--ok)"/><polyline points="111.7,150.0 153.3,122.1 195.0,94.3 236.7,73.4 278.3,59.5 320.0,50.8 361.7,45.5 403.3,42.5 445.0,40.7 486.7,39.8 528.3,39.2 570.0,38.9" fill="none" stroke="var(--ok)" stroke-width="2"/><text x="330" y="178" text-anchor="middle" class="sm">episode</text><text x="62" y="25" text-anchor="end" class="sm">10</text><text x="62" y="152" text-anchor="end" class="sm">0</text><rect x="330" y="95" width="14" height="4" fill="var(--accent)"/><text x="350" y="100" text-anchor="start" class="sm">Q(B, right)  (learns first)</text><rect x="330" y="113" width="14" height="4" fill="var(--ok)"/><text x="350" y="118" text-anchor="start" class="sm">Q(A, right)  (follows B, towards 9)</text></svg>
+<p>The reward information <b>spreads backward</b>: B learns it is good first (next to the goal), then A learns moving toward B is good, because A's update uses the best Q of the next state (B), which is 0 until B learns. <i>Analogy: a rumour spreading backward: C is great, B hears first, then A.</i> Because Q(B, right) &gt; Q(B, left) the agent chooses "right". Check: Q(B, right) = 5, reward 10, episode ends: 5 + 0.5 &times; (10 &minus; 5) = 7.5.</p>
+
+<h2>6. Policy gradients: learning with a neural network <small style="color:var(--muted);font-weight:400">(peer notes, following the StatQuest video)</small></h2>
+<p><b>Problem with ordinary backpropagation</b> (Lesson 6): it needs the correct answer to compute the error and the slopes, but in RL we usually do not know the correct action; we find out later through a reward. <b>Policy gradients</b> fix this: <b>take a guess to calculate the derivative, use a reward to update that derivative, then update the parameter with the updated derivative.</b></p>
+<h3>The fries story</h3>
+<svg viewBox="0 0 640 172" role="img" aria-label="Policy network for the fries story" class="dg"><rect class="bx" x="10" y="55" width="90" height="50" rx="8"/><text x="55.0" y="77.0" text-anchor="middle" class="h">Hunger</text><text x="55.0" y="94.0" text-anchor="middle" class="sm">0 to 1</text><path class="ar" d="M100 80 L140 80"/><rect class="bx" x="140" y="40" width="130" height="80" rx="8"/><text x="205.0" y="77.0" text-anchor="middle" class="h">Neural network</text><text x="205.0" y="94.0" text-anchor="middle" class="sm">policy</text><path class="ar" d="M270 65 L320 50"/><path class="ar" d="M270 95 L320 110"/><rect class="bx" x="320" y="25" width="150" height="50" rx="8"/><text x="395.0" y="47.0" text-anchor="middle" class="h">P(Norm's)</text><text x="395.0" y="64.0" text-anchor="middle" class="sm">big portion</text><rect class="bx" x="320" y="90" width="150" height="50" rx="8"/><text x="395.0" y="112.0" text-anchor="middle" class="h">P(Squatch's)</text><text x="395.0" y="129.0" text-anchor="middle" class="sm">small portion</text><text x="490" y="55" text-anchor="start" class="mono">hunger 0.0: 0.5</text><text x="490" y="118" text-anchor="start" class="mono">hunger 0.0: 0.5</text><text x="330" y="160" text-anchor="middle" class="sm">pick one with a random number, then the reward says if the guess was right</text></svg>
+<p>A small network decides where to go for fries: Norm's (big portion) or Squatch's (small portion). Input: hunger (0 = not hungry, 1 = very hungry). Outputs: P(Norm's) and P(Squatch's), adding to 1. If you are not hungry the small portion is the right choice. Step by step at hunger = 0.0:</p>
+<ol>
+  <li><b>Decide:</b> the network gives P(Norm's) = 0.5, P(Squatch's) = 0.5. A random number (0.2) falls in the first half, so we go to <b>Squatch's</b>.</li>
+  <li><b>Guess:</b> assume that was the right choice; the ideal would be P(Squatch's) = 1.0.</li>
+  <li><b>Derivative:</b> from the gap between ideal (1.0) and actual (0.5): size 0.5 for the bias being trained.</li>
+  <li><b>Reward:</b> we get a small portion while not hungry: the guess was correct, reward = <b>+1.0</b> (a big portion would mean the guess was wrong, reward &minus;1.0).</li>
+  <li><b>Update the derivative with the reward:</b> 0.5 &times; 1.0 = 0.5.</li>
+  <li><b>Gradient descent step</b> with learning rate 1.0: step size = 1.0 &times; 0.5 = 0.5.</li>
+</ol>
+<ul>
+  <li>A <b>positive reward</b> keeps the derivative's direction: the guessed action becomes more likely.</li>
+  <li>A <b>negative reward flips the sign</b>: the update pushes the other way, making the guessed action less likely (derivative 0.5, reward &minus;1.0, learning rate 1.0: updated derivative &minus;0.5, step &minus;0.5).</li>
+  <li>The size of the reward scales the step (other reward values than &plusmn;1 are possible). Sign conventions differ between textbooks; the idea is what matters.</li>
+</ul>
+<p><i>Analogy: a coach's whistle: the coach cannot name the perfect move but gives a thumbs up (+1) or down (&minus;1); up makes you repeat it, down makes you do it less.</i> Summary: use the network to decide, get the actual reward, multiply the derivative by the reward, apply gradient descent.</p>
+
+<h2>7. Uses and problems <small style="color:var(--muted);font-weight:400">(peer notes)</small></h2>
+<table>
+  <tr><th>Uses</th><th>Problems to know</th></tr>
+  <tr><td>Games (self-play), robotics (walk, grasp, balance), self-driving and control, recommendation and scheduling, language models (human-feedback rewards)</td><td><b>Reward hacking</b> (the agent finds a cheat that earns reward without the intended task: a cleaning robot rewarded for "no dirt visible" hides dirt under a rug; the reward must match the real goal); <b>lots of trial and error</b> (millions of tries: easy in a game, risky or costly for a real robot); <b>safe exploration</b> (random actions can cause harm); <b>delayed reward / credit assignment</b> (which earlier action deserves the credit?); <b>explainability</b> (a learned policy is hard to explain: Lesson 14)</td></tr>
+</table>
+<p><i>Analogy: a genie that gives exactly what you wished for, not what you meant.</i></p>
+<table>
+  <tr><th>Idea</th><th>What it does</th></tr>
+  <tr><td>Reward and return</td><td>Define what is good, now and over time</td></tr>
+  <tr><td>Discount &gamma;</td><td>Weights near rewards more than far ones</td></tr>
+  <tr><td>Explore and exploit</td><td>Balance trying new things and using what works</td></tr>
+  <tr><td>Q-learning</td><td>Learns a score for every state-action pair</td></tr>
+  <tr><td>Policy gradients</td><td>A neural network learns the policy directly, using rewards to scale updates</td></tr>
+</table>
+
+<h2>Words list</h2>
+<table>
+  <tr><th>Word</th><th>Plain meaning</th></tr>
+  <tr><td>Agent / environment</td><td>The learner that acts / everything it interacts with</td></tr>
+  <tr><td>State (s), action (a)</td><td>The situation / what the agent does</td></tr>
+  <tr><td>Reward (r)</td><td>Feedback number after an action</td></tr>
+  <tr><td>Policy (&pi;)</td><td>Rule for choosing actions, often probabilities</td></tr>
+  <tr><td>Episode</td><td>One full try from start to end</td></tr>
+  <tr><td>Return (G)</td><td>Total discounted reward over time</td></tr>
+  <tr><td>Discount factor (&gamma;)</td><td>How much later rewards are worth compared with now</td></tr>
+  <tr><td>Value / Q-value</td><td>Expected return of a state / of an action in a state</td></tr>
+  <tr><td>Exploration / exploitation</td><td>Trying new actions / using the best known one</td></tr>
+  <tr><td>&epsilon;-greedy</td><td>Explore with probability &epsilon;, otherwise exploit</td></tr>
+  <tr><td>Learning rate (&alpha;)</td><td>How big each update step is</td></tr>
+  <tr><td>Policy gradient</td><td>Update a policy network using its derivative multiplied by the reward</td></tr>
+  <tr><td>Reward hacking</td><td>Earning reward by a cheat rather than the intended behaviour</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+RL: an agent in an environment sees a state, takes an action and gets a reward or penalty; the policy &pi;(s, a<sub>i</sub>) = P<sub>i</sub> chooses actions (probabilities add to 1). Maximise the discounted return G = r<sub>1</sub> + &gamma;r<sub>2</sub> + &gamma;&sup2;r<sub>3</sub> + &hellip;. Balance exploring and exploiting (&epsilon;-greedy). Q-learning: Q &larr; Q + &alpha;[r + &gamma; max Q&prime; &minus; Q] (good news spreads backward from the goal). Policy gradients: guess, get reward, multiply the derivative by the reward, take a gradient-descent step. Watch for reward hacking.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Define reinforcement learning and contrast it with supervised and unsupervised learning. Give two real examples.</summary>
+<p>RL: an agent learns by interacting with an environment and receiving feedback as rewards (+) or penalties (&minus;). Supervised learning has correct answers (teacher), unsupervised has no answers (find groups), RL has only a reward or penalty after it acts, which may come later. Examples: a puppy trained with treats; Boston Dynamics robots learning movements; game-playing programs; chatbots tuned with human-feedback rewards.</p>
+</details>
+<details>
+<summary>W2. Define agent, environment, state, action, reward, policy and episode, and explain pi(s, a<sub>i</sub>) = P<sub>i</sub> with an example.</summary>
+<p>Agent: the learner that acts; environment: everything it interacts with; state s: current situation; action a: what it does; reward r: feedback number after an action; policy &pi;: rule for choosing actions; episode: one full try from start to end. &pi;(s, a<sub>i</sub>) = P<sub>i</sub> means in state s the policy chooses action a<sub>i</sub> with probability P<sub>i</sub>, and the probabilities for the state add to 1. Example: &pi;(s<sub>1</sub>, lift leg) = 0.7, &pi;(s<sub>1</sub>, turn) = 0.2, &pi;(s<sub>1</sub>, wait) = 0.1.</p>
+</details>
+<details>
+<summary>W3. Explain the return and discount factor. In the corridor A-B-C with +10 at C, compute G for rewards 0, 0, 10 with &gamma; = 0.9 and 0.5, and V(A) and V(B) for &gamma; = 0.9.</summary>
+<p>Return G = r<sub>1</sub> + &gamma;r<sub>2</sub> + &gamma;&sup2;r<sub>3</sub> + &hellip;, the total reward over time, with later rewards worth less (&gamma; between 0 and 1; near 1 patient, near 0 short-sighted). &gamma; = 0.9: 0.81 &times; 10 = 8.1; &gamma; = 0.5: 0.25 &times; 10 = 2.5. Under always-go-right: V(B) = 10, V(A) = 0.9 &times; 10 = 9.</p>
+</details>
+<details>
+<summary>W4. Explain exploration vs exploitation and compute the &epsilon;-greedy probabilities for &epsilon; = 0.3 and three actions.</summary>
+<p>Exploit: use the action that has worked best; explore: try something different that may be better. &epsilon;-greedy explores with probability &epsilon; (random action) and exploits otherwise. With &epsilon; = 0.3 and 3 actions, exploration gives 0.3/3 = 0.1 to each action; the best action gets 0.7 + 0.1 = 0.8; the others 0.1 each (total 1.0). Often &epsilon; starts large and shrinks.</p>
+</details>
+<details>
+<summary>W5. State the Q-learning update and perform the first two episodes in the corridor (&alpha; = 0.5, &gamma; = 0.9, Q = 0 initially, +10 at C).</summary>
+<p>Q(s,a) &larr; Q(s,a) + &alpha;[r + &gamma; max Q(s&prime;,a&prime;) &minus; Q(s,a)]. Episode 1: Q(A,right) = 0 + 0.5[0 + 0 &minus; 0] = 0; Q(B,right) = 0 + 0.5[10 &minus; 0] = 5. Episode 2: Q(A,right) = 0 + 0.5[0 + 0.9&times;5 &minus; 0] = 2.25; Q(B,right) = 5 + 0.5[10 &minus; 5] = 7.5. Reward information spreads backward from the goal toward the true values 10 and 9.</p>
+</details>
+<details>
+<summary>W6. Explain policy gradients using the fries story.</summary>
+<p>Ordinary backpropagation needs the correct answer, which RL lacks. Policy gradients: use the network to decide (hunger 0: P(Norm's) = P(Squatch's) = 0.5; a random number 0.2 picks Squatch's); guess that this was right and compute the derivative (0.5); get the reward from the environment (small portion when not hungry: +1.0); multiply the derivative by the reward (0.5); take a gradient-descent step (learning rate 1.0 &times; 0.5 = 0.5). A positive reward makes the guessed action more likely; a negative reward flips the sign and makes it less likely.</p>
+</details>
+<details>
+<summary>W7. Explain reward hacking and two other practical problems of RL.</summary>
+<p>Reward hacking: the agent finds a cheat that earns reward without doing what was meant (a cleaning robot rewarded for no visible dirt hides dirt under a rug), so the reward must match the real goal. Other problems: lots of trial and error (millions of tries; costly or risky in the real world), safe exploration (random actions can cause harm), delayed reward and credit assignment, and policies that are hard to explain.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>RL</td><td>Agent learns by interacting with an environment; feedback = rewards (+) / penalties (&minus;). No answer sheet; reward may come later. Examples: puppy, Boston Dynamics robots, games, chatbots (human-feedback rewards).</td></tr>
+  <tr><td>vs others</td><td>Supervised: correct answers; unsupervised: no answers; RL: only reward / penalty after acting.</td></tr>
+  <tr><td>Loop</td><td>Agent sees state s &rarr; action a &rarr; environment gives new state s&prime; and reward r &rarr; learn, repeat.</td></tr>
+  <tr><td>Words</td><td>State s, action a, reward r, policy &pi;, episode (one full try), return G, value, Q-value.</td></tr>
+  <tr><td>Policy</td><td>&pi;(s, a<sub>i</sub>) = P<sub>i</sub>; probabilities per state add to 1 (0.7 + 0.2 + 0.1). Learning = change probabilities toward rewarded actions.</td></tr>
+  <tr><td>Return</td><td>G = r<sub>1</sub> + &gamma;r<sub>2</sub> + &gamma;&sup2;r<sub>3</sub> + &hellip; Rewards 0, 0, 10: &gamma; 0.9 &rarr; 8.1; &gamma; 0.5 &rarr; 2.5. &gamma; near 1 patient; near 0 short-sighted.</td></tr>
+  <tr><td>Value</td><td>Expected return from a state. Corridor A-B-C(+10): V(B) = 10, V(A) = 9.</td></tr>
+  <tr><td>Explore / exploit</td><td>&epsilon;-greedy: explore (random) with prob. &epsilon;, else best action. &epsilon; 0.3, 3 actions: best 0.8, others 0.1, 0.1. &epsilon; 0.1, 2 actions: 0.95. Start large, shrink.</td></tr>
+  <tr><td>Q-learning</td><td>Q(s,a) &larr; Q + &alpha;[r + &gamma; max Q&prime; &minus; Q]. &alpha; 0.5, &gamma; 0.9: Q(B,right): 5, 7.5, 8.75, 9.375, 9.69 (&rarr; 10); Q(A,right): 0, 2.25, 4.5, 6.19, 7.31 (&rarr; 9). Reward news spreads backward.</td></tr>
+  <tr><td>Policy gradient</td><td>Backprop needs the correct answer, RL does not have it. Guess &rarr; derivative &rarr; get reward &rarr; derivative &times; reward &rarr; gradient-descent step. Fries story: derivative 0.5 &times; reward +1 = 0.5; step 1.0 &times; 0.5. Negative reward flips direction.</td></tr>
+  <tr><td>Uses</td><td>Games (self-play), robotics, driving/control, recommendation, language models.</td></tr>
+  <tr><td>Problems</td><td><b>Reward hacking</b> (hides dirt under a rug), lots of trial and error, safe exploration, delayed reward / credit assignment, explainability.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Know the definition and vocabulary, write &pi;(s, a<sub>i</sub>) = P<sub>i</sub>, compute a discounted return, &epsilon;-greedy probabilities and one or two Q-learning updates by hand, and explain reward hacking.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Reinforcement learning is best described as:", "o": ["Learning from labelled examples", "An agent learning by interacting with an environment and receiving rewards or penalties", "Grouping unlabelled data", "Fitting a straight line"], "a": 1, "e": "Trial, error and feedback."}, {"q": "In RL, instead of correct answers the agent gets:", "o": ["A reward or penalty after it acts", "Nothing", "A teacher's answer sheet", "Labels"], "a": 0, "e": "Feedback only."}, {"q": "Why is RL harder than supervised learning?", "o": ["Nobody tells the agent the right action and rewards may come much later", "It has too few weights", "It needs labels", "It uses no data"], "a": 0, "e": "E.g. a chess move that wins 30 moves later."}, {"q": "Training a puppy with treats is an analogy for:", "o": ["Supervised learning", "Unsupervised learning", "Reinforcement learning", "Clustering"], "a": 2, "e": "Treat = reward; 'no' = penalty."}, {"q": "Boston Dynamics robots learning movements through feedback illustrate:", "o": ["Reinforcement learning ideas", "Clustering", "Regression", "Search trees"], "a": 0, "e": "Interaction and feedback."}, {"q": "In the RL loop, the environment returns:", "o": ["A new state and a reward", "Only a label", "A policy", "A loss function"], "a": 0, "e": "Then the agent acts again."}, {"q": "A state is:", "o": ["The current situation", "The rule for choosing actions", "The total reward", "One full try"], "a": 0, "e": "E.g. standing in front of a step."}, {"q": "A policy is:", "o": ["The rule the agent uses to choose actions in each state", "The reward", "The environment", "The discount"], "a": 0, "e": "Often probabilities."}, {"q": "pi(s, a_i) = P_i means:", "o": ["In state s the policy chooses action a_i with probability P_i", "The reward of a_i is P_i", "The state is P_i", "The return is P_i"], "a": 0, "e": "Probabilities for a state add to 1."}, {"q": "Which could be a valid policy for one state?", "o": ["0.7, 0.2, 0.1", "0.5, 0.4, 0.3", "0.6, 0.6, 0.1", "0.9, 0.9"], "a": 0, "e": "Probabilities must add to 1."}, {"q": "An episode is:", "o": ["One full try from start to end", "One reward", "One action", "One state"], "a": 0, "e": "E.g. one walk across the room."}, {"q": "Return G is:", "o": ["The total discounted reward over time", "The last reward only", "The policy", "The state"], "a": 0, "e": "G = r1 + gamma r2 + gamma^2 r3 + ..."}, {"q": "Rewards 0, 0, 10 with gamma = 0.9. Return?", "o": ["8.1", "9", "10", "0.9"], "a": 0, "e": "0.81 x 10."}, {"q": "Rewards 0, 0, 10 with gamma = 0.5. Return?", "o": ["2.5", "5", "10", "0.5"], "a": 0, "e": "0.25 x 10."}, {"q": "Rewards 0, 5 with gamma = 0.8. Return?", "o": ["4", "5", "0.8", "4.8"], "a": 0, "e": "0 + 0.8 x 5."}, {"q": "If gamma is close to 0, the agent cares mostly about:", "o": ["Rewards right now", "Rewards far in the future", "Nothing", "The policy"], "a": 0, "e": "Short-sighted."}, {"q": "In the corridor A-B-C (+10 at C) with gamma 0.9 and always go right, V(A) is:", "o": ["9", "10", "8.1", "0"], "a": 0, "e": "0.9 x 10; V(B) = 10."}, {"q": "Exploitation means:", "o": ["Repeating the action that has worked best so far", "Trying random actions", "Stopping learning", "Resetting rewards"], "a": 0, "e": "Explore = try something different."}, {"q": "epsilon-greedy explores with probability:", "o": ["epsilon (random action)", "1 - epsilon", "0.5 always", "0"], "a": 0, "e": "Otherwise it picks the best known action."}, {"q": "epsilon = 0.3, 3 actions. Probability of the best known action?", "o": ["0.8", "0.7", "0.9", "0.3"], "a": 0, "e": "0.7 + 0.3/3 = 0.8."}, {"q": "epsilon = 0.1, 2 actions. Probability of the best action?", "o": ["0.95", "0.9", "0.5", "1.0"], "a": 0, "e": "0.9 + 0.05."}, {"q": "What goes wrong if the agent never explores?", "o": ["It may stay stuck with a mediocre action", "It learns faster", "It gets negative rewards only", "Nothing"], "a": 0, "e": "It never finds better options."}, {"q": "Q(s, a) represents:", "o": ["How good it is to take action a in state s (expected return)", "The learning rate", "The state", "The policy"], "a": 0, "e": "The agent picks the highest Q."}, {"q": "The Q-learning update is:", "o": ["Q + alpha [r + gamma max Q' - Q]", "Q - r", "Q x gamma", "alpha + r"], "a": 0, "e": "Move a fraction alpha toward what was seen."}, {"q": "Q(B,right) = 5, alpha = 0.5, reward 10, episode ends. New Q(B,right)?", "o": ["7.5", "10", "5", "2.5"], "a": 0, "e": "5 + 0.5 x (10 - 5)."}, {"q": "alpha = 0.5, gamma = 0.9, Q(B,right) = 5, Q(A,right) = 0. Update A->B (reward 0). New Q(A,right)?", "o": ["2.25", "4.5", "0.5", "5"], "a": 0, "e": "0.5 x [0 + 0.9 x 5 - 0] = 2.25."}, {"q": "Why does A's Q-value rise only after B's?", "o": ["A's update uses the best Q of the next state (B), which is 0 until B learns about the goal", "A is farther from the screen", "A has no actions", "B has more weights"], "a": 0, "e": "Reward information spreads backward."}, {"q": "In the Q-learning table after 3 episodes, Q(B,right) is:", "o": ["8.75", "7.5", "9.375", "10"], "a": 0, "e": "5, 7.5, 8.75, ... toward 10."}, {"q": "Why can ordinary backpropagation not be used directly in RL?", "o": ["The correct answer is usually unknown, so the error cannot be computed", "RL has no weights", "RL has no neural networks", "It is too fast"], "a": 0, "e": "Only a reward tells us later."}, {"q": "Policy gradients: what multiplies the derivative?", "o": ["The reward", "The state", "The discount only", "The label"], "a": 0, "e": "Then gradient descent updates the parameter."}, {"q": "Derivative 0.5, reward +1.0, learning rate 1.0. Step size?", "o": ["0.5", "1.5", "0", "-0.5"], "a": 0, "e": "Updated derivative 0.5 x 1.0 = 0.5; step 1.0 x 0.5."}, {"q": "Derivative 0.5, reward -1.0, learning rate 1.0. The update:", "o": ["Goes the opposite way (makes the guessed action less likely)", "Goes the same way", "Is zero", "Is undefined"], "a": 0, "e": "Negative reward flips the sign."}, {"q": "In the fries story at hunger 0.0 the network gives P(Norm's), P(Squatch's):", "o": ["0.5 and 0.5", "1 and 0", "0.9 and 0.1", "0.2 and 0.8"], "a": 0, "e": "A random number then picks the restaurant."}, {"q": "Reward hacking is:", "o": ["The agent earns reward by a cheat instead of the intended task", "Hackers stealing data", "A fast optimiser", "A type of policy"], "a": 0, "e": "A robot rewarded for no visible dirt hides it under a rug."}, {"q": "Which is a problem of real-world RL?", "o": ["Lots of trial and error and unsafe exploration", "Too little feedback only", "No state", "No policy"], "a": 0, "e": "Also delayed reward and explainability."}, {"q": "Credit assignment problem:", "o": ["Deciding which earlier action deserves credit for a delayed reward", "Giving students marks", "Assigning labels", "Assigning weights"], "a": 0, "e": "Hard when rewards are delayed."}, {"q": "In language models RL is used to:", "o": ["Use human-feedback rewards to make answers more helpful and human-like", "Store text", "Tokenise", "Compress"], "a": 0, "e": "The reinforcement stage of generative-model training."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

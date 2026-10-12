@@ -1,0 +1,17 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>RL</td><td>Agent learns by interacting with an environment; feedback = rewards (+) / penalties (&minus;). No answer sheet; reward may come later. Examples: puppy, Boston Dynamics robots, games, chatbots (human-feedback rewards).</td></tr>
+  <tr><td>vs others</td><td>Supervised: correct answers; unsupervised: no answers; RL: only reward / penalty after acting.</td></tr>
+  <tr><td>Loop</td><td>Agent sees state s &rarr; action a &rarr; environment gives new state s&prime; and reward r &rarr; learn, repeat.</td></tr>
+  <tr><td>Words</td><td>State s, action a, reward r, policy &pi;, episode (one full try), return G, value, Q-value.</td></tr>
+  <tr><td>Policy</td><td>&pi;(s, a<sub>i</sub>) = P<sub>i</sub>; probabilities per state add to 1 (0.7 + 0.2 + 0.1). Learning = change probabilities toward rewarded actions.</td></tr>
+  <tr><td>Return</td><td>G = r<sub>1</sub> + &gamma;r<sub>2</sub> + &gamma;&sup2;r<sub>3</sub> + &hellip; Rewards 0, 0, 10: &gamma; 0.9 &rarr; 8.1; &gamma; 0.5 &rarr; 2.5. &gamma; near 1 patient; near 0 short-sighted.</td></tr>
+  <tr><td>Value</td><td>Expected return from a state. Corridor A-B-C(+10): V(B) = 10, V(A) = 9.</td></tr>
+  <tr><td>Explore / exploit</td><td>&epsilon;-greedy: explore (random) with prob. &epsilon;, else best action. &epsilon; 0.3, 3 actions: best 0.8, others 0.1, 0.1. &epsilon; 0.1, 2 actions: 0.95. Start large, shrink.</td></tr>
+  <tr><td>Q-learning</td><td>Q(s,a) &larr; Q + &alpha;[r + &gamma; max Q&prime; &minus; Q]. &alpha; 0.5, &gamma; 0.9: Q(B,right): 5, 7.5, 8.75, 9.375, 9.69 (&rarr; 10); Q(A,right): 0, 2.25, 4.5, 6.19, 7.31 (&rarr; 9). Reward news spreads backward.</td></tr>
+  <tr><td>Policy gradient</td><td>Backprop needs the correct answer, RL does not have it. Guess &rarr; derivative &rarr; get reward &rarr; derivative &times; reward &rarr; gradient-descent step. Fries story: derivative 0.5 &times; reward +1 = 0.5; step 1.0 &times; 0.5. Negative reward flips direction.</td></tr>
+  <tr><td>Uses</td><td>Games (self-play), robotics, driving/control, recommendation, language models.</td></tr>
+  <tr><td>Problems</td><td><b>Reward hacking</b> (hides dirt under a rug), lots of trial and error, safe exploration, delayed reward / credit assignment, explainability.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Know the definition and vocabulary, write &pi;(s, a<sub>i</sub>) = P<sub>i</sub>, compute a discounted return, &epsilon;-greedy probabilities and one or two Q-learning updates by hand, and explain reward hacking.</div>

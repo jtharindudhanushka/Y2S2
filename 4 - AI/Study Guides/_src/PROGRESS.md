@@ -16,7 +16,7 @@ Converted peer notes (read these, not the raw PDFs): `../Peer Notes/Notes - Yasi
 7 DONE (RNN, vanishing gradient, LSTM, CNN, U-Net; sources: slides 09 (images, read as PNG), peer-made L8 + L10).
 8 DONE. No slides exist; course facts (discriminative vs generative, next-word prediction, AI map, 3-stage training) are marked; attention/transformer-block sections are labelled Background (not from course).
 9 DONE. Course parts: image-generation slide + colourisation assignment notebook (U-Net code, read fully). Diffusion/GAN/VAE section labelled Background (no source).
-10 Reinforcement Learning (peer-made L12; Geethma AI 4 p11-12, AI 5 p1-2)
+10 DONE (no slides; peer-made L12 + lecturer statements in Geethma).
 11 Genetic Algorithms (slides 05; peer-made L4; Yasiru 4; Geethma AI 4 pp1-7; fix the roulette % error in Geethma)
 12 Swarm Intelligence (NO source material: placeholder)
 13 Fuzzy Logic (slides 10; peer-made L9)
