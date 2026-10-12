@@ -1,0 +1,21 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Sequences</td><td>Order matters; need memory. Lag table: slide a window, next value = answer (25,28,23,31,26 window 2). <b>Never shuffle time</b> (data leakage); train on past, test on future.</td></tr>
+  <tr><td>RNN</td><td>Feedback loop; one input at a time; same weights at every step (unrolling adds no weights). new memory = f(w<sub>in</sub>x + w<sub>loop</sub>&times;old + b). Example: 0.5, 1, 0.5 &rarr; 0.5, 1.25, 1.125.</td></tr>
+  <tr><td>Vanishing / exploding</td><td>Value after n steps = w<sup>n</sup>. w &gt; 1 explodes (2<sup>50</sup> &asymp; 10<sup>15</sup>), w &lt; 1 vanishes (0.5<sup>50</sup> &asymp; 10<sup>&minus;15</sup>). Step = &eta; &times; gradient: huge jumps or no learning.</td></tr>
+  <tr><td>LSTM</td><td>Long-term lane (no weights; &times; percentage, + new) and short-term memory. Sigmoid = percentage gate (0..1); tanh = potential memory (&minus;1..1). 1 forget (keep %), 2 input (add), 3 output (new short-term).</td></tr>
+  <tr><td>LSTM numbers</td><td>LT 2.0, ST 0.5, in 1.0: forget &sigma;(0.75) = 0.679 &rarr; 1.358; add 0.905 &times; 0.623 = 0.563 &rarr; LT 1.922; ST = tanh(1.922) &times; &sigma;(1) = 0.958 &times; 0.731 = 0.700.</td></tr>
+  <tr><td>Vision tasks</td><td>Classification (one label), object detection (labels + bounding boxes), generation (new pixels: Stable Diffusion, VAE, GAN).</td></tr>
+  <tr><td>Image data</td><td>Grid of numbers; grayscale 1 channel; RGB 3 channels; tensor (H &times; W &times; C); 128&times;128&times;3 = 49,152.</td></tr>
+  <tr><td>Dense NN fails</td><td>Destroys spatial geometry; parameter explosion (49,152 &times; 100 = 4,915,200); no shift invariance. CNN: 3&times;3&times;3 filter = 27 weights + 1 bias.</td></tr>
+  <tr><td>CNN aims</td><td>Reduce input nodes; tolerate small shifts; exploit correlations.</td></tr>
+  <tr><td>Convolution</td><td>Filter (kernel) slides over image; dot product of patch and filter + bias &rarr; feature map. Slide example: dot product 3, bias &minus;2, cell = 1.</td></tr>
+  <tr><td>Output size</td><td>floor((N + 2P &minus; K)/S) + 1: 6, K 3, S 1, P 0 &rarr; 4; 5, 3, S 2, P 1 &rarr; 3.</td></tr>
+  <tr><td>Weights</td><td>K &times; K &times; in-channels &times; out-channels + out-channels biases (8 filters 3&times;3 on RGB = 216 + 8 = 224).</td></tr>
+  <tr><td>ReLU / pooling</td><td>ReLU: negatives &rarr; 0. Max pooling: maximum of each 2&times;2 window (4&times;4 &rarr; 2&times;2); no weights; partial shift tolerance. Then flatten &rarr; dense &rarr; softmax (2,1,0 &rarr; 0.665, 0.245, 0.090).</td></tr>
+  <tr><td>Slide network</td><td>O pooled 1,0,0,1: sum + 0.97 = 0.34 &rarr; O 1.00, X 0.00. X pooled 0,1,1,0: 1.10 &rarr; O &minus;0.01, X 1.01.</td></tr>
+  <tr><td>CNN code (32&times;32&times;3)</td><td>conv(3&rarr;32) 30&times;30, pool 15; conv(32&rarr;64) 13, pool 6; conv(64&rarr;128) 4, pool 2; flatten 512; linear 128; linear 10. About 160,202 parameters.</td></tr>
+  <tr><td>U-Net colouring</td><td>Lab: L = lightness (input), a, b = colour (output); 128&times;128; MSE; 15&ndash;20 epochs; encoder, decoder, <b>skip connections</b> carry detail; plausible not true colours.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be ready to unroll an RNN for 2&ndash;3 steps, show w<sup>n</sup> exploding or vanishing, do the three LSTM stages with given gate values, and do a convolution, ReLU and max pool on a small grid (with output-size and weight counts).</div>
