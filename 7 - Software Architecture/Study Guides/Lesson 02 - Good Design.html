@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SA Lesson 2 - Good Design, Architects and SOLID</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Software Architecture study guides</a> &middot; INTE 22293 &middot; Lesson 02</p><button id="theme" type="button"></button></div>
+  <h1>Good Design, Architects and SOLID</h1>
+  <p class="lead">Covers: cohesion and coupling, architecture vs design vs design patterns, why architecture matters, architect vs developer vs tech lead, the architect's responsibilities, quality attributes, ATAM, architectural patterns, and the five SOLID principles with examples. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain the characteristics of a good design: <b>high cohesion</b> and <b>low coupling</b></li>
+  <li>Distinguish software architecture, software design and design patterns; analysis vs design</li>
+  <li>Explain why architecture is needed and what the architect does</li>
+  <li>Define quality attributes and describe how an architecture is evaluated (ATAM)</li>
+  <li>Define an architectural pattern, list the common ones and explain why they matter</li>
+  <li>State and apply the five <b>SOLID</b> principles</li>
+</ul>
+
+<h2>1. Characteristics of a good design</h2>
+<h3>High cohesion</h3>
+<p>General meaning: the state of sticking together, forming a united whole, working well together. In software: the software is divided into <b>modules</b> developed independently, each capable of performing some <b>specific functionality</b>. For the software to be efficient, each module must have <b>high cohesion</b>: everything inside it belongs together and serves one purpose.</p>
+<h3>Low coupling</h3>
+<p>General meaning: something that joins two objects. In software, <b>coupling</b> is the connection between two modules; the measure of the degree of <b>interdependency</b> of two modules on each other. A good design has <b>low coupling</b>: modules depend on each other as little as possible, so a change in one rarely forces changes in another.</p>
+<svg viewBox="0 0 640 170" role="img" aria-label="High coupling vs low coupling" class="dg">
+  <text x="160" y="16" text-anchor="middle" class="h">Tight coupling (bad)</text>
+  <rect class="bx" x="40" y="30" width="70" height="36" rx="6"/><text x="75" y="53" text-anchor="middle" class="sm">A</text>
+  <rect class="bx" x="200" y="30" width="70" height="36" rx="6"/><text x="235" y="53" text-anchor="middle" class="sm">B</text>
+  <rect class="bx" x="40" y="110" width="70" height="36" rx="6"/><text x="75" y="133" text-anchor="middle" class="sm">C</text>
+  <rect class="bx" x="200" y="110" width="70" height="36" rx="6"/><text x="235" y="133" text-anchor="middle" class="sm">D</text>
+  <path class="ar" d="M110 48 H200"/><path class="ar" d="M75 66 V110"/><path class="ar" d="M235 66 V110"/><path class="ar" d="M110 128 H200"/><path class="ar" d="M110 66 L200 110"/><path class="ar" d="M200 66 L110 110"/>
+  <text x="480" y="16" text-anchor="middle" class="h">Loose coupling (good)</text>
+  <rect class="bx" x="380" y="30" width="70" height="36" rx="6"/><text x="415" y="53" text-anchor="middle" class="sm">A</text>
+  <rect class="bx" x="530" y="30" width="70" height="36" rx="6"/><text x="565" y="53" text-anchor="middle" class="sm">B</text>
+  <rect class="bx" x="380" y="110" width="70" height="36" rx="6"/><text x="415" y="133" text-anchor="middle" class="sm">C</text>
+  <rect class="bx" x="530" y="110" width="70" height="36" rx="6"/><text x="565" y="133" text-anchor="middle" class="sm">D</text>
+  <path class="ar" d="M450 48 H530"/><path class="ar" d="M415 66 V110"/>
+</svg>
+<div class="box"><b>Kitchen analogy (from the lecture)</b>A chef (<b>high cohesion</b>) does all the cooking tasks: chopping, seasoning, plating. The chef does not need to know how the dishwasher works internally; they hand dirty plates through a small, well-defined opening (<b>low coupling</b>) and the dishwashing station handles the rest.</div>
+<table>
+  <tr><th></th><th>Cohesion</th><th>Coupling</th></tr>
+  <tr><td>About</td><td>How strongly the parts <i>inside</i> one module belong together</td><td>How strongly <i>different</i> modules depend on each other</td></tr>
+  <tr><td>Goal</td><td><b>High</b></td><td><b>Low</b></td></tr>
+  <tr><td>Effect of a good value</td><td>Module has one clear job, easier to understand and test</td><td>Changes stay local; modules can be developed and replaced independently</td></tr>
+</table>
+
+<h2>2. Architecture vs design vs design patterns</h2>
+<table>
+  <tr><th>Term</th><th>Meaning (lecture definitions)</th></tr>
+  <tr><td><b>Software architecture</b></td><td>A plan that gives <b>enough detail to produce a software design</b>.</td></tr>
+  <tr><td><b>Software design</b></td><td>A plan that gives <b>enough detail to implement the software</b>.</td></tr>
+  <tr><td><b>System analysis</b></td><td>An investigation of the <i>problem</i> (rather than how a solution is defined).</td></tr>
+  <tr><td><b>System design</b></td><td>Emphasises a <i>conceptual solution</i> that fulfils the requirements. Designs are implemented in a programming language.</td></tr>
+</table>
+<table>
+  <tr><th>Architectural pattern</th><th>Design pattern</th></tr>
+  <tr><td>Comes in the <b>designing</b> phase</td><td>Comes in the <b>building</b> phase</td></tr>
+  <tr><td>Like a <b>blueprint</b></td><td>The actual <b>implementation</b> approach</td></tr>
+  <tr><td>The <b>base</b> which everything else adheres to</td><td>A way to <b>structure classes</b> to solve common problems</td></tr>
+</table>
+<svg viewBox="0 0 640 90" role="img" aria-label="From analysis to implementation" class="dg">
+  <rect class="bx" x="5" y="25" width="100" height="40" rx="6"/><text x="55" y="42" text-anchor="middle" class="sm">System analysis</text><text x="55" y="56" text-anchor="middle" class="sm">(the problem)</text>
+  <path class="ar" d="M105 45 H125"/>
+  <rect class="bx" x="125" y="25" width="110" height="40" rx="6"/><text x="180" y="42" text-anchor="middle" class="sm">Architecture</text><text x="180" y="56" text-anchor="middle" class="sm">(patterns)</text>
+  <path class="ar" d="M235 45 H255"/>
+  <rect class="bx" x="255" y="25" width="100" height="40" rx="6"/><text x="305" y="42" text-anchor="middle" class="sm">Software design</text><text x="305" y="56" text-anchor="middle" class="sm">(detail)</text>
+  <path class="ar" d="M355 45 H375"/>
+  <rect class="bx" x="375" y="25" width="120" height="40" rx="6"/><text x="435" y="42" text-anchor="middle" class="sm">Build</text><text x="435" y="56" text-anchor="middle" class="sm">(design patterns)</text>
+  <path class="ar" d="M495 45 H515"/>
+  <rect class="bx" x="515" y="25" width="115" height="40" rx="6"/><text x="572" y="49" text-anchor="middle" class="sm">Code</text>
+</svg>
+
+<h2>3. Why do we need software architecture?</h2>
+<ul>
+  <li>Any software has a significant impact on the business of an organisation.</li>
+  <li>One of the main reasons for software failure can be the <b>selection of the wrong architecture pattern</b>.</li>
+  <li>Without a formal architecture, teams end up with code that <b>lacks clear roles, responsibilities and relationships</b> between its parts.</li>
+  <li>Planning an architecture lets you <b>analyse risks beforehand</b> and avoid adverse impact on the business.</li>
+</ul>
+
+<h2>4. The architect's role</h2>
+<table>
+  <tr><th>Dimension</th><th>Developer</th><th>Tech lead</th><th>Software architect</th></tr>
+  <tr><td>Primary focus</td><td>Implement features</td><td>Team execution and code quality</td><td>System structure and long-term integrity</td></tr>
+  <tr><td>Time horizon</td><td>Sprint / task</td><td>Sprint / release</td><td>Months to years</td></tr>
+  <tr><td>Typical decisions</td><td>Function / class design</td><td>Task breakdown, code review standards</td><td>System boundaries, tech stack, integration patterns</td></tr>
+  <tr><td>Key skill</td><td>Coding proficiency</td><td>Mentoring + delivery</td><td>Trade-off analysis + communication</td></tr>
+  <tr><td>Audience</td><td>Team members</td><td>Team + project manager</td><td>Executives, teams, other architects</td></tr>
+</table>
+<h3>Core responsibilities of a software architect</h3>
+<table>
+  <tr><th>Responsibility</th><th>Meaning</th></tr>
+  <tr><td><b>System decomposition</b></td><td>Break the problem into components / services with clear boundaries and responsibilities.</td></tr>
+  <tr><td><b>Trade-off analysis</b></td><td>Weigh performance, cost, scalability and time-to-market against each other.</td></tr>
+  <tr><td><b>Stakeholder communication</b></td><td>Translate business goals into technical direction, and technical constraints into business language.</td></tr>
+  <tr><td><b>Quality attribute ownership</b></td><td>Own the non-functional requirements: security, scalability, availability, maintainability.</td></tr>
+  <tr><td><b>Decision documentation</b></td><td>Record key decisions and rationale so future teams understand the "why", not just the "what".</td></tr>
+  <tr><td><b>Technical roadmap</b></td><td>Guide the evolution of the system as requirements and scale change over time.</td></tr>
+</table>
+
+<h2>5. Quality attributes ("the -ilities")</h2>
+<p><b>Functional requirements</b> say <i>what</i> the system does; <b>quality attributes</b> say <i>how well</i> it does it, and they drive most architecture decisions.</p>
+<table>
+  <tr><th>Attribute</th><th>Meaning</th></tr>
+  <tr><td>Performance</td><td>Response time and throughput under load</td></tr>
+  <tr><td>Scalability</td><td>Ability to handle growth in users / data</td></tr>
+  <tr><td>Availability</td><td>Uptime and fault tolerance</td></tr>
+  <tr><td>Security</td><td>Protection of data and access control</td></tr>
+  <tr><td>Maintainability</td><td>Ease of modifying and extending the system</td></tr>
+  <tr><td>Interoperability</td><td>Ability to integrate with other systems</td></tr>
+</table>
+
+<h2>6. Evaluating an architecture before building it: ATAM</h2>
+<p>Architects stress-test designs <b>on paper</b> using structured walkthroughs; the best known is <b>ATAM, the Architecture Trade-off Analysis Method</b>.</p>
+<svg viewBox="0 0 640 110" role="img" aria-label="ATAM steps" class="dg">
+  <rect class="bx" x="5" y="15" width="145" height="80" rx="8"/><text x="77" y="38" text-anchor="middle" class="h">1 Identify scenarios</text><text x="77" y="58" text-anchor="middle" class="sm">concrete situations,</text><text x="77" y="74" text-anchor="middle" class="sm">e.g. 10x traffic spike</text><text x="77" y="88" text-anchor="middle" class="sm">during a sale</text>
+  <path class="ar" d="M150 55 H165"/>
+  <rect class="bx" x="165" y="15" width="145" height="80" rx="8"/><text x="237" y="38" text-anchor="middle" class="h">2 Map to attributes</text><text x="237" y="62" text-anchor="middle" class="sm">which -ility does each</text><text x="237" y="78" text-anchor="middle" class="sm">scenario stress?</text>
+  <path class="ar" d="M310 55 H325"/>
+  <rect class="bx" x="325" y="15" width="145" height="80" rx="8"/><text x="397" y="38" text-anchor="middle" class="h">3 Analyse approaches</text><text x="397" y="62" text-anchor="middle" class="sm">how does the current</text><text x="397" y="78" text-anchor="middle" class="sm">design respond?</text>
+  <path class="ar" d="M470 55 H485"/>
+  <rect class="bx" x="485" y="15" width="150" height="80" rx="8"/><text x="560" y="38" text-anchor="middle" class="h">4 Surface risks</text><text x="560" y="58" text-anchor="middle" class="sm">and trade-offs: where</text><text x="560" y="74" text-anchor="middle" class="sm">does it break, what</text><text x="560" y="88" text-anchor="middle" class="sm">is the cost to fix it?</text>
+</svg>
+
+<h2>7. Architectural patterns</h2>
+<div class="box"><b>Definition</b>An architectural pattern is an outline that lets you express and define a <b>structural schema</b> for all kinds of software systems: a <b>reusable solution</b> providing a predefined set of subsystems, roles and responsibilities, including the rules and roadmap for relationships among them. It helps address concerns such as <b>performance limitations, high availability and minimising business risk</b>. It is a rough image or <b>blueprint</b> of the system.</div>
+<h3>Common patterns (the lecture's list)</h3>
+<ul>
+  <li><b>Monolithic architecture</b>: the entire system is built as <b>one large application</b>.</li>
+  <li><b>Multi-layered architecture</b></li>
+  <li><b>MVC architecture</b></li>
+  <li><b>Event-driven architecture</b></li>
+  <li><b>Client&ndash;server architecture</b></li>
+  <li><b>Microservice architecture</b></li>
+</ul>
+<p>For each pattern the lecture asks you to know: <b>the pattern, its usage, its shortcomings, and example applications</b>. A first overview (the lecture itself develops only the monolith; the detailed comparison continues in Lessons 5 and 6):</p>
+<table>
+  <tr><th>Pattern</th><th>Idea</th><th>Typical shortcoming</th></tr>
+  <tr><td>Monolithic</td><td>One application, one deployment unit</td><td>One failure or change affects everything; scaling means copying the whole app</td></tr>
+  <tr><td>Layered</td><td>Horizontal layers (presentation, business logic, data access, database) with one-direction dependencies</td><td>Changes may ripple across layers; layers can become pass-throughs</td></tr>
+  <tr><td>MVC</td><td>Separates Model (data/rules), View (UI) and Controller (input handling)</td><td>Needs discipline to keep logic out of the controller</td></tr>
+  <tr><td>Client&ndash;server</td><td>Clients request, a server provides</td><td>Server is a bottleneck / single point of failure</td></tr>
+  <tr><td>Event-driven</td><td>Components communicate through events asynchronously</td><td>Harder to trace and debug flows</td></tr>
+  <tr><td>Microservices</td><td>Independently deployable services around business capabilities</td><td>Network cost, distributed-system complexity</td></tr>
+</table>
+<h3>Why architectural patterns matter</h3>
+<ol>
+  <li><b>Defining the basic characteristics of an application</b>; 2. <b>Maintaining quality and efficiency</b>; 3. <b>Providing agility</b>; 4. <b>Problem solving</b>; 5. <b>Enhancing productivity</b>.</li>
+</ol>
+
+<h2>8. SOLID principles</h2>
+<p><b>SOLID</b> is a set of five principles of object-oriented programming and design. <b>Goal:</b> build software that is <b>maintainable, extendable and easy to understand</b>. <b>S</b>ingle Responsibility, <b>O</b>pen/Closed, <b>L</b>iskov Substitution, <b>I</b>nterface Segregation, <b>D</b>ependency Inversion. All five fight the same enemy: <b>coupling</b>.</p>
+
+<h3>S: Single Responsibility Principle</h3>
+<p><b>A class should have only one reason to change.</b> Non-technical: a restaurant cashier only handles billing, not cooking or cleaning; if the menu changes, the cashier is unaffected.</p>
+<pre><code>// Wrong: one class does login AND emailing
+class UserService { login(user, password) {...}  sendEmail(message) {...} }
+
+// Right: one responsibility each
+class AuthService  { login(user, password) {...} }
+class EmailService { sendEmail(message) {...} }</code></pre>
+<h3>O: Open/Closed Principle</h3>
+<p><b>Software entities should be open for extension, but closed for modification.</b> Non-technical: a power socket accepts new appliances without rebuilding the electricity system. Wrong: an if-else chain edited for every new payment method. Right: depend on an abstraction and add a new class.</p>
+<pre><code>interface Payment { process() }
+class CreditCardPayment implements Payment { process() {...} }
+class PayPalPayment     implements Payment { process() {...} }
+
+class PaymentProcessor {
+  processPayment(payment: Payment) { payment.process() }   // never edited for a new method
+}</code></pre>
+<h3>L: Liskov Substitution Principle</h3>
+<p><b>Subclasses should be replaceable for their parent classes without breaking the system.</b> Non-technical: a car rental promising a "vehicle" should let you drive a car, van or truck without surprises.</p>
+<pre><code>// Wrong: Penguin breaks the Bird contract
+class Bird { fly() {...} }
+class Penguin extends Bird { fly() { throw Error("Can't fly") } }
+
+// Right: redesign the hierarchy
+interface Bird { eat() }
+interface FlyingBird extends Bird { fly() }
+class Sparrow implements FlyingBird { fly() {...} }
+class Penguin implements Bird { eat() {...} }</code></pre>
+<h3>I: Interface Segregation Principle</h3>
+<p><b>Clients should not be forced to depend on methods they do not use.</b> Non-technical: a phone has separate apps (camera, messaging) so you need not install one giant app for one feature.</p>
+<pre><code>// Wrong: a Printer is forced to implement scan() and fax()
+interface Machine { print()  scan()  fax() }
+
+// Right: small interfaces
+interface Printer { print() }   interface Scanner { scan() }   interface Fax { fax() }
+class SimplePrinter implements Printer { print() {...} }</code></pre>
+<h3>D: Dependency Inversion Principle</h3>
+<p><b>Depend on abstractions, not on concrete implementations.</b> Non-technical: a car depends on a general "fuel system", not specifically on petrol or electric; it works with any that provides energy. Wrong: a high-level class created directly on a low-level class. Right:</p>
+<pre><code>interface Database { save(data) }
+class MySQLDatabase implements Database { save(data) {...} }
+class MongoDatabase implements Database { save(data) {...} }
+
+class UserRepository {
+  db: Database
+  constructor(db: Database) { this.db = db }   // injected
+  saveUser(user) { this.db.save(user) }
+}</code></pre>
+<table>
+  <tr><th>Letter</th><th>One-line test</th></tr>
+  <tr><td>S</td><td>"Does this class have more than one reason to change?"</td></tr>
+  <tr><td>O</td><td>"Can I add behaviour without editing tested code?"</td></tr>
+  <tr><td>L</td><td>"Can any subclass stand in for its parent safely?"</td></tr>
+  <tr><td>I</td><td>"Is any client forced to depend on methods it never uses?"</td></tr>
+  <tr><td>D</td><td>"Does my high-level code depend on a promise (interface) rather than a product?"</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+Good design = <b>high cohesion, low coupling</b>. Architecture gives enough detail to produce a design; design gives enough detail to implement; architectural patterns are blueprints (design phase), design patterns are implementations (build phase). The architect decomposes the system, analyses trade-offs, communicates, owns quality attributes, documents decisions and keeps the roadmap. Evaluate architectures with scenarios (ATAM). SOLID: SRP, OCP, LSP, ISP, DIP.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain cohesion and coupling and why a good design has high cohesion and low coupling. Use the kitchen analogy.</summary>
+<p>Cohesion: how strongly the parts of a module belong together; coupling: the interdependency between modules. High cohesion makes modules do one specific function; low coupling makes changes local and modules independent. Analogy: the chef does all cooking tasks (high cohesion) and hands plates through a small well-defined opening to the dishwashing station without knowing how it works (low coupling).</p>
+</details>
+<details>
+<summary>W2. Distinguish software architecture, software design and architectural vs design patterns.</summary>
+<p>Architecture is a plan with enough detail to produce a design; design is a plan with enough detail to implement. An architectural pattern is a blueprint used in the designing phase and is the base everything adheres to; a design pattern is an implementation approach in the building phase, structuring classes to solve common problems.</p>
+</details>
+<details>
+<summary>W3. Compare a developer, tech lead and software architect and list six responsibilities of an architect.</summary>
+<p>Developer: implements features, sprint horizon, function/class design. Tech lead: team execution and code quality, sprint/release, task breakdown and standards. Architect: system structure and long-term integrity, months to years, boundaries/tech stack/integration. Architect responsibilities: system decomposition, trade-off analysis, stakeholder communication, quality attribute ownership, decision documentation, technical roadmap.</p>
+</details>
+<details>
+<summary>W4. Explain ATAM with an example scenario.</summary>
+<p>The Architecture Trade-off Analysis Method evaluates a design on paper: identify scenarios (e.g. 10x traffic spike during a sale), map them to quality attributes (scalability, performance), analyse how the current architecture responds, and surface risks and trade-offs (where it breaks and the cost to fix).</p>
+</details>
+<details>
+<summary>W5. State the five SOLID principles with a violation example for any two.</summary>
+<p>SRP: one reason to change. OCP: open for extension, closed for modification. LSP: subclasses replaceable for parents. ISP: no forced dependence on unused methods. DIP: depend on abstractions. Violations: a class that both logs users in and sends emails (SRP); a Penguin subclass of Bird whose fly() throws an error (LSP); an if-else chain edited for each new payment method (OCP).</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Good design</td><td><b>High cohesion</b> (a module does one specific job; things inside belong together) and <b>low coupling</b> (little interdependency between modules). Kitchen analogy: chef = cohesion; small hand-off opening to the dishwashing station = low coupling.</td></tr>
+  <tr><td>Architecture vs design</td><td>Architecture = plan with enough detail to produce a design. Design = plan with enough detail to implement. Analysis = investigate the problem; system design = conceptual solution.</td></tr>
+  <tr><td>Architectural vs design pattern</td><td>Architectural: design phase, blueprint, the base. Design pattern: building phase, implementation, structure classes for common problems.</td></tr>
+  <tr><td>Why architecture</td><td>Software affects the business; wrong pattern = main cause of failure; without it code lacks clear roles and relationships; analyse risks beforehand.</td></tr>
+  <tr><td>Architect vs developer vs tech lead</td><td>Architect: system structure and long-term integrity; months to years; boundaries, tech stack, integration patterns; trade-off analysis + communication; audience executives. Developer: features, sprint, coding. Tech lead: team execution and code quality.</td></tr>
+  <tr><td>Architect's responsibilities</td><td>System decomposition &middot; trade-off analysis &middot; stakeholder communication &middot; quality attribute ownership &middot; decision documentation &middot; technical roadmap.</td></tr>
+  <tr><td>Quality attributes</td><td>Functional = what; quality = how well. Performance, scalability, availability, security, maintainability, interoperability.</td></tr>
+  <tr><td>ATAM</td><td>Architecture Trade-off Analysis Method: 1 identify scenarios, 2 map to quality attributes, 3 analyse architectural approaches, 4 surface risks and trade-offs.</td></tr>
+  <tr><td>Architectural pattern</td><td>Reusable blueprint: predefined subsystems, roles, responsibilities and rules. Types: monolithic, layered, MVC, event-driven, client-server, microservice. Know for each: pattern, usage, shortcomings, examples.</td></tr>
+  <tr><td>Importance of patterns</td><td>Define basic characteristics &middot; maintain quality and efficiency &middot; agility &middot; problem solving &middot; productivity.</td></tr>
+  <tr><td>SOLID</td><td><b>S</b>RP one reason to change &middot; <b>O</b>CP open for extension, closed for modification &middot; <b>L</b>SP subclasses replace parents safely (Penguin vs Bird) &middot; <b>I</b>SP no forced unused methods (Machine split into Printer / Scanner / Fax) &middot; <b>D</b>IP depend on abstractions (Database interface for MySQL / Mongo). Goal: maintainable, extendable, easy to understand.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>For SOLID questions give: the definition, a non-technical analogy, a "wrong" example and the fix. The five principles all reduce coupling.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "A good design has:", "o": ["Low cohesion, high coupling", "High cohesion, low coupling", "High cohesion, high coupling", "Low cohesion, low coupling"], "a": 1, "e": "Modules should do one job well and depend on each other little."}, {"q": "Coupling is:", "o": ["How well the inside of a module belongs together", "The degree of interdependency between two modules", "The number of classes", "Code length"], "a": 1, "e": "Cohesion is about the inside of a module."}, {"q": "In the kitchen analogy, the small well-defined opening to the dishwashing station illustrates:", "o": ["High cohesion", "Low coupling", "Scalability", "Caching"], "a": 1, "e": "The chef need not know how the dishwasher works internally."}, {"q": "Software architecture is a plan that gives enough detail to:", "o": ["Implement the software", "Produce a software design", "Test the software", "Deploy the software"], "a": 1, "e": "Design gives enough detail to implement."}, {"q": "System analysis is:", "o": ["A conceptual solution", "An investigation of the problem", "The code", "Deployment"], "a": 1, "e": "System design emphasises the conceptual solution."}, {"q": "Architectural patterns come in the ___ phase and design patterns in the ___ phase.", "o": ["building, designing", "designing, building", "testing, design", "design, design"], "a": 1, "e": "Architectural pattern = blueprint; design pattern = implementation."}, {"q": "Which is a main reason for software failure mentioned in the lecture?", "o": ["Too many comments", "Selecting the wrong architecture pattern", "Using Java", "Small teams"], "a": 1, "e": "Planning architecture lets you analyse risks beforehand."}, {"q": "Which role has the longest time horizon (months to years)?", "o": ["Developer", "Tech lead", "Software architect", "Tester"], "a": 2, "e": "Architects focus on system structure and long-term integrity."}, {"q": "The key skill of an architect is:", "o": ["Coding proficiency", "Mentoring and delivery", "Trade-off analysis and communication", "Typing speed"], "a": 2, "e": "Developers: coding; tech leads: mentoring + delivery."}, {"q": "Breaking a problem into components with clear boundaries is:", "o": ["Decision documentation", "System decomposition", "Technical roadmap", "Quality attribute ownership"], "a": 1, "e": "One of the six core responsibilities."}, {"q": "Recording decisions and rationale so future teams understand the 'why' is:", "o": ["System decomposition", "Decision documentation", "Trade-off analysis", "Stakeholder communication"], "a": 1, "e": "Documentation of the why, not just the what."}, {"q": "Functional requirements say ___; quality attributes say ___.", "o": ["how well; what", "what; how well", "who; when", "where; why"], "a": 1, "e": "Quality attributes drive most architecture decisions."}, {"q": "Which is a quality attribute?", "o": ["Login button colour", "Scalability", "Company logo", "Folder name"], "a": 1, "e": "Performance, scalability, availability, security, maintainability, interoperability."}, {"q": "ATAM stands for:", "o": ["Automated Testing And Monitoring", "Architecture Trade-off Analysis Method", "Application Tier Access Model", "Agile Team Assessment Method"], "a": 1, "e": "A structured way to stress-test designs on paper."}, {"q": "In ATAM, '10x traffic spike during a sale' is an example of a:", "o": ["Risk", "Scenario", "Component", "Tactic"], "a": 1, "e": "Step 1: identify scenarios."}, {"q": "Which is NOT one of the lecture's listed architecture patterns?", "o": ["Monolithic", "MVC", "Event-driven", "Bubble sort"], "a": 3, "e": "Others: layered, client-server, microservice."}, {"q": "A monolithic application means:", "o": ["Many small services", "The entire system is built as one large application", "Only a database", "A client-server pair"], "a": 1, "e": "One application, one deployment."}, {"q": "SRP states that a class should have:", "o": ["Only one reason to change", "Only one method", "No dependencies", "Only private fields"], "a": 0, "e": "Single Responsibility Principle."}, {"q": "Editing an if-else chain for every new payment method violates:", "o": ["SRP", "OCP", "LSP", "ISP"], "a": 1, "e": "Open for extension, closed for modification."}, {"q": "Penguin extends Bird and throws an error in fly(). Which principle is violated?", "o": ["SRP", "OCP", "LSP", "DIP"], "a": 2, "e": "A subclass must be substitutable for its parent."}, {"q": "A Machine interface forcing a Printer to implement scan() and fax() violates:", "o": ["ISP", "DIP", "OCP", "SRP only"], "a": 0, "e": "Clients should not depend on methods they do not use."}, {"q": "UserRepository taking a Database interface in its constructor illustrates:", "o": ["SRP", "OCP", "LSP", "DIP"], "a": 3, "e": "Depend on abstractions, not concrete implementations."}, {"q": "Which principle is shown by a power socket accepting new appliances without rebuilding the system?", "o": ["OCP", "SRP", "ISP", "LSP"], "a": 0, "e": "Open for extension, closed for modification."}, {"q": "The common goal of SOLID is software that is:", "o": ["Fast to type", "Maintainable, extendable and easy to understand", "Free", "Small"], "a": 1, "e": "All five reduce coupling."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
