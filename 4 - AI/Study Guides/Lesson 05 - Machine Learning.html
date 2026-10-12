@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Lesson 5 - Discriminative AI and Machine Learning</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; AI study guides</a> &middot; INTE 22303 &middot; Lesson 05</p><button id="theme" type="button"></button></div>
+  <h1>Discriminative AI and Machine Learning</h1>
+  <p class="lead">Covers: what machine learning is, the three ways of learning, data vocabulary, supervised learning (classification, regression, forecasting), the donor example, data preparation (feature engineering, Z-score), unsupervised learning, dimensionality and PCA, training / testing / bias / variance, model scores and cross-validation, and the supervised methods themselves: linear regression, error (SSE), gradient descent and logistic regression. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define machine learning and its four jobs (regression, classification, forecasting, optimisation)</li>
+  <li>Distinguish supervised, unsupervised and reinforcement learning and use the data vocabulary</li>
+  <li>Prepare data (feature engineering and selection, Z-score) and explain the curse of dimensionality and PCA</li>
+  <li>Explain training / testing, bias and variance, and judge a model (confusion matrix, accuracy, precision, recall, cross-validation)</li>
+  <li>Fit and evaluate linear regression (SSE, R&sup2;), explain gradient descent and the learning rate, and use logistic regression</li>
+</ul>
+
+<h2>1. What is machine learning?</h2>
+<div class="box"><b>Definition</b><b>Machine learning (ML)</b> is a branch of AI in which a computer system learns patterns from data and uses those patterns to make predictions, decisions or generate outputs, rather than following hand-written rules. The pattern it learns is a <b>model</b>.</div>
+<p>Analogy: learning to spot a ripe mango. Nobody gives a rule book; after many mangoes you judge a new one. ML sits beside genetic algorithms, swarm intelligence and fuzzy logic inside AI (Lesson 1).</p>
+<table>
+  <tr><th>Predictive ML</th><th>Generative ML</th></tr>
+  <tr><td>Predicts an outcome from given information: future values, exam marks.</td><td>Generates new content or sequences from learned patterns: predicting the next word repeatedly to write text.</td></tr>
+</table>
+<p><b>Caution (lecturer's shorthand):</b> "supervised ML is mostly predictive; unsupervised is generative; generative ML = unsupervised ML + supervised fine-tuning + reinforcement learning". Supervised/unsupervised describe <i>how</i> a machine learns; predictive/generative describe <i>what</i> it produces. They overlap but are not the same.</p>
+<h3>The four jobs ML can do</h3>
+<table>
+  <tr><th>Technique</th><th>Meaning</th><th>Example</th></tr>
+  <tr><td>Regression</td><td>Predict a number</td><td>Exam marks, donation amount, temperature</td></tr>
+  <tr><td>Classification</td><td>Assign an input to a class</td><td>Will this person donate? Spam or not?</td></tr>
+  <tr><td>Forecasting (time series)</td><td>Predict future values from past values in time order</td><td>Sales next week</td></tr>
+  <tr><td>Optimisation</td><td>Find the best possible solution for one or more objectives</td><td>Minimise cost and emissions (see the genetic algorithm, Lesson 11)</td></tr>
+</table>
+
+<h2>2. Three ways to learn</h2>
+<svg viewBox="0 0 640 150" role="img" aria-label="Three types of ML" class="dg">
+  <rect class="bx" x="15" y="15" width="195" height="120" rx="8"/><text x="112" y="40" text-anchor="middle" class="h">Supervised (SL)</text><text x="112" y="62" text-anchor="middle" class="sm">learns with a teacher</text><text x="112" y="80" text-anchor="middle" class="sm">labelled data: inputs +</text><text x="112" y="96" text-anchor="middle" class="sm">correct answers</text><text x="112" y="120" text-anchor="middle" class="sm">past exam Q + answers</text>
+  <rect class="bx" x="225" y="15" width="195" height="120" rx="8"/><text x="322" y="40" text-anchor="middle" class="h">Unsupervised (USL)</text><text x="322" y="62" text-anchor="middle" class="sm">no teacher</text><text x="322" y="80" text-anchor="middle" class="sm">unlabelled data; finds</text><text x="322" y="96" text-anchor="middle" class="sm">groups / patterns</text><text x="322" y="120" text-anchor="middle" class="sm">sorting buttons by shape</text>
+  <rect class="bx" x="435" y="15" width="190" height="120" rx="8"/><text x="530" y="40" text-anchor="middle" class="h">Reinforcement (RL)</text><text x="530" y="62" text-anchor="middle" class="sm">trial and error</text><text x="530" y="80" text-anchor="middle" class="sm">rewards (+) and</text><text x="530" y="96" text-anchor="middle" class="sm">penalties (&minus;)</text><text x="530" y="120" text-anchor="middle" class="sm">training a puppy</text>
+</svg>
+<ul>
+  <li><b>Supervised:</b> thousands of examples with input <i>and</i> right answer; the model learns the relationship to predict answers for new data. Splits into <b>classification</b> (a category), <b>regression</b> (a number) and <b>time-series prediction</b> (a value from a sequence over time).</li>
+  <li><b>Unsupervised:</b> data with no answers; the machine finds structure. Two main kinds: <b>clustering</b> and <b>association rule mining</b>.</li>
+  <li><b>Reinforcement:</b> an <b>agent</b> acts in an <b>environment</b>, getting rewards for good actions and penalties for mistakes, and updates its strategy to collect the most reward (Lesson 10; Boston Dynamics robots learn movements this way).</li>
+</ul>
+<p>Quick test: correct answers present &rarr; supervised; just finding groups &rarr; unsupervised; an agent acting and getting rewards &rarr; reinforcement.</p>
+
+<h2>3. The words used to describe data</h2>
+<table>
+  <tr><th>Student</th><th>Hours studied (x<sub>1</sub>)</th><th>Attendance % (x<sub>2</sub>)</th><th>Final GPA</th><th>Grade</th></tr>
+  <tr><td>1</td><td>10</td><td>90</td><td>3.4</td><td>B</td></tr>
+  <tr><td>2</td><td>2</td><td>50</td><td>1.8</td><td>D</td></tr>
+</table>
+<ul>
+  <li><b>Record (example):</b> one row. <b>Feature</b> (input x; also attribute or dimension): a column describing the record. <b>Label</b> (answer y): what we want to predict. GPA is a number (regression); Grade is a category (classification).</li>
+  <li><b>Labelled data</b> has the answer column; <b>unlabelled</b> does not. <b>Training:</b> showing many examples. <b>Prediction:</b> the model's answer for a new input.</li>
+  <li><b>Population:</b> everyone we care about; <b>sample:</b> the part of the data we actually have. <b>Noise:</b> random flukes that are not a real pattern.</li>
+</ul>
+
+<h2>4. Supervised learning in detail</h2>
+<table>
+  <tr><th>Kind</th><th>Answer</th><th>Notes and examples</th></tr>
+  <tr><td><b>Classification</b></td><td>a category</td><td>Model draws decision boundaries between classes. <b>Binary</b> (two classes, 1/0: donate or not) or <b>multiclass</b> (three or more: class 1&ndash;4). Spam vs inbox; fracture on an X-ray. A decision tree is one method.</td></tr>
+  <tr><td><b>Regression</b></td><td>a number on a smooth scale</td><td>Fit a line or curve through past points. House price, exam marks, tomorrow's temperature.</td></tr>
+  <tr><td><b>Time series</b></td><td>a future value</td><td>Order is the main predictor (unlike ordinary regression with independent points). Tracks <b>trend</b>, <b>seasonality</b> (weekly / monthly cycles) and <b>lag</b> (yesterday affects today). Electricity demand, monthly inventory.</td></tr>
+</table>
+<p><b>Forecasting example.</b> Sales on days 1&ndash;5: 300, 310, 312, 320, 325. Trend method: daily changes 10, 2, 8, 5, average 6.25, so day 6 &asymp; 325 + 6.25 = <b>331.25</b>. Average of the last 3 days: (312 + 320 + 325)/3 = 319 (lower, because an average of old values lags behind a rising trend). ML can learn it with <b>lag features</b> (yesterday's sales as input, today's as the answer).</p>
+
+<h3>Worked example: whom should the charity contact? (KDD'98)</h3>
+<p>A charity has records of <b>1 million</b> potential donors (about 250,000 are donors). Contacting costs money: <b>10 /-</b> by phone call, <b>25 /-</b> by letter. Contacting everyone wastes money, so two models are used:</p>
+<table>
+  <tr><th>Donor</th><th>Donated last year</th><th>Amount last year</th><th>Model 1: will donate? (classification)</th><th>Model 2: amount (regression)</th><th>Probability &times; amount</th></tr>
+  <tr><td>1</td><td>1</td><td>1000</td><td>1</td><td>1200</td><td>70 % &times; 1200</td></tr>
+  <tr><td>2</td><td>0</td><td>0</td><td>1</td><td>500</td><td>60 % &times; 500</td></tr>
+  <tr><td>3</td><td>1</td><td>5000</td><td>0</td><td>0</td><td>0</td></tr>
+</table>
+<p>Classification alone does not say <i>how much</i> a person will give, hence Model 2. <b>Expected value = &Sigma; P<sub>i</sub> &times; D<sub>i</sub></b> (probability &times; predicted amount). Donor 1: 0.70 &times; 1200 = 840; minus the 10 phone cost = <b>830</b>. Donor 2: 0.60 &times; 500 = 300; minus 25 letter = <b>275</b>. Donor 3: 0 &minus; 10 = &minus;10 (a loss: skip). <b>Contact a person only if the expected value beats the cost.</b></p>
+<p><b>Where a genetic algorithm fits:</b> a chromosome (1 1 0 1 1) over donors P1&ndash;P5 means contact donors 1, 2, 4, 5 and skip 3; fitness = profit. With expected incomes 840, 300, 0, 200, 120 and a cost of 10 each: 11011 gives income 1460, cost 40, profit <b>1420</b>; 11111 gives profit 1410, so 11011 wins. (<b>Multi-objective optimisation</b> chases two or more goals at once, e.g. minimise cost and CO<sub>2</sub> emissions.)</p>
+
+<h2>5. Preparing the data</h2>
+<p><b>Data preprocessing</b> (like washing and chopping before cooking): <b>Feature engineering</b> makes better features (date of birth &rarr; age; BMI = weight / height&sup2;: 60 kg and 1.5 m gives 60/2.25 = 26.7). <b>Feature selection</b> drops useless columns (student ID does not help predict marks): faster model, less noise, fewer dimensions.</p>
+<div class="box"><b>Z-score</b><b>z = (x &minus; mean) / standard deviation</b>: how many standard deviations a value is from the average. It puts features of very different sizes on one scale (salary vs age).</div>
+<p>Marks 40, 50, 60, 70, 80: mean = 60; squared differences 400, 100, 0, 100, 400 sum 1000; /5 = 200; standard deviation = &radic;200 &asymp; 14.14. For 80: z = 20/14.14 = <b>1.41</b>; for 60: 0; for 40: &minus;1.41.</p>
+
+<h2>6. Unsupervised learning</h2>
+<ul>
+  <li><b>Clustering:</b> group similar items by their distance, without labels (students gather in friend groups). Example: shoppers into bargain hunters, weekend casuals, luxury buyers. The machine finds the groups; humans name them. In student data (height, weight, Z-score, GPA...), plotting only height and weight may show <b>2 clusters</b> (guess: two groups of students); adding a third feature (the Z-score) can make the old clusters disappear and new ones form.</li>
+  <li><b>Association rule mining:</b> find "if this, then that" among items that occur together. 10 baskets: 5 contain patties and buns; 4 of those also contain ketchup. <b>Support</b> = 4/10 = 40 % (how common the combination is); <b>confidence</b> = 4/5 = 80 % (how reliable the rule is). Rule: patties + buns &rarr; ketchup. A shop can place ketchup near the buns.</li>
+</ul>
+
+<h2>7. Too many features: dimensions and PCA</h2>
+<p><b>Attribute = feature = dimension = column.</b> 1 feature = a line, 2 = a page, 3 = a box, hundreds = a space we cannot picture (a medical record with 200 metrics is a point in 200 dimensions; a 1,000-pixel image is a point in 1,000 dimensions). More dimensions create the <b>curse of dimensionality</b>:</p>
+<table>
+  <tr><th>Problem</th><th>Explanation</th></tr>
+  <tr><td>1. Data becomes sparse</td><td>With 10 levels per feature and 100 points: 1 feature = 10 boxes (10 points each); 2 features = 100 boxes (1 each); 3 = 1,000 (0.1 each); 50 features = 10<sup>50</sup> boxes (almost 0). Points end up lost in a huge empty space.</td></tr>
+  <tr><td>2. Distances lose meaning</td><td>In very high dimensions almost every pair of points is about equally far apart, so clustering and classification cannot tell what is similar.</td></tr>
+  <tr><td>3. Overfitting and heavy computing</td><td>Hundreds of variables need lots of computing and let the model mistake noise for a pattern.</td></tr>
+</table>
+<p><b>Fix: dimensionality reduction.</b> <b>PCA</b> (Principal Component Analysis) builds a few new features that keep most of the variation (spread) in the data. Example: four students (150,45), (160,52), (170,60), (180,68): taller means heavier, so the points lie almost on one line and one number ("overall body size", the first principal component PC1) describes them almost as well as two. If PC1 holds 95 % of the variation, keeping only it halves the columns with little loss. An <b>autoencoder</b> is a small neural network that squeezes data into a short code and rebuilds the original from it.</p>
+
+<h2>8. Training, testing, bias and variance</h2>
+<p>We cannot measure the whole <b>population</b>, so we build a model from a <b>sample</b>. A model trained too closely on one sample may perform badly on other samples: the <b>bias&ndash;variance problem</b> (the model is overfitted to that sample). So we <b>split</b> the data, about <b>80 % training</b> and <b>20 % testing</b> (1,000 records &rarr; 800 and 200). Training data = practice papers; testing data = the real exam.</p>
+<svg viewBox="0 0 640 70" role="img" aria-label="Train test split" class="dg">
+  <rect class="bx" x="40" y="15" width="400" height="36" rx="4" style="fill:var(--accent);fill-opacity:.2"/><text x="240" y="38" text-anchor="middle" class="h">Training data 80 %</text>
+  <rect class="bx" x="440" y="15" width="100" height="36" rx="4"/><text x="490" y="38" text-anchor="middle" class="h">Test 20 %</text>
+  <text x="590" y="38" text-anchor="middle" class="sm">never seen in training</text>
+</svg>
+<table>
+  <tr><th></th><th>Underfitting</th><th>Good fit</th><th>Overfitting</th></tr>
+  <tr><td>Also called</td><td><b>High bias</b></td><td>Balanced</td><td><b>High variance</b></td></tr>
+  <tr><td>Model</td><td>Too simple (a straight line on a curve): rigid wrong assumptions</td><td>Follows the broad pattern, ignores noise</td><td>Too flexible (zig-zag through every dot): memorises noise; would change a lot with another sample</td></tr>
+  <tr><td>Training error</td><td>High</td><td>Low</td><td>Almost zero</td></tr>
+  <tr><td>Testing error</td><td>High</td><td>Low</td><td>High</td></tr>
+</table>
+<p>Example errors (training / testing): straight line 10 / 12 (underfit), balanced curve 4 / 5 (good), squiggle 0 / 20 (overfit). Always compare the two: a big gap warns of overfitting. Diagnosis drill: 12 / 13 &rarr; underfitting; 1 / 15 &rarr; overfitting. <b>Finding the right model complexity is the bias&ndash;variance problem</b>: more complexity lowers bias but raises variance. ("All models are wrong. Some are useful.")</p>
+
+<h2>9. Judging a model</h2>
+<p><b>Confusion matrix</b> for a spam filter on 100 emails (40 spam, 60 normal):</p>
+<table>
+  <tr><th></th><th>Filter says SPAM</th><th>Filter says NORMAL</th></tr>
+  <tr><td>Really spam (40)</td><td>30 (TP, true positive)</td><td>10 (FN, false negative)</td></tr>
+  <tr><td>Really normal (60)</td><td>5 (FP, false positive)</td><td>55 (TN, true negative)</td></tr>
+</table>
+<table>
+  <tr><th>Score</th><th>Formula</th><th>Value</th><th>Asks</th></tr>
+  <tr><td>Accuracy</td><td>(TP + TN) / all</td><td>85 / 100 = 85 %</td><td>How often is it right overall?</td></tr>
+  <tr><td>Precision</td><td>TP / (TP + FP)</td><td>30 / 35 = 85.7 %</td><td>When it says spam, how often is it right?</td></tr>
+  <tr><td>Recall (sensitivity)</td><td>TP / (TP + FN)</td><td>30 / 40 = 75 %</td><td>Of all real spam, how much did it catch?</td></tr>
+  <tr><td>Specificity</td><td>TN / (TN + FP)</td><td>55 / 60 = 91.7 %</td><td>Of all normal emails, how many left alone?</td></tr>
+</table>
+<p><b>Cross-validation:</b> one 80/20 split can be lucky or unlucky, so cut the data into <b>folds</b> (e.g. 5); each round trains on 4 and tests on the left-out 1, so every part is the test part once; average the scores (80, 84, 78, 86, 82 &rarr; 410/5 = <b>82</b>).</p>
+<p><b>The ML workflow:</b> define the problem &rarr; collect data &rarr; prepare data &rarr; split &rarr; train &rarr; test &rarr; improve (high errors = too simple; good training but bad testing = overfitting: more data, simpler model, other method) &rarr; use.</p>
+
+<h2>10. Linear regression</h2>
+<p>For predicting a number, <b>linear regression</b> finds the best straight line (or flat plane) through the data: <b>curve fitting</b>, finding a function that matches input to output. <i>Analogy: a ruler laid on a scatter plot as close to all the dots as possible.</i></p>
+<div class="box"><b>y&#770; = w &middot; x + b</b>x = input; <b>w</b> (weight; also m or W<sub>1</sub>) = slope: how strongly x affects the prediction; <b>b</b> (bias; also c or W<sub>0</sub>) = value when x = 0, sliding the line up or down; y&#770; ("y-hat", hat = predicted) = prediction; y (no hat) = the real answer.</div>
+<p>w = 0.8, b = 1.2: for x = 2, y&#770; = 1.6 + 1.2 = 2.8; for x = 5, y&#770; = 5.2. <b>Fitting</b> means choosing w and b; there are infinitely many lines. <b>Simple</b> regression has one feature (y&#770; = W<sub>1</sub>x<sub>1</sub> + W<sub>0</sub>); <b>multiple</b> has two or more (y&#770; = W<sub>0</sub> + W<sub>1</sub>x<sub>1</sub> + W<sub>2</sub>x<sub>2</sub>...), fitting a plane. Example: y&#770; = 20 + 5&times;hours + 0.3&times;attendance for 4 hours and 90 %: 20 + 20 + 27 = 67. <b>x<sub>0</sub> = 1 trick:</b> y&#770; = &Sigma; W<sub>i</sub>x<sub>i</sub> with x<sub>0</sub> = 1 treats the bias like any other weight (used in neural networks). Feature engineering and feature selection are the data preprocessing methods used before fitting.</p>
+
+<h3>How good is a line? Error, SSE and R&sup2;</h3>
+<ul>
+  <li><b>Error (residual)</b> of one point: &epsilon; = y &minus; y&#770;.</li>
+  <li><b>Square it</b> so errors do not cancel (+5 and &minus;5 would add to 0; squared gives 50) and so big misses are punished (2 &rarr; 4, 10 &rarr; 100).</li>
+  <li><b>SSE = &Sigma; (y &minus; y&#770;)&sup2;</b>, the Sum of Squared Errors; the best line has the <b>smallest</b> SSE (<b>least squares</b>).</li>
+</ul>
+<p>Data (hours, GPA): (2, 2.8), (1, 3.2), (3, 3.8), (5, 3.6), (6, 2.9).</p>
+<table>
+  <tr><th>x</th><th>y</th><th>Line A y&#770; = 0.8x + 1.2</th><th>&epsilon;&sup2;</th><th>Line B y&#770; = 0.1x + 3</th><th>&epsilon;&sup2;</th></tr>
+  <tr><td>2</td><td>2.8</td><td>2.8</td><td>0</td><td>3.2</td><td>0.16</td></tr>
+  <tr><td>1</td><td>3.2</td><td>2.0</td><td>1.44</td><td>3.1</td><td>0.01</td></tr>
+  <tr><td>3</td><td>3.8</td><td>3.6</td><td>0.04</td><td>3.3</td><td>0.25</td></tr>
+  <tr><td>5</td><td>3.6</td><td>5.2</td><td>2.56</td><td>3.5</td><td>0.01</td></tr>
+  <tr><td>6</td><td>2.9</td><td>6.0</td><td>9.61</td><td>3.6</td><td>0.49</td></tr>
+  <tr><td colspan="3"><b>SSE</b></td><td><b>13.65</b></td><td></td><td><b>0.92</b></td></tr>
+</table>
+<p>Line B fits far better. <b>Rotating the line</b> (least squares idea): for data (1,2), (2,3), (3,5), (4,4), (5,6) (means x = 3, y = 4) keeping the line through (3, 4): slope 0 &rarr; SSE 10; 0.5 &rarr; 3.5; 0.9 &rarr; 1.9; 1.2 &rarr; 2.8. SSE falls then rises: the best is near slope 0.9, the least-squares line y&#770; = 1.3 + 0.9x. <b>R&sup2;</b> = (SSE around the mean &minus; SSE around the line) / SSE around the mean = (10 &minus; 1.9)/10 = <b>0.81</b>: the line explains 81 % of the variation (near 1 = very good; near 0 = no better than guessing the average).</p>
+<p><b>The error depends only on w and b</b> (the data are fixed facts): <b>E = f(w, b)</b>. Plot E for every (w, b) and you get a <b>bowl</b>; the best line is at its bottom. Different (W<sub>0</sub>, W<sub>1</sub>) give different errors: <b>ML = finding the parameter values that minimise E.</b> With two features E = f(W<sub>0</sub>, W<sub>1</sub>, W<sub>2</sub>). An ML-style line search was also introduced in Lesson 4 (searching for the best m, c).</p>
+
+<h3>Gradient descent: rolling down the bowl</h3>
+<p>We cannot try every (w, b), so we start with a guess and keep stepping downhill (walking down a hill in fog): find the <b>slope</b> (gradient) of the error, step the opposite way, repeat until steps are tiny.</p>
+<div class="box"><b>new w = old w &minus; &eta; &times; slope</b>&eta; (eta, learning rate; also &alpha;) is the step-size multiplier you choose. Plotting E against w typically gives a <b>convex</b> curve, so there is one bottom.</div>
+<svg viewBox="0 0 640 230" role="img" aria-label="Gradient descent steps" class="dg"><path d="M70 190 H580 M70 190 V20" stroke="var(--fg)" fill="none"/><polyline points="70.0,40.0 74.2,45.0 78.3,49.8 82.5,54.6 86.7,59.3 90.8,64.0 95.0,68.5 99.2,73.0 103.3,77.3 107.5,81.6 111.7,85.8 115.8,90.0 120.0,94.0 124.2,98.0 128.3,101.8 132.5,105.6 136.7,109.3 140.8,113.0 145.0,116.5 149.2,120.0 153.3,123.3 157.5,126.6 161.7,129.8 165.8,133.0 170.0,136.0 174.2,139.0 178.3,141.8 182.5,144.6 186.7,147.3 190.8,150.0 195.0,152.5 199.2,155.0 203.3,157.3 207.5,159.6 211.7,161.8 215.8,164.0 220.0,166.0 224.2,168.0 228.3,169.8 232.5,171.6 236.7,173.3 240.8,175.0 245.0,176.5 249.2,178.0 253.3,179.3 257.5,180.6 261.7,181.8 265.8,183.0 270.0,184.0 274.2,185.0 278.3,185.8 282.5,186.6 286.7,187.3 290.8,188.0 295.0,188.5 299.2,189.0 303.3,189.3 307.5,189.6 311.7,189.8 315.8,190.0 320.0,190.0 324.2,190.0 328.3,189.8 332.5,189.6 336.7,189.3 340.8,189.0 345.0,188.5 349.2,188.0 353.3,187.3 357.5,186.6 361.7,185.8 365.8,185.0 370.0,184.0 374.2,183.0 378.3,181.8 382.5,180.6 386.7,179.3 390.8,178.0 395.0,176.5 399.2,175.0 403.3,173.3 407.5,171.6 411.7,169.8 415.8,168.0 420.0,166.0 424.2,164.0 428.3,161.8 432.5,159.6 436.7,157.3 440.8,155.0 445.0,152.5 449.2,150.0 453.3,147.3 457.5,144.6 461.7,141.8 465.8,139.0 470.0,136.0 474.2,133.0 478.3,129.8 482.5,126.6 486.7,123.3 490.8,120.0 495.0,116.5 499.2,113.0 503.3,109.3 507.5,105.6 511.7,101.8 515.8,98.0 520.0,94.0 524.2,90.0 528.3,85.8 532.5,81.6 536.7,77.3 540.8,73.0 545.0,68.5 549.2,64.0 553.3,59.3 557.5,54.6 561.7,49.8 565.8,45.0 570.0,40.0" fill="none" stroke="var(--fg)" stroke-width="2"/><circle cx="70.0" cy="40.0" r="5" fill="var(--accent)"/><text x="77.0" y="34.0" class="sm">w=0.00</text><circle cx="120.0" cy="94.0" r="5" fill="var(--accent)"/><text x="127.0" y="88.0" class="sm">w=0.60</text><path d="M70.0 40.0 L120.0 94.0" stroke="var(--accent)" stroke-width="1.5"/><circle cx="160.0" cy="128.6" r="5" fill="var(--accent)"/><text x="167.0" y="122.6" class="sm">w=1.08</text><path d="M120.0 94.0 L160.0 128.6" stroke="var(--accent)" stroke-width="1.5"/><circle cx="192.0" cy="150.7" r="5" fill="var(--accent)"/><text x="199.0" y="144.7" class="sm">w=1.46</text><path d="M160.0 128.6 L192.0 150.7" stroke="var(--accent)" stroke-width="1.5"/><circle cx="217.6" cy="164.8" r="5" fill="var(--accent)"/><text x="224.6" y="158.8" class="sm">w=1.77</text><path d="M192.0 150.7 L217.6 164.8" stroke="var(--accent)" stroke-width="1.5"/><circle cx="238.1" cy="173.9" r="5" fill="var(--accent)"/><text x="245.1" y="167.9" class="sm">w=2.02</text><path d="M217.6 164.8 L238.1 173.9" stroke="var(--accent)" stroke-width="1.5"/><text x="320.0" y="208" text-anchor="middle" class="sm">minimum at w = 3</text><text x="575" y="205" class="sm">w</text><text x="76" y="16" class="sm">error E(w) = (w-3)^2, learning rate 0.1, start w = 0: steps shrink as the slope flattens</text></svg>
+<table>
+  <tr><th>Step</th><th>w now</th><th>Slope 2(w&minus;3)</th><th>Step 0.1 &times; slope</th><th>New w</th></tr>
+  <tr><td>1</td><td>0</td><td>&minus;6</td><td>&minus;0.6</td><td>0.6</td></tr>
+  <tr><td>2</td><td>0.6</td><td>&minus;4.8</td><td>&minus;0.48</td><td>1.08</td></tr>
+  <tr><td>3</td><td>1.08</td><td>&minus;3.84</td><td>&minus;0.384</td><td>1.464</td></tr>
+  <tr><td>4</td><td>1.464</td><td>&minus;3.072</td><td>&minus;0.3072</td><td>1.7712</td></tr>
+</table>
+<p>The slope is negative, so subtracting a negative step increases w toward 3; the slope shrinks near the bottom so steps shrink automatically (error 9, 5.76, 3.69, 2.36, 1.51 ...). Slope of a curve at a point = steepness of a tiny straight piece touching it (e.g. at w = 0: slope &asymp; &minus;6). <b>Learning rate:</b></p>
+<table>
+  <tr><th>&eta;</th><th>Behaviour</th></tr>
+  <tr><td>Just right (0.1)</td><td>Steady steps toward 3.</td></tr>
+  <tr><td>Too big (1.1)</td><td><b>Large jumps:</b> faster but risk overshooting: w = 0, 6.6, &minus;1.32, 8.18 ... jumps past the bottom and gets worse.</td></tr>
+  <tr><td>Too small (0.001)</td><td><b>Small jumps:</b> more precise but converges very slowly (first step only 0.006).</td></tr>
+</table>
+<p><b>On a real line</b> both slopes are used: slope for b = &minus;2&Sigma;(y &minus; y&#770;); slope for w = &minus;2&Sigma;x(y &minus; y&#770;). Data (1,2), (2,4), (3,6), start w = b = 0, &eta; = 0.01: errors 2, 4, 6, SSE 56; slope b = &minus;24; slope w = &minus;56; new b = 0.24, new w = 0.56; new predictions 0.80, 1.36, 1.92; new SSE &asymp; 25.06. One step cut the error from 56 to 25.06; the best line is y&#770; = 2x (SSE 0). Training is often described as repeated passes of this update; in neural networks the same idea is called back-propagation (Lesson 6).</p>
+
+<h2>11. Logistic regression</h2>
+<p>Despite the name, <b>logistic regression is a classification method</b>: it predicts the probability that an input belongs to a class (Pass/Fail, Spam/Not spam). <b>Why not a straight line?</b> A line is unbounded (&minus;1.5 or +3.2) but a probability must stay between 0 and 1, and one far-away point can tilt the whole line. Instead: compute <b>z = w&middot;x + b</b>, then squash it with the <b>sigmoid</b>:</p>
+<div class="box"><b>y&#770; = &sigma;(z) = 1 / (1 + e<sup>&minus;z</sup>)</b>Output always between 0 and 1. (e &asymp; 2.718 is Euler's number, not the error.)</div>
+<svg viewBox="0 0 640 210" role="img" aria-label="Sigmoid curve" class="dg"><path d="M70 170 H580 M70 170 V30" stroke="var(--fg)" fill="none"/><polyline points="70.0,169.7 72.1,169.7 74.2,169.6 76.3,169.6 78.3,169.6 80.4,169.6 82.5,169.6 84.6,169.5 86.7,169.5 88.8,169.5 90.8,169.5 92.9,169.4 95.0,169.4 97.1,169.4 99.2,169.4 101.2,169.3 103.3,169.3 105.4,169.3 107.5,169.2 109.6,169.2 111.7,169.1 113.8,169.1 115.8,169.0 117.9,169.0 120.0,168.9 122.1,168.9 124.2,168.8 126.2,168.8 128.3,168.7 130.4,168.6 132.5,168.6 134.6,168.5 136.7,168.4 138.8,168.3 140.8,168.3 142.9,168.2 145.0,168.1 147.1,168.0 149.2,167.9 151.2,167.8 153.3,167.7 155.4,167.5 157.5,167.4 159.6,167.3 161.7,167.2 163.8,167.0 165.8,166.9 167.9,166.7 170.0,166.5 172.1,166.4 174.2,166.2 176.2,166.0 178.3,165.8 180.4,165.6 182.5,165.4 184.6,165.1 186.7,164.9 188.8,164.7 190.8,164.4 192.9,164.1 195.0,163.8 197.1,163.5 199.2,163.2 201.2,162.9 203.3,162.5 205.4,162.2 207.5,161.8 209.6,161.4 211.7,161.0 213.8,160.6 215.8,160.1 217.9,159.7 220.0,159.2 222.1,158.7 224.2,158.2 226.2,157.6 228.3,157.0 230.4,156.4 232.5,155.8 234.6,155.2 236.7,154.5 238.8,153.8 240.8,153.1 242.9,152.3 245.0,151.6 247.1,150.8 249.2,149.9 251.2,149.1 253.3,148.2 255.4,147.2 257.5,146.3 259.6,145.3 261.7,144.3 263.8,143.2 265.8,142.2 267.9,141.0 270.0,139.9 272.1,138.7 274.2,137.5 276.2,136.3 278.3,135.0 280.4,133.7 282.5,132.4 284.6,131.1 286.7,129.7 288.8,128.3 290.8,126.9 292.9,125.4 295.0,123.9 297.1,122.4 299.2,120.9 301.2,119.4 303.3,117.8 305.4,116.3 307.5,114.7 309.6,113.1 311.7,111.5 313.8,109.9 315.8,108.2 317.9,106.6 320.0,105.0 322.1,103.4 324.2,101.8 326.2,100.1 328.3,98.5 330.4,96.9 332.5,95.3 334.6,93.7 336.7,92.2 338.8,90.6 340.8,89.1 342.9,87.6 345.0,86.1 347.1,84.6 349.2,83.1 351.2,81.7 353.3,80.3 355.4,78.9 357.5,77.6 359.6,76.3 361.7,75.0 363.8,73.7 365.8,72.5 367.9,71.3 370.0,70.1 372.1,69.0 374.2,67.8 376.2,66.8 378.3,65.7 380.4,64.7 382.5,63.7 384.6,62.8 386.7,61.8 388.8,60.9 390.8,60.1 392.9,59.2 395.0,58.4 397.1,57.7 399.2,56.9 401.2,56.2 403.3,55.5 405.4,54.8 407.5,54.2 409.6,53.6 411.7,53.0 413.8,52.4 415.8,51.8 417.9,51.3 420.0,50.8 422.1,50.3 424.2,49.9 426.2,49.4 428.3,49.0 430.4,48.6 432.5,48.2 434.6,47.8 436.7,47.5 438.8,47.1 440.8,46.8 442.9,46.5 445.0,46.2 447.1,45.9 449.2,45.6 451.2,45.3 453.3,45.1 455.4,44.9 457.5,44.6 459.6,44.4 461.7,44.2 463.8,44.0 465.8,43.8 467.9,43.6 470.0,43.5 472.1,43.3 474.2,43.1 476.2,43.0 478.3,42.8 480.4,42.7 482.5,42.6 484.6,42.5 486.7,42.3 488.8,42.2 490.8,42.1 492.9,42.0 495.0,41.9 497.1,41.8 499.2,41.7 501.2,41.7 503.3,41.6 505.4,41.5 507.5,41.4 509.6,41.4 511.7,41.3 513.8,41.2 515.8,41.2 517.9,41.1 520.0,41.1 522.1,41.0 524.2,41.0 526.2,40.9 528.3,40.9 530.4,40.8 532.5,40.8 534.6,40.7 536.7,40.7 538.8,40.7 540.8,40.6 542.9,40.6 545.0,40.6 547.1,40.6 549.2,40.5 551.2,40.5 553.3,40.5 555.4,40.5 557.5,40.4 559.6,40.4 561.7,40.4 563.8,40.4 565.8,40.4 567.9,40.3 570.0,40.3" fill="none" stroke="var(--accent)" stroke-width="2.4"/><path d="M70 105 H580" stroke="var(--muted)" stroke-dasharray="4 3"/><text x="62" y="109" text-anchor="end" class="sm">0.5</text><text x="62" y="174" text-anchor="end" class="sm">0</text><text x="62" y="44" text-anchor="end" class="sm">1</text><text x="70" y="190" text-anchor="middle" class="sm">-6</text><text x="153" y="190" text-anchor="middle" class="sm">-4</text><text x="236" y="190" text-anchor="middle" class="sm">-2</text><text x="320" y="190" text-anchor="middle" class="sm">0</text><text x="403" y="190" text-anchor="middle" class="sm">2</text><text x="486" y="190" text-anchor="middle" class="sm">4</text><text x="570" y="190" text-anchor="middle" class="sm">6</text><text x="575" y="202" class="sm">z</text><text x="330" y="22" text-anchor="middle" class="sm">sigma(z) = 1 / (1 + e^-z): S-shaped, always between 0 and 1</text><text x="330" y="125" class="sm">z = 0 &#8594; 0.5 (decision boundary)</text></svg>
+<table>
+  <tr><th>z</th><th>e<sup>&minus;z</sup></th><th>&sigma;(z)</th><th>Meaning</th></tr>
+  <tr><td>&minus;5</td><td>148.4</td><td>0.0067</td><td>almost 0 %</td></tr>
+  <tr><td>&minus;2</td><td>7.389</td><td>0.119</td><td>12 %</td></tr>
+  <tr><td>0</td><td>1</td><td>0.5</td><td>50 %</td></tr>
+  <tr><td>2</td><td>0.135</td><td>0.881</td><td>88 %</td></tr>
+  <tr><td>5</td><td>0.0067</td><td>0.993</td><td>almost 100 %</td></tr>
+</table>
+<p><b>Decision:</b> predict 1 if y&#770; &ge; 0.5, else 0 (0.5 is the usual <b>threshold</b>; spam probability 0.82 &rarr; spam, 0.15 &rarr; not spam). Where z = 0 (probability 0.5) is the <b>decision boundary</b> (a <b>hyperplane</b>: a point for 1 feature, a line for 2, a plane for 3). <b>Example:</b> data (hours, result) (2,0), (1,0), (5,1), (3,0), (6,1) with w = 1, b = &minus;3.5, z = x &minus; 3.5:</p>
+<table>
+  <tr><th>x</th><th>z</th><th>&sigma;(z)</th><th>Predicted</th><th>Actual</th></tr>
+  <tr><td>1</td><td>&minus;2.5</td><td>0.076</td><td>0</td><td>0</td></tr>
+  <tr><td>2</td><td>&minus;1.5</td><td>0.182</td><td>0</td><td>0</td></tr>
+  <tr><td>3</td><td>&minus;0.5</td><td>0.378</td><td>0</td><td>0</td></tr>
+  <tr><td>5</td><td>1.5</td><td>0.818</td><td>1</td><td>1</td></tr>
+  <tr><td>6</td><td>2.5</td><td>0.924</td><td>1</td><td>1</td></tr>
+</table>
+<p>All correct. The boundary is at x = 3.5 hours; a new student with 4 hours: z = 0.5, &sigma; = 0.6225 &rarr; Pass. <b>Finding w and b:</b> score each choice with an error and use gradient descent. With SSE on the sigmoid output, (w = 1, b = &minus;3.5) gives E = 0.221 while (w = 0.2, b = 0) gives 1.204, so the first is better; gradient descent starts from a poor guess and steps down toward it. Alternatively <b>maximum likelihood</b>: multiply, over all data, the curve's probability for what actually happened (obese mouse: curve height; non-obese: 1 &minus; height); the curve with the highest product wins. Mice obese / not / obese: curve A (0.9, 0.2, 0.7) gives 0.9&times;0.8&times;0.7 = 0.504; curve B (0.6, 0.5, 0.5) gives 0.15, so A is better.</p>
+<p><b>Several inputs:</b> Model A (linear): y&#770; = W<sub>1</sub>x<sub>1</sub> + W<sub>2</sub>x<sub>2</sub> + W<sub>0</sub> = &Sigma; W<sub>i</sub>x<sub>i</sub> (x<sub>0</sub> = 1). Model B (logistic): y&#770; = 1 / (1 + e<sup>&minus;&Sigma; W<sub>i</sub>x<sub>i</sub></sup>), i.e. Model A pushed through a sigmoid. Neural networks are good for both numerical and categorical data (Lesson 6: a single sigmoid neuron <i>is</i> logistic regression).</p>
+<table>
+  <tr><th></th><th>Linear regression</th><th>Logistic regression</th></tr>
+  <tr><td>Task</td><td>Regression (a number)</td><td>Classification (a category)</td></tr>
+  <tr><td>Output</td><td>Any number (&minus;&infin; to +&infin;)</td><td>A probability 0 to 1</td></tr>
+  <tr><td>Equation</td><td>y&#770; = w x + b</td><td>y&#770; = 1 / (1 + e<sup>&minus;(w x + b)</sup>)</td></tr>
+  <tr><td>Best fit by</td><td>Least squares (smallest SSE)</td><td>Maximum likelihood (or small error)</td></tr>
+  <tr><td>Example</td><td>House price</td><td>Is this email spam?</td></tr>
+</table>
+
+<h3>Symbols quick table</h3>
+<table>
+  <tr><th>Symbol</th><th>Meaning</th></tr>
+  <tr><td>x, y, y&#770;</td><td>input, actual value, prediction</td></tr>
+  <tr><td>w (m, W<sub>1</sub>), b (c, W<sub>0</sub>)</td><td>weight / slope, bias / intercept</td></tr>
+  <tr><td>&epsilon;, E (SSE)</td><td>error of one point (y &minus; y&#770;), total squared error</td></tr>
+  <tr><td>&Sigma;</td><td>add up for every data point</td></tr>
+  <tr><td>&eta;</td><td>learning rate</td></tr>
+  <tr><td>z, &sigma;(z)</td><td>weighted sum, sigmoid of it</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+ML learns patterns from data: supervised (answers given: classification, regression, time series), unsupervised (clustering, association rules) and reinforcement (rewards). Prepare data (feature engineering and selection, Z-score) and beware too many dimensions (PCA). Split train / test (80 / 20); underfit = high bias, overfit = high variance; judge with accuracy, precision, recall and cross-validation. Linear regression y&#770; = wx + b minimises SSE (least squares) using gradient descent, new w = old w &minus; &eta; &times; slope. Logistic regression squashes z through a sigmoid and thresholds at 0.5.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Compare supervised, unsupervised and reinforcement learning with an example each.</summary>
+<p>Supervised: labelled data with correct answers (past exam questions with answers; classification, regression, time series). Unsupervised: unlabelled data, the machine finds groups or relationships (clustering, association rules). Reinforcement: an agent learns by trial and error through rewards and penalties (training a puppy; Boston Dynamics robots).</p>
+</details>
+<details>
+<summary>W2. Explain how the two-model donor example decides whom to contact. Compute the profit for a donor with probability 0.8, amount 500 and a 25 letter cost.</summary>
+<p>Model 1 (classification) predicts whether a person will donate; model 2 (regression) predicts how much. Expected value = probability x amount; contact only if it beats the cost. 0.8 x 500 = 400; 400 - 25 = 375 profit, so contact.</p>
+</details>
+<details>
+<summary>W3. Explain the curse of dimensionality and how PCA helps.</summary>
+<p>As features increase, data becomes sparse (10 levels per feature gives 10^n boxes), distances between points become similar and lose meaning, and models overfit and need heavy computing. PCA creates a few new features keeping most of the variation, reducing dimensions with little information loss.</p>
+</details>
+<details>
+<summary>W4. Explain bias, variance, underfitting and overfitting and how to diagnose them from training and testing errors.</summary>
+<p>High bias (underfitting): too simple, high training and testing error. High variance (overfitting): too flexible, near-zero training error but high testing error. A good model has low error on both. Choosing the right complexity is the bias-variance problem.</p>
+</details>
+<details>
+<summary>W5. Compute accuracy, precision and recall for TP 30, FN 10, FP 5, TN 55.</summary>
+<p>Accuracy = (30 + 55) / 100 = 85 %. Precision = 30 / (30 + 5) = 85.7 %. Recall = 30 / (30 + 10) = 75 %. Specificity = 55 / 60 = 91.7 %.</p>
+</details>
+<details>
+<summary>W6. For data (1,2), (2,4), (3,6), w = 0, b = 0, learning rate 0.01, perform one gradient descent step.</summary>
+<p>Errors 2, 4, 6; SSE 56. Slope for b = -2 x 12 = -24; slope for w = -2 x (2 + 8 + 18) = -56. New b = 0 - 0.01 x (-24) = 0.24; new w = 0.56. SSE falls to about 25.06.</p>
+</details>
+<details>
+<summary>W7. Explain logistic regression: why a sigmoid, the decision boundary, and how it differs from linear regression.</summary>
+<p>A straight line is unbounded and sensitive to outliers; probabilities must lie between 0 and 1. Logistic regression computes z = wx + b and passes it through sigma(z) = 1/(1 + e^-z), giving a probability; predict class 1 if it is at least 0.5. The boundary is where z = 0 (a hyperplane). Linear regression predicts a number and is fitted by least squares; logistic regression predicts a probability/category and is fitted by maximum likelihood (or small error with gradient descent).</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>ML</td><td>Branch of AI where a system learns patterns from data to predict, decide or generate. Pattern = model. Jobs: regression, classification, forecasting, optimisation.</td></tr>
+  <tr><td>3 types</td><td><b>Supervised</b> (labelled; teacher) &middot; <b>Unsupervised</b> (no labels; clustering, association rules) &middot; <b>Reinforcement</b> (agent, rewards / penalties).</td></tr>
+  <tr><td>Supervised kinds</td><td>Classification (category; binary / multiclass) &middot; regression (number) &middot; time series (trend, seasonality, lag).</td></tr>
+  <tr><td>Data words</td><td>Record = row; feature = input column (attribute = dimension); label = answer; sample vs population; noise.</td></tr>
+  <tr><td>Donor example</td><td>Model 1 classification (will give?), model 2 regression (how much?). Expected value = &Sigma; P&middot;D (0.70&times;1200 = 840; minus cost 10 = 830). Phone 10 /-, letter 25 /-. GA chromosome 11011 = 1420.</td></tr>
+  <tr><td>Preprocessing</td><td>Feature engineering (age from DOB; BMI), feature selection (drop ID), Z-score = (x &minus; mean) / SD (80 in 40..80: 1.41).</td></tr>
+  <tr><td>Association rules</td><td>Support = how common the combination (4/10 = 40 %); confidence = how reliable the rule (4/5 = 80 %).</td></tr>
+  <tr><td>Curse of dimensionality</td><td>Sparse data; distances lose meaning; overfitting + heavy compute. Fix: PCA / autoencoder (dimensionality reduction).</td></tr>
+  <tr><td>Train / test</td><td>80 % / 20 %. Underfit = high bias (high train + test error); overfit = high variance (train ~0, test high). Find the right complexity.</td></tr>
+  <tr><td>Scores</td><td>Accuracy (TP+TN)/all; precision TP/(TP+FP); recall TP/(TP+FN); specificity TN/(TN+FP). Cross-validation: k folds, average.</td></tr>
+  <tr><td>Linear regression</td><td>y&#770; = w x + b (b = bias, w = slope). Multiple: &Sigma; W<sub>i</sub>x<sub>i</sub> with x<sub>0</sub> = 1. Fit = choose w, b.</td></tr>
+  <tr><td>Error</td><td>&epsilon; = y &minus; y&#770;; SSE = &Sigma;(y &minus; y&#770;)&sup2; = f(w, b); minimise it (least squares). R&sup2; = (SSE_mean &minus; SSE_line) / SSE_mean.</td></tr>
+  <tr><td>Gradient descent</td><td>new w = old w &minus; &eta; &times; slope. Big &eta; overshoots; small &eta; is slow. Error bowl is convex.</td></tr>
+  <tr><td>Logistic regression</td><td>z = wx + b; y&#770; = 1/(1+e<sup>&minus;z</sup>) in (0,1); threshold 0.5; boundary at z = 0 (hyperplane). Classification, not regression. Best fit: maximum likelihood / small error.</td></tr>
+  <tr><td>Linear vs logistic</td><td>Number vs probability/category; least squares vs maximum likelihood.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be able to compute SSE for a line, do one gradient-descent update, compute sigmoid and predict a class, and compute accuracy / precision / recall from a confusion matrix.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Machine learning is best described as:", "o": ["Writing rules by hand", "A branch of AI where a system learns patterns from data to predict or decide", "A database", "A programming language"], "a": 1, "e": "The learned pattern is the model."}, {"q": "Learning from labelled data (inputs with correct answers) is:", "o": ["Unsupervised", "Supervised", "Reinforcement", "Generative"], "a": 1, "e": "Learning with a teacher."}, {"q": "Grouping customers by behaviour with no labels is:", "o": ["Supervised", "Unsupervised (clustering)", "Reinforcement", "Regression"], "a": 1, "e": "No answers are given."}, {"q": "A robot learning to walk from rewards for each step is:", "o": ["Supervised", "Unsupervised", "Reinforcement learning", "Clustering"], "a": 2, "e": "Trial and error with rewards and penalties."}, {"q": "Predicting tomorrow's temperature is:", "o": ["Classification", "Regression", "Clustering", "Association"], "a": 1, "e": "The answer is a number."}, {"q": "Predicting spam or not spam is:", "o": ["Regression", "Binary classification", "Forecasting", "Clustering"], "a": 1, "e": "Two possible classes."}, {"q": "Which feature of time-series data distinguishes it from ordinary regression?", "o": ["Time order matters (trend, seasonality, lag)", "It has no numbers", "It needs labels only", "It is unsupervised"], "a": 0, "e": "Order is the main predictor."}, {"q": "Sales 300, 310, 312, 320, 325. Using the average daily change, day 6 is about:", "o": ["319", "325", "331.25", "350"], "a": 2, "e": "Changes 10, 2, 8, 5 average 6.25; 325 + 6.25."}, {"q": "In a data table the answer column is called the:", "o": ["Feature", "Label", "Record", "Noise"], "a": 1, "e": "Features are inputs; the label is the target."}, {"q": "Attribute, feature, dimension and column are:", "o": ["Four different things", "The same thing", "Labels", "Models"], "a": 1, "e": "All mean one column describing a record."}, {"q": "Donor 1: probability 0.70, amount 1200, phone cost 10. Profit?", "o": ["840", "830", "1200", "1190"], "a": 1, "e": "0.70 x 1200 = 840; minus 10 = 830."}, {"q": "Expected value is:", "o": ["Sum of P x D (probability times amount)", "The maximum amount", "The average cost", "The label"], "a": 0, "e": "Sum over cases of P_i D_i."}, {"q": "Making age from date of birth is:", "o": ["Feature selection", "Feature engineering", "Cross-validation", "Clustering"], "a": 1, "e": "Creating a more useful feature."}, {"q": "Mean 60, standard deviation 10, value 80. Z-score?", "o": ["1", "2", "20", "0.5"], "a": 1, "e": "(80 - 60) / 10 = 2."}, {"q": "10 baskets; 5 have patties+buns; 4 of those have ketchup. Confidence of the rule?", "o": ["40 %", "50 %", "80 %", "20 %"], "a": 2, "e": "4/5 = 80 %; support = 4/10 = 40 %."}, {"q": "Which is a problem of high-dimensional data?", "o": ["Data becomes sparse and distances lose meaning", "Too much data per box", "Models become too simple", "Training becomes instant"], "a": 0, "e": "Curse of dimensionality."}, {"q": "With 10 levels per feature, 4 features create how many boxes?", "o": ["40", "100", "1,000", "10,000"], "a": 3, "e": "10^4."}, {"q": "PCA is used to:", "o": ["Add features", "Squeeze many features into a few keeping most variation", "Label data", "Split data"], "a": 1, "e": "Dimensionality reduction."}, {"q": "A typical train/test split is:", "o": ["50/50", "80/20", "10/90", "100/0"], "a": 1, "e": "E.g. 800 train, 200 test of 1,000."}, {"q": "Training error 0.5 and testing error 9 indicates:", "o": ["Underfitting", "Overfitting (high variance)", "A good fit", "High bias"], "a": 1, "e": "A big gap between training and testing."}, {"q": "Training error 12 and testing error 13 indicates:", "o": ["Overfitting", "Underfitting (high bias)", "A good fit", "Noise"], "a": 1, "e": "Both errors are high."}, {"q": "A straight line fitted to S-shaped data has:", "o": ["High variance", "High bias", "Low error", "No error"], "a": 1, "e": "Too simple a model."}, {"q": "TP 30, FN 10, FP 5, TN 55. Accuracy?", "o": ["75 %", "85 %", "85.7 %", "91.7 %"], "a": 1, "e": "(30 + 55) / 100."}, {"q": "Same matrix. Precision?", "o": ["75 %", "85 %", "85.7 %", "91.7 %"], "a": 2, "e": "30 / (30 + 5)."}, {"q": "Same matrix. Recall?", "o": ["75 %", "85 %", "85.7 %", "91.7 %"], "a": 0, "e": "30 / (30 + 10)."}, {"q": "5-fold cross-validation scores 80, 84, 78, 86, 82. Average?", "o": ["80", "82", "84", "410"], "a": 1, "e": "410 / 5."}, {"q": "In y-hat = w x + b, b is the:", "o": ["Slope", "Bias: value at x = 0", "Error", "Learning rate"], "a": 1, "e": "w is the weight / slope."}, {"q": "y-hat = 0.5x + 2 predicts for x = 6:", "o": ["3", "5", "8", "2"], "a": 1, "e": "0.5 x 6 + 2."}, {"q": "SSE for errors 3 and -4 is:", "o": ["-1", "7", "25", "1"], "a": 2, "e": "9 + 16."}, {"q": "Why are errors squared?", "o": ["To make them cancel", "To stop positive and negative errors cancelling and punish big misses", "To make them smaller", "No reason"], "a": 1, "e": "+5 and -5 would add to 0."}, {"q": "The best-fitting line is the one with:", "o": ["Largest SSE", "Smallest SSE", "Largest slope", "Zero bias"], "a": 1, "e": "Least squares."}, {"q": "SSE around the mean 20, around the line 5. R squared?", "o": ["0.25", "0.75", "0.5", "4"], "a": 1, "e": "(20 - 5) / 20."}, {"q": "Gradient descent update with w = 5, slope 4, learning rate 0.1 gives:", "o": ["4.6", "5.4", "0.4", "9"], "a": 0, "e": "5 - 0.1 x 4."}, {"q": "A learning rate that is too large:", "o": ["Converges slowly", "Overshoots the minimum and may diverge", "Is ideal", "Removes bias"], "a": 1, "e": "Large jumps jump past the bottom."}, {"q": "A learning rate that is too small:", "o": ["Overshoots", "Converges very slowly", "Always diverges", "Gives zero error"], "a": 1, "e": "Precise but takes many steps."}, {"q": "Logistic regression is a:", "o": ["Regression method for numbers", "Classification method giving a probability", "Clustering method", "Reinforcement method"], "a": 1, "e": "Despite its name."}, {"q": "The sigmoid function squashes any number into:", "o": ["-1 to 1", "0 to 1", "0 to infinity", "1 to 10"], "a": 1, "e": "sigma(z) = 1 / (1 + e^-z)."}, {"q": "sigma(0) equals:", "o": ["0", "0.5", "1", "e"], "a": 1, "e": "1 / (1 + 1)."}, {"q": "With w = 1, b = -3.5, a student with 3 hours has z = -0.5, sigma = 0.378, so the class is:", "o": ["1 (Pass)", "0 (Fail)", "Undefined", "0.5"], "a": 1, "e": "Below the 0.5 threshold."}, {"q": "The decision boundary of logistic regression is where:", "o": ["z = 0 (probability 0.5)", "y = 1", "z = 1", "w = 0"], "a": 0, "e": "A hyperplane separating the classes."}, {"q": "Curve X has likelihood 0.4, curve Y 0.1 for the same data. Better curve?", "o": ["X", "Y", "Equal", "Cannot say"], "a": 0, "e": "Maximum likelihood chooses the more likely curve."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
