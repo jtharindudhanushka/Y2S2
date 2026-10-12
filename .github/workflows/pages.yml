@@ -1,0 +1,36 @@
+# Publishes the site to GitHub Pages WITHOUT the large files (videos and files over 40 MB),
+# because Pages sites are limited to 1 GB. The hub links those files to their GitHub raw URLs.
+# Setup (once): repo Settings > Pages > Build and deployment > Source = "GitHub Actions".
+# Currently manual only. To deploy on every push, uncomment the push lines.
+name: Deploy site
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble site (drop large files and tooling)
+        run: |
+          mkdir _site
+          rsync -a --exclude='.git' --exclude='.github' --exclude='_site' --exclude='_tools' --exclude='_src' --exclude='*.mp4' ./ _site/
+          find _site -type f -size +40M -delete
+          touch _site/.nojekyll
+          du -sh _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
