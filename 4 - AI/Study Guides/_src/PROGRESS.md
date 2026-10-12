@@ -14,7 +14,7 @@ Converted peer notes (read these, not the raw PDFs): `../Peer Notes/Notes - Yasi
 5 DONE (ML + regression combined; lesson 6 = neural nets only). (was: peer-made L5, L6; Yasiru 5, 6; Geethma AI 4 pp.8-12, AI 5, AI 6)
 6 DONE. (was: peer-made L7; Yasiru 7; Geethma AI 6 p3-4, AI 7). Note: guide-building helper scripts live outside the repo; SVGs are inline in notes.html.
 7 DONE (RNN, vanishing gradient, LSTM, CNN, U-Net; sources: slides 09 (images, read as PNG), peer-made L8 + L10).
-8 Generative AI and Transformers (peer-made L8; check if transformers covered anywhere)
+8 DONE. No slides exist; course facts (discriminative vs generative, next-word prediction, AI map, 3-stage training) are marked; attention/transformer-block sections are labelled Background (not from course).
 9 Images and Diffusion (peer-made L10 tab 6; diffusion has no source: say so)
 10 Reinforcement Learning (peer-made L12; Geethma AI 4 p11-12, AI 5 p1-2)
 11 Genetic Algorithms (slides 05; peer-made L4; Yasiru 4; Geethma AI 4 pp1-7; fix the roulette % error in Geethma)
