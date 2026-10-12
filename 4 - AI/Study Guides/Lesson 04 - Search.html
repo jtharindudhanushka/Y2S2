@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Lesson 4 - State Space and Heuristic Search</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; AI study guides</a> &middot; INTE 22303 &middot; Lesson 04</p><button id="theme" type="button"></button></div>
+  <h1>State Space and Heuristic Search</h1>
+  <p class="lead">Covers: AI search and why it is everywhere, describing a problem as a state space (initial state, operators, goal test), breadth-first and depth-first search with the two-jug puzzle, why equation methods fail, heuristics, uniform cost search, greedy best-first and A*, and the travelling salesman and knapsack problems. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define AI search and state why it is important; name the three aims of search</li>
+  <li>Describe a problem as a state space: initial state, operators, state space, goal test</li>
+  <li>Run breadth-first search (BFS) and depth-first search (DFS) and compare them</li>
+  <li>Solve the two-jug puzzle with BFS</li>
+  <li>Explain heuristics and run uniform cost search, greedy best-first search and A*</li>
+  <li>Describe the travelling salesman and knapsack problems</li>
+</ul>
+
+<h2>1. What is AI search?</h2>
+<div class="box"><b>Definition</b><b>AI search</b> is the process of finding a sequence of actions (steps) that leads from an <b>initial state</b> to a <b>goal state</b>.</div>
+<p>Analogy: finding your way in a new city. You start at the bus stand and want the hotel; you try roads, turn back from dead ends and compare routes. That trial and comparison is search. <b>Applications:</b> problem solving, game playing, route planning, optimisation. <b>Why important:</b> it lets machines make intelligent decisions, solve complex problems and navigate large search spaces to find optimal or near-optimal solutions. Problem-solving AI agents (task planners, assistants) must do some search. <i>When AI is applied to a problem there is always a search.</i></p>
+<h3>Three objectives of a search</h3>
+<table>
+  <tr><th>#</th><th>Aim</th></tr>
+  <tr><td>1</td><td>Finding <b>a</b> solution (any answer that works)</td></tr>
+  <tr><td>2</td><td>Finding <b>all</b> the solutions</td></tr>
+  <tr><td>3</td><td>Finding the <b>best</b> solution (lowest cost / highest value)</td></tr>
+</table>
+<h3>Search is everywhere in AI</h3>
+<ul>
+  <li><b>Neural network weights:</b> finding the best weight W is a search: each training cycle changes the weights and reduces the error; we look for the weight with the lowest error (Lesson 6).</li>
+  <li><b>Linear regression:</b> many (m, c) pairs for y = m x + c; the best pair (least error) is found by search (Lesson 5).</li>
+  <li><b>Path-finding agents:</b> shortest distance from A to E among many routes.</li>
+  <li><b>Travelling salesman problem</b> (section 8) and <b>games</b> (find paths avoiding obstacles, choose the best moves).</li>
+</ul>
+<p>Search is also called the "core behind AI". Searching for a state in a <b>state space</b> (all possible solutions) where the state is the solution of the problem is <b>state space search</b>.</p>
+
+<h2>2. Describing the problem: the state space</h2>
+<p>In state space search the problem is a set of situations (<b>states</b>). The computer moves from one state to another using legal steps until it reaches a state that passes the <b>goal test</b>. Analogy: a maze or GPS (each spot is a state, each move an operator).</p>
+<table>
+  <tr><th>Part</th><th>Meaning</th></tr>
+  <tr><td><b>Initial state</b></td><td>Where the problem starts.</td></tr>
+  <tr><td><b>Operators</b></td><td>The legal steps (instructions) that change one state into another.</td></tr>
+  <tr><td><b>State space</b></td><td>All the states reachable from the initial state.</td></tr>
+  <tr><td><b>Goal test</b></td><td>A check of whether a state is an acceptable answer.</td></tr>
+</table>
+<ul>
+  <li>A <b>state</b> is a possible solution configuration: a complete snapshot of the problem at one moment, holding everything needed to decide what can happen next. States are written compactly, e.g. the pair (2, 4).</li>
+  <li><b>Two states are the same</b> if their contents are identical, even if reached by different paths. This lets us avoid repeating work (pruning).</li>
+  <li><b>The answer is the path</b> (the sequence of operators used), not only the final state: a GPS gives the route, not just the address.</li>
+</ul>
+<table>
+  <tr><th></th><th>Classical search</th><th>Machine learning</th></tr>
+  <tr><td>States</td><td>Separate and countable (a chess board is in one arrangement or another)</td><td>Parameter values (e.g. network weights), real numbers</td></tr>
+  <tr><td>Space</td><td>Discrete ("stairs")</td><td>Continuous ("ramp": infinitely many states between any two)</td></tr>
+  <tr><td>Moving</td><td>Apply an operator to jump to the next state</td><td>Small steps guided by gradient descent</td></tr>
+  <tr><td>Goal</td><td>One exact state</td><td>A region of low error</td></tr>
+</table>
+
+<h2>3. Uninformed (blind) search</h2>
+<p>BFS and DFS are called <b>uninformed, blind, exhaustive or brute-force</b> search: they know only the operators and the goal test and cannot tell which state is closer to the goal.</p>
+<h3>Breadth-first search (BFS)</h3>
+<p>Search the whole breadth first, <b>horizontally</b>: every state at depth 1, then depth 2, and so on (ripples on a pond). It uses a <b>queue</b> (FIFO) and a <b>visited list</b> used to prune repeats.</p>
+<ol>
+  <li>Put the initial state in the queue and mark it visited.</li>
+  <li>Remove the front state; if it passes the goal test, stop and return the path.</li>
+  <li>Apply every operator to it.</li>
+  <li>Discard successors that cause no change or are already visited.</li>
+  <li>Add the rest to the back of the queue, mark them visited, repeat.</li>
+</ol>
+<svg viewBox="0 0 640 190" role="img" aria-label="BFS and DFS order on a tree" class="dg">
+  <text x="160" y="16" text-anchor="middle" class="h">BFS order</text>
+  <circle cx="160" cy="45" r="16" class="bx"/><text x="160" y="50" text-anchor="middle" class="mono">A</text><text x="182" y="40" class="sm" fill="#cf222e">1</text>
+  <line x1="150" y1="58" x2="105" y2="90" stroke="var(--fg)"/><line x1="170" y1="58" x2="215" y2="90" stroke="var(--fg)"/>
+  <circle cx="100" cy="105" r="16" class="bx"/><text x="100" y="110" text-anchor="middle" class="mono">B</text><text x="78" y="100" class="sm">2</text>
+  <circle cx="220" cy="105" r="16" class="bx"/><text x="220" y="110" text-anchor="middle" class="mono">C</text><text x="242" y="100" class="sm">3</text>
+  <line x1="92" y1="119" x2="60" y2="150" stroke="var(--fg)"/><line x1="108" y1="119" x2="140" y2="150" stroke="var(--fg)"/><line x1="226" y1="119" x2="250" y2="150" stroke="var(--fg)"/>
+  <circle cx="55" cy="165" r="16" class="bx"/><text x="55" y="170" text-anchor="middle" class="mono">D</text><text x="33" y="160" class="sm">4</text>
+  <circle cx="145" cy="165" r="16" class="bx"/><text x="145" y="170" text-anchor="middle" class="mono">E</text><text x="167" y="160" class="sm">5</text>
+  <circle cx="255" cy="165" r="16" class="bx" style="stroke-width:3"/><text x="255" y="170" text-anchor="middle" class="mono">F</text><text x="277" y="160" class="sm">6 goal</text>
+  <text x="480" y="16" text-anchor="middle" class="h">DFS order</text>
+  <circle cx="480" cy="45" r="16" class="bx"/><text x="480" y="50" text-anchor="middle" class="mono">A</text><text x="502" y="40" class="sm">1</text>
+  <line x1="470" y1="58" x2="425" y2="90" stroke="var(--fg)"/><line x1="490" y1="58" x2="535" y2="90" stroke="var(--fg)"/>
+  <circle cx="420" cy="105" r="16" class="bx"/><text x="420" y="110" text-anchor="middle" class="mono">B</text><text x="398" y="100" class="sm">2</text>
+  <circle cx="540" cy="105" r="16" class="bx"/><text x="540" y="110" text-anchor="middle" class="mono">C</text><text x="562" y="100" class="sm">5</text>
+  <line x1="412" y1="119" x2="380" y2="150" stroke="var(--fg)"/><line x1="428" y1="119" x2="460" y2="150" stroke="var(--fg)"/><line x1="546" y1="119" x2="570" y2="150" stroke="var(--fg)"/>
+  <circle cx="375" cy="165" r="16" class="bx"/><text x="375" y="170" text-anchor="middle" class="mono">D</text><text x="353" y="160" class="sm">3</text>
+  <circle cx="465" cy="165" r="16" class="bx"/><text x="465" y="170" text-anchor="middle" class="mono">E</text><text x="487" y="160" class="sm">4</text>
+  <circle cx="575" cy="165" r="16" class="bx" style="stroke-width:3"/><text x="575" y="170" text-anchor="middle" class="mono">F</text><text x="597" y="160" class="sm">6 goal</text>
+</svg>
+<table>
+  <tr><th>Step</th><th>Take from the front (BFS)</th><th>Queue after adding children</th></tr>
+  <tr><td>1</td><td>A</td><td>B, C</td></tr>
+  <tr><td>2</td><td>B</td><td>C, D, E</td></tr>
+  <tr><td>3</td><td>C</td><td>D, E, F</td></tr>
+  <tr><td>4</td><td>D</td><td>E, F</td></tr>
+  <tr><td>5</td><td>E</td><td>F</td></tr>
+  <tr><td>6</td><td>F: goal found</td><td></td></tr>
+</table>
+<p><b>Properties:</b> <b>complete</b> (finds a solution if one exists); <b>optimal</b> when every step costs the same (the first goal found is the shallowest); time and space about <b>b<sup>d</sup></b> (b = branching factor, the choices per state; d = depth of the goal; b = 2, d = 3 gives 8 states; b = 10, d = 5 gives 100,000). <b>Weakness: memory</b> (a whole level is stored).</p>
+
+<h3>Depth-first search (DFS)</h3>
+<p>Follow one branch <b>as deep as possible</b>, then <b>backtrack</b> to the most recent state that still has an unexplored option (exploring one tunnel to its end). It uses a <b>stack</b> (LIFO) or recursion.</p>
+<table>
+  <tr><th>Step</th><th>Take from the top (DFS)</th><th>Stack after pushing children (top first)</th></tr>
+  <tr><td>1</td><td>A</td><td>B, C</td></tr>
+  <tr><td>2</td><td>B</td><td>D, E, C</td></tr>
+  <tr><td>3</td><td>D</td><td>E, C</td></tr>
+  <tr><td>4</td><td>E</td><td>C</td></tr>
+  <tr><td>5</td><td>C</td><td>F</td></tr>
+  <tr><td>6</td><td>F: goal found</td><td></td></tr>
+</table>
+<p><b>Properties:</b> <b>not complete</b> (can loop forever in a deep or cyclic space); <b>not optimal</b>; time about b<sup>m</sup> (m = maximum depth); space about b &times; m (low memory: only the current branch).</p>
+<table>
+  <tr><th></th><th>BFS</th><th>DFS</th></tr>
+  <tr><td>Order</td><td>Level by level (wide)</td><td>Branch by branch (deep)</td></tr>
+  <tr><td>Structure</td><td>Queue</td><td>Stack</td></tr>
+  <tr><td>Shortest path</td><td>Guaranteed (equal step costs)</td><td>Not guaranteed</td></tr>
+  <tr><td>Complete?</td><td>Yes</td><td>No</td></tr>
+  <tr><td>Memory</td><td>High</td><td>Low</td></tr>
+</table>
+
+<h2>4. Worked example: the two-jug puzzle (BFS)</h2>
+<p>Two jugs without markings: a <b>3 L</b> jug and a <b>4 L</b> jug, unlimited water. Measure exactly <b>2 litres</b>. (Written in the lecturer's notes as: both jugs empty; collect 2 L of water in either jug.)</p>
+<ul>
+  <li><b>State</b> (x, y): x = litres in the 3L jug, y = litres in the 4L jug. <b>Initial</b> (0, 0). <b>Goal:</b> (2, 0) or (0, 2).</li>
+</ul>
+<table>
+  <tr><th>#</th><th>Operator</th><th>Result</th></tr>
+  <tr><td>1</td><td>Fill 3L</td><td>(3, y)</td></tr>
+  <tr><td>2</td><td>Fill 4L</td><td>(x, 4)</td></tr>
+  <tr><td>3</td><td>Empty 3L</td><td>(0, y)</td></tr>
+  <tr><td>4</td><td>Empty 4L</td><td>(x, 0)</td></tr>
+  <tr><td>5</td><td>Pour 3L into 4L</td><td>until the 4L jug is full or the 3L jug is empty</td></tr>
+  <tr><td>6</td><td>Pour 4L into 3L</td><td>until the 3L jug is full or the 4L jug is empty</td></tr>
+</table>
+<p>A pour moves the <b>smaller</b> of (what the source holds) and (free space in the other jug). From (0, 4) "pour 4L into 3L": source holds 4, the 3L jug has 3 free, so 3 litres move: (3, 1). A successor is discarded if it causes no change or is already visited (otherwise the search loops: (3,0) regenerates (0,0), which regenerates (3,0)...).</p>
+<table>
+  <tr><th>Level</th><th>Expanded</th><th>New states added</th></tr>
+  <tr><td>0</td><td>(0,0)</td><td>(3,0), (0,4)</td></tr>
+  <tr><td>1</td><td>(3,0), (0,4)</td><td>(3,4), (0,3), (3,1)</td></tr>
+  <tr><td>2</td><td>(3,4), (0,3), (3,1)</td><td>(3,3), (0,1)</td></tr>
+  <tr><td>3</td><td>(3,3), (0,1)</td><td>(2,4), (1,0)</td></tr>
+  <tr><td>4</td><td>(2,4), (1,0)</td><td>(2,0): <b>goal</b></td></tr>
+</table>
+<svg viewBox="0 0 640 200" role="img" aria-label="Jug solution path" class="dg">
+  <g class="mono">
+  <rect class="bx" x="10" y="75" width="80" height="34" rx="6"/><text x="50" y="97" text-anchor="middle">(0,0)</text>
+  <path class="ar" d="M90 92 H115"/><text x="102" y="68" text-anchor="middle" class="sm">fill 3L</text>
+  <rect class="bx" x="115" y="75" width="80" height="34" rx="6"/><text x="155" y="97" text-anchor="middle">(3,0)</text>
+  <path class="ar" d="M195 92 H220"/><text x="207" y="68" text-anchor="middle" class="sm">pour 3L&rarr;4L</text>
+  <rect class="bx" x="220" y="75" width="80" height="34" rx="6"/><text x="260" y="97" text-anchor="middle">(0,3)</text>
+  <path class="ar" d="M300 92 H325"/><text x="312" y="68" text-anchor="middle" class="sm">fill 3L</text>
+  <rect class="bx" x="325" y="75" width="80" height="34" rx="6"/><text x="365" y="97" text-anchor="middle">(3,3)</text>
+  <path class="ar" d="M405 92 H430"/><text x="417" y="68" text-anchor="middle" class="sm">pour &rarr;4L full</text>
+  <rect class="bx" x="430" y="75" width="80" height="34" rx="6"/><text x="470" y="97" text-anchor="middle">(2,4)</text>
+  <path class="ar" d="M510 92 H535"/><text x="522" y="68" text-anchor="middle" class="sm">empty 4L</text>
+  <rect class="bx" x="535" y="75" width="90" height="34" rx="6" style="stroke-width:3"/><text x="580" y="97" text-anchor="middle">(2,0) goal</text>
+  </g>
+  <text x="320" y="150" text-anchor="middle" class="sm">The answer is the path: fill 3L, pour into 4L, fill 3L again, pour until 4L is full (2 L remain in the 3L jug), empty the 4L jug.</text>
+  <text x="320" y="172" text-anchor="middle" class="sm">The first goal found at the shallowest level is a shortest path: 5 steps.</text>
+</svg>
+<p><b>Lessons from the example:</b> BFS is <b>blind</b> (it expanded (3,4) as readily as (3,3)); <b>pruning</b> with the visited list is essential (it also removed the duplicate (3,4) produced by two parents); 11 of the 20 possible states were generated; the first goal found is shortest because no level is skipped; the cost is <b>memory</b>, which is why heuristic search was developed. The order in which operators are tried can change the order states are found but BFS still finds a shortest path. The handwritten BFS tree of the class shows the same solution path, with repeated or dead states marked with a stop sign.</p>
+
+<h2>5. Why not solve it with equations?</h2>
+<p>The graphical and simplex methods come from <b>Linear Programming (LP)</b>: they assume a linear objective, linear constraints, continuous variables and a <b>convex</b> feasible region (no dents). Example: a bakery makes cakes (profit 5, 2 hours) and cookies (profit 2, 1 hour) with 10 hours: maximise 5 &times; cakes + 2 &times; cookies subject to 2 &times; cakes + cookies &le; 10. The best answer is at a corner: (0,0) gives 0; (5 cakes, 0) gives 25; (0, 10 cookies) gives 20; best = 5 cakes, profit 25. The graphical method picks the best corner on a graph; simplex hops from corner to corner.</p>
+<p><b>Why they cannot be used for search problems:</b></p>
+<ul>
+  <li>The world is not linear (curved, conditional, interacting relationships).</li>
+  <li>Many states are <b>discrete</b>: a jug holds 2 or 3 litres, not a meaningful 2.4.</li>
+  <li>The answer is a <b>sequence of actions</b>, not a single point: LP returns values, not a plan.</li>
+  <li>Constraints are <b>logical rules</b> ("cannot pour into a full jug"), not linear inequalities.</li>
+  <li>The graphical method works only for two or three variables.</li>
+  <li>In a non-convex space a corner point is not guaranteed to be optimal, so simplex logic fails.</li>
+</ul>
+<p>So we explore the space step by step.</p>
+
+<h2>6. Informed (heuristic) search</h2>
+<p>A <b>heuristic h(n)</b> estimates how close a state is to the goal (lower = more promising). It lets the search expand promising states first and so cuts the number of expansions. It is an <b>estimate, not a guarantee</b>. Analogy: the hot-and-cold game, or Google Maps using straight-line distance to try roads that head the right way (the A* idea). Examples: straight-line distance to a destination; the number of misplaced tiles in the 8-puzzle.</p>
+<p><b>Small map for all three methods.</b> Start S, goal G. Roads: S&ndash;A 1, S&ndash;B 4, A&ndash;B 2, A&ndash;G 6, B&ndash;G 3. Heuristic (guessed distance to G): h(S) = 5, h(A) = 4, h(B) = 2, h(G) = 0.</p>
+<svg viewBox="0 0 640 210" role="img" aria-label="Small search map" class="dg">
+  <circle cx="90" cy="105" r="22" class="bx"/><text x="90" y="110" text-anchor="middle" class="h">S</text><text x="90" y="145" text-anchor="middle" class="sm">h=5</text>
+  <circle cx="270" cy="45" r="22" class="bx"/><text x="270" y="50" text-anchor="middle" class="h">A</text><text x="270" y="20" text-anchor="middle" class="sm">h=4</text>
+  <circle cx="270" cy="165" r="22" class="bx"/><text x="270" y="170" text-anchor="middle" class="h">B</text><text x="270" y="203" text-anchor="middle" class="sm">h=2</text>
+  <circle cx="450" cy="105" r="22" class="bx" style="stroke-width:3"/><text x="450" y="110" text-anchor="middle" class="h">G</text><text x="450" y="145" text-anchor="middle" class="sm">h=0</text>
+  <line x1="108" y1="93" x2="252" y2="55" stroke="var(--fg)"/><text x="170" y="62" class="sm">1</text>
+  <line x1="108" y1="117" x2="252" y2="155" stroke="var(--fg)"/><text x="170" y="150" class="sm">4</text>
+  <line x1="270" y1="67" x2="270" y2="143" stroke="var(--fg)"/><text x="278" y="108" class="sm">2</text>
+  <line x1="288" y1="55" x2="432" y2="93" stroke="var(--fg)"/><text x="365" y="62" class="sm">6</text>
+  <line x1="288" y1="155" x2="432" y2="117" stroke="var(--fg)"/><text x="365" y="150" class="sm">3</text>
+  <text x="520" y="70" class="sm">S,A,B,G = 1+2+3 = 6 (best)</text><text x="520" y="88" class="sm">S,B,G = 4+3 = 7</text><text x="520" y="106" class="sm">S,A,G = 1+6 = 7</text>
+</svg>
+<h3>Uniform cost search (UCS; uninformed)</h3>
+<p>Always expand the state with the <b>smallest total path cost so far, g(n)</b> (a priority queue). It finds the <b>lowest-cost path</b> but uses no guess about the goal, so it can explore many states. On the map: expand S (0): A = 1, B = 4. Expand A (1): B via A = 3 (better than 4), G = 7. Expand B (3): G via B = 6 (better than 7). Smallest is now G (6): goal, path S &rarr; A &rarr; B &rarr; G, cost 6.</p>
+<h3>Greedy best-first search (informed)</h3>
+<p>Always expand the state with the smallest <b>h(n)</b>, ignoring cost so far. From S the neighbours are A (h = 4) and B (h = 2), so it goes to B, then G. Route S, B, G costs <b>7</b>: fast but <b>not guaranteed best</b>.</p>
+<h3>A* (A-star)</h3>
+<div class="box"><b>f(n) = g(n) + h(n)</b>g = real cost from the start to n; h = guessed cost from n to the goal. Expand the state with the smallest f. If h never overestimates the true remaining cost (an <b>admissible</b> heuristic), A* finds the shortest path.</div>
+<table>
+  <tr><th>Step</th><th>Expand</th><th>What A* finds (g, h, f)</th></tr>
+  <tr><td>1</td><td>S (f = 0 + 5 = 5)</td><td>A: g = 1, h = 4, f = 5. B: g = 4, h = 2, f = 6.</td></tr>
+  <tr><td>2</td><td>A (smallest f = 5)</td><td>B through A: g = 3, f = 5 (better than 6, update). G through A: g = 7, f = 7.</td></tr>
+  <tr><td>3</td><td>B (f = 5)</td><td>G through B: g = 6, f = 6 (better than 7, update).</td></tr>
+  <tr><td>4</td><td>G (f = 6)</td><td>Goal reached. Total cost 6: S &rarr; A &rarr; B &rarr; G.</td></tr>
+</table>
+<table>
+  <tr><th>Method</th><th>Uses</th><th>Best route guaranteed?</th></tr>
+  <tr><td>Uniform cost</td><td>g(n) only</td><td>Yes</td></tr>
+  <tr><td>Greedy best-first</td><td>h(n) only</td><td>No (found cost 7 here)</td></tr>
+  <tr><td>A*</td><td>g(n) + h(n)</td><td>Yes, with an admissible h</td></tr>
+</table>
+<p>Class videos on UCS and A* (Abdul Bari style tutorials) are linked in the course folder; Google Maps routing is the standard A* example.</p>
+
+<h2>7. Famous hard search problems</h2>
+<h3>Travelling salesman problem (TSP)</h3>
+<p>A salesman must visit each city exactly once and return to the start; all cities are connected and paths work both ways. Find the shortest tour. With a fixed start there are <b>(n &minus; 1)!</b> orders (n! = n &times; (n&minus;1) &times; ... &times; 1).</p>
+<table>
+  <tr><th>Cities n</th><th>Routes (n &minus; 1)!</th></tr>
+  <tr><td>5</td><td>4! = 24</td></tr>
+  <tr><td>6</td><td>5! = 120</td></tr>
+  <tr><td>10</td><td>9! = 362,880</td></tr>
+  <tr><td>20</td><td>19! = 121,645,100,408,832,000 (about 1.2 &times; 10<sup>17</sup>)</td></tr>
+</table>
+<p>(If a route and its reverse are the same tour, halve these numbers.) TSP is <b>NP-hard</b>: no known fast method always finds the best tour for every size, so large cases cannot be solved by trying all routes; we use heuristics and genetic algorithms (Lesson 11). Even checking a million routes per second, 20 cities would take thousands of years.</p>
+<h3>Knapsack problem</h3>
+<p>An optimisation problem: choose items with the maximum total value without exceeding a weight limit. Example: limit 5; A (weight 2, value 3), B (3, 4), C (4, 5).</p>
+<table>
+  <tr><th>Choice</th><th>Weight</th><th>Value</th><th>Allowed?</th></tr>
+  <tr><td>A + B</td><td>5</td><td>7</td><td>Yes (best)</td></tr>
+  <tr><td>A + C</td><td>6</td><td>8</td><td>No, too heavy</td></tr>
+  <tr><td>B + C</td><td>7</td><td>9</td><td>No, too heavy</td></tr>
+  <tr><td>C alone</td><td>4</td><td>5</td><td>Yes</td></tr>
+  <tr><td>B alone</td><td>3</td><td>4</td><td>Yes</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+Search = find the sequence of steps from initial to goal state. State space = initial state, operators, state space, goal test; the answer is the path. BFS: queue, complete, optimal (equal costs), memory heavy. DFS: stack, not complete, low memory. Blind search uses only operators and goal test. Heuristics guess closeness to the goal. UCS uses g, greedy uses h, A* uses f = g + h and is optimal with an admissible h. TSP ((n&minus;1)! routes) and knapsack are hard search/optimisation problems.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Define AI search, list its three aims and name four places search appears in AI.</summary>
+<p>AI search is finding a sequence of actions from an initial state to a goal state. Aims: find a solution, find all solutions, find the best solution. It appears in neural network weight training, linear regression (best m, c), path-finding agents, the travelling salesman problem and games.</p>
+</details>
+<details>
+<summary>W2. Explain the four components of a state space search problem and why the answer is the path.</summary>
+<p>Initial state (where it starts), operators (legal steps changing one state into another), state space (all reachable states) and goal test (is this state an acceptable answer). The answer is the sequence of operators used, like a GPS route rather than just the destination.</p>
+</details>
+<details>
+<summary>W3. Compare BFS and DFS (structure, completeness, optimality, memory) and trace both on a small tree.</summary>
+<p>BFS: queue, level by level, complete, optimal with equal costs, high memory (about b^d). DFS: stack, branch by branch, not complete, not optimal, low memory (about b x m). On A(B(D,E),C(F)) BFS visits A B C D E F; DFS visits A B D E C F.</p>
+</details>
+<details>
+<summary>W4. Solve the 3L/4L jug puzzle to get 2 L using BFS and explain pruning.</summary>
+<p>State (x, y), initial (0,0), goal (2,0) or (0,2), six operators (fill, empty, pour each way). BFS levels: (0,0); (3,0),(0,4); (3,4),(0,3),(3,1); (3,3),(0,1); (2,4),(1,0); (2,0). Path (0,0),(3,0),(0,3),(3,3),(2,4),(2,0). Pruning with a visited list discards repeated states so the search does not loop or duplicate work.</p>
+</details>
+<details>
+<summary>W5. Explain heuristics and compare uniform cost, greedy best-first and A*, using the map S-A 1, S-B 4, A-B 2, A-G 6, B-G 3 with h(S)=5, h(A)=4, h(B)=2, h(G)=0.</summary>
+<p>A heuristic estimates closeness to the goal. UCS uses g only and finds the cheapest path S, A, B, G (cost 6). Greedy uses h only: S, B, G cost 7 (not optimal). A* uses f = g + h: expand S (f=5), A (f=5), B (f=5 via A), G (f=6): path S, A, B, G, cost 6, optimal because h is admissible.</p>
+</details>
+<details>
+<summary>W6. Why are the graphical and simplex methods unsuitable for search problems?</summary>
+<p>They assume a linear objective, linear constraints, continuous variables and a convex region. Search problems are non-linear, have discrete states, need a sequence of actions rather than values, have logical rather than linear constraints, the graphical method handles only 2 to 3 variables, and corner optimality fails in non-convex spaces.</p>
+</details>
+<details>
+<summary>W7. Describe the travelling salesman and knapsack problems and why they are hard.</summary>
+<p>TSP: visit each city once and return at minimum distance; (n-1)! routes with a fixed start (9! = 362,880 for 10 cities; about 1.2 x 10^17 for 20); NP-hard. Knapsack: pick items of maximum total value within a weight limit; the number of combinations explodes with more items. Both need heuristics or genetic algorithms for large cases.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>AI search</td><td>Finding a sequence of actions from an initial state to a goal state. Uses: problem solving, games, route planning, optimisation.</td></tr>
+  <tr><td>3 aims</td><td>Find a solution &middot; find all solutions &middot; find the best solution.</td></tr>
+  <tr><td>State space problem</td><td><b>Initial state</b> &middot; <b>operators</b> &middot; <b>state space</b> (all reachable states) &middot; <b>goal test</b>. Answer = the path. Identical contents = same state.</td></tr>
+  <tr><td>Classical vs ML space</td><td>Discrete (stairs, operators) vs continuous (ramp, gradient descent, goal = low-error region).</td></tr>
+  <tr><td>Uninformed = blind</td><td>Also exhaustive / brute force. Knows only operators and goal test: BFS, DFS.</td></tr>
+  <tr><td>BFS</td><td>Level by level; <b>queue</b>; visited list; complete; optimal (equal costs); O(b<sup>d</sup>); memory heavy.</td></tr>
+  <tr><td>DFS</td><td>One branch deep, backtrack; <b>stack</b> / recursion; not complete; not optimal; O(b<sup>m</sup>) time; O(b&middot;m) space.</td></tr>
+  <tr><td>Two jugs (3L, 4L) goal 2L</td><td>State (x,y). 6 operators: fill 3L / 4L, empty 3L / 4L, pour 3&rarr;4, pour 4&rarr;3. Path (0,0)&rarr;(3,0)&rarr;(0,3)&rarr;(3,3)&rarr;(2,4)&rarr;(2,0): 5 steps. 11 of 20 states generated.</td></tr>
+  <tr><td>Why not LP</td><td>World not linear; discrete states; answer is a sequence; logical constraints; graphical method only 2&ndash;3 variables; non-convex spaces.</td></tr>
+  <tr><td>Heuristic h(n)</td><td>Estimate of closeness to the goal; an estimate, not a guarantee.</td></tr>
+  <tr><td>UCS</td><td>Expand smallest g(n); lowest-cost path; uninformed.</td></tr>
+  <tr><td>Greedy best-first</td><td>Expand smallest h(n); fast, not guaranteed best (found 7 vs 6).</td></tr>
+  <tr><td>A*</td><td><b>f = g + h</b>; optimal if h is admissible (never overestimates). Example map: S, A, B, G cost 6.</td></tr>
+  <tr><td>TSP</td><td>Visit each city once and return; (n&minus;1)! routes; NP-hard (9! = 362,880; 19! about 1.2&times;10<sup>17</sup>).</td></tr>
+  <tr><td>Knapsack</td><td>Max total value within a weight limit (limit 5: A+B = value 7).</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be able to run BFS/DFS on a small tree (show queue/stack), run A* with a g, h, f table, and set up a state space (state, operators, goal test) for a puzzle.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "AI search is the process of:", "o": ["Searching the internet", "Finding a sequence of actions from an initial state to a goal state", "Sorting data", "Training a model"], "a": 1, "e": "Initial state to goal state."}, {"q": "Which is NOT one of the three aims of search?", "o": ["Find a solution", "Find all solutions", "Find the best solution", "Find the fastest computer"], "a": 3, "e": "Solution, all solutions, best solution."}, {"q": "Which is NOT part of a state space problem description?", "o": ["Initial state", "Operators", "Goal test", "Learning rate"], "a": 3, "e": "Initial state, operators, state space, goal test."}, {"q": "Operators are:", "o": ["The legal steps changing one state into another", "Mathematical symbols", "Programmers", "Goal states"], "a": 0, "e": "They generate successor states."}, {"q": "In state space search the answer is:", "o": ["Only the goal state", "The path (sequence of operators) to the goal", "The initial state", "The number of states"], "a": 1, "e": "A GPS gives the route, not just the address."}, {"q": "Two states with identical contents reached by different paths are:", "o": ["Different states", "The same state", "Invalid", "Goal states"], "a": 1, "e": "This lets us prune repeats."}, {"q": "Classical state space search is ___, whereas the ML weight space is ___.", "o": ["continuous, discrete", "discrete, continuous", "random, fixed", "small, large"], "a": 1, "e": "Stairs versus a ramp."}, {"q": "Blind search is also called:", "o": ["Informed search", "Heuristic search", "Uninformed / exhaustive / brute-force search", "A* search"], "a": 2, "e": "It knows only operators and goal test."}, {"q": "BFS uses which data structure?", "o": ["Stack", "Queue", "Heap only", "Array"], "a": 1, "e": "FIFO."}, {"q": "DFS uses which data structure?", "o": ["Queue", "Stack (or recursion)", "Priority queue", "Tree"], "a": 1, "e": "LIFO."}, {"q": "On the tree A(B(D,E),C(F)) BFS visits in order:", "o": ["A B D E C F", "A B C D E F", "A C B F E D", "A D B E C F"], "a": 1, "e": "Level by level."}, {"q": "On the same tree DFS (first child first) visits:", "o": ["A B C D E F", "A B D E C F", "A C F B E D", "F C E D B A"], "a": 1, "e": "Deep down the left side first."}, {"q": "Which is true of BFS?", "o": ["Not complete", "Complete and optimal when step costs are equal", "Uses little memory", "Uses a stack"], "a": 1, "e": "The first goal found is the shallowest."}, {"q": "Which is a weakness of BFS?", "o": ["Not complete", "High memory use", "Needs a heuristic", "Cannot find shortest path"], "a": 1, "e": "It stores a whole level; about b^d states."}, {"q": "Which is true of DFS?", "o": ["Complete always", "Optimal always", "Low memory but can loop forever in a deep or cyclic space", "Uses a queue"], "a": 2, "e": "Space about b x m."}, {"q": "b = 10 and d = 5: BFS may generate about how many states?", "o": ["50", "1,000", "100,000", "10"], "a": 2, "e": "10^5."}, {"q": "Two-jug puzzle (3L, 4L): from (0,4) pour 4L into 3L gives:", "o": ["(3, 1)", "(4, 0)", "(3, 4)", "(0, 3)"], "a": 0, "e": "3 litres move (the 3L jug had 3 free)."}, {"q": "From (3,0) pour 3L into 4L gives:", "o": ["(0, 3)", "(3, 4)", "(0, 0)", "(1, 2)"], "a": 0, "e": "All 3 litres fit in the empty 4L jug."}, {"q": "How many steps does BFS need to reach (2,0) from (0,0)?", "o": ["3", "4", "5", "8"], "a": 2, "e": "(0,0),(3,0),(0,3),(3,3),(2,4),(2,0): 5 steps."}, {"q": "Why is a visited list needed in BFS?", "o": ["To speed up the CPU", "To prune repeated states and avoid looping", "To store the goal", "To count levels"], "a": 1, "e": "Otherwise (3,0) and (0,0) regenerate each other forever."}, {"q": "Why can LP (graphical/simplex methods) not solve search problems like the jug puzzle?", "o": ["They are too slow", "The answer is a sequence of actions with discrete, logical-rule constraints", "They need quantum computers", "They only work on trees"], "a": 1, "e": "LP returns values, not a plan."}, {"q": "A heuristic h(n) is:", "o": ["The exact remaining cost", "An estimate of how close a state is to the goal", "The cost so far", "A goal test"], "a": 1, "e": "An estimate, not a guarantee."}, {"q": "Uniform cost search expands the state with the smallest:", "o": ["h(n)", "g(n)", "f(n)", "depth only"], "a": 1, "e": "Total path cost so far."}, {"q": "Greedy best-first search expands the state with the smallest:", "o": ["g(n)", "h(n)", "f(n)", "b"], "a": 1, "e": "It ignores the cost already spent."}, {"q": "A* expands the state with the smallest:", "o": ["g(n)", "h(n)", "g(n) + h(n)", "g(n) - h(n)"], "a": 2, "e": "f(n) = g(n) + h(n)."}, {"q": "A state has g = 3 and h = 4. Its f in A* is:", "o": ["1", "7", "12", "4"], "a": 1, "e": "3 + 4."}, {"q": "A* is optimal when h is:", "o": ["Random", "Admissible (never overestimates)", "Zero for all states", "Larger than the true cost"], "a": 1, "e": "Admissible heuristic."}, {"q": "On the S, A, B, G map greedy best-first finds a route costing:", "o": ["5", "6", "7", "8"], "a": 2, "e": "S, B, G = 4 + 3 = 7; A* and UCS find 6."}, {"q": "For 6 cities with a fixed start the TSP has how many routes?", "o": ["6", "24", "120", "720"], "a": 2, "e": "(6-1)! = 120."}, {"q": "TSP is called NP-hard because:", "o": ["It uses neural networks", "No known fast method always finds the best tour for every size", "It has too few routes", "It is linear"], "a": 1, "e": "The number of routes explodes."}, {"q": "Knapsack limit 5, items A(2,3), B(3,4), C(4,5). The best allowed choice is:", "o": ["A + C", "B + C", "A + B", "C alone"], "a": 2, "e": "A + B: weight 5, value 7. A + C weighs 6 (too heavy)."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
