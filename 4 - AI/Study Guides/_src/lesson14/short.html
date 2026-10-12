@@ -1,0 +1,19 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Black box</td><td>Modern ML prioritises predictive performance over transparency; logic hidden in millions of parameters. Risky in <b>medical diagnosis</b> (life safety), <b>credit scoring</b> (financial loss), <b>autonomous driving</b> (legal liability).</td></tr>
+  <tr><td>3 goals of XAI</td><td><b>Trust</b> (legitimate domain logic, not spurious correlations: husky vs snow), <b>Debugging</b> (where / how / why systematic errors on edge cases), <b>Fairness &amp; auditing</b> (no discrimination on protected attributes).</td></tr>
+  <tr><td>Trade-off</td><td>Glass-box (linear / logistic regression, decision trees): interpretability very high, power moderate. Ensemble (random forest, XGBoost, LightGBM): moderate / high. Deep learning (CNNs, transformers): low / very high. Use post-hoc methods for the hard ones.</td></tr>
+  <tr><td>Intrinsic</td><td>Linear / logistic: coefficient = expected change per unit of a feature (price = 10 + 5 bedrooms + 0.2 area; 3 bed, 100 m&sup2; = 45). Decision tree: IF-THEN rules.</td></tr>
+  <tr><td>Global vs local</td><td>Global: "Which features drive predictions overall?" Local: "Why was this specific loan rejected?"</td></tr>
+  <tr><td>Permutation importance</td><td>Shuffle a feature; importance = original score &minus; shuffled score (90 &minus; 62 = 28). Global, any model, weak with correlated features.</td></tr>
+  <tr><td>LIME</td><td>Local Interpretable Model-agnostic Explanations: simple model (line) fitted near one point; complex surface looks flat up close. f = x&sup2; at 3: slope 6. Valid only locally; varies run to run.</td></tr>
+  <tr><td>SHAP</td><td>Shapley values (game theory): prediction = prize, features = players, test all coalitions. Baseline 50, Income only 70, Debt only 60, both 90: Income (20 + 30)/2 = <b>25</b>, Debt (10 + 20)/2 = <b>15</b>; 25 + 15 = 90 &minus; 50. <b>Consistency</b> and <b>additivity</b>. 2<sup>n</sup> coalitions.</td></tr>
+  <tr><td>Warnings</td><td>Explanation &ne; cause; explanations are approximations; explaining a bad model does not make it good; tailor to the audience.</td></tr>
+  <tr><td>9 ethical foundations</td><td>Integrity, Originality, Transparency, Accountability, Compliance, Security, Intellectual property, Fairness &amp; bias, Human oversight.</td></tr>
+  <tr><td>EU AI Act</td><td>Regulation (EU) 2024/1689 (in force 1 Aug 2024). Risk levels: <b>Unacceptable</b> (banned: social scoring&hellip;), <b>High</b> (hiring, credit, education, law enforcement&hellip;), <b>Specific transparency / limited</b> (chatbots, deepfakes), <b>Minimal</b> (spam filters, games).</td></tr>
+  <tr><td>High-risk duties</td><td>Risk management, data governance, technical documentation, logging, transparency, <b>human oversight</b>, accuracy / robustness / cybersecurity.</td></tr>
+  <tr><td>GPAI and fines</td><td>GPAI (LLMs): documentation, copyright policy, training-content summary; systemic-risk models extra duties (10<sup>25</sup> operations). Fines: &euro;35 M or 7 % (bans); &euro;15 M or 3 %; &euro;7.5 M or 1 %. Dates changing: check official text.</td></tr>
+  <tr><td>Assignment</td><td>5-page report: (1) key concerns, (2) how addressed, (3) extra guardrails and why. Brief: classify a system by risk, explainability / transparency duties, compliance and audit workflows. Own words; acknowledge AI use.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be able to explain the black-box problem, the three XAI goals, the trade-off table, global vs local, and compute a permutation drop, a LIME slope and two-feature SHAP values; list the nine ethical foundations and the four EU risk levels with examples.</div>

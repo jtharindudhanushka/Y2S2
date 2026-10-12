@@ -20,5 +20,5 @@ Converted peer notes (read these, not the raw PDFs): `../Peer Notes/Notes - Yasi
 11 DONE (slides 05 read as images + peer L4, Yasiru 4, Geethma AI 4; exact roulette % used; slide typo 0.59 noted).
 12 DONE (short: course facts + Background ACO/PSO, clearly flagged; not in official topic list).
 13 DONE (all 40 slides read as images; peer L9).
-14 XAI and Ethics (slides 11; peer-made L11; EU case assignment md)
+14 DONE (slides 11 incl. image slides 4 and 11, peer L11, assignment brief; EU Act dates flagged as changing).
 Then: AI index page (copy DSA index.html pattern; LESSONS list), set SUBJECTS notes count in `_tools/build_hub.py`, run it, commit.

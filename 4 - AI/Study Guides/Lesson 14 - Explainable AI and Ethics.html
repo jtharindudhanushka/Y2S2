@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Lesson 14 - Explainable AI and Ethics</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; AI study guides</a> &middot; INTE 22303 &middot; Lesson 14</p><button id="theme" type="button"></button></div>
+  <h1>Explainable AI and Ethics</h1>
+  <p class="lead">Covers: the black-box problem, the goals of explainable AI (trust, debugging, fairness and auditing), the accuracy-interpretability trade-off, glass-box models, global vs local explanations, permutation importance, LIME and SHAP with worked numbers, the nine ethical foundations of using (Gen)AI, the EU AI Act (risk levels, duties, general-purpose AI, fines) and how to approach the EU case-analysis assignment. No prior lecture attendance needed.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain the black-box problem and why interpretability matters in high-stakes areas</li>
+  <li>State the three goals of XAI (trust, debugging, fairness and auditing) and recognise spurious correlations</li>
+  <li>Describe the accuracy-interpretability trade-off and the model families (glass-box, ensemble, deep learning)</li>
+  <li>Distinguish global from local explanations; explain and compute permutation importance, LIME and SHAP at an introductory level</li>
+  <li>List the nine ethical foundations of using (Gen)AI</li>
+  <li>Summarise the EU AI Act: four risk levels, duties of high-risk systems, general-purpose AI, fines; plan the case-analysis assignment</li>
+</ul>
+<p>Sources: the lecturer's slides (<b>Explainable AI: An Introduction</b>, 12 slides, marked <b>(slides)</b>), the EU case-analysis assignment brief and the peer-made lesson (worked examples, EU AI Act summary, marked <b>(peer notes)</b>).</p>
+
+<h2>1. The black-box problem <small style="color:var(--muted);font-weight:400">(slides)</small></h2>
+<svg viewBox="0 0 580 150" role="img" aria-label="Black-box model" class="dg"><rect class="bx" x="10" y="40" width="120" height="60" rx="8"/><text x="70.0" y="67.0" text-anchor="middle" class="h">Input</text><text x="70.0" y="84.0" text-anchor="middle" class="sm">applicant data</text><path class="ar" d="M130 70 L200 70"/><rect x="200" y="30" width="160" height="80" rx="6" fill="#222" stroke="var(--fg)"/><text x="280" y="66" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:14px">millions of</text><text x="280" y="86" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:14px">parameters ?</text><path class="ar" d="M360 70 L430 70"/><rect class="bx" x="430" y="40" width="120" height="60" rx="8"/><text x="490.0" y="67.0" text-anchor="middle" class="h">Output</text><text x="490.0" y="84.0" text-anchor="middle" class="sm">Rejected</text><text x="280" y="135" text-anchor="middle" class="sm">we see what goes in and what comes out, but not why</text></svg>
+<ul>
+  <li><b>Key problem:</b> modern machine learning prioritises <b>predictive performance over transparency</b>. Complex algorithms achieve outstanding accuracy but <b>hide their decision logic inside millions of parameters</b>. A <b>black box</b> is a machine where you see what goes in and what comes out, but not what happens inside.</li>
+  <li><b>Why interpretability?</b> In high-stakes applications unexplainable model failure poses critical risks: <b>medical diagnosis (life safety)</b>, <b>credit scoring (financial loss)</b>, <b>autonomous driving (legal liability)</b>.</li>
+  <li><i>Analogy: two doctors. Doctor A: "Take this medicine, trust me." Doctor B: "Your blood test shows low iron, which causes your tiredness, so take this medicine." You can check and trust only Doctor B.</i> Story: a student loan is rejected in seconds and nobody can say why, so you cannot fix it and nobody can check fairness.</li>
+</ul>
+<p><b>Explainable AI (XAI)</b> = methods that let humans understand why a model decided something.</p>
+
+<h2>2. Key goals of XAI <small style="color:var(--muted);font-weight:400">(slides)</small></h2>
+<table>
+  <tr><th>Goal</th><th>Meaning (slides)</th><th>Example</th></tr>
+  <tr><td><b>01 Trust</b></td><td>Verify that predictions rely on <b>legitimate domain logic rather than spurious correlations</b></td><td>Ice-cream sales and sunburn both rise in summer; the real cause is sunny weather. A husky-vs-wolf model that was mostly looking at <b>snow</b>, not the animal, was right for the wrong reason and would fail on a husky in snow.</td></tr>
+  <tr><td><b>02 Debugging</b></td><td>Identify <b>where, how and why</b> a model makes systematic errors on edge cases</td><td>A medical model that fails on older patients: the explanation shows which feature misleads it</td></tr>
+  <tr><td><b>03 Fairness and auditing</b></td><td>Ensure decisions <b>do not discriminate on protected attributes</b></td><td>A hiring model that weights gender, or a stand-in such as a name (a reported experimental recruiting tool marked down CVs with signs of being female and was stopped)</td></tr>
+</table>
+<p>A <b>spurious correlation</b> is a pattern that exists in the data by accident and is not the real cause.</p>
+
+<h2>3. The accuracy vs interpretability trade-off <small style="color:var(--muted);font-weight:400">(slides)</small></h2>
+<svg viewBox="0 0 660 220" role="img" aria-label="Accuracy versus interpretability" class="dg"><text x="330" y="16" text-anchor="middle" class="sm">Interpretability falls as predictive power rises</text><text x="100" y="52" text-anchor="end" class="h">Glass-box</text><rect x="110" y="30" width="380" height="16" fill="var(--accent)" opacity="0.75"/><text x="495.0" y="43" text-anchor="start" class="sm">interpretability</text><rect x="110" y="52" width="200" height="16" fill="var(--ok)" opacity="0.75"/><text x="315.0" y="65" text-anchor="start" class="sm">predictive power</text><text x="100" y="114" text-anchor="end" class="h">Ensemble</text><rect x="110" y="92" width="200" height="16" fill="var(--accent)" opacity="0.75"/><text x="315.0" y="105" text-anchor="start" class="sm">interpretability</text><rect x="110" y="114" width="300" height="16" fill="#d98e04" opacity="0.75"/><text x="415.0" y="127" text-anchor="start" class="sm">predictive power</text><text x="100" y="176" text-anchor="end" class="h">Deep learning</text><rect x="110" y="154" width="48" height="16" fill="var(--accent)" opacity="0.75"/><text x="163.0" y="167" text-anchor="start" class="sm">interpretability</text><rect x="110" y="176" width="392" height="16" fill="var(--bad)" opacity="0.75"/><text x="507.0" y="189" text-anchor="start" class="sm">predictive power</text></svg>
+<table>
+  <tr><th>Model type</th><th>Examples</th><th>Interpretability</th><th>Predictive power</th></tr>
+  <tr><td><b>Glass-box (intrinsic)</b></td><td>Linear regression, decision trees, logistic regression</td><td><b>Very high</b></td><td>Moderate</td></tr>
+  <tr><td><b>Ensemble models</b></td><td>Random forest, XGBoost, LightGBM</td><td>Moderate</td><td>High</td></tr>
+  <tr><td><b>Deep learning</b></td><td>Convolutional nets, transformers</td><td>Low</td><td><b>Very high</b></td></tr>
+</table>
+<ul>
+  <li><b>Glass-box:</b> the model itself is the explanation (<b>intrinsic interpretability</b>). <b>Ensemble:</b> a team of many small models combined; a random forest is many decision trees that vote; XGBoost and LightGBM build trees one after another, each fixing the earlier mistakes. One tree is readable; a hundred voting trees are not. <b>Deep learning:</b> many-layer networks (Lessons 6 and 7): powerful but unreadable (transformers can have billions of weights).</li>
+  <li><b>Solution:</b> if we need a powerful black box, explain it afterwards with <b>post-hoc</b> methods (permutation importance, LIME, SHAP).</li>
+</ul>
+<h3>Intrinsic interpretability (slides)</h3>
+<ul>
+  <li><b>Linear and logistic regression: direct mathematical transparency.</b> Each feature coefficient directly represents the expected change in the outcome per unit increase in the feature value. Example: price = 10 + 5 &times; bedrooms + 0.2 &times; area. 3 bedrooms, 100 m&sup2;: 10 + 15 + 20 = 45; one more bedroom: +5; 10 m&sup2; more: +2. 2 bedrooms, 50 m&sup2;: 10 + 10 + 10 = 30. For logistic regression a positive coefficient raises the class probability.</li>
+  <li><b>Decision trees: explicit human-logic rules.</b> IF-THEN conditional splits map directly to human logic. Loan tree: IF income &ge; 50,000 then (IF debt &lt; 20,000 APPROVE ELSE REJECT) ELSE REJECT. Income 60,000 and debt 25,000 is rejected because "income is at least 50,000 but debt is not below 20,000"; income 70,000 and debt 10,000 is approved. Limits: very large trees stop being readable; glass-box models may be less accurate on complex problems such as images.</li>
+</ul>
+
+<h2>4. Scopes of explanation: global vs local <small style="color:var(--muted);font-weight:400">(slides)</small></h2>
+<svg viewBox="0 0 660 140" role="img" aria-label="Global versus local explanations" class="dg"><text x="165" y="18" text-anchor="middle" class="h">Global: the whole model</text><text x="485" y="18" text-anchor="middle" class="h">Local: one prediction</text><text x="70" y="49" text-anchor="end" class="sm">income</text><rect x="80" y="35" width="180" height="18" fill="var(--accent)" opacity="0.75"/><text x="70" y="77" text-anchor="end" class="sm">debt</text><rect x="80" y="63" width="140" height="18" fill="var(--accent)" opacity="0.75"/><text x="70" y="105" text-anchor="end" class="sm">age</text><rect x="80" y="91" width="40" height="18" fill="var(--accent)" opacity="0.75"/><text x="165" y="128" text-anchor="middle" class="sm">which features matter overall?</text><text x="400" y="50" text-anchor="start" class="sm">Why was THIS application rejected?</text><text x="400" y="74" text-anchor="start" class="mono">debt is high:    -0.30</text><text x="400" y="94" text-anchor="start" class="mono">income is medium: +0.10</text><text x="400" y="114" text-anchor="start" class="mono">age = 24:         +0.02</text></svg>
+<table>
+  <tr><th></th><th>Global interpretability</th><th>Local interpretability</th></tr>
+  <tr><td>Scope</td><td>Overall dataset / model logic</td><td>Single prediction</td></tr>
+  <tr><td>Key question</td><td>"Which features drive predictions overall?"</td><td>"Why was <i>this specific</i> loan application rejected?"</td></tr>
+  <tr><td>Useful for</td><td>Engineers and auditors checking general behaviour (does gender matter overall?)</td><td>The affected person ("what could I change?") and the decision maker</td></tr>
+  <tr><td>Methods</td><td>Permutation importance (mainly global); SHAP (averaged)</td><td>LIME; SHAP</td></tr>
+</table>
+<p><i>Analogy: a school. Global: study time and attendance mostly decide results. Local: why did Nimal fail? Perhaps missed attendance.</i></p>
+
+<h2>5. Permutation feature importance <small style="color:var(--muted);font-weight:400">(slides, peer notes)</small></h2>
+<div class="box"><b>Core concept (slides)</b>Measures <b>how much model performance decreases when a feature's values are randomly shuffled</b>. High impact: if shuffling breaks accuracy, the model relied heavily on that feature. Low impact: if performance stays unchanged, the feature was largely ignored.</div>
+<p>Steps: measure the score on test data; shuffle one feature's column among the rows (breaks its link with the answer); measure again; <b>importance = original score &minus; new score</b>; repeat for every feature and rank. <i>Analogy: removing a team member.</i></p>
+<svg viewBox="0 0 660 172" role="img" aria-label="Permutation importance" class="dg"><text x="10" y="18" text-anchor="start" class="sm">Baseline accuracy 90 %: importance = drop after shuffling a feature</text><text x="120" y="49" text-anchor="end" class="sm">Hours studied</text><rect x="130" y="32" width="248" height="24" fill="var(--accent)" opacity="0.5"/><rect x="378" y="32" width="112" height="24" fill="var(--bad)" opacity="0.7"/><text x="500" y="49" text-anchor="start" class="h">drop 28</text><text x="120" y="89" text-anchor="end" class="sm">Attendance</text><rect x="130" y="72" width="320" height="24" fill="var(--accent)" opacity="0.5"/><rect x="450" y="72" width="40" height="24" fill="var(--bad)" opacity="0.7"/><text x="500" y="89" text-anchor="start" class="h">drop 10</text><text x="120" y="129" text-anchor="end" class="sm">Shoe size</text><rect x="130" y="112" width="360" height="24" fill="var(--accent)" opacity="0.5"/><rect x="490" y="112" width="0" height="24" fill="var(--bad)" opacity="0.7"/><text x="500" y="129" text-anchor="start" class="h">drop 0</text><text x="130" y="160" text-anchor="start" class="sm">blue = accuracy after shuffling, red = the drop (importance)</text></svg>
+<table>
+  <tr><th>Feature shuffled</th><th>Accuracy after shuffling</th><th>Drop = importance</th><th>Meaning</th></tr>
+  <tr><td>Hours studied</td><td>62 %</td><td>90 &minus; 62 = <b>28</b></td><td>High impact</td></tr>
+  <tr><td>Attendance</td><td>80 %</td><td>90 &minus; 80 = 10</td><td>Some impact</td></tr>
+  <tr><td>Shoe size</td><td>90 %</td><td>90 &minus; 90 = 0</td><td>Ignored by the model</td></tr>
+</table>
+<p>Baseline accuracy 90 %. Good to know: works with any model (only needs inputs and predictions); <b>global</b> only; correlated features (height in cm and in inches) can hide each other; it shows that a feature matters, not how (higher or lower).</p>
+
+<h2>6. LIME <small style="color:var(--muted);font-weight:400">(slides, peer notes)</small></h2>
+<div class="box"><b>LIME: Local Interpretable Model-agnostic Explanations</b>LIME builds a <b>simple, interpretable model (like linear regression) that mirrors the complex model's behaviour only in the immediate neighbourhood of a single prediction point</b>. Local = one prediction; interpretable = the explaining model is readable; model-agnostic = works with any model.</div>
+<svg viewBox="0 0 640 185" role="img" aria-label="LIME local linear approximation" class="dg"><path d="M60 150 H575 M160 150 V15" stroke="var(--fg)" fill="none"/><polyline points="60.0,141.9 64.2,142.5 68.3,143.2 72.5,143.8 76.7,144.4 80.8,144.9 85.0,145.4 89.2,145.9 93.3,146.4 97.5,146.8 101.7,147.2 105.8,147.6 110.0,148.0 114.2,148.3 118.3,148.6 122.5,148.9 126.7,149.1 130.8,149.3 135.0,149.5 139.2,149.6 143.3,149.8 147.5,149.9 151.7,149.9 155.8,150.0 160.0,150.0 164.2,150.0 168.3,149.9 172.5,149.9 176.7,149.8 180.8,149.6 185.0,149.5 189.2,149.3 193.3,149.1 197.5,148.9 201.7,148.6 205.8,148.3 210.0,148.0 214.2,147.6 218.3,147.2 222.5,146.8 226.7,146.4 230.8,145.9 235.0,145.4 239.2,144.9 243.3,144.4 247.5,143.8 251.7,143.2 255.8,142.5 260.0,141.9 264.2,141.2 268.3,140.5 272.5,139.7 276.7,138.9 280.8,138.1 285.0,137.3 289.2,136.4 293.3,135.6 297.5,134.6 301.7,133.7 305.8,132.7 310.0,131.7 314.2,130.7 318.3,129.6 322.5,128.5 326.7,127.4 330.8,126.3 335.0,125.1 339.2,123.9 343.3,122.7 347.5,121.4 351.7,120.2 355.8,118.8 360.0,117.5 364.2,116.1 368.3,114.7 372.5,113.3 376.7,111.9 380.8,110.4 385.0,108.9 389.2,107.3 393.3,105.8 397.5,104.2 401.7,102.5 405.8,100.9 410.0,99.2 414.2,97.5 418.3,95.8 422.5,94.0 426.7,92.2 430.8,90.4 435.0,88.6 439.2,86.7 443.3,84.8 447.5,82.8 451.7,80.9 455.8,78.9 460.0,76.9 464.2,74.8 468.3,72.8 472.5,70.7 476.7,68.5 480.8,66.4 485.0,64.2 489.2,62.0 493.3,59.7 497.5,57.5 501.7,55.2 505.8,52.8 510.0,50.5 514.2,48.1 518.3,45.7 522.5,43.2 526.7,40.8 530.8,38.3 535.0,35.7 539.2,33.2 543.3,30.6 547.5,28.0 551.7,25.4 555.8,22.7 560.0,20.0" fill="none" stroke="var(--accent)" stroke-width="2.6"/><path d="M340.0 135.4 L540.0 37.9" stroke="var(--bad)" stroke-width="2.4" fill="none"/><circle cx="460.0" cy="76.9" r="5" fill="var(--bad)"/><text x="448.0" y="64.875" text-anchor="end" class="sm">x = 3, f = 9</text><text x="550.0" y="77.875" text-anchor="end" class="sm">local line, slope 6</text><text x="166.0" y="144.0" text-anchor="start" class="sm">x = 0: true slope is 0, so the line is wrong here</text><text x="320" y="172" text-anchor="middle" class="sm">a complicated curve looks flat up close: the straight line explains only near the chosen point</text></svg>
+<p><b>Geometric analogy (slides):</b> a complex topological map with winding curves; zoom in very close to one point and the surface looks flat; LIME draws a straight line across that local flat surface.</p>
+<p>Steps: pick the prediction; create many slightly changed copies of the input; ask the model for their predictions; weight nearer copies more; fit a simple model (a line); read its coefficients. <b>Worked example:</b> model f(x) = x&sup2; at x = 3 (f = 9); nearby 2.9 &rarr; 8.41 and 3.1 &rarr; 9.61: slope = (9.61 &minus; 8.41)/(3.1 &minus; 2.9) = 1.20/0.2 = <b>6</b>: near x = 3, each +1 in x raises the output by about 6. At x = 0 the true slope is 0, so the explanation is valid only locally. A loan example (illustrative): debt high &minus;0.30, income medium +0.10, age 24 +0.02: high debt caused the rejection. Limits: one point only; random neighbours make results vary a little; the line is an approximation.</p>
+
+<h2>7. SHAP <small style="color:var(--muted);font-weight:400">(slides, peer notes)</small></h2>
+<div class="box"><b>SHAP: game-theoretic interpretability</b>SHAP adapts <b>Shapley values from cooperative game theory</b> to measure feature contribution. <b>Analogy (slides):</b> prediction = the winning team's cash prize; features = individual team players; SHAP calculates the exact reward each player deserves by testing <b>all possible sub-coalitions</b> of players with and without that feature.</div>
+<p><b>Baseline:</b> the model's average prediction knowing nothing about this person (here 50). Worked example (peer notes), a loan score: none known = 50; Income only = 70; Debt only = 60; Income and Debt = 90.</p>
+<svg viewBox="0 0 640 205" role="img" aria-label="SHAP waterfall" class="dg"><rect x="158" y="20" width="4" height="26" fill="var(--muted)"/><text x="170" y="38" text-anchor="start" class="sm">baseline 50 (average prediction)</text><rect x="160" y="60" width="250" height="26" fill="var(--accent)" opacity="0.75"/><text x="285.0" y="78" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">Income  +25</text><rect x="410" y="100" width="150" height="26" fill="var(--ok)" opacity="0.75"/><text x="485.0" y="118" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">Debt  +15</text><rect x="558" y="140" width="4" height="26" fill="var(--muted)"/><text x="550" y="158" text-anchor="end" class="sm">prediction 90</text><text x="330" y="190" text-anchor="middle" class="sm">SHAP values add up: 25 + 15 = 40 = 90 - 50 (additivity)</text></svg>
+<ul>
+  <li><b>Income:</b> income first adds 70 &minus; 50 = 20; income after debt adds 90 &minus; 60 = 30; average = (20 + 30)/2 = <b>25</b>.</li>
+  <li><b>Debt:</b> debt first adds 60 &minus; 50 = 10; debt after income adds 90 &minus; 70 = 20; average = <b>15</b>.</li>
+  <li>Check: 25 + 15 = 40 = 90 &minus; 50 (<b>additivity</b>). With three features all 6 orders are checked (e.g. +25, +15, +2 = 42 = 92 &minus; 50).</li>
+</ul>
+<p><b>Key axiomatic properties (slides):</b> <b>1. Consistency:</b> if a model changes so that a feature's contribution increases or stays the same, its SHAP value will not decrease (if income alone becomes 80 and income with debt 100, income's contributions are 30 and 40, SHAP 35 &gt; 25, debt stays 15). <b>2. Additivity:</b> the sum of the feature contributions equals the difference between the actual prediction and the average baseline prediction. Check: baseline 40, prediction 75, A = +20, so B = 35 &minus; 20 = 15.</p>
+<p><b>Cost:</b> n features have 2<sup>n</sup> coalitions (8 for 3, 16 for 4, 1,024 for 10), so big models use shortcuts. <b>Use:</b> local (one person's values explain that decision) and global (average the size of SHAP values over many people); negative contributions push the score down.</p>
+
+<h2>8. Choosing a method; warnings <small style="color:var(--muted);font-weight:400">(peer notes)</small></h2>
+<table>
+  <tr><th>Method</th><th>Scope</th><th>Main idea</th><th>Strength</th><th>Weakness</th></tr>
+  <tr><td>Glass-box model</td><td>Both</td><td>The model itself is readable</td><td>Exact and simple</td><td>Less powerful on complex data</td></tr>
+  <tr><td>Permutation importance</td><td>Global</td><td>Shuffle a feature, see the score drop</td><td>Simple, any model</td><td>Weak with correlated features</td></tr>
+  <tr><td>LIME</td><td>Local</td><td>A simple model near one point</td><td>Easy to read, any model</td><td>Approximate, varies run to run</td></tr>
+  <tr><td>SHAP</td><td>Local and global</td><td>Fair sharing by Shapley values</td><td>Additive and consistent</td><td>Costly for many features</td></tr>
+</table>
+<ul>
+  <li>An explanation is <b>not a cause</b> ("income mattered to the model" is not "income causes repayment"); explanations are approximations and can mislead; explaining a bad model does not make it good; show the right level of detail to the right audience (doctor, regulator, patient). <i>Analogy: an X-ray shows what is inside but does not cure.</i></li>
+</ul>
+
+<h2>9. Ethical foundations of (Gen)AI <small style="color:var(--muted);font-weight:400">(slides)</small></h2>
+<svg viewBox="0 0 660 185" role="img" aria-label="Nine ethical foundations" class="dg"><rect class="bx" x="10" y="10" width="205" height="48" rx="8"/><text x="112" y="31" text-anchor="middle" class="h">1. Integrity</text><text x="112" y="48" text-anchor="middle" class="sm">honesty</text><rect class="bx" x="225" y="10" width="205" height="48" rx="8"/><text x="327" y="31" text-anchor="middle" class="h">2. Originality</text><text x="327" y="48" text-anchor="middle" class="sm">AI supports you</text><rect class="bx" x="440" y="10" width="205" height="48" rx="8"/><text x="542" y="31" text-anchor="middle" class="h">3. Transparency</text><text x="542" y="48" text-anchor="middle" class="sm">acknowledge AI use</text><rect class="bx" x="10" y="66" width="205" height="48" rx="8"/><text x="112" y="87" text-anchor="middle" class="h">4. Accountability</text><text x="112" y="104" text-anchor="middle" class="sm">you stay responsible</text><rect class="bx" x="225" y="66" width="205" height="48" rx="8"/><text x="327" y="87" text-anchor="middle" class="h">5. Compliance</text><text x="327" y="104" text-anchor="middle" class="sm">laws and ethics approval</text><rect class="bx" x="440" y="66" width="205" height="48" rx="8"/><text x="542" y="87" text-anchor="middle" class="h">6. Security</text><text x="542" y="104" text-anchor="middle" class="sm">protect data and IP</text><rect class="bx" x="10" y="122" width="205" height="48" rx="8"/><text x="112" y="143" text-anchor="middle" class="h">7. Intellectual property</text><text x="112" y="160" text-anchor="middle" class="sm">respect IP and licences</text><rect class="bx" x="225" y="122" width="205" height="48" rx="8"/><text x="327" y="143" text-anchor="middle" class="h">8. Fairness & bias</text><text x="327" y="160" text-anchor="middle" class="sm">check for bias</text><rect class="bx" x="440" y="122" width="205" height="48" rx="8"/><text x="542" y="143" text-anchor="middle" class="h">9. Human oversight</text><text x="542" y="160" text-anchor="middle" class="sm">humans decide</text></svg>
+<table>
+  <tr><th>Principle</th><th>Meaning (slides)</th><th>Student example (peer notes)</th></tr>
+  <tr><td><b>Integrity</b></td><td>Uphold academic honesty and scholarly standards; never use AI to misrepresent authorship or fabricate information</td><td>Do not hand in an AI-written report as yours; do not cite sources the AI invented</td></tr>
+  <tr><td><b>Originality</b></td><td>AI must support, not replace, human intellect; core scholarly outputs must reflect individual knowledge and critical analysis</td><td>Use AI for grammar or explaining a concept; ideas and conclusions must be yours</td></tr>
+  <tr><td><b>Transparency</b></td><td>Clearly acknowledge and document all AI tool usage across proposals, theses, publications and presentations</td><td>"I used [tool] to [purpose]. I reviewed and edited the output."</td></tr>
+  <tr><td><b>Accountability</b></td><td>Users remain fully responsible for outputs and conclusions; AI reliance does not diminish individual accountability</td><td>If the AI gives a wrong number and you copy it, the mistake is yours</td></tr>
+  <tr><td><b>Compliance</b></td><td>Comply with legal, regulatory and institutional requirements, including data-protection laws and ethics approvals</td><td>Get ethics approval before surveying people</td></tr>
+  <tr><td><b>Security</b></td><td>Safeguard data confidentiality and IP; exercise caution with third-party platforms to prevent unauthorised leaks</td><td>Do not paste private data or unpublished results into a public AI tool</td></tr>
+  <tr><td><b>Intellectual property</b></td><td>Respect third-party IP rights and ensure AI tool licensing terms align with institutional policies</td><td>Check copyright and the tool's terms</td></tr>
+  <tr><td><b>Fairness and bias</b></td><td>Critically evaluate AI outputs to recognise algorithmic bias and prevent unfair or discriminatory outcomes</td><td>Question an AI that ranks applicants or uses stereotypes</td></tr>
+  <tr><td><b>Human oversight</b></td><td>Maintain meaningful human judgement in all activities; final decisions are made by qualified individuals</td><td>A teacher, not a chatbot, decides the final grade</td></tr>
+</table>
+<p><b>XAI and ethics connect:</b> accountability and transparency need you to be able to explain how a result came about; explanations (like SHAP) can reveal reliance on a protected attribute (fairness); a human can only oversee a decision they can understand.</p>
+
+<h2>10. The EU AI Act <small style="color:var(--muted);font-weight:400">(assignment brief, peer notes)</small></h2>
+<p>The <b>Artificial Intelligence Act</b> is <b>Regulation (EU) 2024/1689</b> (the assignment links the EUR-Lex text), the EU's first big AI law; it entered into force on 1 August 2024 and applies in stages. <i>Analogy: traffic rules: a bicycle needs few rules, a car a licence and tests, a plane very strict checks: the riskier the AI, the stricter the rules.</i></p>
+<svg viewBox="0 0 660 205" role="img" aria-label="EU AI Act risk levels" class="dg"><rect x="240.0" y="8" width="180" height="38" rx="6" fill="var(--bad)" opacity="0.85"/><text x="330" y="32" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">Unacceptable risk: BANNED</text><rect x="180.0" y="52" width="300" height="38" rx="6" fill="#d98e04" opacity="0.85"/><text x="330" y="76" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">High risk: strict duties</text><rect x="120.0" y="96" width="420" height="38" rx="6" fill="#2f6fcf" opacity="0.85"/><text x="330" y="120" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">Specific transparency risk: tell users</text><rect x="60.0" y="140" width="540" height="38" rx="6" fill="var(--ok)" opacity="0.85"/><text x="330" y="164" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">Minimal risk: no specific duties</text><text x="330" y="195" text-anchor="middle" class="sm">the riskier the AI, the stricter the rules (EU AI Act, Regulation 2024/1689)</text></svg>
+<table>
+  <tr><th>Level</th><th>Meaning</th><th>Examples</th></tr>
+  <tr><td><b>Unacceptable risk</b></td><td>Banned outright</td><td>Social scoring; manipulative AI exploiting weaknesses; untargeted scraping of face images; emotion recognition in workplaces and schools (narrow exceptions); real-time remote biometric identification in public for police (narrow exceptions)</td></tr>
+  <tr><td><b>High risk</b></td><td>Allowed with strict duties</td><td>Hiring, education and exams, credit scoring, essential services, law enforcement, migration and border control, justice, critical infrastructure, some safety parts of products</td></tr>
+  <tr><td><b>Specific transparency risk</b> (limited risk)</td><td>Transparency duties</td><td>Chatbots (must say you are talking to AI); deepfakes and AI-generated images, audio, video (must be labelled)</td></tr>
+  <tr><td><b>Minimal risk</b></td><td>No specific duties</td><td>Spam filters, AI in video games</td></tr>
+</table>
+<ul>
+  <li><b>High-risk duties:</b> risk management across the life of the system; data governance (relevant, bias-checked training data); technical documentation; record-keeping (automatic logs); transparency (instructions for users); <b>human oversight</b>; accuracy, robustness and cybersecurity. These overlap with XAI: documentation, logs, transparency and oversight all depend on understanding what a system does.</li>
+  <li><b>General-purpose AI (GPAI)</b> models (e.g. large language models): technical documentation, information for downstream builders, a copyright policy and a summary of training content; models with <b>systemic risk</b> (presumed above 10<sup>25</sup> training operations) face extra duties (evaluations, adversarial testing, incident reporting, cybersecurity). A voluntary Code of Practice was published in July 2025.</li>
+  <li><b>Enforcement and fines:</b> European AI Office and national authorities. Prohibited practices: up to <b>&euro;35 million or 7 %</b> of worldwide yearly turnover (the higher); most other duties: &euro;15 million or 3 %; false information to authorities: &euro;7.5 million or 1 %.</li>
+  <li><b>Timeline (changing):</b> 1 Aug 2024 in force; 2 Feb 2025 bans and AI-literacy duty; 2 Aug 2025 GPAI rules and governance; 2 Aug 2026 general application incl. transparency duties; the strictest high-risk rules were planned for 2026 but recent summaries say an EU amendment (the "Digital Omnibus") postponed them (2 Dec 2027 for the listed use areas, 2 Aug 2028 for AI in regulated products). <b>Check the official text before quoting dates.</b></li>
+</ul>
+
+<h2>11. The assignment: EU case analysis <small style="color:var(--muted);font-weight:400">(slides, assignment brief)</small></h2>
+<p><b>Slide task:</b> read the EU regulation and prepare a <b>5-page report</b> on (1) <b>key concerns raised</b>, (2) <b>how the concerns are addressed</b>, (3) <b>what additional guardrails / regulations will be required and why</b>. <b>Assignment brief (EU AI Act case analysis):</b> analyse real-world AI applications against the Act: (1) classify a given system as Unacceptable, High, Specific-transparency or Minimal risk; (2) detail the transparency and explainability obligations; (3) propose compliance mechanisms and algorithmic-audit workflows. The report must be your own work in your own words with any AI help acknowledged (the transparency and integrity principles above).</p>
+<table>
+  <tr><th>Concern</th><th>How the Act responds (check the article in the real text)</th></tr>
+  <tr><td>Bias and discrimination</td><td>Data and data governance for high-risk systems (Art. 10); bans on some practices</td></tr>
+  <tr><td>Black-box decisions</td><td>Technical documentation (Art. 11), logging (Art. 12), information for deployers (Art. 13)</td></tr>
+  <tr><td>Loss of human control</td><td>Human oversight (Art. 14)</td></tr>
+  <tr><td>Safety and reliability</td><td>Risk management (Art. 9); accuracy, robustness, cybersecurity (Art. 15)</td></tr>
+  <tr><td>Manipulation and surveillance</td><td>Prohibited practices (Art. 5)</td></tr>
+  <tr><td>Deepfakes and AI interaction</td><td>Transparency duties (Art. 50)</td></tr>
+  <tr><td>Training data, copyright, powerful models</td><td>General-purpose AI rules (Arts. 53 to 55)</td></tr>
+  <tr><td>Enforcement</td><td>AI Office, national authorities and fines (Art. 99)</td></tr>
+</table>
+<p>For part 3, gap-finding questions: who checks compliance and do they have the skills? is there a standard for a "good enough" explanation? how can a harmed person get an explanation and a remedy? can the rules keep up with new technology? what about jobs, energy use and the information space, AI made outside the EU, and small companies and universities? A plan: introduction 0.5 page, concerns 1.5, responses 1.5, additional guardrails 1.25 (reasons, not a wish list), conclusion and references 0.25.</p>
+
+<h2>Summary of related ideas</h2>
+<table>
+  <tr><th></th><th>Permutation importance</th><th>LIME</th><th>SHAP</th></tr>
+  <tr><td>Question</td><td>Which features matter overall?</td><td>Why this prediction?</td><td>How is the prediction shared among features?</td></tr>
+  <tr><td>How</td><td>Shuffle a feature, measure the drop</td><td>Fit a line near one point</td><td>Average marginal contribution over all orders</td></tr>
+  <tr><td>Scope</td><td>Global</td><td>Local</td><td>Local and global</td></tr>
+  <tr><td>Number from the lesson</td><td>Drop 90 &minus; 62 = 28</td><td>Slope 6 at x = 3</td><td>Income +25, Debt +15</td></tr>
+</table>
+
+<h2>Words list</h2>
+<table>
+  <tr><th>Word</th><th>Plain meaning</th></tr>
+  <tr><td>Black box / XAI</td><td>Model whose logic cannot be seen / methods to understand its decisions</td></tr>
+  <tr><td>Interpretability, glass-box, intrinsic</td><td>How well humans understand it / a self-explaining model</td></tr>
+  <tr><td>Ensemble</td><td>Many small models combined (random forest, XGBoost, LightGBM)</td></tr>
+  <tr><td>Post-hoc</td><td>Explaining after the model is built</td></tr>
+  <tr><td>Global / local</td><td>Whole model / one prediction</td></tr>
+  <tr><td>Spurious correlation</td><td>Accidental pattern, not the real cause</td></tr>
+  <tr><td>Permutation importance, LIME, SHAP</td><td>Shuffle-drop / local line / game-theory fair shares</td></tr>
+  <tr><td>Baseline, coalition</td><td>Average prediction / a group of features considered together</td></tr>
+  <tr><td>Additivity, consistency</td><td>Shares add to prediction minus baseline / more important never gets less credit</td></tr>
+  <tr><td>High-risk AI, GPAI</td><td>EU AI Act categories: strict-duty systems / general-purpose models</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+Powerful ML models are black boxes; XAI serves trust (no spurious correlations), debugging and fairness / auditing. More accuracy usually means less interpretability (glass-box &gt; ensemble &gt; deep learning); post-hoc methods explain the rest. Global = which features matter overall (permutation importance); local = why this decision (LIME, SHAP). SHAP shares credit fairly and is additive (shares sum to prediction &minus; baseline). Nine ethical foundations guide use of GenAI (integrity, originality, transparency, accountability, compliance, security, IP, fairness and bias, human oversight). The EU AI Act sorts systems into unacceptable, high, specific-transparency and minimal risk, with fines up to &euro;35 million or 7 %.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain the black-box problem and the three goals of explainable AI with an example for each.</summary>
+<p>Modern ML prioritises predictive performance over transparency; complex models hide decision logic in millions of parameters, which is risky in medicine (life safety), credit scoring (financial loss) and driving (legal liability). XAI goals: Trust (verify legitimate logic, e.g. a husky vs wolf model that actually looked at snow); Debugging (find where, how and why systematic errors occur on edge cases, e.g. failures on older patients); Fairness and auditing (check decisions do not discriminate on protected attributes, e.g. a hiring tool using gender or a stand-in).</p>
+</details>
+<details>
+<summary>W2. Describe the accuracy vs interpretability trade-off and how glass-box models and post-hoc methods fit in.</summary>
+<p>Glass-box models (linear / logistic regression, decision trees) have very high interpretability and moderate power; ensembles (random forest, XGBoost, LightGBM) moderate and high; deep learning (CNNs, transformers) low and very high. Glass-box models explain themselves (coefficients, IF-THEN rules). When we need a black box, post-hoc methods such as permutation importance, LIME and SHAP explain it afterwards.</p>
+</details>
+<details>
+<summary>W3. Distinguish global and local interpretability and say which methods suit each.</summary>
+<p>Global explains the overall logic across the dataset (which features drive predictions overall): permutation importance, averaged SHAP. Local explains one prediction (why was this loan rejected?): LIME and SHAP. Global suits engineers and auditors; local suits the affected person.</p>
+</details>
+<details>
+<summary>W4. A model has baseline accuracy 90 %. Shuffling hours studied gives 62 %, attendance 80 %, shoe size 90 %. Compute and interpret the permutation importances.</summary>
+<p>Importance = baseline &minus; shuffled accuracy: hours 28, attendance 10, shoe size 0. The model relied heavily on hours studied, somewhat on attendance and ignored shoe size. Caveats: it is global, works with any model, and correlated features can hide each other.</p>
+</details>
+<details>
+<summary>W5. Explain LIME and compute the local slope for f(x) = x&sup2; at x = 3 using points 2.9 and 3.1.</summary>
+<p>LIME fits a simple interpretable model (such as a line) to the complex model's predictions for many perturbed copies near one point, weighting nearer copies more; the coefficients are the explanation. f(2.9) = 8.41, f(3.1) = 9.61; slope = (9.61 &minus; 8.41)/0.2 = 6, so near x = 3 each +1 in x raises the output by about 6. It is valid only locally (at x = 0 the true slope is 0).</p>
+</details>
+<details>
+<summary>W6. Explain SHAP and compute the values for Income and Debt given baseline 50, Income only 70, Debt only 60, both 90. State its two axioms.</summary>
+<p>SHAP uses Shapley values: each feature's average marginal contribution over all orders (coalitions). Income: first adds 20, after Debt adds 30, average 25. Debt: first adds 10, after Income adds 20, average 15. 25 + 15 = 40 = 90 &minus; 50. Axioms: consistency (if a feature's contribution increases or stays the same its SHAP value does not decrease) and additivity (contributions sum to prediction minus baseline). Cost grows as 2<sup>n</sup>.</p>
+</details>
+<details>
+<summary>W7. List the nine ethical foundations of (Gen)AI and explain how XAI supports three of them.</summary>
+<p>Integrity, originality, transparency, accountability, compliance, security, intellectual property, fairness and bias, human oversight. XAI supports transparency and accountability (you can only be accountable for what you can explain), fairness (SHAP can reveal reliance on a protected attribute) and human oversight (humans can only supervise decisions they understand).</p>
+</details>
+<details>
+<summary>W8. Summarise the EU AI Act's risk levels with examples, the duties of high-risk systems and the maximum fines.</summary>
+<p>Unacceptable risk (banned): social scoring, manipulative AI, untargeted face scraping. High risk: hiring, education, credit scoring, law enforcement, critical infrastructure; duties: risk management, data governance, technical documentation, logging, transparency, human oversight, accuracy / robustness / cybersecurity. Specific transparency (limited) risk: chatbots and deepfakes must be disclosed or labelled. Minimal risk: spam filters, games. GPAI models have documentation, copyright and systemic-risk duties. Fines up to &euro;35 million or 7 % of turnover for prohibited practices, &euro;15 million or 3 % for most other duties, &euro;7.5 million or 1 % for false information.</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Black box</td><td>Modern ML prioritises predictive performance over transparency; logic hidden in millions of parameters. Risky in <b>medical diagnosis</b> (life safety), <b>credit scoring</b> (financial loss), <b>autonomous driving</b> (legal liability).</td></tr>
+  <tr><td>3 goals of XAI</td><td><b>Trust</b> (legitimate domain logic, not spurious correlations: husky vs snow), <b>Debugging</b> (where / how / why systematic errors on edge cases), <b>Fairness &amp; auditing</b> (no discrimination on protected attributes).</td></tr>
+  <tr><td>Trade-off</td><td>Glass-box (linear / logistic regression, decision trees): interpretability very high, power moderate. Ensemble (random forest, XGBoost, LightGBM): moderate / high. Deep learning (CNNs, transformers): low / very high. Use post-hoc methods for the hard ones.</td></tr>
+  <tr><td>Intrinsic</td><td>Linear / logistic: coefficient = expected change per unit of a feature (price = 10 + 5 bedrooms + 0.2 area; 3 bed, 100 m&sup2; = 45). Decision tree: IF-THEN rules.</td></tr>
+  <tr><td>Global vs local</td><td>Global: "Which features drive predictions overall?" Local: "Why was this specific loan rejected?"</td></tr>
+  <tr><td>Permutation importance</td><td>Shuffle a feature; importance = original score &minus; shuffled score (90 &minus; 62 = 28). Global, any model, weak with correlated features.</td></tr>
+  <tr><td>LIME</td><td>Local Interpretable Model-agnostic Explanations: simple model (line) fitted near one point; complex surface looks flat up close. f = x&sup2; at 3: slope 6. Valid only locally; varies run to run.</td></tr>
+  <tr><td>SHAP</td><td>Shapley values (game theory): prediction = prize, features = players, test all coalitions. Baseline 50, Income only 70, Debt only 60, both 90: Income (20 + 30)/2 = <b>25</b>, Debt (10 + 20)/2 = <b>15</b>; 25 + 15 = 90 &minus; 50. <b>Consistency</b> and <b>additivity</b>. 2<sup>n</sup> coalitions.</td></tr>
+  <tr><td>Warnings</td><td>Explanation &ne; cause; explanations are approximations; explaining a bad model does not make it good; tailor to the audience.</td></tr>
+  <tr><td>9 ethical foundations</td><td>Integrity, Originality, Transparency, Accountability, Compliance, Security, Intellectual property, Fairness &amp; bias, Human oversight.</td></tr>
+  <tr><td>EU AI Act</td><td>Regulation (EU) 2024/1689 (in force 1 Aug 2024). Risk levels: <b>Unacceptable</b> (banned: social scoring&hellip;), <b>High</b> (hiring, credit, education, law enforcement&hellip;), <b>Specific transparency / limited</b> (chatbots, deepfakes), <b>Minimal</b> (spam filters, games).</td></tr>
+  <tr><td>High-risk duties</td><td>Risk management, data governance, technical documentation, logging, transparency, <b>human oversight</b>, accuracy / robustness / cybersecurity.</td></tr>
+  <tr><td>GPAI and fines</td><td>GPAI (LLMs): documentation, copyright policy, training-content summary; systemic-risk models extra duties (10<sup>25</sup> operations). Fines: &euro;35 M or 7 % (bans); &euro;15 M or 3 %; &euro;7.5 M or 1 %. Dates changing: check official text.</td></tr>
+  <tr><td>Assignment</td><td>5-page report: (1) key concerns, (2) how addressed, (3) extra guardrails and why. Brief: classify a system by risk, explainability / transparency duties, compliance and audit workflows. Own words; acknowledge AI use.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be able to explain the black-box problem, the three XAI goals, the trade-off table, global vs local, and compute a permutation drop, a LIME slope and two-feature SHAP values; list the nine ethical foundations and the four EU risk levels with examples.</div>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "The black-box problem is that complex models:", "o": ["Are accurate but hide their decision logic inside millions of parameters", "Are always inaccurate", "Have no inputs", "Cannot be trained"], "a": 0, "e": "Performance is prioritised over transparency."}, {"q": "Which is NOT listed as a high-stakes area where unexplainable failure is critical?", "o": ["Medical diagnosis", "Credit scoring", "Autonomous driving", "Choosing a font"], "a": 3, "e": "Life safety, financial loss, legal liability."}, {"q": "Autonomous driving is a high-stakes application mainly because of:", "o": ["Legal liability", "Font size", "Colour", "Speed of typing"], "a": 0, "e": "Medical = life safety; credit = financial loss."}, {"q": "The three key goals of XAI are:", "o": ["Trust, debugging, fairness and auditing", "Speed, memory, cost", "Training, testing, tuning", "Input, output, loss"], "a": 0, "e": "Slides: 01 Trust, 02 Debugging, 03 Fairness and auditing."}, {"q": "Trust in XAI means verifying that predictions rely on:", "o": ["Legitimate domain logic rather than spurious correlations", "The largest weights", "The fastest features", "Random noise"], "a": 0, "e": "E.g. husky vs wolf: the model looked at snow."}, {"q": "A spurious correlation is:", "o": ["A pattern that appears by accident and is not the real cause", "A strong causal link", "A type of weight", "A loss function"], "a": 0, "e": "Ice cream sales and sunburn."}, {"q": "Debugging with XAI means identifying:", "o": ["Where, how and why the model makes systematic errors on edge cases", "The fastest model", "The best colour", "The training time"], "a": 0, "e": "E.g. which feature misleads a medical model on older patients."}, {"q": "Fairness and auditing means ensuring decisions:", "o": ["Do not discriminate based on protected attributes", "Are fast", "Use more data", "Use deep learning"], "a": 0, "e": "E.g. gender or a stand-in such as a name."}, {"q": "Which model type has very high interpretability and moderate predictive power?", "o": ["Glass-box (linear regression, decision trees)", "Ensemble", "Deep learning", "Transformers"], "a": 0, "e": "Intrinsic interpretability."}, {"q": "Random forest, XGBoost and LightGBM are:", "o": ["Ensemble models", "Glass-box models", "Deep learning models", "Clustering models"], "a": 0, "e": "Moderate interpretability, high power."}, {"q": "Deep learning models (CNNs, transformers) have:", "o": ["Low interpretability and very high predictive power", "High interpretability", "No weights", "Moderate power"], "a": 0, "e": "The trade-off table."}, {"q": "Post-hoc explanation means:", "o": ["Explaining after the model is built", "Explaining before training", "Never explaining", "Explaining by design"], "a": 0, "e": "Permutation importance, LIME and SHAP."}, {"q": "In price = 10 + 5 x bedrooms + 0.2 x area, a house with 3 bedrooms and 100 m2 costs:", "o": ["45", "35", "65", "15"], "a": 0, "e": "10 + 15 + 20."}, {"q": "In the same formula, adding one bedroom changes the price by:", "o": ["+5", "+0.2", "+10", "+1"], "a": 0, "e": "The coefficient is the expected change per unit."}, {"q": "Loan tree: IF income >= 50,000 THEN (IF debt < 20,000 APPROVE ELSE REJECT) ELSE REJECT. Income 60,000, debt 25,000 gives:", "o": ["Reject", "Approve", "Undefined", "Approve with condition"], "a": 0, "e": "Debt is not below 20,000."}, {"q": "Global interpretability asks:", "o": ["Which features drive predictions overall?", "Why was this loan rejected?", "How long did training take?", "Which GPU was used?"], "a": 0, "e": "Local asks about a single prediction."}, {"q": "'Why was this specific loan application rejected?' is a:", "o": ["Local question", "Global question", "Training question", "Hardware question"], "a": 0, "e": "Local interpretability."}, {"q": "Permutation feature importance measures:", "o": ["The drop in performance when a feature's values are shuffled", "The size of the weights", "The number of features", "The training time"], "a": 0, "e": "High drop = high importance."}, {"q": "Baseline accuracy 90 %. Shuffling hours studied gives 62 %. Importance?", "o": ["28", "62", "152", "0"], "a": 0, "e": "90 - 62."}, {"q": "Shuffling a feature leaves accuracy unchanged. The feature was:", "o": ["Largely ignored by the model", "Very important", "A label", "The target"], "a": 0, "e": "Low impact."}, {"q": "A weakness of permutation importance is:", "o": ["Correlated features can hide each other", "It needs the model's weights", "It only works for trees", "It is local only"], "a": 0, "e": "Also: it shows that a feature matters, not how."}, {"q": "LIME stands for:", "o": ["Local Interpretable Model-agnostic Explanations", "Linear Interpretable Model Estimates", "Large Input Model Explainer", "Local Image Mapping Engine"], "a": 0, "e": "Local, interpretable, model-agnostic."}, {"q": "LIME explains a prediction by:", "o": ["Fitting a simple model near that point", "Shuffling features globally", "Training a bigger model", "Deleting features"], "a": 0, "e": "Near one point a complex surface looks flat."}, {"q": "For f(x) = x^2 near x = 3 using points 2.9 and 3.1, the LIME slope is:", "o": ["6", "3", "9", "0"], "a": 0, "e": "(9.61 - 8.41)/0.2."}, {"q": "A LIME explanation is valid:", "o": ["Only near the explained point", "Everywhere", "Only at x = 0", "For the whole dataset"], "a": 0, "e": "It is a local approximation."}, {"q": "SHAP adapts which concept?", "o": ["Shapley values from cooperative game theory", "Gradient descent", "Genetic crossover", "Fuzzy sets"], "a": 0, "e": "Prediction = prize, features = players."}, {"q": "Baseline 50; Income only 70; Debt only 60; both 90. Income's SHAP value is:", "o": ["25", "20", "30", "40"], "a": 0, "e": "(20 + 30)/2."}, {"q": "In the same example Debt's SHAP value is:", "o": ["15", "10", "20", "25"], "a": 0, "e": "(10 + 20)/2."}, {"q": "SHAP additivity means the contributions sum to:", "o": ["Prediction minus baseline", "The baseline", "The prediction", "Zero"], "a": 0, "e": "25 + 15 = 90 - 50."}, {"q": "Baseline 40, prediction 75, feature A SHAP +20, two features. B's SHAP value is:", "o": ["15", "20", "35", "55"], "a": 0, "e": "35 - 20."}, {"q": "SHAP consistency says that if a feature's contribution increases or stays the same, its SHAP value:", "o": ["Will not decrease", "Must decrease", "Becomes zero", "Doubles"], "a": 0, "e": "One of the two axioms."}, {"q": "How many coalitions exist for 4 features?", "o": ["16", "8", "24", "4"], "a": 0, "e": "2^4."}, {"q": "Which statement about explanations is correct?", "o": ["An explanation is not the same as a cause", "SHAP proves causation", "Explaining a bad model makes it good", "Explanations are always exact"], "a": 0, "e": "They show what the model used."}, {"q": "Which is NOT one of the nine ethical foundations of (Gen)AI?", "o": ["Speed", "Integrity", "Transparency", "Human oversight"], "a": 0, "e": "Integrity, Originality, Transparency, Accountability, Compliance, Security, IP, Fairness & Bias, Human oversight."}, {"q": "Which principle says users stay fully responsible for outputs?", "o": ["Accountability", "Originality", "Security", "Compliance"], "a": 0, "e": "AI reliance does not diminish individual accountability."}, {"q": "Pasting private research data into a public AI tool breaches:", "o": ["Security", "Originality", "Integrity only", "Nothing"], "a": 0, "e": "Confidentiality and IP may leak."}, {"q": "The EU AI Act is Regulation:", "o": ["(EU) 2024/1689", "(EU) 2016/679", "(EU) 2000/1", "(EU) 1999/5"], "a": 0, "e": "The first major AI law."}, {"q": "Social scoring falls under which EU AI Act level?", "o": ["Unacceptable risk (banned)", "High risk", "Minimal risk", "Specific transparency risk"], "a": 0, "e": "Banned outright."}, {"q": "AI used for hiring or credit scoring is:", "o": ["High risk", "Minimal risk", "Banned", "Unregulated"], "a": 0, "e": "Allowed with strict duties."}, {"q": "Chatbots and deepfakes carry which obligation?", "o": ["Transparency (tell users it is AI / label content)", "A ban", "None", "Fines of 0"], "a": 0, "e": "Specific transparency (limited) risk."}, {"q": "A spam filter is:", "o": ["Minimal risk", "High risk", "Banned", "Specific transparency risk"], "a": 0, "e": "No specific duties."}, {"q": "Maximum fine for prohibited practices:", "o": ["EUR 35 million or 7 % of worldwide turnover", "EUR 7.5 million or 1 %", "EUR 1 million", "EUR 100"], "a": 0, "e": "The higher of the two."}, {"q": "Which is a duty of high-risk systems?", "o": ["Human oversight", "Open-sourcing the code", "Free access", "Using deep learning"], "a": 0, "e": "Also risk management, data governance, documentation, logs, transparency."}, {"q": "The assignment report asks for key concerns, how they are addressed and:", "o": ["Additional guardrails and why they are needed", "A python program", "A poster", "A video"], "a": 0, "e": "5-page report in your own words."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
