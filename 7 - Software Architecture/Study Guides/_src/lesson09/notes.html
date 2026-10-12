@@ -1,0 +1,268 @@
+<p class="sm" style="color:var(--muted)">Source: the ten guides of the <i>UniMart Monolithic Full-Stack Lab Series</i> (B.Sc. (Hons) IT Level 2, hands-on laboratory practical). This lesson explains the architecture and reasoning behind each lab; commands and code are summarised, not copied in full. It builds the <b>Year-0 monolith</b> of the UniMart case study (Lesson 8).</p>
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Translate the UniMart narrative into an ER model and a layered monolith design</li>
+  <li>Explain the full stack: React SPA, Spring Boot MVC REST API, MySQL, JWT security</li>
+  <li>Apply configuration, secrets, Git workflow, API testing and CI/CD good practice</li>
+  <li>Explain why containers do not make a monolith into microservices</li>
+</ul>
+
+<h2>0. The big picture</h2>
+<svg viewBox="0 0 640 190" role="img" aria-label="UniMart monolith deployment" class="dg">
+  <rect class="bx" x="5" y="70" width="80" height="40" rx="6"/><text x="45" y="94" text-anchor="middle" class="sm">Browser</text><path class="ar" d="M85 90 H110"/>
+  <rect class="bx" x="110" y="70" width="90" height="40" rx="6"/><text x="155" y="88" text-anchor="middle" class="sm">Nginx</text><text x="155" y="102" text-anchor="middle" class="sm">reverse proxy</text>
+  <path class="ar" d="M200 80 L260 45"/><path class="ar" d="M200 100 L260 135"/>
+  <rect class="bx" x="260" y="25" width="150" height="40" rx="6"/><text x="335" y="43" text-anchor="middle" class="sm">React SPA container</text><text x="335" y="57" text-anchor="middle" class="sm">(static files via Nginx)</text>
+  <rect class="bx" x="260" y="115" width="160" height="40" rx="6"/><text x="340" y="133" text-anchor="middle" class="sm">Spring Boot monolith</text><text x="340" y="147" text-anchor="middle" class="sm">/api/v1 (one deployable)</text>
+  <path class="ar" d="M420 135 H460"/>
+  <rect class="bx" x="460" y="115" width="110" height="40" rx="6"/><text x="515" y="133" text-anchor="middle" class="sm">MySQL 8.4</text><text x="515" y="147" text-anchor="middle" class="sm">one shared schema</text>
+  <text x="320" y="182" text-anchor="middle" class="sm">Single VPS (DigitalOcean Droplet), Docker Compose, public / private boundaries</text>
+</svg>
+<table>
+  <tr><th>Guide</th><th>Lab</th><th>Architectural lesson</th></tr>
+  <tr><td>01</td><td>ER diagram and monolithic architecture design</td><td>Model the domain first; design a layered monolith</td></tr>
+  <tr><td>02</td><td>Frontend setup (Antigravity, React, TypeScript)</td><td>Feature-first structure keeps modules cohesive</td></tr>
+  <tr><td>03</td><td>Backend setup (IntelliJ, Spring Boot, MVC)</td><td>Controller &rarr; service &rarr; repository boundaries</td></tr>
+  <tr><td>04</td><td>MySQL and Workbench</td><td>Least-privilege database account</td></tr>
+  <tr><td>05</td><td>Database connection and environment variables</td><td>Config and secrets outside code; Flyway owns the schema</td></tr>
+  <tr><td>06</td><td>GitHub and version control</td><td>Feature branches, pull requests, protected main</td></tr>
+  <tr><td>07</td><td>CRUD APIs and Postman testing</td><td>Secure REST design with positive and negative tests</td></tr>
+  <tr><td>08</td><td>Frontend features: listings and reviews</td><td>Server state vs client state (RTK Query vs slices)</td></tr>
+  <tr><td>09</td><td>Full-stack integration, Redux and debugging</td><td>End-to-end flow, CORS, tokens, systematic debugging</td></tr>
+  <tr><td>10</td><td>DigitalOcean deployment and GitHub Actions</td><td>Containers, reverse proxy, CI/CD, rollback; still a monolith</td></tr>
+</table>
+
+<h2>1. Guide 01: ER model and monolithic architecture design</h2>
+<p><b>Outcomes:</b> convert the narrative into a normalised relational model; build an EER diagram in MySQL Workbench (keys, cardinalities, constraints); draw C4-style context, container, component and deployment diagrams; map MVC to Spring Boot. <i>Scope discipline:</i> add only implementation-level fields (IDs, timestamps, statuses, optimistic-lock versions) that the case requires.</p>
+<table>
+  <tr><th>Case statement</th><th>Entity / rule</th></tr>
+  <tr><td>Register and log in with a university email</td><td><b>User</b>; <code>university_email</code> UNIQUE; password stored only as a <b>hash</b></td></tr>
+  <tr><td>Sellers post listings (title, description, price, category, photos)</td><td><b>Listing</b>, <b>Category</b>, <b>ListingImage</b>; one seller owns many listings</td></tr>
+  <tr><td>Buyers and sellers message each other</td><td><b>Conversation</b> and <b>Message</b> (a message belongs to one conversation and one sender)</td></tr>
+  <tr><td>Buyers pay and orders move through statuses</td><td><b>Order</b> and <b>Payment</b>; payment reference and <b>idempotency key</b> UNIQUE</td></tr>
+  <tr><td>Buyer reviews after a transaction</td><td><b>Review</b> belongs to a <b>completed</b> order; one review per order</td></tr>
+  <tr><td>Users receive notifications</td><td><b>Notification</b> belongs to one user with a type and read state</td></tr>
+</table>
+<h3>Entity catalogue (key constraints)</h3>
+<table>
+  <tr><th>Entity</th><th>Important constraints</th></tr>
+  <tr><td>User</td><td>UNIQUE university_email; password_hash never returned by APIs</td></tr>
+  <tr><td>Category</td><td>UNIQUE name</td></tr>
+  <tr><td>Listing</td><td>price &ge; 0; seller and category foreign keys; <b>version</b> column for optimistic locking</td></tr>
+  <tr><td>ListingImage</td><td>deleted with the listing; URL length limit</td></tr>
+  <tr><td>Conversation</td><td>unique buyer / seller / listing combination</td></tr>
+  <tr><td>Message</td><td>sender must be a participant</td></tr>
+  <tr><td>Order</td><td>snapshot of the amount; only legal status transitions</td></tr>
+  <tr><td>Payment</td><td>UNIQUE order_id, provider_reference and idempotency_key</td></tr>
+  <tr><td>Review</td><td>UNIQUE order_id; rating 1&ndash;5; completed order required</td></tr>
+  <tr><td>Notification</td><td>index on user_id + is_read + created_at</td></tr>
+</table>
+<ul>
+  <li><b>EER steps:</b> new model, schema <code>unimart</code>, create tables; <code>BIGINT</code> ids, <code>DECIMAL(12,2)</code> money, <code>VARCHAR</code> bounded text, <code>TEXT</code> descriptions, <code>TIMESTAMP</code>; mark PK, NOT NULL, unique indexes and foreign keys; most links are non-identifying (children have their own surrogate keys); add indexes for access paths: listing(status, category_id, created_at), message(conversation_id, created_at), review(reviewee_id, created_at), notification(user_id, is_read, created_at); review generated DDL (Forward Engineer) before executing; export PNG/PDF and keep the <code>.mwb</code>.</li>
+  <li><b>Money rule:</b> never FLOAT or DOUBLE for prices; use DECIMAL so binary floating-point rounding cannot change currency values.</li>
+  <li><b>Normalisation:</b> 1NF (photos are rows in listing_images, not comma-separated URLs); 2NF/3NF (category names stored once, seller details in users, payment details in payments). Status values: Listing AVAILABLE, RESERVED, SOLD, ARCHIVED; Order POSTED, PAID, COMPLETED, CANCELLED; Payment PENDING, SUCCEEDED, FAILED, REFUNDED. Prefer <b>soft deletion</b> for listings with transaction history (keep audit evidence). Apply business constraints in <b>both the service layer and the database</b>.</li>
+</ul>
+<h3>Diagrams to draw</h3>
+<table>
+  <tr><th>Diagram</th><th>Show</th></tr>
+  <tr><td>C4 Context</td><td>UniMart, students, payment gateway, university email service, notification provider</td></tr>
+  <tr><td>C4 Container</td><td>React SPA, Spring Boot monolith, MySQL, optional object storage / payment gateway; technology and protocol labels; only one backend deployable</td></tr>
+  <tr><td>Component / package</td><td>Auth, catalog, messaging, orders/payments, reviews, notifications inside the monolith; Controller &rarr; Service &rarr; Repository</td></tr>
+  <tr><td>Deployment</td><td>Browser, Nginx, one Spring Boot process/container, one MySQL instance on one VM; ports, public/private boundaries, environment variables</td></tr>
+</table>
+<h3>MVC mapping used in the lab</h3>
+<table>
+  <tr><th>MVC role</th><th>Spring Boot</th><th>Rule</th></tr>
+  <tr><td>Controller</td><td><code>@RestController</code> + request/response DTOs</td><td>HTTP only; no database calls, minimal business logic</td></tr>
+  <tr><td>Model</td><td>JPA entities, DTOs, domain rules, repositories</td><td>Entities are persistence models; do not serialise entities directly</td></tr>
+  <tr><td>Service</td><td><code>@Service</code> with <code>@Transactional</code> methods</td><td>Use-case logic, authorisation decisions, orchestration</td></tr>
+  <tr><td>View</td><td>React SPA</td><td>Backend returns JSON; React renders the UI</td></tr>
+</table>
+<p><b>Diagram quality checklist:</b> every relationship in the diagram exists in the written model and vice versa; arrows labelled with a protocol or purpose; the monolith is visibly <b>one deployable</b> containing modules; the database is one shared schema at this stage; security boundaries visible (browser/public, reverse proxy, backend, private database); consistent names across ER, packages, API paths and UI. Also write a one-paragraph rationale for monolith-first with a small student team.</p>
+
+<h2>2. Guide 02: frontend (React + TypeScript SPA)</h2>
+<ul>
+  <li><b>Tools:</b> Google Antigravity (AI-assisted IDE: read generated diffs, run tests, explain code, never paste secrets or student data into prompts); Node.js 22.12+; <code>npm create vite@latest unimart-frontend -- --template react-ts</code> (Create React App is deprecated); run <code>npm run build</code> early and fix TypeScript errors immediately.</li>
+  <li><b>Feature-first structure:</b> <code>src/app</code> (store, hooks), <code>components</code> (genuinely reusable UI only), <code>features/auth|listings|reviews</code> (slice, API, types, components, pages), <code>layouts</code>, <code>routes</code> (AppRouter, ProtectedRoute), <code>services/baseApi.ts</code>, <code>theme</code>, <code>utils</code>. It keeps catalog and review code cohesive and eases future extraction (the same cohesion idea as Lesson 4).</li>
+  <li><b>Libraries:</b> Redux Toolkit + React Redux (store with auth reducer, typed hooks, <code>Provider</code> in <code>main.tsx</code>); Material UI (accessible components, theme tokens); Tailwind CSS v4 via the Vite plugin (layout and spacing). <b>Styling rule:</b> MUI for interactive components and theme; Tailwind for layout; do not apply competing <code>sx</code> props and Tailwind classes to the same CSS property. Routing with <code>react-router-dom</code>; forms with <code>react-hook-form</code> + <code>zod</code>.</li>
+  <li><b>Environment:</b> <code>.env.local</code> with <code>VITE_API_BASE_URL=http://localhost:8080/api/v1</code>; commit <code>.env.example</code>; only <code>VITE_</code> variables reach client code, so <b>never put passwords, JWT secrets, DB credentials or private keys there</b> (browser users can inspect bundles).</li>
+  <li><b>Quality scripts:</b> <code>npm run dev / build / lint</code>, <code>npm audit</code>, <code>npm outdated</code>.</li>
+</ul>
+
+<h2>3. Guide 03: backend (Spring Boot, MVC, package-by-feature)</h2>
+<table>
+  <tr><th>Item</th><th>Baseline and reason</th></tr>
+  <tr><td>Java 21 LTS</td><td>Stable long-term release</td></tr>
+  <tr><td>Spring Boot (generated by Initializr)</td><td>Starter versions dependency-managed; avoid manual version mixing</td></tr>
+  <tr><td>Maven Wrapper</td><td>Same Maven on every computer and CI runner</td></tr>
+  <tr><td>Spring Data JPA + Hibernate</td><td>Repository abstraction and ORM</td></tr>
+  <tr><td>Flyway</td><td>Repeatable, version-controlled database migrations</td></tr>
+  <tr><td>Spring Security + OAuth2 Resource Server (JWT)</td><td>Standard bearer-token validation without a custom filter</td></tr>
+</table>
+<p>Project: group <code>lk.ac.kln</code>, artifact <code>unimart-backend</code>; dependencies Spring Web, JPA, Validation, Security, OAuth2 Resource Server, MySQL Driver, Flyway, Actuator, Test. <b>Package-by-feature MVC</b>: <code>common/ config/ security/ auth/ listing/ review/ order/ notification/</code> each with <code>controller dto entity repository service mapper</code>; resources <code>application.yml</code>, <code>application-local.yml</code>, <code>application-prod.yml</code>, <code>db/migration/</code>. It is still MVC (controllers HTTP, services use cases, repositories data, React the view); package-by-feature keeps each business module cohesive and reduces merge contention.</p>
+<table>
+  <tr><th>Layer</th><th>Allowed</th><th>Not allowed</th></tr>
+  <tr><td>Controller</td><td>Parse path/query/body, trigger validation, call service, map HTTP status</td><td>Direct repository calls, transactions, complex authorisation, entity serialisation</td></tr>
+  <tr><td>Service</td><td>Business rules, ownership checks, transactions, orchestration</td><td>HTTP-specific objects (e.g. <code>HttpServletRequest</code>) unless necessary</td></tr>
+  <tr><td>Repository</td><td>Query and persist entities</td><td>Business workflow decisions</td></tr>
+  <tr><td>Entity</td><td>Persistence state, simple invariants, relationships</td><td>Being returned from controllers; storing plain-text passwords</td></tr>
+  <tr><td>DTO / mapper</td><td>API contract and mapping</td><td>Leaking internal fields (<code>passwordHash</code>, <code>version</code>)</td></tr>
+</table>
+<ul>
+  <li><b>First proof:</b> a public <code>GET /api/v1/public/ping</code> returning service, status UP and time proves the web layer runs before the database is configured.</li>
+  <li><b>API conventions:</b> base path <code>/api/v1</code>; plural resources; return DTOs not entities; ISO-8601 UTC timestamps; <b>201</b> created, <b>204</b> deleted, <b>400</b> validation, <b>401</b> missing/invalid auth, <b>403</b> insufficient permission, <b>404</b> absent, <b>409</b> state conflict; pagination from the start; one <b>global exception handler</b> returning a predictable Problem-Details style <code>ApiError(code, message, path, timestamp, fieldErrors)</code>; thin controller methods.</li>
+  <li><b>Security to prepare:</b> BCrypt password hashing (never logged); public endpoints = registration, login, token refresh, public listing reads, health; protected = listing/review writes and user-specific actions; short-lived JWT access tokens; CORS only for configured frontend origins (no wildcard with credentials); production secrets from environment variables or secret stores.</li>
+  <li><b>Common errors:</b> invalid target release (IntelliJ and Maven use different JDKs: set all to Java 21); port 8080 busy; unresolved dependencies (<code>./mvnw -U clean test</code>); 401 on <code>/ping</code> (permit <code>/api/v1/public/**</code>); startup failure before DB setup (needs variables or a test profile).</li>
+</ul>
+
+<h2>4. Guide 04: MySQL and Workbench</h2>
+<ul>
+  <li>MySQL Server 8.4 LTS with Workbench (Workbench stays on the 8.0 line; some features may not work with newer servers: test the exact class image). Use a Development Computer configuration, TCP/IP on 3306, a strong unique root password (in a password manager, not a text file).</li>
+  <li><b>Least privilege:</b> create schema <code>unimart</code> (utf8mb4) and user <code>unimart_app</code> with only SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, REFERENCES on it. <b>Never configure the Spring Boot app to use root.</b></li>
+  <li>Workbench connection "UniMart Local" (127.0.0.1:3306, user unimart_app); store passwords in the vault only on a trusted personal computer; verify with <code>SELECT VERSION(); SHOW DATABASES; USE unimart;</code>.</li>
+  <li><b>Naming:</b> snake_case in the database, camelCase in Java DTOs; map explicitly. Let <b>Flyway own schema creation</b>; use Forward Engineer only as a review tool; after migrations run, Reverse Engineer to compare the live schema with the model.</li>
+  <li><b>Safe practice:</b> explicit column lists (not <code>SELECT *</code>); limit results; never show <code>password_hash</code> or tokens on a projector; export before big migrations; dedicated local database; no destructive reset without a backup and approval. Backup: <code>mysqldump --single-transaction --routines --triggers</code>; restore into an empty dev schema.</li>
+</ul>
+
+<h2>5. Guide 05: database connection and environment variables</h2>
+<table>
+  <tr><th>Variable</th><th>Purpose</th></tr>
+  <tr><td>DB_URL</td><td>JDBC URL (<code>jdbc:mysql://127.0.0.1:3306/unimart</code>)</td></tr>
+  <tr><td>DB_USERNAME / DB_PASSWORD</td><td>Least-privilege account; password is a secret, never committed</td></tr>
+  <tr><td>JWT_SECRET</td><td>Signs and verifies HS256 access tokens; base64, 32+ bytes (<code>openssl rand -base64 48</code>)</td></tr>
+  <tr><td>JWT_ACCESS_MINUTES</td><td>Short access-token lifetime (15)</td></tr>
+  <tr><td>APP_ALLOWED_ORIGINS</td><td>Exact frontend origin list (<code>http://localhost:5173</code>)</td></tr>
+  <tr><td>SERVER_PORT / SPRING_PROFILES_ACTIVE</td><td>Backend port / profile (local, test, prod)</td></tr>
+</table>
+<ul>
+  <li>Commit <code>.env.example</code> (names and placeholders only); ignore <code>.env</code>, <code>.env.*</code> (except the example), <code>application-secrets.yml</code>, <code>*.pem</code>, <code>*.key</code>.</li>
+  <li><code>application.yml</code> reads <code>${DB_URL}</code> etc.; Hikari pool (<code>maximum-pool-size</code>, <code>minimum-idle</code>); <code>jpa.open-in-view: false</code>; <b><code>ddl-auto: validate</code></b> (not <code>update</code>): <b>Flyway creates and changes the schema; Hibernate checks the mappings match</b>; <code>server.error.include-message: never</code>; actuator exposure limited to health and info; CORS and JWT settings from environment.</li>
+  <li><b>Flyway:</b> <code>V1__create_core_tables.sql</code> creates users, categories, listings (with CHECK price &ge; 0 and index on status, category_id, created_at). <b>A migration is an immutable history record</b>: create later migrations for orders and reviews rather than editing V1 after it has run on shared environments.</li>
+  <li><b>JPA mapping:</b> <code>@Entity @Table</code>, <code>@ManyToOne(fetch = LAZY)</code>, <code>BigDecimal</code> for price, <code>@Enumerated(EnumType.STRING)</code>, <code>@Version</code> for optimistic locking.</li>
+  <li><b>JWT config:</b> decode the base64 secret, fail startup if under 32 bytes, build <code>JwtEncoder</code> / <code>JwtDecoder</code> beans; password checking happens at login before a token is minted.</li>
+  <li><b>Verify:</b> run with the local profile, check logs for Flyway success and Hikari start, <code>curl /actuator/health</code> returns UP, tables and <code>flyway_schema_history</code> visible in Workbench. <b>Error diagnosis:</b> Access denied (credentials/grants), Unknown database, Communications link failure (server stopped), Flyway validation failed (migration changed after execution: restore it and add a new versioned one), schema validation missing column (entity and migration differ), JWT secret error (not base64 or too short), CORS blocked (origin mismatch).</li>
+</ul>
+
+<h2>6. Guide 06: GitHub and version control</h2>
+<table>
+  <tr><th>Repository</th><th>Contains</th><th>Never contains</th></tr>
+  <tr><td>unimart-frontend</td><td>React source, lock file, tests, Dockerfile, workflow, .env.example</td><td>node_modules, .env.local, dist, secrets</td></tr>
+  <tr><td>unimart-backend</td><td>Spring source, Maven Wrapper, migrations, tests, Dockerfile, workflow, .env.example</td><td>target, IDE files, real DB/JWT secrets, private keys</td></tr>
+  <tr><td>unimart-docs (optional)</td><td>Diagrams, API contract, lab evidence</td><td>Passwords, personal student data, production exports</td></tr>
+</table>
+<ul>
+  <li><b>Feature-branch workflow:</b> <code>git switch main; git pull --ff-only; git switch -c feature/listing-create-api</code>; small commits; push; open a <b>pull request</b> into main describing requirement, implementation, evidence, tests, migration; at least one reviewer (the author does not approve their own work); resolve comments with new commits; merge only when CI passes; delete the branch.</li>
+  <li><b>Commit prefixes:</b> feat, fix, test, docs, refactor, chore, ci (e.g. <code>feat(listings): add create listing endpoint</code>).</li>
+  <li><b>Sync:</b> <code>git fetch origin; git rebase origin/main</code>; resolve conflicts by reading both versions and the business intent (never blindly "ours" or "theirs"); run tests; rebase local feature branches but never rewrite shared main history; <code>pull --ff-only</code> on main.</li>
+  <li><b>Protect main:</b> require a PR, required status checks (frontend build/lint, backend tests), conversation resolution and one approval, restrict force pushes and deletion; Dependabot alerts; issues or a board for Listing, Review, Auth and Deployment tasks. <b>Releases:</b> annotated tags (<code>v0.1.0</code> local CRUD milestone, <code>v1.0.0</code> cloud deployment milestone) as rollback points.</li>
+  <li><b>Review checklist:</b> one PR = one coherent change; migration and entity reviewed together; API contract changes reflected in frontend types and the Postman collection; tests cover happy path, validation, unauthorised, forbidden, not found; no generated directories, secrets or DB dumps; README works on a clean clone.</li>
+</ul>
+
+<h2>7. Guide 07: CRUD APIs and Postman testing</h2>
+<p>Two CRUD features: <b>Listings</b> and <b>Reviews</b> (a review requires a completed order; real card payment is out of scope: seed a completed order or mock the payment status).</p>
+<table>
+  <tr><th>Endpoint</th><th>Auth</th><th>Result</th></tr>
+  <tr><td>POST /auth/register</td><td>Public</td><td>Create university-email account</td></tr>
+  <tr><td>POST /auth/login</td><td>Public</td><td>Return short-lived access token</td></tr>
+  <tr><td>GET /listings</td><td>Public</td><td>Paged / filterable list</td></tr>
+  <tr><td>GET /listings/{id}</td><td>Public</td><td>Listing details</td></tr>
+  <tr><td>POST /listings</td><td>Authenticated seller</td><td>Create listing owned by the current user</td></tr>
+  <tr><td>PUT /listings/{id}</td><td>Owner / admin</td><td>Replace editable fields</td></tr>
+  <tr><td>DELETE /listings/{id}</td><td>Owner / admin</td><td>Soft archive</td></tr>
+  <tr><td>GET /listings/{id}/reviews</td><td>Public</td><td>Paged reviews</td></tr>
+  <tr><td>POST /reviews</td><td>Authenticated buyer</td><td>One review per completed order</td></tr>
+  <tr><td>PUT / DELETE /reviews/{id}</td><td>Author / admin</td><td>Update or delete/hide per policy</td></tr>
+</table>
+<ul>
+  <li><b>Postman setup:</b> workspace "UniMart Lab", collection "UniMart API v1", environment "UniMart Local" with <code>base_url</code> and <code>access_token</code>; collection-level Bearer auth <code>{{access_token}}</code> overridden for public endpoints; folders Auth, Listings, Reviews, Negative Tests; post-response scripts store the token and created ids.</li>
+  <li><b>Validation via DTOs:</b> <code>ListingRequest</code> with <code>@NotBlank @Size(max=160) title</code>, <code>@NotBlank @Size(max=5000) description</code>, <code>@NotNull @DecimalMin("0.00") price</code>, <code>@NotNull categoryId</code>; <code>ReviewCreateRequest</code> with orderId and rating <code>@Min(1) @Max(5)</code>.</li>
+  <li><b>Service rules:</b> create resolves the current user from the token and an active category; update/archive call <code>requireOwnedListing</code> (403 if not the owner); a SOLD listing cannot be deleted (409); archived listings are hidden (404); <code>GET /listings</code> uses <code>Pageable</code> + <code>Specification</code> (q, categoryId, status) with a maximum page size (e.g. 50) to protect the server.</li>
+  <li><b>Review rules:</b> order must be COMPLETED (else 409), only the buyer may review it (else 403), only one review per order (409; also a UNIQUE constraint <code>uk_review_order</code>); reviewer = the buyer, reviewee = the listing's seller.</li>
+  <li><b>Security filter chain:</b> CSRF disabled (appropriate for stateless bearer-token APIs; reassess if cookies are used for auth), CORS enabled, <b>stateless sessions</b>, POST <code>/api/v1/auth/**</code> and GET listings/reviews/health permitted, everything else authenticated, OAuth2 resource server with JWT.</li>
+</ul>
+<table>
+  <tr><th>Required negative test</th><th>Expected</th></tr>
+  <tr><td>Create listing without token</td><td>401 Unauthorized</td></tr>
+  <tr><td>Create listing with blank title</td><td>400 with <code>fieldErrors.title</code></td></tr>
+  <tr><td>Update another seller's listing</td><td>403 Forbidden</td></tr>
+  <tr><td>Get archived / non-existent listing</td><td>404 Not Found</td></tr>
+  <tr><td>Review an order that is not completed</td><td>409 Conflict</td></tr>
+  <tr><td>Review another buyer's order</td><td>403 Forbidden</td></tr>
+  <tr><td>Second review for the same order</td><td>409 Conflict</td></tr>
+  <tr><td>Rating outside 1&ndash;5</td><td>400 validation error</td></tr>
+  <tr><td>Expired / malformed JWT</td><td>401 Unauthorized</td></tr>
+</table>
+<p>Run the collection in dependency order (login, create, get, update, delete listing; create, update, delete review; negative tests) with the Collection Runner as evidence.</p>
+
+<h2>8. Guide 08: frontend features (listings and reviews)</h2>
+<ul>
+  <li><b>Routes:</b> <code>/</code> ListingsPage (search/filter/paginate); <code>/listings/new</code> and <code>/listings/:id/edit</code> ListingFormPage; <code>/listings/:id</code> ListingDetailsPage (listing, seller, reviews; owner sees edit/archive); <code>/orders/:orderId/review</code> ReviewFormPage; <code>/my/listings</code>; <code>/login</code>.</li>
+  <li><b>TypeScript domain types</b> mirror the API contract (<code>Listing</code>, <code>ListingInput</code>, <code>Page&lt;T&gt;</code>, <code>Review</code>).</li>
+  <li><b>RTK Query</b> for <i>server state</i> (<code>createApi</code> + <code>fetchBaseQuery</code>; <code>prepareHeaders</code> attaches the bearer token from Redux; tag types <code>Listing</code>, <code>Review</code>); Redux slices for <i>client/auth state</i>. Queries use <code>providesTags</code>; mutations use <code>invalidatesTags</code> so affected queries refetch automatically.</li>
+  <li><b>UI:</b> accessible Material UI forms and a responsive Tailwind card grid; handle loading, empty, validation, authorisation and error states.</li>
+</ul>
+
+<h2>9. Guide 09: full-stack integration, Redux and debugging</h2>
+<h3>End-to-end request flow</h3>
+<ol>
+  <li>A React component calls an RTK Query hook. 2. <code>fetchBaseQuery</code> reads <code>VITE_API_BASE_URL</code> and the token from Redux state. 3. The browser sends the HTTP request with <code>Authorization: Bearer &lt;token&gt;</code>. 4. Spring Security validates the JWT, then Controller &rarr; Service &rarr; Repository &rarr; MySQL runs. 5. The backend returns a DTO as JSON; RTK Query caches it and React re-renders. 6. Mutations invalidate tags so affected queries refetch.</li>
+</ol>
+<ul>
+  <li><b>CORS:</b> exact origins; <code>http://localhost:5173</code> and <code>http://127.0.0.1:5173</code> are different origins; do not combine <code>allowCredentials(true)</code> with wildcard origins; allowed headers Authorization, Content-Type, Accept.</li>
+  <li><b>Token handling:</b> keep the <b>short-lived access token in memory</b> (Redux) and use an <b>HttpOnly, Secure, SameSite refresh cookie</b> issued by the backend; on reload call <code>/auth/refresh</code> with credentials; <b>avoid localStorage for long-lived bearer tokens</b> (injected scripts can read it). The base query retries once after a 401 using the refresh endpoint, guarded by a <b>mutex</b> so concurrent requests trigger only one refresh; on failure sign out.</li>
+  <li><b>Store:</b> add <code>baseApi.middleware</code> exactly once; DevTools enabled in development only; use Redux DevTools to inspect <code>auth/credentialsReceived</code>, cache entries and tag invalidation; never expose real tokens in demos.</li>
+</ul>
+<table>
+  <tr><th>Symptom</th><th>Evidence</th><th>Likely fix</th></tr>
+  <tr><td>CORS blocked</td><td>Console and OPTIONS request</td><td>Match APP_ALLOWED_ORIGINS; enable cors() in the filter chain; allow method/header</td></tr>
+  <tr><td>401 although login worked</td><td>Authorization header, token expiry</td><td>Check prepareHeaders and token state; issuer/secret/clock</td></tr>
+  <tr><td>Infinite refresh requests</td><td>Network waterfall, Redux actions</td><td>Refresh must not use the same failing loop; one retry; mutex</td></tr>
+  <tr><td>403 on owner action</td><td>JWT subject vs DB owner</td><td>Use a stable user id/subject; verify the ownership rule</td></tr>
+  <tr><td>400 with no form message</td><td>Backend ApiError and UI mapping</td><td>Map fieldErrors to form fields; generic fallback</td></tr>
+  <tr><td>Response field undefined</td><td>Network JSON vs TS interface</td><td>Align DTO names and types</td></tr>
+  <tr><td>Stale list after create/update</td><td>Redux cache and tags</td><td>Provide and invalidate matching Listing tags</td></tr>
+  <tr><td>Failed to fetch</td><td>Backend down, wrong VITE URL, mixed content</td><td>Check server/port; restart Vite after env change; HTTPS consistently</td></tr>
+  <tr><td>Lazy serialisation error</td><td>Entity leaked outside a transaction</td><td>Return mapped DTOs; fetch needed relations explicitly</td></tr>
+</table>
+<p><b>Acceptance tests:</b> anonymous users can browse but not create/edit/archive/review; a seller manages only their own listings; a buyer reviews only their own completed order, once; mutations update the UI without a full reload; an expired token triggers at most one refresh then retry or sign-out; errors give friendly feedback while technical detail stays in dev tools and logs.</p>
+
+<h2>10. Guide 10: DigitalOcean deployment and GitHub Actions</h2>
+<div class="box"><b>Architecture meaning</b>Containers do not turn the backend into microservices: the Spring Boot application remains <b>one deployable monolith</b> connected to one MySQL database, with separate containers for frontend, backend and database on a single VPS.</div>
+<ol>
+  <li><b>Droplet:</b> Ubuntu 24.04 LTS, small Basic plan, SSH-key authentication (no password-only root), billing alert, delete unused resources.</li>
+  <li><b>Secure the server first:</b> create a <code>deploy</code> user with sudo and your SSH keys, enable the UFW firewall (OpenSSH), update packages; verify <code>ssh deploy@IP</code> before closing root; disable password auth only after key access is confirmed.</li>
+  <li><b>Docker Engine + Compose plugin</b> from the official repository. Docker group membership is root-equivalent: restrict it and protect the deploy key.</li>
+  <li><b>Backend Dockerfile (multi-stage):</b> build with Maven + JDK 21, run on a JRE image as a non-root user (<code>spring</code>), <code>-XX:MaxRAMPercentage=75</code>. <b>Frontend Dockerfile:</b> build with Node 22 (<code>VITE_API_BASE_URL=/api/v1</code>), serve static files with Nginx (SPA fallback <code>try_files ... /index.html</code>; long cache for assets).</li>
+  <li><b>Docker Compose (<code>/opt/unimart</code>):</b> <code>db</code> (mysql:8.4, volume <code>mysql_data</code> for persistence, healthcheck), <code>backend</code> (image from GHCR, prod profile, environment from <code>.env</code>, <code>depends_on db: service_healthy</code>, port bound to 127.0.0.1:8080), <code>frontend</code> (127.0.0.1:3000); a private <code>unimart</code> network. The <code>.env</code> on the server is <code>chmod 600</code> and never committed.</li>
+  <li><b>Host Nginx reverse proxy:</b> <code>/api/</code> to 127.0.0.1:8080 and <code>/</code> to 127.0.0.1:3000; <code>nginx -t</code> then reload; open <code>Nginx Full</code> in the firewall; point a domain's A record at the Droplet and use Certbot for a trusted TLS certificate (without a domain/TLS use only non-sensitive demo data).</li>
+  <li><b>GHCR:</b> workflows push images with <code>GITHUB_TOKEN</code>; the server authenticates with a narrowly scoped read:packages token if private; prefer immutable SHA tags for rollback (<code>latest</code> only a convenience pointer).</li>
+  <li><b>GitHub Actions (backend):</b> on push and PR to main: set up Java 21, <code>./mvnw -B verify</code>; on push only, log in to GHCR and build/push the image (<code>:latest</code> and <code>:${{ github.sha }}</code>); a <b>deploy job</b> (needs the build job, environment <code>production</code>) uses SSH secrets (<code>DO_SSH_PRIVATE_KEY</code>, <code>DO_HOST</code>, <code>DO_USER</code>) to run <code>docker compose pull backend &amp;&amp; docker compose up -d backend &amp;&amp; docker image prune -f</code>. <b>Frontend:</b> the same pattern with Node 22, <code>npm ci</code>, lint, build.</li>
+  <li><b>Operate:</b> backups, health checks, rollback to a previous SHA tag, cost controls.</li>
+</ol>
+<svg viewBox="0 0 640 100" role="img" aria-label="CI/CD pipeline" class="dg">
+  <g class="sm">
+  <rect class="bx" x="5" y="30" width="95" height="38" rx="6"/><text x="52" y="47" text-anchor="middle">git push /</text><text x="52" y="60" text-anchor="middle">pull request</text><path class="ar" d="M100 49 H120"/>
+  <rect class="bx" x="120" y="30" width="105" height="38" rx="6"/><text x="172" y="47" text-anchor="middle">test + lint +</text><text x="172" y="60" text-anchor="middle">build (Actions)</text><path class="ar" d="M225 49 H245"/>
+  <rect class="bx" x="245" y="30" width="105" height="38" rx="6"/><text x="297" y="47" text-anchor="middle">build image,</text><text x="297" y="60" text-anchor="middle">push to GHCR</text><path class="ar" d="M350 49 H370"/>
+  <rect class="bx" x="370" y="30" width="105" height="38" rx="6"/><text x="422" y="47" text-anchor="middle">SSH to Droplet</text><text x="422" y="60" text-anchor="middle">compose pull</text><path class="ar" d="M475 49 H495"/>
+  <rect class="bx" x="495" y="30" width="135" height="38" rx="6"/><text x="562" y="47" text-anchor="middle">compose up -d</text><text x="562" y="60" text-anchor="middle">(new version live)</text>
+  <text x="320" y="92" text-anchor="middle">PRs only test; only pushes to main publish and deploy</text>
+  </g>
+</svg>
+
+<h2>11. Connecting the labs to the lectures</h2>
+<table>
+  <tr><th>Lecture idea</th><th>Where it appears in the labs</th></tr>
+  <tr><td>Cohesion and coupling; SRP</td><td>Package-by-feature; controller / service / repository split; thin controllers</td></tr>
+  <tr><td>Dependency inversion</td><td>Repository interfaces; Spring injection; DTO mappers</td></tr>
+  <tr><td>Never trust the client; authn vs authz</td><td>Bean validation, ownership checks in the service, JWT, server-side rules</td></tr>
+  <tr><td>Secrets never in Git</td><td>.env.example, ignored .env, environment variables, GitHub Actions secrets</td></tr>
+  <tr><td>Stateless servers</td><td>Stateless sessions with JWT bearer tokens</td></tr>
+  <tr><td>Idempotency / consistency</td><td>UNIQUE constraints (one review per order, payment idempotency key), optimistic locking version</td></tr>
+  <tr><td>Monolith first / modular monolith</td><td>One deployable with feature modules, one schema; containers do not change that</td></tr>
+  <tr><td>REST conventions and status codes</td><td>201/204/400/401/403/404/409, nouns in URLs, pagination</td></tr>
+  <tr><td>Reliability / operations</td><td>Health checks, Docker restart policies, rollback by SHA tag, backups</td></tr>
+</table>
+
+<div class="box"><b>Key takeaways</b>
+Model the domain and constraints first (unique keys, DECIMAL money, status enums). Build a layered monolith: React SPA, Spring Boot MVC REST API, one MySQL schema owned by Flyway migrations, least-privilege DB user. Keep secrets in environment variables, never in Git. Use feature branches, PRs and protected main. Test APIs with positive and negative Postman tests (401, 403, 404, 409). Keep the access token in memory with a refresh cookie, configure exact CORS. Deploy with Docker Compose behind Nginx and GitHub Actions; remember containers do not make a monolith into microservices.</div>

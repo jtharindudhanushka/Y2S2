@@ -1,0 +1,18 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Stack</td><td>React + TypeScript SPA (Vite, Redux Toolkit, MUI, Tailwind) &rarr; Spring Boot MVC REST API (Java 21, JPA/Hibernate, Flyway, Spring Security JWT) &rarr; MySQL 8.4; Nginx; Docker on one VPS.</td></tr>
+  <tr><td>ER design (guide 01)</td><td>Entities: User, Category, Listing, ListingImage, Conversation, Message, Order, Payment, Review, Notification. DECIMAL for money; UNIQUE email, order_id on review, payment idempotency key; soft delete; status enums; constraints in service AND database.</td></tr>
+  <tr><td>Diagrams</td><td>C4 context, container, component/package, deployment: one backend deployable, one DB, labelled arrows, security boundaries.</td></tr>
+  <tr><td>MVC mapping</td><td>Controller = HTTP only; Service = rules, transactions, authorisation; Repository = data; Model = entities/DTOs; View = React.</td></tr>
+  <tr><td>Frontend (02)</td><td>Feature-first folders; only VITE_ vars reach the browser (no secrets); MUI for components, Tailwind for layout.</td></tr>
+  <tr><td>Backend (03)</td><td>Package-by-feature; thin controllers; DTOs not entities; global exception handler; 201/204/400/401/403/404/409; BCrypt; short JWTs; exact CORS.</td></tr>
+  <tr><td>MySQL (04)</td><td>Least-privilege account (not root); utf8mb4; Flyway owns schema; backups with mysqldump.</td></tr>
+  <tr><td>Config (05)</td><td>DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET (base64 32+ bytes), JWT_ACCESS_MINUTES, APP_ALLOWED_ORIGINS; .env.example committed, .env ignored; ddl-auto validate; migrations immutable (add new versions).</td></tr>
+  <tr><td>Git (06)</td><td>Separate frontend / backend repos; feature branch + PR + review + CI; protected main; rebase local branches; ff-only pull; conventional commits; annotated tags.</td></tr>
+  <tr><td>CRUD (07)</td><td>Listings and Reviews; validation DTOs; ownership checks (403); SOLD cannot be deleted (409); review needs COMPLETED order, buyer only, once (UNIQUE order_id); stateless JWT security chain; Postman negative tests.</td></tr>
+  <tr><td>Frontend features (08)</td><td>RTK Query for server state (providesTags / invalidatesTags); slices for auth state; handle loading, empty, error states.</td></tr>
+  <tr><td>Integration (09)</td><td>Access token in memory + HttpOnly refresh cookie; one refresh retry with mutex; Redux DevTools; CORS exact origin; error-to-fix matrix.</td></tr>
+  <tr><td>Deployment (10)</td><td>Droplet + deploy user + UFW; multi-stage Dockerfiles (non-root); Compose with MySQL volume and healthcheck; Nginx reverse proxy + Certbot TLS; GitHub Actions test, build, push to GHCR, SSH deploy; rollback by SHA tag. Containers &ne; microservices: still one monolith.</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>Be ready to explain WHY: monolith first for a small team, DTOs instead of entities, Flyway + validate, JWT stateless security, secrets in environment variables, and that Docker does not change the architecture style.</div>
