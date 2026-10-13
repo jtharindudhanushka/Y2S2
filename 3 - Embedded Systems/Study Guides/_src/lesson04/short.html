@@ -1,0 +1,15 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>ADC maths</td><td>Intervals = 2^n = 1024. &Delta;V = Vref/1024. ADCW = floor(Vin/&Delta;V). Vin = ADCW &times; Vref/1024. Use <b>1024</b>. 5 V: 4.883 mV; 1.1 V: 1.074 mV.</td></tr>
+  <tr><td>Accuracy</td><td>More bits or smaller Vref.</td></tr>
+  <tr><td>ADMUX</td><td>REFS1 REFS0: 00 AREF, 01 AVcc, 11 1.1 V. ADLAR left adjust. MUX3..0 channel (0000 = ADC0 ... 0101 = ADC5, 1000 = temperature).</td></tr>
+  <tr><td>ADCSRA</td><td>ADEN (7), ADSC (6), ADATE (5), ADIF (4), ADIE (3), ADPS2..0 (2..0). 111 = /128 = 125 kHz.</td></tr>
+  <tr><td>Read steps</td><td>input pin, Vref, channel, prescaler, ADEN, ADSC, wait ADSC = 0 (or ADC_vect), read ADCW.</td></tr>
+  <tr><td>Arduino</td><td><code>analogRead(A0)</code> = 0..1023; <code>analogReference(DEFAULT / INTERNAL / EXTERNAL)</code>.</td></tr>
+  <tr><td>LDR</td><td>Resistance falls with light; divider Vin = V&times;R2/(R1+R2). LDR on top: bright = high Vin. Use hysteresis (on &lt; 300, off &gt; 400).</td></tr>
+  <tr><td>LM35</td><td>10 mV/&deg;C; T = Vout &times; 100; with 1.1 V Vref: T = ADCW &times; 0.1074; &minus;55 to 150 &deg;C.</td></tr>
+  <tr><td>Voltmeter</td><td><code>vIn = ADCW * 5.0 / 1024</code>; &gt;4 5 LEDs, &gt;3 4, &gt;2 3, &gt;1 2, &gt;0 1.</td></tr>
+  <tr><td>Interrupt ADC</td><td>ADIE + sei(), start once, ISR(ADC_vect) uses ADCW and restarts with ADSC.</td></tr>
+  <tr><td>Mains lamp</td><td>BC547 + 1 k&Omega; base, relay coil with 1N4001 flyback, contacts on the live wire; qualified supervision only.</td></tr>
+</table>

@@ -1,0 +1,36 @@
+{
+ "mcq": [
+  {"q":"Serial communication sends:","o":["All bits at once","One bit at a time","Only bytes in parallel","Only analog signals"],"a":1,"e":"Fewer wires and pins than parallel."},
+  {"q":"Why is parallel communication unsuitable between chips with few pins, over longer distances?","o":["It is too slow at all times","It needs many wires/pins and suffers from skew and crosstalk","It cannot send data","It has no clock"],"a":1,"e":"Serial uses one data line."},
+  {"q":"In asynchronous communication each character is framed by:","o":["A clock line","A start bit and a stop bit","A parity chip","Two clock edges"],"a":1,"e":"Idle line is high; start bit is 0; stop bit is 1."},
+  {"q":"Why must the baud rates of both ends match?","o":["To save power","There is no clock line, so each side times the bits by itself","The USB cable requires it","To enable interrupts"],"a":1,"e":"Otherwise bits are sampled at the wrong time."},
+  {"q":"With 8N1 framing, how many bits are sent per character?","o":["8","9","10","12"],"a":2,"e":"1 start + 8 data + 1 stop."},
+  {"q":"At 9600 baud with 8N1 the time to send one character is about:","o":["104 µs","1.04 ms","10.4 ms","0.1 s"],"a":1,"e":"10 bits / 9600 = 1.04 ms."},
+  {"q":"A line driver such as the MAX232 is needed because:","o":["RS-232 voltage levels differ from the microcontroller's 0 and 5 V","The ATmega has no USART","It boosts the clock","It stores data"],"a":0,"e":"Do not connect RS-232 directly to the pins."},
+  {"q":"The Arduino Uno's USB-to-serial interface is done by:","o":["FT232RL","MAX232","ATmega16U2","LM35"],"a":2,"e":"Duemilanove used FT232RL."},
+  {"q":"Which flag gives the maximum transmit throughput?","o":["TXC","UDRE","RXC","TOV"],"a":1,"e":"The next character can be loaded as soon as UDR is empty, while the previous one shifts out."},
+  {"q":"The purpose of the TXC flag is to know:","o":["That the data register is empty","That the whole frame has been shifted out","That data was received","That an error occurred"],"a":1,"e":"Useful before disabling TX or switching a half-duplex driver."},
+  {"q":"RXC0 is set when:","o":["UDR0 is empty","UDR0 contains unread received data","The frame was sent","The baud rate changes"],"a":1,"e":"Reading UDR0 clears it."},
+  {"q":"Bit mask for the UDRE0 flag in UCSR0A:","o":["0b10000000","0b01000000","0b00100000","0b00010000"],"a":2,"e":"RXC = bit 7, TXC = bit 6, UDRE = bit 5."},
+  {"q":"Which bits enable the receiver and transmitter?","o":["RXEN0, TXEN0 in UCSR0B","UCSZ01, UCSZ00","RXC0, TXC0","U2X0"],"a":0,"e":"Bits 4 and 3 of UCSR0B."},
+  {"q":"Which settings give 8-bit characters?","o":["UCSZ02 = 0, UCSZ01 = 1, UCSZ00 = 1","UCSZ02 = 1 only","All zero","UCSZ01 = 0, UCSZ00 = 1"],"a":0,"e":"011 means 8-bit."},
+  {"q":"UBRR for 9600 baud at 16 MHz is:","o":["51","103","207","8"],"a":1,"e":"16 000 000 / (16 × 9600) − 1 = 103.17."},
+  {"q":"Why is UL used in 16000000 / (16 * 9600UL) − 1?","o":["Unix line","An int is 16 bits on the AVR and 16 × 9600 would overflow, so 32-bit arithmetic is needed","To select the USART","To enable UBRR"],"a":1,"e":"unsigned long."},
+  {"q":"Baud rate error for 9600 baud at 16 MHz is about:","o":["0 %","0.16 %","2 %","3.5 %"],"a":1,"e":"Actual 9615.4 baud."},
+  {"q":"A high baud rate error causes:","o":["Faster transmission","Mis-sampled bits and corrupted characters","Lower power","Nothing"],"a":1,"e":"Errors accumulate across the frame."},
+  {"q":"Which crystal gives 0 % error at 9600 baud?","o":["16 MHz","18.432 MHz","20 MHz","12 MHz"],"a":1,"e":"UBRR = 119 exactly."},
+  {"q":"In the interrupt version, which vector runs when a character is received?","o":["USART_UDRE_vect","USART_RX_vect","USART_TX_vect","ADC_vect"],"a":1,"e":"Enabled by RXCIE0."},
+  {"q":"Why must the UDRE interrupt be disabled when there is nothing to send?","o":["It consumes RAM","The UDRE flag stays 1 while UDR is empty, so the interrupt would fire continuously","It clears the ADC","It resets the CPU"],"a":1,"e":"The slide ISR disables UDRIE0 after the last character."},
+  {"q":"Arduino function to check whether serial data has arrived:","o":["Serial.begin()","Serial.available()","Serial.print()","Serial.end()"],"a":1,"e":"Then Serial.read() returns the character."},
+  {"q":"CR and LF are:","o":["Clock and line","Carriage return (13) and line feed (10)","Control register and latch flag","Character read and load flag"],"a":1,"e":"\\r and \\n."},
+  {"q":"The char array holding the string of an LM35 reading (−55 to 150 °C) needs at least 4 elements because:","o":["It has 4 digits","Three characters plus the '\\0' terminator","The ADC is 10 bits","Serial needs 4 bytes"],"a":1,"e":"Longest text is three characters ('-55' or '150')."},
+  {"q":"After setting stdout to a serial stream created with FDEV_SETUP_STREAM, printf() sends its output to:","o":["The LCD","The serial port","EEPROM","Nowhere"],"a":1,"e":"Streams make I/O device independent."},
+  {"q":"In the C# temp logger, the DataReceived handler must update the text box using:","o":["Direct assignment","Invoke/BeginInvoke because it runs on a different thread than the GUI","A timer","Thread.Sleep"],"a":1,"e":"Cross-thread invocation."}
+ ],
+ "written": [
+  {"q":"Explain how a character is sent in asynchronous serial communication and why the baud rate must match at both ends.","a":"<p>The idle line is high. The transmitter sends a start bit (0), the data bits LSB first and a stop bit (1), so 10 bits for 8N1. There is no clock line: the receiver detects the falling edge of the start bit, then samples each bit in the middle of its bit time using its own clock. If the baud rates differ the sampling instants drift and the character is corrupted.</p>"},
+  {"q":"Compute UBRR and the baud rate error for 19 200 baud at 16 MHz, and for 115 200 baud. Comment.","a":"<p>19 200: UBRR = 16 000 000/(16&times;19 200) &minus; 1 = 51.08, use 51; actual = 16 000 000/(16&times;52) = 19 230.8; error +0.16 %. 115 200: UBRR = 7.68, use 8; actual = 16 000 000/(16&times;9) = 111 111; error &minus;3.55 %, too large for reliable communication; use the double speed mode or a crystal such as 18.432 MHz.</p>"},
+  {"q":"Describe how the receive complete interrupt and the data register empty interrupt are used in the charEncloser using interrupts.","a":"<p>RXCIE0 is enabled. When a character arrives <code>ISR(USART_RX_vect)</code> stores UDR0 in the middle of the array {'[', ' ', ']'}, disables the receive interrupt and enables the UDRE interrupt. Each <code>ISR(USART_UDRE_vect)</code> writes the next array element to UDR0; after the third it resets the index, disables the UDRE interrupt and re-enables the receive interrupt. <code>main()</code> is free.</p>"},
+  {"q":"Discuss the pros and cons of using stdio functions (printf, getchar) in embedded firmware.","a":"<p>Pros: standard, portable, device-independent through streams (serial, LCD), convenient formatted I/O, shorter code. Cons: large flash and RAM overhead, slower and blocking, floating-point formatting needs extra libraries, less predictable timing; unsuitable on very small devices if memory is tight.</p>"}
+ ]
+}

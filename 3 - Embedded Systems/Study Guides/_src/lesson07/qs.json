@@ -1,0 +1,35 @@
+{
+ "mcq": [
+  {"q":"PWM is a technique for:","o":["Storing data","Getting an analog-like output by digital means","Converting analog to digital","Measuring time"],"a":1,"e":"The load reacts to the average, not to the individual pulses."},
+  {"q":"Duty cycle is:","o":["Frequency × period","Percentage of the cycle that the output is high","Voltage × current","Period / pulse width"],"a":1,"e":"t_high / period × 100."},
+  {"q":"A 5 V PWM signal with a 60 % duty cycle has an average voltage of:","o":["2 V","3 V","3.3 V","5 V"],"a":1,"e":"0.6 × 5 = 3 V."},
+  {"q":"Fast PWM duty cycle formula:","o":["OCR / TOP","(OCR + 1) / (TOP + 1)","OCR × TOP","TOP / OCR"],"a":1,"e":"Hence OCR = 0 still gives 1/256 on an 8-bit timer."},
+  {"q":"PWM frequency (fast PWM, 8-bit) at 16 MHz and prescale 64:","o":["490 Hz","976.6 Hz","1.953 kHz","62.5 kHz"],"a":1,"e":"16 MHz / (256 × 64)."},
+  {"q":"Phase correct PWM at the same prescale has:","o":["Double the frequency","Half the frequency (about 490 Hz)","The same frequency","No pulses"],"a":1,"e":"The timer counts up and down so each cycle takes about 510 counts."},
+  {"q":"Which timer mode has a programmable TOP held in OCRnA?","o":["Normal","CTC","Fast PWM","Phase correct PWM"],"a":1,"e":"Clear Timer on Compare."},
+  {"q":"WGMn2 WGMn1 WGMn0 = 011 selects:","o":["Normal","Phase correct PWM","CTC","Fast PWM"],"a":3,"e":"001 phase correct, 010 CTC, 000 normal."},
+  {"q":"COMnX1 COMnX0 = 10 selects:","o":["Disconnected","Non-inverted: clear OCnX on compare match, set at 0","Inverted","Toggle"],"a":1,"e":"11 is inverted."},
+  {"q":"In inverted mode a larger OCR gives:","o":["A higher duty cycle","A lower duty cycle","The same duty","No output"],"a":1,"e":"The pin is set on the match and cleared at BOTTOM."},
+  {"q":"OC0A is on pin:","o":["PD5","PD6","PB1","PB3"],"a":1,"e":"PD6, Arduino pin 6. OC0B is PD5 (pin 5)."},
+  {"q":"Which Arduino pins support analogWrite on an Uno?","o":["0 to 5","3, 5, 6, 9, 10, 11","8 to 13","A0 to A5"],"a":1,"e":"Marked ~."},
+  {"q":"analogWrite(6, 128) gives a duty cycle of about:","o":["25 %","50 %","75 %","100 %"],"a":1,"e":"128/255."},
+  {"q":"To get about 1 kHz with Timer0 fast PWM you choose prescale:","o":["8","64","256","1024"],"a":1,"e":"976 Hz."},
+  {"q":"CS02 CS01 CS00 = 011 gives prescale:","o":["8","64","256","1024"],"a":1,"e":"As in lesson 6."},
+  {"q":"In CTC mode which flag is set on a compare match?","o":["TOVn","OCFnX","ADIF","UDRE"],"a":1,"e":"Output Compare match Flag."},
+  {"q":"The interrupt enable bit for output compare A is:","o":["TOIEn","OCIEnA","OCFnA","ADIE"],"a":1,"e":"In TIMSKn."},
+  {"q":"To generate exactly 1 ms periodic events with Timer0 CTC at prescale 64 and 16 MHz, OCR0A =","o":["249","250","255","15999"],"a":0,"e":"16 000 000 / 64 / 1000 − 1 = 249."},
+  {"q":"The 'fader' system dims an LED by:","o":["Increasing the resistor","Decreasing OCR0A from 255 in steps of 5 every 30 ms","Switching the LED off","Using the ADC"],"a":1,"e":"Non-inverted fast PWM on OC0A."},
+  {"q":"PWM can drive a motor smoothly because:","o":["The motor is digital","Its inertia and inductance respond to the average, not to the pulses","The pin is analog","It uses less power"],"a":1,"e":"The frequency is much higher than the motor can follow."},
+  {"q":"A true analog output can be obtained by:","o":["A bigger resistor","An RC low-pass filter on the PWM signal, a DAC breakout or an MCU with a built-in DAC","More LEDs","A relay"],"a":1,"e":"The three options in the lecture."},
+  {"q":"In the auto fan, the motor is full speed at:","o":["25 °C or higher","30 °C","35 °C or higher","Always"],"a":2,"e":"Off at 25 °C or lower; linear in between."},
+  {"q":"Duty for the fan at 30 °C (linear between 25 and 35 °C, 255 maximum):","o":["0","127","255","64"],"a":1,"e":"(30 − 25)/10 × 255 = 127."},
+  {"q":"Why is the 1.1 V reference used in the auto fan?","o":["It powers the motor","Finer temperature resolution of the LM35 signal (about 0.1 °C per step)","It disables PWM","It avoids interrupts"],"a":1,"e":"10 mV/°C is a small voltage."},
+  {"q":"Why should the Timer0 prescale or mode not be altered in an Arduino sketch that also uses delay() or millis()?","o":["It breaks them because they rely on Timer0","They use Timer2","It is illegal in C","It disables the ADC"],"a":0,"e":"The Arduino core uses Timer0 for time keeping."}
+ ],
+ "written": [
+  {"q":"Explain how a timer generates a PWM waveform and derive the PWM frequency and duty cycle for fast PWM.","a":"<p>The prescaled clock increments TCNT from 0 to TOP. A comparator compares TCNT with OCRnX; at the match the waveform generator clears the OCnX pin (non-inverted) and it is set again when TCNT returns to 0. F<sub>PWM</sub> = F_CPU / ((TOP + 1) &times; prescale); duty cycle = (OCR + 1) / (TOP + 1). With TOP = 255, prescale 64 and F_CPU = 16 MHz, F<sub>PWM</sub> = 976.6 Hz; OCR = 127 gives 50 %.</p>"},
+  {"q":"Compare fast PWM and phase correct PWM.","a":"<p>Fast PWM counts up only then jumps to 0 (frequency F_CPU/(256&times;prescale), edge aligned, highest frequency). Phase correct PWM counts up and down (frequency F_CPU/(510&times;prescale), half of fast PWM), and its pulses are symmetric about the centre, which suits motor control; duty &asymp; OCR/TOP.</p>"},
+  {"q":"Write the register configuration to produce 1 kHz non-inverted fast PWM on PD6 and explain each bit.","a":"<pre><code>DDRD |= (1&lt;&lt;DDD6);                       // PD6 output\nTCCR0A = (1&lt;&lt;COM0A1)|(1&lt;&lt;WGM01)|(1&lt;&lt;WGM00); // non-inverted, fast PWM\nTCCR0B = (1&lt;&lt;CS01)|(1&lt;&lt;CS00);              // /64 = 976.6 Hz\nOCR0A = 128;                               // about 50 % duty</code></pre><p>COM0A1:0 = 10 clears OC0A at the match; WGM02:0 = 011 is fast PWM; CS = 011 selects F_CPU/64.</p>"},
+  {"q":"Describe the auto fan design and the firmware logic.","a":"<p>LM35 on A0 with the 1.1 V reference (T = ADCW &times; 1.1/1024 &times; 100). PWM on pin 6 (OC0A) drives a BC547 or 2N7000 that switches the motor, with a 1N4001 flyback diode and a common ground. Duty: 0 at &le; 25 &deg;C, 255 at &ge; 35 &deg;C and (T &minus; 25)/10 &times; 255 between, written to OCR0A (or <code>analogWrite(6, duty)</code>).</p>"}
+ ]
+}

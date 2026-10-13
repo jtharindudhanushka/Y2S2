@@ -1,0 +1,68 @@
+<h2>Practical question: "Status light" (warm-up, exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question written for this guide in the style of the practical exam. It tests only what lessons 1 and 2 cover: choosing the platform, reading the pin diagram, the resistor calculation and the first firmware.</p>
+<div class="box"><b>Scenario</b>A workshop needs a "status light" that shows the state of a machine with <b>three LEDs</b> (green, yellow, red). The system is battery powered, produced in thousands and has a single binary input from a limit switch. All three LEDs are driven at 2 V and 10 mA. The supply is 5 V.</div>
+<ol>
+  <li>State, with reasons, whether a microprocessor-based or microcontroller-based design is appropriate.</li>
+  <li>Calculate the series resistor for each LED and give the nearest preferred value. Prepare a Bill of Materials.</li>
+  <li>Assemble the circuit on a breadboard using an Arduino Uno: connect green, yellow and red LEDs to Arduino pins 8, 9 and 10. Give a wiring table with the ATmega328P port bit for each pin.</li>
+  <li>Write the firmware (Arduino wrapper functions) that cycles green, yellow, red, each for 1 second, repeatedly.</li>
+  <li>Write the same firmware in C using direct register access.</li>
+</ol>
+
+<details open><summary>Solution</summary>
+<h3>1. Platform</h3>
+<p>Microcontroller-based. Binary input and outputs mean very little processing; battery operation needs low power and compactness; thousands of units need low cost.</p>
+<h3>2. Resistor and BOM</h3>
+<p>R = (V<sub>S</sub> &minus; V<sub>L</sub>) / I<sub>L</sub> = (5 &minus; 2) / 0.010 = <b>300 &Omega;</b>. The nearest standard value from the E-series kit parts is <b>330 &Omega;</b> (slightly less current, about 9 mA, still bright). Using 220 &Omega; gives 13.6 mA, which is also within a typical LED rating.</p>
+<table>
+  <tr><th>Qty</th><th>Item</th></tr>
+  <tr><td>1</td><td>Arduino Uno R3 (ATmega328P)</td></tr>
+  <tr><td>1</td><td>Solderless breadboard</td></tr>
+  <tr><td>3</td><td>LED (green, yellow, red)</td></tr>
+  <tr><td>3</td><td>330 &Omega; resistor (or 220 &Omega;)</td></tr>
+  <tr><td>4</td><td>Male to male jumper wires</td></tr>
+</table>
+<h3>3. Wiring</h3>
+<table>
+  <tr><th>Arduino pin</th><th>Port bit</th><th>Connection</th></tr>
+  <tr><td>8</td><td>PB0</td><td>Resistor &rarr; anode of green LED; cathode to GND rail</td></tr>
+  <tr><td>9</td><td>PB1</td><td>Resistor &rarr; anode of yellow LED; cathode to GND rail</td></tr>
+  <tr><td>10</td><td>PB2</td><td>Resistor &rarr; anode of red LED; cathode to GND rail</td></tr>
+  <tr><td>GND</td><td></td><td>Breadboard GND rail (long leg is the anode, the flat edge / short leg is the cathode)</td></tr>
+</table>
+<h3>4. Arduino wrapper version</h3>
+<pre><code>const int led[] = {8, 9, 10};          // green, yellow, red
+
+void setup() {
+  for (int i = 0; i &lt; 3; i++)
+    pinMode(led[i], OUTPUT);           // configure as outputs
+}
+
+void loop() {
+  for (int i = 0; i &lt; 3; i++) {
+    digitalWrite(led[i], HIGH);        // LED on
+    delay(1000);                       // 1 s
+    digitalWrite(led[i], LOW);         // LED off
+  }
+}</code></pre>
+<h3>5. C version</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+
+int main(void)
+{
+    DDRB |= (1&lt;&lt;DDB0) | (1&lt;&lt;DDB1) | (1&lt;&lt;DDB2);   // PB0..PB2 outputs
+    while (1)
+    {
+        for (int i = 0; i &lt; 3; i++)
+        {
+            PORTB |= (1&lt;&lt;i);        // LED on
+            _delay_ms(1000);
+            PORTB &amp;= ~(1&lt;&lt;i);       // LED off
+        }
+    }
+    return 0;
+}</code></pre>
+<div class="box"><b>Marking hints</b>Reasoning for the platform; the working for R shown; BOM complete; LED polarity and common ground; DDR set before PORT; <code>while(1)</code> loop present; <code>F_CPU</code> defined <i>before</i> including <code>util/delay.h</code>.</div>
+</details>

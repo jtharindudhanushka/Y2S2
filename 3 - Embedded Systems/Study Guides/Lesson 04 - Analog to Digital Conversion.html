@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ES Lesson 4 - Analog to Digital Conversion</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .warn{background:var(--badbg);border-left:3px solid var(--bad);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  td.c{white-space:normal}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Embedded Systems study guides</a> &middot; INTE 22263 &middot; Lesson 04</p><button id="theme" type="button"></button></div>
+  <h1>Analog to Digital Conversion</h1>
+  <p class="lead">Covers lecture 05 and exercise 4: why an ADC is needed, resolution, reference voltage and interval size, successive approximation, the ADC registers (ADMUX, ADCSRA, ADCW), the voltmeter systems 8 and 9 (polling and interrupt), the 1023 vs 1024 question, LDR and LM35 sensors, and the auto light exercise. Built from the slides, the 10-bit ADC workbook and peer notes pages 34 to 37.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="prac">Practical question</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<p class="sm" style="color:var(--muted)">Sources: lecture 05, Exercise 4, "Arduino ADC: 1023 or 1024?", the 10-bit ADC workbook (successive approximation demo), LM35 and VT900 datasheets, peer notes pages 34 to 37 (the peer missed one class, so register details here come from the slides and the datasheet extract).</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain why an ADC is needed and how it turns a voltage into a number</li>
+  <li>Compute interval size, ADC value and input voltage for any reference voltage</li>
+  <li>Configure ADMUX and ADCSRA for a conversion and read ADCW</li>
+  <li>Write the voltmeter in C (polling and interrupt) and with Arduino <code>analogRead</code></li>
+  <li>Interface an LDR (voltage divider) and an LM35 temperature sensor</li>
+</ul>
+
+<h2>1. The need for an ADC</h2>
+<p>In the physical world everything is <b>analog</b>; in computers everything is <b>digital</b>. Analog sensors transform physical quantities into analog <b>voltages</b>. The <b>ADC</b> converts an analog voltage into a <b>discrete number</b> that the CPU can process.</p>
+<p>The ATmega328P ADC: <b>10-bit</b>, successive approximation, 6 external channels ADC0 to ADC5 on PC0 to PC5 (Arduino A0 to A5) plus an internal temperature channel, sharing one converter through an <b>input multiplexer</b>.</p>
+<svg viewBox="0 0 640 150" role="img" aria-label="ADC block" class="dg">
+  <rect x="10" y="50" width="100" height="44" rx="6" class="bx"/><text x="60" y="76" text-anchor="middle" class="h">Sensor</text>
+  <rect x="150" y="50" width="100" height="44" rx="6" class="bx"/><text x="200" y="68" text-anchor="middle" class="h">Mux</text><text x="200" y="85" text-anchor="middle" class="sm">ADC0 to ADC5</text>
+  <rect x="290" y="30" width="150" height="84" rx="6" class="bx"/><text x="365" y="55" text-anchor="middle" class="h">ADC</text><text x="365" y="75" text-anchor="middle" class="sm">comparator + DAC</text><text x="365" y="92" text-anchor="middle" class="sm">+ conversion logic</text>
+  <rect x="480" y="50" width="140" height="44" rx="6" class="bx"/><text x="550" y="68" text-anchor="middle" class="h">ADCH : ADCL</text><text x="550" y="85" text-anchor="middle" class="sm">= ADCW (10 bits)</text>
+  <path class="ar" d="M110 72 H148"/><path class="ar" d="M250 72 H288"/><path class="ar" d="M440 72 H478"/>
+  <text x="365" y="136" text-anchor="middle" class="sm">Vref (AVcc / 1.1 V / AREF) sets the full-scale voltage</text>
+</svg>
+
+<h2>2. Resolution, reference voltage and interval size</h2>
+<ul>
+  <li>The ADC converts any voltage between <b>0 and V<sub>ref</sub></b> into a number between <b>0 and 2<sup>resolution</sup> &minus; 1</b>.</li>
+  <li><b>Resolution</b> = number of bits (10 here). Total intervals = 2<sup>resolution</sup> = <b>1024</b>.</li>
+  <li><b>Interval size</b> &Delta;V = V<sub>ref</sub> / 2<sup>resolution</sup> = V<sub>ref</sub> / 1024. It is the <b>smallest change in input voltage the ADC can distinguish</b>.</li>
+  <li><b>V<sub>in</sub> = ADCW &times; V<sub>ref</sub> / 1024</b> (analog voltage = number of intervals &times; interval size) and <b>ADCW = floor(V<sub>in</sub> / &Delta;V)</b>.</li>
+  <li>Default V<sub>ref</sub> on our board = 5 V (AVcc), so &Delta;V = 5 / 1024 = <b>4.883 mV</b> and the number range is 0 to 1023.</li>
+</ul>
+<p>Number line: 0 V ... V<sub>ref</sub> with codes 0, 1, 2, ..., 1022, 1023 each covering one interval of width &Delta;V.</p>
+<table>
+  <tr><th>ADC value</th><th>Input voltage range</th></tr>
+  <tr><td>0</td><td>0 &le; V<sub>in</sub> &lt; &Delta;V</td></tr>
+  <tr><td>1</td><td>&Delta;V &le; V<sub>in</sub> &lt; 2&Delta;V</td></tr>
+  <tr><td>n</td><td>n&Delta;V &le; V<sub>in</sub> &lt; (n+1)&Delta;V</td></tr>
+  <tr><td>1023</td><td>1023&Delta;V &le; V<sub>in</sub> &lt; 1024&Delta;V = V<sub>ref</sub></td></tr>
+</table>
+<p class="sm" style="color:var(--muted)">The peer notes list the first row as "ADC = 1: 0 &le; V<sub>in</sub> &lt; &Delta;V"; with the standard convention above the first interval is code <b>0</b>.</p>
+<div class="box"><b>1023 or 1024? (supplementary article)</b>The datasheet says ADC = V<sub>in</sub> / V<sub>ref</sub> &times; <b>1024</b>. The range 0 to V<sub>ref</sub> is divided into 1024 equal intervals (1024 codes), each of width V<sub>ref</sub>/1024; the largest code 1023 covers V<sub>ref</sub> &minus; &Delta;V &le; V<sub>in</sub> &lt; V<sub>ref</sub>, so V<sub>ref</sub> itself is never reached. So use <code>analogRead(A0) * 5.0 / 1024</code>. The difference to 1023 is under 0.1 %, but with lower resolutions it matters (8 bits: V<sub>ref</sub>/256, not /255). Analogy: a clock shows hours 0 to 23, and 23 is not the last moment of the day.</div>
+
+<h3>Improving accuracy: a smaller &Delta;V</h3>
+<p>A smaller interval means a more accurate reading. Two ways: (1) increase the resolution; (2) with the resolution fixed, <b>reduce V<sub>ref</sub></b>.</p>
+<table>
+  <tr><th>Input range</th><th>V<sub>ref</sub> to use</th><th>&Delta;V</th></tr>
+  <tr><td>0 to 5 V</td><td>5 V (AVcc, DEFAULT)</td><td>4.883 mV</td></tr>
+  <tr><td>0 to 1 V (small sensor signals)</td><td>1.1 V (internal, INTERNAL)</td><td>1.074 mV</td></tr>
+  <tr><td>0 to 2.5 V</td><td>2.5 V supplied externally at AREF (EXTERNAL)</td><td>2.441 mV</td></tr>
+</table>
+<h3>Successive approximation (the workbook)</h3>
+<p>The ADC finds the 10 bits from the MSB down. A DAC generates a trial voltage; a comparator tells whether V<sub>in</sub> is above it. At each step the range is halved, which is why V<sub>ref</sub> is divided by a power of two.</p>
+<table>
+  <tr><th>Step</th><th>Bit tried</th><th>Trial voltage (V<sub>ref</sub> = 5 V)</th><th>V<sub>in</sub> = 3.3 V &ge; trial?</th><th>Result</th></tr>
+  <tr><td>1</td><td>512</td><td>2.500 V</td><td>yes</td><td>1</td></tr>
+  <tr><td>2</td><td>256</td><td>2.500 + 1.250 = 3.750 V</td><td>no</td><td>0</td></tr>
+  <tr><td>3</td><td>128</td><td>2.500 + 0.625 = 3.125 V</td><td>yes</td><td>1</td></tr>
+  <tr><td>4</td><td>64</td><td>3.125 + 0.3125 = 3.4375 V</td><td>no</td><td>0</td></tr>
+  <tr><td>5</td><td>32</td><td>3.125 + 0.15625 = 3.28125 V</td><td>yes</td><td>1</td></tr>
+  <tr><td>6 to 10</td><td>16, 8, 4, 2, 1</td><td>...</td><td></td><td>0, 0, 0, 1, 1</td></tr>
+</table>
+<p>Result 1010100011 = 675, and indeed 3.3 / 5 &times; 1024 = 675.8, floored to <b>675</b>.</p>
+
+<h2>3. ADC registers</h2>
+<h3>Result: ADCL, ADCH, ADCW</h3>
+<p>ADCL (low) and ADCH (high) hold the result. <b>ADCW</b> is the 16-bit register that gives access to the <b>10-bit result with six leading zeros</b> (in C just read <code>ADCW</code>).</p>
+<h3>ADMUX (ADc MUltipleXer selection)</h3>
+<table>
+  <tr><th>Bit</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th><th>0</th></tr>
+  <tr><td>Name</td><td>REFS1</td><td>REFS0</td><td>ADLAR</td><td>&ndash;</td><td>MUX3</td><td>MUX2</td><td>MUX1</td><td>MUX0</td></tr>
+</table>
+<table>
+  <tr><th>REFS1</th><th>REFS0</th><th>V<sub>ref</sub></th><th>Arduino analogReference()</th></tr>
+  <tr><td>0</td><td>0</td><td>External at AREF pin</td><td><code>EXTERNAL</code></td></tr>
+  <tr><td>0</td><td>1</td><td>AVcc (5 V)</td><td><code>DEFAULT</code></td></tr>
+  <tr><td>1</td><td>0</td><td>Reserved</td><td></td></tr>
+  <tr><td>1</td><td>1</td><td>Internal 1.1 V</td><td><code>INTERNAL</code></td></tr>
+</table>
+<ul>
+  <li><b>ADLAR</b> = 0: result <b>right justified</b> (ADCH holds bits 9 and 8, ADCL bits 7 to 0). ADLAR = 1: <b>left justified</b> (ADCH holds the top 8 bits), handy for an 8-bit reading from ADCH alone.</li>
+  <li><b>MUX3..0</b> select the channel: 0000 = ADC0 (PC0), 0001 = ADC1, 0010 = ADC2, 0011 = ADC3, 0100 = ADC4, 0101 = ADC5, 1000 = internal temperature sensor.</li>
+  <li>In Arduino: <code>analogReference(type)</code>, called once in <code>setup()</code>.</li>
+</ul>
+<h3>ADCSRA (ADc Control and Status Register A)</h3>
+<table>
+  <tr><th>Bit</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th><th>0</th></tr>
+  <tr><td>Name</td><td>ADEN</td><td>ADSC</td><td>ADATE</td><td>ADIF</td><td>ADIE</td><td>ADPS2</td><td>ADPS1</td><td>ADPS0</td></tr>
+</table>
+<ul>
+  <li><b>ADEN</b>: enable the ADC. <b>ADSC</b>: set to <b>start</b> a conversion; it stays 1 while converting and the hardware clears it when done (so you <b>poll ADSC</b>).</li>
+  <li><b>ADIF</b>: flag set when the conversion is over and the data registers are updated. <b>ADIE</b>: enable the ADC-complete interrupt (<code>ADC_vect</code>). ADATE: auto-trigger.</li>
+  <li><b>ADPS2..0</b>: prescaler of the CPU clock for the ADC clock.</li>
+</ul>
+<table>
+  <tr><th>ADPS2</th><th>ADPS1</th><th>ADPS0</th><th>F_ADC</th><th>at 16 MHz</th></tr>
+  <tr><td>0</td><td>0</td><td>0</td><td>Reserved</td><td></td></tr>
+  <tr><td>0</td><td>0</td><td>1</td><td>F_CPU/2</td><td>8 MHz</td></tr>
+  <tr><td>0</td><td>1</td><td>0</td><td>F_CPU/4</td><td>4 MHz</td></tr>
+  <tr><td>0</td><td>1</td><td>1</td><td>F_CPU/8</td><td>2 MHz</td></tr>
+  <tr><td>1</td><td>0</td><td>0</td><td>F_CPU/16</td><td>1 MHz</td></tr>
+  <tr><td>1</td><td>0</td><td>1</td><td>F_CPU/32</td><td>500 kHz</td></tr>
+  <tr><td>1</td><td>1</td><td>0</td><td>F_CPU/64</td><td>250 kHz</td></tr>
+  <tr><td>1</td><td>1</td><td>1</td><td>F_CPU/128</td><td><b>125 kHz</b></td></tr>
+</table>
+<p>For full 10-bit accuracy the ADC clock should be about <b>50 to 200 kHz</b> (datasheet), so at 16 MHz use <b>F_CPU/128 = 125 kHz</b> (ADPS2..0 = 111). A conversion takes 13 ADC clock cycles, about 104 &micro;s. Arduino's <code>analogRead()</code> sets exactly this.</p>
+<div class="box"><b>Steps to read the ADC in C</b>1) PC0 input (<code>DDRC &amp;= ~(1&lt;&lt;DDC0)</code>). 2) Set V<sub>ref</sub> (REFS). 3) Select the channel (MUX). 4) Set the prescaler (ADPS). 5) Enable the ADC (ADEN). 6) Start (ADSC). 7) Wait until ADSC = 0 (or the ADC interrupt). 8) Read ADCW.</div>
+
+<h2>4. System 8: voltMeter (polling) in C</h2>
+<p>Measure any voltage from 0 to 5 V and show it on five LEDs (PB0 to PB4) from a potentiometer wiper on PC0 (ADC0): above 0 V one LED, above 1 V two, ..., above 4 V all five. Hardware: 10 k&Omega; potentiometer between +5 V and GND with the wiper to PC0, five 220 &Omega; resistors and LEDs.</p>
+<pre><code>#include &lt;avr/io.h&gt;
+int main(void)
+{
+    DDRB  = DDRB | 0b00011111;                        // PB0..PB4 outputs
+    DDRC  = DDRC &amp; 0b11111110;                        // PC0 (ADC0) input
+    ADMUX = (ADMUX &amp; 0b01111111) | 0b01000000;        // REFS1 = 0, REFS0 = 1: Vref = AVcc (5 V)
+    ADMUX = ADMUX &amp; 0b11111000;                       // MUX2..0 = 000: channel ADC0
+    ADCSRA = ADCSRA | 0b00000111;                     // ADPS2..0 = 111: F_CPU/128
+    ADCSRA = ADCSRA | 0b10000000;                     // ADEN: enable ADC
+    while (1)
+    {
+        ADCSRA = ADCSRA | 0b01000000;                 // ADSC: start conversion
+        while (ADCSRA &amp; 0b01000000);                  // poll until the conversion is over
+        float vIn = ADCW * 5.0 / 1024;                // input voltage
+        PORTB = PORTB &amp; 0b11100000;                   // all LEDs off
+        if      (vIn &gt; 4) PORTB = PORTB | 0b00011111; // 5 LEDs
+        else if (vIn &gt; 3) PORTB = PORTB | 0b00001111; // 4
+        else if (vIn &gt; 2) PORTB = PORTB | 0b00000111; // 3
+        else if (vIn &gt; 1) PORTB = PORTB | 0b00000011; // 2
+        else if (vIn &gt; 0) PORTB = PORTB | 0b00000001; // 1
+    }
+    return 0;
+}</code></pre>
+<p><b>Peer note:</b> at least one operand must be floating point (<code>5.0 / 1024</code>) otherwise integer division gives 0.</p>
+<pre><code>// Arduino wrapper version (LEDs on pins 8 to 12)
+void setup() {
+  pinMode(A0, INPUT);                              // not necessary
+  for (int pin = 8; pin &lt;= 12; pin++) pinMode(pin, OUTPUT);
+}
+void loop() {
+  int value = analogRead(A0);                      // 0..1023
+  float vIn = value * 5.0 / 1024;
+  for (int pin = 8; pin &lt;= 12; pin++) digitalWrite(pin, LOW);
+  int n = 0;
+  if      (vIn &gt; 4) n = 12;
+  else if (vIn &gt; 3) n = 11;
+  else if (vIn &gt; 2) n = 10;
+  else if (vIn &gt; 1) n = 9;
+  else if (vIn &gt; 0) n = 8;
+  for (int pin = 8; pin &lt;= n; pin++) digitalWrite(pin, HIGH);
+}</code></pre>
+
+<h2>5. System 9: voltMeterUsingInterrupts</h2>
+<p>The ADC raises <b>ADC_vect</b> when a conversion completes, so the CPU is free to do another task in <code>main()</code> instead of waiting.</p>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+int main(void)
+{
+    DDRB  = DDRB | 0b00011111;
+    DDRC  = DDRC &amp; 0b11111110;
+    ADMUX = (ADMUX &amp; 0b01111111) | 0b01000000;     // Vref = AVcc
+    ADMUX = ADMUX &amp; 0b11111000;                    // ADC0
+    ADCSRA = ADCSRA | 0b00000111;                  // F_CPU/128
+    ADCSRA = ADCSRA | 0b10000000;                  // enable ADC
+    ADCSRA = ADCSRA | 0b00001000;                  // ADIE: enable ADC complete interrupt
+    sei();                                         // global interrupts
+    ADCSRA = ADCSRA | 0b01000000;                  // start the first conversion
+    while (1) { /* can be used to perform another task */ }
+    return 0;
+}
+ISR(ADC_vect)
+{
+    float vIn = ADCW * 5.0 / 1024;
+    PORTB = PORTB &amp; 0b11100000;
+    if      (vIn &gt; 4) PORTB = PORTB | 0b00011111;
+    else if (vIn &gt; 3) PORTB = PORTB | 0b00001111;
+    else if (vIn &gt; 2) PORTB = PORTB | 0b00000111;
+    else if (vIn &gt; 1) PORTB = PORTB | 0b00000011;
+    else if (vIn &gt; 0) PORTB = PORTB | 0b00000001;
+    ADCSRA = ADCSRA | 0b01000000;                  // restart ADC
+}</code></pre>
+<p>The same program written with labelled constants: <code>ADMUX = (ADMUX &amp; ~(1&lt;&lt;REFS1)) | (1&lt;&lt;REFS0);</code>, <code>ADMUX &amp;= ~((1&lt;&lt;MUX2)|(1&lt;&lt;MUX1)|(1&lt;&lt;MUX0));</code>, <code>ADCSRA |= (1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0)|(1&lt;&lt;ADEN)|(1&lt;&lt;ADIE);</code>, start with <code>ADCSRA |= (1&lt;&lt;ADSC);</code>.</p>
+
+<h2>6. Sensors: LDR and LM35</h2>
+<h3>Light dependent resistor (LDR)</h3>
+<ul>
+  <li>Its <b>resistance falls as light intensity rises</b> (VT900 series: tens of k&Omega; at 10 lux, hundreds of k&Omega; to M&Omega; in the dark).</li>
+  <li>Used in a <b>voltage divider</b> to turn light intensity into a voltage: <b>V<sub>in</sub> = V &times; R2 / (R1 + R2)</b>. With the LDR as R1 (top, to +5 V) and a fixed resistor R2 (bottom, to GND), a bright room (small R1) gives a <b>high</b> V<sub>in</sub> and darkness gives a low V<sub>in</sub>. Swap the positions to invert.</li>
+  <li>Choose R2 close to the LDR's mid-range resistance (about 10 k&Omega; for the kit LDR) so the voltage swings usefully.</li>
+</ul>
+<h3>LM35 temperature sensor</h3>
+<ul>
+  <li>Outputs a voltage <b>linearly proportional</b> to temperature: <b>10 mV per &deg;C</b>. <b>Temperature = V<sub>out</sub> &times; 100</b> (&deg;C when V<sub>out</sub> in volts).</li>
+  <li>Range &minus;55 &deg;C to +150 &deg;C. Pins: +V, V<sub>out</sub>, GND.</li>
+  <li>With V<sub>ref</sub> = 5 V one ADC step is 4.88 mV, i.e. 0.49 &deg;C. Using the <b>internal 1.1 V</b> reference gives 1.07 mV per step, i.e. <b>0.107 &deg;C</b> per step, covering 0 to 110 &deg;C. Example: 25 &deg;C = 0.25 V gives ADCW = 51 (5 V) or 232 (1.1 V).</li>
+</ul>
+<pre><code>// LM35 on A0, internal 1.1 V reference
+analogReference(INTERNAL);                      // in setup()
+float tempC = analogRead(A0) * 1.1 / 1024 * 100;     // = ADC x 0.1074
+// C: ADMUX |= (1&lt;&lt;REFS1)|(1&lt;&lt;REFS0);   float tempC = ADCW * 1.1 / 1024 * 100;</code></pre>
+<p class="sm" style="color:var(--muted)">After switching the reference voltage, discard the first reading (the reference needs time to settle).</p>
+
+<h2>7. Exercise 4: auto light (worked)</h2>
+<p><b>Specification:</b> an LED turns on automatically at nightfall and off in the morning light, using a transducer; this shows the chain physical phenomenon &rarr; analog voltage &rarr; discrete number &rarr; digital output.</p>
+<h3>Design</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>LDR (R1)</td><td>+5 V to LDR to node A0</td></tr>
+  <tr><td>10 k&Omega; resistor (R2)</td><td>node A0 to GND</td></tr>
+  <tr><td>LED + 220 &Omega;</td><td>Arduino pin 8 (PB0) &rarr; 220 &Omega; &rarr; LED anode, cathode to GND</td></tr>
+</table>
+<p>Bright: LDR small, A0 high (for example 4 V = ADC 819). Night: LDR large, A0 low. Use two thresholds (hysteresis) so the LED does not flicker around dusk: on when ADC &lt; 300, off when ADC &gt; 400 (tune with the actual LDR).</p>
+<pre><code>// Arduino wrapper functions
+const int ledPin = 8, ldrPin = A0;
+void setup() { pinMode(ledPin, OUTPUT); }
+void loop() {
+  int v = analogRead(ldrPin);
+  if      (v &lt; 300) digitalWrite(ledPin, HIGH);    // dark: light on
+  else if (v &gt; 400) digitalWrite(ledPin, LOW);     // bright: light off
+  delay(100);
+}</code></pre>
+<pre><code>// C
+#include &lt;avr/io.h&gt;
+int main(void)
+{
+    DDRB  |=  (1&lt;&lt;DDB0);                              // LED output
+    DDRC  &amp;= ~(1&lt;&lt;DDC0);                              // PC0 input
+    ADMUX  = (ADMUX &amp; ~(1&lt;&lt;REFS1)) | (1&lt;&lt;REFS0);      // Vref = AVcc
+    ADMUX &amp;= ~((1&lt;&lt;MUX3)|(1&lt;&lt;MUX2)|(1&lt;&lt;MUX1)|(1&lt;&lt;MUX0));  // channel ADC0
+    ADCSRA |= (1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0);      // F_CPU/128
+    ADCSRA |= (1&lt;&lt;ADEN);                             // enable ADC
+    while (1)
+    {
+        ADCSRA |= (1&lt;&lt;ADSC);                          // start
+        while (ADCSRA &amp; (1&lt;&lt;ADSC));                   // wait
+        unsigned int v = ADCW;
+        if      (v &lt; 300) PORTB |=  (1&lt;&lt;PORTB0);       // dark: on
+        else if (v &gt; 400) PORTB &amp;= ~(1&lt;&lt;PORTB0);       // bright: off
+    }
+}</code></pre>
+<h3>Question 4: controlling a 230 V AC lamp</h3>
+<div class="warn"><b>Safety</b>Mains voltage can cause serious injury, shock, fire or death. Do not build or test it unless supervised by a qualified person, and never put mains on a breadboard or use exposed wiring. This is a design discussion only.</div>
+<p>The pin cannot switch mains or a relay coil directly. Use a <b>relay</b> driven by a transistor, so the low-voltage side is isolated from the mains side by the relay contacts:</p>
+<ul>
+  <li>Arduino pin 8 &rarr; <b>1 k&Omega;</b> base resistor &rarr; <b>BC547</b> NPN base; emitter to GND.</li>
+  <li>Collector &rarr; relay coil &rarr; +5 V (a 5 V coil, for example a relay module).</li>
+  <li><b>Flyback diode</b> (1N4001) across the coil, cathode to +5 V and anode to the collector, to absorb the voltage spike when the coil switches off.</li>
+  <li>Mains side: the relay's <b>COM</b> and <b>NO</b> contacts in series with the live conductor to the lamp (properly rated contacts, fuse, insulated enclosure, correct isolation).</li>
+  <li>Firmware is unchanged: HIGH on the pin energises the relay and lights the lamp.</li>
+</ul>
+
+<div class="warn"><b>Common mistakes</b>1) Integer division <code>5/1024</code> (use <code>5.0</code>). 2) Reading ADCW before ADSC clears. 3) Forgetting ADEN. 4) Wrong prescaler (too fast ADC clock lowers accuracy). 5) Dividing by 1023. 6) Using an analog pin as digital output. 7) LM35 read with 5 V reference when the signal is below 1 V (wasteful resolution). 8) Mixing up LDR/resistor positions so day and night are inverted.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain how a 10-bit ADC with Vref = 5 V converts 3.3 V and compute its resolution in volts. How can the accuracy be improved?</summary>
+<p>Interval size = 5/1024 = 4.883 mV; ADCW = floor(3.3 / 4.883 mV) = floor(675.84) = <b>675</b> (binary 1010100011, found by successive approximation: each of the 10 steps compares Vin with a DAC trial voltage). Reconstructed Vin = 675 &times; 5/1024 = 3.296 V. Accuracy improves with a higher resolution or a smaller Vref (for example the internal 1.1 V reference gives 1.07 mV per step for signals below 1.1 V).</p>
+</details>
+<details>
+<summary>W2. List the steps and register settings to read channel ADC0 with Vref = AVcc in C and write the code to read the value in a loop.</summary>
+<pre><code>DDRC &amp;= ~(1&lt;&lt;DDC0);
+ADMUX = (ADMUX &amp; ~(1&lt;&lt;REFS1)) | (1&lt;&lt;REFS0);   // Vref = AVcc
+ADMUX &amp;= ~((1&lt;&lt;MUX3)|(1&lt;&lt;MUX2)|(1&lt;&lt;MUX1)|(1&lt;&lt;MUX0)); // ADC0
+ADCSRA |= (1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0);       // /128 = 125 kHz
+ADCSRA |= (1&lt;&lt;ADEN);
+while(1){ ADCSRA |= (1&lt;&lt;ADSC); while(ADCSRA &amp; (1&lt;&lt;ADSC)); v = ADCW; }</code></pre>
+</details>
+<details>
+<summary>W3. Design an LM35-based thermometer that switches on an LED above 30 °C. Compute the ADC threshold and the resolution for 5 V and 1.1 V references.</summary>
+<p>LM35 to A0 (+V to 5 V, GND to GND), LED with 220 &Omega; on pin 8. 30 &deg;C = 0.30 V. With Vref = 5 V: threshold = 0.30/5 &times; 1024 = 61.4 (about 62), resolution 4.88 mV = 0.49 &deg;C. With Vref = 1.1 V: threshold = 0.30/1.1 &times; 1024 = 279, resolution 1.07 mV = 0.107 &deg;C, so the 1.1 V reference is better. Code: <code>analogReference(INTERNAL); float t = analogRead(A0)*1.1/1024*100; digitalWrite(8, t &gt; 30);</code></p>
+</details>
+<details>
+<summary>W4. Compare the polling and interrupt-driven voltmeter implementations.</summary>
+<p>Polling: after setting ADSC the CPU waits in <code>while (ADCSRA &amp; (1&lt;&lt;ADSC))</code>, so it is tied up for about 104 &micro;s every conversion. Interrupt: enable ADIE and <code>sei()</code>, start once, and the <code>ISR(ADC_vect)</code> computes the voltage, sets the LEDs and restarts the ADC; <code>main()</code> is free for other work.</p>
+</details>
+</section>
+
+<section class="panel" id="prac">
+<h2>Practical question: "Cold-store monitor" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question modelled on Exercises 4 and 6 (transducer, ADC, decision, actuator).</p>
+<div class="box"><b>Scenario</b>A vaccine fridge must stay between 2 &deg;C and 8 &deg;C. A "cold-store monitor" reads an <b>LM35</b> temperature sensor. A <b>green LED</b> is on while the temperature is 2 &deg;C or higher and 8 &deg;C or lower, an <b>orange LED</b> is on above 8 &deg;C up to 12 &deg;C, and a <b>red LED</b> is on above 12 &deg;C or below 2 &deg;C. Readings must be accurate to about 0.1 &deg;C.</div>
+<ol>
+  <li>Explain which ADC reference voltage you will choose and calculate the resulting resolution in &deg;C per step.</li>
+  <li>Draw the connection table for the Arduino Uno (LM35, three LEDs).</li>
+  <li>Write the firmware in C (no wrapper functions).</li>
+  <li>Write the firmware with the Arduino wrapper functions.</li>
+  <li>The LM35 is 3 m from the board. Suggest a hardware improvement for noise.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Reference voltage</h3>
+<p>The LM35 gives 10 mV/&deg;C, so 0 to 15 &deg;C is only 0 to 0.15 V. With 5 V the step is 4.88 mV = 0.49 &deg;C, which is too coarse. The <b>internal 1.1 V</b> reference (REFS1 = REFS0 = 1) gives 1.1 / 1024 = 1.074 mV = <b>0.107 &deg;C</b> per step, which meets 0.1 &deg;C. Temperature = ADCW &times; 1.1 / 1024 &times; 100 = ADCW &times; 0.1074.</p>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>LM35 +V / V<sub>out</sub> / GND</td><td>5 V / A0 (PC0, ADC0) / GND</td></tr>
+  <tr><td>Green LED</td><td>pin 8 (PB0) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>Orange LED</td><td>pin 9 (PB1) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>Red LED</td><td>pin 10 (PB2) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+
+static float readTemp(void)
+{
+    ADCSRA |= (1&lt;&lt;ADSC);                       // start conversion
+    while (ADCSRA &amp; (1&lt;&lt;ADSC));                // wait
+    return ADCW * 1.1 / 1024 * 100;            // degrees Celsius
+}
+
+int main(void)
+{
+    DDRB |= (1&lt;&lt;DDB0) | (1&lt;&lt;DDB1) | (1&lt;&lt;DDB2);   // LEDs
+    DDRC &amp;= ~(1&lt;&lt;DDC0);                          // PC0 input
+    ADMUX  = (1&lt;&lt;REFS1) | (1&lt;&lt;REFS0);              // Vref = 1.1 V internal, channel ADC0
+    ADCSRA = (1&lt;&lt;ADEN) | (1&lt;&lt;ADPS2) | (1&lt;&lt;ADPS1) | (1&lt;&lt;ADPS0);   // enable, F_CPU/128
+    readTemp();                                // discard first reading after changing Vref
+    while (1)
+    {
+        float t = readTemp();
+        PORTB &amp;= ~((1&lt;&lt;PORTB0) | (1&lt;&lt;PORTB1) | (1&lt;&lt;PORTB2));   // all off
+        if (t &gt; 12 || t &lt; 2)       PORTB |= (1&lt;&lt;PORTB2);       // red
+        else if (t &gt; 8)            PORTB |= (1&lt;&lt;PORTB1);       // orange
+        else                       PORTB |= (1&lt;&lt;PORTB0);       // green
+    }
+}</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>const int green = 8, orange = 9, red = 10;
+void setup() {
+  analogReference(INTERNAL);                 // 1.1 V
+  pinMode(green, OUTPUT); pinMode(orange, OUTPUT); pinMode(red, OUTPUT);
+}
+void loop() {
+  float t = analogRead(A0) * 1.1 / 1024 * 100;
+  digitalWrite(red,    (t &gt; 12 || t &lt; 2));
+  digitalWrite(orange, (t &gt; 8 &amp;&amp; t &lt;= 12));
+  digitalWrite(green,  (t &gt;= 2 &amp;&amp; t &lt;= 8));
+  delay(500);
+}</code></pre>
+<h3>5. Noise</h3>
+<p>Put a 100 nF capacitor between the ADC input and GND next to the board, use shielded or twisted cable, and average several readings (for example 16) in firmware.</p>
+<div class="box"><b>Marking hints</b>1.1 V reference justified with the number; <code>ADCW &times; 1.1 / 1024 &times; 100</code> (floats and 1024); ADEN, prescaler, ADSC polling; correct boundaries for each band, including both below 2 and above 12; Vref switch noted.</div>
+</details>
+
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>ADC maths</td><td>Intervals = 2^n = 1024. &Delta;V = Vref/1024. ADCW = floor(Vin/&Delta;V). Vin = ADCW &times; Vref/1024. Use <b>1024</b>. 5 V: 4.883 mV; 1.1 V: 1.074 mV.</td></tr>
+  <tr><td>Accuracy</td><td>More bits or smaller Vref.</td></tr>
+  <tr><td>ADMUX</td><td>REFS1 REFS0: 00 AREF, 01 AVcc, 11 1.1 V. ADLAR left adjust. MUX3..0 channel (0000 = ADC0 ... 0101 = ADC5, 1000 = temperature).</td></tr>
+  <tr><td>ADCSRA</td><td>ADEN (7), ADSC (6), ADATE (5), ADIF (4), ADIE (3), ADPS2..0 (2..0). 111 = /128 = 125 kHz.</td></tr>
+  <tr><td>Read steps</td><td>input pin, Vref, channel, prescaler, ADEN, ADSC, wait ADSC = 0 (or ADC_vect), read ADCW.</td></tr>
+  <tr><td>Arduino</td><td><code>analogRead(A0)</code> = 0..1023; <code>analogReference(DEFAULT / INTERNAL / EXTERNAL)</code>.</td></tr>
+  <tr><td>LDR</td><td>Resistance falls with light; divider Vin = V&times;R2/(R1+R2). LDR on top: bright = high Vin. Use hysteresis (on &lt; 300, off &gt; 400).</td></tr>
+  <tr><td>LM35</td><td>10 mV/&deg;C; T = Vout &times; 100; with 1.1 V Vref: T = ADCW &times; 0.1074; &minus;55 to 150 &deg;C.</td></tr>
+  <tr><td>Voltmeter</td><td><code>vIn = ADCW * 5.0 / 1024</code>; &gt;4 5 LEDs, &gt;3 4, &gt;2 3, &gt;1 2, &gt;0 1.</td></tr>
+  <tr><td>Interrupt ADC</td><td>ADIE + sei(), start once, ISR(ADC_vect) uses ADCW and restarts with ADSC.</td></tr>
+  <tr><td>Mains lamp</td><td>BC547 + 1 k&Omega; base, relay coil with 1N4001 flyback, contacts on the live wire; qualified supervision only.</td></tr>
+</table>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "The ADC converts:", "o": ["Digital numbers to voltages", "Analog voltages into discrete numbers", "Currents to resistances", "Clock pulses to bits"], "a": 1, "e": "Between 0 and Vref into 0 to 2^resolution − 1."}, {"q": "The ATmega328P ADC resolution is:", "o": ["8 bits", "10 bits", "12 bits", "16 bits"], "a": 1, "e": "1024 intervals."}, {"q": "Interval size with Vref = 5 V and 10 bits is about:", "o": ["4.88 mV", "5 mV exactly", "48.8 mV", "0.49 mV"], "a": 0, "e": "5 / 1024 = 4.883 mV."}, {"q": "The ADC value for Vin = 2.5 V with Vref = 5 V is:", "o": ["256", "512", "1023", "2500"], "a": 1, "e": "2.5 / 5 × 1024 = 512."}, {"q": "Which is the correct conversion back to voltage (datasheet)?", "o": ["ADCW × Vref / 1023", "ADCW × Vref / 1024", "ADCW / Vref", "ADCW × 1024"], "a": 1, "e": "1024 intervals; the code 1023 never reaches Vref."}, {"q": "To make the ADC more accurate with a fixed resolution you can:", "o": ["Increase Vref", "Reduce Vref", "Disable the multiplexer", "Use a slower CPU"], "a": 1, "e": "Smaller Vref gives a smaller interval size."}, {"q": "REFS1 REFS0 = 11 selects:", "o": ["AREF pin", "AVcc", "Internal 1.1 V", "Reserved"], "a": 2, "e": "01 is AVcc (DEFAULT); 00 is external."}, {"q": "In Arduino, analogReference(INTERNAL) corresponds to:", "o": ["REFS = 00", "REFS = 01", "REFS = 11", "REFS = 10"], "a": 2, "e": "1.1 V internal."}, {"q": "MUX2 MUX1 MUX0 = 011 selects channel:", "o": ["ADC0", "ADC2", "ADC3", "ADC5"], "a": 2, "e": "Binary value is the channel number."}, {"q": "Setting which bit starts a conversion?", "o": ["ADEN", "ADSC", "ADIE", "ADIF"], "a": 1, "e": "ADSC (ADc Start Conversion); it clears when the conversion is done."}, {"q": "Which bit must be set to enable the ADC?", "o": ["ADEN", "ADSC", "ADATE", "ADLAR"], "a": 0, "e": "ADc ENable, bit 7 of ADCSRA."}, {"q": "ADPS2..0 = 111 gives an ADC clock of (F_CPU = 16 MHz):", "o": ["2 MHz", "1 MHz", "250 kHz", "125 kHz"], "a": 3, "e": "F_CPU/128."}, {"q": "Why use a prescaler of 128 at 16 MHz?", "o": ["To save RAM", "To keep the ADC clock within about 50 to 200 kHz for full accuracy", "To disable interrupts", "To raise Vref"], "a": 1, "e": "125 kHz."}, {"q": "ADLAR = 1 means:", "o": ["Result right justified", "Result left justified so ADCH holds the top 8 bits", "ADC disabled", "Auto trigger"], "a": 1, "e": "ADc Left Adjust Result."}, {"q": "ADCW provides:", "o": ["Only the low byte", "A 16-bit access to the 10-bit result with six leading zeros", "The channel number", "The prescaler"], "a": 1, "e": "Combines ADCH:ADCL."}, {"q": "float vIn = ADCW * 5 / 1024; (all integers) gives a wrong result because:", "o": ["ADCW is negative", "Integer arithmetic: 5/1024 style truncation loses the fraction", "5 is too big", "It needs sei()"], "a": 1, "e": "Use 5.0 so the calculation is floating point."}, {"q": "Which vector is used for the ADC-complete interrupt?", "o": ["ADC_vect", "ADCSRA_vect", "INT0_vect", "TIMER0_OVF_vect"], "a": 0, "e": "Enable with ADIE and sei()."}, {"q": "In the interrupt voltmeter, the ISR must end by:", "o": ["Clearing ADEN", "Restarting the conversion by setting ADSC", "Calling cli()", "Returning 0"], "a": 1, "e": "The ADC does not retrigger itself unless auto trigger is used."}, {"q": "An LDR's resistance:", "o": ["Rises with light", "Falls as light intensity rises", "Is constant", "Depends on sound"], "a": 1, "e": "Used in a voltage divider."}, {"q": "LDR on top (to 5 V), 10 kΩ at the bottom. In bright light the divider voltage is:", "o": ["Low", "High", "Zero", "Negative"], "a": 1, "e": "Vin = V×R2/(R1+R2); small R1 gives Vin near 5 V."}, {"q": "LM35 output sensitivity:", "o": ["1 mV/°C", "10 mV/°C", "100 mV/°C", "1 V/°C"], "a": 1, "e": "Temperature = Vout × 100."}, {"q": "LM35 output is 0.30 V. The temperature is:", "o": ["3 °C", "30 °C", "300 °C", "0.3 °C"], "a": 1, "e": "0.30 × 100 = 30 °C."}, {"q": "Why use the 1.1 V internal reference with an LM35?", "o": ["It is cheaper", "The sensor output is small, so a smaller interval gives finer temperature resolution (about 0.1 °C)", "The LM35 needs 1.1 V", "It disables noise"], "a": 1, "e": "1.1/1024 = 1.07 mV per step."}, {"q": "To switch a 230 V lamp from a microcontroller pin you use:", "o": ["The pin directly", "A transistor-driven relay with a flyback diode, with proper isolation", "A bigger resistor", "A capacitor"], "a": 1, "e": "Mains work needs qualified supervision and correct isolation."}, {"q": "The flyback diode across a relay coil:", "o": ["Raises the current", "Absorbs the voltage spike when the coil de-energises", "Sets the logic level", "Debounces the input"], "a": 1, "e": "Protects the transistor and the microcontroller."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

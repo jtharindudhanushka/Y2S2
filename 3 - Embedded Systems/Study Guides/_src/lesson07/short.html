@@ -1,0 +1,15 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>PWM</td><td>Analog-like output by digital means; device reacts to the average. Duty = t<sub>high</sub>/period; V<sub>avg</sub> = duty &times; 5 V.</td></tr>
+  <tr><td>Generation</td><td>TCNT counts 0..TOP; comparator vs OCRnX; waveform generator sets/clears OCnX. Non-inverted (COM = 10): clear at match, set at 0. Inverted (11): set at match, clear at 0.</td></tr>
+  <tr><td>Frequency</td><td>F<sub>PWM</sub> = F_CPU/((TOP+1) &times; prescale). 8-bit /64: 976.6 Hz. Phase correct: F_CPU/(510 &times; prescale) = 490 Hz.</td></tr>
+  <tr><td>Duty</td><td>Fast: (OCR+1)/(TOP+1). Phase correct: about OCR/TOP.</td></tr>
+  <tr><td>WGM (n2 n1 n0)</td><td>000 Normal, 001 Phase correct PWM, 010 CTC (TOP = OCRnA), 011 Fast PWM.</td></tr>
+  <tr><td>CTC</td><td>Count to OCRnA, clear, OCFnA flag, OCIEnA interrupt. 1 ms at /64: OCR = 249.</td></tr>
+  <tr><td>Pins</td><td>OC0A = PD6 (6), OC0B = PD5 (5), OC1A = PB1 (9), OC1B = PB2 (10), OC2A = PB3 (11), OC2B = PD3 (3). Output in DDR.</td></tr>
+  <tr><td>1 kHz recipe</td><td><code>DDRD |= (1&lt;&lt;DDD6); TCCR0A = (1&lt;&lt;COM0A1)|(1&lt;&lt;WGM01)|(1&lt;&lt;WGM00); TCCR0B = (1&lt;&lt;CS01)|(1&lt;&lt;CS00); OCR0A = value;</code></td></tr>
+  <tr><td>Arduino</td><td><code>analogWrite(pin, 0..255)</code> on ~ pins; 5, 6 about 977 Hz fast PWM, others about 490 Hz phase correct.</td></tr>
+  <tr><td>Analog output</td><td>MCU with DAC, DAC breakout, or RC low-pass filter.</td></tr>
+  <tr><td>Auto fan</td><td>LM35 on A0, 1.1 V reference; duty 0 at &le; 25 &deg;C, 255 at &ge; 35 &deg;C, linear (T&minus;25)/10 &times; 255; motor via BC547/2N7000, flyback diode, common ground.</td></tr>
+</table>

@@ -1,0 +1,57 @@
+<h2>Practical question: "Magnetic lid pump" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question using the kit parts named in the course (AH1815 / reed switch, BC547, 2N7000, 1N4001, 6 to 9 V DC motor, 9 V battery).</p>
+<div class="box"><b>Scenario</b>A small pump (6 V DC motor, 120 mA) must run only while a magnet fixed to a tank lid is <b>close to a Hall sensor</b> (lid closed). When the lid is lifted the pump must stop immediately. A green LED shows that the pump is running. The motor has its own 9 V battery.</div>
+<ol>
+  <li>Choose and justify a driver (BJT or MOSFET) and calculate its component values.</li>
+  <li>Give the complete connection list (Arduino Uno, AH1815, driver, motor, diode, LED).</li>
+  <li>Write the firmware in C using register access.</li>
+  <li>Write the firmware with the Arduino wrapper functions.</li>
+  <li>State two reasons the pump must not be connected directly to an I/O pin and one safety feature in the circuit.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Driver</h3>
+<p>BJT BC547 (100 mA limit) is too small for 120 mA. Use the <b>2N7000 MOSFET</b> (60 V, 200 mA, gate threshold 0.8 to 3 V so a 5 V pin enhances it fully). Gate resistor 100 &Omega; (limits switching current), <b>10 k&Omega; pull-down</b> from gate to GND so the pump stays off while the pin floats. <b>1N4001 flyback diode</b> across the motor, cathode to the battery +. (If only BC547 parts are available: I<sub>B</sub> = 120/10 = 12 mA, R<sub>B</sub> = (5 &minus; 0.7)/0.012 = 358 &Omega;, so 330 &Omega;, but the transistor is then at its limit, so a power transistor is preferred.)</p>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>From</th><th>To</th></tr>
+  <tr><td>AH1815 VDD, GND</td><td>Arduino 5 V, GND</td></tr>
+  <tr><td>AH1815 OUTPUT</td><td>Arduino pin 2 (PD2); internal pull-up on (output is open drain)</td></tr>
+  <tr><td>Arduino pin 8 (PB0)</td><td>100 &Omega; &rarr; MOSFET gate; 10 k&Omega; from gate to GND</td></tr>
+  <tr><td>MOSFET source</td><td>GND (joined to battery &minus; and Arduino GND)</td></tr>
+  <tr><td>MOSFET drain</td><td>Motor terminal 1</td></tr>
+  <tr><td>Motor terminal 2</td><td>9 V battery +</td></tr>
+  <tr><td>1N4001</td><td>Across the motor: cathode (band) to battery +, anode to drain</td></tr>
+  <tr><td>Arduino pin 9 (PB1)</td><td>220 &Omega; &rarr; green LED &rarr; GND</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+
+int main(void)
+{
+    DDRB  |= (1&lt;&lt;DDB0) | (1&lt;&lt;DDB1);      // pump driver, LED
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);                 // PD2 input (Hall sensor)
+    PORTD |=  (1&lt;&lt;PORTD2);                // pull-up (open-drain output)
+    while (1)
+    {
+        if ((PIND &amp; (1&lt;&lt;PIND2)) == 0)    // output low: magnet near, lid closed
+            PORTB |=  (1&lt;&lt;PORTB0) | (1&lt;&lt;PORTB1);    // pump and LED on
+        else
+            PORTB &amp;= ~((1&lt;&lt;PORTB0) | (1&lt;&lt;PORTB1)); // both off
+    }
+}</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>const int sensor = 2, pump = 8, led = 9;
+void setup() {
+  pinMode(sensor, INPUT_PULLUP);
+  pinMode(pump, OUTPUT);
+  pinMode(led, OUTPUT);
+}
+void loop() {
+  bool lidClosed = (digitalRead(sensor) == LOW);
+  digitalWrite(pump, lidClosed);
+  digitalWrite(led,  lidClosed);
+}</code></pre>
+<h3>5. Why not directly</h3>
+<p>(a) The motor draws 120 mA but an I/O pin can supply only about 20 mA (40 mA absolute maximum), so the pin or chip would be damaged. (b) The motor is an inductive load that generates voltage spikes when switched off, which could destroy the pin. Safety feature: the flyback diode (and the separate battery with a common ground).</p>
+<div class="box"><b>Marking hints</b>Driver chosen with a calculation; flyback diode orientation; gate pull-down; common ground; pull-up for the open-drain Hall output and the active-low test; the code reacts immediately to the sensor state.</div>
+</details>

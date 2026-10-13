@@ -1,0 +1,16 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Registers</td><td>DDR 1 = output, 0 = input. PORT writes outputs (and enables the pull-up for inputs). PIN reads inputs.</td></tr>
+  <tr><td>LED resistor</td><td>R = (Vs &minus; VL) / IL; round <b>up</b> to the standard value (200 &rarr; 220 &Omega;).</td></tr>
+  <tr><td>Colour code</td><td>0 black, 1 brown, 2 red, 3 orange, 4 yellow, 5 green, 6 blue, 7 violet, 8 grey, 9 white; third band = multiplier.</td></tr>
+  <tr><td>Bit operations</td><td>set <code>|= (1&lt;&lt;n)</code>; clear <code>&amp;= ~(1&lt;&lt;n)</code>; toggle <code>^= (1&lt;&lt;n)</code>; test <code>PINx &amp; (1&lt;&lt;n)</code>.</td></tr>
+  <tr><td>Button</td><td>Pin to GND, PORT bit = 1 for pull-up, pressed reads 0.</td></tr>
+  <tr><td>Delay maths</td><td>t = 1/f (16 MHz: 62.5 ns); cycles = delay/t (0.5 s: 8 000 000). Loop of N: (b+1+2)(N&minus;1) + (b+1+1). LDI 1, DEC 1, BRNE 2/1, NOP 1, RET 4, CALL 4.</td></tr>
+  <tr><td>Exact delays</td><td>500 ms: R16=72, R17=188, R18=196 + 8 NOP. 200 ms: 241, 25, 176 + 2 NOP.</td></tr>
+  <tr><td>Asm blinker</td><td>SBI DDRB,0; START: SBI PORTB,0; CALL DELAY; CBI PORTB,0; CALL DELAY; JMP START.</td></tr>
+  <tr><td>C blinker</td><td>#define F_CPU before util/delay.h; DDRB|=; while(1){...}.</td></tr>
+  <tr><td>Arduino</td><td>pinMode / digitalWrite / digitalRead / delay; INPUT_PULLUP. Larger HEX (920 B vs 200 B vs 172 B for the 5-LED chaser).</td></tr>
+  <tr><td>Comparison</td><td>Asm: efficient, hard, not portable. C: efficient, easier, portable. Arduino: easiest, inefficient.</td></tr>
+  <tr><td>Ten LEDs, seven pins</td><td>5 anode lines + 2 BC547 (1 k&Omega; base) switching two LED sets' grounds.</td></tr>
+</table>

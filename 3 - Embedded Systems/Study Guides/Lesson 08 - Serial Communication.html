@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ES Lesson 8 - Serial Communication</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .warn{background:var(--badbg);border-left:3px solid var(--bad);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  td.c{white-space:normal}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Embedded Systems study guides</a> &middot; INTE 22263 &middot; Lesson 08</p><button id="theme" type="button"></button></div>
+  <h1>Serial Communication</h1>
+  <p class="lead">Covers lecture 09 and exercise 7: serial vs parallel, synchronous vs asynchronous, the USART and the asynchronous frame, line drivers and USB interfaces, transmitter and receiver, USART registers, baud rate and baud rate error, systems 16 and 17 (character encloser with polling and interrupts), Arduino Serial, and the temp logger exercise (firmware, stdio streams and the C# .NET application). The peer notes do not cover this lecture.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="prac">Practical question</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<p class="sm" style="color:var(--muted)">Sources: lecture 09 (Serial Communication), Exercise 7, ATmega328P simplified data sheet and the C cheat sheet (stdio). The peer notes stop before this lecture. Prerequisites: lessons 3 (interrupts) and 4 (ADC).</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Discuss serial vs parallel and asynchronous vs synchronous communication</li>
+  <li>Explain the asynchronous frame, baud rate, line drivers and USART-to-USB interfaces</li>
+  <li>Explain how the USART transmits and receives and the function of its registers</li>
+  <li>Compute UBRR and the baud rate error</li>
+  <li>Write C (polling and interrupt) and Arduino firmware that communicates with a PC, including stdio <code>printf</code>/<code>getchar</code> over a stream</li>
+</ul>
+
+<h2>1. Serial communication</h2>
+<ul>
+  <li>Used by embedded systems to communicate with <b>other systems</b>: a PC, another microcontroller, a GPS module, a Bluetooth/Wi-Fi module, a display, a memory chip.</li>
+  <li><b>Serial</b> sends <b>one bit at a time</b> over one line (plus ground).</li>
+  <li><b>Why not parallel?</b> Parallel sends many bits at once but needs many wires and pins (scarce on a microcontroller), is costly, and over longer cables the bits arrive at slightly different times (skew) and the lines interfere (crosstalk), so the speed over distance is limited. Serial needs few pins, few wires and works over longer distances at high speed.</li>
+</ul>
+<table>
+  <tr><th></th><th>Asynchronous</th><th>Synchronous</th></tr>
+  <tr><td>Clock</td><td>No shared clock line; both sides agree on a <b>baud rate</b></td><td>A clock signal is sent with the data (separate clock line)</td></tr>
+  <tr><td>Framing</td><td>Each character framed by start and stop bits</td><td>Continuous stream, no framing per character</td></tr>
+  <tr><td>Wires</td><td>TX, RX, GND</td><td>Data + clock (+ GND), e.g. SPI, I<sup>2</sup>C</td></tr>
+  <tr><td>Overhead</td><td>2 or more extra bits per character</td><td>Less overhead, faster</td></tr>
+</table>
+
+<h2>2. The USART</h2>
+<p>The <b>USART</b> (Universal Synchronous Asynchronous Receiver Transmitter) is a <b>peripheral device that implements both asynchronous and synchronous serial communication</b>. <b>Why a separate peripheral?</b> Sending a bit every 104 &micro;s (at 9600 baud) with precise timing in software would occupy the CPU; the USART shifts the bits out and in by itself using its own baud rate generator, so the CPU only handles whole characters (and can do other tasks in between).</p>
+<h3>Asynchronous data transfer</h3>
+<ul>
+  <li>The line is <b>high when idle</b>. Each character is <b>framed</b>: a <b>start bit</b> (0), then the data bits, <b>least significant bit first</b>, then the <b>stop bit</b> (1). 8N1 means 8 data bits, no parity, 1 stop bit, so <b>10 bits per character</b>.</li>
+  <li>Example: ASCII 'A' = 0x41 = 01000001, sent as start 0, then 1 0 0 0 0 0 1 0 (LSB first), then stop 1.</li>
+  <li><b>Why is the baud rate important?</b> There is no clock line, so the receiver times each bit with its own clock. Both ends must use the same baud rate (bits per second) or the bits are sampled at the wrong times and characters are garbled.</li>
+  <li><b>How does the receiver recognise characters?</b> The falling edge of the start bit marks the beginning of a frame; the receiver then samples each bit in the middle of its bit time (it oversamples 16 times per bit) and checks the stop bit.</li>
+  <li>Character time at 9600 baud = 10 / 9600 = 1.04 ms, so about 960 characters per second.</li>
+</ul>
+
+<h2>3. Connecting to a PC</h2>
+<ul>
+  <li><b>Serial port with a line driver:</b> the PC's RS-232 port uses voltages of about &plusmn;3 to &plusmn;15 V (a logic 1 is a negative voltage), while the microcontroller uses 0 and 5 V. <b>Why not connect directly?</b> The levels and polarity differ and the RS-232 voltages would damage the microcontroller. A <b>line driver (MAX232)</b> converts between the levels (with charge-pump capacitors). Example: Arduino Severino (ATmega328P with MAX232) and a DB-9 connector.</li>
+  <li><b>USB port with a UART-to-USB interface controller:</b> modern PCs have no serial port, so a chip converts the UART signals to USB. Arduino Duemilanove: ATmega328P with the <b>FT232RL</b>. <b>Arduino Uno: ATmega328P with an ATmega16U2</b> (another microcontroller programmed as the UART-to-USB converter).</li>
+  <li>The PC then sees a <b>virtual COM port</b>. TX of one device connects to RX of the other (crossed), and the grounds are common. On the Uno the chip's PD0 (RXD) and PD1 (TXD) are Arduino pins 0 and 1.</li>
+</ul>
+
+<h2>4. How the USART transmits and receives</h2>
+<h3>Transmitter</h3>
+<p>CPU writes the character to <b>UDRn</b> (transmit data buffer) &rarr; moved to the <b>Transmit Shift Register</b> &rarr; shifted out bit by bit on <b>TXD</b> by the baud rate generator, with the start and stop bits added by the pin control.</p>
+<ul>
+  <li><b>UDREn</b> flag = data register empty (ready for a new character). <b>TXCn</b> flag = the whole frame in the shift register has been sent and UDRn is empty.</li>
+  <li><b>Which flag gives maximum throughput?</b> <b>UDRE</b>: as soon as the data register is empty (the previous character has moved to the shift register) the next character can be loaded while the previous one is still being shifted out, so the line never idles. Waiting for TXC would leave gaps.</li>
+  <li><b>Purpose of TXC:</b> to know when the <b>last bit has really left</b> (for example before turning off the transmitter, entering sleep mode, or switching a half-duplex line driver like RS-485 to receive).</li>
+</ul>
+<h3>Receiver</h3>
+<p>Bits arrive on <b>RXD</b> &rarr; <b>pin control</b> &rarr; synchronisation with the baud rate clock &rarr; <b>Receive Shift Register</b> assembles the frame &rarr; the character is transferred to the <b>receive data buffer UDRn</b> &rarr; <b>RXCn</b> flag set (unread data). Reading <b>UDRn</b> clears RXC.</p>
+<ul>
+  <li><b>Role of pin control:</b> it connects the RXD/TXD pin to the USART and manages the pin direction when the receiver/transmitter is enabled (overriding the normal I/O function).</li>
+  <li><b>Need for shift registers:</b> the data arrives bit by bit and must be assembled into a byte (or shifted out one by one on transmit); the shift registers do this and let the CPU work with a whole character, and with double buffering a new character can be received while the previous one is waiting to be read.</li>
+</ul>
+<div class="box"><b>Summary sequences (slide)</b><b>Receive:</b> bits arrive on RXD &rarr; Receive Shift Register assembles bits &rarr; character moved to the receive data buffer &rarr; UDR gives access to the unread character &rarr; RXC = 1 &rarr; if RXCIE = 1, <code>USART_RX_vect</code> ISR runs &rarr; CPU reads UDR &rarr; RXC = 0.<br><b>Transmit:</b> transmit data buffer empty &rarr; UDRE = 1 &rarr; if UDRIE = 1, <code>USART_UDRE_vect</code> ISR runs &rarr; CPU loads a new character into UDR &rarr; UDRE = 0 &rarr; character moves to the Transmit Shift Register &rarr; UDRE = 1 &rarr; bits transmitted on TXD.</div>
+
+<h2>5. USART registers (USART0 on the ATmega328P, n = 0)</h2>
+<table>
+  <tr><th>Register</th><th>Function</th></tr>
+  <tr><td><b>UBRRn</b></td><td>Baud rate register, 16 bits but only the lower 12 bits are used. <b>Baud rate = F_CPU / (16 &times; (UBRR + 1))</b>, so <b>UBRR = F_CPU / (16 &times; baud) &minus; 1</b>.</td></tr>
+  <tr><td><b>UDRn</b></td><td>Data register: writing gives the transmit data buffer, reading gives the receive data buffer.</td></tr>
+  <tr><td><b>UCSRnA</b></td><td>bit 7 <b>RXCn</b> (receive complete: unread data in UDR), bit 6 <b>TXCn</b> (transmit complete), bit 5 <b>UDREn</b> (UDR empty)</td></tr>
+  <tr><td><b>UCSRnB</b></td><td>bit 7 <b>RXCIEn</b>, bit 6 <b>TXCIEn</b>, bit 5 <b>UDRIEn</b> (interrupt enables for RXC, TXC, UDRE); bit 4 <b>RXENn</b>, bit 3 <b>TXENn</b> (enable receiver, transmitter); bit 2 <b>UCSZn2</b></td></tr>
+  <tr><td><b>UCSRnC</b></td><td>bits 2:1 <b>UCSZn1, UCSZn0</b> (character size together with UCSZn2). Reset value 011: 8-bit.</td></tr>
+</table>
+<table>
+  <tr><th>UCSZn2</th><th>UCSZn1</th><th>UCSZn0</th><th>Character size</th></tr>
+  <tr><td>0</td><td>0</td><td>0</td><td>5-bit</td></tr><tr><td>0</td><td>0</td><td>1</td><td>6-bit</td></tr><tr><td>0</td><td>1</td><td>0</td><td>7-bit</td></tr><tr><td>0</td><td>1</td><td>1</td><td><b>8-bit</b></td></tr><tr><td>1</td><td>1</td><td>1</td><td>9-bit</td></tr>
+</table>
+<p><b>Why enable and disable RX and TX separately?</b> Enabling them connects the USART to the pins (taking over PD0 and PD1) and starts the hardware. Disabling them frees the pins for ordinary I/O and saves power, and a device that only transmits (or only receives) needs just one of them. The flags TXC is cleared by writing 1 (W1C) like the timer flags.</p>
+<p><b>Setting the baud rate:</b> choose a standard rate (2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 76800, 115200, 230400, 460800, 921600). <b>Why not other values?</b> Standard rates are what PCs, terminal programs and USB converters support, and they divide common crystals with small error. In code: <code>UBRR0 = 16000000 / (16 * 9600UL) - 1;</code>. <b>Why UL?</b> On the AVR an <code>int</code> is 16 bits (maximum 32 767), and 16 &times; 9600 = 153 600 would overflow; <code>UL</code> (unsigned long, 32 bits) forces 32-bit arithmetic.</p>
+
+<h3>Baud rate error</h3>
+<div class="box">Actual baud rate = F_CPU / (16 &times; (UBRR + 1)). <b>Baud rate error</b> = (actual &minus; desired) / desired &times; 100 %.<br>9600 baud at 16 MHz: UBRR = 16 000 000 / (16 &times; 9600) &minus; 1 = 103.17, so UBRR = 103; actual = 16 000 000 / (16 &times; 104) = 9615.4 baud; error = +0.16 %.</div>
+<table>
+  <tr><th>Desired</th><th>UBRR (16 MHz)</th><th>Actual</th><th>Error</th></tr>
+  <tr><td>2400</td><td>416</td><td>2398.1</td><td>&minus;0.08 %</td></tr>
+  <tr><td>4800</td><td>207</td><td>4807.7</td><td>+0.16 %</td></tr>
+  <tr><td><b>9600</b></td><td><b>103</b></td><td>9615.4</td><td>+0.16 %</td></tr>
+  <tr><td>19 200</td><td>51</td><td>19 230.8</td><td>+0.16 %</td></tr>
+  <tr><td>38 400</td><td>25</td><td>38 461.5</td><td>+0.16 %</td></tr>
+  <tr><td>57 600</td><td>16</td><td>58 823.5</td><td>+2.12 %</td></tr>
+  <tr><td>115 200</td><td>8</td><td>111 111</td><td>&minus;3.55 %</td></tr>
+</table>
+<ul>
+  <li><b>What if the error is high?</b> The receiver's bit sampling drifts from the middle of each bit; over the 10 bits of a frame the error accumulates, so bits are mis-sampled and characters are corrupted (about 2 to 3 % total mismatch is the practical limit). 115 200 baud at 16 MHz (&minus;3.55 %) is unreliable without the double-speed mode (U2X0).</li>
+  <li><b>How to minimise error?</b> Choose a baud rate with a small error, use a crystal that divides exactly (an <b>18.432 MHz</b> crystal, as shown in the lecture, gives UBRR = 119 for 9600 baud with 0 % error), or use the U2X double speed mode.</li>
+</ul>
+
+<h2>6. System 16: charEncloser (polling)</h2>
+<p><b>Task:</b> receive characters from the PC, enclose each in square brackets and send it back (typing <code>a</code> returns <code>[a]</code>). <b>Hardware:</b> the Arduino Uno's USB interface (no extra parts): the ATmega328P PD0/PD1 connect to the USART-to-USB interface; the board connects to the PC with the USB cable. In the schematic: USB &rarr; USART-to-USB interface (TXD to RXD pin 2, RXD to TXD pin 3), 10 k&Omega; reset pull-up, 16 MHz crystal.</p>
+<pre><code>// charEncloserC.c
+#include &lt;avr/io.h&gt;                                  // I/O definitions
+
+void transmitChar(char ch)                            // transmitChar() subroutine
+{
+    while (!(UCSR0A &amp; 0b00100000));                   // poll for data register empty flag (UDRE0)
+    UDR0 = ch;                                        // write character to data register
+}
+
+int main(void)
+{
+    UBRR0 = 16000000 / (16 * 9600UL) - 1;             // set baud rate as 9600 bps
+    UCSR0B = UCSR0B &amp; 0b11111011;                     // UCSZ02 = 0
+    UCSR0C = UCSR0C | 0b00000110;                     // specify char size as 8-bit (UCSZ01, UCSZ00 = 1)
+    UCSR0B = UCSR0B | 0b00011000;                     // enable RX and TX (RXEN0, TXEN0)
+    while (1)
+    {
+        while (!(UCSR0A &amp; 0b10000000));               // poll for receive complete flag (RXC0)
+        char ch = UDR0;                               // read character from data register
+        transmitChar('[');
+        transmitChar(ch);                             // call transmitChar()
+        transmitChar(']');
+    }
+    return 0;
+}</code></pre>
+<pre><code>// Arduino wrapper version
+void setup() { Serial.begin(9600); }                  // set baud rate
+void loop() {
+  if (Serial.available()) {                           // if new data available
+    char ch = Serial.read();                          // read incoming character
+    Serial.print('[');
+    Serial.print(ch);                                 // print enclosed character
+    Serial.print(']');
+  }
+}</code></pre>
+<h3>Testing: terminal emulators</h3>
+<p>A <b>terminal emulator</b> is a program that sends the characters you type to a serial port and shows what arrives (the software version of an old computer terminal). Examples: the <b>Serial Monitor</b> of the Arduino IDE (set the baud rate to match), the Terminal window extension of Atmel/Microchip Studio, PuTTY. Typing <code>a</code> then <code>b</code> shows <code>[a][b]</code>. <b>CR and LF:</b> carriage return (<code>\r</code>, ASCII 13) moves the cursor to the start of the line; line feed (<code>\n</code>, ASCII 10) moves down one line. Terminals can append them (the "No line ending / Newline / Carriage return / Both" setting) and <code>println()</code> sends CR + LF.</p>
+
+<h2>7. System 17: charEncloserUsingInterrupts</h2>
+<p>The USART raises <b>USART_RX_vect</b> when a character is received and <b>USART_UDRE_vect</b> when the data register is empty, so no waiting is needed in <code>main()</code>.</p>
+<pre><code>// charEncloserUsingInterruptsC.c
+#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+char ch[] = {'[', ' ', ']'};                     // character array with enclosing brackets
+volatile int i = 0;                              // array index
+
+int main(void)
+{
+    UBRR0 = 103;                                 // 9600 bps
+    UCSR0B = UCSR0B &amp; 0b11111011;                // UCSZ02 = 0
+    UCSR0C = UCSR0C | 0b00000110;                // 8-bit
+    UCSR0B = UCSR0B | 0b00011000;                // enable RX and TX
+    UCSR0B = UCSR0B | 0b10000000;                // enable receive complete interrupt (RXCIE0)
+    sei();                                       // enable global interrupts
+    while (1) { }
+    return 0;
+}
+
+ISR(USART_RX_vect)                               // receive complete
+{
+    ch[1] = UDR0;                                // read character into the array
+    UCSR0B = UCSR0B &amp; 0b01111111;                // disable receive complete interrupt
+    UCSR0B = UCSR0B | 0b00100000;                // enable data register empty interrupt (UDRIE0)
+}
+
+ISR(USART_UDRE_vect)                             // data register empty
+{
+    UDR0 = ch[i++];                              // send next character and increment the index
+    if (i == 3)                                  // all three characters written
+    {
+        i = 0;                                   // reset the index
+        UCSR0B = UCSR0B &amp; 0b11011111;            // disable data register empty interrupt
+        UCSR0B = UCSR0B | 0b10000000;            // enable receive complete interrupt
+    }
+}</code></pre>
+<p>The UDRE interrupt must be <b>disabled when there is nothing more to send</b>, otherwise it fires continuously (the flag stays 1 while the register is empty). Reading <code>UDR0</code> clears RXC; writing <code>UDR0</code> clears UDRE.</p>
+
+<h2>8. Exercise 7: temp logger</h2>
+<p><b>System:</b> an ATmega328P subsystem with an LM35 on A0 (PC0) and a serial-to-USB interface, plus a .NET (C#) application on a PC. When the subsystem receives the ASCII character <b>'Y'</b> it starts sending the temperature once a second; on any other character it stops at once and keeps listening.</p>
+<h3>Q1: Arduino wrapper firmware</h3>
+<pre><code>bool sending = false;
+void setup() { Serial.begin(9600); }
+void loop() {
+  if (Serial.available()) {
+    char ch = Serial.read();
+    sending = (ch == 'Y');                       // 'Y' starts, any other character stops
+  }
+  if (sending) {
+    int temp = analogRead(A0) * 5.0 / 1024 * 100;
+    Serial.println(temp);
+    for (int i = 0; i &lt; 100 &amp;&amp; sending; i++) {   // wait 1 s but keep listening
+      delay(10);
+      if (Serial.available()) sending = (Serial.read() == 'Y');
+    }
+  }
+}</code></pre>
+<h3>Q2: fill in the blanks (C in the Arduino IDE, no wrapper functions, labelled constants)</h3>
+<pre><code>// tempLoggerC.ino  (given code: main(), receiveChar() prototype etc.; blanks filled)
+void initADC()
+{
+    DDRC  &amp;= ~(1&lt;&lt;PORTC0);                                  // configure PC0 (ADC0) as input
+    ADMUX  = (ADMUX &amp; ~(1&lt;&lt;REFS1)) | (1&lt;&lt;REFS0);            // set Vref as AVcc (5V)
+    ADMUX &amp;= ~((1&lt;&lt;MUX3)|(1&lt;&lt;MUX2)|(1&lt;&lt;MUX1)|(1&lt;&lt;MUX0)); // multiplex PC0 as ADC0
+    ADCSRA |= (1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0);            // set ADC clock speed as 125 kHz
+    ADCSRA |= (1&lt;&lt;ADEN);                                    // enable ADC
+}
+void initUSART()
+{
+    UBRR0 = F_CPU / (16 * 9600UL) - 1;                      // set baud rate as 9600bps
+    UCSR0B &amp;= ~(1&lt;&lt;UCSZ02);                                // (character size bit 2 = 0)
+    UCSR0C |= (1&lt;&lt;UCSZ01) | (1&lt;&lt;UCSZ00);                    // specify char size as 8-bit
+    UCSR0B |= (1&lt;&lt;RXEN0) | (1&lt;&lt;TXEN0);                      // enable RX and TX
+}
+char receiveChar()
+{
+    while (!(UCSR0A &amp; (1&lt;&lt;RXC0)));                         // poll for receive complete flag
+    return UDR0;                                            // return character in data register
+}
+void transmitChar(char ch)
+{
+    while (!(UCSR0A &amp; (1&lt;&lt;UDRE0)));                        // poll for data register empty flag
+    UDR0 = ch;                                              // write character to data register
+}
+void printString(char *ch)
+{
+    while (*ch != '\0')                                     // repeat till '\0' character
+    {
+        transmitChar(*ch);                                  // transmit character
+        ch++;                                               // increment to next character
+    }
+}
+// in main(), the two blanks:   ADCSRA |= (1&lt;&lt;ADSC);            // start ADC
+//                              while (ADCSRA &amp; (1&lt;&lt;ADSC));    // poll for ADC complete
+// (compiled size 1146 bytes)</code></pre>
+<p class="sm" style="color:var(--muted)">The main() in the exercise computes <code>vIn = ADCW * 5.0 / 1024.0; int temp = vIn * 100; itoa(temp, str, BASE); printString(str); printString("\n"); _delay_ms(1000);</code>.</p>
+<h3>Q3: why the array needs at least four elements</h3>
+<p>The LM35 range is &minus;55 &deg;C to 150 &deg;C. The longest text is <code>-55</code> (the minus sign and two digits) or <code>150</code> (three digits): <b>three characters</b>. A C string must end with the <b>null terminator '\0'</b>, so the array needs 3 + 1 = <b>4 elements</b>.</p>
+<h3>Q4: stdio streams (Microchip Studio)</h3>
+<p>A <b>stream</b> is a sequence of bytes to or from a device. <code>FDEV_SETUP_STREAM(put, get, flags)</code> makes a user-defined stream from two functions. After assigning it to <code>stdin</code> and <code>stdout</code>, <code>getchar()</code> and <code>printf()</code> work through the serial port.</p>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+#include &lt;stdio.h&gt;
+
+static int uartPut(char c, FILE *stream)             // write function
+{
+    while (!(UCSR0A &amp; (1&lt;&lt;UDRE0)));
+    UDR0 = c;
+    return 0;
+}
+static int uartGet(FILE *stream)                     // read function
+{
+    while (!(UCSR0A &amp; (1&lt;&lt;RXC0)));
+    return UDR0;
+}
+static FILE uart = FDEV_SETUP_STREAM(uartPut, uartGet, _FDEV_SETUP_RW);
+
+int main(void)
+{
+    // initADC() and initUSART() as in Q2
+    stdin  = &amp;uart;                                  // standard streams use the serial port
+    stdout = &amp;uart;
+    char ch = 'N';
+    while (1)
+    {
+        if (UCSR0A &amp; (1&lt;&lt;RXC0)) ch = getchar();   // do not block when nothing was received
+        if (ch == 'Y')
+        {
+            ADCSRA |= (1&lt;&lt;ADSC);
+            while (ADCSRA &amp; (1&lt;&lt;ADSC));
+            int temp = (int)(ADCW * 5.0 / 1024 * 100);
+            printf("%d\n", temp);                    // send the temperature
+            for (int i = 0; i &lt; 100; i++)            // wait 1 s but keep listening
+            {
+                _delay_ms(10);
+                if (UCSR0A &amp; (1&lt;&lt;RXC0)) { ch = getchar(); if (ch != 'Y') break; }
+            }
+        }
+    }
+}</code></pre>
+<h3>Q5: pros and cons of stdio functions in embedded systems</h3>
+<table>
+  <tr><th>Pros</th><th>Cons</th></tr>
+  <tr><td>Standard, familiar and portable; the same code can write to a serial port, LCD or file by changing the stream (device independence)</td><td>Large code size and RAM use (<code>printf</code> pulls in formatting code, stream structures and buffers) on a device with 32 KB flash and 2 KB RAM</td></tr>
+  <tr><td>Convenient formatted I/O (<code>printf("%d")</code>, <code>scanf</code>) so no manual number-to-string code</td><td>Slower than direct register access; blocking calls waste CPU time</td></tr>
+  <tr><td>Cleaner, shorter application code, easier maintenance</td><td>Floating-point formatting (<code>%f</code>) is not enabled by default and needs extra libraries; harder to predict timing and memory</td></tr>
+</table>
+<h3>Q6: the .NET application (C#, Windows Forms)</h3>
+<p>Use the <b>SerialPort</b> component and handle its <b>DataReceived</b> event. The event handler runs on a <b>different thread</b> from the GUI, and controls may only be touched by the thread that created them, so update the text box with <code>Invoke</code> (or <code>BeginInvoke</code>).</p>
+<table>
+  <tr><th>Class</th><th>Object</th><th>Property</th><th>Value</th></tr>
+  <tr><td>Form</td><td>TempForm</td><td>File Name / Name / Text</td><td>Temp.cs / TempForm / Temperature Logger</td></tr>
+  <tr><td>Label</td><td>lblTemp</td><td>Text</td><td>Temperature in C&deg;</td></tr>
+  <tr><td>TextBox</td><td>txtTemp</td><td>ReadOnly / TextAlign</td><td>True / Right</td></tr>
+  <tr><td>Button</td><td>btnStart</td><td>Text</td><td>&amp;Start</td></tr>
+  <tr><td>Button</td><td>btnStop</td><td>Text / Enabled</td><td>S&amp;top / False</td></tr>
+  <tr><td>SerialPort</td><td>serialPort1</td><td>PortName / BaudRate / DataBits / Parity / StopBits / NewLine</td><td>COM3 (the Arduino port) / 9600 / 8 / None / One / \n</td></tr>
+</table>
+<pre><code>using System;
+using System.IO.Ports;
+using System.Windows.Forms;
+
+namespace TempLogger
+{
+    public partial class TempForm : Form
+    {
+        private bool running = false;
+
+        public TempForm() { InitializeComponent(); }
+
+        private void TempForm_Load(object sender, EventArgs e)
+        {
+            serialPort1.Open();                              // open the serial port when the app starts
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            running = true;
+            serialPort1.Write("Y");                          // start sending
+            btnStart.Enabled = false;  btnStop.Enabled = true;
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            running = false;
+            serialPort1.Write("N");                          // stop sending
+            txtTemp.Clear();                                 // clear the GUI
+            btnStart.Enabled = true;   btnStop.Enabled = false;
+        }
+
+        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            string line = serialPort1.ReadLine();            // one temperature per line
+            this.BeginInvoke((MethodInvoker)delegate         // run on the GUI thread
+            {
+                if (running) txtTemp.Text = line.Trim();     // ignore data that arrives after Stop
+            });
+        }
+
+        private void TempForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write("N");                      // tell the embedded subsystem to stop
+                serialPort1.Close();                         // close the connection
+            }
+        }
+    }
+}</code></pre>
+
+<div class="warn"><b>Common mistakes</b>1) Baud rates not matching in the firmware and the terminal. 2) <code>16 * 9600</code> without <code>UL</code> (overflow). 3) Using the TX/RX pins (0, 1) for other circuits, or uploading while they are connected. 4) Not setting RXEN/TXEN. 5) Reading UDR before RXC is set, or writing before UDRE is set (lost characters). 6) Leaving the UDRE interrupt enabled with nothing to send. 7) Array too small for a string (forgetting '\0'). 8) Touching GUI controls directly in DataReceived instead of <code>Invoke</code>. 9) A blocking <code>_delay_ms(1000)</code> so a stop command is heard up to a second late.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Explain how a character is sent in asynchronous serial communication and why the baud rate must match at both ends.</summary>
+<p>The idle line is high. The transmitter sends a start bit (0), the data bits LSB first and a stop bit (1), so 10 bits for 8N1. There is no clock line: the receiver detects the falling edge of the start bit, then samples each bit in the middle of its bit time using its own clock. If the baud rates differ the sampling instants drift and the character is corrupted.</p>
+</details>
+<details>
+<summary>W2. Compute UBRR and the baud rate error for 19 200 baud at 16 MHz, and for 115 200 baud. Comment.</summary>
+<p>19 200: UBRR = 16 000 000/(16&times;19 200) &minus; 1 = 51.08, use 51; actual = 16 000 000/(16&times;52) = 19 230.8; error +0.16 %. 115 200: UBRR = 7.68, use 8; actual = 16 000 000/(16&times;9) = 111 111; error &minus;3.55 %, too large for reliable communication; use the double speed mode or a crystal such as 18.432 MHz.</p>
+</details>
+<details>
+<summary>W3. Describe how the receive complete interrupt and the data register empty interrupt are used in the charEncloser using interrupts.</summary>
+<p>RXCIE0 is enabled. When a character arrives <code>ISR(USART_RX_vect)</code> stores UDR0 in the middle of the array {'[', ' ', ']'}, disables the receive interrupt and enables the UDRE interrupt. Each <code>ISR(USART_UDRE_vect)</code> writes the next array element to UDR0; after the third it resets the index, disables the UDRE interrupt and re-enables the receive interrupt. <code>main()</code> is free.</p>
+</details>
+<details>
+<summary>W4. Discuss the pros and cons of using stdio functions (printf, getchar) in embedded firmware.</summary>
+<p>Pros: standard, portable, device-independent through streams (serial, LCD), convenient formatted I/O, shorter code. Cons: large flash and RAM overhead, slower and blocking, floating-point formatting needs extra libraries, less predictable timing; unsuitable on very small devices if memory is tight.</p>
+</details>
+</section>
+
+<section class="panel" id="prac">
+<h2>Practical question: "Serial command console" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question combining Exercise 7 (USART, LM35) with interrupts and a counted event.</p>
+<div class="box"><b>Scenario</b>A bench instrument is controlled from a PC terminal over the USB serial link at <b>19 200 baud</b> (8 data bits, no parity, one stop bit). The PC sends single characters:<br>&bull; <b>'L'</b> toggles an LED on the board;<br>&bull; <b>'T'</b> makes the board reply with the room temperature in whole &deg;C (LM35) followed by a new line;<br>&bull; <b>'C'</b> makes the board reply with the number of times a pushbutton has been pressed since reset, followed by a new line;<br>&bull; any other character gets the reply <code>?</code> and a new line.<br>The button presses must never be missed, even while a reply is being sent.</div>
+<ol>
+  <li>Calculate UBRR and the baud rate error for 19 200 baud at 16 MHz. How long does the reply "27\n" take on the wire?</li>
+  <li>Give the connection list.</li>
+  <li>Write the firmware in C (registers, labelled constants).</li>
+  <li>Write the firmware with the Arduino wrapper functions.</li>
+  <li>Explain which pins you must keep free and why.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Baud rate</h3>
+<p>UBRR = 16 000 000 / (16 &times; 19 200) &minus; 1 = 51.08, so <b>UBRR = 51</b>. Actual = 16 000 000 / (16 &times; 52) = 19 230.8 baud. Error = (19 230.8 &minus; 19 200) / 19 200 = <b>+0.16 %</b>, fine. The reply "27\n" has 3 characters &times; 10 bits = 30 bits, so 30 / 19 200 = <b>1.56 ms</b>.</p>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>USB to PC</td><td>Arduino Uno USB (uses PD0 / PD1 through the ATmega16U2)</td></tr>
+  <tr><td>LED</td><td>pin 8 (PB0) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>LM35</td><td>+V 5 V, GND, V<sub>out</sub> to A0 (PC0)</td></tr>
+  <tr><td>Pushbutton</td><td>pin 2 (PD2 = INT0) to GND, internal pull-up, 100 nF across the switch</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+#include &lt;stdlib.h&gt;                                     // itoa()
+
+volatile unsigned int presses = 0;
+
+static void txChar(char c)
+{
+    while (!(UCSR0A &amp; (1&lt;&lt;UDRE0)));
+    UDR0 = c;
+}
+static void txString(const char *s) { while (*s) txChar(*s++); }
+static void txNumber(unsigned int n)
+{
+    char buf[6];
+    itoa(n, buf, 10);
+    txString(buf);
+    txChar('\n');
+}
+
+int main(void)
+{
+    DDRB  |=  (1&lt;&lt;DDB0);                               // LED output
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);   PORTD |= (1&lt;&lt;PORTD2);       // button input + pull-up
+    EICRA |=  (1&lt;&lt;ISC01);    EICRA &amp;= ~(1&lt;&lt;ISC00);      // INT0 falling edge
+    EIMSK |=  (1&lt;&lt;INT0);
+
+    ADMUX  = (1&lt;&lt;REFS0);                                // AVcc, ADC0
+    ADCSRA = (1&lt;&lt;ADEN)|(1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0);
+
+    UBRR0  = 16000000UL / (16 * 19200UL) - 1;           // 51
+    UCSR0B &amp;= ~(1&lt;&lt;UCSZ02);
+    UCSR0C |= (1&lt;&lt;UCSZ01) | (1&lt;&lt;UCSZ00);               // 8 bit
+    UCSR0B |= (1&lt;&lt;RXEN0) | (1&lt;&lt;TXEN0);                 // enable RX and TX
+    sei();
+
+    while (1)
+    {
+        while (!(UCSR0A &amp; (1&lt;&lt;RXC0)));                // wait for a command
+        char cmd = UDR0;
+        if (cmd == 'L')      PORTB ^= (1&lt;&lt;PORTB0);
+        else if (cmd == 'T')
+        {
+            ADCSRA |= (1&lt;&lt;ADSC);
+            while (ADCSRA &amp; (1&lt;&lt;ADSC));
+            txNumber((unsigned int)(ADCW * 5.0 / 1024 * 100));
+        }
+        else if (cmd == 'C') txNumber(presses);
+        else { txChar('?'); txChar('\n'); }
+    }
+}
+
+ISR(INT0_vect) { presses++; }                           // never missed: counted by the interrupt</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>volatile unsigned int presses = 0;
+void count() { presses++; }
+void setup() {
+  Serial.begin(19200);
+  pinMode(8, OUTPUT);
+  pinMode(2, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(2), count, FALLING);
+}
+void loop() {
+  if (Serial.available()) {
+    char cmd = Serial.read();
+    if (cmd == 'L')      digitalWrite(8, !digitalRead(8));
+    else if (cmd == 'T') Serial.println((int)(analogRead(A0) * 5.0 / 1024 * 100));
+    else if (cmd == 'C') Serial.println(presses);
+    else                 Serial.println('?');
+  }
+}</code></pre>
+<h3>5. Pins to keep free</h3>
+<p>Arduino pins 0 and 1 (PD0 = RXD, PD1 = TXD) belong to the USART and the USB interface; connecting anything there interferes with communication and with uploading the firmware.</p>
+<div class="box"><b>Marking hints</b>UBRR with the <code>UL</code> suffix and the error shown; RXEN/TXEN and 8-bit set; polling RXC and UDRE correctly; <code>itoa</code> or <code>println</code> for numbers; button on INT0 with ISR and <code>volatile</code>; Rx/Tx pins kept free; terminal baud rate set to 19 200.</div>
+</details>
+
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Serial vs parallel</td><td>Serial = 1 bit at a time, few wires. Parallel needs many wires, has skew and crosstalk.</td></tr>
+  <tr><td>Async frame</td><td>Idle high; start bit 0; data LSB first; stop bit 1. 8N1 = 10 bits/char. Needs matching baud rate (no clock).</td></tr>
+  <tr><td>Interfaces</td><td>RS-232 via MAX232 line driver (level shift). USB via UART-to-USB controller: FT232RL (Duemilanove), ATmega16U2 (Uno). TX to RX crossed, common GND.</td></tr>
+  <tr><td>Transmit</td><td>UDRE (data register empty, max throughput) vs TXC (whole frame sent).</td></tr>
+  <tr><td>Receive</td><td>RXC set when UDR has unread data; reading UDR clears it.</td></tr>
+  <tr><td>Registers</td><td>UCSR0A: RXC0 bit 7, TXC0 bit 6, UDRE0 bit 5. UCSR0B: RXCIE0 7, TXCIE0 6, UDRIE0 5, RXEN0 4, TXEN0 3, UCSZ02 2. UCSR0C: UCSZ01, UCSZ00 (011 = 8-bit).</td></tr>
+  <tr><td>Baud</td><td>UBRR = F_CPU/(16&times;baud) &minus; 1 (use <code>UL</code>). 9600 &rarr; 103 (+0.16 %); 19 200 &rarr; 51; 115 200 &rarr; 8 (&minus;3.55 %, too high). Error = (actual &minus; desired)/desired. 18.432 MHz gives 0 % at 9600.</td></tr>
+  <tr><td>C recipe</td><td><code>UBRR0 = ...; UCSR0B &amp;= ~(1&lt;&lt;UCSZ02); UCSR0C |= (1&lt;&lt;UCSZ01)|(1&lt;&lt;UCSZ00); UCSR0B |= (1&lt;&lt;RXEN0)|(1&lt;&lt;TXEN0);</code> send: wait UDRE then <code>UDR0 = c</code>; receive: wait RXC then <code>c = UDR0</code>.</td></tr>
+  <tr><td>Interrupts</td><td>USART_RX_vect (RXCIE0), USART_UDRE_vect (UDRIE0, disable when done), USART_TX_vect (TXCIE0).</td></tr>
+  <tr><td>Arduino</td><td><code>Serial.begin(9600); Serial.available(); Serial.read(); Serial.print/println</code>. Serial Monitor = terminal emulator.</td></tr>
+  <tr><td>CR / LF</td><td>\r = 13 carriage return, \n = 10 line feed.</td></tr>
+  <tr><td>Strings</td><td>'-55' / '150' need 3 chars + '\0' = 4 elements. <code>itoa(n, buf, 10)</code>.</td></tr>
+  <tr><td>stdio</td><td><code>FDEV_SETUP_STREAM(put, get, _FDEV_SETUP_RW)</code>; <code>stdin = stdout = &amp;stream</code>; getchar/printf. Pros: portable, convenient; cons: memory, speed.</td></tr>
+  <tr><td>C# app</td><td>SerialPort, DataReceived on another thread: use Invoke/BeginInvoke; send 'Y'/'N'; close port on exit.</td></tr>
+</table>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Serial communication sends:", "o": ["All bits at once", "One bit at a time", "Only bytes in parallel", "Only analog signals"], "a": 1, "e": "Fewer wires and pins than parallel."}, {"q": "Why is parallel communication unsuitable between chips with few pins, over longer distances?", "o": ["It is too slow at all times", "It needs many wires/pins and suffers from skew and crosstalk", "It cannot send data", "It has no clock"], "a": 1, "e": "Serial uses one data line."}, {"q": "In asynchronous communication each character is framed by:", "o": ["A clock line", "A start bit and a stop bit", "A parity chip", "Two clock edges"], "a": 1, "e": "Idle line is high; start bit is 0; stop bit is 1."}, {"q": "Why must the baud rates of both ends match?", "o": ["To save power", "There is no clock line, so each side times the bits by itself", "The USB cable requires it", "To enable interrupts"], "a": 1, "e": "Otherwise bits are sampled at the wrong time."}, {"q": "With 8N1 framing, how many bits are sent per character?", "o": ["8", "9", "10", "12"], "a": 2, "e": "1 start + 8 data + 1 stop."}, {"q": "At 9600 baud with 8N1 the time to send one character is about:", "o": ["104 µs", "1.04 ms", "10.4 ms", "0.1 s"], "a": 1, "e": "10 bits / 9600 = 1.04 ms."}, {"q": "A line driver such as the MAX232 is needed because:", "o": ["RS-232 voltage levels differ from the microcontroller's 0 and 5 V", "The ATmega has no USART", "It boosts the clock", "It stores data"], "a": 0, "e": "Do not connect RS-232 directly to the pins."}, {"q": "The Arduino Uno's USB-to-serial interface is done by:", "o": ["FT232RL", "MAX232", "ATmega16U2", "LM35"], "a": 2, "e": "Duemilanove used FT232RL."}, {"q": "Which flag gives the maximum transmit throughput?", "o": ["TXC", "UDRE", "RXC", "TOV"], "a": 1, "e": "The next character can be loaded as soon as UDR is empty, while the previous one shifts out."}, {"q": "The purpose of the TXC flag is to know:", "o": ["That the data register is empty", "That the whole frame has been shifted out", "That data was received", "That an error occurred"], "a": 1, "e": "Useful before disabling TX or switching a half-duplex driver."}, {"q": "RXC0 is set when:", "o": ["UDR0 is empty", "UDR0 contains unread received data", "The frame was sent", "The baud rate changes"], "a": 1, "e": "Reading UDR0 clears it."}, {"q": "Bit mask for the UDRE0 flag in UCSR0A:", "o": ["0b10000000", "0b01000000", "0b00100000", "0b00010000"], "a": 2, "e": "RXC = bit 7, TXC = bit 6, UDRE = bit 5."}, {"q": "Which bits enable the receiver and transmitter?", "o": ["RXEN0, TXEN0 in UCSR0B", "UCSZ01, UCSZ00", "RXC0, TXC0", "U2X0"], "a": 0, "e": "Bits 4 and 3 of UCSR0B."}, {"q": "Which settings give 8-bit characters?", "o": ["UCSZ02 = 0, UCSZ01 = 1, UCSZ00 = 1", "UCSZ02 = 1 only", "All zero", "UCSZ01 = 0, UCSZ00 = 1"], "a": 0, "e": "011 means 8-bit."}, {"q": "UBRR for 9600 baud at 16 MHz is:", "o": ["51", "103", "207", "8"], "a": 1, "e": "16 000 000 / (16 × 9600) − 1 = 103.17."}, {"q": "Why is UL used in 16000000 / (16 * 9600UL) − 1?", "o": ["Unix line", "An int is 16 bits on the AVR and 16 × 9600 would overflow, so 32-bit arithmetic is needed", "To select the USART", "To enable UBRR"], "a": 1, "e": "unsigned long."}, {"q": "Baud rate error for 9600 baud at 16 MHz is about:", "o": ["0 %", "0.16 %", "2 %", "3.5 %"], "a": 1, "e": "Actual 9615.4 baud."}, {"q": "A high baud rate error causes:", "o": ["Faster transmission", "Mis-sampled bits and corrupted characters", "Lower power", "Nothing"], "a": 1, "e": "Errors accumulate across the frame."}, {"q": "Which crystal gives 0 % error at 9600 baud?", "o": ["16 MHz", "18.432 MHz", "20 MHz", "12 MHz"], "a": 1, "e": "UBRR = 119 exactly."}, {"q": "In the interrupt version, which vector runs when a character is received?", "o": ["USART_UDRE_vect", "USART_RX_vect", "USART_TX_vect", "ADC_vect"], "a": 1, "e": "Enabled by RXCIE0."}, {"q": "Why must the UDRE interrupt be disabled when there is nothing to send?", "o": ["It consumes RAM", "The UDRE flag stays 1 while UDR is empty, so the interrupt would fire continuously", "It clears the ADC", "It resets the CPU"], "a": 1, "e": "The slide ISR disables UDRIE0 after the last character."}, {"q": "Arduino function to check whether serial data has arrived:", "o": ["Serial.begin()", "Serial.available()", "Serial.print()", "Serial.end()"], "a": 1, "e": "Then Serial.read() returns the character."}, {"q": "CR and LF are:", "o": ["Clock and line", "Carriage return (13) and line feed (10)", "Control register and latch flag", "Character read and load flag"], "a": 1, "e": "\\r and \\n."}, {"q": "The char array holding the string of an LM35 reading (−55 to 150 °C) needs at least 4 elements because:", "o": ["It has 4 digits", "Three characters plus the '\\0' terminator", "The ADC is 10 bits", "Serial needs 4 bytes"], "a": 1, "e": "Longest text is three characters ('-55' or '150')."}, {"q": "After setting stdout to a serial stream created with FDEV_SETUP_STREAM, printf() sends its output to:", "o": ["The LCD", "The serial port", "EEPROM", "Nowhere"], "a": 1, "e": "Streams make I/O device independent."}, {"q": "In the C# temp logger, the DataReceived handler must update the text box using:", "o": ["Direct assignment", "Invoke/BeginInvoke because it runs on a different thread than the GUI", "A timer", "Thread.Sleep"], "a": 1, "e": "Cross-thread invocation."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

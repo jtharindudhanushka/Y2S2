@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ES Lesson 5 - Transducers: Sensors and Actuators</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .warn{background:var(--badbg);border-left:3px solid var(--bad);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  td.c{white-space:normal}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Embedded Systems study guides</a> &middot; INTE 22263 &middot; Lesson 05</p><button id="theme" type="button"></button></div>
+  <h1>Transducers: Sensors and Actuators</h1>
+  <p class="lead">Covers lecture 06 and its datasheets: what a transducer is, digital sensors (reed switch, Hall effect, PIR, flame), analog sensors (water level, accelerometer, joystick), analog/digital sensors, actuators (RGB LED, bulb, motor, solenoid, thermoelectric), and how to drive heavy loads with a BJT (BC547), a MOSFET (2N7000), a flyback diode (1N4001) or a relay. Built from the slides, datasheets and peer note page 38.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="prac">Practical question</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<p class="sm" style="color:var(--muted)">Sources: lecture 06 (Transducers), datasheets for the AH1815 Hall switch, ADXL335 accelerometer, BC547 NPN transistor, 2N7000 MOSFET and 1N4001 diode, "Applications of Diodes" reference, peer note page 38 (only the PIR expansion was noted). The component values quoted come from those datasheets.</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain the role of transducers and classify sensors (digital, analog, both) and actuators</li>
+  <li>Explain how common sensors capture the physical world and how common actuators change it</li>
+  <li>Interface sensors and actuators with an ATmega328P, including loads that need more than a pin can supply</li>
+  <li>Design a transistor / MOSFET / relay driver and explain the flyback diode</li>
+</ul>
+
+<h2>1. What is a transducer?</h2>
+<ul>
+  <li>Converts <b>energy or physical quantities from one form to another</b>.</li>
+  <li>Used at the <b>boundary of an embedded system</b>.</li>
+  <li>Classified by the direction of conversion: <b>sensors</b> (physical quantity &rarr; electrical signal, inputs) and <b>actuators</b> (electrical energy &rarr; other forms, outputs).</li>
+</ul>
+
+<h2>2. Sensors</h2>
+<p>Sensors capture the <b>state of the physical world as inputs</b>. They are <b>digital</b> (two discrete voltages, read through a digital input pin with <code>PINx</code> / <code>digitalRead</code>), <b>analog</b> (a continuous voltage, read with the ADC) or both.</p>
+<table>
+  <tr><th>Sensor</th><th>Type</th><th>What it does</th><th>Interface</th></tr>
+  <tr><td>Reed switch</td><td>Digital</td><td>Normally open; <b>closes when a magnetic field is present</b>. Detects presence or absence of magnetic energy, two discrete voltages.</td><td>One pin to GND, pull-up on</td></tr>
+  <tr><td>Hall effect sensor (AH1815)</td><td>Digital</td><td>Detects presence or absence of a magnet, two discrete voltages. AH1815 is an <b>omnipolar</b> switch: either pole turns the output on (pulled low) when the field exceeds the operating point B<sub>op</sub>, off again below the release point B<sub>rp</sub>. Open-drain output, supply 2.5 to 5.5 V.</td><td>Needs a pull-up on the output (the internal pull-up works); output low = magnet near</td></tr>
+  <tr><td>PIR sensor</td><td>Digital</td><td><b>P</b>yroelectric <b>I</b>nfra<b>R</b>ed: detects variation of IR radiation in its field of view (a moving person), two discrete voltages</td><td>Digital input</td></tr>
+  <tr><td>Flame sensor</td><td>Digital</td><td>Detects IR energy emitted from a fire, two discrete voltages</td><td>Digital input</td></tr>
+  <tr><td>Water level sensor</td><td>Analog</td><td>Continuous water level &rarr; continuous voltage</td><td>ADC</td></tr>
+  <tr><td>Accelerometer (ADXL335)</td><td>Analog</td><td>Linear acceleration in 3D &rarr; <b>three</b> continuous voltages X<sub>out</sub>, Y<sub>out</sub>, Z<sub>out</sub>. &plusmn;3 g, 1.8 to 3.6 V supply, about 300 mV/g at 3 V, 0 g at about half the supply.</td><td>3 ADC channels</td></tr>
+  <tr><td>Thumb joystick</td><td>Analog</td><td>Continuous displacement along X and Y &rarr; <b>two</b> voltages (each a potentiometer)</td><td>2 ADC channels</td></tr>
+  <tr><td>Sound sensor</td><td>Analog/digital</td><td>Sound variation &rarr; continuous voltage <b>and</b> two discrete voltages (threshold comparator)</td><td>ADC or digital pin</td></tr>
+  <tr><td>Soil moisture sensor</td><td>Analog/digital</td><td>Moisture level &rarr; continuous voltage and a threshold output</td><td>ADC or digital pin</td></tr>
+  <tr><td>Gas / smoke sensor</td><td>Analog/digital</td><td>Gas concentration &rarr; continuous voltage and a threshold output</td><td>ADC or digital pin</td></tr>
+  <tr><td>LDR, LM35 (lesson 4)</td><td>Analog</td><td>Light &rarr; resistance; temperature &rarr; 10 mV/&deg;C</td><td>ADC</td></tr>
+</table>
+<div class="box"><b>Choosing digital or analog use</b>Digital output tells only "above the threshold or not" (the threshold is set by a trimmer on the module); the analog output tells <i>how much</i>. For the analog/digital modules use the analog output when you need a value and the digital output when you only need an event (which you can also attach to an interrupt).</div>
+
+<h2>3. Actuators</h2>
+<p>Actuators <b>convert electrical energy into other forms</b> and change the state of the physical world. Many need a higher voltage or more current than an I/O pin can deliver.</p>
+<p><b>The ATmega328P pin limits:</b> about 20 mA per pin recommended (40 mA absolute maximum), about 200 mA total for the chip. A small DC motor, a relay coil, a solenoid or a bulb will exceed this, so a <b>driver</b> is needed.</p>
+<table>
+  <tr><th>Actuator</th><th>Converts to</th><th>Note</th></tr>
+  <tr><td>LED (and RGB LED)</td><td>Light (red, green, blue in an RGB LED)</td><td>Pin + series resistor is enough; RGB LEDs mix colours with PWM</td></tr>
+  <tr><td>Incandescent bulb</td><td>Visible light and heat</td><td>Needs a higher voltage and current than a pin can deliver</td></tr>
+  <tr><td>DC motor</td><td>Kinetic energy (circular motion)</td><td>Even small ones draw more than a pin can deliver; inductive (needs a flyback diode)</td></tr>
+  <tr><td>Solenoid</td><td>Kinetic energy (linear motion)</td><td>Higher voltage and current; inductive</td></tr>
+  <tr><td>Thermoelectric cooler / heater</td><td>Thermal energy</td><td>Higher voltage and current</td></tr>
+  <tr><td>Relay</td><td>Mechanical switching of another circuit</td><td>Allows mains loads; isolated coil and contacts</td></tr>
+</table>
+
+<h2>4. Driving a load with a BJT (BC547)</h2>
+<ul>
+  <li>An <b>NPN</b> BJT is a current-controlled switch: a small <b>base</b> current lets a much larger current flow from <b>collector to emitter</b>. (PNP is the complementary type.)</li>
+  <li>Circuit: microcontroller pin &rarr; <b>base resistor R<sub>B</sub></b> &rarr; base; emitter to <b>GND</b> (common with the microcontroller); load between the <b>load supply +V</b> and the <b>collector</b>.</li>
+  <li><b>Flyback diode</b> across an inductive load (motor, relay, solenoid): <b>cathode to +V, anode to the collector</b>. When the transistor switches off, the coil's collapsing field drives current back through the diode instead of producing a high voltage spike that could destroy the transistor or the pin. The kit uses a <b>1N4001</b> rectifier diode (50 V reverse, 1 A forward, about 1.1 V forward drop).</li>
+</ul>
+<pre><code>          +V (motor supply, e.g. 9 V battery +)
+            |                 |
+          ( M )  motor      -----  1N4001 flyback diode
+            |                 ^    (cathode band to +V, anode to collector)
+            |-----------------|
+            C
+  pin --[ R_B ]-- B   BC547 (NPN)
+            E
+            |
+           GND  (battery - and Arduino GND joined)</code></pre>
+<h3>Choosing R<sub>B</sub></h3>
+<p>To <b>saturate</b> the transistor (fully on) force the base current to about one tenth of the collector current: I<sub>B</sub> &asymp; I<sub>C</sub> / 10 (less than the gain h<sub>FE</sub>, which is 110 or more for a BC547). Then R<sub>B</sub> = (V<sub>pin</sub> &minus; V<sub>BE</sub>) / I<sub>B</sub> with V<sub>pin</sub> = 5 V and V<sub>BE</sub> &asymp; 0.7 V.</p>
+<div class="box"><b>Worked example</b>A 6 V motor draws 100 mA. I<sub>B</sub> = 100 mA / 10 = 10 mA. R<sub>B</sub> = (5 &minus; 0.7) / 0.010 = 430 &Omega;, use <b>330 &Omega; or 470 &Omega;</b> (the pin supplies 13 mA at 330 &Omega;, still within the pin limit). With 1 k&Omega; the base current is 4.3 mA, which saturates the transistor only up to about 43 mA. The BC547 handles up to 100 mA continuous (45 V V<sub>CEO</sub>); above that choose a power transistor.</div>
+
+<h2>5. Driving a load with a MOSFET (2N7000)</h2>
+<ul>
+  <li>An <b>N-channel enhancement MOSFET</b> is <b>voltage</b> controlled: the <b>gate</b> draws practically no current in steady state. Terminals: gate G, drain D (load side), source S (to GND).</li>
+  <li>2N7000: 60 V drain-source, 200 mA continuous, gate threshold 0.8 to 3 V, so a 5 V pin turns it on fully (logic-level). On-resistance a few ohms at V<sub>GS</sub> = 4.5 to 10 V.</li>
+  <li>Wiring: pin &rarr; gate (optionally through about 100 &Omega; to limit switching current); a <b>10 k&Omega; pull-down</b> from gate to GND keeps it off while the pin floats (during reset or programming); load from +V to drain; source to GND; flyback diode across inductive loads.</li>
+</ul>
+<table>
+  <tr><th></th><th>BJT (BC547)</th><th>MOSFET (2N7000)</th></tr>
+  <tr><td>Control</td><td>Base <b>current</b> (needs R<sub>B</sub>)</td><td>Gate <b>voltage</b> (very little current)</td></tr>
+  <tr><td>Load limit (kit parts)</td><td>100 mA continuous</td><td>200 mA continuous</td></tr>
+  <tr><td>Best use</td><td>Simple switching of small loads</td><td>PWM at high speed, low drive current</td></tr>
+</table>
+
+<h2>6. Switching with a relay</h2>
+<ul>
+  <li>A relay is an electromagnetic switch. A small coil current (from a transistor driver) closes the contacts of a <b>separate, isolated circuit</b>, so the microcontroller never touches the load voltage.</li>
+  <li>Contacts: <b>COM</b> (common), <b>NO</b> (normally open), <b>NC</b> (normally closed). The coil needs a <b>transistor driver and a flyback diode</b>. Relay modules include the transistor, diode and an indicator LED.</li>
+  <li>Use a relay (or a solid-state relay) for <b>AC mains</b> loads. Only with qualified supervision, correct isolation and enclosure.</li>
+</ul>
+
+<h2>7. Reading a digital sensor (code pattern)</h2>
+<pre><code>// Hall switch AH1815 on PD2 (output low when a magnet is near), motor driver on PB0
+DDRB |=  (1&lt;&lt;DDB0);                  // motor transistor base
+DDRD &amp;= ~(1&lt;&lt;DDD2);                  // sensor input
+PORTD |= (1&lt;&lt;PORTD2);                 // pull-up for the open-drain output
+while (1) {
+    if ((PIND &amp; (1&lt;&lt;PIND2)) == 0)     // magnet present
+        PORTB |=  (1&lt;&lt;PORTB0);        // motor on
+    else
+        PORTB &amp;= ~(1&lt;&lt;PORTB0);        // motor off
+}</code></pre>
+<pre><code>// Arduino
+void setup() { pinMode(8, OUTPUT); pinMode(2, INPUT_PULLUP); }
+void loop()  { digitalWrite(8, digitalRead(2) == LOW); }</code></pre>
+
+<h2>8. Diode applications (reference reading)</h2>
+<ul>
+  <li><b>Rectification</b> (1N400X series): AC to DC; 1N4001 withstands 50 V reverse and 1 A.</li>
+  <li><b>Flyback / freewheeling</b> protection across relay coils, motors and solenoids.</li>
+  <li><b>Reverse-polarity protection</b> in series with a battery input.</li>
+  <li><b>LED</b> indicators (light emitting diodes), signal clamping and logic.</li>
+</ul>
+
+<div class="warn"><b>Common mistakes</b>1) Driving a motor straight from a pin. 2) Forgetting the flyback diode or fitting it backwards. 3) Not joining the grounds of the motor supply and the Arduino. 4) Using no pull-down on a MOSFET gate. 5) R<sub>B</sub> too large to saturate the BJT, which makes it hot. 6) Powering a motor from the 5 V pin of the Arduino (use a separate supply). 7) Connecting a mains circuit on a breadboard.</div>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Classify sensors with two examples of each class and explain how each class is read by the microcontroller.</summary>
+<p>Digital sensors (reed switch, Hall effect switch, PIR, flame) give two discrete voltages and are read on a digital pin with PINx / digitalRead (pull-up for open-drain or switch types). Analog sensors (water level, accelerometer, joystick, LDR, LM35) give a continuous voltage and are read by the ADC. Analog/digital sensors (sound, soil moisture, gas/smoke modules) provide both a continuous voltage and a threshold output.</p>
+</details>
+<details>
+<summary>W2. A 6 V DC motor (150 mA) must be switched on and off from a 5 V pin. Design the driver with a BC547 and justify the component values.</summary>
+<p>Pin &rarr; R<sub>B</sub> &rarr; base; emitter to GND (common with the Arduino); motor from the 6 V (or 9 V) supply to the collector; 1N4001 across the motor with the cathode to +V. Saturation needs I<sub>B</sub> &asymp; 150/10 = 15 mA, R<sub>B</sub> = (5 &minus; 0.7)/0.015 = 287 &Omega;, use 270 &Omega;; but the pin limit is about 20 mA, so a MOSFET (2N7000 has 200 mA limit and negligible gate current) is the better driver. The flyback diode absorbs the spike when the motor coil is switched off.</p>
+</details>
+<details>
+<summary>W3. Explain how a relay allows a microcontroller to control a mains lamp, and the precautions needed.</summary>
+<p>The pin switches a transistor that energises the relay coil (flyback diode across the coil). The relay contacts (COM and NO) are a separate circuit in series with the lamp's live wire, so the mains is isolated from the microcontroller. Precautions: qualified supervision, rated contacts, fuse, insulated enclosure, correct isolation, no breadboard or exposed wiring for mains.</p>
+</details>
+<details>
+<summary>W4. Compare BJT and MOSFET switches for a microcontroller load.</summary>
+<p>The BJT (BC547) is current controlled and needs a base resistor sized for I<sub>B</sub> &asymp; I<sub>C</sub>/10; limit 100 mA. The MOSFET (2N7000) is voltage controlled, draws almost no gate current, switches faster (good for PWM), limit 200 mA; add a gate pull-down. Both need a flyback diode for inductive loads and a shared ground.</p>
+</details>
+</section>
+
+<section class="panel" id="prac">
+<h2>Practical question: "Magnetic lid pump" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question using the kit parts named in the course (AH1815 / reed switch, BC547, 2N7000, 1N4001, 6 to 9 V DC motor, 9 V battery).</p>
+<div class="box"><b>Scenario</b>A small pump (6 V DC motor, 120 mA) must run only while a magnet fixed to a tank lid is <b>close to a Hall sensor</b> (lid closed). When the lid is lifted the pump must stop immediately. A green LED shows that the pump is running. The motor has its own 9 V battery.</div>
+<ol>
+  <li>Choose and justify a driver (BJT or MOSFET) and calculate its component values.</li>
+  <li>Give the complete connection list (Arduino Uno, AH1815, driver, motor, diode, LED).</li>
+  <li>Write the firmware in C using register access.</li>
+  <li>Write the firmware with the Arduino wrapper functions.</li>
+  <li>State two reasons the pump must not be connected directly to an I/O pin and one safety feature in the circuit.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Driver</h3>
+<p>BJT BC547 (100 mA limit) is too small for 120 mA. Use the <b>2N7000 MOSFET</b> (60 V, 200 mA, gate threshold 0.8 to 3 V so a 5 V pin enhances it fully). Gate resistor 100 &Omega; (limits switching current), <b>10 k&Omega; pull-down</b> from gate to GND so the pump stays off while the pin floats. <b>1N4001 flyback diode</b> across the motor, cathode to the battery +. (If only BC547 parts are available: I<sub>B</sub> = 120/10 = 12 mA, R<sub>B</sub> = (5 &minus; 0.7)/0.012 = 358 &Omega;, so 330 &Omega;, but the transistor is then at its limit, so a power transistor is preferred.)</p>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>From</th><th>To</th></tr>
+  <tr><td>AH1815 VDD, GND</td><td>Arduino 5 V, GND</td></tr>
+  <tr><td>AH1815 OUTPUT</td><td>Arduino pin 2 (PD2); internal pull-up on (output is open drain)</td></tr>
+  <tr><td>Arduino pin 8 (PB0)</td><td>100 &Omega; &rarr; MOSFET gate; 10 k&Omega; from gate to GND</td></tr>
+  <tr><td>MOSFET source</td><td>GND (joined to battery &minus; and Arduino GND)</td></tr>
+  <tr><td>MOSFET drain</td><td>Motor terminal 1</td></tr>
+  <tr><td>Motor terminal 2</td><td>9 V battery +</td></tr>
+  <tr><td>1N4001</td><td>Across the motor: cathode (band) to battery +, anode to drain</td></tr>
+  <tr><td>Arduino pin 9 (PB1)</td><td>220 &Omega; &rarr; green LED &rarr; GND</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+
+int main(void)
+{
+    DDRB  |= (1&lt;&lt;DDB0) | (1&lt;&lt;DDB1);      // pump driver, LED
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);                 // PD2 input (Hall sensor)
+    PORTD |=  (1&lt;&lt;PORTD2);                // pull-up (open-drain output)
+    while (1)
+    {
+        if ((PIND &amp; (1&lt;&lt;PIND2)) == 0)    // output low: magnet near, lid closed
+            PORTB |=  (1&lt;&lt;PORTB0) | (1&lt;&lt;PORTB1);    // pump and LED on
+        else
+            PORTB &amp;= ~((1&lt;&lt;PORTB0) | (1&lt;&lt;PORTB1)); // both off
+    }
+}</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>const int sensor = 2, pump = 8, led = 9;
+void setup() {
+  pinMode(sensor, INPUT_PULLUP);
+  pinMode(pump, OUTPUT);
+  pinMode(led, OUTPUT);
+}
+void loop() {
+  bool lidClosed = (digitalRead(sensor) == LOW);
+  digitalWrite(pump, lidClosed);
+  digitalWrite(led,  lidClosed);
+}</code></pre>
+<h3>5. Why not directly</h3>
+<p>(a) The motor draws 120 mA but an I/O pin can supply only about 20 mA (40 mA absolute maximum), so the pin or chip would be damaged. (b) The motor is an inductive load that generates voltage spikes when switched off, which could destroy the pin. Safety feature: the flyback diode (and the separate battery with a common ground).</p>
+<div class="box"><b>Marking hints</b>Driver chosen with a calculation; flyback diode orientation; gate pull-down; common ground; pull-up for the open-drain Hall output and the active-low test; the code reacts immediately to the sensor state.</div>
+</details>
+
+</section>
+
+<section class="panel" id="short">
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Transducer</td><td>Energy form converter at the boundary: sensors (in) and actuators (out).</td></tr>
+  <tr><td>Digital sensors</td><td>Reed switch (NO, closes in magnetic field), Hall switch AH1815 (omnipolar, open drain, low = magnet), PIR (pyroelectric infrared, motion), flame (IR). Read with a digital pin.</td></tr>
+  <tr><td>Analog sensors</td><td>Water level, accelerometer ADXL335 (3 outputs, &plusmn;3 g, 300 mV/g at 3 V), joystick (2 outputs), LDR, LM35. Read with ADC.</td></tr>
+  <tr><td>Analog + digital</td><td>Sound, soil moisture, gas/smoke modules.</td></tr>
+  <tr><td>Actuators</td><td>LED/RGB, bulb, motor, solenoid, thermoelectric cooler, relay. Pin about 20 mA only, so use a driver.</td></tr>
+  <tr><td>BJT driver (BC547)</td><td>NPN, 45 V, 100 mA. R<sub>B</sub> = (5 &minus; 0.7)/I<sub>B</sub> with I<sub>B</sub> &asymp; I<sub>C</sub>/10. Emitter to GND. Flyback diode on inductive loads.</td></tr>
+  <tr><td>MOSFET driver (2N7000)</td><td>N-channel, 60 V, 200 mA, V<sub>GS(th)</sub> 0.8 to 3 V. Gate ~100 &Omega; + 10 k&Omega; pull-down to GND.</td></tr>
+  <tr><td>Flyback diode</td><td>1N4001 across coil: cathode to +V, anode to collector/drain. Absorbs the turn-off spike.</td></tr>
+  <tr><td>Relay</td><td>Coil via transistor + flyback diode; COM/NO/NC contacts isolate the load; mains only with qualified supervision.</td></tr>
+  <tr><td>Grounds</td><td>Join the grounds of separate supplies.</td></tr>
+</table>
+
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "A transducer:", "o": ["Stores energy", "Converts energy or physical quantities from one form to another at the boundary of the system", "Only amplifies signals", "Is only an input"], "a": 1, "e": "Sensors (input) and actuators (output)."}, {"q": "Which is a digital sensor?", "o": ["Accelerometer", "Reed switch", "Thumb joystick", "Water level sensor"], "a": 1, "e": "It gives two discrete states (closed or open)."}, {"q": "A reed switch:", "o": ["Is normally closed", "Is normally open and closes in a magnetic field", "Detects heat", "Is analog"], "a": 1, "e": "Detects presence of magnetic energy."}, {"q": "The AH1815 is a(n):", "o": ["Omnipolar Hall-effect switch with open-drain output", "Temperature sensor", "Accelerometer", "Relay"], "a": 0, "e": "Output is pulled low when the field exceeds the operating point (either pole)."}, {"q": "The open-drain output of a Hall switch needs:", "o": ["A pull-up resistor (the internal pull-up can be used)", "A capacitor only", "A flyback diode", "Nothing"], "a": 0, "e": "Otherwise the pin floats when the output is off."}, {"q": "PIR stands for:", "o": ["Pulse Interval Register", "Pyroelectric InfraRed", "Passive Input Relay", "Power Input Rectifier"], "a": 1, "e": "It detects variation of IR radiation in its field of view."}, {"q": "The ADXL335 accelerometer gives:", "o": ["One digital output", "Three analog voltages (X, Y, Z)", "A serial stream only", "A relay signal"], "a": 1, "e": "Needs three ADC channels."}, {"q": "A thumb joystick provides:", "o": ["One digital output", "Two analog voltages (X and Y)", "Three digital outputs", "PWM"], "a": 1, "e": "Two potentiometers."}, {"q": "A sound sensor module gives:", "o": ["Only digital output", "Only analog output", "Both an analog voltage and a threshold digital output", "No output"], "a": 2, "e": "Analog/digital sensor."}, {"q": "Actuators:", "o": ["Convert physical quantities to voltages", "Convert electrical energy into other forms to change the physical world", "Store data", "Measure time"], "a": 1, "e": "Motors, solenoids, lamps, heaters, relays."}, {"q": "Why can't a DC motor be driven directly from an I/O pin?", "o": ["It needs more current than the pin can supply", "It is analog", "Pins are inputs only", "It needs a clock"], "a": 0, "e": "Pins supply only about 20 mA."}, {"q": "The purpose of a flyback diode across a motor or relay coil is to:", "o": ["Increase torque", "Absorb the voltage spike when the inductive load is switched off", "Limit the supply voltage", "Debounce"], "a": 1, "e": "It gives the collapsing coil current a safe path."}, {"q": "A flyback diode is connected with its cathode to:", "o": ["Ground", "The +V supply side of the coil", "The transistor base", "The pin"], "a": 1, "e": "Reverse biased in normal operation."}, {"q": "In a BJT switch the base resistor:", "o": ["Is not needed", "Limits the base current taken from the pin", "Sets the motor speed", "Replaces the flyback diode"], "a": 1, "e": "R_B = (5 − 0.7) / I_B."}, {"q": "To saturate a BJT switching 100 mA you supply a base current of about:", "o": ["0.1 mA", "1 mA", "10 mA", "100 mA"], "a": 2, "e": "Rule of thumb: I_B ≈ I_C / 10."}, {"q": "The correct base resistor for I_B = 10 mA from a 5 V pin (V_BE = 0.7 V):", "o": ["43 Ω", "430 Ω (use 330 or 470 Ω)", "4.3 kΩ", "43 kΩ"], "a": 1, "e": "(5 − 0.7) / 0.01 = 430 Ω."}, {"q": "A MOSFET differs from a BJT because it is controlled by:", "o": ["Gate voltage (almost no current)", "Base current", "Heat", "Magnetic field"], "a": 0, "e": "The gate is insulated."}, {"q": "Why add a 10 kΩ resistor from the MOSFET gate to GND?", "o": ["To keep it off while the pin floats", "To increase speed", "To protect the load", "It is the flyback diode"], "a": 0, "e": "Defines the gate level during reset or programming."}, {"q": "The 2N7000 can switch up to about:", "o": ["2 mA", "20 mA", "200 mA", "20 A"], "a": 2, "e": "60 V and 200 mA continuous."}, {"q": "The BC547 is a:", "o": ["PNP transistor", "NPN transistor", "N-channel MOSFET", "Diode"], "a": 1, "e": "BC547: NPN, 45 V, 100 mA."}, {"q": "Which load is best switched by a relay?", "o": ["An LED", "A 230 V lamp", "A switch", "An LM35"], "a": 1, "e": "Isolated contacts. Only with qualified supervision."}, {"q": "The relay terminals COM and NO mean:", "o": ["Common and normally open", "Coil and negative output", "Control and no output", "Counter and none"], "a": 0, "e": "NO closes when the coil energises; NC opens."}, {"q": "When a motor and Arduino use separate supplies, you must:", "o": ["Not connect them", "Join their grounds", "Join their positive rails", "Remove the diode"], "a": 1, "e": "The transistor needs a common reference."}, {"q": "In the Hall sensor code, magnet present with a pull-up gives PIND bit:", "o": ["1", "0", "Undefined", "Toggles"], "a": 1, "e": "The open-drain output pulls the pin low."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

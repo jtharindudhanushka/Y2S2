@@ -1,0 +1,68 @@
+<h2>Master cheat table (everything in one place)</h2>
+<p class="sm" style="color:var(--muted)">Print this page. It repeats the numbers and registers you will look up most often.</p>
+
+<h3>Pin map</h3>
+<table>
+  <tr><th>Arduino</th><th>AVR</th><th>Special</th></tr>
+  <tr><td>0, 1</td><td>PD0, PD1</td><td>RXD, TXD (keep free)</td></tr>
+  <tr><td>2, 3</td><td>PD2, PD3</td><td>INT0, INT1 (PD3 also OC2B, PWM)</td></tr>
+  <tr><td>4</td><td>PD4</td><td>T0 counter input</td></tr>
+  <tr><td>5, 6</td><td>PD5, PD6</td><td>OC0B, OC0A (PWM); PD5 is also T1</td></tr>
+  <tr><td>7</td><td>PD7</td><td></td></tr>
+  <tr><td>8</td><td>PB0</td><td></td></tr>
+  <tr><td>9, 10, 11</td><td>PB1, PB2, PB3</td><td>OC1A, OC1B, OC2A (PWM)</td></tr>
+  <tr><td>12, 13</td><td>PB4, PB5</td><td>13 has the on-board LED</td></tr>
+  <tr><td>A0 to A5</td><td>PC0 to PC5</td><td>ADC0 to ADC5</td></tr>
+</table>
+<h3>Formulas</h3>
+<table>
+  <tr><th>Quantity</th><th>Formula</th><th>Value at 16 MHz</th></tr>
+  <tr><td>LED resistor</td><td>(Vs &minus; VL) / IL, round up</td><td>(5 &minus; 2)/15 mA = 200 &rarr; 220 &Omega;</td></tr>
+  <tr><td>Clock cycle</td><td>1 / f</td><td>62.5 ns</td></tr>
+  <tr><td>Loop of N iterations (body b cycles)</td><td>(b + 1 + 2)(N &minus; 1) + (b + 1 + 1)</td><td>innermost 255: 764</td></tr>
+  <tr><td>ADC interval</td><td>Vref / 1024</td><td>5 V: 4.883 mV; 1.1 V: 1.074 mV</td></tr>
+  <tr><td>ADC to volts</td><td>ADCW &times; Vref / 1024</td><td></td></tr>
+  <tr><td>LM35</td><td>T = Vout &times; 100</td><td>1.1 V ref: T = ADCW &times; 0.1074</td></tr>
+  <tr><td>Timer tick</td><td>prescale / F_CPU</td><td>/64: 4 &micro;s; /1024: 64 &micro;s</td></tr>
+  <tr><td>Pulses for a delay</td><td>n = (F_CPU / prescale) &times; delay</td><td></td></tr>
+  <tr><td>Initial TCNT</td><td>max &minus; n + 1 (255 or 65 535)</td><td>200 ms T1 /64: 15 536; 1 s T1 /1024: 49 911; 1 ms T0 /64: 6</td></tr>
+  <tr><td>Fast PWM</td><td>f = F_CPU/((TOP+1) &times; prescale); duty = (OCR+1)/(TOP+1)</td><td>/64: 976.6 Hz</td></tr>
+  <tr><td>Phase correct PWM</td><td>f = F_CPU/(510 &times; prescale)</td><td>/64: 490 Hz</td></tr>
+  <tr><td>CTC period</td><td>(OCRnA + 1) &times; prescale / F_CPU</td><td>1 ms /64: OCR = 249</td></tr>
+  <tr><td>Baud</td><td>UBRR = F_CPU/(16 &times; baud) &minus; 1; error = (actual &minus; desired)/desired</td><td>9600: 103 (+0.16 %); 19 200: 51; 38 400: 25; 115 200: 8 (&minus;3.55 %)</td></tr>
+  <tr><td>Character time</td><td>10 bits / baud</td><td>9600: 1.04 ms</td></tr>
+  <tr><td>Series BJT base resistor</td><td>(5 &minus; 0.7)/(I_C/10)</td><td>100 mA &rarr; 430 &Omega;</td></tr>
+  <tr><td>Divider (LDR)</td><td>Vin = V &times; R2/(R1 + R2)</td><td></td></tr>
+</table>
+<h3>Registers at a glance</h3>
+<table>
+  <tr><th>Area</th><th>Registers / bits</th></tr>
+  <tr><td>I/O</td><td>DDRx 1 = out; PORTx write (1 = pull-up on inputs); PINx read. Set <code>|= (1&lt;&lt;n)</code>; clear <code>&amp;= ~(1&lt;&lt;n)</code>; toggle <code>^= (1&lt;&lt;n)</code>.</td></tr>
+  <tr><td>External interrupt</td><td>EICRA ISCn1:0 (00 low, 01 change, 10 falling, 11 rising); EIMSK INT0, INT1; <code>sei()</code>; <code>ISR(INTn_vect)</code>.</td></tr>
+  <tr><td>Pin change</td><td>PCICR PCIE0/1/2 (B/C/D); PCMSK0/1/2 bits; PD2 = PCINT18; <code>ISR(PCINTn_vect)</code>.</td></tr>
+  <tr><td>ADC</td><td>ADMUX: REFS1:0 (01 AVcc, 11 1.1 V), ADLAR, MUX3:0. ADCSRA: ADEN 7, ADSC 6, ADATE 5, ADIF 4, ADIE 3, ADPS2:0 (111 = /128). Result ADCW. <code>ADC_vect</code>.</td></tr>
+  <tr><td>Timers</td><td>TCCRnB CSn2:0: 001 /1, 010 /8, 011 /64, 100 /256, 101 /1024, 110 ext falling, 111 ext rising. TCNTn. TIFRn: TOVn (W1C), OCFnA, OCFnB. TIMSKn: TOIEn, OCIEnA, OCIEnB. Vectors <code>TIMERn_OVF_vect</code>.</td></tr>
+  <tr><td>PWM</td><td>TCCRnA: COMnA1:0, COMnB1:0 (10 non-inverted, 11 inverted), WGMn1:0; TCCRnB WGMn2. WGM 000 normal, 001 phase correct, 010 CTC, 011 fast. OCRnA/B. Pins OC0A = PD6, OC0B = PD5.</td></tr>
+  <tr><td>USART</td><td>UBRR0; UDR0; UCSR0A RXC0 7, TXC0 6, UDRE0 5; UCSR0B RXCIE0 7, TXCIE0 6, UDRIE0 5, RXEN0 4, TXEN0 3, UCSZ02 2; UCSR0C UCSZ01, UCSZ00 (11 + 0 = 8-bit). Vectors USART_RX_vect, USART_UDRE_vect, USART_TX_vect.</td></tr>
+</table>
+<h3>Code skeletons</h3>
+<pre><code>// blink (C)         DDRB |= (1&lt;&lt;DDB0); while(1){ PORTB ^= (1&lt;&lt;PORTB0); _delay_ms(500); }
+// button read       DDRD &amp;= ~(1&lt;&lt;DDD2); PORTD |= (1&lt;&lt;PORTD2); if (!(PIND &amp; (1&lt;&lt;PIND2))) { /* pressed */ }
+// ADC read          ADMUX=(1&lt;&lt;REFS0); ADCSRA=(1&lt;&lt;ADEN)|7; ADCSRA|=(1&lt;&lt;ADSC); while(ADCSRA&amp;(1&lt;&lt;ADSC)); v=ADCW;
+// Timer1 1 s        TCNT1=49911; TCCR1B=(1&lt;&lt;CS12)|(1&lt;&lt;CS10); if(TIFR1&amp;(1&lt;&lt;TOV1)){TIFR1=(1&lt;&lt;TOV1); TCNT1=49911;}
+// PWM Timer0 /64    DDRD|=(1&lt;&lt;DDD6); TCCR0A=(1&lt;&lt;COM0A1)|(1&lt;&lt;WGM01)|(1&lt;&lt;WGM00); TCCR0B=(1&lt;&lt;CS01)|(1&lt;&lt;CS00); OCR0A=v;
+// USART 9600        UBRR0=103; UCSR0C|=(1&lt;&lt;UCSZ01)|(1&lt;&lt;UCSZ00); UCSR0B|=(1&lt;&lt;RXEN0)|(1&lt;&lt;TXEN0);
+// send              while(!(UCSR0A&amp;(1&lt;&lt;UDRE0))); UDR0=c;      // receive: while(!(UCSR0A&amp;(1&lt;&lt;RXC0))); c=UDR0;
+// random            srand(seed); wait = 1 + rand() % 10;</code></pre>
+<h3>Components</h3>
+<table>
+  <tr><th>Part</th><th>Key facts</th></tr>
+  <tr><td>LED</td><td>Anode to resistor/pin, cathode (flat edge, short leg) to GND; always a series resistor</td></tr>
+  <tr><td>BC547 NPN</td><td>45 V, 100 mA, base resistor, emitter to GND, flyback diode on inductive loads</td></tr>
+  <tr><td>2N7000 N-MOSFET</td><td>60 V, 200 mA, V<sub>GS(th)</sub> 0.8 to 3 V, gate 100 &Omega; + 10 k&Omega; pull-down</td></tr>
+  <tr><td>1N4001</td><td>50 V, 1 A rectifier/flyback diode, cathode band to +V</td></tr>
+  <tr><td>LDR</td><td>Resistance falls with light; use in a voltage divider</td></tr>
+  <tr><td>LM35</td><td>10 mV/&deg;C, &minus;55 to +150 &deg;C</td></tr>
+  <tr><td>Hall AH1815</td><td>Omnipolar, open drain, low when magnet near, 2.5 to 5.5 V</td></tr>
+  <tr><td>Pushbutton</td><td>Pin to GND, internal pull-up, 100 nF debounce</td></tr>
+</table>

@@ -1,0 +1,80 @@
+<h2>Practical question: "Wheel speed alarm" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question modelled on systems 10 to 14 and the reaction timer: one timer as a counter, another as a time base.</p>
+<div class="box"><b>Scenario</b>A bicycle wheel carries a magnet. A <b>Hall sensor</b> (AH1815, active low open drain) gives one pulse per wheel turn. A "speed alarm" counts the pulses for exactly one second. If more than <b>8 turns per second</b> were counted, a red LED turns on; otherwise it is off. The measurement repeats continuously. The processor must remain free for other work, so the one-second time base must come from a timer interrupt, not a delay loop.</div>
+<ol>
+  <li>Choose the timer for counting and the timer for the time base. Justify the choice and calculate all register values.</li>
+  <li>Give the connection list.</li>
+  <li>Write the firmware in C.</li>
+  <li>Describe how you would do it in Arduino and why this is harder with the wrapper functions only.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Timers</h3>
+<ul>
+  <li><b>Counter:</b> Timer1 (16-bit) with its external clock input T1 = PD5 (CS12:0 = 110, falling edge). 16 bits are plenty for 8 turns per second and give headroom.</li>
+  <li><b>Time base:</b> Timer0 (8-bit) with prescale 1024: tick = 64 &micro;s. For about 10 ms: n = 0.01 / 64 &micro;s = 156.25, use <b>156</b> (9.984 ms), initial value = 255 &minus; 156 + 1 = <b>100</b>. 100 overflow interrupts give 0.9984 s (0.16 % short; acceptable, say so in the answer). For an exact second use Timer1 in compare mode or a correction every 625 ticks.</li>
+  <li>Timer0 clock bits: CS02 = 1, CS01 = 0, CS00 = 1 (/1024). TIMSK0: TOIE0 = 1.</li>
+</ul>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>AH1815 VDD, GND, OUTPUT</td><td>5 V, GND, PD5 (Arduino 5 = T1); pull-up on PD5</td></tr>
+  <tr><td>Red LED</td><td>PB0 (Arduino 8) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+
+volatile unsigned char ticks = 0;      // 10 ms ticks
+volatile unsigned char secondElapsed = 0;
+
+int main(void)
+{
+    DDRB  |=  (1&lt;&lt;DDB0);                       // LED output
+    DDRD  &amp;= ~(1&lt;&lt;DDD5);                       // PD5 (T1) input
+    PORTD |=  (1&lt;&lt;PORTD5);                      // pull-up for the open-drain sensor
+
+    TCCR1B = (1&lt;&lt;CS12) | (1&lt;&lt;CS11);            // Timer1: external clock T1, falling edge (counter)
+    TCNT1  = 0;
+
+    TCNT0  = 100;                               // Timer0: 156 counts to overflow = 9.984 ms
+    TCCR0B = (1&lt;&lt;CS02) | (1&lt;&lt;CS00);            // F_CPU/1024
+    TIMSK0 |= (1&lt;&lt;TOIE0);                      // overflow interrupt
+    sei();
+
+    while (1)
+    {
+        if (secondElapsed)
+        {
+            secondElapsed = 0;
+            unsigned int turns = TCNT1;         // turns counted in the last second
+            TCNT1 = 0;
+            if (turns &gt; 8) PORTB |=  (1&lt;&lt;PORTB0);
+            else           PORTB &amp;= ~(1&lt;&lt;PORTB0);
+        }
+        /* other tasks can run here */
+    }
+}
+
+ISR(TIMER0_OVF_vect)
+{
+    TCNT0 = 100;                                // reload for the next 9.984 ms
+    if (++ticks == 100) { ticks = 0; secondElapsed = 1; }
+}</code></pre>
+<h3>4. Arduino</h3>
+<p>The wrapper functions have no function to use Timer1 as an external-clock counter, so the usual approach is to count pulses in an interrupt (<code>attachInterrupt(digitalPinToInterrupt(2), pulse, FALLING)</code> with the sensor on pin 2) and compare <code>millis()</code> against the last report time. Using the timer registers directly (as above, even inside an Arduino sketch) gives hardware counting with no interrupt per pulse.</p>
+<pre><code>volatile unsigned int pulses = 0;
+unsigned long last = 0;
+void pulse() { pulses++; }
+void setup() {
+  pinMode(2, INPUT_PULLUP); pinMode(8, OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(2), pulse, FALLING);
+}
+void loop() {
+  if (millis() - last &gt;= 1000) {
+    last += 1000;
+    noInterrupts(); unsigned int n = pulses; pulses = 0; interrupts();
+    digitalWrite(8, n &gt; 8);
+  }
+}</code></pre>
+<div class="box"><b>Marking hints</b>Counter on T1 with CS = 110; time base arithmetic with the +1; reload in the ISR; <code>volatile</code> flag; <code>sei()</code>; result read and reset in main; the 0.16 % error is acknowledged.</div>
+</details>

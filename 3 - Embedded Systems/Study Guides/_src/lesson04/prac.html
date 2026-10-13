@@ -1,0 +1,64 @@
+<h2>Practical question: "Cold-store monitor" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question modelled on Exercises 4 and 6 (transducer, ADC, decision, actuator).</p>
+<div class="box"><b>Scenario</b>A vaccine fridge must stay between 2 &deg;C and 8 &deg;C. A "cold-store monitor" reads an <b>LM35</b> temperature sensor. A <b>green LED</b> is on while the temperature is 2 &deg;C or higher and 8 &deg;C or lower, an <b>orange LED</b> is on above 8 &deg;C up to 12 &deg;C, and a <b>red LED</b> is on above 12 &deg;C or below 2 &deg;C. Readings must be accurate to about 0.1 &deg;C.</div>
+<ol>
+  <li>Explain which ADC reference voltage you will choose and calculate the resulting resolution in &deg;C per step.</li>
+  <li>Draw the connection table for the Arduino Uno (LM35, three LEDs).</li>
+  <li>Write the firmware in C (no wrapper functions).</li>
+  <li>Write the firmware with the Arduino wrapper functions.</li>
+  <li>The LM35 is 3 m from the board. Suggest a hardware improvement for noise.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Reference voltage</h3>
+<p>The LM35 gives 10 mV/&deg;C, so 0 to 15 &deg;C is only 0 to 0.15 V. With 5 V the step is 4.88 mV = 0.49 &deg;C, which is too coarse. The <b>internal 1.1 V</b> reference (REFS1 = REFS0 = 1) gives 1.1 / 1024 = 1.074 mV = <b>0.107 &deg;C</b> per step, which meets 0.1 &deg;C. Temperature = ADCW &times; 1.1 / 1024 &times; 100 = ADCW &times; 0.1074.</p>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>LM35 +V / V<sub>out</sub> / GND</td><td>5 V / A0 (PC0, ADC0) / GND</td></tr>
+  <tr><td>Green LED</td><td>pin 8 (PB0) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>Orange LED</td><td>pin 9 (PB1) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>Red LED</td><td>pin 10 (PB2) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+
+static float readTemp(void)
+{
+    ADCSRA |= (1&lt;&lt;ADSC);                       // start conversion
+    while (ADCSRA &amp; (1&lt;&lt;ADSC));                // wait
+    return ADCW * 1.1 / 1024 * 100;            // degrees Celsius
+}
+
+int main(void)
+{
+    DDRB |= (1&lt;&lt;DDB0) | (1&lt;&lt;DDB1) | (1&lt;&lt;DDB2);   // LEDs
+    DDRC &amp;= ~(1&lt;&lt;DDC0);                          // PC0 input
+    ADMUX  = (1&lt;&lt;REFS1) | (1&lt;&lt;REFS0);              // Vref = 1.1 V internal, channel ADC0
+    ADCSRA = (1&lt;&lt;ADEN) | (1&lt;&lt;ADPS2) | (1&lt;&lt;ADPS1) | (1&lt;&lt;ADPS0);   // enable, F_CPU/128
+    readTemp();                                // discard first reading after changing Vref
+    while (1)
+    {
+        float t = readTemp();
+        PORTB &amp;= ~((1&lt;&lt;PORTB0) | (1&lt;&lt;PORTB1) | (1&lt;&lt;PORTB2));   // all off
+        if (t &gt; 12 || t &lt; 2)       PORTB |= (1&lt;&lt;PORTB2);       // red
+        else if (t &gt; 8)            PORTB |= (1&lt;&lt;PORTB1);       // orange
+        else                       PORTB |= (1&lt;&lt;PORTB0);       // green
+    }
+}</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>const int green = 8, orange = 9, red = 10;
+void setup() {
+  analogReference(INTERNAL);                 // 1.1 V
+  pinMode(green, OUTPUT); pinMode(orange, OUTPUT); pinMode(red, OUTPUT);
+}
+void loop() {
+  float t = analogRead(A0) * 1.1 / 1024 * 100;
+  digitalWrite(red,    (t &gt; 12 || t &lt; 2));
+  digitalWrite(orange, (t &gt; 8 &amp;&amp; t &lt;= 12));
+  digitalWrite(green,  (t &gt;= 2 &amp;&amp; t &lt;= 8));
+  delay(500);
+}</code></pre>
+<h3>5. Noise</h3>
+<p>Put a 100 nF capacitor between the ADC input and GND next to the board, use shielded or twisted cable, and average several readings (for example 16) in firmware.</p>
+<div class="box"><b>Marking hints</b>1.1 V reference justified with the number; <code>ADCW &times; 1.1 / 1024 &times; 100</code> (floats and 1024); ADEN, prescaler, ADSC polling; correct boundaries for each band, including both below 2 and above 12; Vref switch noted.</div>
+</details>

@@ -1,0 +1,262 @@
+<p class="sm" style="color:var(--muted)">Sources: lecture 04 (Polling and Interrupt Handling), Exercise 3, "Is AI safe to trust?", peer notes pages 28 to 33, ATmega328P Simplified Data Sheet (interrupt tables). Prerequisite: lesson 2.</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Compare polling and interrupts and state the problems of polling</li>
+  <li>Explain interrupt handling: vector table, ISR, stack, <code>sei()</code> / <code>cli()</code></li>
+  <li>Configure external interrupts (INT0, INT1) and pin change interrupts with the registers EICRA, EIMSK, PCICR and PCMSKn</li>
+  <li>Explain contact bounce and how a capacitor debounces a switch</li>
+  <li>Write C and Arduino firmware that does one task in the main loop while an interrupt handles another</li>
+</ul>
+
+<h2>1. Why polling or interrupts?</h2>
+<p>Both are ways to perform <b>more than one task seemingly at the same time</b>: they give the CPU's service to a peripheral device while the CPU is busy with another task.</p>
+<table>
+  <tr><th></th><th>Polling</th><th>Interrupt</th></tr>
+  <tr><td>Idea</td><td>The CPU <b>keeps checking</b> the status of devices at regular intervals while doing its other task. If the condition is met it serves the device, then resumes.</td><td>The <b>device interrupts</b> the CPU when it needs service. The CPU suspends its task, serves the device, then resumes.</td></tr>
+  <tr><td>CPU load</td><td>CPU spends time monitoring</td><td>Frees the CPU from monitoring</td></tr>
+  <tr><td>Fast events</td><td>May be missed if the state changes too fast or the check interval is long</td><td>Caught immediately</td></tr>
+  <tr><td>Priority</td><td>No priority: all tasks run in the same order</td><td>Supports priority (lower vector address = higher priority)</td></tr>
+</table>
+
+<h2>2. System 5: pollingBasedTrigger</h2>
+<p><b>Task:</b> toggle one LED on user input (button) while blinking another LED every 2 seconds, using polling.</p>
+<p><b>Hardware:</b> blink LED on PB5 (220 &Omega;), user-input LED on PB0 (1 k&Omega;), pushbutton on PD2 to GND with the pull-up (default state high, pressed = low), reset circuit with 10 k&Omega; pull-up, 16 MHz crystal (on an Uno these are built in).</p>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+
+int main(void)
+{
+    DDRB  = DDRB | 0b00100001;      // PB0 and PB5 outputs
+    DDRD  = DDRD &amp; 0b11111011;      // PD2 input
+    PORTD = PORTD | 0b00000100;     // pull-up PD2
+    while (1)
+    {
+        PORTB = PORTB ^ 0b00100000;       // toggle PB5 (main task)
+        _delay_ms(2000);                  // wait 2 s
+        if ((PIND &amp; 0b00000100) == 0)     // poll the button: low = pressed
+            PORTB = PORTB ^ 0b00000001;   // toggle PB0
+    }
+    return 0;
+}</code></pre>
+<pre><code>// Arduino wrapper version
+const int ledPin1 = 8, ledPin2 = 13, switchPin = 2;
+void setup() {
+  pinMode(ledPin1, OUTPUT); pinMode(ledPin2, OUTPUT);
+  pinMode(switchPin, INPUT_PULLUP);
+}
+void loop() {
+  digitalWrite(ledPin2, !digitalRead(ledPin2));      // toggle the blink LED
+  delay(2000);
+  if (digitalRead(switchPin) == LOW)                 // poll
+    digitalWrite(ledPin1, !digitalRead(ledPin1));
+}</code></pre>
+<div class="box"><b>How the test works</b><code>(PIND &amp; 0b00000100) == 0</code>: mask keeps only bit 2. Released: 0000 0100, not 0 (false). Pressed: 0000 0000, equal to 0 (true). XOR with 1 flips a bit: <code>PORTB ^ 0b00000001</code>.</div>
+<h3>Problems of polling (shown by this very program)</h3>
+<ul>
+  <li>The button is looked at only once per 2 s. A <b>quick press</b> that starts and ends inside the delay is <b>not detected</b>. For a sensor there may be many undetected inputs.</li>
+  <li>The reaction is delayed by up to 2 s.</li>
+  <li>There is <b>no priority</b>: with many devices all are served in the same order.</li>
+</ul>
+
+<h2>3. Interrupt handling</h2>
+<ol>
+  <li>A device requests an interrupt (a flag is set). If the source is enabled and the global interrupt bit is set, the CPU finishes the current instruction.</li>
+  <li>The CPU <b>pushes the return address on the stack</b> and jumps to the entry of the <b>interrupt vector table</b> belonging to that source. The entry holds the address of the <b>interrupt service routine (ISR)</b>.</li>
+  <li>The ISR runs. At its end (<code>RETI</code>) the return address is <b>popped</b> and the interrupted task resumes where it stopped.</li>
+</ol>
+<h3>Interrupt vector table (widely used vectors)</h3>
+<table>
+  <tr><th>Address</th><th>Interrupt</th><th>Vector name (for ISR)</th></tr>
+  <tr><td>0x0002</td><td>External interrupt on INT0 pin</td><td><code>INT0_vect</code></td></tr>
+  <tr><td>0x0004</td><td>External interrupt on INT1 pin</td><td><code>INT1_vect</code></td></tr>
+  <tr><td>0x0006</td><td>Pin change, Port B pins</td><td><code>PCINT0_vect</code></td></tr>
+  <tr><td>0x0008</td><td>Pin change, Port C pins</td><td><code>PCINT1_vect</code></td></tr>
+  <tr><td>0x000A</td><td>Pin change, Port D pins</td><td><code>PCINT2_vect</code></td></tr>
+  <tr><td>0x0012</td><td>Timer/Counter 2 overflow</td><td><code>TIMER2_OVF_vect</code></td></tr>
+  <tr><td>0x001A</td><td>Timer/Counter 1 overflow</td><td><code>TIMER1_OVF_vect</code></td></tr>
+  <tr><td>0x0020</td><td>Timer/Counter 0 overflow</td><td><code>TIMER0_OVF_vect</code></td></tr>
+  <tr><td>0x0024</td><td>USART receive complete</td><td><code>USART_RX_vect</code></td></tr>
+  <tr><td>0x0026</td><td>USART data register empty</td><td><code>USART_UDRE_vect</code></td></tr>
+  <tr><td>0x0028</td><td>USART transmit complete</td><td><code>USART_TX_vect</code></td></tr>
+  <tr><td>0x002A</td><td>ADC conversion complete</td><td><code>ADC_vect</code></td></tr>
+</table>
+<p class="sm" style="color:var(--muted)">The datasheet extract in the exam lists the vector names without addresses; the exam needs the <b>names</b>. The lower the address, the higher the priority (INT0 beats everything).</p>
+
+<h3>Interrupt routines in C (<code>avr/interrupt.h</code>)</h3>
+<table>
+  <tr><th>Item</th><th>Use</th></tr>
+  <tr><td><code>sei();</code></td><td>SEt Interrupt: sets the global interrupt enable bit I in SREG</td></tr>
+  <tr><td><code>cli();</code></td><td>CLear Interrupt: clears the global enable (disables all interrupts)</td></tr>
+  <tr><td><code>ISR(vector_name) { ... }</code></td><td>Interrupt service routine for that vector. No parameters, no return value.</td></tr>
+  <tr><td><code>volatile</code></td><td>Qualifier for variables shared between an ISR and <code>main</code>, so the compiler does not optimise the access away</td></tr>
+</table>
+<h3>The chain of enable bits</h3>
+<p>An interrupt happens only if <b>both</b> its own enable bit and the global bit are set:</p>
+<table>
+  <tr><th>Source</th><th>Individual enable</th></tr>
+  <tr><td>External INT0, INT1</td><td>EIMSK: INT0, INT1</td></tr>
+  <tr><td>Pin change</td><td>PCICR: PCIE0 (Port B), PCIE1 (Port C), PCIE2 (Port D) <b>and</b> PCMSKn bit of the pin</td></tr>
+  <tr><td>Timer overflow</td><td>TIMSKn: TOIEn</td></tr>
+  <tr><td>ADC complete</td><td>ADCSRA: ADIE</td></tr>
+  <tr><td>USART</td><td>UCSRnB: RXCIEn, TXCIEn, UDRIEn</td></tr>
+  <tr><td>All</td><td>SREG bit I via <code>sei()</code></td></tr>
+</table>
+<p>Pattern: the ISR sets a <b>flag variable</b> that <code>main()</code> reacts to:</p>
+<pre><code>volatile int flag = 0;
+int main(void) {
+    /* configure ... */ sei();
+    while (1) { if (flag == 0) { /* do something */ } else { /* do something else */ } }
+}
+ISR(INT0_vect) { flag = 1; }</code></pre>
+
+<h2>4. External interrupt registers</h2>
+<ul>
+  <li><b>EICRA</b> (External Interrupt Control Register A): <b>ISC01, ISC00</b> select what triggers INT0; <b>ISC11, ISC10</b> select INT1.</li>
+  <li><b>EIMSK</b> (External Interrupt MaSK): bit <b>INT0</b> / <b>INT1</b> enables the interrupt on that pin.</li>
+  <li>INT0 is pin <b>PD2</b> (Arduino 2), INT1 is pin <b>PD3</b> (Arduino 3).</li>
+</ul>
+<table>
+  <tr><th>ISCn1</th><th>ISCn0</th><th>Interrupt on INTn pin</th></tr>
+  <tr><td>0</td><td>0</td><td>Low level</td></tr>
+  <tr><td>0</td><td>1</td><td>Logic change (any edge)</td></tr>
+  <tr><td>1</td><td>0</td><td><b>Falling edge</b> (1 &rarr; 0, button pressed with pull-up)</td></tr>
+  <tr><td>1</td><td>1</td><td><b>Rising edge</b> (0 &rarr; 1)</td></tr>
+</table>
+
+<h2>5. System 6: externalInterruptBasedTrigger</h2>
+<p>Same task as System 5, but the button is on <b>INT0 (PD2)</b> and an ISR toggles the LED, so a press is never missed and the main loop needs no checking.</p>
+<h3>Contact bounce and the capacitor</h3>
+<p>The contacts of a mechanical switch <b>bounce</b>: one press produces a series of rapid voltage changes that the microcontroller may count as several presses (each edge is an interrupt!). A <b>capacitor (100 nF)</b> placed across the switch smooths the voltage and <b>debounces</b> the input (Exercise 3 uses one 100 nF capacitor in parallel with each pushbutton).</p>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+#include &lt;avr/interrupt.h&gt;
+
+int main(void)
+{
+    DDRB  |= (1&lt;&lt;DDB5) | (1&lt;&lt;DDB0);     // PB5, PB0 outputs
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);               // PD2 (INT0) input
+    PORTD |= (1&lt;&lt;PORTD2);              // pull-up
+    EICRA |=  (1&lt;&lt;ISC01);              // falling edge: ISC01 = 1
+    EICRA &amp;= ~(1&lt;&lt;ISC00);              //               ISC00 = 0
+    EIMSK |=  (1&lt;&lt;INT0);               // enable INT0
+    sei();                             // enable global interrupts
+    while (1)
+    {
+        PORTB ^= (1&lt;&lt;PORTB5);              // main task
+        _delay_ms(2000);
+    }
+}
+
+ISR(INT0_vect)                         // handle INT0
+{
+    PORTB ^= (1&lt;&lt;PORTB0);                // toggle PB0
+}</code></pre>
+<pre><code>// Arduino wrapper version
+const int ledPin1 = 8, ledPin2 = 13, switchPin = 2;
+void setup() {
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
+  pinMode(switchPin, INPUT_PULLUP);
+  int intNum = digitalPinToInterrupt(switchPin);   // map I/O pin to interrupt number
+  attachInterrupt(intNum, toggle, FALLING);        // LOW, CHANGE, RISING or FALLING
+}
+void loop() {
+  digitalWrite(ledPin2, !digitalRead(ledPin2));
+  delay(2000);
+}
+void toggle() {                                    // ISR: no arguments, no return
+  digitalWrite(ledPin1, !digitalRead(ledPin1));
+}</code></pre>
+
+<h2>6. Pin change interrupts and System 7</h2>
+<p>INT0 and INT1 exist on only two pins. <b>Pin change interrupts</b> work on <b>any pin</b>.</p>
+<ul>
+  <li><b>PCICR</b>: PCIE0 / PCIE1 / PCIE2 enable pin-change interrupts for Port B / C / D.</li>
+  <li><b>PCMSKn</b>: PCMSK0 (PCINT0 to 7 = PB0 to PB7), PCMSK1 (PCINT8 to 14 = PC0 to PC6), PCMSK2 (PCINT16 to 23 = PD0 to PD7). The bit enables that pin. <b>PD2 = PCINT18</b>.</li>
+  <li>The interrupt fires on <b>any change</b> (rising and falling), and all pins of the port share <b>one vector</b>, so the ISR must <b>check the pin state</b> (for example only act if the pin is low).</li>
+</ul>
+<pre><code>int main(void)
+{
+    DDRB  |= (1&lt;&lt;DDB5) | (1&lt;&lt;DDB0);
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);
+    PORTD |= (1&lt;&lt;PORTD2);
+    PCICR  |= (1&lt;&lt;PCIE2);              // enable pin change interrupts on Port D
+    PCMSK2 |= (1&lt;&lt;PCINT18);            // ... for PD2
+    sei();
+    while (1) { PORTB ^= (1&lt;&lt;PORTB5); _delay_ms(2000); }
+}
+ISR(PCINT2_vect)                       // any PD pin that is enabled
+{
+    if ((PIND &amp; (1&lt;&lt;PIND2)) == 0)      // act only on the falling edge (pin low)
+        PORTB ^= (1&lt;&lt;PORTB0);
+}</code></pre>
+<table>
+  <tr><th></th><th>External (INT0/INT1)</th><th>Pin change</th></tr>
+  <tr><td>Pins</td><td>Only PD2, PD3</td><td>Any pin (PCINT0 to 23)</td></tr>
+  <tr><td>Trigger</td><td>Selectable: low, change, falling, rising</td><td>Any change only</td></tr>
+  <tr><td>Vector</td><td>One per pin</td><td>One per port: ISR checks which pin/level</td></tr>
+  <tr><td>Enable</td><td>EICRA + EIMSK</td><td>PCICR + PCMSKn</td></tr>
+</table>
+
+<h2>7. Writing good ISRs</h2>
+<ul>
+  <li>Keep them <b>short and fast</b>; no <code>_delay_ms()</code>, no long loops. Set a flag or update a variable and return.</li>
+  <li>Variables shared with <code>main()</code> must be <code>volatile</code>. For multi-byte shared variables, briefly disable interrupts (<code>cli()</code> / <code>sei()</code>) when <code>main</code> reads them.</li>
+  <li>Never forget the <b>two levels of enable</b> (the source and <code>sei()</code>).</li>
+  <li>An ISR is not called by your code; the hardware calls it. Interrupts are not queued without limit (one pending flag per source).</li>
+</ul>
+
+<h2>8. Exercise 3: click counter (worked)</h2>
+<p><b>Specification:</b> count the presses of a pushbutton and show the count in binary on LEDs (0 to 255, so <b>8 LEDs</b>). Display is initially all off. Pressing a second pushbutton ("enter") shows the entered number. Pressing "enter" again clears the display (all off), ready for the next entry. Chip pins <b>2 and 3</b> (PD0 / PD1 = RXD / TXD) must be reserved for later serial communication.</p>
+<h3>Design</h3>
+<table>
+  <tr><th>Function</th><th>Pin</th><th>Notes</th></tr>
+  <tr><td>LED bits 0 to 5</td><td>PB0 to PB5 (Arduino 8 to 13)</td><td>each with a 220 &Omega; resistor to GND</td></tr>
+  <tr><td>LED bits 6 and 7</td><td>PD6, PD7 (Arduino 6, 7)</td><td>mapping the number bits 6 and 7 directly to the same bit positions of PORTD</td></tr>
+  <tr><td>Count button</td><td>PD2 (INT0)</td><td>to GND, pull-up on, 100 nF across the switch</td></tr>
+  <tr><td>Enter button</td><td>PD3 (INT1)</td><td>to GND, pull-up on, 100 nF across the switch</td></tr>
+  <tr><td>Reserved</td><td>PD0, PD1 (chip pins 2, 3)</td><td>not used</td></tr>
+  <tr><td>Reset, crystal</td><td></td><td>10 k&Omega; pull-up on RESET, 16 MHz crystal with two 22 pF capacitors (built in on an Arduino Uno)</td></tr>
+</table>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+
+volatile unsigned char count   = 0;     // entered number (0..255, wraps after 255)
+volatile unsigned char showing = 0;     // 0 = entering, 1 = displaying
+
+static void display(unsigned char v)
+{
+    PORTB = (PORTB &amp; ~0x3F) | (v &amp; 0x3F);   // bits 0..5 on PB0..PB5
+    PORTD = (PORTD &amp; ~0xC0) | (v &amp; 0xC0);   // bits 6..7 on PD6..PD7
+}
+
+int main(void)
+{
+    DDRB |= 0x3F;                          // PB0..PB5 outputs
+    DDRD |= 0xC0;                          // PD6, PD7 outputs
+    DDRD &amp;= ~((1&lt;&lt;DDD2) | (1&lt;&lt;DDD3));    // PD2, PD3 inputs
+    PORTD |= (1&lt;&lt;PORTD2) | (1&lt;&lt;PORTD3);    // pull-ups
+    EICRA |= (1&lt;&lt;ISC01) | (1&lt;&lt;ISC11);      // falling edge on INT0 and INT1
+    EICRA &amp;= ~((1&lt;&lt;ISC00) | (1&lt;&lt;ISC10));
+    EIMSK |= (1&lt;&lt;INT0) | (1&lt;&lt;INT1);
+    display(0);
+    sei();
+    while (1) { }                          // all work is done by the ISRs
+}
+
+ISR(INT0_vect)                             // count button
+{
+    if (!showing) count++;
+}
+
+ISR(INT1_vect)                             // enter button
+{
+    if (!showing) { showing = 1; display(count); }   // show the number
+    else          { showing = 0; count = 0; display(0); }  // clear
+}</code></pre>
+<div class="box"><b>"Is AI safe to trust?" (lecture 04 reading)</b>The lecturer's model answer maps count bits 7 to 2 to PB0 to PB5 (<code>PORTB |= count &gt;&gt; 2</code>) and bits 1 and 0 to PD6 and PD7 (<code>PORTD |= count &lt;&lt; 6</code>), with a 100 nF capacitor across each pushbutton, and interrupt-driven code. An AI asked to check it first declared the bit mapping wrong and criticised the missing software debounce. The student replied that the mapping was deliberate and that two 100 nF capacitors already debounce the switches in hardware; the AI then admitted it had misread the schematic. Lesson: AI predicts likely text and can hallucinate with an authoritative tone, so <b>always verify against the schematic and datasheet yourself</b>. Any consistent bit mapping is acceptable (mine above uses bits 0 to 5 on PB0 to PB5 and bits 6 and 7 on PD6 and PD7); just keep schematic and code in agreement.</div>
+
+<div class="warn"><b>Common mistakes</b>1) Forgetting <code>sei()</code>. 2) Setting EIMSK but leaving EICRA at the default (low-level trigger fires repeatedly while held). 3) Using INT0/INT1 vectors with the wrong pin (INT0 is PD2, INT1 is PD3). 4) Not marking shared variables <code>volatile</code>. 5) Delays inside an ISR. 6) Pin change ISR acting on both edges (button toggles twice). 7) No debounce capacitor, so one press counts several times.</div>

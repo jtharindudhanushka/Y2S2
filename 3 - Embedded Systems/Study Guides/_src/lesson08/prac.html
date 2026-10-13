@@ -1,0 +1,97 @@
+<h2>Practical question: "Serial command console" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question combining Exercise 7 (USART, LM35) with interrupts and a counted event.</p>
+<div class="box"><b>Scenario</b>A bench instrument is controlled from a PC terminal over the USB serial link at <b>19 200 baud</b> (8 data bits, no parity, one stop bit). The PC sends single characters:<br>&bull; <b>'L'</b> toggles an LED on the board;<br>&bull; <b>'T'</b> makes the board reply with the room temperature in whole &deg;C (LM35) followed by a new line;<br>&bull; <b>'C'</b> makes the board reply with the number of times a pushbutton has been pressed since reset, followed by a new line;<br>&bull; any other character gets the reply <code>?</code> and a new line.<br>The button presses must never be missed, even while a reply is being sent.</div>
+<ol>
+  <li>Calculate UBRR and the baud rate error for 19 200 baud at 16 MHz. How long does the reply "27\n" take on the wire?</li>
+  <li>Give the connection list.</li>
+  <li>Write the firmware in C (registers, labelled constants).</li>
+  <li>Write the firmware with the Arduino wrapper functions.</li>
+  <li>Explain which pins you must keep free and why.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Baud rate</h3>
+<p>UBRR = 16 000 000 / (16 &times; 19 200) &minus; 1 = 51.08, so <b>UBRR = 51</b>. Actual = 16 000 000 / (16 &times; 52) = 19 230.8 baud. Error = (19 230.8 &minus; 19 200) / 19 200 = <b>+0.16 %</b>, fine. The reply "27\n" has 3 characters &times; 10 bits = 30 bits, so 30 / 19 200 = <b>1.56 ms</b>.</p>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>USB to PC</td><td>Arduino Uno USB (uses PD0 / PD1 through the ATmega16U2)</td></tr>
+  <tr><td>LED</td><td>pin 8 (PB0) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>LM35</td><td>+V 5 V, GND, V<sub>out</sub> to A0 (PC0)</td></tr>
+  <tr><td>Pushbutton</td><td>pin 2 (PD2 = INT0) to GND, internal pull-up, 100 nF across the switch</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+#include &lt;stdlib.h&gt;                                     // itoa()
+
+volatile unsigned int presses = 0;
+
+static void txChar(char c)
+{
+    while (!(UCSR0A &amp; (1&lt;&lt;UDRE0)));
+    UDR0 = c;
+}
+static void txString(const char *s) { while (*s) txChar(*s++); }
+static void txNumber(unsigned int n)
+{
+    char buf[6];
+    itoa(n, buf, 10);
+    txString(buf);
+    txChar('\n');
+}
+
+int main(void)
+{
+    DDRB  |=  (1&lt;&lt;DDB0);                               // LED output
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);   PORTD |= (1&lt;&lt;PORTD2);       // button input + pull-up
+    EICRA |=  (1&lt;&lt;ISC01);    EICRA &amp;= ~(1&lt;&lt;ISC00);      // INT0 falling edge
+    EIMSK |=  (1&lt;&lt;INT0);
+
+    ADMUX  = (1&lt;&lt;REFS0);                                // AVcc, ADC0
+    ADCSRA = (1&lt;&lt;ADEN)|(1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0);
+
+    UBRR0  = 16000000UL / (16 * 19200UL) - 1;           // 51
+    UCSR0B &amp;= ~(1&lt;&lt;UCSZ02);
+    UCSR0C |= (1&lt;&lt;UCSZ01) | (1&lt;&lt;UCSZ00);               // 8 bit
+    UCSR0B |= (1&lt;&lt;RXEN0) | (1&lt;&lt;TXEN0);                 // enable RX and TX
+    sei();
+
+    while (1)
+    {
+        while (!(UCSR0A &amp; (1&lt;&lt;RXC0)));                // wait for a command
+        char cmd = UDR0;
+        if (cmd == 'L')      PORTB ^= (1&lt;&lt;PORTB0);
+        else if (cmd == 'T')
+        {
+            ADCSRA |= (1&lt;&lt;ADSC);
+            while (ADCSRA &amp; (1&lt;&lt;ADSC));
+            txNumber((unsigned int)(ADCW * 5.0 / 1024 * 100));
+        }
+        else if (cmd == 'C') txNumber(presses);
+        else { txChar('?'); txChar('\n'); }
+    }
+}
+
+ISR(INT0_vect) { presses++; }                           // never missed: counted by the interrupt</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>volatile unsigned int presses = 0;
+void count() { presses++; }
+void setup() {
+  Serial.begin(19200);
+  pinMode(8, OUTPUT);
+  pinMode(2, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(2), count, FALLING);
+}
+void loop() {
+  if (Serial.available()) {
+    char cmd = Serial.read();
+    if (cmd == 'L')      digitalWrite(8, !digitalRead(8));
+    else if (cmd == 'T') Serial.println((int)(analogRead(A0) * 5.0 / 1024 * 100));
+    else if (cmd == 'C') Serial.println(presses);
+    else                 Serial.println('?');
+  }
+}</code></pre>
+<h3>5. Pins to keep free</h3>
+<p>Arduino pins 0 and 1 (PD0 = RXD, PD1 = TXD) belong to the USART and the USB interface; connecting anything there interferes with communication and with uploading the firmware.</p>
+<div class="box"><b>Marking hints</b>UBRR with the <code>UL</code> suffix and the error shown; RXEN/TXEN and 8-bit set; polling RXC and UDRE correctly; <code>itoa</code> or <code>println</code> for numbers; button on INT0 with ISR and <code>volatile</code>; Rx/Tx pins kept free; terminal baud rate set to 19 200.</div>
+</details>

@@ -1,0 +1,35 @@
+{
+ "mcq": [
+  {"q":"Setting a bit in DDRx to 1 configures the corresponding pin as:","o":["Input","Output","Analog","Disabled"],"a":1,"e":"DDR: 1 = output (set), 0 = input (clear)."},
+  {"q":"Which register do you READ to get the logic level on an input pin?","o":["DDRx","PORTx","PINx","TCNTx"],"a":2,"e":"PINx holds the logic level present on the pins."},
+  {"q":"For a pin configured as input, writing 1 to its PORT bit:","o":["Makes it an output","Enables the internal pull-up resistor","Clears the pin","Has no effect"],"a":1,"e":"A pressed button to GND then reads 0, released reads 1."},
+  {"q":"LED driven at 2 V and 15 mA from 5 V needs a series resistor of about:","o":["20 Ω","200 Ω (use 220 Ω)","2 kΩ","20 kΩ"],"a":1,"e":"R = (5 − 2) / 0.015 = 200 Ω; choose the next standard value."},
+  {"q":"Colour bands red, red, brown give:","o":["22 Ω","220 Ω","2.2 kΩ","22 kΩ"],"a":1,"e":"2, 2, ×10."},
+  {"q":"Colour bands brown, black, orange give:","o":["1 kΩ","10 kΩ","100 kΩ","103 Ω"],"a":1,"e":"1, 0, ×1000."},
+  {"q":"The cathode of an LED is the:","o":["Longer leg","Leg next to the flat edge of the body","Leg that goes to +5 V","Either leg"],"a":1,"e":"Current flows anode to cathode; the cathode goes towards GND."},
+  {"q":"Clock cycle time of a 16 MHz CPU is:","o":["6.25 ns","62.5 ns","625 ns","1 µs"],"a":1,"e":"t = 1 / 16 MHz = 62.5 ns."},
+  {"q":"Cycles required for a 0.5 s delay at 16 MHz:","o":["8 000","800 000","8 000 000","80 000 000"],"a":2,"e":"0.5 / 62.5 ns = 8 × 10^6."},
+  {"q":"BRNE takes how many cycles?","o":["Always 1","2 if the branch is taken, 1 if not","Always 2","3"],"a":1,"e":"Taken costs 2, falling through costs 1."},
+  {"q":"Cycles consumed by: LDI R18,255 / L: DEC R18 / BRNE L (the loop part only, after LDI) are:","o":["255","764","765","510"],"a":1,"e":"(1+2)×254 + (1+1)×1 = 764 for the DEC/BRNE loop."},
+  {"q":"Why can a delay loop counter not exceed 255?","o":["BRNE limits it","The registers are 8-bit","The clock is too slow","LDI forbids it"],"a":1,"e":"8-bit word size; use nested loops for longer delays."},
+  {"q":"Which instruction sets a bit of an I/O register?","o":["SBI","LDI","SEI","CBI"],"a":0,"e":"CBI clears it; SEI is set interrupt flag."},
+  {"q":"Which is the correct way to clear PB3 without changing other bits?","o":["PORTB = 0b00001000;","PORTB |= (1<<3);","PORTB &= ~(1<<3);","PORTB ^= 0xFF;"],"a":2,"e":"AND with the inverted mask."},
+  {"q":"Which toggles PB5?","o":["PORTB |= (1<<5);","PORTB &= ~(1<<5);","PORTB ^= (1<<5);","PORTB = 5;"],"a":2,"e":"XOR with 1 flips a bit."},
+  {"q":"In a C program using _delay_ms(), where must F_CPU be defined?","o":["After util/delay.h","Before including util/delay.h","Anywhere","Not needed"],"a":1,"e":"The delay macros read F_CPU when the header is processed."},
+  {"q":"Why is an endless loop needed in firmware?","o":["To use less power","There is no OS, so the CPU would run past the program otherwise","Compilers require it","To reset RAM"],"a":1,"e":"Execution is line by line from the first instruction."},
+  {"q":"A pushbutton wired between PD2 and GND with the pull-up enabled reads:","o":["0 when released","1 when pressed","1 when released and 0 when pressed","Always 1"],"a":2,"e":"Active low."},
+  {"q":"Which expression is true when the button on PD2 is pressed (pull-up used)?","o":["(PIND & (1<<PIND2)) == 0","(PORTD & (1<<PORTD2)) == 0","PIND2 == 1","(DDRD & 4) == 0"],"a":0,"e":"Mask the bit and test for 0."},
+  {"q":"The Exercise 2 Arduino program (pinMode/digitalWrite) uses 743 bytes versus 142 bytes for the register version because:","o":["Arduino uses a different CPU","Wrapper functions and core initialisation code add instructions","It blinks slower","It uses EEPROM"],"a":1,"e":"Lookup tables, PWM checks and init() are linked in."},
+  {"q":"Which is a disadvantage of assembly language?","o":["Large HEX files","Difficult to code and not portable","Slow execution","No access to registers"],"a":1,"e":"It is however the most efficient."},
+  {"q":"The tool used to upload the HEX file through the Arduino bootloader is:","o":["AVRDUDE","GCC","Notepad","Wireshark"],"a":0,"e":"AVR Downloader UploaDEr."},
+  {"q":"Which is a limitation of a hard-wired (transistor or IC) blinker compared with firmware?","o":["Cannot blink","Fixed behaviour: changes need component changes","Uses a processor","Needs a compiler"],"a":1,"e":"Software is easy to modify."},
+  {"q":"In Exercise 1 Q3, 10 LEDs are driven with seven pins by:","o":["PWM","Switching the ground of two five-LED sets with two BC547 transistors","Using SPI","Using two resistors"],"a":1,"e":"5 anode lines + 2 transistor base pins = 7."},
+  {"q":"If DDRB = 0b00100001, which pins are outputs?","o":["PB0 and PB5","PB1 and PB6","PB2 and PB7","PB5 only"],"a":0,"e":"Bits 0 and 5 are set."}
+ ],
+ "written": [
+  {"q":"Explain the roles of DDR, PORT and PIN registers and show how a pushbutton and an LED are connected and configured on ATmega328P pins.","a":"<p>DDRx sets direction (1 output, 0 input). PORTx drives output pins high/low and, for an input pin, enables the internal pull-up when set. PINx reads the logic level of the pins. LED: PB0 through a 220 &Omega; resistor to the LED anode, cathode to GND, <code>DDRB |= (1&lt;&lt;DDB0)</code>. Button: PD2 to GND, <code>DDRD &amp;= ~(1&lt;&lt;DDD2); PORTD |= (1&lt;&lt;PORTD2);</code> so the pin reads 1 released and 0 pressed; test with <code>(PIND &amp; (1&lt;&lt;PIND2)) == 0</code>.</p>"},
+  {"q":"Calculate the cycle count and delay produced by: LDI R16,50 / L1: LDI R17,200 / L2: DEC R17 / BRNE L2 / DEC R16 / BRNE L1 on a 16 MHz AVR.","a":"<p>Inner loop (R17 = 200): (1+2)&times;199 + (1+1) = 599. Outer body = LDI (1) + 599 + DEC (1) + BRNE. Taken (2): 603 &times; 49 = 29 547. Last pass (1): 602. Total loops = 30 149; plus the first LDI R16 = <b>30 150 cycles</b>. Delay = 30 150 &times; 62.5 ns = <b>1.884 ms</b>.</p>"},
+  {"q":"Compare assembly, C and Arduino wrapper functions for firmware development. Why is the Arduino HEX file bigger?","a":"<p>Assembly: most efficient, difficult, not portable. C: efficient, easier, portable, libraries, but data-type misuse possible. Arduino: easiest with libraries, but inefficient and not portable. Although it also uses GCC and AVRDUDE, wrapper functions such as digitalWrite look up port and bit tables, handle PWM pins and the core adds initialisation (timers, millis interrupt), so more instructions are stored; the 5-LED chaser took 920 bytes with Arduino, 200 bytes in C and 172 bytes with further optimisation.</p>"},
+  {"q":"Describe how ten LEDs can be controlled with seven pins and write the firmware to light them one at a time.","a":"<p>Five anode lines (PB0 to PB4, each with 220 &Omega;) are shared by two sets of five LEDs. Each set's cathodes go to the collector of a BC547 NPN transistor (emitter to GND) driven through a 1 k&Omega; base resistor from PD6 or PD7. Switching the correct transistor on and one anode line high lights one LED. Firmware: for each position choose set = pos/5 and led = pos%5; <code>PORTB = (PORTB &amp; ~0x1F) | (1&lt;&lt;led)</code> and enable only that set's base pin.</p>"}
+ ]
+}

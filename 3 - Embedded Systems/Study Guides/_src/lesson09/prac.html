@@ -1,0 +1,233 @@
+<h2>Mock practical paper (original, exam style)</h2>
+<p class="sm" style="color:var(--muted)">Written for this guide to rehearse the style of the practical exam: scenario, circuit, firmware, upload, demonstration. It is <b>not</b> a real past paper. Suggested time 3 hours at a real board, or about 90 minutes writing the answers on paper. Allowed: the three cheat sheets only. The real paper may have a different number of questions and marks; practise the workflow, not the numbers.</p>
+<div class="box"><b>Instructions</b>Answer all questions. Use an ATmega328P (Arduino Uno) at 16 MHz. Show all calculations. Unless a question says otherwise you may use C with direct register access or the Arduino wrapper functions. Draw or tabulate every circuit with the pin used.</div>
+
+<h2>Question 1: "Greenhouse controller" (40 marks)</h2>
+<p>A small greenhouse controller keeps plants cool. It uses an <b>LM35</b> temperature sensor, a <b>6 V DC fan</b> (about 100 mA) with its own battery, a green "manual" LED and a pushbutton, and a PC connected through the USB serial interface.</p>
+<ul>
+  <li>The fan is off at 25 &deg;C or lower, at full speed at 35 &deg;C or higher, and its speed varies linearly in between.</li>
+  <li>Pressing the pushbutton toggles a <b>manual override</b>: when active the fan runs at full speed whatever the temperature, and the green LED is on. Pressing again returns to automatic control. A press must never be missed.</li>
+  <li>Every <b>2 seconds</b> the controller sends one line to the PC terminal such as <code>T=29 C, FAN=40 %</code> at <b>9600 baud</b>.</li>
+</ul>
+<ol type="a">
+  <li>Draw the schematic (or a connection table) with the pin of every component, including the fan driver and protection. (10)</li>
+  <li>Calculate and state: the ADC reference you chose and the temperature resolution; the fan driver component values; the timer registers/values for the 2 s period; the baud rate setting and its error. (10)</li>
+  <li>Write the firmware in C (direct register access). (15)</li>
+  <li>Outline how the Arduino wrapper functions version would differ. (5)</li>
+</ol>
+
+<h2>Question 2: "Quiz buzzer" (35 marks)</h2>
+<p>A quiz game has two contestant buttons (A and B), a host "ready" button, two LEDs (A and B) and a PC terminal. When the host presses <b>ready</b>, both LEDs go off and a millisecond timer restarts at 0. The <b>first contestant to press</b> their button wins: that contestant's LED turns on, later presses are ignored, and the controller sends <code>Player A won at 842 ms</code> (or B) to the PC at 9600 baud. A contestant who presses before the host presses ready is ignored. All three buttons must use interrupts.</p>
+<ol type="a">
+  <li>Choose the pins and justify the use of external versus pin change interrupts. Draw the connection table. (10)</li>
+  <li>Design the 1 ms time base and give all register values. (5)</li>
+  <li>Write the firmware in C. (15)</li>
+  <li>Explain why the shared variables are <code>volatile</code> and what happens if A and B press within the same millisecond. (5)</li>
+</ol>
+
+<h2>Question 3: quick calculations (25 marks, 5 each)</h2>
+<ol type="a">
+  <li>The loop <code>LDI R16, 200 / L: DEC R16 / NOP / BRNE L</code> runs on a 16 MHz AVR. How many clock cycles does it take (including the LDI) and what is the time?</li>
+  <li>An 8-bit timer with prescale 256 at 16 MHz must overflow every 2 ms. Give the initial TCNT value. What is the longest period possible with this prescale?</li>
+  <li>Give UBRR and the baud rate error for 38 400 baud at 16 MHz. How long does a 5-character message take?</li>
+  <li>An ADC with Vref = 2.5 V and 10 bits converts 1.8 V. Give the ADC value and the interval size. What value would the default 5 V reference give?</li>
+  <li>A red LED needs 1.8 V at 10 mA; the supply is 5 V. Compute the resistor and pick a standard value. A fast PWM output uses prescale 8: give the frequency and the duty cycle for OCR = 63.</li>
+</ol>
+
+<hr>
+<h2>Solutions and marking scheme</h2>
+
+<h3>Question 1 solution</h3>
+<h4>(a) Connections</h4>
+<table>
+  <tr><th>Part</th><th>Pin</th><th>Connection</th></tr>
+  <tr><td>LM35</td><td>A0 (PC0, ADC0)</td><td>+V to 5 V, GND to GND, V<sub>out</sub> to A0</td></tr>
+  <tr><td>Fan driver</td><td>Pin 6 (PD6 = OC0A, PWM)</td><td>pin &rarr; 100 &Omega; &rarr; gate of a <b>2N7000</b>; 10 k&Omega; gate to GND; drain to the fan; fan other terminal to battery + (6 V); source to GND; <b>1N4001</b> across the fan (cathode to +). (BC547 alternative: R<sub>B</sub> = (5 &minus; 0.7)/10 mA = 430 &Omega; &rarr; 470 &Omega; but at its 100 mA limit.)</td></tr>
+  <tr><td>Grounds</td><td></td><td>Battery &minus;, MOSFET source, LM35 and Arduino GND joined</td></tr>
+  <tr><td>Override button</td><td>Pin 2 (PD2 = INT0)</td><td>pin to GND; internal pull-up; 100 nF across the switch</td></tr>
+  <tr><td>Green LED</td><td>Pin 8 (PB0)</td><td>pin &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>Serial</td><td>Pins 0, 1 (USB)</td><td>USB cable to the PC; pins 0 and 1 left free</td></tr>
+</table>
+<h4>(b) Calculations</h4>
+<ul>
+  <li><b>ADC:</b> the LM35 gives 10 mV/&deg;C, so 0 to 50 &deg;C is only 0 to 0.5 V. Use the <b>internal 1.1 V</b> reference (REFS1 = REFS0 = 1): &Delta;V = 1.1/1024 = 1.074 mV = <b>0.107 &deg;C</b> per step (with 5 V it would be 0.49 &deg;C). T = ADCW &times; 1.1/1024 &times; 100.</li>
+  <li><b>Fan duty:</b> OCR0A = (T &minus; 25)/10 &times; 255 between 25 and 35 &deg;C; 0 below; 255 above. At 30 &deg;C: 127 (about 50 %).</li>
+  <li><b>PWM:</b> Timer0 fast PWM, prescale 64: 16 MHz/(256 &times; 64) = 976.6 Hz (suitable for a small fan).</li>
+  <li><b>2 s period:</b> Timer1 (16-bit), prescale 1024: tick 64 &micro;s, n = 15 625 for 1 s, initial = 65 535 &minus; 15 625 + 1 = <b>49 911</b>; the overflow ISR counts two overflows.</li>
+  <li><b>Baud:</b> UBRR = 16 000 000/(16 &times; 9600) &minus; 1 = 103.17 &rarr; 103; actual 9615.4 baud; error +0.16 %.</li>
+</ul>
+<h4>(c) C firmware</h4>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+#include &lt;stdlib.h&gt;
+
+volatile unsigned char override = 0;       // manual override
+volatile unsigned char seconds  = 0;
+volatile unsigned char report   = 0;
+
+ISR(INT0_vect)                             // button: toggle override and the green LED
+{
+    override ^= 1;
+    PORTB ^= (1&lt;&lt;PORTB0);
+}
+
+ISR(TIMER1_OVF_vect)                       // every 1 s
+{
+    TCNT1 = 49911;
+    if (++seconds &gt;= 2) { seconds = 0; report = 1; }
+}
+
+static void txChar(char c) { while (!(UCSR0A &amp; (1&lt;&lt;UDRE0))); UDR0 = c; }
+static void txString(const char *s) { while (*s) txChar(*s++); }
+static void txInt(int n) { char b[7]; itoa(n, b, 10); txString(b); }
+
+int main(void)
+{
+    DDRB  |=  (1&lt;&lt;DDB0);                                  // LED
+    DDRD  |=  (1&lt;&lt;DDD6);                                  // OC0A (fan)
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);   PORTD |= (1&lt;&lt;PORTD2);          // button + pull-up
+
+    TCCR0A = (1&lt;&lt;COM0A1) | (1&lt;&lt;WGM01) | (1&lt;&lt;WGM00);       // fast PWM, non-inverted
+    TCCR0B = (1&lt;&lt;CS01) | (1&lt;&lt;CS00);                      // /64
+
+    ADMUX  = (1&lt;&lt;REFS1) | (1&lt;&lt;REFS0);                     // 1.1 V reference, ADC0
+    ADCSRA = (1&lt;&lt;ADEN) | (1&lt;&lt;ADPS2) | (1&lt;&lt;ADPS1) | (1&lt;&lt;ADPS0);
+
+    UBRR0  = 16000000UL / (16 * 9600UL) - 1;               // 103
+    UCSR0C |= (1&lt;&lt;UCSZ01) | (1&lt;&lt;UCSZ00);                  // 8 bit
+    UCSR0B |= (1&lt;&lt;TXEN0);                                 // transmitter
+
+    EICRA |= (1&lt;&lt;ISC01);  EICRA &amp;= ~(1&lt;&lt;ISC00);           // INT0 falling edge
+    EIMSK |= (1&lt;&lt;INT0);
+
+    TCNT1  = 49911;                                        // Timer1 1 s tick
+    TCCR1B = (1&lt;&lt;CS12) | (1&lt;&lt;CS10);                      // /1024
+    TIMSK1 |= (1&lt;&lt;TOIE1);
+    sei();
+
+    while (1)
+    {
+        ADCSRA |= (1&lt;&lt;ADSC);
+        while (ADCSRA &amp; (1&lt;&lt;ADSC));
+        float t = ADCW * 1.1 / 1024 * 100;                 // degrees Celsius
+        unsigned char duty;
+        if (override || t &gt;= 35) duty = 255;
+        else if (t &lt;= 25)        duty = 0;
+        else                     duty = (unsigned char)((t - 25) * 255 / 10);
+
+        if (duty == 0) { TCCR0A &amp;= ~(1&lt;&lt;COM0A1); PORTD &amp;= ~(1&lt;&lt;PORTD6); }  // fully off
+        else           { TCCR0A |=  (1&lt;&lt;COM0A1); OCR0A = duty; }
+
+        if (report)
+        {
+            report = 0;
+            txString("T=");   txInt((int)t);
+            txString(" C, FAN=");  txInt(duty * 100 / 255);
+            txString(" %\r\n");
+        }
+    }
+}</code></pre>
+<h4>(d) Arduino version, differences</h4>
+<ul>
+  <li><code>analogReference(INTERNAL)</code>; <code>float t = analogRead(A0) * 1.1 / 1024 * 100;</code></li>
+  <li><code>analogWrite(6, duty)</code> instead of the Timer0 registers.</li>
+  <li><code>pinMode(2, INPUT_PULLUP); attachInterrupt(digitalPinToInterrupt(2), toggleOverride, FALLING);</code> with an ISR that flips the flag and the LED.</li>
+  <li>The 2 s report with <code>millis()</code>: <code>if (millis() - last &gt;= 2000) { last += 2000; Serial.print("T="); ... }</code> and <code>Serial.begin(9600)</code>.</li>
+</ul>
+<div class="box"><b>Marking scheme Q1 (40)</b>(a) 10: sensor wiring 2, MOSFET/BJT driver with flyback diode and gate pull-down or base resistor 4, button with pull-up and debounce 2, LED + resistor 1, common ground and free pins 0/1 1. (b) 10: 1.1 V reference and resolution 3, duty mapping 2, PWM frequency 1, timer value 2, baud and error 2. (c) 15: configuration 6, mapping logic 3, ISRs 3, report 2, structure and <code>volatile</code> 1. (d) 5.</div>
+
+<h3>Question 2 solution</h3>
+<h4>(a) Pins and interrupt choice</h4>
+<table>
+  <tr><th>Part</th><th>Pin</th><th>Connection and interrupt</th></tr>
+  <tr><td>Host "ready"</td><td>Pin 2 (PD2 = INT0)</td><td>to GND, pull-up; <b>external interrupt</b> on the falling edge</td></tr>
+  <tr><td>Contestant A button</td><td>Pin 4 (PD4 = PCINT20)</td><td>to GND, pull-up; <b>pin change interrupt</b></td></tr>
+  <tr><td>Contestant B button</td><td>Pin 5 (PD5 = PCINT21)</td><td>to GND, pull-up; <b>pin change interrupt</b></td></tr>
+  <tr><td>LED A, LED B</td><td>Pins 8, 9 (PB0, PB1)</td><td>each pin &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>Serial</td><td>USB (pins 0, 1 free)</td><td>9600 baud</td></tr>
+</table>
+<p>Only two pins (INT0, INT1) support external interrupts, and three buttons are needed, so the two contestant buttons use <b>pin change interrupts</b> (any pin, but any change and one shared vector for the port, so the ISR must test which pin is low). The host button uses INT0 with a selectable falling edge. Debounce each button with a 100 nF capacitor.</p>
+<h4>(b) Time base</h4>
+<p>Timer0, prescale 64: tick 4 &micro;s; 1 ms = 250 ticks; initial value = 255 &minus; 250 + 1 = <b>6</b>; <code>TCNT0 = 6</code>, <code>TCCR0B = (1&lt;&lt;CS01)|(1&lt;&lt;CS00)</code>, <code>TIMSK0 |= (1&lt;&lt;TOIE0)</code>, ISR <code>TIMER0_OVF_vect</code> reloads TCNT0 and increments <code>ms</code> only while a round is armed.</p>
+<h4>(c) C firmware</h4>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+#include &lt;stdlib.h&gt;
+
+volatile unsigned long ms = 0;
+volatile unsigned char armed = 0;           // 1 while a round is running
+volatile unsigned char winner = 0;          // 0 none, 1 = A, 2 = B
+volatile unsigned char announce = 0;        // result ready to send
+volatile unsigned long tWin = 0;
+
+ISR(TIMER0_OVF_vect) { TCNT0 = 6; if (armed) ms++; }
+
+ISR(INT0_vect)                              // host: ready
+{
+    PORTB &amp;= ~((1&lt;&lt;PORTB0) | (1&lt;&lt;PORTB1));   // both LEDs off
+    ms = 0;  winner = 0;  announce = 0;
+    armed = 1;                              // start the round
+}
+
+ISR(PCINT2_vect)                            // contestant buttons (any change on Port D pins enabled)
+{
+    if (!armed) return;                     // ignore presses before ready (and after a winner)
+    if      (!(PIND &amp; (1&lt;&lt;PIND4))) winner = 1;      // A is low: pressed
+    else if (!(PIND &amp; (1&lt;&lt;PIND5))) winner = 2;      // B is low: pressed
+    else return;                            // a release, not a press
+    armed = 0;                              // lock out the other contestant
+    tWin = ms;
+    PORTB |= (winner == 1) ? (1&lt;&lt;PORTB0) : (1&lt;&lt;PORTB1);
+    announce = 1;
+}
+
+static void txChar(char c) { while (!(UCSR0A &amp; (1&lt;&lt;UDRE0))); UDR0 = c; }
+static void txString(const char *s) { while (*s) txChar(*s++); }
+
+int main(void)
+{
+    DDRB  |= (1&lt;&lt;DDB0) | (1&lt;&lt;DDB1);
+    DDRD  &amp;= ~((1&lt;&lt;DDD2) | (1&lt;&lt;DDD4) | (1&lt;&lt;DDD5));
+    PORTD |=  (1&lt;&lt;PORTD2) | (1&lt;&lt;PORTD4) | (1&lt;&lt;PORTD5);       // pull-ups
+
+    EICRA |= (1&lt;&lt;ISC01);  EICRA &amp;= ~(1&lt;&lt;ISC00);          // INT0 falling edge
+    EIMSK |= (1&lt;&lt;INT0);
+    PCICR  |= (1&lt;&lt;PCIE2);                                 // pin change interrupts on Port D
+    PCMSK2 |= (1&lt;&lt;PCINT20) | (1&lt;&lt;PCINT21);               // PD4 and PD5
+
+    TCNT0 = 6;  TCCR0B = (1&lt;&lt;CS01) | (1&lt;&lt;CS00);  TIMSK0 |= (1&lt;&lt;TOIE0);
+
+    UBRR0 = 16000000UL / (16 * 9600UL) - 1;
+    UCSR0C |= (1&lt;&lt;UCSZ01) | (1&lt;&lt;UCSZ00);
+    UCSR0B |= (1&lt;&lt;TXEN0);
+    sei();
+
+    while (1)
+    {
+        if (announce)
+        {
+            announce = 0;
+            char buf[11];
+            txString("Player ");
+            txChar(winner == 1 ? 'A' : 'B');
+            txString(" won at ");
+            ultoa(tWin, buf, 10);
+            txString(buf);
+            txString(" ms\r\n");
+        }
+    }
+}</code></pre>
+<h4>(d) Explanation</h4>
+<p>The flags and counters are changed in ISRs while <code>main()</code> reads them, so they are <code>volatile</code> (otherwise the compiler may keep a stale copy in a register and never see the change). <code>tWin</code> is copied inside the ISR so a later round cannot overwrite it before the message is sent. If A and B press within the same millisecond, the ISR runs once per pin-change event; the first ISR to run locks the round (<code>armed = 0</code>) and the second is ignored. If both buttons are already low when the first ISR runs, the code awards the win to A (it tests A first); a fair design could record the order with finer timer resolution or use separate interrupt vectors per player, which the AVR pin change scheme (one vector per port) does not give.</p>
+<div class="box"><b>Marking scheme Q2 (35)</b>(a) 10: pin choice and justification 5, wiring and debounce 5. (b) 5. (c) 15: registers for INT0 and PCINT 5, ISR logic with lock-out 5, time base 2, serial output 3. (d) 5.</div>
+
+<h3>Question 3 solution</h3>
+<ol type="a">
+  <li>Loop body: DEC 1 + NOP 1 + BRNE. Taken (2 cycles): 4 &times; 199 = 796; last pass falls through (1): 3. Total = 799, plus LDI (1) = <b>800 cycles</b> = 800 &times; 62.5 ns = <b>50 &micro;s</b>.</li>
+  <li>Tick = 256/16 MHz = 16 &micro;s; n = 2 ms/16 &micro;s = 125; initial = 255 &minus; 125 + 1 = <b>131</b>. Longest period = 256 &times; 16 &micro;s = <b>4.096 ms</b>.</li>
+  <li>UBRR = 16 000 000/(16 &times; 38 400) &minus; 1 = 25.04, so <b>25</b>; actual = 16 000 000/(16 &times; 26) = 38 461.5 baud; error <b>+0.16 %</b>. Five characters at 10 bits = 50 bits, 50/38 400 = <b>1.30 ms</b>.</li>
+  <li>&Delta;V = 2.5/1024 = <b>2.44 mV</b>; ADC = floor(1.8/2.5 &times; 1024) = floor(737.28) = <b>737</b>. With 5 V: 1.8/5 &times; 1024 = 368.64, so <b>368</b>.</li>
+  <li>R = (5 &minus; 1.8)/0.010 = <b>320 &Omega;</b>, use <b>330 &Omega;</b>. Frequency = 16 MHz/(256 &times; 8) = <b>7.81 kHz</b>; duty = (63 + 1)/256 = <b>25 %</b>.</li>
+</ol>
+<div class="box"><b>Marking scheme Q3 (25)</b>5 per part: method 3, answer 2.</div>
+<p><b>Total: 100 marks.</b> Aim for at least 70 under time. Weak topics: go back to the lesson named in the exercise bank (lessons 2 to 8) and redo the Practical question tab there.</p>

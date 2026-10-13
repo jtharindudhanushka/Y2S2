@@ -1,0 +1,258 @@
+<p class="sm" style="color:var(--muted)">Sources: lecture 07 (Timing and Counting), Exercise 5, peer notes pages 39 and 40, the ATmega328P simplified data sheet (timer registers). Prerequisites: lessons 2 and 3. PWM modes (lesson 7) use the same timers.</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain why timers and counters are separate peripherals and how they measure time and count events</li>
+  <li>Use the formulas for elapsed time, prescaler, number of pulses and initial timer value</li>
+  <li>Configure TCCRnB, TCNTn, TIFRn and TIMSKn (with the write-one-to-clear rule)</li>
+  <li>Write C firmware for counting events and for timed events by polling the overflow flag and with interrupts</li>
+  <li>Use <code>rand()</code> and <code>srand()</code> and build the reaction timer</li>
+</ul>
+
+<h2>1. Timer and counter</h2>
+<ul>
+  <li>A <b>timer</b> increments on each clock pulse when the <b>oscillator</b> is connected. Because the frequency is known, the pulse count tells the elapsed time.</li>
+  <li>When an <b>external pulse source</b> (a switch or sensor on the Tn pin) is connected instead, it counts <b>events</b> and operates as a <b>counter</b>.</li>
+  <li><b>What is the need?</b> The same thing can be done in software, but software timing and counting ties up the CPU. A microcontroller has a very small CPU, so the work is given to a <b>peripheral device</b> (the timer) and the CPU is left for computation.</li>
+</ul>
+<table>
+  <tr><th>Timer</th><th>Width</th><th>Counts</th><th>External input</th><th>PWM pins</th></tr>
+  <tr><td>Timer/Counter 0</td><td>8-bit</td><td>0 to 255</td><td>T0 = PD4 (Arduino 4)</td><td>OC0A = PD6 (6), OC0B = PD5 (5)</td></tr>
+  <tr><td>Timer/Counter 1</td><td>16-bit</td><td>0 to 65 535</td><td>T1 = PD5 (Arduino 5)</td><td>OC1A = PB1 (9), OC1B = PB2 (10)</td></tr>
+  <tr><td>Timer/Counter 2</td><td>8-bit</td><td>0 to 255</td><td>(none)</td><td>OC2A = PB3 (11), OC2B = PD3 (3)</td></tr>
+</table>
+<p>Every timer has its own registers named with the timer number n (TCCR0B, TCNT0, TIFR0, TIMSK0 for Timer 0; TCCR1B, TCNT1, ... for Timer 1).</p>
+
+<h3>How an 8-bit timer works</h3>
+<p>Oscillator &rarr; (optional prescaler) &rarr; <b>TCNTn</b> register. At each clock pulse TCNTn increments from 0 to 255, then <b>overflows</b> back to 0. When it overflows the hardware sets the <b>TOVn</b> flag in <b>TIFRn</b>, telling the CPU that the timer overflowed.</p>
+
+<h2>2. Time formulas</h2>
+<div class="box"><b>Elapsed time</b>Without a prescaler: elapsed time = (B &minus; A) / f, where A is the start count in TCNT, B the stop count and f the oscillator frequency. With a prescaler 1/N: elapsed time = N &times; (B &minus; A) / f.</div>
+<table>
+  <tr><th>Quantity</th><th>Formula</th></tr>
+  <tr><td>Time of one timer pulse</td><td>time = 1 / (F_CPU / prescale) = <b>prescale / F_CPU</b></td></tr>
+  <tr><td>Pulses n for a required delay</td><td>delay = (prescale / F_CPU) &times; n, so <b>n = (F_CPU / prescale) &times; delay</b></td></tr>
+  <tr><td>Initial value of TCNT</td><td><b>initialValue = maxValue &minus; n + 1</b> (maxValue = 255 for 8-bit, 65 535 for 16-bit). The timer overflows after n pulses.</td></tr>
+  <tr><td>Overflow period from 0</td><td>(maxValue + 1) &times; prescale / F_CPU</td></tr>
+</table>
+<p>Overflow period of the timers at F_CPU = 16 MHz (counting from 0):</p>
+<table>
+  <tr><th>Prescale</th><th>Tick</th><th>8-bit timer overflow</th><th>16-bit timer overflow</th></tr>
+  <tr><td>1</td><td>62.5 ns</td><td>16 &micro;s</td><td>4.096 ms</td></tr>
+  <tr><td>8</td><td>0.5 &micro;s</td><td>128 &micro;s</td><td>32.77 ms</td></tr>
+  <tr><td>64</td><td>4 &micro;s</td><td>1.024 ms</td><td>262.1 ms</td></tr>
+  <tr><td>256</td><td>16 &micro;s</td><td>4.096 ms</td><td>1.049 s</td></tr>
+  <tr><td>1024</td><td>64 &micro;s</td><td>16.384 ms</td><td>4.194 s</td></tr>
+</table>
+<div class="box"><b>Worked: 200 ms with Timer1, prescale 64</b>Tick = 64 / 16 MHz = 4 &micro;s. n = 0.2 / 4 &micro;s = 50 000. Initial = 65 535 &minus; 50 000 + 1 = <b>15 536</b>. (Exact, because 50 000 is an integer.)<br><b>Exercise 5 Q2: one second, 16-bit timer, prescale 1024</b>Tick = 64 &micro;s. n = 1 / 64 &micro;s = 15 625. Initial = 65 535 &minus; 15 625 + 1 = <b>49 911</b>.<br><b>Timer0, 10 ms, prescale 1024</b>n = 0.01 / 64 &micro;s = 156.25, so use 156 (9.984 ms): initial = 255 &minus; 156 + 1 = 100.</div>
+
+<h2>3. Timer registers</h2>
+<h3>TCCRnB: clock select</h3>
+<p>Bits <b>CSn2, CSn1, CSn0</b> (bits 2 to 0 of TCCRnB) select the clock source and prescale. 000 stops the timer.</p>
+<table>
+  <tr><th>CSn2</th><th>CSn1</th><th>CSn0</th><th>Clock source</th></tr>
+  <tr><td>0</td><td>0</td><td>0</td><td>Disconnected (timer stopped)</td></tr>
+  <tr><td>0</td><td>0</td><td>1</td><td>F_CPU</td></tr>
+  <tr><td>0</td><td>1</td><td>0</td><td>F_CPU / 8</td></tr>
+  <tr><td>0</td><td>1</td><td>1</td><td>F_CPU / 64</td></tr>
+  <tr><td>1</td><td>0</td><td>0</td><td>F_CPU / 256</td></tr>
+  <tr><td>1</td><td>0</td><td>1</td><td>F_CPU / 1024</td></tr>
+  <tr><td>1</td><td>1</td><td>0</td><td>External on Tn pin, counts on <b>falling</b> edge</td></tr>
+  <tr><td>1</td><td>1</td><td>1</td><td>External on Tn pin, counts on <b>rising</b> edge</td></tr>
+</table>
+<h3>TCNTn, TIFRn, TIMSKn</h3>
+<ul>
+  <li><b>TCNTn</b>: the count. Increments at every clock pulse, counts up to maximum, overflows to 0 and starts again. Software uses it to <b>set the start count</b> and to <b>read the end count</b>.</li>
+  <li><b>TIFRn</b> (Timer Interrupt Flag Register): bit 0 = <b>TOVn</b>, set by hardware when TCNTn overflows from its maximum to 0. (Bits OCFnA, OCFnB are for compare matches, lesson 7.)</li>
+  <li><b>TIMSKn</b> (Timer Interrupt MaSK): bit 0 = <b>TOIEn</b>, Timer Overflow Interrupt Enable. With <code>sei()</code> it makes the overflow call <code>ISR(TIMERn_OVF_vect)</code> (vectors TIMER0_OVF_vect, TIMER1_OVF_vect, TIMER2_OVF_vect).</li>
+</ul>
+<h3>Write one to clear (W1C)</h3>
+<p>A flag in TIFRn is <b>cleared by writing a 1 to it</b>, not a 0. Why? The flag is set by hardware, and TIFRn holds several flags. If clearing needed a 0, software would have to read the register, change one bit and write it back, a read-modify-write that could wrongly clear another flag that was set in between. With W1C, writing a mask with a single 1 clears just that flag and writing 0s leaves the others untouched. In code: <code>TIFR0 = (1&lt;&lt;TOV0);</code> (the lecture also uses <code>TIFR0 = TIFR0 | 0b00000001;</code>, which works for TOV0 but also writes back 1s to any other flag that is set, so prefer the plain mask).</p>
+
+<h2>4. Counting events: Systems 10, 11, 12</h2>
+<p><b>Task:</b> count 5 button presses, then toggle an LED. Hardware: LED on PB5 (with 220 &Omega;); the pushbutton on <b>PD4 = T0</b> to GND with the internal pull-up and a debounce capacitor (100 nF) across it.</p>
+<h3>System 10: count by polling TCNT0</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+int main(void)
+{
+    DDRB  = DDRB | 0b00100000;       // PB5 output
+    DDRD  = DDRD &amp; 0b11101111;       // PD4 (T0) input
+    PORTD = PORTD | 0b00010000;      // pull-up on PD4
+    TCCR0B = TCCR0B | 0b00000110;    // CS02:0 = 110: external clock T0, falling edge
+    TCNT0 = 0;                       // counter = 0
+    while (1)
+    {
+        if (TCNT0 &gt;= 5)              // 5 presses counted
+        {
+            PORTB = PORTB ^ 0b00100000;   // toggle PB5
+            TCNT0 = 0;                    // reset the counter
+        }
+    }
+    return 0;
+}</code></pre>
+<h3>System 11: alternate approach using the overflow flag</h3>
+<p>Preload the counter with <b>251</b>. The 5th falling edge takes it 251 &rarr; 252 &rarr; 253 &rarr; 254 &rarr; 255 &rarr; <b>overflow to 0</b>, which sets TOV0. Then no comparison with a number is needed.</p>
+<pre><code>    TCCR0B = TCCR0B | 0b00000110;    // external clock on T0, falling edge
+    TCNT0 = 251;                     // 5 counts to overflow
+    while (1)
+    {
+        if (TIFR0 &amp; 0b00000001)      // TOV0 set: 5 presses
+        {
+            PORTB = PORTB ^ 0b00100000;   // toggle PB5
+            TCNT0 = 251;                  // reload
+            TIFR0 = TIFR0 | 0b00000001;   // clear TOV0 (write 1)
+        }
+    }</code></pre>
+<h3>System 12: using the overflow interrupt</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+int main(void)
+{
+    DDRB  |=  (1&lt;&lt;DDB5);
+    DDRD  &amp;= ~(1&lt;&lt;DDD4);
+    PORTD |=  (1&lt;&lt;PORTD4);
+    TCCR0B |= (1&lt;&lt;CS02) | (1&lt;&lt;CS01);    // external clock on T0, falling edge
+    TCNT0 = 251;
+    TIMSK0 |= (1&lt;&lt;TOIE0);               // enable timer overflow interrupt
+    sei();                               // enable global interrupts
+    while (1) { /* can be used to perform another task */ }
+}
+ISR(TIMER0_OVF_vect)                     // 5 presses counted
+{
+    PORTB ^= (1&lt;&lt;PORTB5);                // toggle the LED
+    TCNT0 = 251;                         // reload (the flag clears itself on ISR entry)
+}</code></pre>
+<p class="sm" style="color:var(--muted)">When the overflow interrupt is serviced the hardware clears TOVn automatically, so the ISR does not clear it.</p>
+
+<h2>5. Timing: Systems 13 and 14 (200 ms blinker)</h2>
+<p><b>Task:</b> blink an LED on PB5 every 200 ms using Timer1 (16-bit), prescale 64, initial value 15 536 (see the worked example).</p>
+<pre><code>// System 13: polling the overflow flag
+#include &lt;avr/io.h&gt;
+int main(void)
+{
+    DDRB   |= (1&lt;&lt;DDB5);
+    TCCR1B |= (1&lt;&lt;CS11) | (1&lt;&lt;CS10);      // F_CPU/64
+    TCNT1 = 15536;                          // 50 000 pulses to overflow
+    while (1)
+    {
+        if (TIFR1 &amp; (1&lt;&lt;TOV1))             // timer overflowed: 200 ms passed
+        {
+            PORTB ^= (1&lt;&lt;PORTB5);           // toggle LED
+            TCNT1 = 15536;                  // reset timer
+            TIFR1 |= (1&lt;&lt;TOV1);             // clear TOV1 (write 1)
+        }
+    }
+}
+
+// System 14: using interrupts
+    TCCR1B |= (1&lt;&lt;CS11) | (1&lt;&lt;CS10);
+    TCNT1 = 15536;
+    TIMSK1 |= (1&lt;&lt;TOIE1);
+    sei();
+    while (1) { /* another task */ }
+ISR(TIMER1_OVF_vect) { PORTB ^= (1&lt;&lt;PORTB5); TCNT1 = 15536; }</code></pre>
+<div class="box"><b>Timer vs software delay</b>A timer keeps the CPU free for other work (and with the interrupt version the delay costs nothing), is more accurate than a counted loop, and is not affected by other code, whereas <code>_delay_ms()</code> blocks the CPU. Remember to <b>reload TCNT</b> in the loop or ISR, otherwise the next period is a full 65 536 counts.</div>
+
+<h2>6. Random numbers on the AVR</h2>
+<ul>
+  <li><code>#include &lt;stdlib.h&gt;</code>: <code>rand()</code> returns a pseudo-random integer from 0 to RAND_MAX; <code>srand(seed)</code> seeds it with an unsigned int.</li>
+  <li>The same seed gives the same sequence after every reset, so the program needs a <b>fairly random seed</b>. Sources: the value of a free-running timer when the user presses a button (the press time is unpredictable), or the ADC reading of a <b>floating (unconnected) analog pin</b>, which picks up noise.</li>
+  <li>A number in a range: <code>1 + rand() % 10</code> gives 1 to 10. Arduino: <code>randomSeed(analogRead(A5))</code>, <code>random(1000, 10001)</code>.</li>
+</ul>
+
+<h2>7. Exercise 5: reaction timer (worked)</h2>
+<p><b>Specification:</b> When the user presses the "ready" button, all LEDs go off and the system waits a random 1 to 10 s. Then a <b>blue LED</b> turns on as the signal. The user presses the "react" button as fast as possible; the blue LED turns off and the elapsed time is shown by one LED: <b>green</b> if the reaction is less than 1 s, <b>orange</b> for 1 s to less than 2 s, <b>red</b> for 2 s or more.</p>
+<h3>Design</h3>
+<table>
+  <tr><th>Function</th><th>Pin</th><th>Connection</th></tr>
+  <tr><td>Blue, green, orange, red LEDs</td><td>PB0 to PB3 (Arduino 8 to 11)</td><td>each through 220 &Omega; to the LED, cathode to GND</td></tr>
+  <tr><td>"Ready" pushbutton</td><td>PD2 (Arduino 2)</td><td>to GND, internal pull-up</td></tr>
+  <tr><td>"React" pushbutton</td><td>PD3 (Arduino 3)</td><td>to GND, internal pull-up</td></tr>
+  <tr><td>Timer0 (8-bit)</td><td>internal</td><td>free-running, supplies the random seed</td></tr>
+  <tr><td>Timer1 (16-bit)</td><td>internal</td><td>1-second ticks for the waiting time and the reaction time</td></tr>
+</table>
+<h3>Q2: the timer value</h3>
+<p>16 MHz, prescale 1024: tick 64 &micro;s, n = 15 625, initial value <b>49 911</b> makes the 16-bit timer overflow in exactly one second (65 535 &minus; 15 625 + 1). The firmware counts overflows in a numeric variable: waiting time = random whole seconds from 1 to 10, reaction time = number of whole seconds elapsed.</p>
+<h3>Q3: C firmware (seed from Timer0)</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define ONE_SECOND 49911u
+
+static void waitOneSecond(void)
+{
+    TCNT1 = ONE_SECOND;
+    TIFR1 |= (1&lt;&lt;TOV1);                   // clear the flag (write 1)
+    while (!(TIFR1 &amp; (1&lt;&lt;TOV1)));         // wait for the overflow
+}
+
+int main(void)
+{
+    DDRB  |= 0x0F;                          // PB0..PB3 outputs
+    DDRD  &amp;= ~((1&lt;&lt;DDD2) | (1&lt;&lt;DDD3));    // buttons inputs
+    PORTD |= (1&lt;&lt;PORTD2) | (1&lt;&lt;PORTD3);    // pull-ups
+    TCCR0B = (1&lt;&lt;CS02) | (1&lt;&lt;CS00);        // Timer0 free-running, F_CPU/1024
+    TCCR1B = (1&lt;&lt;CS12) | (1&lt;&lt;CS10);        // Timer1 F_CPU/1024
+
+    while (1)
+    {
+        while (PIND &amp; (1&lt;&lt;PIND2));          // wait until "ready" is pressed (low)
+        srand(TCNT0);                       // timer value at the moment of the press: random seed
+        PORTB &amp;= ~0x0F;                     // all LEDs off
+        unsigned char wait = 1 + rand() % 10;    // 1..10 s
+        while (wait--) waitOneSecond();          // waiting time
+        PORTB |= (1&lt;&lt;PORTB0);               // blue LED: signal
+
+        unsigned char seconds = 0;
+        TCNT1 = ONE_SECOND;
+        TIFR1 |= (1&lt;&lt;TOV1);
+        while (PIND &amp; (1&lt;&lt;PIND3))           // until "react" is pressed
+        {
+            if (TIFR1 &amp; (1&lt;&lt;TOV1))           // another whole second passed
+            {
+                TIFR1 |= (1&lt;&lt;TOV1);
+                TCNT1 = ONE_SECOND;
+                if (seconds &lt; 255) seconds++;
+            }
+        }
+        PORTB &amp;= ~(1&lt;&lt;PORTB0);              // blue off
+        if      (seconds == 0) PORTB |= (1&lt;&lt;PORTB1);   // &lt; 1 s: green
+        else if (seconds == 1) PORTB |= (1&lt;&lt;PORTB2);   // 1 s to &lt; 2 s: orange
+        else                   PORTB |= (1&lt;&lt;PORTB3);   // &gt;= 2 s: red
+    }
+}</code></pre>
+<h3>Q4: seed from a floating analog input</h3>
+<p>Leave A5 (PC5, ADC5) unconnected, read it once with the ADC (see lesson 4) and use the noisy value as the seed. Replace the <code>srand(TCNT0)</code> line with:</p>
+<pre><code>    ADMUX  = (1&lt;&lt;REFS0) | (1&lt;&lt;MUX2) | (1&lt;&lt;MUX0);        // AVcc reference, channel ADC5 (floating)
+    ADCSRA = (1&lt;&lt;ADEN) | (1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0);
+    ADCSRA |= (1&lt;&lt;ADSC); while (ADCSRA &amp; (1&lt;&lt;ADSC));
+    srand(ADCW);                                       // a different seed each run</code></pre>
+<h3>Q5: Arduino wrapper version</h3>
+<pre><code>const int readyBtn = 2, reactBtn = 3, blue = 8, green = 9, orange = 10, red = 11;
+void setup() {
+  pinMode(readyBtn, INPUT_PULLUP); pinMode(reactBtn, INPUT_PULLUP);
+  pinMode(blue, OUTPUT); pinMode(green, OUTPUT); pinMode(orange, OUTPUT); pinMode(red, OUTPUT);
+  randomSeed(analogRead(A5));              // floating pin
+}
+void loop() {
+  while (digitalRead(readyBtn) == HIGH);   // wait for "ready"
+  digitalWrite(green, LOW); digitalWrite(orange, LOW); digitalWrite(red, LOW);
+  delay(random(1000, 10001));              // 1 to 10 s
+  digitalWrite(blue, HIGH);
+  unsigned long t0 = millis();
+  while (digitalRead(reactBtn) == HIGH);   // wait for "react"
+  unsigned long t = millis() - t0;
+  digitalWrite(blue, LOW);
+  if      (t &lt; 1000) digitalWrite(green, HIGH);
+  else if (t &lt; 2000) digitalWrite(orange, HIGH);
+  else               digitalWrite(red, HIGH);
+}</code></pre>
+<h3>Q6: comparison of the C and Arduino versions</h3>
+<table>
+  <tr><th></th><th>C with timers</th><th>Arduino wrappers</th></tr>
+  <tr><td>Size/speed</td><td>Smaller and faster; only needed code</td><td>Larger (core, <code>millis</code> interrupt, <code>random</code>, <code>digitalRead</code>)</td></tr>
+  <tr><td>Timing resolution</td><td>Whole seconds in this design (finer if the timer ticks are used)</td><td>1 ms (<code>millis()</code>), tick of 4 &micro;s on Timer0</td></tr>
+  <tr><td>Effort / readability</td><td>Needs register knowledge</td><td>Easier to write and read, portable</td></tr>
+  <tr><td>Hardware use</td><td>Uses Timer0/Timer1 directly</td><td>Uses Timer0 internally for <code>millis()</code>/<code>delay()</code></td></tr>
+</table>
+<div class="warn"><b>Common mistakes</b>1) Forgetting to reload TCNT in the loop or ISR. 2) Writing 0 instead of 1 to clear TOV. 3) Wrong initial value (+1 error): initial = max &minus; n + 1. 4) Mixing up the CS bits (for example 011 is /64, 101 is /1024). 5) Using Timer1 registers with TCCR0B. 6) Forgetting that an external-clock timer needs the pin as input with a pull-up. 7) Debounce capacitor missing when counting button presses. 8) <code>rand()</code> without <code>srand()</code> gives the same wait every time.</div>

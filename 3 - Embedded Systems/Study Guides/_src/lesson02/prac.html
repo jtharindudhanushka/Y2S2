@@ -1,0 +1,74 @@
+<h2>Practical question: "Scanner light" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question modelled on Exercises 1 and 2 and on the style of the past practical paper (assemble the hardware, then write and demonstrate the firmware).</p>
+<div class="box"><b>Scenario</b>A "scanner light" sweeps a single lit LED across a row of <b>six LEDs</b> (left to right, then right to left, without repeating the end LEDs). Each LED stays lit for 150 ms. When the operator <b>holds the "fast" pushbutton</b> the sweep runs at 50 ms per LED instead. The LEDs are driven at 2 V and 12 mA from a 5 V supply.</div>
+<ol>
+  <li>Calculate the series resistor and prepare a Bill of Materials.</li>
+  <li>Assemble the system on a breadboard with an Arduino Uno (ATmega328P). Give a wiring table: pins, port bits and components.</li>
+  <li>Write the firmware using the Arduino wrapper functions.</li>
+  <li>Write the firmware in C using direct register access and the labelled constants (<code>DDB0</code>, <code>PORTB0</code>, <code>PIND2</code>).</li>
+  <li>The sketch for part 3 is 1 020 bytes and the C code is 210 bytes. Explain the difference.</li>
+</ol>
+
+<details open><summary>Solution</summary>
+<h3>1. Resistor and BOM</h3>
+<p>R = (5 &minus; 2) / 0.012 = <b>250 &Omega;</b>. Use the next standard value, <b>270 &Omega;</b> (about 11 mA); 220 &Omega; (13.6 mA) is acceptable if the LED allows 15 mA.</p>
+<table>
+  <tr><th>Qty</th><th>Item</th></tr>
+  <tr><td>1</td><td>Arduino Uno R3</td></tr><tr><td>1</td><td>Breadboard</td></tr><tr><td>6</td><td>LED</td></tr><tr><td>6</td><td>270 &Omega; resistor</td></tr><tr><td>1</td><td>Micro pushbutton</td></tr><tr><td>1</td><td>Jumper wires</td></tr>
+</table>
+<h3>2. Wiring</h3>
+<table>
+  <tr><th>Arduino pin</th><th>Port bit</th><th>Connection</th></tr>
+  <tr><td>8 to 13</td><td>PB0 to PB5</td><td>Each pin &rarr; 270 &Omega; &rarr; LED anode; LED cathodes to the GND rail</td></tr>
+  <tr><td>2</td><td>PD2</td><td>One leg of the pushbutton; the other leg to GND. Internal pull-up is used (no resistor).</td></tr>
+  <tr><td>GND</td><td></td><td>Common ground rail</td></tr>
+</table>
+<p class="sm">Pin 13 already has the on-board LED, so the on-board LED will blink too; that is harmless. Do not use pins 0 and 1.</p>
+<h3>3. Arduino wrapper version</h3>
+<pre><code>const int led[] = {8, 9, 10, 11, 12, 13};
+const int btn = 2;
+
+void setup() {
+  for (int i = 0; i &lt; 6; i++) pinMode(led[i], OUTPUT);
+  pinMode(btn, INPUT_PULLUP);
+}
+
+void show(int i) {
+  int d = (digitalRead(btn) == LOW) ? 50 : 150;   // pressed = fast
+  digitalWrite(led[i], HIGH);
+  delay(d);
+  digitalWrite(led[i], LOW);
+}
+
+void loop() {
+  for (int i = 0; i &lt; 6; i++)  show(i);          // left to right
+  for (int i = 4; i &gt; 0; i--)  show(i);          // back, ends not repeated
+}</code></pre>
+<h3>4. C version</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+
+static void show(int i)
+{
+    PORTB = (1&lt;&lt;i);                                  // only LED i on
+    if ((PIND &amp; (1&lt;&lt;PIND2)) == 0) _delay_ms(50);    // fast
+    else                            _delay_ms(150);
+}
+
+int main(void)
+{
+    DDRB  |= 0b00111111;            // PB0..PB5 outputs
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);           // PD2 input
+    PORTD |=  (1&lt;&lt;PORTD2);          // pull-up
+    while (1)
+    {
+        for (int i = 0; i &lt; 6; i++)  show(i);
+        for (int i = 4; i &gt; 0; i--)  show(i);
+    }
+}</code></pre>
+<p class="sm">Note: <code>_delay_ms()</code> needs a compile-time constant argument, which is why the two branches each call it with a literal.</p>
+<h3>5. Size difference</h3>
+<p>The wrapper version links <code>pinMode</code>, <code>digitalRead</code>, <code>digitalWrite</code>, <code>delay</code>, the pin-to-port tables, PWM-turn-off checks and the core start-up (<code>init()</code>, timer set-up, the <code>millis()</code> interrupt). The C version writes the registers directly and contains only the instructions it needs.</p>
+<div class="box"><b>Marking hints</b>Resistor working shown and rounded <i>up</i>; BOM; common ground; button with pull-up and active-low test; sweep ends not repeated; delay values met (50 ms and 150 ms); explanation names the wrapper overhead.</div>
+</details>

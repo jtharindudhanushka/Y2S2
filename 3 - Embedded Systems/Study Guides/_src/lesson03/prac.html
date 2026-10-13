@@ -1,0 +1,80 @@
+<h2>Practical question: "Visitor counter" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question modelled on Exercise 3 (click counter) and system 6. It combines two pushbuttons, interrupts, binary LED output and a background task.</p>
+<div class="box"><b>Scenario</b>A shop door has a <b>visitor counter</b>. Each press of the "visitor" pushbutton adds one to a count that wraps from 15 back to 0. The count is shown in binary on <b>four LEDs</b>. A second "reset" pushbutton sets the count to 0. Meanwhile a green "alive" LED blinks every 1 s to show the system is running. Both buttons must react immediately and the main program must not wait for them. Serial pins 0 and 1 must stay free.</div>
+<ol>
+  <li>Design the circuit: give the pin allocation and explain how you will debounce the buttons.</li>
+  <li>Assemble it on a breadboard (Arduino Uno) and list the connections.</li>
+  <li>Write the firmware in C using direct register access and interrupts.</li>
+  <li>Rewrite the firmware using the Arduino wrapper functions.</li>
+  <li>Explain why <code>count</code> must be <code>volatile</code>, and why polling would be unsuitable.</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1 and 2. Design and wiring</h3>
+<table>
+  <tr><th>Function</th><th>Arduino pin</th><th>Port bit</th><th>Connection</th></tr>
+  <tr><td>Count bits 0 to 3</td><td>8, 9, 10, 11</td><td>PB0 to PB3</td><td>pin &rarr; 220 &Omega; &rarr; LED anode, cathode to GND</td></tr>
+  <tr><td>Alive LED</td><td>13</td><td>PB5</td><td>on-board LED (or external with 220 &Omega;)</td></tr>
+  <tr><td>Visitor button</td><td>2</td><td>PD2 / INT0</td><td>pin to GND; internal pull-up; 100 nF across the switch</td></tr>
+  <tr><td>Reset button</td><td>3</td><td>PD3 / INT1</td><td>pin to GND; internal pull-up; 100 nF across the switch</td></tr>
+  <tr><td>Free</td><td>0, 1</td><td>PD0, PD1</td><td>left unconnected (Rx, Tx)</td></tr>
+</table>
+<p>Debouncing: a <b>100 nF capacitor</b> in parallel with each switch smooths the bounce so that each press produces a single falling edge. The buttons are on the two <b>external interrupt pins</b> (INT0, INT1), triggered on the falling edge (pull-up inputs go low when pressed).</p>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+#include &lt;avr/interrupt.h&gt;
+
+volatile unsigned char count = 0;
+
+static void show(void)
+{
+    PORTB = (PORTB &amp; 0b11110000) | (count &amp; 0x0F);     // bits 0..3 on PB0..PB3
+}
+
+int main(void)
+{
+    DDRB  |= 0b00101111;                    // PB0..PB3 and PB5 outputs
+    DDRD  &amp;= ~((1&lt;&lt;DDD2) | (1&lt;&lt;DDD3));    // PD2, PD3 inputs
+    PORTD |=  (1&lt;&lt;PORTD2) | (1&lt;&lt;PORTD3);    // pull-ups
+    EICRA |=  (1&lt;&lt;ISC01) | (1&lt;&lt;ISC11);      // falling edge for INT0 and INT1
+    EICRA &amp;= ~((1&lt;&lt;ISC00) | (1&lt;&lt;ISC10));
+    EIMSK |=  (1&lt;&lt;INT0) | (1&lt;&lt;INT1);        // enable both
+    sei();
+    while (1)
+    {
+        PORTB ^= (1&lt;&lt;PORTB5);               // alive LED
+        _delay_ms(1000);
+    }
+}
+
+ISR(INT0_vect) { count = (count + 1) &amp; 0x0F; show(); }   // 15 + 1 wraps to 0
+ISR(INT1_vect) { count = 0;                   show(); }</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>const int ledPin[] = {8, 9, 10, 11};
+const int aliveLed = 13, visitorBtn = 2, resetBtn = 3;
+volatile byte count = 0;
+
+void show() {
+  for (int i = 0; i &lt; 4; i++)
+    digitalWrite(ledPin[i], (count &gt;&gt; i) &amp; 1);
+}
+void addVisitor() { count = (count + 1) &amp; 0x0F; show(); }
+void clearCount() { count = 0; show(); }
+
+void setup() {
+  for (int i = 0; i &lt; 4; i++) pinMode(ledPin[i], OUTPUT);
+  pinMode(aliveLed, OUTPUT);
+  pinMode(visitorBtn, INPUT_PULLUP);
+  pinMode(resetBtn,   INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(visitorBtn), addVisitor, FALLING);
+  attachInterrupt(digitalPinToInterrupt(resetBtn),   clearCount, FALLING);
+}
+void loop() {
+  digitalWrite(aliveLed, !digitalRead(aliveLed));
+  delay(1000);
+}</code></pre>
+<h3>5. Explanation</h3>
+<p><code>count</code> is changed inside the ISRs, outside the normal flow of <code>main()</code>. Without <code>volatile</code> the compiler may keep a copy in a register and never see the change. Polling would be unsuitable because <code>main()</code> sleeps for 1 s in <code>_delay_ms(1000)</code>: a visitor press lasting 100 ms would usually be missed, and the count would be wrong. Interrupts catch each press at once and the CPU does not waste time monitoring.</p>
+<div class="box"><b>Marking hints</b>INT0/INT1 on PD2/PD3; EICRA set for falling edge; EIMSK enabled; <code>sei()</code> present; debounce capacitor; ISR short with no delay; volatile; wrap-around with <code>&amp; 0x0F</code>; pins 0 and 1 unused; the wrapper version uses <code>digitalPinToInterrupt</code>.</div>
+</details>

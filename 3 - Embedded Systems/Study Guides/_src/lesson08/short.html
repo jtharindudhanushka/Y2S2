@@ -1,0 +1,18 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Serial vs parallel</td><td>Serial = 1 bit at a time, few wires. Parallel needs many wires, has skew and crosstalk.</td></tr>
+  <tr><td>Async frame</td><td>Idle high; start bit 0; data LSB first; stop bit 1. 8N1 = 10 bits/char. Needs matching baud rate (no clock).</td></tr>
+  <tr><td>Interfaces</td><td>RS-232 via MAX232 line driver (level shift). USB via UART-to-USB controller: FT232RL (Duemilanove), ATmega16U2 (Uno). TX to RX crossed, common GND.</td></tr>
+  <tr><td>Transmit</td><td>UDRE (data register empty, max throughput) vs TXC (whole frame sent).</td></tr>
+  <tr><td>Receive</td><td>RXC set when UDR has unread data; reading UDR clears it.</td></tr>
+  <tr><td>Registers</td><td>UCSR0A: RXC0 bit 7, TXC0 bit 6, UDRE0 bit 5. UCSR0B: RXCIE0 7, TXCIE0 6, UDRIE0 5, RXEN0 4, TXEN0 3, UCSZ02 2. UCSR0C: UCSZ01, UCSZ00 (011 = 8-bit).</td></tr>
+  <tr><td>Baud</td><td>UBRR = F_CPU/(16&times;baud) &minus; 1 (use <code>UL</code>). 9600 &rarr; 103 (+0.16 %); 19 200 &rarr; 51; 115 200 &rarr; 8 (&minus;3.55 %, too high). Error = (actual &minus; desired)/desired. 18.432 MHz gives 0 % at 9600.</td></tr>
+  <tr><td>C recipe</td><td><code>UBRR0 = ...; UCSR0B &amp;= ~(1&lt;&lt;UCSZ02); UCSR0C |= (1&lt;&lt;UCSZ01)|(1&lt;&lt;UCSZ00); UCSR0B |= (1&lt;&lt;RXEN0)|(1&lt;&lt;TXEN0);</code> send: wait UDRE then <code>UDR0 = c</code>; receive: wait RXC then <code>c = UDR0</code>.</td></tr>
+  <tr><td>Interrupts</td><td>USART_RX_vect (RXCIE0), USART_UDRE_vect (UDRIE0, disable when done), USART_TX_vect (TXCIE0).</td></tr>
+  <tr><td>Arduino</td><td><code>Serial.begin(9600); Serial.available(); Serial.read(); Serial.print/println</code>. Serial Monitor = terminal emulator.</td></tr>
+  <tr><td>CR / LF</td><td>\r = 13 carriage return, \n = 10 line feed.</td></tr>
+  <tr><td>Strings</td><td>'-55' / '150' need 3 chars + '\0' = 4 elements. <code>itoa(n, buf, 10)</code>.</td></tr>
+  <tr><td>stdio</td><td><code>FDEV_SETUP_STREAM(put, get, _FDEV_SETUP_RW)</code>; <code>stdin = stdout = &amp;stream</code>; getchar/printf. Pros: portable, convenient; cons: memory, speed.</td></tr>
+  <tr><td>C# app</td><td>SerialPort, DataReceived on another thread: use Invoke/BeginInvoke; send 'Y'/'N'; close port on exit.</td></tr>
+</table>

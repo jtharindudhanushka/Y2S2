@@ -1,0 +1,35 @@
+{
+ "mcq": [
+  {"q":"The ADC converts:","o":["Digital numbers to voltages","Analog voltages into discrete numbers","Currents to resistances","Clock pulses to bits"],"a":1,"e":"Between 0 and Vref into 0 to 2^resolution − 1."},
+  {"q":"The ATmega328P ADC resolution is:","o":["8 bits","10 bits","12 bits","16 bits"],"a":1,"e":"1024 intervals."},
+  {"q":"Interval size with Vref = 5 V and 10 bits is about:","o":["4.88 mV","5 mV exactly","48.8 mV","0.49 mV"],"a":0,"e":"5 / 1024 = 4.883 mV."},
+  {"q":"The ADC value for Vin = 2.5 V with Vref = 5 V is:","o":["256","512","1023","2500"],"a":1,"e":"2.5 / 5 × 1024 = 512."},
+  {"q":"Which is the correct conversion back to voltage (datasheet)?","o":["ADCW × Vref / 1023","ADCW × Vref / 1024","ADCW / Vref","ADCW × 1024"],"a":1,"e":"1024 intervals; the code 1023 never reaches Vref."},
+  {"q":"To make the ADC more accurate with a fixed resolution you can:","o":["Increase Vref","Reduce Vref","Disable the multiplexer","Use a slower CPU"],"a":1,"e":"Smaller Vref gives a smaller interval size."},
+  {"q":"REFS1 REFS0 = 11 selects:","o":["AREF pin","AVcc","Internal 1.1 V","Reserved"],"a":2,"e":"01 is AVcc (DEFAULT); 00 is external."},
+  {"q":"In Arduino, analogReference(INTERNAL) corresponds to:","o":["REFS = 00","REFS = 01","REFS = 11","REFS = 10"],"a":2,"e":"1.1 V internal."},
+  {"q":"MUX2 MUX1 MUX0 = 011 selects channel:","o":["ADC0","ADC2","ADC3","ADC5"],"a":2,"e":"Binary value is the channel number."},
+  {"q":"Setting which bit starts a conversion?","o":["ADEN","ADSC","ADIE","ADIF"],"a":1,"e":"ADSC (ADc Start Conversion); it clears when the conversion is done."},
+  {"q":"Which bit must be set to enable the ADC?","o":["ADEN","ADSC","ADATE","ADLAR"],"a":0,"e":"ADc ENable, bit 7 of ADCSRA."},
+  {"q":"ADPS2..0 = 111 gives an ADC clock of (F_CPU = 16 MHz):","o":["2 MHz","1 MHz","250 kHz","125 kHz"],"a":3,"e":"F_CPU/128."},
+  {"q":"Why use a prescaler of 128 at 16 MHz?","o":["To save RAM","To keep the ADC clock within about 50 to 200 kHz for full accuracy","To disable interrupts","To raise Vref"],"a":1,"e":"125 kHz."},
+  {"q":"ADLAR = 1 means:","o":["Result right justified","Result left justified so ADCH holds the top 8 bits","ADC disabled","Auto trigger"],"a":1,"e":"ADc Left Adjust Result."},
+  {"q":"ADCW provides:","o":["Only the low byte","A 16-bit access to the 10-bit result with six leading zeros","The channel number","The prescaler"],"a":1,"e":"Combines ADCH:ADCL."},
+  {"q":"float vIn = ADCW * 5 / 1024; (all integers) gives a wrong result because:","o":["ADCW is negative","Integer arithmetic: 5/1024 style truncation loses the fraction","5 is too big","It needs sei()"],"a":1,"e":"Use 5.0 so the calculation is floating point."},
+  {"q":"Which vector is used for the ADC-complete interrupt?","o":["ADC_vect","ADCSRA_vect","INT0_vect","TIMER0_OVF_vect"],"a":0,"e":"Enable with ADIE and sei()."},
+  {"q":"In the interrupt voltmeter, the ISR must end by:","o":["Clearing ADEN","Restarting the conversion by setting ADSC","Calling cli()","Returning 0"],"a":1,"e":"The ADC does not retrigger itself unless auto trigger is used."},
+  {"q":"An LDR's resistance:","o":["Rises with light","Falls as light intensity rises","Is constant","Depends on sound"],"a":1,"e":"Used in a voltage divider."},
+  {"q":"LDR on top (to 5 V), 10 kΩ at the bottom. In bright light the divider voltage is:","o":["Low","High","Zero","Negative"],"a":1,"e":"Vin = V×R2/(R1+R2); small R1 gives Vin near 5 V."},
+  {"q":"LM35 output sensitivity:","o":["1 mV/°C","10 mV/°C","100 mV/°C","1 V/°C"],"a":1,"e":"Temperature = Vout × 100."},
+  {"q":"LM35 output is 0.30 V. The temperature is:","o":["3 °C","30 °C","300 °C","0.3 °C"],"a":1,"e":"0.30 × 100 = 30 °C."},
+  {"q":"Why use the 1.1 V internal reference with an LM35?","o":["It is cheaper","The sensor output is small, so a smaller interval gives finer temperature resolution (about 0.1 °C)","The LM35 needs 1.1 V","It disables noise"],"a":1,"e":"1.1/1024 = 1.07 mV per step."},
+  {"q":"To switch a 230 V lamp from a microcontroller pin you use:","o":["The pin directly","A transistor-driven relay with a flyback diode, with proper isolation","A bigger resistor","A capacitor"],"a":1,"e":"Mains work needs qualified supervision and correct isolation."},
+  {"q":"The flyback diode across a relay coil:","o":["Raises the current","Absorbs the voltage spike when the coil de-energises","Sets the logic level","Debounces the input"],"a":1,"e":"Protects the transistor and the microcontroller."}
+ ],
+ "written": [
+  {"q":"Explain how a 10-bit ADC with Vref = 5 V converts 3.3 V and compute its resolution in volts. How can the accuracy be improved?","a":"<p>Interval size = 5/1024 = 4.883 mV; ADCW = floor(3.3 / 4.883 mV) = floor(675.84) = <b>675</b> (binary 1010100011, found by successive approximation: each of the 10 steps compares Vin with a DAC trial voltage). Reconstructed Vin = 675 &times; 5/1024 = 3.296 V. Accuracy improves with a higher resolution or a smaller Vref (for example the internal 1.1 V reference gives 1.07 mV per step for signals below 1.1 V).</p>"},
+  {"q":"List the steps and register settings to read channel ADC0 with Vref = AVcc in C and write the code to read the value in a loop.","a":"<pre><code>DDRC &amp;= ~(1&lt;&lt;DDC0);\nADMUX = (ADMUX &amp; ~(1&lt;&lt;REFS1)) | (1&lt;&lt;REFS0);   // Vref = AVcc\nADMUX &amp;= ~((1&lt;&lt;MUX3)|(1&lt;&lt;MUX2)|(1&lt;&lt;MUX1)|(1&lt;&lt;MUX0)); // ADC0\nADCSRA |= (1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0);       // /128 = 125 kHz\nADCSRA |= (1&lt;&lt;ADEN);\nwhile(1){ ADCSRA |= (1&lt;&lt;ADSC); while(ADCSRA &amp; (1&lt;&lt;ADSC)); v = ADCW; }</code></pre>"},
+  {"q":"Design an LM35-based thermometer that switches on an LED above 30 °C. Compute the ADC threshold and the resolution for 5 V and 1.1 V references.","a":"<p>LM35 to A0 (+V to 5 V, GND to GND), LED with 220 &Omega; on pin 8. 30 &deg;C = 0.30 V. With Vref = 5 V: threshold = 0.30/5 &times; 1024 = 61.4 (about 62), resolution 4.88 mV = 0.49 &deg;C. With Vref = 1.1 V: threshold = 0.30/1.1 &times; 1024 = 279, resolution 1.07 mV = 0.107 &deg;C, so the 1.1 V reference is better. Code: <code>analogReference(INTERNAL); float t = analogRead(A0)*1.1/1024*100; digitalWrite(8, t &gt; 30);</code></p>"},
+  {"q":"Compare the polling and interrupt-driven voltmeter implementations.","a":"<p>Polling: after setting ADSC the CPU waits in <code>while (ADCSRA &amp; (1&lt;&lt;ADSC))</code>, so it is tied up for about 104 &micro;s every conversion. Interrupt: enable ADIE and <code>sei()</code>, start once, and the <code>ISR(ADC_vect)</code> computes the voltage, sets the LEDs and restarts the ADC; <code>main()</code> is free for other work.</p>"}
+ ]
+}

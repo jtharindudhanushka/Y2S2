@@ -1,0 +1,87 @@
+<p class="sm" style="color:var(--muted)">The module outline says the written examination (50 %) may be based on the self-study exercises, so expect calculations, code reading and writing, circuit explanations and short theory answers. No real written past paper is available, so the mock paper in the next tab is modelled on the lecture questions and the exercises. Items marked <i>(syllabus)</i> come from the course outline, not the slides.</p>
+
+<h2>1. How to answer</h2>
+<table>
+  <tr><th>Command word</th><th>What to write</th></tr>
+  <tr><td>Define / state</td><td>One precise sentence plus an example if helpful</td></tr>
+  <tr><td>Explain</td><td>What it is, how it works, why it is needed (three short points)</td></tr>
+  <tr><td>Compare / contrast</td><td>A table with the same criteria on both sides, then a conclusion</td></tr>
+  <tr><td>Calculate</td><td>Formula, substitution with units, answer, check for plausibility</td></tr>
+  <tr><td>Write firmware</td><td>Includes, <code>F_CPU</code>, configuration, main loop, ISRs; comment every register line; use the cheat sheet tables</td></tr>
+  <tr><td>Design / draw</td><td>Block or schematic with pin names, component values, supply and ground</td></tr>
+  <tr><td>Discuss</td><td>Pros and cons with an example, then a reasoned view</td></tr>
+</table>
+
+<h2>2. Answer bank (ready-made theory answers)</h2>
+<h3>A. Introduction and microcontrollers</h3>
+<ul>
+  <li><b>Embedded system:</b> a computer system embedded into another system to perform a dedicated task, using sensors (input), a processor running firmware and actuators (output); it operates under strict constraints of cost, size/weight, power and real-time performance.</li>
+  <li><b>Why software-based:</b> easier to implement on generic hardware, lower cost, easier to debug and to modify.</li>
+  <li><b>Microprocessor vs microcontroller:</b> separate chips on a board (single board computer; fast, replaceable parts, but costly, hot, bulky) against everything in one chip (single chip computer; cheap, low power, compact, but limited performance). Choose by requirements: image processing needs a microprocessor; a fire alarm needs a microcontroller.</li>
+  <li><b>ATmega328P:</b> 8-bit Harvard RISC AVR, 131 mostly single-cycle instructions, 20 MHz max, 32 KB flash, 2 KB RAM, 1 KB EEPROM, 23 I/O pins, 3 timers, 6 PWM channels, 10-bit ADC (6 channels), 1 USART, 2 SPI, 1 I2C, 28-pin PDIP. Chosen for learning as it is popular, well documented and the heart of the Arduino Uno.</li>
+  <li><b>Firmware development flow:</b> source &rarr; compiler/assembler &rarr; HEX &rarr; programmer or bootloader (AVRDUDE) &rarr; flash.</li>
+  <li><b>Harvard vs von Neumann</b> <i>(syllabus)</i>: separate program/data memories and buses allow simultaneous instruction and data access; RISC: simple instructions, predictable timing.</li>
+</ul>
+<h3>B. I/O and delays</h3>
+<ul>
+  <li><b>DDR, PORT, PIN:</b> direction (1 output), output / pull-up, input read. Bit operations: set with OR, clear with AND-NOT, toggle with XOR.</li>
+  <li><b>Assembly vs C vs Arduino:</b> efficient/hard/not portable; efficient/easier/portable; easiest/inefficient/not portable. Example: 5-LED chaser = 920 B (Arduino), 200 B (C), 172 B (optimised C).</li>
+  <li><b>Delay calculation:</b> cycle = 1/f; cycles = delay/cycle; nested loops (b+3)(N&minus;1)+(b+2); add NOPs to trim.</li>
+</ul>
+<h3>C. Polling and interrupts</h3>
+<ul>
+  <li><b>Polling:</b> the CPU repeatedly checks; can miss fast events; no priority; wastes time.</li>
+  <li><b>Interrupts:</b> device interrupts the CPU; the return address is pushed; vector table &rarr; ISR; <code>RETI</code> pops and resumes; supports priority; CPU free.</li>
+  <li><b>Enable chain:</b> source enable bit + global <code>sei()</code>; external interrupt: EICRA sense + EIMSK; pin change: PCICR + PCMSKn.</li>
+  <li><b>Debouncing:</b> contacts bounce, producing several edges; hardware: 100 nF capacitor across the switch; software: ignore changes for about 20 ms (not by delay in an ISR).</li>
+  <li><b>ISR rules:</b> short, no delays, shared variables <code>volatile</code>.</li>
+</ul>
+<h3>D. ADC and sensors</h3>
+<ul>
+  <li><b>ADC:</b> converts 0 to Vref into 0 to 1023 (10 bits); interval = Vref/1024; the largest code 1023 does not reach Vref; smaller Vref (1.1 V) improves resolution; successive approximation determines one bit per step from the MSB.</li>
+  <li><b>ADC registers:</b> ADMUX (reference, left adjust, channel), ADCSRA (enable, start, flag, interrupt, prescaler 125 kHz at /128), ADCW result.</li>
+  <li><b>LDR:</b> resistance falls with light; voltage divider. <b>LM35:</b> 10 mV/&deg;C.</li>
+</ul>
+<h3>E. Transducers</h3>
+<ul>
+  <li><b>Sensors</b> convert physical quantities to signals (digital, analog, both); <b>actuators</b> convert electrical energy into other forms and often need drivers: BJT (base current, resistor), MOSFET (gate voltage, pull-down), relay (isolation, mains), flyback diode for inductive loads.</li>
+</ul>
+<h3>F. Timers and PWM</h3>
+<ul>
+  <li><b>Timer/counter:</b> a peripheral that counts oscillator (time) or external (events) pulses so the CPU is free; registers TCNT, TCCR, TIFR (W1C), TIMSK. Time = prescale/F_CPU &times; counts; initial = max &minus; n + 1.</li>
+  <li><b>Why W1C:</b> clears just one flag without a read-modify-write that could clear others.</li>
+  <li><b>PWM:</b> analog-like output by changing the duty cycle; average = duty &times; Vhigh. Modes: normal (no PWM), CTC (programmable TOP), fast PWM (duty = (OCR+1)/(TOP+1), high frequency), phase correct (symmetric, half frequency). True analog: DAC or RC filter.</li>
+</ul>
+<h3>G. Serial communication</h3>
+<ul>
+  <li><b>Serial vs parallel;</b> asynchronous vs synchronous; the framing (start bit, data LSB first, stop bit); baud rate must match; line driver (MAX232) for RS-232; UART-to-USB (FT232RL, ATmega16U2).</li>
+  <li><b>Registers:</b> UBRR (UBRR = F_CPU/(16&times;baud) &minus; 1; error), UDR, UCSRnA (RXC, TXC, UDRE), UCSRnB (enables), UCSRnC (size).</li>
+  <li><b>UDRE vs TXC:</b> UDRE gives max throughput; TXC tells when the frame has completely left.</li>
+  <li><b>stdio over serial:</b> <code>FDEV_SETUP_STREAM</code>, <code>stdin/stdout</code>; convenient and device independent but costs memory and time.</li>
+</ul>
+
+<h2>3. Syllabus topics the slides only touch <i>(syllabus)</i></h2>
+<table>
+  <tr><th>Topic</th><th>What to know</th></tr>
+  <tr><td>Power management</td><td>Lower the clock or supply voltage; <b>sleep modes</b> (idle, power-down, wake by interrupt); switch off unused peripherals (ADC, timers, USART); use interrupts instead of polling; avoid busy-wait delays; drive LEDs with larger resistors / PWM; efficient actuators. Battery life = capacity / average current.</td></tr>
+  <tr><td>Resource-aware firmware</td><td>Flash 32 KB (code, constants), SRAM 2 KB (variables, stack; heap should be avoided), EEPROM 1 KB (settings, slow writes with limited write cycles). Avoid dynamic memory and the Arduino <code>String</code> class (heap fragmentation, hidden allocations); prefer char arrays and fixed buffers. Put constant tables in flash (PROGMEM). Avoid floating point where integers will do.</td></tr>
+  <tr><td>Performance and optimisation</td><td>Direct register access is much faster than <code>digitalWrite()</code> (the Arduino speed test). Measure code size (HEX bytes) and execution time. Use shifts for powers of two, local variables, small data types (<code>uint8_t</code>), interrupts and hardware peripherals instead of software loops.</td></tr>
+  <tr><td>Hardware-software co-design</td><td>Decide which function goes in hardware (timer, PWM, USART) and which in software; the hardware peripherals free the CPU.</td></tr>
+  <tr><td>Debugging and simulation</td><td>Simulators (Microchip Studio simulator, Proteus, Tinkercad) before building; debugging aids: LEDs, serial prints, logic analyser/oscilloscope, breakpoints with a debugger. Tests: hardware error &rarr; replace/rewire components; software error &rarr; debug the code.</td></tr>
+  <tr><td>Choosing a platform</td><td>Pick the board by pins, memory, speed, voltage and peripherals (Uno, Mega, Nano, ESP32...); microcontroller boards against single board computers.</td></tr>
+  <tr><td>Embedded OS</td><td>Small systems run bare-metal (super-loop with interrupts); larger systems use an RTOS for scheduling with deadlines.</td></tr>
+  <tr><td>Current trends</td><td>IoT and wireless connectivity, 32-bit low-power MCUs, RISC-V, edge AI / TinyML, energy harvesting, security of connected devices.</td></tr>
+</table>
+
+<h2>4. Typical numerical question types and the method</h2>
+<table>
+  <tr><th>Type</th><th>Method</th></tr>
+  <tr><td>Resistor for an LED</td><td>R = (Vs &minus; VL)/IL, then round up to a standard value</td></tr>
+  <tr><td>Software delay</td><td>cycles per loop level, total cycles &times; 62.5 ns</td></tr>
+  <tr><td>ADC value / voltage</td><td>floor(Vin/Vref &times; 1024); Vin = ADCW &times; Vref/1024</td></tr>
+  <tr><td>Temperature from LM35</td><td>Vout &times; 100</td></tr>
+  <tr><td>Timer initial value</td><td>tick = prescale/F_CPU; n = delay/tick; initial = max &minus; n + 1</td></tr>
+  <tr><td>PWM frequency / duty</td><td>F_CPU/((TOP+1) &times; prescale); (OCR+1)/(TOP+1)</td></tr>
+  <tr><td>Baud rate</td><td>UBRR = F_CPU/(16 &times; baud) &minus; 1; error %; time = bits/baud</td></tr>
+  <tr><td>Driver resistor</td><td>I<sub>B</sub> = I<sub>C</sub>/10; R<sub>B</sub> = (5 &minus; 0.7)/I<sub>B</sub></td></tr>
+</table>

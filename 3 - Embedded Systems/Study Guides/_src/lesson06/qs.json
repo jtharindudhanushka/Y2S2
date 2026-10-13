@@ -1,0 +1,35 @@
+{
+ "mcq": [
+  {"q":"A timer becomes a counter when:","o":["The prescaler is 1","An external pulse source is connected on the Tn pin","The overflow flag is set","The CPU sleeps"],"a":1,"e":"It then counts events instead of oscillator pulses."},
+  {"q":"Why use a hardware timer instead of a software delay loop?","o":["It is slower","It leaves the CPU free for other work","It uses more power","It needs no registers"],"a":1,"e":"Software timing ties up the CPU, which is small in a microcontroller."},
+  {"q":"Timer0 and Timer2 are __-bit; Timer1 is __-bit:","o":["8 and 16","16 and 8","8 and 8","16 and 16"],"a":0,"e":"Counts 0 to 255 and 0 to 65 535."},
+  {"q":"Time of one timer pulse at F_CPU = 16 MHz and prescale 64:","o":["62.5 ns","1 µs","4 µs","64 µs"],"a":2,"e":"64 / 16 MHz = 4 µs."},
+  {"q":"Initial value for a 16-bit timer, 200 ms, prescale 64, F_CPU = 16 MHz:","o":["15 536","50 000","65 536","49 911"],"a":0,"e":"n = 50 000; 65 535 − 50 000 + 1 = 15 536."},
+  {"q":"Initial value for a 16-bit timer to overflow in 1 s at prescale 1024:","o":["15 625","49 911","65 535","3 036"],"a":1,"e":"n = 15 625; 65 535 − 15 625 + 1 = 49 911."},
+  {"q":"CS02 CS01 CS00 = 101 selects:","o":["F_CPU/64","F_CPU/256","F_CPU/1024","External rising edge"],"a":2,"e":"011 is /64, 100 is /256."},
+  {"q":"CS02 CS01 CS00 = 110 selects:","o":["F_CPU/1024","External clock on Tn, falling edge","External clock on Tn, rising edge","Timer stopped"],"a":1,"e":"111 is rising edge."},
+  {"q":"CS bits = 000 means the timer is:","o":["Running at F_CPU","Stopped (clock disconnected)","In PWM mode","Counting externally"],"a":1,"e":"The default after reset."},
+  {"q":"Which register holds the current count?","o":["TCCRnB","TCNTn","TIFRn","TIMSKn"],"a":1,"e":"Timer/CouNTer register."},
+  {"q":"TOV0 is set when:","o":["Timer0 is started","TCNT0 overflows from 255 to 0","A button is pressed","The ADC finishes"],"a":1,"e":"TOVn in TIFRn."},
+  {"q":"To clear the TOV0 flag you:","o":["Write 0 to it","Write 1 to it","Read TCNT0","Call cli()"],"a":1,"e":"W1C, write one to clear."},
+  {"q":"Why is the flag cleared by writing 1?","o":["A hack","Writing a mask with one 1 clears only that flag without a read-modify-write that could clear other flags","Hardware cannot write 0","To save power"],"a":1,"e":"Writing 0 bits leaves other flags untouched."},
+  {"q":"Bit TOIE0 is in:","o":["TIFR0","TIMSK0","TCCR0B","TCNT0"],"a":1,"e":"Timer Overflow Interrupt Enable."},
+  {"q":"The ISR vector for Timer1 overflow is:","o":["TIMER0_OVF_vect","TIMER1_OVF_vect","TIMER1_COMPA_vect","TOV1_vect"],"a":1,"e":"Used with ISR()."},
+  {"q":"To count 5 external events with an overflow flag, preload Timer0 with:","o":["0","250","251","255"],"a":2,"e":"251 → 255 takes 4 pulses, the 5th overflows."},
+  {"q":"Which pin is the external clock input T0?","o":["PD2","PD3","PD4","PD5"],"a":2,"e":"T1 is PD5."},
+  {"q":"In the 200 ms blinker you must reload TCNT1 in the loop because:","o":["The timer stops","Otherwise the next overflow takes 65 536 counts instead of 50 000","TCNT1 is read-only","TOV1 clears it"],"a":1,"e":"The timer continues from 0 after overflow."},
+  {"q":"Elapsed time with prescaler N, start count A, stop count B and oscillator frequency f:","o":["(B − A) / f","N × (B − A) / f","f × (B − A) / N","N / (B − A)"],"a":1,"e":"Each count takes N / f seconds."},
+  {"q":"rand() needs a good seed because:","o":["It is slow","The same seed gives the same sequence after each reset","It only returns 0","It needs an interrupt"],"a":1,"e":"Seed with a timer value or a floating ADC input."},
+  {"q":"Which gives a random whole number of seconds from 1 to 10?","o":["rand() % 10","1 + rand() % 10","rand() % 11","10 / rand()"],"a":1,"e":"rand() % 10 is 0 to 9; add 1."},
+  {"q":"A fairly random seed for srand() can be obtained from:","o":["A constant","The TCNT0 value at the moment the user presses a button, or ADC of a floating pin","The PORT register","TIFR0"],"a":1,"e":"Both are unpredictable."},
+  {"q":"In the reaction timer, the reaction time class '1 s to less than 2 s' lights:","o":["Green","Orange","Red","Blue"],"a":1,"e":"Green < 1 s, orange 1 to < 2 s, red ≥ 2 s."},
+  {"q":"Arduino functions used to measure reaction time in milliseconds:","o":["millis()","analogRead()","pulseIn() only","Serial.begin()"],"a":0,"e":"t = millis() − t0."},
+  {"q":"When the overflow interrupt is serviced, TOVn is:","o":["Cleared automatically by hardware","Never cleared","Cleared by cli()","Cleared by sei()"],"a":0,"e":"So the ISR need not clear it."}
+ ],
+ "written": [
+  {"q":"Explain why timers and counters are implemented as peripherals, and describe how an 8-bit timer measures time and how it counts events.","a":"<p>Doing timing and counting in software ties up the small CPU. A timer peripheral increments its TCNT register on each clock pulse from the oscillator (optionally through a prescaler), counts 0 to 255 and overflows to 0, setting TOV in TIFR. Because the clock frequency is known, elapsed time = N&times;(B&minus;A)/f. If a pulse source such as a button or sensor is connected to the Tn pin (CS bits 110 or 111) the same hardware counts events.</p>"},
+  {"q":"Calculate the initial value of a 16-bit timer to overflow every 100 ms with F_CPU = 16 MHz, and write the code to toggle PB5 using the overflow interrupt.","a":"<p>Choose prescale 64: tick 4 &micro;s, n = 0.1/4 &micro;s = 25 000, initial = 65 535 &minus; 25 000 + 1 = <b>40 536</b>.</p><pre><code>DDRB |= (1&lt;&lt;DDB5);\nTCCR1B |= (1&lt;&lt;CS11)|(1&lt;&lt;CS10);   // /64\nTCNT1 = 40536;\nTIMSK1 |= (1&lt;&lt;TOIE1); sei();\nwhile(1){}\nISR(TIMER1_OVF_vect){ PORTB ^= (1&lt;&lt;PORTB5); TCNT1 = 40536; }</code></pre>"},
+  {"q":"Describe the reaction timer design and explain how the random waiting time and the reaction time are obtained.","a":"<p>Ready and react buttons (pull-ups) on PD2 and PD3, blue, green, orange and red LEDs on PB0 to PB3. While waiting for ready, Timer0 free-runs; <code>srand(TCNT0)</code> at the press gives a fairly random seed (or the ADC of a floating pin). Timer1 with prescale 1024 and initial value 49 911 overflows every second; the firmware waits <code>1 + rand() % 10</code> overflows, lights the blue LED, then counts overflows until react is pressed. 0 s &rarr; green, 1 s &rarr; orange, 2 s or more &rarr; red.</p>"},
+  {"q":"What is the W1C flag clearing convention and why is it used?","a":"<p>Write one to clear: a flag such as TOVn is cleared by writing a 1 to its bit. Writing a mask that has a single 1 clears only that flag and leaves other flags (which also live in TIFRn) untouched; a read-modify-write to clear by writing 0 could clear flags set in between.</p>"}
+ ]
+}

@@ -1,0 +1,171 @@
+<p class="sm" style="color:var(--muted)">Sources: the photograph of last year's practical question (peer notes), the three exam support documents (ATmega328P simplified data sheet, C cheat sheet, Arduino cheat sheet) that are <b>given during the exam</b>, and lessons 1 to 8. The practical exam is worth 50 % of the module and is on <b>26.10.2026 at 09:00</b>; the written paper is on 27.10.2026.</p>
+
+<h2>1. What the practical exam looks like</h2>
+<p>The only past question available (a photo of the projected screen, an INTE practical exam from 2018) reads:</p>
+<div class="box"><b>"Cogni tester"</b>The diffuse axonal injury is a disorder that affects negatively one's cognitive skill to detect, process, and respond to a stimulus. The "cogni tester" is an embedded system used in healthcare to measure the response time of a patient suffering from this disorder accurately to the nearest millisecond.<br>On every start/restart of the "cogni tester", it waits for a random time period between 1 and 10 seconds. Upon the expiration of this waiting time, the "cogni tester" turns on an LED as a stimulus.<br>The patient is then supposed to press the "respond" pushbutton on the system as quickly as possible to respond to the stimulus. The "cogni tester" then turns off the LED used as stimulus and measures the time elapsed between the stimulus and the patient's response to the stimulus in milliseconds.<br>Finally, the "cogni tester" transmits the measured response time to a connected PC over USB using a serial to USB interface and displays the patient's response time to the stimulus on a text terminal in milliseconds.<br><b>1.</b> Assemble "cogni tester" using an ATmega328P microcontroller and other necessary hardware components on a breadboard. (The photo shows only the first part; further parts presumably ask for the firmware, upload and a demonstration.)</div>
+<p>Pattern of the practical paper (from this question, the exercises and the module outline): a short real-world scenario with a sensing or timing task &rarr; <b>build the circuit on a breadboard</b> &rarr; <b>write, compile and upload the firmware</b> (C in the Arduino IDE or Microchip Studio, or Arduino wrapper functions) &rarr; <b>demonstrate it working</b>. The question combines several lessons (the cogni tester is exercise 5 plus exercise 7). The module outline states that both exams may be based on the self-study exercises, so every exercise in this guide matters.</p>
+
+<h2>2. The exam workflow (follow it every time)</h2>
+<ol>
+  <li><b>Read the whole question</b> and underline every requirement (times, ranges, units, which LED colours, which messages). Note the <b>accuracy</b> required (for example "nearest millisecond").</li>
+  <li><b>Plan the pins</b> before touching the board: write a table (function, Arduino pin, port bit, connection). Keep PD0/PD1 (pins 0, 1) free when serial is used; use pins 2 and 3 for external interrupts, 4 and 5 for T0/T1 counters, 6, 5, 9, 10, 11, 3 for PWM, A0 to A5 for analog.</li>
+  <li><b>Calculate</b> resistors (R = (Vs &minus; VL)/IL, round up), timer values (initial = max &minus; n + 1), UBRR, ADC thresholds. Do the maths on paper with the working shown; examiners mark working.</li>
+  <li><b>Assemble</b> the circuit on the breadboard: power rails, common GND first; LED polarity (long leg to the resistor/pin, cathode to GND); buttons from pin to GND with internal pull-up; sensors to the right pin. Check it twice before powering up.</li>
+  <li><b>Write the firmware in small steps</b>: configure pins, test one LED, then the button, then the timer, then serial. Compile after each step.</li>
+  <li><b>Upload</b>: select the right board (Arduino Uno) and COM port. Disconnect anything from pins 0 and 1 while uploading.</li>
+  <li><b>Test</b> with the terminal (Serial Monitor at the same baud rate) and fix. Keep a working version before making improvements.</li>
+</ol>
+
+<h2>3. Using the cheat sheets you will be given</h2>
+<table>
+  <tr><th>Document</th><th>What to look up</th></tr>
+  <tr><td>ATmega328P Simplified Data Sheet</td><td>Bit positions and values of DDRx, PORTx, PINx, EICRA/EIMSK, PCICR/PCMSKn, ADMUX, ADCSRA (prescaler table), ADCW, TCCRnA/B (COM, WGM, CS tables), TIFRn, TIMSKn, OCRnX, UBRRn, UDRn, UCSRnA/B/C and the interrupt vector names. Note: all timers share one table; Timer1 and Timer2 differ in the real datasheet (see lesson 7).</td></tr>
+  <tr><td>Simplified Cheat Sheet for AVR Programming in C</td><td>Operators, bit operations, data types, <code>stdlib.h</code> (<code>rand</code>, <code>srand</code>, <code>itoa</code>, <code>ultoa</code>), <code>util/delay.h</code>, <code>avr/interrupt.h</code> (<code>sei</code>, <code>cli</code>, <code>ISR</code>), stdio (<code>FDEV_SETUP_STREAM</code>, <code>printf</code>), string functions.</td></tr>
+  <tr><td>Arduino Simplified Cheat Sheet</td><td><code>pinMode</code>, <code>digitalRead/Write</code>, <code>analogRead/Write</code>, <code>analogReference</code>, <code>delay</code>, <code>millis</code>, <code>random</code>, <code>randomSeed</code>, <code>attachInterrupt</code>, <code>Serial.*</code>, bit macros.</td></tr>
+</table>
+<p><b>Not given:</b> the ATmega328P pin diagram may be given (peer note), but <b>learn the pin map</b>: D0 to D7 = PD0 to PD7, D8 to D13 = PB0 to PB5, A0 to A5 = PC0 to PC5.</p>
+
+<h2>4. Past paper solution: "cogni tester"</h2>
+<h3>4.1 Analysis</h3>
+<table>
+  <tr><th>Requirement</th><th>Design decision</th></tr>
+  <tr><td>Waits a random 1 to 10 s on every start</td><td><code>rand()</code> / <code>random()</code> with a seed that differs each run (ADC reading of a floating pin, lesson 6). Wait = 1000 + rand() % 9001 ms.</td></tr>
+  <tr><td>LED as stimulus</td><td>LED on PB0 (pin 8) with 220 &Omega;</td></tr>
+  <tr><td>"respond" pushbutton</td><td>PD2 (pin 2) to GND with the internal pull-up (pressed = 0)</td></tr>
+  <tr><td>Time to the nearest millisecond</td><td>A 1 ms time base: Timer0 overflow every exactly 1 ms (prescale 64: tick 4 &micro;s, n = 250, initial = 255 &minus; 250 + 1 = <b>6</b>) incrementing <code>ms</code>. In Arduino: <code>millis()</code>.</td></tr>
+  <tr><td>Transmit to PC over USB and show on a text terminal in ms</td><td>The Arduino Uno's USB serial (USART at 9600 baud, UBRR = 103). Show the number with <code>ultoa</code> / <code>Serial.print</code>. PC: Serial Monitor or a terminal emulator at 9600 baud.</td></tr>
+</table>
+<h3>4.2 Hardware (breadboard)</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>Arduino Uno (ATmega328P)</td><td>USB cable to the PC (power and serial through the ATmega16U2)</td></tr>
+  <tr><td>Stimulus LED (red or green)</td><td>Pin 8 (PB0) &rarr; 220 &Omega; &rarr; LED anode; cathode to the GND rail; GND rail to the Arduino GND</td></tr>
+  <tr><td>"Respond" pushbutton</td><td>One leg to pin 2 (PD2), the opposite leg to GND (internal pull-up used, so no resistor)</td></tr>
+  <tr><td>Floating analog pin (random seed)</td><td>A5 (PC5) left unconnected</td></tr>
+  <tr><td>Pins 0 and 1</td><td>Left free (USART)</td></tr>
+</table>
+<p>BOM: 1 &times; Arduino Uno, 1 &times; breadboard, 1 &times; LED, 1 &times; 220 &Omega; resistor, 1 &times; pushbutton, 3 &times; jumper wires, USB cable. Optional: 100 nF across the button.</p>
+<h3>4.3 Firmware in C (registers, timer time base)</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+#include &lt;stdlib.h&gt;                                   // rand, srand, ultoa
+
+volatile unsigned long ms = 0;                         // milliseconds since the timer started
+
+ISR(TIMER0_OVF_vect)                                   // every 1 ms
+{
+    TCNT0 = 6;                                         // 250 counts of 4 us = 1 ms
+    ms++;
+}
+
+static unsigned long now(void)                         // atomic read of the 32-bit counter
+{
+    unsigned long t;
+    cli(); t = ms; sei();
+    return t;
+}
+
+static void txChar(char c)
+{
+    while (!(UCSR0A &amp; (1&lt;&lt;UDRE0)));                   // wait for data register empty
+    UDR0 = c;
+}
+static void txString(const char *s) { while (*s) txChar(*s++); }
+
+int main(void)
+{
+    DDRB  |=  (1&lt;&lt;DDB0);                              // stimulus LED output
+    DDRD  &amp;= ~(1&lt;&lt;DDD2);                              // respond button input
+    PORTD |=  (1&lt;&lt;PORTD2);                             // pull-up
+
+    UBRR0  = 16000000UL / (16 * 9600UL) - 1;           // 9600 baud: 103
+    UCSR0B &amp;= ~(1&lt;&lt;UCSZ02);
+    UCSR0C |= (1&lt;&lt;UCSZ01) | (1&lt;&lt;UCSZ00);              // 8 bit
+    UCSR0B |= (1&lt;&lt;TXEN0);                              // transmitter on
+
+    ADMUX  = (1&lt;&lt;REFS0) | (1&lt;&lt;MUX2) | (1&lt;&lt;MUX0);      // AVcc, channel ADC5 (floating pin)
+    ADCSRA = (1&lt;&lt;ADEN) | (1&lt;&lt;ADPS2) | (1&lt;&lt;ADPS1) | (1&lt;&lt;ADPS0);
+    ADCSRA |= (1&lt;&lt;ADSC);
+    while (ADCSRA &amp; (1&lt;&lt;ADSC));
+    srand(ADCW);                                       // different seed on every start
+
+    TCNT0   = 6;                                       // Timer0: 1 ms time base
+    TCCR0B  = (1&lt;&lt;CS01) | (1&lt;&lt;CS00);                  // F_CPU/64
+    TIMSK0 |= (1&lt;&lt;TOIE0);                             // overflow interrupt
+    sei();
+
+    unsigned long waitMs = 1000UL + (rand() % 9001);   // 1000..10000 ms
+    unsigned long t0 = now();
+    while (now() - t0 &lt; waitMs);                       // random waiting time
+
+    PORTB |= (1&lt;&lt;PORTB0);                              // stimulus: LED on
+    unsigned long start = now();
+    while (PIND &amp; (1&lt;&lt;PIND2));                       // wait until "respond" is pressed (pin low)
+    unsigned long response = now() - start;
+    PORTB &amp;= ~(1&lt;&lt;PORTB0);                             // LED off
+
+    char buf[11];
+    ultoa(response, buf, 10);                          // number to text
+    txString("Response time: ");
+    txString(buf);
+    txString(" ms\r\n");
+    while (1);                                         // done: wait for restart
+}</code></pre>
+<h3>4.4 Firmware with the Arduino wrapper functions</h3>
+<pre><code>const int stimulusLed = 8, respondBtn = 2;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(stimulusLed, OUTPUT);
+  pinMode(respondBtn, INPUT_PULLUP);
+  randomSeed(analogRead(A5));                    // floating pin: different seed each start
+}
+
+void loop() {
+  digitalWrite(stimulusLed, LOW);
+  delay(random(1000, 10001));                    // 1 to 10 s
+  digitalWrite(stimulusLed, HIGH);               // stimulus
+  unsigned long start = millis();
+  while (digitalRead(respondBtn) == HIGH);       // wait for the response
+  unsigned long response = millis() - start;     // elapsed time in ms
+  digitalWrite(stimulusLed, LOW);
+  Serial.print("Response time: ");
+  Serial.print(response);
+  Serial.println(" ms");
+  while (true);                                  // stop until restart
+}</code></pre>
+<div class="box"><b>Improvements that earn marks</b>1) <b>False start</b>: if the button is already pressed when the stimulus is due (or during the wait), print "False start" instead of a time. 2) Debounce the button with a 100 nF capacitor. 3) Make the time base exact with CTC (OCR0A = 249 with prescale 64) if the examiner asks for better than 1 ms drift. 4) Mention that <code>millis()</code> has 1 ms resolution and uses Timer0.</div>
+<h3>4.5 Likely viva questions</h3>
+<ul>
+  <li>Why does the seed need to change? (Same seed = same sequence after every reset.) Why a floating analog pin? (Noise gives an unpredictable value.)</li>
+  <li>How accurate is the measurement? (Timer tick 4 &micro;s, 1 ms counter; loop latency small, so about &plusmn;1 ms.)</li>
+  <li>Why is the button wired to GND with the pull-up? (No external resistor; pressed = 0.)</li>
+  <li>Why must <code>ms</code> be <code>volatile</code> and read with interrupts disabled? (Shared with the ISR; a 32-bit read takes several instructions and could be interrupted mid-read.)</li>
+  <li>What happens at 115 200 baud? (&minus;3.55 % error, unreliable.)</li>
+</ul>
+
+<h2>5. Exercise bank: where every exercise is solved</h2>
+<table>
+  <tr><th>Exercise</th><th>Task</th><th>Solved in</th></tr>
+  <tr><td>Exercise 1</td><td>5-LED chaser, Knight Rider, 10 LEDs on 7 pins, resistor, BOM, code size comparison</td><td>Lesson 2, section 8</td></tr>
+  <tr><td>Exercise 2</td><td>Assembly dual-rate blink with a button; Arduino vs register code sizes; subroutine delay calculation</td><td>Lesson 2, section 9</td></tr>
+  <tr><td>Exercise 3</td><td>Click counter 0 to 255 with two pushbuttons, reserving pins 2 and 3; "Is AI safe to trust?"</td><td>Lesson 3, section 8</td></tr>
+  <tr><td>Exercise 4</td><td>Auto light (LDR), Arduino and C firmware, extension to a 230 V lamp</td><td>Lesson 4, section 7</td></tr>
+  <tr><td>Exercise 5</td><td>Reaction timer: timer value, C firmware with srand, floating ADC seed, Arduino version, comparison</td><td>Lesson 6, section 7</td></tr>
+  <tr><td>Exercise 6</td><td>Auto fan: LM35, PWM, Arduino and C firmware</td><td>Lesson 7, section 7</td></tr>
+  <tr><td>Exercise 7</td><td>Temp logger: Arduino firmware, blanks, array size, stdio streams, pros and cons, C# application</td><td>Lesson 8, section 8</td></tr>
+  <tr><td>Past paper</td><td>Cogni tester</td><td>This lesson, section 4</td></tr>
+</table>
+<div class="box"><b>How to use this bank</b>Cover the solution, do the exercise on paper in 20 to 30 minutes, then compare. For the hardest ones (5 and 7) also build and run them on a board or in a simulator if you can. Redo anything you could not finish.</div>
+
+<h2>6. Rules of thumb for the practical</h2>
+<ul>
+  <li>If it says <b>"C using direct register access"</b> do not use <code>pinMode</code>, <code>digitalWrite</code>, <code>Serial</code> and so on at all. If it says Arduino wrapper functions, use them.</li>
+  <li>In the Arduino IDE you may write <code>int main(void)</code> in C (as in Exercises 2, 6, 7) and then <code>setup()</code>/<code>loop()</code> are not used.</li>
+  <li>Pull-up on every button input. Resistor on every LED. Flyback diode on every motor/relay. Common ground everywhere.</li>
+  <li>Declare shared variables <code>volatile</code>; keep ISRs short; never <code>_delay_ms</code> in an ISR.</li>
+  <li><code>#define F_CPU 16000000UL</code> before <code>#include &lt;util/delay.h&gt;</code>.</li>
+  <li>Use <code>5.0 / 1024</code> (floating point, 1024) for ADC to volts.</li>
+  <li>Always include a <code>while(1)</code> loop in bare C <code>main()</code>.</li>
+  <li>Time budget: plan 15 %, build 25 %, code 35 %, test and fix 25 %. A working simple version beats an unfinished perfect one.</li>
+</ul>

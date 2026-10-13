@@ -1,0 +1,53 @@
+<h2>Practical question: "Twin-lamp dimmer" (exam style)</h2>
+<p class="sm" style="color:var(--muted)">Original practice question modelled on the fader and Exercise 6 (ADC in, PWM out) and using the inverted mode of the compare output.</p>
+<div class="box"><b>Scenario</b>A reading lamp has a bright LED and a night-light LED. A <b>potentiometer</b> sets the main LED brightness from off to full. The night-light LED does the <b>opposite</b>: it is brightest when the main LED is off and off when the main LED is at full brightness. Both are driven by PWM at about <b>1 kHz</b> from the two outputs of the same timer.</div>
+<ol>
+  <li>Choose the timer, mode and prescaler, and calculate the PWM frequency.</li>
+  <li>Give the connection list.</li>
+  <li>Write the firmware in C. Use the inverted output mode for the night light.</li>
+  <li>Write the firmware with the Arduino wrapper functions.</li>
+  <li>What duty cycle does each LED get when the potentiometer is at the middle (ADC = 512)?</li>
+</ol>
+<details open><summary>Solution</summary>
+<h3>1. Timer</h3>
+<p><b>Timer0</b> in <b>fast PWM</b> (WGM02:0 = 011), prescale 64 (CS02:0 = 011). F<sub>PWM</sub> = 16 MHz / (256 &times; 64) = <b>976.6 Hz &asymp; 1 kHz</b>. Outputs: OC0A = PD6 (pin 6, main LED, <b>non-inverted</b>, COM0A1:0 = 10) and OC0B = PD5 (pin 5, night light, <b>inverted</b>, COM0B1:0 = 11). The same OCR value then gives opposite brightness: duty A = (OCR + 1)/256, duty B = 1 &minus; (OCR + 1)/256.</p>
+<h3>2. Connections</h3>
+<table>
+  <tr><th>Part</th><th>Connection</th></tr>
+  <tr><td>10 k&Omega; potentiometer</td><td>ends to 5 V and GND, wiper to A0 (PC0)</td></tr>
+  <tr><td>Main LED</td><td>pin 6 (PD6) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+  <tr><td>Night LED</td><td>pin 5 (PD5) &rarr; 220 &Omega; &rarr; LED &rarr; GND</td></tr>
+</table>
+<h3>3. C firmware</h3>
+<pre><code>#include &lt;avr/io.h&gt;
+
+int main(void)
+{
+    DDRD  |= (1&lt;&lt;DDD6) | (1&lt;&lt;DDD5);                     // OC0A, OC0B outputs
+    TCCR0A = (1&lt;&lt;COM0A1)                                 // OC0A non-inverted (10)
+           | (1&lt;&lt;COM0B1) | (1&lt;&lt;COM0B0)                  // OC0B inverted (11)
+           | (1&lt;&lt;WGM01)  | (1&lt;&lt;WGM00);                  // fast PWM
+    TCCR0B = (1&lt;&lt;CS01) | (1&lt;&lt;CS00);                     // /64, 976.6 Hz
+    ADMUX  = (1&lt;&lt;REFS0);                                 // AVcc, channel ADC0
+    ADCSRA = (1&lt;&lt;ADEN) | (1&lt;&lt;ADPS2) | (1&lt;&lt;ADPS1) | (1&lt;&lt;ADPS0);
+    while (1)
+    {
+        ADCSRA |= (1&lt;&lt;ADSC);
+        while (ADCSRA &amp; (1&lt;&lt;ADSC));
+        unsigned char v = ADCW &gt;&gt; 2;                     // 10-bit to 8-bit (0..255)
+        OCR0A = v;                                       // main LED
+        OCR0B = v;                                       // night light (inverted output)
+    }
+}</code></pre>
+<h3>4. Arduino firmware</h3>
+<pre><code>const int mainLed = 6, nightLed = 5;
+void setup() { pinMode(mainLed, OUTPUT); pinMode(nightLed, OUTPUT); }
+void loop() {
+  int v = analogRead(A0) / 4;          // 0..255
+  analogWrite(mainLed, v);
+  analogWrite(nightLed, 255 - v);      // analogWrite is non-inverted, so invert in software
+}</code></pre>
+<h3>5. Middle position</h3>
+<p>ADC = 512 gives OCR = 512 &gt;&gt; 2 = 128. Main LED: duty = (128 + 1)/256 = <b>50.4 %</b>. Night LED (inverted): 1 &minus; 129/256 = <b>49.6 %</b> (about half each).</p>
+<div class="box"><b>Marking hints</b>Fast PWM mode bits; correct COM bits (10 and 11); both pins outputs; ADC set-up (ADEN, prescaler, ADSC polling); <code>ADCW &gt;&gt; 2</code> scaling; frequency calculation shown; Arduino version inverts with <code>255 - v</code>.</div>
+</details>

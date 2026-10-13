@@ -1,0 +1,175 @@
+<p class="sm" style="color:var(--muted)">Sources: lecture 01 (Introduction to Embedded Systems), lecture 02 (Introduction to Microcontrollers), peer notes pages 1 to 12 (transcribed in <code>Peer Notes/Transcription.md</code>). Items marked <i>(syllabus)</i> come from the course outline rather than the slides.</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Define an embedded system and explain how it senses and changes the physical world</li>
+  <li>Discuss the constraints, the evolution and the growth of embedded systems</li>
+  <li>Identify the components of an embedded system and compare microprocessor-based and microcontroller-based implementations</li>
+  <li>Explain the core components of a microcontroller and how it is programmed</li>
+  <li>Explain why an 8-bit AVR (ATmega328P on an Arduino Uno) is chosen for learning</li>
+</ul>
+
+<h2>1. What is an embedded system?</h2>
+<ul>
+  <li>A <b>computer system embedded into some other system</b>, used to get <b>one dedicated task</b> done.</li>
+  <li>It performs <b>physical computing</b>: <b>Sensors &rarr; Processor &rarr; Actuators</b> (input, process, output).</li>
+  <li>It usually works under <b>strict constraints</b>.</li>
+</ul>
+<svg viewBox="0 0 640 110" role="img" aria-label="Sensor processor actuator" class="dg">
+  <rect x="10" y="30" width="150" height="50" rx="6" class="bx"/><text x="85" y="60" text-anchor="middle" class="h">Sensors</text>
+  <rect x="245" y="30" width="150" height="50" rx="6" class="bx"/><text x="320" y="55" text-anchor="middle" class="h">Processor</text><text x="320" y="72" text-anchor="middle" class="sm">runs the firmware</text>
+  <rect x="480" y="30" width="150" height="50" rx="6" class="bx"/><text x="555" y="60" text-anchor="middle" class="h">Actuators</text>
+  <path class="ar" d="M160 55 H243"/><path class="ar" d="M395 55 H478"/>
+  <text x="200" y="22" text-anchor="middle" class="sm">state of the world</text><text x="438" y="22" text-anchor="middle" class="sm">changes the world</text>
+</svg>
+<ul>
+  <li><b>Sensors</b> capture the state of the real world and feed it to the processor as input.</li>
+  <li>The <b>processor</b> processes the inputs following instructions given by programming. These instructions are called <b>firmware</b> (it does not change once loaded).</li>
+  <li>The outputs drive the <b>actuators</b> (for example the motor of a fan).</li>
+  <li>Example: sense temperature; if it is above 30 &deg;C, turn on the fan.</li>
+</ul>
+
+<h3>Constraints (the four to remember)</h3>
+<table>
+  <tr><th>Constraint</th><th>Meaning</th></tr>
+  <tr><td>Cost</td><td>Must be cheap (bought in bulk, for example fire alarms)</td></tr>
+  <tr><td>Weight and size</td><td>Must be small and light</td></tr>
+  <tr><td>Power consumption</td><td>Must consume very little power (battery operation, little heat)</td></tr>
+  <tr><td>Real-time performance</td><td>Must respond to events within a deadline</td></tr>
+</table>
+<p class="sm" style="color:var(--muted)"><i>(syllabus)</i> Other design pressures include reliability, memory limits (small RAM and ROM) and safety.</p>
+
+<h3>Examples from the lecture</h3>
+<table>
+  <tr><th>System</th><th>Main task</th><th>How it is achieved</th></tr>
+  <tr><td>Anti-lock braking system (ABS)</td><td>Apply equal braking to all four wheels so none locks</td><td>Rotational speed sensors measure each wheel (RPM). The processor compares them. The actuator is a hydraulic pump: if one wheel is braked less than the other three, fluid is released to that wheel until all four rotate at the same speed.</td></tr>
+  <tr><td>Flight controller (quadcopter)</td><td>Fly the drone stably</td><td>Sensors: gyroscope, accelerometer and the radio-control receiver (pilot commands). The processor varies the speed of the four motors (through four ESCs) from these inputs.</td></tr>
+</table>
+
+<h2>2. Evolution, growth and the shift of industry</h2>
+<ul>
+  <li><b>Early days:</b> Apollo guidance and Minuteman missile guidance systems. Military and scientific use only, because they were very expensive.</li>
+  <li><b>Today:</b> agriculture, manufacturing robots, medical MRI, consumer electronics. The embedded computing market grows from about USD 101 billion (2022) to about USD 178 billion (2032), which is why the subject matters.</li>
+  <li><b>Shift of industry</b> (compare a Nokia 3310 with a later phone that has far fewer chips): most functionality moved from <b>hard-wired electronics to software</b>. A software-implemented function is an embedded system.</li>
+</ul>
+<div class="box"><b>Advantages of software over hard-wired electronics (peer notes)</b>1. Easier to implement (software runs on generic hardware). 2. Lower cost. 3. Easier to debug. 4. Easier to modify.</div>
+
+<h2>3. Components of an embedded system</h2>
+<p>A <b>CPU</b> connected to <b>RAM</b> (keeps temporary data), <b>ROM</b> (keeps the firmware), <b>input/output ports</b> and <b>clock / timers / counters</b>. The I/O ports connect to <b>sensors</b> and <b>actuators</b>.</p>
+
+<h2>4. Microprocessor-based vs microcontroller-based</h2>
+<svg viewBox="0 0 640 150" role="img" aria-label="Microprocessor vs microcontroller" class="dg">
+  <text x="160" y="16" text-anchor="middle" class="h">Microprocessor-based</text>
+  <rect x="20" y="30" width="60" height="30" class="bx"/><text x="50" y="49" text-anchor="middle" class="sm">CPU</text>
+  <rect x="95" y="30" width="60" height="30" class="bx"/><text x="125" y="49" text-anchor="middle" class="sm">ROM</text>
+  <rect x="170" y="30" width="60" height="30" class="bx"/><text x="200" y="49" text-anchor="middle" class="sm">RAM</text>
+  <rect x="245" y="30" width="60" height="30" class="bx"/><text x="275" y="49" text-anchor="middle" class="sm">I/O</text>
+  <rect x="20" y="75" width="285" height="14" class="bx" style="fill:none"/><text x="160" y="100" text-anchor="middle" class="sm">separate chips on one board</text>
+  <text x="160" y="125" text-anchor="middle" class="h">= Single Board Computer</text>
+  <text x="480" y="16" text-anchor="middle" class="h">Microcontroller-based</text>
+  <rect x="380" y="30" width="200" height="70" rx="8" class="bx"/><text x="480" y="52" text-anchor="middle" class="sm">CPU · ROM · RAM · I/O</text><text x="480" y="72" text-anchor="middle" class="sm">timers · ADC · serial · PWM</text><text x="480" y="90" text-anchor="middle" class="sm">all in ONE chip</text>
+  <text x="480" y="125" text-anchor="middle" class="h">= Single Chip Computer</text>
+</svg>
+<table>
+  <tr><th></th><th>Microprocessor-based (single board)</th><th>Microcontroller-based (single chip)</th></tr>
+  <tr><td>Pros</td><td>Very high specification and performance; each component can be replaced or upgraded</td><td>Cheap; power efficient and low heat; compact</td></tr>
+  <tr><td>Cons</td><td>Expensive; consumes a lot of power and generates heat; bulky</td><td>Components cannot be replaced individually; everything is miniature so the specification is modest</td></tr>
+</table>
+<h3>Which to choose?</h3>
+<ul>
+  <li><b>Adaptive traffic control (camera + image processing):</b> needs a lot of RAM and processing, and has no size or power constraint, so use a <b>microprocessor-based</b> board (for example a Raspberry Pi class board).</li>
+  <li><b>Fire / smoke alarm:</b> binary sensors, binary outputs, little processing, battery operated, small and bought in bulk, so use a <b>microcontroller</b>.</li>
+  <li>Most embedded systems are microcontroller-based because they do not need power-hungry, bulky hardware.</li>
+</ul>
+
+<h2>5. The microcontroller (lecture 02)</h2>
+<p>A microcontroller is a <b>single chip computer</b>. It integrates CPU, RAM, ROM, ADC, oscillator, I/O ports, serial ports, PWM and timers.</p>
+<table>
+  <tr><th>Component</th><th>Purpose</th></tr>
+  <tr><td>CPU</td><td>Executes the instructions of the firmware</td></tr>
+  <tr><td>ROM (Flash)</td><td>Stores the firmware. Called <b>Flash</b> because the developer can rewrite it. Larger than RAM because firmware is bulky.</td></tr>
+  <tr><td>RAM</td><td>Stores variables and temporary data (small, volatile)</td></tr>
+  <tr><td>EEPROM</td><td>Non-volatile but changeable data such as settings. Firmware goes into ROM (by the developer); EEPROM data is written by the user or program at run time.</td></tr>
+  <tr><td>ADC</td><td>Analog to Digital Converter. Most real-world inputs (temperature, speed, light) are analog but the processor only understands digital.</td></tr>
+  <tr><td>Oscillator</td><td>Gives precise clock pulses (1,0,1,0...) to the processor</td></tr>
+  <tr><td>PWM</td><td>Pulse Width Modulator. Gives an analog-like output (for example dim a light) rather than plain ON/OFF.</td></tr>
+  <tr><td>Timers (T0, T1, T2)</td><td>Measure elapsed time and count events</td></tr>
+  <tr><td>I/O ports (A, B, C, D...)</td><td>Receive inputs and deliver outputs. More ports means more I/O pins; the number is chosen by requirement.</td></tr>
+  <tr><td>Serial communication</td><td><b>USART</b> (microcontroller to PC), <b>SPI</b> (fast, 4 wires, microcontroller to microcontroller or memory chip), <b>I&sup2;C</b> (slower, 2 wires, also called TWI, nearby devices)</td></tr>
+  <tr><td>RESET and power supply</td><td>RESET clears and restarts execution from the very first instruction</td></tr>
+</table>
+
+<h3>What is an I/O port and how does it work?</h3>
+<ul>
+  <li>An I/O port is an <b>8-bit register associated with microcontroller pins</b>. Pins are counted like array indexes, 0 to 7.</li>
+  <li>The <b>bit value</b> is the logic level of the pin. Logic high is about 2 to 5 V and logic low is about 0 to 1 V.</li>
+  <li><b>Input:</b> a switch on pin 0 with a resistor to 5 V. Switch open: the pin sees 5 V, so the bit is <b>1</b>. Switch pressed: the pin is connected to ground, so the bit is <b>0</b>. The resistor stops a short circuit between 5 V and ground.</li>
+  <li><b>Output:</b> the program writes a bit to the port register, which drives the pin high or low and so turns an LED on or off.</li>
+</ul>
+<div class="box"><b>Internal working example</b>Pseudocode: <code>if bit 0 of PORT = 0 then bit 2 of PORT &larr; 1 else bit 2 of PORT &larr; 0</code>. External electronics change the flow of the program through an input pin, and the program drives external electronics through an output pin.</div>
+
+<h2>6. How a microcontroller is programmed</h2>
+<ol>
+  <li>Write the program in a high-level language (C) or assembly on a PC.</li>
+  <li>The <b>compiler / assembler</b> converts it to machine code in a <b>.hex file</b> (hexadecimal text, almost machine code).</li>
+  <li>A <b>programmer</b> (or the Arduino bootloader) uploads the hex file into the <b>ROM (Flash)</b>.</li>
+  <li>The programmed microcontroller sits on the system board. The CPU fetches instructions from ROM, sensors give input and actuators take output.</li>
+</ol>
+
+<h2>7. Word size and the AVR family</h2>
+<ul>
+  <li><b>Word size</b> is the number of bits processed at a time: 8, 16 or 32.</li>
+  <li>For learning, <b>8-bit</b> is ideal: easier to learn, cheaper, free and open tools and a large community. You can migrate to 32-bit later. (The 8-bit segment grows slowly, about 11.7 % CAGR 2022 to 2030, but remains widely used.)</li>
+  <li>8-bit families: 68HC08 / 68HC11 (NXP, formerly Motorola), 8051 (Intel), <b>AVR</b> (Microchip, formerly Atmel), PIC (Microchip), STM8 (STMicroelectronics).</li>
+</ul>
+
+<h2>8. ATmega328P</h2>
+<table>
+  <tr><th>Feature</th><th>Value</th></tr>
+  <tr><td>Architecture</td><td><b>Harvard RISC</b>; 131 instructions, mostly <b>single clock cycle</b></td></tr>
+  <tr><td>CPU</td><td>8-bit, 20 MHz recommended maximum (overclocking possible), 14-bit program counter</td></tr>
+  <tr><td>Program ROM (Flash)</td><td>32 KB, 16-bit word addressable</td></tr>
+  <tr><td>RAM / EEPROM</td><td>2 KB byte addressable / 1 KB</td></tr>
+  <tr><td>I/O</td><td>Three ports (B, C, D), 23 I/O pins</td></tr>
+  <tr><td>Peripherals</td><td>3 timers, 6 PWM channels, 6-channel 10-bit ADC, one USART, two SPI, one I&sup2;C</td></tr>
+  <tr><td>Package</td><td>28-pin <b>PDIP</b> (plastic dual in-line package, breadboard friendly)</td></tr>
+</table>
+<p><b>Why ATmega328P?</b> It is the most popular and best documented 8-bit MCU, and it is the heart of the <b>Arduino Uno</b>, the most used development board.</p>
+
+<h2>9. Development boards and the Arduino Uno</h2>
+<p>Microcontroller-based development boards: Atmel Xplained, MikroElektronika EasyAVR, Arduino Uno, or a home-made board. <b>Arduino</b> is an open-source, low-cost, easy-to-use hardware and software platform for prototyping (Uno, Mega, 101, Zero, Yun, Lilypad, Nano, MKR Zero).</p>
+<table>
+  <tr><th>Arduino Uno part</th><th>Role</th></tr>
+  <tr><td>USB port and USB-serial interface controller</td><td>Power and data. The controller (ATmega16U2) translates serial to USB.</td></tr>
+  <tr><td>Power circuit and jack</td><td>Regulates to 5 V. The jack takes less than 12 V.</td></tr>
+  <tr><td>16 MHz resonator</td><td>Clock source of the ATmega328P</td></tr>
+  <tr><td>Reset button</td><td>Restarts the program</td></tr>
+  <tr><td>Digital I/O pins 0 to 13; ~ marks PWM pins</td><td>Pins 3, 5, 6, 9, 10, 11 support PWM</td></tr>
+  <tr><td>Tx and Rx (pins 1 and 0)</td><td>Serial data. Board 1 Tx connects to Board 2 Rx and vice versa (crossed). Do not connect sensors there: it interferes with serial communication.</td></tr>
+  <tr><td>LED on pin 13 (PB5)</td><td>Built-in test LED</td></tr>
+  <tr><td>Analog inputs A0 to A5</td><td>ADC channels (PC0 to PC5)</td></tr>
+</table>
+
+<h3>Pin mapping you must know (exam wiring)</h3>
+<table>
+  <tr><th>Arduino pin</th><th>ATmega328P pin / port bit</th><th>Special function</th></tr>
+  <tr><td>0, 1</td><td>PD0 (RXD), PD1 (TXD)</td><td>USART receive and transmit</td></tr>
+  <tr><td>2, 3</td><td>PD2 (INT0), PD3 (INT1, OC2B)</td><td>External interrupts; pin 3 is PWM</td></tr>
+  <tr><td>4</td><td>PD4 (T0)</td><td>Timer 0 external clock input</td></tr>
+  <tr><td>5, 6</td><td>PD5 (OC0B, T1), PD6 (OC0A)</td><td>PWM (Timer 0)</td></tr>
+  <tr><td>7</td><td>PD7</td><td></td></tr>
+  <tr><td>8</td><td>PB0 (ICP1)</td><td></td></tr>
+  <tr><td>9, 10, 11</td><td>PB1 (OC1A), PB2 (OC1B), PB3 (OC2A)</td><td>PWM</td></tr>
+  <tr><td>12, 13</td><td>PB4, PB5</td><td>Pin 13 has the on-board LED</td></tr>
+  <tr><td>A0 to A5</td><td>PC0 to PC5 (ADC0 to ADC5)</td><td>Analog inputs</td></tr>
+</table>
+<div class="box"><b>Exam tip</b>The peer notes say the ATmega328P pin diagram will be given in the exam. Even so, learn the table above: nearly every practical question asks you to name the Arduino pin and the matching port bit (for example <i>pin 6 = PD6 = OC0A</i>).</div>
+
+<h2>10. Extra theory <i>(syllabus)</i></h2>
+<ul>
+  <li><b>Harvard vs von Neumann:</b> Harvard has separate program and data memories and buses so an instruction and data can be fetched at the same time (AVR is Harvard). Von Neumann shares one memory.</li>
+  <li><b>RISC vs CISC:</b> RISC uses a small set of simple instructions, mostly one cycle each, so execution time is predictable (AVR). CISC has many complex instructions.</li>
+  <li><b>Firmware</b> is the program stored in ROM. A <b>bootloader</b> is a small resident program that lets the board load new firmware over serial/USB without an external programmer (the Arduino method, using AVRDUDE). A <b>hardware programmer</b> writes the chip directly.</li>
+  <li><b>Hardware-software co-design:</b> designing hardware and firmware together, deciding which function goes in hardware and which in software.</li>
+  <li><b>Embedded OS / RTOS:</b> an operating system with deterministic timing; small systems (like our Arduino) run bare-metal with no OS, which is why an endless loop is needed.</li>
+</ul>

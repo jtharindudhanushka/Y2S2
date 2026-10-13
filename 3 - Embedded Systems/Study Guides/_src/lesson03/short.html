@@ -1,0 +1,14 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Polling</td><td>CPU checks devices repeatedly. Misses fast events, wastes CPU, no priority. Button tested with <code>(PIND &amp; (1&lt;&lt;PIND2)) == 0</code>.</td></tr>
+  <tr><td>Interrupt</td><td>Device interrupts CPU; return address pushed on stack; jump via vector table to ISR; <code>RETI</code> resumes. Priority by vector address (lower = higher).</td></tr>
+  <tr><td>C tools</td><td><code>#include &lt;avr/interrupt.h&gt;</code>; <code>sei()</code>, <code>cli()</code>; <code>ISR(XXX_vect)</code>; <code>volatile</code> shared variables.</td></tr>
+  <tr><td>Vectors</td><td>INT0_vect, INT1_vect, PCINT0/1/2_vect (B/C/D), TIMER0/1/2_OVF_vect, USART_RX_vect, USART_UDRE_vect, USART_TX_vect, ADC_vect.</td></tr>
+  <tr><td>External INT</td><td>INT0 = PD2, INT1 = PD3. EICRA: ISCn1 ISCn0 = 00 low, 01 change, 10 <b>falling</b>, 11 <b>rising</b>. EIMSK bit INTn enables.</td></tr>
+  <tr><td>Pin change</td><td>PCICR PCIE0/1/2 (B/C/D) + PCMSKn bit. PD2 = PCINT18 (PCMSK2). Fires on any change, so test the pin in the ISR.</td></tr>
+  <tr><td>Arduino</td><td><code>attachInterrupt(digitalPinToInterrupt(pin), isr, FALLING)</code>; modes LOW, CHANGE, RISING, FALLING; pins 2 and 3 only.</td></tr>
+  <tr><td>Debounce</td><td>Contact bounce = many edges. 100 nF across the switch.</td></tr>
+  <tr><td>ISR rules</td><td>Short, no delays, <code>volatile</code>, both enable levels set.</td></tr>
+  <tr><td>Click counter</td><td>8 LEDs (0 to 255), 2 buttons on INT0 / INT1 with 100 nF, PD0/PD1 reserved, <code>unsigned char</code> count, <code>display()</code> maps bits to ports.</td></tr>
+</table>

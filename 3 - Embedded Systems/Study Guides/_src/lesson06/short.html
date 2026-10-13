@@ -1,0 +1,14 @@
+<h2>Short note: revision sheet</h2>
+<table>
+  <tr><th>Topic</th><th>Remember</th></tr>
+  <tr><td>Timer vs counter</td><td>Timer counts oscillator pulses (time), counter counts external pulses on Tn (events). Peripheral so the CPU is free.</td></tr>
+  <tr><td>Timers</td><td>T0, T2: 8-bit (255). T1: 16-bit (65 535). T0 pin PD4, T1 pin PD5.</td></tr>
+  <tr><td>Formulas</td><td>tick = prescale/F_CPU; n = (F_CPU/prescale) &times; delay; <b>initial = max &minus; n + 1</b>; elapsed = N&times;(B&minus;A)/f.</td></tr>
+  <tr><td>CS bits</td><td>001 /1, 010 /8, 011 /64, 100 /256, 101 /1024, 110 external falling, 111 external rising, 000 stopped.</td></tr>
+  <tr><td>Flag</td><td>TOVn in TIFRn, cleared by <b>writing 1</b>. TOIEn in TIMSKn enables <code>TIMERn_OVF_vect</code>; cleared automatically on interrupt entry.</td></tr>
+  <tr><td>Ready values</td><td>200 ms T1 /64: 15 536. 1 s T1 /1024: 49 911. 5 counts T0: 251. 10 ms T0 /1024: 156 counts, initial 100.</td></tr>
+  <tr><td>Overflow</td><td>T1 /64: 262 ms; T1 /1024: 4.19 s; T0 /1024: 16.4 ms.</td></tr>
+  <tr><td>Pattern</td><td>Set CS, load TCNT, poll TOV (or TOIE + sei), reload TCNT, clear TOV.</td></tr>
+  <tr><td>Random</td><td><code>stdlib.h</code>: <code>srand(seed)</code>, <code>rand()</code>; <code>1 + rand() % 10</code>. Seed from TCNT0 at a button press or from a floating ADC pin. Arduino: <code>randomSeed</code>, <code>random(min,max)</code>.</td></tr>
+  <tr><td>Reaction timer</td><td>Ready, react buttons; blue signal LED; green &lt; 1 s, orange 1 to &lt; 2 s, red &ge; 2 s; T1 overflow = 1 s.</td></tr>
+</table>
