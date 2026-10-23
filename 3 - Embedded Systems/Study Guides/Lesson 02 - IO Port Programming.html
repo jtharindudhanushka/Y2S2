@@ -70,7 +70,8 @@ document.documentElement.dataset.theme=t;})();
 
   <div class="top"><p class="crumb"><a href="index.html">&larr; Embedded Systems study guides</a> &middot; INTE 22263 &middot; Lesson 02</p><button id="theme" type="button"></button></div>
   <h1>I/O Port Programming</h1>
-  <p class="lead">Covers lecture 03, the six I/O-port lecture recordings and exercises 1 and 2, written for complete beginners: electricity basics, binary/hex, DDR, PORT and PIN, bit operations, the blinker in assembly, C and Arduino (systems 1 to 4), delay-loop maths, reading a pushbutton, building circuits by hand, everything the lecturer added in class (section L) and worked solutions.</p>
+  <p class="lead">Part 1 (unchanged): lecture 03 and exercises 1 and 2 from this year's slides and peer notes: DDR, PORT and PIN, LED and resistor basics, the blinker in assembly, C and Arduino (systems 1 to 4), delay-loop maths, bitwise operators, the pushbutton, worked exercises. Part 2 (added): the same topics explained from zero for beginners, with diagrams, building circuits by hand, and section L: what the lecturer said in the 2020 recordings.</p>
+  <div class="warn" style="font-weight:600;color:var(--bad)"><b>Caution:</b> the parts marked as coming from the <b>lecture recordings</b> (section L in Part 2 of the Lesson tab, and related questions) are from <b>old 2020 videos</b>. Some details may not apply to this year's course, so study them with caution. Where they disagree, follow <b>this year's slides and exercises</b> (Part 1).</div>
 
   <nav class="tabs" role="tablist">
     <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
@@ -98,7 +99,304 @@ b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;ma
 table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
 .led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
 </style>
-<p class="sm" style="color:var(--muted)">Sources: lecture 03 slides, the 2020 lecture recordings (sections L), Exercises 1 and 2 with answers, and the peer notes. Written for complete beginners: start at section 0. The same text is printable as <code>Print Notes/Lesson 03 - IO Port Programming.pdf</code>.</p>
+<h2 style="border-bottom:2px solid var(--accent)">Part 1: Lesson notes (this year's slides and peer notes)</h2>
+<p class="sm" style="color:var(--muted)">Sources: lecture 03 (I/O Port Programming), Exercise 1 with answers, Exercise 2, peer notes pages 13 to 27, and the AVR instruction set manual. The exam gives you the <b>ATmega328P Simplified Data Sheet</b> and the <b>C and Arduino cheat sheets</b>; this lesson shows how to use them.</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain the I/O registers DDR, PORT and PIN and use them to configure, drive and read pins</li>
+  <li>Calculate the series resistor of an LED and read a resistor colour code</li>
+  <li>Write the LED blinker in assembly, in C and with Arduino wrapper functions, and compare them</li>
+  <li>Calculate a software delay from clock cycles (nested loops)</li>
+  <li>Use the bitwise operators to change single bits without disturbing the rest</li>
+  <li>Read a pushbutton using an internal pull-up and drive an LED from it</li>
+</ul>
+
+<h2>1. I/O ports and registers</h2>
+<p>I/O ports read the state of the physical world through sensors and drive actuators to change it. Each port (B, C, D on the ATmega328P) has three registers. The letter <b>x</b> stands for the port name (a, b, c, ...).</p>
+<table>
+  <tr><th>Register</th><th>Name</th><th>Purpose</th></tr>
+  <tr><td>DDRx</td><td>Data Direction Register</td><td>Bit = <b>1</b> makes the pin an <b>output</b> (set); bit = <b>0</b> makes it an <b>input</b> (clear)</td></tr>
+  <tr><td>PORTx</td><td>Port output register</td><td>As output: 1 = high (5 V, LED on), 0 = low. As input: 1 enables the internal <b>pull-up resistor</b></td></tr>
+  <tr><td>PINx</td><td>Port input register</td><td>Read the logic level actually present on the pins</td></tr>
+</table>
+<p class="sm" style="color:var(--muted)">Memory aid: <b>D</b>irection, <b>P</b>ort (write), <b>P</b>in (read). Data in = input, data out = output.</p>
+<div class="box"><b>Example (slide)</b>DDRx = 11110000 and PORTx = 10100000. The upper four pins are outputs: bit 7 = 1 (high, LED on), bit 6 = 0 (LED off), bit 5 = 1 (on), bit 4 = 0 (off). The lower four are inputs.</div>
+
+<h2>2. Electricity, resistors and diodes</h2>
+<ul>
+  <li><b>Current</b> is the flow of electrons; <b>voltage</b> is the pressure that pushes it (water analogy: more pressure, more flow). Ohm's law: <b>V = I R</b>.</li>
+  <li>An <b>LED</b> is a diode: current flows only from <b>anode</b> to <b>cathode</b>. The cathode is the <b>flat edge</b> on the body flange / the shorter leg. An LED must have a series resistor.</li>
+</ul>
+<div class="box"><b>Series resistor for an LED</b> R = (V<sub>S</sub> &minus; V<sub>L</sub>) / I<sub>L</sub>.<br>Exercise 1(a): V<sub>S</sub> = 5 V, V<sub>L</sub> = 2 V, I<sub>L</sub> = 15 mA, so R = (5 &minus; 2) / 0.015 = <b>200 &Omega;</b>, use the next standard value <b>220 &Omega;</b> (never a smaller one, which would exceed the current).</div>
+<h3>Resistor colour code (4 bands)</h3>
+<table>
+  <tr><th>Colour</th><th>Digit</th><th>Colour</th><th>Digit</th></tr>
+  <tr><td>Black</td><td>0</td><td>Green</td><td>5</td></tr>
+  <tr><td>Brown</td><td>1</td><td>Blue</td><td>6</td></tr>
+  <tr><td>Red</td><td>2</td><td>Violet</td><td>7</td></tr>
+  <tr><td>Orange</td><td>3</td><td>Grey</td><td>8</td></tr>
+  <tr><td>Yellow</td><td>4</td><td>White</td><td>9</td></tr>
+</table>
+<p>Band 1 = first digit, band 2 = second digit, band 3 = multiplier (number of zeros), band 4 = tolerance (gold &plusmn;5 %, silver &plusmn;10 %). Examples: <b>220 &Omega;</b> = red, red, brown; <b>330 &Omega;</b> = orange, orange, brown; <b>1 k&Omega;</b> = brown, black, red; <b>10 k&Omega;</b> = brown, black, orange; <b>2.4 M&Omega;</b> = red, yellow, green (24 &times; 10<sup>5</sup>, the peer notes example).</p>
+
+<h2>3. Hardware: ATmega328P pins and breadboard</h2>
+<ul>
+  <li>PB0 to PB5 are Arduino pins 8 to 13; PD0 to PD7 are pins 0 to 7; PC0 to PC5 are A0 to A5 (see lesson 1).</li>
+  <li>On a <b>breadboard</b> the holes in each column of five (in the main area) are connected vertically; the power rails run horizontally.</li>
+  <li>Wiring (slide): Arduino pin &rarr; resistor &rarr; LED anode; LED cathode &rarr; GND.</li>
+</ul>
+
+<h2>4. System 1: blinkerAsm (blink an LED every half second, assembly)</h2>
+<p>Firmware algorithm: configure PB0 as output; make PB0 high; <code>delay()</code>; make PB0 low; <code>delay()</code>; loop back. The <code>delay()</code> subroutine runs a loop for 500 ms and returns. An <b>endless loop is a must</b>: there is no OS, so without it the CPU would run on into empty memory.</p>
+<table>
+  <tr><th>Instruction</th><th>Meaning</th><th>Cycles</th></tr>
+  <tr><td><code>SBI DDRB, 0</code></td><td>Set bit 0 of an I/O register (configure PB0 as output)</td><td>2</td></tr>
+  <tr><td><code>SBI PORTB, 0</code></td><td>Set bit: PB0 high, LED on</td><td>2</td></tr>
+  <tr><td><code>CBI PORTB, 0</code></td><td>Clear bit: PB0 low, LED off</td><td>2</td></tr>
+  <tr><td><code>LDI R16, k</code></td><td>Load immediate (R16 to R31 only)</td><td>1</td></tr>
+  <tr><td><code>DEC Rd</code></td><td>Decrement register; sets the Z flag when the result is 0</td><td>1</td></tr>
+  <tr><td><code>BRNE label</code></td><td>Branch if not equal (Z = 0), i.e. result of the previous instruction was not 0</td><td>2 if taken, 1 if not</td></tr>
+  <tr><td><code>CALL / RCALL</code>, <code>RET</code></td><td>Call a subroutine / return</td><td>4 / 3, and 4</td></tr>
+  <tr><td><code>JMP / RJMP</code></td><td>Jump (infinite loop)</td><td>3 / 2</td></tr>
+  <tr><td><code>NOP</code></td><td>Do nothing for one cycle (used to trim a delay)</td><td>1</td></tr>
+  <tr><td><code>SBIS / SBIC reg, b</code></td><td>Skip next instruction if bit in I/O register is Set / Clear (read a pin)</td><td>1 (2 or 3 if it skips)</td></tr>
+</table>
+<pre><code>        SBI  DDRB, 0        ; configure PB0 as an output
+START:  SBI  PORTB, 0       ; PB0 high, LED on
+        CALL DELAY          ; wait 0.5 s
+        CBI  PORTB, 0       ; PB0 low, LED off
+        CALL DELAY          ; wait 0.5 s
+        JMP  START          ; repeat forever
+
+DELAY:  LDI  R16, 41        ; outer loop count
+LOOP1:  LDI  R17, 255
+LOOP2:  LDI  R18, 255
+LOOP3:  DEC  R18
+        BRNE LOOP3          ; innermost loop
+        DEC  R17
+        BRNE LOOP2
+        DEC  R16
+        BRNE LOOP1
+        RET</code></pre>
+
+<h3>Delay calculation (the part the exam loves)</h3>
+<ol>
+  <li>Clock cycle time t = 1 / f = 1 / (16 &times; 10<sup>6</sup>) = <b>62.5 ns</b>.</li>
+  <li>Cycles needed for 0.5 s: n = d / t = 0.5 / 62.5 ns = <b>8 &times; 10<sup>6</sup></b>.</li>
+  <li><b>Innermost loop</b> with counter 255 (8-bit register, maximum 255): the branch is taken 254 times (DEC 1 + BRNE 2 = 3 cycles) and falls through once (DEC 1 + BRNE 1 = 2 cycles).<br>n3 = (1 + 2) &times; 254 + (1 + 1) &times; 1 = <b>764</b></li>
+  <li><b>Two loops</b>: add the LDI of the inner counter.<br>n2 = (1 + n3 + 1 + 2) &times; 254 + (1 + n3 + 1 + 1) &times; 1 = (1+764+1+2)&times;254 + (1+764+1+1) = <b>195 839</b></li>
+  <li><b>Three loops</b>: outer counter 41 gives 8 &times; 10<sup>6</sup> / 195 839 = 40.8, so take 41 (the larger value).<br>n1 = (1 + 195 839 + 1 + 2) &times; 40 + (1 + 195 839 + 1 + 1) &times; 1 = <b>8 029 562</b></li>
+  <li>Add the first <code>LDI R16</code>: n = 1 + n1 = 8 029 563 cycles, so <b>d = t &times; n = 62.5 ns &times; 8 029 563 = 0.50185 s &asymp; 0.5 s</b>.</li>
+</ol>
+<p><b>General rule:</b> a loop whose body (excluding its own DEC and BRNE) takes <i>b</i> cycles and which repeats <i>N</i> times costs (b + 1 + 2)(N &minus; 1) + (b + 1 + 1).</p>
+<div class="box"><b>Exact delays with the NOP trick (peer notes)</b>With R16 = 72, R17 = 188, R18 = 196: n3 = 587, n2 = 111 107, n1 = 7 999 991, so n = 7 999 992 cycles. Only 8 cycles short of 8 000 000, so add <b>8 &times; NOP</b> (1 cycle each) for exactly 0.5 s. Another exact pair of counters: 200 ms = 3 200 000 cycles with R16 = 241, R17 = 25, R18 = 176 (3 199 998) plus 2 NOP.</div>
+<p class="sm" style="color:var(--muted)">The call overhead (CALL 4 cycles, RET 4 cycles) is usually ignored in lecture answers; mention it if asked for precision.</p>
+
+<h3>Programming and uploading</h3>
+<ul>
+  <li>Microchip Studio: create an assembler project, select the device (ATmega328P), build to get the <b>HEX</b> file.</li>
+  <li>Programming options: a commercial programmer from the manufacturer, aftermarket / home-made programmers (USB or serial), or <b>self-programming</b> with a <b>bootloader</b> and a host application such as <b>AVRDUDE</b> (the Arduino way).</li>
+  <li>AVRDUDE tool settings in Microchip Studio: Command = path to <code>avrdude.exe</code>; Arguments = <code>-C "avrdude.conf" -v -v -p atmega328p -c arduino -P COMx -b 115200 -U flash:w:"$(TargetName).hex":i</code>; Initial directory = <code>$(TargetDir)</code>.</li>
+  <li><b>Hardwired alternatives</b> (transistors, a timer IC like the 555) make the same blinker, but the circuit is fixed: changing the rate means changing components, it takes more parts, space and cost, and it cannot be extended with more behaviour. The software version changes by editing one number.</li>
+</ul>
+
+<h2>5. System 2: blinkerC (C, every 200 ms)</h2>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL      // must be defined BEFORE util/delay.h
+#include &lt;util/delay.h&gt;
+
+int main(void)
+{
+    DDRB = DDRB | 0b00000001;     // configure PB0 as output
+    while (1)
+    {
+        PORTB = PORTB | 0b00000001;   // PB0 high (set bit)
+        _delay_ms(200);
+        PORTB = PORTB &amp; 0b11111110;   // PB0 low (clear bit)
+        _delay_ms(200);
+    }
+    return 0;
+}</code></pre>
+<h3>Bitwise operators: change one bit, keep the others</h3>
+<table>
+  <tr><th>Goal</th><th>Expression</th><th>Why</th></tr>
+  <tr><td>Set bit n</td><td><code>PORTB |= (1&lt;&lt;n)</code></td><td>x | 1 = 1 and x | 0 = x</td></tr>
+  <tr><td>Clear bit n</td><td><code>PORTB &amp;= ~(1&lt;&lt;n)</code></td><td>x &amp; 0 = 0 and x &amp; 1 = x</td></tr>
+  <tr><td>Toggle bit n</td><td><code>PORTB ^= (1&lt;&lt;n)</code></td><td>x ^ 1 flips the bit, x ^ 0 keeps it</td></tr>
+  <tr><td>Test bit n of an input</td><td><code>if (PIND &amp; (1&lt;&lt;n))</code> (high) or <code>if (!(PIND &amp; (1&lt;&lt;n)))</code> (low)</td><td>mask all other bits</td></tr>
+</table>
+<p>Example: <code>xxxx xxxx | 0000 0001 = xxxx xxx1</code> and <code>xxxx xxxx &amp; 1111 1110 = xxxx xxx0</code> (only the interesting bit changes).</p>
+<p><b>Styles for the same operation</b> (all equal): binary constant <code>0b00000001</code>; hex <code>0x01</code>; shift <code>(1&lt;&lt;0)</code>; and the labelled constants defined in <code>avr/io.h</code>: <code>DDRB |= (1&lt;&lt;DDB0)</code>, <code>PORTB |= (1&lt;&lt;PORTB0)</code>, <code>PIND &amp; (1&lt;&lt;PIND2)</code>. The shift style with labels is the easiest to read and to get right.</p>
+
+<h2>6. System 3: blinker (Arduino wrapper functions)</h2>
+<pre><code>int ledPin = 8;                    // PB0
+
+void setup()                       // runs once
+{
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop()                        // runs again and again
+{
+  digitalWrite(ledPin, HIGH);
+  delay(200);
+  digitalWrite(ledPin, LOW);
+  delay(200);
+}</code></pre>
+<p><b>Comparison (lecture):</b></p>
+<table>
+  <tr><th>Approach</th><th>Pros</th><th>Cons</th></tr>
+  <tr><td>Assembly</td><td>Highly efficient (smallest, fastest)</td><td>Difficult to code, not portable</td></tr>
+  <tr><td>C</td><td>Efficient, easier to code, libraries available, portable</td><td>Data type misuse possible</td></tr>
+  <tr><td>Arduino wrappers</td><td>Much easier to code, libraries available</td><td>Inefficient (larger, slower), not portable</td></tr>
+</table>
+<p><b>Why is Arduino inefficient although it also uses GCC and AVRDUDE?</b> Because the wrapper functions do extra work: <code>pinMode</code>/<code>digitalWrite</code> look up the port and bit from tables, check whether the pin has PWM that must be turned off, and the Arduino core adds start-up code (<code>init()</code> configures timers, the <code>millis()</code> interrupt, serial hooks). The generated HEX is therefore larger and slower than direct register code.</p>
+<div class="box"><b>Measured sizes from Exercise 2 (code ROM)</b>Program 1 (register code, <code>DDRB=0x01; PORTB=0x01; PORTB=0x00;</code>) = 142 bytes; Program 2 (<code>pinMode / digitalWrite</code>) = 743 bytes. Both just blink an LED on pin 8 (PB0) as fast as the CPU can, so the LED looks half-lit; the size difference is the wrapper overhead.</div>
+
+<h2>7. Reading an input: System 4 dualRateBlinker</h2>
+<p><b>Task:</b> blink an LED every 500 ms with no input, every 200 ms while a pushbutton is pressed.</p>
+<ul>
+  <li>The <b>micro pushbutton</b> is normally open and connects two points when pressed.</li>
+  <li>Wire the button between the input pin and <b>GND</b>. Enable the internal <b>pull-up</b> by setting the PORT bit of the input pin. Then the pin reads <b>1 when released</b> and <b>0 when pressed</b> (active low). No external resistor is needed.</li>
+  <li>To read a pin use <b>PIN</b>, not PORT.</li>
+</ul>
+<pre><code>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+
+int main(void)
+{
+    DDRB |=  (1&lt;&lt;DDB0);        // PB0 output (LED)
+    DDRD &amp;= ~(1&lt;&lt;DDD2);       // PD2 input (button)
+    PORTD |= (1&lt;&lt;PORTD2);      // pull-up on PD2
+    while (1)
+    {
+        PORTB |= (1&lt;&lt;PORTB0);                 // LED on
+        if ((PIND &amp; (1&lt;&lt;PIND2)) == 0) _delay_ms(200);   // pressed
+        else                            _delay_ms(500);   // released
+        PORTB &amp;= ~(1&lt;&lt;PORTB0);                // LED off
+        if ((PIND &amp; (1&lt;&lt;PIND2)) == 0) _delay_ms(200);
+        else                            _delay_ms(500);
+    }
+}</code></pre>
+<pre><code>// Arduino version
+const int ledPin = 8, switchPin = 2;
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(switchPin, INPUT_PULLUP);          // input with pull-up
+}
+void loop() {
+  int d = (digitalRead(switchPin) == LOW) ? 200 : 500;
+  digitalWrite(ledPin, HIGH); delay(d);
+  digitalWrite(ledPin, LOW);  delay(d);
+}</code></pre>
+<p><code>digitalRead</code> returns the current state (HIGH/LOW) of the pin. <code>digitalWrite(2, !digitalRead(2))</code> toggles pin 2.</p>
+
+<h2>8. Exercise 1: five-LED chaser and Knight Rider (worked)</h2>
+<p><b>Hardware:</b> five LEDs on Arduino pins 8 to 12 (PB0 to PB4), each with a 220 &Omega; resistor in series, cathodes to GND.<br><b>BOM:</b> 1 &times; Arduino Uno, 1 &times; breadboard, 5 &times; LED, 5 &times; 220 &Omega; resistor, male-to-male jumper wires.</p>
+<pre><code>// (d) Arduino: chase left to right        (lecturer's size: 920 bytes)
+const int led[] = {8, 9, 10, 11, 12};
+void setup() { for (int i = 0; i &lt; 5; i++) pinMode(led[i], OUTPUT); }
+void loop()  { for (int i = 0; i &lt; 5; i++) {
+                 digitalWrite(led[i], HIGH); delay(200); digitalWrite(led[i], LOW); } }
+
+// (e) C: 200 bytes (78% smaller)
+#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+int main(void) {
+    DDRB |= 0b00011111;                       // PB0..PB4 outputs
+    while (1)
+        for (int i = 0; i &lt; 5; i++) {
+            PORTB |= (1&lt;&lt;i); _delay_ms(200); PORTB &amp;= ~(1&lt;&lt;i);
+        }
+}
+// further 3% smaller (172 bytes): write the port directly instead of read-modify-write
+//      PORTB = (1&lt;&lt;i); _delay_ms(200);   and clear with PORTB = 0 after the loop</code></pre>
+<h3>Knight Rider (forward then back, end LEDs not repeated)</h3>
+<pre><code>// Arduino (986 bytes)
+void loop() {
+  for (int i = 0; i &lt; 5; i++)  { digitalWrite(led[i], HIGH); delay(100); digitalWrite(led[i], LOW); }
+  for (int i = 3; i &gt; 0; i--)  { digitalWrite(led[i], HIGH); delay(100); digitalWrite(led[i], LOW); }
+}
+// C (260 bytes; 202 bytes after the same optimisation)
+while (1) {
+    for (int i = 0; i &lt; 5; i++)  { PORTB = (1&lt;&lt;i); _delay_ms(100); }
+    for (int i = 3; i &gt; 0; i--)  { PORTB = (1&lt;&lt;i); _delay_ms(100); }
+}</code></pre>
+<h3>Question 3: ten LEDs with at most seven I/O pins</h3>
+<p>Use <b>multiplexing</b> of the ground side. Wire LED k of set 1 and LED k of set 2 to the same anode line (five lines, PB0 to PB4, each through a 220 &Omega; resistor). Connect the <b>cathodes of set 1</b> to the collector of transistor Q1 and the <b>cathodes of set 2</b> to the collector of Q2 (both BC547 NPN, emitters to GND). The bases connect through <b>1 k&Omega;</b> resistors to PD6 and PD7. That is 5 + 2 = <b>7 pins</b>. An LED lights only when its anode line is high <i>and</i> its set's transistor is switched on.</p>
+<pre><code>int main(void) {
+    DDRB |= 0x1F;                   // PB0..PB4 anode lines
+    DDRD |= (1&lt;&lt;DDD6) | (1&lt;&lt;DDD7); // transistor bases
+    while (1) {
+        // positions 0..9 forward, then 8..1 back
+        for (int p = 0; p &lt; 18; p++) {
+            int pos = (p &lt; 10) ? p : 18 - p;
+            int set = pos / 5, led = pos % 5;
+            PORTB = (PORTB &amp; ~0x1F) | (1&lt;&lt;led);
+            PORTD = (PORTD &amp; ~((1&lt;&lt;PORTD6)|(1&lt;&lt;PORTD7))) | (set ? (1&lt;&lt;PORTD7) : (1&lt;&lt;PORTD6));
+            _delay_ms(100);
+        }
+    }
+}</code></pre>
+
+<h2>9. Exercise 2 (worked)</h2>
+<h3>Q1: assembly, blink 200 ms when pressed, otherwise 400 ms</h3>
+<p>LED with 220 &Omega; on PB0; pushbutton from PD2 to GND with the internal pull-up (pressed = 0).</p>
+<pre><code>        SBI   DDRB, 0         ; PB0 output
+        CBI   DDRD, 2         ; PD2 input
+        SBI   PORTD, 2        ; pull-up on PD2
+MAIN:   SBI   PORTB, 0        ; LED on
+        RCALL WAIT
+        CBI   PORTB, 0        ; LED off
+        RCALL WAIT
+        RJMP  MAIN
+
+WAIT:   SBIC  PIND, 2         ; skip next if PD2 is clear (button pressed)
+        RJMP  SLOW
+        RCALL D200            ; pressed: 200 ms
+        RET
+SLOW:   RCALL D200            ; released: 2 x 200 ms = 400 ms
+        RCALL D200
+        RET
+
+D200:   LDI   R16, 241        ; 200 ms = 3 200 000 cycles
+D1:     LDI   R17, 25
+D2:     LDI   R18, 176
+D3:     DEC   R18
+        BRNE  D3
+        DEC   R17
+        BRNE  D2
+        DEC   R16
+        BRNE  D1
+        NOP
+        NOP
+        RET</code></pre>
+<h3>Q2 (a) intended functionality, (b) code ROM sizes</h3>
+<p>(a) Both programs set pin 8 (PB0) as an output and then turn it on and off continuously with no delay, so the LED flashes extremely fast and appears dim or constantly on. (b) Program 1 (142 bytes) uses direct register access and compiles to a few instructions plus minimal start-up code. Program 2 (743 bytes) calls <code>pinMode</code> and <code>digitalWrite</code>, which pull in pin-to-port lookup tables, PWM (timer) checks and the Arduino core initialisation (<code>init()</code>, timers, <code>millis</code> interrupt), so many more instructions are stored in the flash.</p>
+<h3>Q3: delay of a subroutine</h3>
+<pre><code>DELAY: LDI R16, 0x69      ; 105
+LOOP1: LDI R17, 0xFD      ; 253
+LOOP2: DEC R17
+       BRNE LOOP2
+       DEC R16
+       NOP
+       BRNE LOOP1
+       RET</code></pre>
+<ol>
+  <li>Inner loop (R17 = 253): n2 = (1 + 2) &times; 252 + (1 + 1) = <b>758</b> cycles.</li>
+  <li>Outer loop body: LDI (1) + 758 + DEC (1) + NOP (1) + BRNE. Taken (2): 763 cycles &times; (105 &minus; 1) = 79 352. Last pass falls through (1): 762.</li>
+  <li>n1 = 79 352 + 762 = 80 114. Add the first <code>LDI R16</code>: <b>80 115</b> cycles; with <code>RET</code> (4): 80 119.</li>
+  <li>Delay = 80 115 &times; 62.5 ns = <b>5.007 ms</b> (about 5.0074 ms including RET; call overhead extra).</li>
+</ol>
+
+<div class="warn"><b>Common mistakes</b>1) <code>F_CPU</code> defined after <code>#include &lt;util/delay.h&gt;</code>. 2) Writing <code>DDRB = 0x01</code> (destroys other bits) instead of <code>|=</code>. 3) Reading <code>PORTx</code> instead of <code>PINx</code>. 4) LED without a resistor, or LED reversed. 5) No pull-up on the button input (floating pin). 6) <code>BRNE</code> counts: forgetting that the last iteration costs 1 less cycle.</div>
+
+<h2 style="border-bottom:2px solid var(--accent);margin-top:40px">Part 2: Beginner explanations, diagrams and lecture-recording notes (added)</h2>
+<div class="box">Part 2 explains the same topics again from zero, with diagrams, worked solutions and building tips, then adds <b>section L</b>: what the lecturer said in the 2020 recordings. Part 1 above is unchanged.</div>
+<p class="sm" style="color:var(--muted)">Sources: lecture 03 slides, the six I/O-port lecture recordings from 2020 (section L), Exercises 1 and 2 with answers, and the peer notes. Printable as <code>Print Notes/Lesson 03 - IO Port Programming.pdf</code>.</p>
 <div class="key">
 <b class="t">What you will be able to do after this lesson</b>
 <ul>
@@ -502,7 +800,6 @@ The body includes the <code>DEC</code> and, for an outer loop, the <code>LDI</co
 <b>Exercise 1 (slide 36) change:</b> loading R16 with 16 instead of 41 gives about 196 ms &asymp; the 200 ms blinker.
 </div>
 
-<div class="box"><b>Exact delays with the NOP trick (peer notes)</b> With R16 = 72, R17 = 188, R18 = 196: n3 = 587, n2 = 111 107, n1 = 7 999 991, so n = 7 999 992 cycles, only 8 short of 8 000 000. Add <b>8 &times; NOP</b> (1 cycle each) for exactly 0.5 s. For exactly 200 ms (3 200 000 cycles): R16 = 241, R17 = 25, R18 = 176 gives 3 199 998, plus 2 NOP.</div>
 <h3>Worked exam example (Exercise 2, question 3)</h3>
 <pre>DELAY: LDI R16, 0x69      ; 0x69 = 105
 LOOP1: LDI R17, 0xFD      ; 0xFD = 253

@@ -7,6 +7,7 @@ study guide in sync and makes the drawings follow the light/dark theme.
 import re, sys
 
 src, out, sources = sys.argv[1], sys.argv[2], sys.argv[3]
+old = open(sys.argv[4], encoding="utf-8").read() if len(sys.argv) > 4 else ""
 s = open(src, encoding="utf-8").read()
 body = s[s.index("<body>") + 6:s.index("</body>")]
 
@@ -46,5 +47,13 @@ table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:
 </style>
 """
 head = '<p class="sm" style="color:var(--muted)">%s</p>\n' % sources
-open(out, "w", encoding="utf-8").write(css + head + body.strip() + "\n")
+if old:
+    # Part 1 = the original notes from this year's slides and peer notes, kept unchanged.
+    # Part 2 = added beginner explanations, diagrams and the lecture-recording notes.
+    old = ('<h2 style="border-bottom:2px solid var(--accent)">Part 1: Lesson notes (this year\'s slides and peer notes)</h2>\n'
+           + old)
+    head = ('\n<h2 style="border-bottom:2px solid var(--accent);margin-top:40px">Part 2: Beginner explanations, diagrams and lecture-recording notes (added)</h2>\n'
+            '<div class="box">Part 2 explains the same topics again from zero, with diagrams, worked solutions and building tips, '
+            'then adds <b>section L</b>: what the lecturer said in the 2020 recordings. Part 1 above is unchanged.</div>\n' + head)
+open(out, "w", encoding="utf-8").write(css + old + head + body.strip() + "\n")
 print("wrote", out, len(body), "chars")

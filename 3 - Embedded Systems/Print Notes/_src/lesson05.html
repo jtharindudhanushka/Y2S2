@@ -466,6 +466,109 @@ int main(void)
 <li><b>Calibrate first, then decide:</b> upload a 3-line sketch that prints <code>analogRead(A0)</code> to the Serial Monitor, note the readings in light and covered, set DARK and LIGHT between them, then upload the real firmware. Test by covering the LDR with your hand: LED on; uncover: LED off, with no flicker in between.</li>
 </ol>
 
+<h2 class="pb">L. What the lecturer explained in the lectures (2020 recordings)</h2>
+<p class="small">From the five ADC recordings (folders 13&ndash;17 in <code>Embedded Systems Lectures</code>). <b>[EXAM]</b> marks things he tied to the exam.</p>
+
+<div class="key">
+<b class="t">L1. What he expects you to know [EXAM]</b>
+The learning outcome says <b>describe how the ADC converts</b> an analog input into a number, "not how to use the ADC. How to use it is simple; many people know. But how the conversion happens, you should be able to explain." He also said many people multiply by 5/1024 "<b>blindly, without any clue</b>": you must be able to say <i>why</i> (sections 2 and L4).
+</div>
+
+<h3>L2. Why an ADC (his words)</h3>
+<ul class="small">
+<li>Everything in the physical world varies <b>continuously</b> (temperature, light, distance, pressure, speed, acceleration): this is <b>analog</b>. Inside a computer everything is <b>discrete</b> (1s and 0s): <b>digital</b>.</li>
+<li>An analog sensor converts one form of energy into <b>electrical energy (a voltage)</b>: an LM35 turns thermal energy into a voltage, an LDR turns light (radiation energy) into a voltage, and a potentiometer turns rotation (kinetic energy) into a voltage. The CPU can only process digital data, so the <b>ADC converts the voltage into a number</b>.</li>
+<li>The input range follows the chip's operating voltage: a 5 V chip measures 0&ndash;5 V. A 10-bit ADC gives 0&ndash;1023; an 8-bit ADC on a 3.3 V chip would give 0&ndash;255 for 0&ndash;3.3 V (1.65 V &rarr; about 128). The range can be <b>narrowed</b> (e.g. 0&ndash;1.1 V) by changing the reference voltage.</li>
+<li>The ATmega328P has <b>one</b> ADC with <b>six input channels</b> (ADC0&ndash;ADC5 = A0&ndash;A5 = PC0&ndash;PC5). Because there is only one converter, <b>only one channel can be converted at a time</b>. Some chips have several ADCs and can convert in parallel.</li>
+<li>Port C pins are <b>shared</b>: a pin used as an ADC input cannot be a digital I/O pin at the same time, and vice versa.</li>
+</ul>
+
+<h3>L3. Successive approximation, his worked example [EXAM]</h3>
+<p class="small">Block diagram: the <b>input multiplexer</b> picks the channel; <b>AVCC</b> is the ADC's own supply (normally equal to the chip's 5 V); the <b>reference multiplexer</b> picks Vref; the <b>DAC</b> turns the current guess into a voltage; the <b>comparator</b> outputs 1 if Vin &gt; guess, else 0; the <b>conversion logic</b> stores each bit in the <b>data register</b> and feeds it back to the DAC. The ADMUX register controls both multiplexers.</p>
+<p class="small"><b>The rule he used:</b> first guess = Vref/2. If the comparator says 1, the next guess is previous + Vref/4; if 0, previous &minus; Vref/4. Then &plusmn;Vref/8, &plusmn;Vref/16&hellip;: one step per bit. He explained it as "you don't know Vin but you know Vref, so compare Vin with slices of Vref and come closer each time".</p>
+<table class="small">
+<tr><th colspan="5">4-bit ADC, Vin = 3 V, Vref = 5 V (his recap example)</th></tr>
+<tr><th>Step</th><th>Guess</th><th>Vin &gt; guess?</th><th>Bit</th><th>Next guess</th></tr>
+<tr><td>1</td><td>2.5</td><td>yes</td><td>1</td><td>2.5 + 5/4 = 3.75</td></tr>
+<tr><td>2</td><td>3.75</td><td>no</td><td>0</td><td>3.75 &minus; 5/8 = 3.125</td></tr>
+<tr><td>3</td><td>3.125</td><td>no</td><td>0</td><td>3.125 &minus; 5/16 = 2.8125</td></tr>
+<tr><td>4</td><td>2.8125</td><td>yes</td><td>1</td><td>(done)</td></tr>
+</table>
+<p class="small">Result <b>1001 = 9</b> (out of 0&ndash;15). It approximated 3 V as about 2.81 V. With 10 bits the same process runs 10 times and lands much closer to 3 V. He uploaded an Excel simulation of the 10-bit process: <code>Lecture Materials/05 - 10-bit ADC.xlsx</code>. Type any Vin and watch the bits.</p>
+<div class="box small"><b class="t">More bits = more accurate, but slower</b>
+Each bit costs one compare cycle: a 4-bit ADC needs 4 steps, 8-bit 8 steps, 12-bit 12 steps. A 12-bit ADC is the most accurate but takes the longest; an 8-bit one is quicker but coarser. The ATmega328P's 10-bit ADC is the middle ground. "Successively we come closer to the input voltage, so it is called successive approximation."</div>
+
+<h3>L4. The formulas, explained the way he did</h3>
+<ol class="small">
+<li>Range 0 to Vref is mapped onto 0 to 2<sup>resolution</sup> &minus; 1, i.e. 0&ndash;1023. <b>0 to 1023 is 1024 values</b> (like 0 to 2 is 3 values: 0, 1, 2).</li>
+<li><b>Step size</b> = voltage range / number of steps = (Vref &minus; 0) / 2<sup>resolution</sup> = <b>Vref / 1024</b>.</li>
+<li><b>Vin = number of steps &times; step size = ADCW &times; Vref / 1024</b>. In Arduino: <code>analogRead(A0) * 5.0 / 1024</code>. Now you know why that line is written that way.</li>
+<li>Put "number of steps = 1": Vin = step size. So the <b>step size is the smallest voltage (or change) the ADC can detect</b>: 5 / 1024 = <b>4.88 mV</b>; with the internal 1.1 V reference, 1.1 / 1024 = <b>1.07 mV</b>.</li>
+<li>You <b>cannot put more than Vref</b> into the ADC (a student asked about 5.1 V): raise Vref first (never above the supply).</li>
+</ol>
+<div class="key small"><b class="t">His accuracy example [EXAM]</b>
+A sensor outputs 0&ndash;1 V. At 501 mV and then 503 mV (a 2 mV change): with Vref = 5 V (step 4.88 mV) the ADC gives the <b>same number</b> for both, so the change is lost. With Vref = 1.1 V (step 1.07 mV) it gives <b>two different numbers</b>. <b>Resolution is fixed by the chip, but Vref you can choose, so choose it just above your sensor's maximum.</b> For a 0&ndash;3 V sensor, put 3 V on AREF and select external. He said even some industry projects leave the default 5 V with a 0&ndash;1.5 V sensor and lose accuracy.</div>
+<p class="small"><b>Two sensors with different references?</b> Possible: set the reference (<code>analogReference</code> / REFS bits), read sensor 1, change the reference, read sensor 2. External AREF can be at most the supply voltage (5 V).</p>
+
+<h3>L5. The registers: extra points</h3>
+<ul class="small">
+<li><b>Why two data registers?</b> The result is 10 bits but registers are 8 bits. ADCL holds the low 8 bits; ADCH holds the top 2 bits (with six leading zeros). Combining them by hand is awkward, so the C compiler offers <b><code>ADCW</code></b>, a <b>virtual 16-bit register</b> that does it for you. It is <b>not in the datasheet</b> (an 8-bit chip has no 16-bit hardware register) and is <b>not available in assembly</b>, where you read ADCL and ADCH yourself.</li>
+<li><b>ADSC</b> (start conversion): you set it to start; the hardware <b>clears it automatically</b> when the result is ready. So <code>while (ADCSRA &amp; (1&lt;&lt;ADSC));</code> is <b>polling</b> the ADC.</li>
+<li><b>ADIF</b> is set when the conversion is over and the data registers are updated; <b>ADIE</b> lets that raise an interrupt. All ADCSRA bits are 0 after reset, and the ADC is off (ADEN = 0) <b>to save power</b>.</li>
+<li><b>Prescaler:</b> the ADC is slow (successive approximation), so it can't run at the CPU clock. ADPS = 000 is "reserved": <b>you must choose a prescaler</b>. The datasheet says <b>below 200 kHz</b> for full accuracy: 16 MHz / 128 = 125 kHz. With an 8 or 4 MHz CPU you would pick a smaller divider. If speed matters more than accuracy you may run faster than 200 kHz; the result is still reasonable, just less precise.</li>
+<li><b>Arduino fixes the prescaler at 128</b>, and <code>analogRead</code> uses <b>polling</b>. Arduino has <b>no ADC-interrupt wrapper</b>: another example of Arduino being inefficient. In C you control both.</li>
+<li>ADMUX MUX bits: default 000 = ADC0 (A0). With several sensors on different channels: select the channel, then read; select the next, then read.</li>
+</ul>
+
+<h3>L6. Hardware he stressed in System 8</h3>
+<ul class="small">
+<li>The ADC has its <b>own supply pins</b>: <b>AVCC</b> (pin 20) to 5 V and its GND (pin 22). They must be connected on a bare chip (the Uno does it for you).</li>
+<li><b>Potentiometer</b> = "potential meter": a <b>variable resistor</b>. A <b>wiper</b> slides on a circular resistive track, so the knob splits it into R1 (to 5 V) and R2 (to GND), forming a <b>voltage divider</b>: Vin = V &times; R2 / (R1 + R2). Fully clockwise R1 = 0, so Vin = 5 V; fully anticlockwise R2 = 0, so Vin = 0 V. Uses: volume controls, light dimmers, and the <b>accelerator pedal of electric and hybrid cars</b>.</li>
+<li><b>One resistor for all 5 LEDs?</b> (a student's idea) <b>No.</b> With three LEDs at 15 mA, one shared quarter-watt resistor would carry 45 mA and could <b>burn</b>, and LEDs of different colours draw different currents. Use a <b>separate resistor per LED</b> (or a <b>resistor array</b>: one package with several resistors).</li>
+<li>Configuring PC0 as input (<code>DDRC &amp;= ~(1&lt;&lt;0)</code>) is not required (pins are inputs after reset) but is good practice for readability, at the cost of one cycle.</li>
+</ul>
+
+<h3>L7. Code points</h3>
+<ul class="small">
+<li><b>Integer-division trap [EXAM habit]:</b> <code>ADCW * 5 / 1024</code> is all integers, so the fraction is <b>thrown away</b>. Write <b><code>5.0</code></b> so at least one operand is floating point (implicit conversion, "casting").</li>
+<li>Writing a <b>decimal</b> to a port is fine: <code>PORTB = 3;</code> stores <code>0b00000011</code> (registers only ever hold bits; binary, hex and decimal are just ways of writing the number).</li>
+<li>Arduino version trick: store the <b>highest pin to light</b> in a variable <code>n</code> (8&ndash;12), then <code>for (pin = 8; pin &lt;= n; pin++) digitalWrite(pin, HIGH);</code> instead of many repeated lines.</li>
+<li><b>Interrupt-driven ADC (System 9):</b> polling a slow ADC wastes the CPU, so let it interrupt instead. Start the first conversion <b>before</b> the loop and <b>restart it at the end of <code>ISR(ADC_vect)</code></b>, because ADSC is cleared after each conversion. The main loop is then free for other work.</li>
+<li>Binary, hex and labelled-constant versions compile to the <b>same</b> code (no difference in size or speed). Hex and labels matter on 32-bit and 64-bit chips.</li>
+</ul>
+
+<h3>L8. The two exercises he set at the end (practise these)</h3>
+<div class="two">
+<div class="box small"><b class="t">Light meter (LDR, 4 LEDs)</b>
+LDR from 5 V to A0, 10 k&Omega; from A0 to GND (LDR = R1). Dark: R1 &rarr; &infin;, Vin = 0. Bright: R1 &rarr; 0, Vin = 5 V. The LDR's resistance vs light curve is <b>not linear</b>. Show the light level as a percentage:<br>
+reading &lt; 256 &rarr; 1 LED (25%)<br>&lt; 512 &rarr; 2 LEDs (50%)<br>&lt; 768 &rarr; 3 LEDs (75%)<br>up to 1023 &rarr; 4 LEDs (100%)<br>
+Write it <b>in C and in Arduino</b>.</div>
+<div class="box small"><b class="t">Thermometer (LM35, 4 LEDs)</b>
+Flat side facing you: <b>left = +5 V, middle = Vout, right = GND</b>. Reversing + and GND <b>burns it out</b>. Temperature = Vout &times; 100, and Vout = ADCW &times; 5.0 / 1024.<br>
+below 20 &deg;C &rarr; 1 LED<br>20&ndash;25 &deg;C &rarr; 2 LEDs<br>25&ndash;30 &deg;C &rarr; 3 LEDs<br>above 30 &deg;C (he said 30&ndash;35) &rarr; 4 LEDs<br>
+Test by <b>wrapping your fingers round the sensor</b> (body heat about 35&ndash;36 &deg;C).</div>
+</div>
+<pre>// Light meter, C (my worked version; adjust the LED pins to your wiring)
+#include &lt;avr/io.h&gt;
+int main(void)
+{
+    DDRB  |= 0x0F;                                   // PB0-PB3: 4 LEDs
+    ADMUX  = (1&lt;&lt;REFS0);                             // AVcc reference, channel ADC0
+    ADCSRA = (1&lt;&lt;ADEN)|(1&lt;&lt;ADPS2)|(1&lt;&lt;ADPS1)|(1&lt;&lt;ADPS0); // on, /128
+    while (1)
+    {
+        ADCSRA |= (1&lt;&lt;ADSC);                         // start
+        while (ADCSRA &amp; (1&lt;&lt;ADSC));                  // wait
+        unsigned int v = ADCW;
+        unsigned char leds;
+        if      (v &lt; 256) leds = 0x01;               // 25 %
+        else if (v &lt; 512) leds = 0x03;               // 50 %
+        else if (v &lt; 768) leds = 0x07;               // 75 %
+        else              leds = 0x0F;               // 100 %
+        PORTB = (PORTB &amp; 0xF0) | leds;
+    }
+}</pre>
+
 <h2>10. Common mistakes</h2>
 <table>
 <tr><th style="width:36%">Mistake</th><th>Result / fix</th></tr>
