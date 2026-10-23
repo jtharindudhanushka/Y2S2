@@ -1,262 +1,736 @@
-<p class="sm" style="color:var(--muted)">Sources: lecture 04 (Polling and Interrupt Handling), Exercise 3, "Is AI safe to trust?", peer notes pages 28 to 33, ATmega328P Simplified Data Sheet (interrupt tables). Prerequisite: lesson 2.</p>
-
-<h2>Learning outcomes</h2>
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Sources: lecture 04 slides, the four 2020 lecture recordings on polling and interrupts (section L), Exercise 3 and the peer notes. Written for complete beginners. The same text is printable as <code>Print Notes/Lesson 04 - Polling and Interrupts.pdf</code>.</p>
+<div class="key">
+<b class="t">What you will be able to do after this lesson</b>
 <ul>
-  <li>Compare polling and interrupts and state the problems of polling</li>
-  <li>Explain interrupt handling: vector table, ISR, stack, <code>sei()</code> / <code>cli()</code></li>
-  <li>Configure external interrupts (INT0, INT1) and pin change interrupts with the registers EICRA, EIMSK, PCICR and PCMSKn</li>
-  <li>Explain contact bounce and how a capacitor debounces a switch</li>
-  <li>Write C and Arduino firmware that does one task in the main loop while an interrupt handles another</li>
+<li>Compare polling and interrupts, and explain the two problems of polling.</li>
+<li>Explain the 3 steps of interrupt handling (vector table, ISR, stack).</li>
+<li>Set up an <b>external interrupt</b> (INT0 / INT1) and a <b>pin change interrupt</b> (PCINT) in C and Arduino.</li>
+<li>Explain switch bounce and how a capacitor debounces it.</li>
+<li>Design the Exercise 3 "click counter".</li>
 </ul>
+</div>
 
-<h2>1. Why polling or interrupts?</h2>
-<p>Both are ways to perform <b>more than one task seemingly at the same time</b>: they give the CPU's service to a peripheral device while the CPU is busy with another task.</p>
-<table>
-  <tr><th></th><th>Polling</th><th>Interrupt</th></tr>
-  <tr><td>Idea</td><td>The CPU <b>keeps checking</b> the status of devices at regular intervals while doing its other task. If the condition is met it serves the device, then resumes.</td><td>The <b>device interrupts</b> the CPU when it needs service. The CPU suspends its task, serves the device, then resumes.</td></tr>
-  <tr><td>CPU load</td><td>CPU spends time monitoring</td><td>Frees the CPU from monitoring</td></tr>
-  <tr><td>Fast events</td><td>May be missed if the state changes too fast or the check interval is long</td><td>Caught immediately</td></tr>
-  <tr><td>Priority</td><td>No priority: all tasks run in the same order</td><td>Supports priority (lower vector address = higher priority)</td></tr>
-</table>
+<div class="box small">
+<b class="t">Given to you in the exam (do not memorise these)</b>
+<b>ATmega328P Simplified Data Sheet</b>: the interrupt vector names (<code>INT0_vect</code>, <code>PCINT2_vect</code>&hellip;), the bits of <code>EICRA</code>, <code>EIMSK</code>, <code>PCICR</code>, <code>PCMSK0/1/2</code>, and the ISC table (low level / logic change / falling / rising). &nbsp;
+<b>AVR C cheat sheet</b>: <code>#include &lt;avr/interrupt.h&gt;</code>, <code>sei()</code>, <code>cli()</code>, <code>ISR(vector){ }</code>, <code>volatile</code>. &nbsp;
+<b>Arduino cheat sheet</b>: <code>attachInterrupt</code>, <code>digitalPinToInterrupt</code>, <code>LOW / CHANGE / RISING / FALLING</code>, <code>interrupts()</code> / <code>noInterrupts()</code>; pins 2 and 3 are marked INT0 and INT1 on the board picture.<br>
+<b>Not given, so learn them here:</b> polling vs interrupt, the handling steps, priority, which register does what, how to combine them in code, debouncing, and the PCINT numbering.
+</div>
 
-<h2>2. System 5: pollingBasedTrigger</h2>
-<p><b>Task:</b> toggle one LED on user input (button) while blinking another LED every 2 seconds, using polling.</p>
-<p><b>Hardware:</b> blink LED on PB5 (220 &Omega;), user-input LED on PB0 (1 k&Omega;), pushbutton on PD2 to GND with the pull-up (default state high, pressed = low), reset circuit with 10 k&Omega; pull-up, 16 MHz crystal (on an Uno these are built in).</p>
-<pre><code>#include &lt;avr/io.h&gt;
+<h2>1. The problem: doing two things "at the same time"</h2>
+<p>The CPU runs one instruction at a time. While it is busy blinking an LED with a 2-second delay, a button might be pressed. How does the CPU notice? Two approaches:</p>
+<div class="two">
+<div class="box"><b class="t">Polling</b>
+The CPU <b>keeps checking</b> the status of each device at regular intervals while doing its main task. If a device needs service, it serves it, then continues.<br><i>Like checking your phone every 5 minutes to see if a message came.</i></div>
+<div class="box"><b class="t">Interrupt</b>
+The <b>device tells the CPU</b> when it needs service. The CPU pauses the main task, serves the device (runs the ISR), then resumes exactly where it stopped.<br><i>Like the phone ringing: you only react when it rings.</i></div>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 640 262" font-family="Arial" font-size="12">
+  <defs><marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <text x="10" y="18" font-weight="bold" font-size="13">POLLING: the CPU looks at the button only at the check points (every 2 s)</text>
+  <text x="10" y="64" font-size="11">button pin</text>
+  <path d="M80 60 H170 V92 H200 V60 H395 V92 H455 V60 H630" stroke="currentColor" stroke-width="2.2" fill="none"/>
+  <g fill="currentColor"><path d="M102 38 l8 10 l8 -10z"/><path d="M262 38 l8 10 l8 -10z"/><path d="M422 38 l8 10 l8 -10z"/><path d="M582 38 l8 10 l8 -10z"/></g>
+  <g stroke="currentColor" stroke-dasharray="3 3" stroke-width="1"><path d="M110 48V100M270 48V100M430 48V100M590 48V100"/></g>
+  <g font-size="11" text-anchor="middle"><text x="110" y="34">check</text><text x="270" y="34">check</text><text x="430" y="34">check</text><text x="590" y="34">check</text></g>
+  <text x="185" y="114" text-anchor="middle" font-weight="bold">quick press</text>
+  <text x="185" y="128" text-anchor="middle">MISSED (no check during it)</text>
+  <text x="425" y="114" text-anchor="middle" font-weight="bold">long press</text>
+  <text x="425" y="128" text-anchor="middle">seen at the check</text>
+  <text x="10" y="160" font-weight="bold" font-size="13">INTERRUPT: the press itself triggers the CPU immediately</text>
+  <text x="10" y="206" font-size="11">button pin</text>
+  <path d="M80 202 H170 V234 H200 V202 H395 V234 H455 V202 H630" stroke="currentColor" stroke-width="2.2" fill="none"/>
+  <path d="M170 236 V250 M395 236 V250" stroke="currentColor" stroke-width="1.6"/>
+  <path d="M170 186 V176 M395 186 V176" stroke="currentColor" stroke-width="1.6" fill="none"/>
+  <path d="M170 196 V178" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#b1)"/>
+  <path d="M395 196 V178" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#b1)"/>
+  <text x="178" y="182" font-size="11" font-weight="bold">ISR runs now</text>
+  <text x="403" y="182" font-size="11" font-weight="bold">ISR runs now</text>
+  <text x="470" y="226" font-size="11">no press is ever missed</text>
+</svg>
+<div class="cap">Figure 1. With polling, a press shorter than the checking interval can be missed completely.</div>
+</div>
+
+<h2>2. System 5: <code>pollingBasedTrigger</code></h2>
+<p><b>Task:</b> blink the LED on <b>PB5</b> (pin 13) every 2 s, and toggle a second LED on <b>PB0</b> (pin 8, through 220 &Omega;; the on-board pin 13 LED has its own 1 k&Omega;) when the button on <b>PD2</b> (pin 2) is pressed. Button between PD2 and GND, internal pull-up on.</p>
+<div class="two">
+<div>
+<pre>#include &lt;avr/io.h&gt;
 #define F_CPU 16000000UL
 #include &lt;util/delay.h&gt;
 
 int main(void)
 {
-    DDRB  = DDRB | 0b00100001;      // PB0 and PB5 outputs
-    DDRD  = DDRD &amp; 0b11111011;      // PD2 input
-    PORTD = PORTD | 0b00000100;     // pull-up PD2
-    while (1)
-    {
-        PORTB = PORTB ^ 0b00100000;       // toggle PB5 (main task)
-        _delay_ms(2000);                  // wait 2 s
-        if ((PIND &amp; 0b00000100) == 0)     // poll the button: low = pressed
-            PORTB = PORTB ^ 0b00000001;   // toggle PB0
-    }
-    return 0;
-}</code></pre>
-<pre><code>// Arduino wrapper version
-const int ledPin1 = 8, ledPin2 = 13, switchPin = 2;
-void setup() {
-  pinMode(ledPin1, OUTPUT); pinMode(ledPin2, OUTPUT);
-  pinMode(switchPin, INPUT_PULLUP);
-}
-void loop() {
-  digitalWrite(ledPin2, !digitalRead(ledPin2));      // toggle the blink LED
-  delay(2000);
-  if (digitalRead(switchPin) == LOW)                 // poll
-    digitalWrite(ledPin1, !digitalRead(ledPin1));
-}</code></pre>
-<div class="box"><b>How the test works</b><code>(PIND &amp; 0b00000100) == 0</code>: mask keeps only bit 2. Released: 0000 0100, not 0 (false). Pressed: 0000 0000, equal to 0 (true). XOR with 1 flips a bit: <code>PORTB ^ 0b00000001</code>.</div>
-<h3>Problems of polling (shown by this very program)</h3>
-<ul>
-  <li>The button is looked at only once per 2 s. A <b>quick press</b> that starts and ends inside the delay is <b>not detected</b>. For a sensor there may be many undetected inputs.</li>
-  <li>The reaction is delayed by up to 2 s.</li>
-  <li>There is <b>no priority</b>: with many devices all are served in the same order.</li>
-</ul>
+  DDRB = DDRB | 0b00100001;   // PB0, PB5 outputs
+  DDRD = DDRD &amp; 0b11111011;   // PD2 input
+  PORTD = PORTD | 0b00000100; // pull-up on PD2
+  while (1)
+  {
+    PORTB = PORTB ^ 0b00100000;     // toggle PB5
+    _delay_ms(2000);                // 2 s
+    if ((PIND &amp; 0b00000100) == 0)   // PD2 low?
+      PORTB = PORTB ^ 0b00000001;   // toggle PB0
+  }
+  return 0;
+}</pre>
+</div>
+<div>
+<table class="code">
+<tr><th>Line</th><th>Meaning</th></tr>
+<tr><td>DDRB | 0b00100001</td><td>Bits 5 and 0 set: both LED pins are outputs.</td></tr>
+<tr><td>DDRD &amp; 0b11111011</td><td>Bit 2 cleared: PD2 is an input.</td></tr>
+<tr><td>PORTD | 0b00000100</td><td>Pull-up on PD2: reads 1 when released.</td></tr>
+<tr><td>PORTB ^ 0b00100000</td><td><b>Main task:</b> flip the PB5 LED.</td></tr>
+<tr><td>if ((PIND &amp; 0b00000100) == 0)</td><td><b>The poll:</b> keep only bit 2. Result 0 means PD2 is LOW = <b>pressed</b>.</td></tr>
+<tr><td>PORTB ^ 0b00000001</td><td><b>The service:</b> flip the PB0 LED.</td></tr>
+</table>
+<p class="small"><b>Arduino version:</b> <code>pinMode(2, INPUT_PULLUP)</code>, then in <code>loop()</code>: <code>digitalWrite(13, !digitalRead(13)); delay(2000); if (!digitalRead(2)) digitalWrite(8, !digitalRead(8));</code><br><code>!digitalRead(13)</code> reads the pin's current state and writes the opposite, which is a toggle.</p>
+</div>
+</div>
 
-<h2>3. Interrupt handling</h2>
+<div class="key">
+<b class="t">The two problems of polling (learn both)</b>
 <ol>
-  <li>A device requests an interrupt (a flag is set). If the source is enabled and the global interrupt bit is set, the CPU finishes the current instruction.</li>
-  <li>The CPU <b>pushes the return address on the stack</b> and jumps to the entry of the <b>interrupt vector table</b> belonging to that source. The entry holds the address of the <b>interrupt service routine (ISR)</b>.</li>
-  <li>The ISR runs. At its end (<code>RETI</code>) the return address is <b>popped</b> and the interrupted task resumes where it stopped.</li>
+<li><b>Missed events:</b> if the device changes state too fast, or the CPU's checking interval is too long, the change can go undetected. Here the button is checked only once every 2 s, so a quick press during the delay is lost.</li>
+<li><b>No priority:</b> the CPU checks all devices in the same fixed order every time, so an urgent device cannot be served first.</li>
 </ol>
-<h3>Interrupt vector table (widely used vectors)</h3>
-<table>
-  <tr><th>Address</th><th>Interrupt</th><th>Vector name (for ISR)</th></tr>
-  <tr><td>0x0002</td><td>External interrupt on INT0 pin</td><td><code>INT0_vect</code></td></tr>
-  <tr><td>0x0004</td><td>External interrupt on INT1 pin</td><td><code>INT1_vect</code></td></tr>
-  <tr><td>0x0006</td><td>Pin change, Port B pins</td><td><code>PCINT0_vect</code></td></tr>
-  <tr><td>0x0008</td><td>Pin change, Port C pins</td><td><code>PCINT1_vect</code></td></tr>
-  <tr><td>0x000A</td><td>Pin change, Port D pins</td><td><code>PCINT2_vect</code></td></tr>
-  <tr><td>0x0012</td><td>Timer/Counter 2 overflow</td><td><code>TIMER2_OVF_vect</code></td></tr>
-  <tr><td>0x001A</td><td>Timer/Counter 1 overflow</td><td><code>TIMER1_OVF_vect</code></td></tr>
-  <tr><td>0x0020</td><td>Timer/Counter 0 overflow</td><td><code>TIMER0_OVF_vect</code></td></tr>
-  <tr><td>0x0024</td><td>USART receive complete</td><td><code>USART_RX_vect</code></td></tr>
-  <tr><td>0x0026</td><td>USART data register empty</td><td><code>USART_UDRE_vect</code></td></tr>
-  <tr><td>0x0028</td><td>USART transmit complete</td><td><code>USART_TX_vect</code></td></tr>
-  <tr><td>0x002A</td><td>ADC conversion complete</td><td><code>ADC_vect</code></td></tr>
-</table>
-<p class="sm" style="color:var(--muted)">The datasheet extract in the exam lists the vector names without addresses; the exam needs the <b>names</b>. The lower the address, the higher the priority (INT0 beats everything).</p>
+Also: the CPU wastes time checking devices that usually do not need anything.
+</div>
 
-<h3>Interrupt routines in C (<code>avr/interrupt.h</code>)</h3>
-<table>
-  <tr><th>Item</th><th>Use</th></tr>
-  <tr><td><code>sei();</code></td><td>SEt Interrupt: sets the global interrupt enable bit I in SREG</td></tr>
-  <tr><td><code>cli();</code></td><td>CLear Interrupt: clears the global enable (disables all interrupts)</td></tr>
-  <tr><td><code>ISR(vector_name) { ... }</code></td><td>Interrupt service routine for that vector. No parameters, no return value.</td></tr>
-  <tr><td><code>volatile</code></td><td>Qualifier for variables shared between an ISR and <code>main</code>, so the compiler does not optimise the access away</td></tr>
-</table>
-<h3>The chain of enable bits</h3>
-<p>An interrupt happens only if <b>both</b> its own enable bit and the global bit are set:</p>
-<table>
-  <tr><th>Source</th><th>Individual enable</th></tr>
-  <tr><td>External INT0, INT1</td><td>EIMSK: INT0, INT1</td></tr>
-  <tr><td>Pin change</td><td>PCICR: PCIE0 (Port B), PCIE1 (Port C), PCIE2 (Port D) <b>and</b> PCMSKn bit of the pin</td></tr>
-  <tr><td>Timer overflow</td><td>TIMSKn: TOIEn</td></tr>
-  <tr><td>ADC complete</td><td>ADCSRA: ADIE</td></tr>
-  <tr><td>USART</td><td>UCSRnB: RXCIEn, TXCIEn, UDRIEn</td></tr>
-  <tr><td>All</td><td>SREG bit I via <code>sei()</code></td></tr>
-</table>
-<p>Pattern: the ISR sets a <b>flag variable</b> that <code>main()</code> reacts to:</p>
-<pre><code>volatile int flag = 0;
-int main(void) {
-    /* configure ... */ sei();
-    while (1) { if (flag == 0) { /* do something */ } else { /* do something else */ } }
-}
-ISR(INT0_vect) { flag = 1; }</code></pre>
+<h3>Polling done better: detect the press, not the held button</h3>
+<p class="small">System 5 toggles PB0 every 2 s <b>while</b> the button is held, and misses short presses. In practical tasks (counters, reaction timers) you usually want "react once per press". The standard trick is to remember the previous reading and look for the change from 1 to 0, a <b>falling edge</b>, then wait out the bounce.</p>
+<div class="two">
+<pre>unsigned char last = 1;               // 1 = released
+while (1)
+{
+    unsigned char now = (PIND &amp; (1&lt;&lt;PD2)) ? 1 : 0;
+    if (last == 1 &amp;&amp; now == 0)        // it was up, now down
+    {
+        PORTB ^= (1&lt;&lt;PB0);            // react once
+        _delay_ms(30);                // ignore the bounce
+    }
+    last = now;                       // remember for next time
+}</pre>
+<pre>int last = HIGH;                      // Arduino version
+void loop()
+{
+  int now = digitalRead(2);
+  if (last == HIGH &amp;&amp; now == LOW)     // falling edge
+  {
+    digitalWrite(8, !digitalRead(8));
+    delay(30);                        // software debounce
+  }
+  last = now;
+}</pre>
+</div>
+<p class="small">The loop runs thousands of times per second (no long delay), so no press is missed. This is <b>software debouncing</b>; the 100 nF capacitor is <b>hardware debouncing</b>. Either is acceptable; with interrupts, use the capacitor (you cannot <code>delay</code> inside an ISR).</p>
 
-<h2>4. External interrupt registers</h2>
-<ul>
-  <li><b>EICRA</b> (External Interrupt Control Register A): <b>ISC01, ISC00</b> select what triggers INT0; <b>ISC11, ISC10</b> select INT1.</li>
-  <li><b>EIMSK</b> (External Interrupt MaSK): bit <b>INT0</b> / <b>INT1</b> enables the interrupt on that pin.</li>
-  <li>INT0 is pin <b>PD2</b> (Arduino 2), INT1 is pin <b>PD3</b> (Arduino 3).</li>
+<h2 class="pb">3. Interrupts</h2>
+<p>A peripheral device <b>interrupts</b> the CPU when it needs service. The CPU <b>suspends</b> its current task, runs the <b>Interrupt Service Routine (ISR)</b> for that device, then <b>resumes</b> the task. This frees the CPU from polling and <b>supports priority</b>.</p>
+
+<h3>The 3 steps of interrupt handling</h3>
+<div class="fig">
+<svg viewBox="0 0 640 318" font-family="Arial" font-size="12">
+  <defs><marker id="b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <text x="70" y="18" font-weight="bold">Program memory (flash)</text>
+  <rect x="70" y="28" width="170" height="52" style="fill:var(--soft)" stroke="currentColor" stroke-width="1.8"/>
+  <text x="155" y="46" text-anchor="middle" font-weight="bold">Interrupt Vector Table</text>
+  <text x="155" y="64" text-anchor="middle" font-size="11">0x0002 INT0_vect: jump to ISR</text>
+  <rect x="70" y="92" width="170" height="110" style="fill:var(--bg)" stroke="currentColor" stroke-width="1.8"/>
+  <text x="155" y="112" text-anchor="middle" font-weight="bold">main program</text>
+  <text x="80" y="134" font-size="11">... toggle PB5 ...</text>
+  <rect x="74" y="142" width="162" height="18" style="fill:var(--soft)" stroke="none"/>
+  <text x="80" y="155" font-size="11" font-weight="bold">instruction running now</text>
+  <text x="80" y="178" font-size="11">next instruction</text>
+  <text x="80" y="194" font-size="11">...</text>
+  <rect x="70" y="214" width="170" height="64" style="fill:var(--soft)" stroke="currentColor" stroke-width="1.8"/>
+  <text x="155" y="234" text-anchor="middle" font-weight="bold">ISR(INT0_vect)</text>
+  <text x="155" y="252" text-anchor="middle" font-size="11">toggle PB0</text>
+  <text x="155" y="270" text-anchor="middle" font-size="11">return (RETI)</text>
+  <rect x="470" y="120" width="130" height="70" style="fill:var(--bg)" stroke="currentColor" stroke-width="1.8"/>
+  <text x="535" y="114" text-anchor="middle" font-weight="bold">STACK (in RAM)</text>
+  <text x="535" y="160" text-anchor="middle" font-size="11">return address =</text>
+  <text x="535" y="175" text-anchor="middle" font-size="11">"next instruction"</text>
+  <path d="M240 168 H468" stroke="currentColor" stroke-width="1.8" fill="none" marker-end="url(#b2)"/>
+  <text x="300" y="160" font-size="11.5" font-weight="bold">1  push return address</text>
+  <path d="M70 151 H40 V54 H68" stroke="currentColor" stroke-width="1.8" fill="none" marker-end="url(#b2)"/>
+  <text x="8" y="104" font-size="11.5" font-weight="bold">1</text>
+  <path d="M240 54 H280 V244 H242" stroke="currentColor" stroke-width="1.8" fill="none" marker-end="url(#b2)"/>
+  <text x="288" y="232" font-size="11.5" font-weight="bold">2  jump to the ISR and run it</text>
+  <path d="M535 190 V300 H20 V180 H68" stroke="currentColor" stroke-width="1.8" fill="none" marker-end="url(#b2)"/>
+  <text x="300" y="294" font-size="11.5" font-weight="bold">3  pop the address, resume main</text>
+</svg>
+<div class="cap">Figure 2. (1) The interrupt arrives: the CPU finishes the current instruction, saves the return address on the stack and jumps to the vector-table entry. (2) The entry jumps to the ISR, which runs. (3) At the end of the ISR the address is popped from the stack and main continues where it stopped.</div>
+</div>
+
+<div class="two">
+<div>
+<h3>Interrupt Vector Table</h3>
+<p class="small">A table at the start of flash. Each entry holds the address (a jump) of one ISR. <b>Lower address = higher priority.</b> If two interrupts arrive together, the lower-address one runs first.</p>
+<table>
+<tr><th>Address</th><th>Vector name</th></tr>
+<tr><td>0x0002</td><td>INT0_vect (highest of these)</td></tr>
+<tr><td>0x0004</td><td>INT1_vect</td></tr>
+<tr><td>0x0006</td><td>PCINT0_vect (Port B)</td></tr>
+<tr><td>0x0008</td><td>PCINT1_vect (Port C)</td></tr>
+<tr><td>0x000A</td><td>PCINT2_vect (Port D)</td></tr>
+<tr><td>0x0012</td><td>TIMER2_OVF_vect</td></tr>
+<tr><td>0x001A</td><td>TIMER1_OVF_vect</td></tr>
+<tr><td>0x0020</td><td>TIMER0_OVF_vect</td></tr>
+<tr><td>0x0024</td><td>USART_RX_vect</td></tr>
+<tr><td>0x0028</td><td>USART_TX_vect</td></tr>
+<tr><td>0x002A</td><td>ADC_vect (lowest of these)</td></tr>
+</table>
+<p class="small">The names are on your exam data sheet; the addresses (and so the priority order) are not.</p>
+</div>
+<div>
+<h3>Writing an ISR in C</h3>
+<pre>#include &lt;avr/interrupt.h&gt;
+
+ISR(INT0_vect)        // runs on its own
+{                     // when INT0 fires
+    PORTB ^= (1 &lt;&lt; 0);
+}                     // never call it yourself</pre>
+<ul class="small">
+<li><code>sei()</code> = SEt global Interrupt enable. <code>cli()</code> = CLear it (turn all interrupts off).</li>
+<li>Keep an ISR <b>short</b>: no long delays inside it, or the main task and other interrupts are blocked.</li>
+<li>A variable shared between an ISR and <code>main</code> must be <b>volatile</b>, so the compiler always re-reads it from RAM instead of keeping an old copy.</li>
 </ul>
+<h3>The flag pattern (from the lecture)</h3>
+<pre>volatile int flag = 0;
+int main(void) {
+  ...
+  while (1) {
+    if (flag == 0) { /* normal work */ }
+    else           { /* react, then flag = 0 */ }
+  }
+}
+ISR(INT0_vect) { flag = 1; }   // just note it</pre>
+</div>
+</div>
+
+<h2 class="pb">3A. Interrupts from zero: what really happens</h2>
 <table>
-  <tr><th>ISCn1</th><th>ISCn0</th><th>Interrupt on INTn pin</th></tr>
-  <tr><td>0</td><td>0</td><td>Low level</td></tr>
-  <tr><td>0</td><td>1</td><td>Logic change (any edge)</td></tr>
-  <tr><td>1</td><td>0</td><td><b>Falling edge</b> (1 &rarr; 0, button pressed with pull-up)</td></tr>
-  <tr><td>1</td><td>1</td><td><b>Rising edge</b> (0 &rarr; 1)</td></tr>
+<tr><th style="width:20%">Word</th><th>Plain meaning</th></tr>
+<tr><td><b>Peripheral</b></td><td>A hardware block inside the chip that works on its own beside the CPU: the I/O ports, the external-interrupt detector, timers, ADC, USART.</td></tr>
+<tr><td><b>Event</b></td><td>Something a peripheral notices: a falling edge on PD2, a timer overflowing, an ADC conversion finishing, a byte arriving.</td></tr>
+<tr><td><b>Flag</b></td><td>A single bit a peripheral sets to 1 to say "my event happened". E.g. <code>INTF0</code> in register <code>EIFR</code> becomes 1 on an INT0 edge. Hardware sets it, even if interrupts are off.</td></tr>
+<tr><td><b>Enable bit</b></td><td>A bit <b>you</b> set to say "if that flag rises, interrupt the CPU". Without it the flag still rises but nothing happens.</td></tr>
+<tr><td><b>Vector</b></td><td>A fixed slot in flash for each interrupt source. The CPU jumps to the slot; the compiler puts a jump to your ISR there.</td></tr>
+<tr><td><b>Stack</b></td><td>An area of RAM used like a pile of plates: the last thing put on is the first taken off. The CPU puts the return address on it so it knows where to come back to.</td></tr>
+<tr><td><b>ISR</b></td><td>Interrupt Service Routine: a function you write with <code>ISR(vector_name)</code>. You never call it; the hardware does.</td></tr>
+<tr><td><b>Program counter (PC)</b></td><td>The CPU register holding the address of the next instruction. Interrupt handling is just saving the PC, changing it, and restoring it.</td></tr>
 </table>
 
-<h2>5. System 6: externalInterruptBasedTrigger</h2>
-<p>Same task as System 5, but the button is on <b>INT0 (PD2)</b> and an ISR toggles the LED, so a press is never missed and the main loop needs no checking.</p>
-<h3>Contact bounce and the capacitor</h3>
-<p>The contacts of a mechanical switch <b>bounce</b>: one press produces a series of rapid voltage changes that the microcontroller may count as several presses (each edge is an interrupt!). A <b>capacitor (100 nF)</b> placed across the switch smooths the voltage and <b>debounces</b> the input (Exercise 3 uses one 100 nF capacitor in parallel with each pushbutton).</p>
-<pre><code>#include &lt;avr/io.h&gt;
+<h3>Walk-through: System 6, button pressed in the middle of the 2 s delay</h3>
+<div class="fig">
+<svg viewBox="0 0 640 200" font-family="Arial" font-size="11.5">
+  <defs><marker id="b9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <text x="10" y="52" font-weight="bold">main</text>
+  <text x="10" y="112" font-weight="bold">ISR</text>
+  <rect x="60" y="36" width="250" height="26" style="fill:var(--soft)" stroke="currentColor" stroke-width="1.4"/>
+  <text x="185" y="53" text-anchor="middle">_delay_ms(2000) counting</text>
+  <rect x="380" y="36" width="250" height="26" style="fill:var(--soft)" stroke="currentColor" stroke-width="1.4"/>
+  <text x="505" y="53" text-anchor="middle">same delay continues</text>
+  <rect x="318" y="96" width="54" height="26" style="fill:var(--bg)" stroke="currentColor" stroke-width="1.8"/>
+  <text x="345" y="113" text-anchor="middle" font-weight="bold">PB0 ^</text>
+  <path d="M310 62 L318 96" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#b9)"/>
+  <path d="M372 96 L380 62" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#b9)"/>
+  <path d="M310 20 V160" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="304" y="16" text-anchor="end" font-weight="bold">button pressed</text>
+  <path d="M60 150 H630" stroke="currentColor" stroke-width="1.2" marker-end="url(#b9)"/>
+  <text x="600" y="168">time</text>
+  <g font-weight="bold"><text x="300" y="144">1-3</text><text x="338" y="144">4</text><text x="370" y="144">5-6</text></g>
+  <text x="10" y="190" font-size="11">The ISR takes only a few microseconds, so the blinking LED is not visibly disturbed. The delay simply resumes.</text>
+</svg>
+<div class="cap">Figure 2A. The main program is paused for the ISR and then continues from the exact instruction where it stopped.</div>
+</div>
+<ol class="small">
+<li><b>The event:</b> the button pulls PD2 from 5 V to 0 V. The INT0 detector sees a falling edge (EICRA says that is what we want) and sets the flag <code>INTF0 = 1</code>.</li>
+<li><b>The check:</b> after every instruction the CPU asks "is any flag set whose enable bit is 1, and is the global I bit 1?" INTF0 = 1, INT0 enable = 1, I = 1: yes.</li>
+<li><b>Save and block:</b> the CPU finishes the current instruction, pushes the PC (return address) onto the stack, and <b>clears the I bit</b> so no other interrupt can break into this one.</li>
+<li><b>Jump:</b> the PC is loaded with INT0's vector address (0x0002); the jump there leads to <code>ISR(INT0_vect)</code>. The hardware also clears INTF0 automatically. Your code toggles PB0.</li>
+<li><b>Return:</b> the ISR ends with the <code>RETI</code> instruction (the compiler adds it). RETI pops the PC from the stack and <b>sets the I bit again</b>.</li>
+<li><b>Resume:</b> the CPU carries on inside <code>_delay_ms</code> as if nothing happened. The 2 s delay ends a few microseconds late.</li>
+</ol>
+
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Who does what</th></tr>
+<tr><th>You write</th><th>The hardware does by itself</th></tr>
+<tr><td>Pin as input + pull-up</td><td>Watches the pin for the edge</td></tr>
+<tr><td>EICRA (which edge)</td><td>Sets the flag INTF0</td></tr>
+<tr><td>EIMSK (enable INT0)</td><td>Checks flags after each instruction</td></tr>
+<tr><td><code>sei()</code></td><td>Saves the PC, clears I, jumps to the vector</td></tr>
+<tr><td>The ISR body</td><td>Clears the flag, RETI restores PC and sets I</td></tr>
+</table>
+</div>
+<div>
+<div class="box small"><b class="t">Interrupt latency</b>
+The time from event to the first ISR instruction: the CPU finishes the current instruction, then needs about 4 cycles to save and jump, plus the jump in the vector. At 16 MHz that is well under 1 &micro;s, so an interrupt is effectively instant.</div>
+</div>
+</div>
+
+<h3>Questions a beginner always asks</h3>
+<table>
+<tr><th style="width:38%">Question</th><th>Answer</th></tr>
+<tr><td>What if the button is pressed during <code>_delay_ms</code>?</td><td>That is the whole point: the delay is paused, the ISR runs, the delay continues. With polling the press would be lost.</td></tr>
+<tr><td>Can an ISR be interrupted by another interrupt?</td><td>Not normally: the I bit is cleared on entry. A second event sets its flag and waits; it runs right after the first ISR returns.</td></tr>
+<tr><td>Two interrupts happen at the same moment?</td><td>The one with the lower vector address (higher priority) runs first, then the other.</td></tr>
+<tr><td>The button is pressed 3 times while an ISR is running?</td><td>The flag is only one bit, so it can only remember "at least once". One extra run happens, the other presses are lost. Hence: keep ISRs short.</td></tr>
+<tr><td>Why do I never call the ISR?</td><td>It is not called by your code; its address sits in the vector table and the CPU jumps there. Calling it yourself would end with RETI in the wrong place.</td></tr>
+<tr><td>What if I enable an interrupt but write no ISR for it?</td><td>The vector points to a default handler that <b>resets the chip</b>. The program seems to restart every time the event happens. Always write the ISR for every enabled interrupt, with the exact vector name.</td></tr>
+<tr><td>What happens with "low level" trigger while the button is held?</td><td>The interrupt fires again and again as long as the pin is low, so the main program barely runs. Use falling edge for buttons.</td></tr>
+<tr><td>Why <code>volatile</code>?</td><td>The compiler may keep a variable in a CPU register inside a loop and never re-read it from RAM. If the ISR changes it in RAM, main would not notice. <code>volatile</code> forces a fresh read every time.</td></tr>
+</table>
+
+<h2>4. Two switches in a row: local enable and global enable</h2>
+<p>An interrupt reaches the CPU only if <b>both</b> its own enable bit is 1 <b>and</b> the global I bit in <code>SREG</code> is 1 (set by <code>sei()</code>). The device sets a flag when its event happens; the enables decide if that flag interrupts the CPU.</p>
+<div class="fig">
+<svg viewBox="0 0 640 262" font-family="Arial" font-size="12">
+  <defs><marker id="b3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.6">
+    <rect x="10" y="22" width="150" height="30"/><rect x="10" y="64" width="150" height="30"/><rect x="10" y="106" width="150" height="30"/><rect x="10" y="148" width="150" height="30"/><rect x="10" y="190" width="150" height="30"/>
+  </g>
+  <g text-anchor="middle" font-size="11.5">
+    <text x="85" y="41">INT0 / INT1 pin</text><text x="85" y="83">PCINT pins (any pin)</text><text x="85" y="125">Timer overflow (TOV)</text><text x="85" y="167">ADC complete (ADIF)</text><text x="85" y="209">USART RX / TX done</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.6" fill="none">
+    <path d="M160 37H230M160 79H230M160 121H230M160 163H230M160 205H230"/>
+    <path d="M230 37 L262 27M230 79 L262 69M230 121 L262 111M230 163 L262 153M230 205 L262 195"/>
+    <path d="M266 37H360M266 79H360M266 121H360M266 163H360M266 205H360"/>
+    <path d="M360 37V205"/>
+    <path d="M360 121H420"/>
+    <path d="M420 121 L452 111"/>
+    <path d="M456 121H520"/>
+  </g>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.4"><circle cx="230" cy="37" r="3"/><circle cx="266" cy="37" r="3"/><circle cx="230" cy="79" r="3"/><circle cx="266" cy="79" r="3"/><circle cx="230" cy="121" r="3"/><circle cx="266" cy="121" r="3"/><circle cx="230" cy="163" r="3"/><circle cx="266" cy="163" r="3"/><circle cx="230" cy="205" r="3"/><circle cx="266" cy="205" r="3"/><circle cx="420" cy="121" r="3"/><circle cx="456" cy="121" r="3"/></g>
+  <g font-size="10.5" font-weight="bold">
+    <text x="272" y="31">EIMSK: INTn</text><text x="272" y="73">PCICR + PCMSKn</text><text x="272" y="115">TIMSKn: TOIEn</text><text x="272" y="157">ADCSRA: ADIE</text><text x="272" y="199">UCSR0B: RXCIE/TXCIE</text>
+  </g>
+  <text x="196" y="246" font-size="11">local enable bits (1 = allowed)</text>
+  <text x="398" y="100" font-size="11" font-weight="bold">SREG: I bit</text>
+  <text x="398" y="146" font-size="11">sei() closes it</text>
+  <text x="398" y="160" font-size="11">cli() opens it</text>
+  <rect x="520" y="96" width="110" height="50" style="fill:var(--soft)" stroke="currentColor" stroke-width="1.8"/>
+  <text x="575" y="126" text-anchor="middle" font-weight="bold" font-size="14">CPU</text>
+  <text x="398" y="232" font-size="11">all sources share one path</text>
+</svg>
+<div class="cap">Figure 3. Each source has its own enable switch, then all go through the one global switch (I bit). Forgetting <code>sei()</code> = nothing ever interrupts.</div>
+</div>
+
+<h2>5. External interrupts: INT0 and INT1</h2>
+<p>Two special pins: <b>INT0 = PD2 (Arduino pin 2)</b> and <b>INT1 = PD3 (Arduino pin 3)</b>. Each has its own vector and you can choose <b>what kind of signal</b> triggers it.</p>
+<div class="fig">
+<svg viewBox="0 0 640 150" font-family="Arial" font-size="12">
+  <path d="M40 40 H190 V100 H360 V40 H600" stroke="currentColor" stroke-width="2.4" fill="none"/>
+  <path d="M190 30 V112 M360 30 V112" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="10" y="44" font-size="11">HIGH</text><text x="10" y="104" font-size="11">LOW</text>
+  <text x="190" y="24" text-anchor="middle" font-weight="bold">falling edge</text>
+  <text x="190" y="128" text-anchor="middle" font-size="11">button pressed (1 &rarr; 0)</text>
+  <text x="360" y="24" text-anchor="middle" font-weight="bold">rising edge</text>
+  <text x="360" y="128" text-anchor="middle" font-size="11">button released (0 &rarr; 1)</text>
+  <text x="275" y="92" text-anchor="middle" font-size="11">low level (whole time)</text>
+  <text x="480" y="80" text-anchor="middle" font-size="11">logic change = either edge</text>
+  <text x="10" y="146" font-size="11">With a pull-up and a button to GND, "falling edge" means "the moment it is pressed".</text>
+</svg>
+<div class="cap">Figure 4. The four trigger choices, set with the ISC bits in EICRA (table on your exam sheet).</div>
+</div>
+
+<table>
+<tr><th style="width:22%">Register</th><th>What it does</th><th style="width:30%">For INT0, falling edge</th></tr>
+<tr><td><b>EICRA</b> (External Interrupt Control Register A)</td><td>Bits ISC01/ISC00 choose the trigger for INT0; ISC11/ISC10 for INT1. 00 = low level, 01 = any change, 10 = falling, 11 = rising.</td><td>ISC01 = 1, ISC00 = 0</td></tr>
+<tr><td><b>EIMSK</b> (External Interrupt MaSK)</td><td>Bit INT0 / INT1 = 1 enables that interrupt.</td><td>INT0 = 1</td></tr>
+<tr><td><b>SREG I bit</b></td><td>Global enable.</td><td><code>sei();</code></td></tr>
+</table>
+
+<h3>Debouncing a button</h3>
+<div class="fig">
+<svg viewBox="0 0 640 150" font-family="Arial" font-size="12">
+  <text x="10" y="16" font-weight="bold">Without capacitor: contacts bounce</text>
+  <path d="M10 40 H90 V100 H98 V40 H104 V100 H112 V52 H118 V100 H128 V64 H132 V100 H290" stroke="currentColor" stroke-width="2" fill="none"/>
+  <path d="M90 112 H132" stroke="currentColor" stroke-width="1"/>
+  <text x="111" y="126" text-anchor="middle" font-size="11">0.01 &ndash; 100 ms</text>
+  <text x="150" y="68" font-size="11">CPU may see</text><text x="150" y="82" font-size="11">several presses</text>
+  <text x="340" y="16" font-weight="bold">With 100 nF across the button</text>
+  <path d="M340 40 H420 C430 90 450 98 480 100 H620" stroke="currentColor" stroke-width="2" fill="none"/>
+  <text x="490" y="78" font-size="11">one clean change</text>
+  <text x="10" y="146" font-size="11">The capacitor cannot change voltage instantly, so it smooths the rapid bounces into one slow transition.</text>
+</svg>
+<div class="cap">Figure 5.
+ A mechanical switch bounces for a few ms. An interrupt is fast enough to catch every bounce, so debouncing matters here.</div>
+</div>
+<p class="small"><b>Why the capacitor works:</b> the pull-up resistor (20&ndash;50 k&Omega; inside the chip) has to charge the 100 nF capacitor. The time constant &tau; = R &times; C &asymp; 35 k&Omega; &times; 100 nF &asymp; 3.5 ms, so the pin voltage cannot jump up and down faster than a few milliseconds. The bounces (each far shorter) are smoothed away and the pin crosses the HIGH/LOW threshold only once. Pressing the button discharges the capacitor almost instantly, so the press itself is still detected at once.</p>
+
+<h2>6. System 6: <code>externalInterruptBasedTrigger</code></h2>
+<p>Same task as System 5, but the button press is caught by <b>INT0</b> (PD2) with a <b>100 nF</b> capacitor from PD2 to GND for debouncing. The main loop only blinks PB5; the ISR toggles PB0. No press is ever missed.</p>
+<pre>#include &lt;avr/io.h&gt;
 #define F_CPU 16000000UL
 #include &lt;util/delay.h&gt;
 #include &lt;avr/interrupt.h&gt;
 
 int main(void)
 {
-    DDRB  |= (1&lt;&lt;DDB5) | (1&lt;&lt;DDB0);     // PB5, PB0 outputs
-    DDRD  &amp;= ~(1&lt;&lt;DDD2);               // PD2 (INT0) input
-    PORTD |= (1&lt;&lt;PORTD2);              // pull-up
-    EICRA |=  (1&lt;&lt;ISC01);              // falling edge: ISC01 = 1
-    EICRA &amp;= ~(1&lt;&lt;ISC00);              //               ISC00 = 0
-    EIMSK |=  (1&lt;&lt;INT0);               // enable INT0
-    sei();                             // enable global interrupts
+    DDRB = DDRB | 0b00100001;                    // PB5, PB0 outputs
+    DDRD = DDRD &amp; 0b11111011;                    // PD2 (INT0) input
+    PORTD = PORTD | 0b00000100;                  // pull-up on PD2
+    EICRA = (EICRA &amp; 0b11111110) | 0b00000010;   // INT0 on falling edge
+    EIMSK = EIMSK | 0b00000001;                  // enable INT0
+    sei();                                       // enable global interrupts
     while (1)
     {
-        PORTB ^= (1&lt;&lt;PORTB5);              // main task
+        PORTB = PORTB ^ 0b00100000;              // toggle PB5
+        _delay_ms(2000);
+    }
+    return 0;
+}
+
+ISR(INT0_vect)                                   // runs on every press
+{
+    PORTB = PORTB ^ 0b00000001;                  // toggle PB0
+}</pre>
+<table class="code">
+<tr><th>Line</th><th>Meaning</th></tr>
+<tr><td>#include &lt;avr/interrupt.h&gt;</td><td>Gives <code>sei()</code>, <code>cli()</code> and <code>ISR()</code>.</td></tr>
+<tr><td>EICRA = (EICRA &amp; 0b11111110) | 0b00000010</td><td>Two steps: <code>&amp; 0b11111110</code> clears ISC00 (bit 0), then <code>| 0b00000010</code> sets ISC01 (bit 1). ISC01 ISC00 = <b>10 = falling edge</b>. The other bits are untouched.</td></tr>
+<tr><td>EIMSK | 0b00000001</td><td>Local enable for INT0.</td></tr>
+<tr><td>sei()</td><td>Global enable. Must come <b>after</b> the setup.</td></tr>
+<tr><td>while (1) { ... }</td><td>The main task knows nothing about the button any more.</td></tr>
+<tr><td>ISR(INT0_vect)</td><td>The CPU jumps here by itself at each falling edge on PD2.</td></tr>
+</table>
+<p class="small">Same with labelled constants: <code>EICRA = (EICRA &amp; ~(1&lt;&lt;ISC00)) | (1&lt;&lt;ISC01); EIMSK |= (1&lt;&lt;INT0);</code></p>
+
+<h3>Arduino version</h3>
+<pre>const int ledPin1 = 8, ledPin2 = 13, switchPin = 2;
+void setup()
+{
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
+  pinMode(switchPin, INPUT_PULLUP);
+  int intNum = digitalPinToInterrupt(switchPin);   // pin 2 -> interrupt 0
+  attachInterrupt(intNum, toggle, FALLING);        // call toggle() on a fall
+}
+void loop()
+{
+  digitalWrite(ledPin2, !digitalRead(ledPin2));    // blink pin 13
+  delay(2000);
+}
+void toggle()                                      // the ISR
+{
+  digitalWrite(ledPin1, !digitalRead(ledPin1));
+}</pre>
+<p class="small"><code>attachInterrupt</code> does the EICRA, EIMSK and <code>sei()</code> work for you. Only pins <b>2 and 3</b> work on an Uno.</p>
+
+<h2 class="pb">7. Pin change interrupts (PCINT): any pin can interrupt</h2>
+<p>Only 2 pins have INT0/INT1, but <b>every</b> I/O pin has a <b>pin change</b> interrupt. Differences: they trigger on <b>any change</b> (both edges, no choice), and all pins of one port <b>share one vector</b>, so the ISR must read the pin to find out what happened.</p>
+<table>
+<tr><th>Port</th><th>PCINT numbers</th><th>Port enable bit in PCICR</th><th>Pin mask register</th><th>Vector</th></tr>
+<tr><td>B (PB0&ndash;PB7)</td><td>PCINT0 &ndash; PCINT7</td><td>PCIE0</td><td>PCMSK0</td><td>PCINT0_vect</td></tr>
+<tr><td>C (PC0&ndash;PC6)</td><td>PCINT8 &ndash; PCINT14</td><td>PCIE1</td><td>PCMSK1</td><td>PCINT1_vect</td></tr>
+<tr><td>D (PD0&ndash;PD7)</td><td>PCINT16 &ndash; PCINT23</td><td>PCIE2</td><td>PCMSK2</td><td>PCINT2_vect</td></tr>
+</table>
+<p class="small"><b>Trick:</b> PD2 is PCINT18 = Port D's bit 2, so its bit in PCMSK2 is bit 2. In each port, the PCMSK bit number equals the pin's bit number.</p>
+
+<div class="fig">
+<svg viewBox="0 0 640 96" font-family="Arial" font-size="12">
+  <defs><marker id="b4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.6"><rect x="10" y="20" width="120" height="48"/><rect x="170" y="20" width="140" height="48"/><rect x="350" y="20" width="130" height="48"/><rect x="520" y="20" width="110" height="48"/></g>
+  <g text-anchor="middle"><text x="70" y="40" font-weight="bold">PD2 changes</text><text x="70" y="56" font-size="11">(PCINT18)</text>
+  <text x="240" y="40" font-weight="bold">PCMSK2 bit 2 = 1?</text><text x="240" y="56" font-size="11">this pin is watched</text>
+  <text x="415" y="40" font-weight="bold">PCICR PCIE2 = 1?</text><text x="415" y="56" font-size="11">Port D is enabled</text>
+  <text x="575" y="40" font-weight="bold">sei() done?</text><text x="575" y="56" font-size="11">&rarr; PCINT2_vect</text></g>
+  <path d="M130 44H168M310 44H348M480 44H518" stroke="currentColor" stroke-width="1.8" fill="none" marker-end="url(#b4)"/>
+  <text x="10" y="88" font-size="11">All three "yes" are needed. The ISR then checks PIND to see if it was a press (low) or a release (high).</text>
+</svg>
+<div class="cap">Figure 6. The chain for a pin change interrupt on PD2.</div>
+</div>
+
+<h3>System 7: <code>pinChangeInterruptBasedTrigger</code></h3>
+<pre>#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL
+#include &lt;util/delay.h&gt;
+#include &lt;avr/interrupt.h&gt;
+
+int main(void)
+{
+    DDRB  |= (1&lt;&lt;5) | (1&lt;&lt;0);      // PB5, PB0 outputs
+    DDRD  &amp;= ~(1&lt;&lt;2);               // PD2 (PCINT18) input
+    PORTD |= (1&lt;&lt;2);                // pull-up on PD2
+    PCICR |= (1&lt;&lt;2);                // PCIE2: enable pin change interrupts on Port D
+    PCMSK2 |= (1&lt;&lt;2);               // watch PD2 (PCINT18) only
+    sei();
+    while (1)
+    {
+        PORTB ^= (1&lt;&lt;5);            // toggle PB5
         _delay_ms(2000);
     }
 }
 
-ISR(INT0_vect)                         // handle INT0
+ISR(PCINT2_vect)                    // any change on a watched Port D pin
 {
-    PORTB ^= (1&lt;&lt;PORTB0);                // toggle PB0
-}</code></pre>
-<pre><code>// Arduino wrapper version
-const int ledPin1 = 8, ledPin2 = 13, switchPin = 2;
-void setup() {
-  pinMode(ledPin1, OUTPUT);
-  pinMode(ledPin2, OUTPUT);
-  pinMode(switchPin, INPUT_PULLUP);
-  int intNum = digitalPinToInterrupt(switchPin);   // map I/O pin to interrupt number
-  attachInterrupt(intNum, toggle, FALLING);        // LOW, CHANGE, RISING or FALLING
-}
-void loop() {
-  digitalWrite(ledPin2, !digitalRead(ledPin2));
-  delay(2000);
-}
-void toggle() {                                    // ISR: no arguments, no return
-  digitalWrite(ledPin1, !digitalRead(ledPin1));
-}</code></pre>
+    if ((PIND &amp; (1&lt;&lt;2)) == 0)       // only act if PD2 is now LOW (falling edge = press)
+        PORTB ^= (1&lt;&lt;0);            // toggle PB0
+}</pre>
+<p class="small"><b>Why the <code>if</code> in the ISR?</b> The ISR runs on the press <b>and</b> on the release. Without the check, PB0 would toggle twice per click and appear not to change. The slides show the same program three ways: binary (<code>0b00000100</code>), hex (<code>0x04</code>) and shifts (<code>1&lt;&lt;2</code>); all are identical.</p>
 
-<h2>6. Pin change interrupts and System 7</h2>
-<p>INT0 and INT1 exist on only two pins. <b>Pin change interrupts</b> work on <b>any pin</b>.</p>
-<ul>
-  <li><b>PCICR</b>: PCIE0 / PCIE1 / PCIE2 enable pin-change interrupts for Port B / C / D.</li>
-  <li><b>PCMSKn</b>: PCMSK0 (PCINT0 to 7 = PB0 to PB7), PCMSK1 (PCINT8 to 14 = PC0 to PC6), PCMSK2 (PCINT16 to 23 = PD0 to PD7). The bit enables that pin. <b>PD2 = PCINT18</b>.</li>
-  <li>The interrupt fires on <b>any change</b> (rising and falling), and all pins of the port share <b>one vector</b>, so the ISR must <b>check the pin state</b> (for example only act if the pin is low).</li>
-</ul>
-<pre><code>int main(void)
-{
-    DDRB  |= (1&lt;&lt;DDB5) | (1&lt;&lt;DDB0);
-    DDRD  &amp;= ~(1&lt;&lt;DDD2);
-    PORTD |= (1&lt;&lt;PORTD2);
-    PCICR  |= (1&lt;&lt;PCIE2);              // enable pin change interrupts on Port D
-    PCMSK2 |= (1&lt;&lt;PCINT18);            // ... for PD2
-    sei();
-    while (1) { PORTB ^= (1&lt;&lt;PORTB5); _delay_ms(2000); }
-}
-ISR(PCINT2_vect)                       // any PD pin that is enabled
-{
-    if ((PIND &amp; (1&lt;&lt;PIND2)) == 0)      // act only on the falling edge (pin low)
-        PORTB ^= (1&lt;&lt;PORTB0);
-}</code></pre>
+<h3>Which method when?</h3>
 <table>
-  <tr><th></th><th>External (INT0/INT1)</th><th>Pin change</th></tr>
-  <tr><td>Pins</td><td>Only PD2, PD3</td><td>Any pin (PCINT0 to 23)</td></tr>
-  <tr><td>Trigger</td><td>Selectable: low, change, falling, rising</td><td>Any change only</td></tr>
-  <tr><td>Vector</td><td>One per pin</td><td>One per port: ISR checks which pin/level</td></tr>
-  <tr><td>Enable</td><td>EICRA + EIMSK</td><td>PCICR + PCMSKn</td></tr>
+<tr><th></th><th>Polling</th><th>External interrupt (INT0/1)</th><th>Pin change interrupt</th></tr>
+<tr><td><b>Pins</b></td><td>any</td><td>only PD2, PD3</td><td>any</td></tr>
+<tr><td><b>Trigger</b></td><td>whatever you check</td><td>low / change / falling / rising</td><td>any change only</td></tr>
+<tr><td><b>Vector</b></td><td>none</td><td>one per pin</td><td>one per port (shared)</td></tr>
+<tr><td><b>Can miss events?</b></td><td>yes</td><td>no</td><td>no</td></tr>
+<tr><td><b>Priority</b></td><td>no</td><td>yes (high)</td><td>yes (after INT0/INT1)</td></tr>
 </table>
 
-<h2>7. Writing good ISRs</h2>
-<ul>
-  <li>Keep them <b>short and fast</b>; no <code>_delay_ms()</code>, no long loops. Set a flag or update a variable and return.</li>
-  <li>Variables shared with <code>main()</code> must be <code>volatile</code>. For multi-byte shared variables, briefly disable interrupts (<code>cli()</code> / <code>sei()</code>) when <code>main</code> reads them.</li>
-  <li>Never forget the <b>two levels of enable</b> (the source and <code>sei()</code>).</li>
-  <li>An ISR is not called by your code; the hardware calls it. Interrupts are not queued without limit (one pending flag per source).</li>
-</ul>
+<h2>8. Exercise 3 solved: the "click counter"</h2>
+<p><b>Spec:</b> button 1 is pressed repeatedly to enter a number (0&ndash;255). Button 2 means "done": the number is shown in <b>binary on 8 LEDs</b>. It stays until button 2 is pressed again, which clears the LEDs. Pins 2 and 3 <b>of the chip</b> (PD0 = RX, PD1 = TX) must stay free for serial.</p>
+<p><b>Design choices:</b> 8 LEDs for 8 bits (255 = 0b11111111). The two buttons go on <b>INT0 (PD2)</b> and <b>INT1 (PD3)</b> so no click is missed, each with a 100 nF debounce capacitor. Bits 0&ndash;3 on PB0&ndash;PB3, bits 4&ndash;7 on PD4&ndash;PD7, so nothing touches PD0/PD1.</p>
 
-<h2>8. Exercise 3: click counter (worked)</h2>
-<p><b>Specification:</b> count the presses of a pushbutton and show the count in binary on LEDs (0 to 255, so <b>8 LEDs</b>). Display is initially all off. Pressing a second pushbutton ("enter") shows the entered number. Pressing "enter" again clears the display (all off), ready for the next entry. Chip pins <b>2 and 3</b> (PD0 / PD1 = RXD / TXD) must be reserved for later serial communication.</p>
-<h3>Design</h3>
-<table>
-  <tr><th>Function</th><th>Pin</th><th>Notes</th></tr>
-  <tr><td>LED bits 0 to 5</td><td>PB0 to PB5 (Arduino 8 to 13)</td><td>each with a 220 &Omega; resistor to GND</td></tr>
-  <tr><td>LED bits 6 and 7</td><td>PD6, PD7 (Arduino 6, 7)</td><td>mapping the number bits 6 and 7 directly to the same bit positions of PORTD</td></tr>
-  <tr><td>Count button</td><td>PD2 (INT0)</td><td>to GND, pull-up on, 100 nF across the switch</td></tr>
-  <tr><td>Enter button</td><td>PD3 (INT1)</td><td>to GND, pull-up on, 100 nF across the switch</td></tr>
-  <tr><td>Reserved</td><td>PD0, PD1 (chip pins 2, 3)</td><td>not used</td></tr>
-  <tr><td>Reset, crystal</td><td></td><td>10 k&Omega; pull-up on RESET, 16 MHz crystal with two 22 pF capacitors (built in on an Arduino Uno)</td></tr>
-</table>
-<pre><code>#include &lt;avr/io.h&gt;
+<div class="fig">
+<svg viewBox="0 0 640 320" font-family="Arial" font-size="12">
+  <rect x="230" y="20" width="150" height="290" style="fill:var(--bg)" stroke="currentColor" stroke-width="2"/>
+  <text x="300" y="128" text-anchor="middle" font-weight="bold" font-size="13">ATmega328P</text>
+  <g font-size="11" font-weight="bold">
+    <text x="236" y="84">PD2 / INT0</text><text x="236" y="189">PD3 / INT1</text><text x="236" y="262">PD0 RX, PD1 TX</text>
+  </g>
+  <text x="236" y="276" font-size="10.5">kept free (serial)</text>
+  <g stroke="currentColor" stroke-width="1.6" fill="none">
+    <path d="M230 80 H150"/><path d="M150 80 L120 66"/><path d="M114 80 H70 V100"/>
+    <path d="M150 80 V100 M138 100 H162 M138 106 H162 M150 106 V120 M140 120 H160 M144 125 H156"/>
+    <path d="M58 100 H82 M62 106 H78 M66 112 H74"/>
+    <path d="M230 185 H150"/><path d="M150 185 L120 171"/><path d="M114 185 H70 V205"/>
+    <path d="M150 185 V205 M138 205 H162 M138 211 H162 M150 211 V225 M140 225 H160 M144 230 H156"/>
+    <path d="M58 205 H82 M62 211 H78 M66 217 H74"/>
+  </g>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.4"><circle cx="150" cy="80" r="3"/><circle cx="114" cy="80" r="3"/><circle cx="150" cy="185" r="3"/><circle cx="114" cy="185" r="3"/></g>
+  <text x="60" y="58" font-size="11" font-weight="bold">button 1 "count"</text>
+  <text x="60" y="163" font-size="11" font-weight="bold">button 2 "done"</text>
+  <text x="168" y="112" font-size="10.5">100 nF</text><text x="168" y="217" font-size="10.5">100 nF</text>
+  <g font-size="11" font-weight="bold" text-anchor="end">
+    <text x="376" y="44">PB0</text><text x="376" y="78">PB1</text><text x="376" y="112">PB2</text><text x="376" y="146">PB3</text>
+    <text x="376" y="180">PD4</text><text x="376" y="214">PD5</text><text x="376" y="248">PD6</text><text x="376" y="282">PD7</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.6" fill="none">
+    <path d="M380 40H420M380 74H420M380 108H420M380 142H420M380 176H420M380 210H420M380 244H420M380 278H420"/>
+    <path d="M456 40H500M456 74H500M456 108H500M456 142H500M456 176H500M456 210H500M456 244H500M456 278H500"/>
+    <path d="M518 40H600M518 74H600M518 108H600M518 142H600M518 176H600M518 210H600M518 244H600M518 278H600"/>
+    <path d="M600 40V300 M588 300H612 M592 306H608 M596 312H604"/>
+  </g>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.5">
+    <rect x="420" y="33" width="36" height="14"/><rect x="420" y="67" width="36" height="14"/><rect x="420" y="101" width="36" height="14"/><rect x="420" y="135" width="36" height="14"/>
+    <rect x="420" y="169" width="36" height="14"/><rect x="420" y="203" width="36" height="14"/><rect x="420" y="237" width="36" height="14"/><rect x="420" y="271" width="36" height="14"/>
+    <path d="M500 32V48L518 40Z"/><path d="M500 66V82L518 74Z"/><path d="M500 100V116L518 108Z"/><path d="M500 134V150L518 142Z"/>
+    <path d="M500 168V184L518 176Z"/><path d="M500 202V218L518 210Z"/><path d="M500 236V252L518 244Z"/><path d="M500 270V286L518 278Z"/>
+  </g>
+  <g font-size="10" text-anchor="middle"><text x="438" y="44">220</text><text x="438" y="78">220</text><text x="438" y="112">220</text><text x="438" y="146">220</text><text x="438" y="180">220</text><text x="438" y="214">220</text><text x="438" y="248">220</text><text x="438" y="282">220</text></g>
+  <g font-size="10.5"><text x="530" y="34">bit 0</text><text x="530" y="68">bit 1</text><text x="530" y="102">bit 2</text><text x="530" y="136">bit 3</text><text x="530" y="170">bit 4</text><text x="530" y="204">bit 5</text><text x="530" y="238">bit 6</text><text x="530" y="272">bit 7</text></g>
+  <text x="608" y="290" font-size="10.5">GND</text>
+</svg>
+<div class="cap">Figure 7. Click counter. Each button goes from its pin to GND with a 100 nF capacitor in parallel; pull-ups are internal. (Supply, reset and crystal not drawn.)</div>
+</div>
+
+<pre>#include &lt;avr/io.h&gt;
 #include &lt;avr/interrupt.h&gt;
 
-volatile unsigned char count   = 0;     // entered number (0..255, wraps after 255)
-volatile unsigned char showing = 0;     // 0 = entering, 1 = displaying
+volatile unsigned char count = 0;    // changed inside ISRs, so volatile
+volatile unsigned char showing = 0;  // 0 = entering a number, 1 = displaying
 
-static void display(unsigned char v)
+static void display(unsigned char n)
 {
-    PORTB = (PORTB &amp; ~0x3F) | (v &amp; 0x3F);   // bits 0..5 on PB0..PB5
-    PORTD = (PORTD &amp; ~0xC0) | (v &amp; 0xC0);   // bits 6..7 on PD6..PD7
+    PORTB = (PORTB &amp; 0xF0) | (n &amp; 0x0F);   // low 4 bits of n on PB0-PB3
+    PORTD = (PORTD &amp; 0x0F) | (n &amp; 0xF0);   // high 4 bits of n on PD4-PD7
 }
 
 int main(void)
 {
-    DDRB |= 0x3F;                          // PB0..PB5 outputs
-    DDRD |= 0xC0;                          // PD6, PD7 outputs
-    DDRD &amp;= ~((1&lt;&lt;DDD2) | (1&lt;&lt;DDD3));    // PD2, PD3 inputs
-    PORTD |= (1&lt;&lt;PORTD2) | (1&lt;&lt;PORTD3);    // pull-ups
-    EICRA |= (1&lt;&lt;ISC01) | (1&lt;&lt;ISC11);      // falling edge on INT0 and INT1
-    EICRA &amp;= ~((1&lt;&lt;ISC00) | (1&lt;&lt;ISC10));
-    EIMSK |= (1&lt;&lt;INT0) | (1&lt;&lt;INT1);
-    display(0);
+    DDRB |= 0x0F;                          // PB0-PB3 outputs
+    DDRD |= 0xF0;                          // PD4-PD7 outputs
+    DDRD &amp;= ~((1&lt;&lt;PD2) | (1&lt;&lt;PD3));       // PD2, PD3 inputs
+    PORTD |= (1&lt;&lt;PD2) | (1&lt;&lt;PD3);         // pull-ups on both buttons
+    EICRA = (1&lt;&lt;ISC01) | (1&lt;&lt;ISC11);       // falling edge on INT0 and INT1
+    EIMSK = (1&lt;&lt;INT0) | (1&lt;&lt;INT1);        // enable both
+    display(0);                            // start with all LEDs off
     sei();
-    while (1) { }                          // all work is done by the ISRs
+    while (1) { }                          // nothing to do: the ISRs do the work
 }
 
-ISR(INT0_vect)                             // count button
+ISR(INT0_vect)                             // button 1: one more click
 {
-    if (!showing) count++;
+    if (!showing &amp;&amp; count &lt; 255) count++;
 }
 
-ISR(INT1_vect)                             // enter button
+ISR(INT1_vect)                             // button 2: show, or clear
 {
-    if (!showing) { showing = 1; display(count); }   // show the number
-    else          { showing = 0; count = 0; display(0); }  // clear
-}</code></pre>
-<div class="box"><b>"Is AI safe to trust?" (lecture 04 reading)</b>The lecturer's model answer maps count bits 7 to 2 to PB0 to PB5 (<code>PORTB |= count &gt;&gt; 2</code>) and bits 1 and 0 to PD6 and PD7 (<code>PORTD |= count &lt;&lt; 6</code>), with a 100 nF capacitor across each pushbutton, and interrupt-driven code. An AI asked to check it first declared the bit mapping wrong and criticised the missing software debounce. The student replied that the mapping was deliberate and that two 100 nF capacitors already debounce the switches in hardware; the AI then admitted it had misread the schematic. Lesson: AI predicts likely text and can hallucinate with an authoritative tone, so <b>always verify against the schematic and datasheet yourself</b>. Any consistent bit mapping is acceptable (mine above uses bits 0 to 5 on PB0 to PB5 and bits 6 and 7 on PD6 and PD7); just keep schematic and code in agreement.</div>
+    if (!showing) { display(count); showing = 1; }
+    else          { display(0); count = 0; showing = 0; }
+}</pre>
+<table class="code">
+<tr><th>Idea</th><th>Explanation</th></tr>
+<tr><td>(PORTB &amp; 0xF0) | (n &amp; 0x0F)</td><td>Keep PB4&ndash;PB7 as they were, replace PB0&ndash;PB3 with the low 4 bits of the number. Example: n = 13 = 0b00001101 lights bits 0, 2, 3.</td></tr>
+<tr><td>(PORTD &amp; 0x0F) | (n &amp; 0xF0)</td><td>Keep PD0&ndash;PD3 (so the pull-ups on PD2/PD3 stay on), replace PD4&ndash;PD7 with the high 4 bits.</td></tr>
+<tr><td>count &lt; 255</td><td>An <code>unsigned char</code> holds 0&ndash;255; the 256th click would wrap to 0, so stop at 255.</td></tr>
+<tr><td>volatile</td><td><code>count</code> and <code>showing</code> are used by two ISRs; volatile makes every read come from memory.</td></tr>
+<tr><td>while (1) { }</td><td>Everything is event driven, so main just waits. This is fine: interrupts still fire.</td></tr>
+</table>
+<p class="small">This is my own worked answer (no model answer was provided for Exercise 3). Other pin choices are fine if they keep PD0/PD1 free and the buttons on interrupt pins, or use pin change interrupts instead.</p>
 
-<div class="warn"><b>Common mistakes</b>1) Forgetting <code>sei()</code>. 2) Setting EIMSK but leaving EICRA at the default (low-level trigger fires repeatedly while held). 3) Using INT0/INT1 vectors with the wrong pin (INT0 is PD2, INT1 is PD3). 4) Not marking shared variables <code>volatile</code>. 5) Delays inside an ISR. 6) Pin change ISR acting on both edges (button toggles twice). 7) No debounce capacitor, so one press counts several times.</div>
+<div class="key small">
+<b class="t">Building these circuits</b>
+Use the method from Lesson 3, section P (breadboard, schematic, wiring order, fault checklist). The only new part here is the <b>100 nF capacitor</b>: one leg in the same column as the button's pin wire (pin 2 / pin 3), the other leg to the GND rail, so it sits in parallel with the button.<br>
+<b>Try the theory on the bench:</b> with the System 5/6 wiring, tap the button quickly. Polling (System 5) misses taps; the interrupt (System 6) never does; remove the capacitor and you will sometimes see a double toggle from bounce.
+</div>
+
+<h2 class="pb">L. What the lecturer explained in the lectures (2020 recordings)</h2>
+<p class="small">From the four polling and interrupt recordings (folders 09&ndash;12 in <code>Embedded Systems Lectures</code>). <b>[EXAM]</b> marks things he tied to the exam.</p>
+
+<div class="key">
+<b class="t">L1. How the exam is set [EXAM]</b>
+"The learning outcomes slide is the most important slide in the entire slide set": the paper is set to check exactly those outcomes. For this lesson they are: compare polling vs interrupts; build a system that does two tasks with polling; explain how interrupt handling works; explain the interrupt registers; build the same system with interrupts.<br>
+<b>Do not memorise register names or bit positions.</b> "Even for the exam you get all these names": the practical and the written exam both give you the summarised datasheet. What you must know is <i>which register to use for what</i> and how to read the datasheet.
+</div>
+
+<h3>L2. "Seemingly at the same time": multitasking is an illusion</h3>
+<ul class="small">
+<li>One CPU can run only <b>one instruction stream at a time</b>. It switches between tasks so fast that they look simultaneous, like a juggler who holds only one ball at a time while the others are in the air. This is <b>multitasking</b>.</li>
+<li>Truly simultaneous work needs <b>several CPUs</b> (a multi-core processor or multi-core microcontroller), each running its own task. This is <b>multiprocessing</b>.</li>
+<li>On a PC the <b>operating system</b> handles task switching (context switching). A microcontroller has <b>no OS</b>, so <b>multitasking is the programmer's responsibility</b>. Polling and interrupts are the two ways to do it.</li>
+<li>The purpose: to give the CPU's service to <b>peripheral devices</b> while the CPU is busy with another task. Peripherals can be <b>external</b> (buttons, sensors) or <b>internal</b> (timers, the ADC, the USART).</li>
+</ul>
+
+<h3>L3. His polling analogy, and why System 4 was already polling</h3>
+<p class="small"><b>Reading the newspaper with a baby on the floor.</b> Main task: read the paper. Peripheral: the baby's nappy. With polling you read one article, touch the nappy to check it, read the next article, check again&hellip;. If it is wet, you stop, change it, then carry on reading from the next article. <b>ABS example:</b> the controller checks wheel 1, 2, 3, 4, then wheel 1 again; if one wheel is slower it releases that brake, then carries on checking.<br>
+A student asked how this differs from last week's dual-rate blinker: it doesn't. <b>System 4 was already polling</b>: it checked the button once per loop. The idea just wasn't named yet.</p>
+
+<h3>L4. Polling's problems, the full list he gave [EXAM]</h3>
+<ol class="small">
+<li><b>Missed events</b>, in two situations: the device changes <b>too fast</b> (a quick tap), <b>or</b> the checking interval is <b>too long</b> (even a normal press is missed if you only check every 5&ndash;10 s). His ABS case: while the controller checks wheel 2, wheel 1 slows down and recovers before it is checked again, so the car can slide off course. This is dangerous in a safety-critical system.</li>
+<li><b>No priority:</b> every task runs in the same fixed order, so an urgent device can't be served first.</li>
+<li><b>Wasted CPU work:</b> the CPU spends time checking devices that usually don't need anything ("opening the door again and again to see if a visitor has come").</li>
+</ol>
+<p class="small"><b>The class experiment</b> (try it yourself): with a 2 s interval, quick taps are often missed and you must hold the button; at 200 ms most presses are caught, but still not all. A shorter interval catches more presses but also changes how fast the LED blinks. Interrupts remove the interval problem altogether.</p>
+
+<h3>L5. Two hardware details from the System 5 circuit</h3>
+<ul class="small">
+<li><b>Why 1 k&Omega; on the on-board LED but 220 &Omega; on ours?</b> The pin 13 LED on the Uno is an <b>SMD</b> (surface-mounted device) LED: tiny, needs very little current, so a larger 1 k&Omega; resistor limits it. Our breadboard LED is a <b>through-hole</b> LED (its legs go through holes in the board): bigger, needs more current, so a smaller 220 &Omega;. He asked this in class.</li>
+<li><b>Schematic diagram</b> = how components are connected, using <b>standard symbols</b>. <b>Wiring diagram</b> = a simplified pictorial view using <b>realistic pictures</b>, showing where parts sit relative to each other.</li>
+</ul>
+
+<h3>L6. Interrupts in his words</h3>
+<p class="small">An interrupt is a <b>hardware mechanism</b> (polling is a software technique). The baby <b>cries</b> when the nappy is wet, so you just keep reading and react only when it cries. A visitor <b>knocks</b> instead of you checking the door. Three gains: <b>no monitoring work</b>, <b>no missed events</b> however fast or slow they are, and <b>priority</b> (if two children cry, you can decide who comes first).</p>
+
+<h3>L7. The handling steps exactly as he taught them</h3>
+<ol class="small">
+<li>Execution starts at <b>address 0</b>. If interrupts are used, the <b>interrupt vector table</b> sits at the start of program memory, and the program <b>jumps over it</b> to the code.</li>
+<li>An interrupt arrives while an instruction is running. The CPU finishes it and saves the <b>address of the next instruction</b> (the program counter) on the <b>stack</b>.</li>
+<li>The CPU <b>turns off interrupts</b> so that no other interrupt breaks in while this one is handled.</li>
+<li>It jumps to the <b>vector table</b>, which holds the <b>address of each ISR</b>, then jumps to the right ISR and runs it. You, the programmer, write what the ISR does.</li>
+<li>At the end of the ISR it <b>turns interrupts on again</b>, takes the saved address off the stack, and <b>resumes</b> exactly where it stopped.</li>
+</ol>
+<p class="small"><b>His analogies:</b> you put a <b>bookmark</b> in page 5 (the stack), go and change the nappy (the ISR), then open the book at the bookmark (the return). While changing the older brother's nappy you <b>stop the younger one from crying</b> (interrupts disabled); afterwards you let him cry again (interrupts re-enabled).</p>
+
+<div class="key small"><b class="t">Keep ISRs short [EXAM reasoning]</b>
+While an ISR runs, all other interrupts are disabled. A long ISR therefore (1) delays the main task, and (2) can make other events go <b>unnoticed</b>. His example: a long ADC ISR is still running when the timer overflows, so the overflow interrupt is missed. Writing short ISRs is <b>the programmer's responsibility</b>; there is no OS to protect you.</div>
+
+<h3>L8. Priority and the vector table</h3>
+<p class="small">Each interrupt source has its <b>own ISR</b> and its own vector-table entry. <b>Lower vector address = higher priority</b>: if INT0 and the ADC interrupt arrive together, INT0 runs first. INT0 has a higher priority than INT1. Timer overflow happens when a timer counts past its maximum (255 for an 8-bit timer) back to 0.</p>
+
+<h3>L9. The stack (and an aside on recursion)</h3>
+<p class="small">The stack is <b>last in, first out</b>. When main calls A, A calls B and B calls C, the return addresses are stacked; they come back off in the order C &rarr; B &rarr; A &rarr; main. Each call also stores its local variables there. <b>Deep recursion</b> keeps adding to the stack and can <b>run out of memory and crash</b> the system; attackers have exploited this. Recursion is still the natural solution to some problems (the classic <i>Towers of Hanoi</i>), but for performance and safety he prefers iteration on small machines.</p>
+
+<h3>L10. Rules of an ISR in C, and why [EXAM]</h3>
+<ul class="small">
+<li>Written as <code>ISR(vector_name) { ... }</code>. Books also call it an <b>interrupt handler</b>.</li>
+<li><b>No return value</b> and <b>no parameters</b> except the vector. <b>Why?</b> It is called automatically by the hardware at a moment nobody knows when the code is written or compiled. There is no calling statement, so there is nowhere to pass arguments from and nowhere to return a value to. ("If you are asked why ISRs look like functions but have no return type and no arguments, can you explain?")</li>
+<li><b>To pass data in or out, use global variables declared <code>volatile</code>.</b> <b>Why volatile?</b> The compiler sees no call to the ISR, so it assumes the ISR never runs and that a variable changed only inside it never changes. With optimisation on, it may then replace the variable with a <b>literal constant</b> (e.g. always 5), and main never sees the change. <code>volatile</code> means "this can change at any time, don't optimise it away".</li>
+<li><b>Literal constant</b> = a plain number in the code (<code>5</code>), with no memory reserved. A <code>const int y = 5;</code> still occupies memory.</li>
+<li><b>All interrupts are disabled by default</b>, and most peripherals are off by default, <b>to save power</b>. <code>sei()</code> sets the <b>I bit (bit 7) of SREG</b>, the status register; <code>cli()</code> clears it.</li>
+<li><b>[EXAM]</b> <code>sei()</code>, <code>cli()</code>, <code>ISR()</code> and the vector names are defined in <code>avr/interrupt.h</code>. "One time" an exam gave interrupt code with blanks to fill, and the <code>#include &lt;avr/interrupt.h&gt;</code> line was missing. <b>No student noticed it</b>, although without it the program does not compile.</li>
+</ul>
+
+<h3>L11. External interrupt details</h3>
+<ul class="small">
+<li>The ATmega328P has only <b>two</b> external interrupt pins: <b>INT0 = PD2 = Arduino pin 2</b>, <b>INT1 = PD3 = Arduino pin 3</b>. More need a different chip, or pin change interrupts.</li>
+<li><b>Low level</b> means the pin must be <b>held LOW until the current instruction finishes</b>. <b>Falling edge</b> = "going low" (the moment between HIGH and LOW). <b>Rising edge</b> = "going high". <b>Logic change</b> = either.</li>
+<li>INT0 and INT1 can use <b>different</b> trigger choices (e.g. INT0 on any change, INT1 on rising edge).</li>
+<li>EICRA only chooses <b>when</b>; EIMSK <b>enables</b>. You need both, plus <code>sei()</code>. In System 6 only INT0 is enabled, because nothing is connected to INT1.</li>
+<li><b>How to read his register slides:</b> bits with names are explained on that slide; "n/a" bits are explained later in the set; "&ndash;" bits are not covered in that slide set. If you are curious, read the datasheet.</li>
+</ul>
+
+<h3>L12. Capacitors, as he taught them</h3>
+<table class="small">
+<tr><th style="width:24%">Point</th><th>Detail</th></tr>
+<tr><td>What it is</td><td>Two metal plates with an <b>insulator</b> (ceramic, mica, polyester&hellip;) between them. It stores charge <b>temporarily</b>: the charge slowly leaks away (the same reason DRAM must be refreshed).</td></tr>
+<tr><td>Unit</td><td><b>Farad</b> (after Michael Faraday). It is huge, so we use &micro;F, nF, pF: 1000 pF = 1 nF, 1000 nF = 1 &micro;F.</td></tr>
+<tr><td>Typical use</td><td><b>Smoothing a power supply</b>: placed across + and GND, it charges, then discharges into any dip, so the device sees a steady voltage.</td></tr>
+<tr><td>Polarised (electrolytic)</td><td>Has + and &minus; legs that must go the right way. Value and max voltage are printed (e.g. 10 &micro;F 50 V).</td></tr>
+<tr><td>Non-polarised (ceramic)</td><td>Either way round. <b>Code "104"</b> = 10 followed by 4 zeros pF = 100,000 pF = <b>100 nF = 0.1 &micro;F</b> (the one in your kit). Voltage code e.g. <b>2E = 250 V</b>. Tolerance letter: <b>K = &plusmn;10%</b>, J = &plusmn;5%. Cheap ones may show only the value.</td></tr>
+</table>
+
+<h3>L13. Bounce and debouncing in his words</h3>
+<p class="small">The contacts of a mechanical switch don't close once and stay closed: due to their <b>momentum they bounce</b> several times in a few milliseconds before settling. This is the nature of switches, not a fault. The microcontroller sees several HIGH&ndash;LOW changes, so with interrupts enabled <b>one press can interrupt the CPU several times</b> and the LED toggles several times. <b>Hardware fix:</b> 100 nF across the switch. When the switch is open, the capacitor is <b>charged through the internal pull-up</b>; during bouncing it <b>discharges and fills the gaps</b>, giving one clean change, "like a reservoir". <b>Software fix:</b> he set this as <b>homework</b> ("you know coding, find it out"). One answer is the edge-detect-plus-short-delay code in section 2 of these notes.</p>
+
+<h3>L14. Pin change interrupts: extra points</h3>
+<ul class="small">
+<li>Why they exist: INT0/INT1 give only two interrupt pins, but pin change interrupts make <b>virtually every I/O pin</b> interrupt-capable.</li>
+<li>Difference from external interrupts: <b>only one trigger choice, "logic change"</b> (equivalent to the INT "logic change" option), but on <b>any pin</b>.</li>
+<li>Two steps: <b>enable the port</b> with PCICR (PCIE0 = port B, PCIE1 = port C, PCIE2 = port D), <b>then the pin</b> with PCMSK0/1/2.</li>
+<li><b>Why is bit 7 of PCMSK1 unused?</b> PCMSK1 is port C, and port C has only <b>7 pins</b> (PC0&ndash;PC6), so there is no pin for bit 7. (A student asked this.)</li>
+<li><b>One pin, several labels:</b> Arduino <b>2</b> = <b>PD2</b> (as I/O) = <b>INT0</b> (as external interrupt) = <b>PCINT18</b> (as pin change interrupt). All mean the same pin. <b>Use the label that matches how you use it</b>, so the reader is not misled (writing INT0 in pin change code suggests an external interrupt).</li>
+<li>The ISR runs on <b>press and release</b>, so it must test the pin. "Currently LOW and an interrupt happened" means it was HIGH before: a <b>falling edge</b>, a press. "Currently HIGH" means a release.</li>
+<li><code>DDRD &amp;= ~(1&lt;&lt;2);</code> is not strictly needed (pins are inputs after reset) but is <b>good practice</b> for readability, at the cost of one clock cycle.</li>
+<li><b>Arduino has no official pin change interrupt support</b>, so in Arduino you only have the two INT pins. A <b>third-party library, PinChangeInt</b>, exists but is not official.</li>
+</ul>
+
+<h3>L15. Arduino's attachInterrupt</h3>
+<p class="small"><code>digitalPinToInterrupt(2)</code> converts Arduino pin 2 to interrupt number 0 (INT0), so Arduino users never need to know interrupt numbers. <code>attachInterrupt(num, toggle, FALLING)</code> links a normal function to it; behind the scenes the real ISR calls your function. Modes: <b>LOW, CHANGE, RISING, FALLING</b>. "Most Arduino users don't know you can do interrupts at all."</p>
+
+<h3>L16. Code style and addresses</h3>
+<ul class="small">
+<li>Binary strings, hex (<code>0x21</code>), shifts (<code>(1&lt;&lt;5)|(1&lt;&lt;0)</code>) and labels (<code>PCINT18</code>) give <b>exactly the same machine code</b>: no difference in speed or size, because the compiler converts them. Shifts and labels matter most on 32-bit chips, where counting 32 bits is error-prone.</li>
+<li>Register names are <b>labels for memory addresses</b>. <code>avr/io.h</code> is common to all AVR chips; the chip-specific <code>iom328p.h</code> (added when you select the device) gives the real addresses. Each I/O register has an <b>I/O address</b> (relative to the start of I/O memory) and a <b>data-memory address</b>.</li>
+<li>Size of the System 5 firmware: <b>C &asymp; 180 bytes, Arduino &gt; 1100 bytes</b>.</li>
+</ul>
+
+<h3>L17. Assignment hints he gave</h3>
+<ul class="small">
+<li>Exercise 2 Q1 in assembly: use <b><code>SBIC PIND, 2</code></b> (skip the next instruction if the bit is clear, i.e. the button is pressed) to skip one call of a <b>200 ms delay</b>, and call it <b>twice</b> for 400 ms. Writing one 200 ms routine and calling it twice is better than two separate delay loops.</li>
+<li>Toggle in assembly with <b><code>EOR</code></b> (exclusive OR). Move a port register into a working register with <b><code>IN</code></b> and back with <b><code>OUT</code></b>.</li>
+<li>He refused to hand out full answers: "otherwise you become good typists, not good programmers". <b>Do every practical yourself</b>, try different polling intervals, and bring your questions. Exercise 3 (the click counter) belongs to this lesson.</li>
+</ul>
+
+<h2>9. Common mistakes</h2>
+<table>
+<tr><th style="width:36%">Mistake</th><th>Result / fix</th></tr>
+<tr><td>Forgot <code>sei()</code></td><td>No interrupt ever runs. The local enable alone is not enough.</td></tr>
+<tr><td>Forgot <code>#include &lt;avr/interrupt.h&gt;</code></td><td><code>ISR</code> and <code>sei</code> are unknown, so compile error.</td></tr>
+<tr><td>Wrong vector name (e.g. <code>INT0vect</code>)</td><td>Compiles with a warning but the ISR is never used. Copy the name from the exam data sheet.</td></tr>
+<tr><td>Button on a pin other than PD2/PD3 with INT0/INT1</td><td>Never triggers. Use pins 2/3, or a pin change interrupt.</td></tr>
+<tr><td>PCINT without checking the pin in the ISR</td><td>Runs on press and release, so it toggles twice.</td></tr>
+<tr><td>Setting PCMSK but not PCICR (or the other way)</td><td>Both are needed: PCICR enables the port, PCMSK picks the pins.</td></tr>
+<tr><td>Long delays inside an ISR</td><td>Blocks everything else. Set a flag, do the work in main.</td></tr>
+<tr><td>Shared variable not <code>volatile</code></td><td>Main may never see the ISR's change.</td></tr>
+<tr><td>No debounce capacitor</td><td>One press can count as several.</td></tr>
+</table>

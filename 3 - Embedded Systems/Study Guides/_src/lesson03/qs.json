@@ -1,34 +1,375 @@
 {
  "mcq": [
-  {"q":"In polling, the CPU:","o":["Waits for the device to interrupt it","Repeatedly checks the device status at intervals","Never serves devices","Uses the stack for every check"],"a":1,"e":"It checks, serves if the condition is met, then resumes its task."},
-  {"q":"Which is a problem of polling?","o":["Supports priority","A quick change can go undetected if the checking interval is long","Needs sei()","Uses the vector table"],"a":1,"e":"Also: no priority; CPU time spent monitoring."},
-  {"q":"In System 5 (polling), why is a very short button press often missed?","o":["The pin is output","The button is only read once every 2 s after the delay","The pull-up is off","PIND is write-only"],"a":1,"e":"The press must happen at the moment of the check."},
-  {"q":"When an interrupt is serviced the return address is saved:","o":["In EEPROM","On the stack","In the PORT register","In the ADC"],"a":1,"e":"It is popped again when the ISR returns."},
-  {"q":"The interrupt vector table holds:","o":["The program data","Addresses of the interrupt service routines","The pin states","Sensor values"],"a":1,"e":"One entry per interrupt source."},
-  {"q":"Lower vector address means:","o":["Lower priority","Higher priority","Same priority","Disabled"],"a":1,"e":"INT0 (0x0002) has the highest priority of the external sources."},
-  {"q":"Which C statement enables global interrupts?","o":["cli();","sei();","ISR();","EIMSK = 1;"],"a":1,"e":"sei() sets the I bit in SREG; cli() clears it."},
-  {"q":"The ISR for external interrupt 0 is declared as:","o":["ISR(INT0_vect)","ISR(PCINT0_vect)","void INT0()","interrupt INT0"],"a":0,"e":"PCINT0_vect is the pin-change vector of Port B."},
-  {"q":"To trigger INT0 on a falling edge you set:","o":["ISC01 = 0, ISC00 = 0","ISC01 = 0, ISC00 = 1","ISC01 = 1, ISC00 = 0","ISC01 = 1, ISC00 = 1"],"a":2,"e":"11 is the rising edge; 01 is any logic change; 00 is low level."},
-  {"q":"Which bit enables the INT1 interrupt?","o":["EICRA bit ISC10","EIMSK bit INT1","PCICR bit PCIE1","SREG bit 1"],"a":1,"e":"EIMSK (External Interrupt MaSK)."},
-  {"q":"INT0 and INT1 are on pins:","o":["PB0 and PB1","PD2 and PD3","PC0 and PC1","PD0 and PD1"],"a":1,"e":"Arduino pins 2 and 3."},
-  {"q":"PD2 corresponds to which pin change interrupt?","o":["PCINT2","PCINT10","PCINT18","PCINT20"],"a":2,"e":"Port D is PCINT16 to 23 so PD2 = PCINT18, enabled in PCMSK2."},
-  {"q":"To enable a pin change interrupt on PD2 you set:","o":["PCICR PCIE2 and PCMSK2 PCINT18","EIMSK INT2","TIMSK0 TOIE0","PCICR PCIE0"],"a":0,"e":"Group enable plus pin mask."},
-  {"q":"A pin change interrupt on PD2 triggers on:","o":["Falling edge only","Rising edge only","Any logic change","Low level only"],"a":2,"e":"So the ISR checks the pin state."},
-  {"q":"Contact bounce causes:","o":["No effect","One press to generate several edges","Lower voltage","Higher power use"],"a":1,"e":"Each edge can trigger an interrupt."},
-  {"q":"A 100 nF capacitor across a switch is used to:","o":["Increase current","Debounce the input by smoothing voltage changes","Store the count","Clock the CPU"],"a":1,"e":"Hardware debouncing."},
-  {"q":"Variables shared between an ISR and main should be declared:","o":["const","volatile","register","static only"],"a":1,"e":"The compiler must not cache them in registers."},
-  {"q":"Which should be avoided inside an ISR?","o":["Setting a flag","Toggling a pin","_delay_ms(2000)","Incrementing a counter"],"a":2,"e":"ISRs must be short."},
-  {"q":"In Arduino, an external interrupt on pin 2 is attached with:","o":["attachInterrupt(digitalPinToInterrupt(2), isr, FALLING)","interrupt(2, isr)","pinMode(2, ISR)","sei(2)"],"a":0,"e":"Modes: LOW, CHANGE, RISING, FALLING."},
-  {"q":"Which Arduino pins support attachInterrupt on an Uno?","o":["0 and 1","2 and 3","8 and 9","13 only"],"a":1,"e":"INT0 and INT1."},
-  {"q":"In the click counter, the ATmega328P chip pins 2 and 3 are reserved because they are:","o":["Ground","RXD and TXD (PD0, PD1) used for serial communication","The crystal","AREF"],"a":1,"e":"They cannot be GPIO while the USART is used."},
-  {"q":"How many LEDs does a click counter for 0 to 255 need?","o":["4","6","8","16"],"a":2,"e":"8 bits."},
-  {"q":"If DDRD = 0xC0 and PORTD |= (1<<PORTD2) is executed, PD2 is:","o":["An output driven high","An input with pull-up enabled","An output driven low","Disabled"],"a":1,"e":"DDRD bit 2 is 0 (input); PORT bit 1 enables the pull-up."},
-  {"q":"Which register enables interrupts for the whole Port D pin-change group?","o":["PCMSK2","PCICR","EICRA","TIMSK2"],"a":1,"e":"PCIE2 in PCICR; PCMSK2 selects the individual pins."}
+  {
+   "q": "In polling, the CPU:",
+   "o": [
+    "Waits for the device to interrupt it",
+    "Repeatedly checks the device status at intervals",
+    "Never serves devices",
+    "Uses the stack for every check"
+   ],
+   "a": 1,
+   "e": "It checks, serves if the condition is met, then resumes its task."
+  },
+  {
+   "q": "Which is a problem of polling?",
+   "o": [
+    "Supports priority",
+    "A quick change can go undetected if the checking interval is long",
+    "Needs sei()",
+    "Uses the vector table"
+   ],
+   "a": 1,
+   "e": "Also: no priority; CPU time spent monitoring."
+  },
+  {
+   "q": "In System 5 (polling), why is a very short button press often missed?",
+   "o": [
+    "The pin is output",
+    "The button is only read once every 2 s after the delay",
+    "The pull-up is off",
+    "PIND is write-only"
+   ],
+   "a": 1,
+   "e": "The press must happen at the moment of the check."
+  },
+  {
+   "q": "When an interrupt is serviced the return address is saved:",
+   "o": [
+    "In EEPROM",
+    "On the stack",
+    "In the PORT register",
+    "In the ADC"
+   ],
+   "a": 1,
+   "e": "It is popped again when the ISR returns."
+  },
+  {
+   "q": "The interrupt vector table holds:",
+   "o": [
+    "The program data",
+    "Addresses of the interrupt service routines",
+    "The pin states",
+    "Sensor values"
+   ],
+   "a": 1,
+   "e": "One entry per interrupt source."
+  },
+  {
+   "q": "Lower vector address means:",
+   "o": [
+    "Lower priority",
+    "Higher priority",
+    "Same priority",
+    "Disabled"
+   ],
+   "a": 1,
+   "e": "INT0 (0x0002) has the highest priority of the external sources."
+  },
+  {
+   "q": "Which C statement enables global interrupts?",
+   "o": [
+    "cli();",
+    "sei();",
+    "ISR();",
+    "EIMSK = 1;"
+   ],
+   "a": 1,
+   "e": "sei() sets the I bit in SREG; cli() clears it."
+  },
+  {
+   "q": "The ISR for external interrupt 0 is declared as:",
+   "o": [
+    "ISR(INT0_vect)",
+    "ISR(PCINT0_vect)",
+    "void INT0()",
+    "interrupt INT0"
+   ],
+   "a": 0,
+   "e": "PCINT0_vect is the pin-change vector of Port B."
+  },
+  {
+   "q": "To trigger INT0 on a falling edge you set:",
+   "o": [
+    "ISC01 = 0, ISC00 = 0",
+    "ISC01 = 0, ISC00 = 1",
+    "ISC01 = 1, ISC00 = 0",
+    "ISC01 = 1, ISC00 = 1"
+   ],
+   "a": 2,
+   "e": "11 is the rising edge; 01 is any logic change; 00 is low level."
+  },
+  {
+   "q": "Which bit enables the INT1 interrupt?",
+   "o": [
+    "EICRA bit ISC10",
+    "EIMSK bit INT1",
+    "PCICR bit PCIE1",
+    "SREG bit 1"
+   ],
+   "a": 1,
+   "e": "EIMSK (External Interrupt MaSK)."
+  },
+  {
+   "q": "INT0 and INT1 are on pins:",
+   "o": [
+    "PB0 and PB1",
+    "PD2 and PD3",
+    "PC0 and PC1",
+    "PD0 and PD1"
+   ],
+   "a": 1,
+   "e": "Arduino pins 2 and 3."
+  },
+  {
+   "q": "PD2 corresponds to which pin change interrupt?",
+   "o": [
+    "PCINT2",
+    "PCINT10",
+    "PCINT18",
+    "PCINT20"
+   ],
+   "a": 2,
+   "e": "Port D is PCINT16 to 23 so PD2 = PCINT18, enabled in PCMSK2."
+  },
+  {
+   "q": "To enable a pin change interrupt on PD2 you set:",
+   "o": [
+    "PCICR PCIE2 and PCMSK2 PCINT18",
+    "EIMSK INT2",
+    "TIMSK0 TOIE0",
+    "PCICR PCIE0"
+   ],
+   "a": 0,
+   "e": "Group enable plus pin mask."
+  },
+  {
+   "q": "A pin change interrupt on PD2 triggers on:",
+   "o": [
+    "Falling edge only",
+    "Rising edge only",
+    "Any logic change",
+    "Low level only"
+   ],
+   "a": 2,
+   "e": "So the ISR checks the pin state."
+  },
+  {
+   "q": "Contact bounce causes:",
+   "o": [
+    "No effect",
+    "One press to generate several edges",
+    "Lower voltage",
+    "Higher power use"
+   ],
+   "a": 1,
+   "e": "Each edge can trigger an interrupt."
+  },
+  {
+   "q": "A 100 nF capacitor across a switch is used to:",
+   "o": [
+    "Increase current",
+    "Debounce the input by smoothing voltage changes",
+    "Store the count",
+    "Clock the CPU"
+   ],
+   "a": 1,
+   "e": "Hardware debouncing."
+  },
+  {
+   "q": "Variables shared between an ISR and main should be declared:",
+   "o": [
+    "const",
+    "volatile",
+    "register",
+    "static only"
+   ],
+   "a": 1,
+   "e": "The compiler must not cache them in registers."
+  },
+  {
+   "q": "Which should be avoided inside an ISR?",
+   "o": [
+    "Setting a flag",
+    "Toggling a pin",
+    "_delay_ms(2000)",
+    "Incrementing a counter"
+   ],
+   "a": 2,
+   "e": "ISRs must be short."
+  },
+  {
+   "q": "In Arduino, an external interrupt on pin 2 is attached with:",
+   "o": [
+    "attachInterrupt(digitalPinToInterrupt(2), isr, FALLING)",
+    "interrupt(2, isr)",
+    "pinMode(2, ISR)",
+    "sei(2)"
+   ],
+   "a": 0,
+   "e": "Modes: LOW, CHANGE, RISING, FALLING."
+  },
+  {
+   "q": "Which Arduino pins support attachInterrupt on an Uno?",
+   "o": [
+    "0 and 1",
+    "2 and 3",
+    "8 and 9",
+    "13 only"
+   ],
+   "a": 1,
+   "e": "INT0 and INT1."
+  },
+  {
+   "q": "In the click counter, the ATmega328P chip pins 2 and 3 are reserved because they are:",
+   "o": [
+    "Ground",
+    "RXD and TXD (PD0, PD1) used for serial communication",
+    "The crystal",
+    "AREF"
+   ],
+   "a": 1,
+   "e": "They cannot be GPIO while the USART is used."
+  },
+  {
+   "q": "How many LEDs does a click counter for 0 to 255 need?",
+   "o": [
+    "4",
+    "6",
+    "8",
+    "16"
+   ],
+   "a": 2,
+   "e": "8 bits."
+  },
+  {
+   "q": "If DDRD = 0xC0 and PORTD |= (1<<PORTD2) is executed, PD2 is:",
+   "o": [
+    "An output driven high",
+    "An input with pull-up enabled",
+    "An output driven low",
+    "Disabled"
+   ],
+   "a": 1,
+   "e": "DDRD bit 2 is 0 (input); PORT bit 1 enables the pull-up."
+  },
+  {
+   "q": "Which register enables interrupts for the whole Port D pin-change group?",
+   "o": [
+    "PCMSK2",
+    "PCICR",
+    "EICRA",
+    "TIMSK2"
+   ],
+   "a": 1,
+   "e": "PCIE2 in PCICR; PCMSK2 selects the individual pins."
+  },
+  {
+   "q": "Why does an ISR have no return value and no parameters (other than the vector)?",
+   "o": [
+    "To save flash",
+    "It is called automatically by hardware at an unknown time, with no calling statement",
+    "C does not allow it",
+    "Because interrupts are disabled"
+   ],
+   "a": 1,
+   "e": "No code calls it, so there is nothing to pass arguments from or return a value to. Use volatile globals to share data."
+  },
+  {
+   "q": "Why must a global shared between an ISR and main be volatile?",
+   "o": [
+    "To store it in EEPROM",
+    "So the compiler does not optimise it into a constant, since it sees no call to the ISR",
+    "To make it faster",
+    "To make it read-only"
+   ],
+   "a": 1,
+   "e": "The compiler assumes the ISR never runs; volatile stops it replacing the variable with a literal constant."
+  },
+  {
+   "q": "Why are interrupts disabled after reset?",
+   "o": [
+    "To save power",
+    "Because the stack is empty",
+    "Because flash is locked",
+    "They are enabled after reset"
+   ],
+   "a": 0,
+   "e": "Interrupts and most peripherals are off by default to save power; sei() turns them on."
+  },
+  {
+   "q": "The Uno's pin 13 LED uses 1 kΩ while our breadboard LED uses 220 Ω because...",
+   "o": [
+    "Pin 13 is 3.3 V",
+    "The on-board LED is a tiny SMD LED needing little current; the through-hole LED needs more",
+    "Pin 13 is an input",
+    "1 kΩ is the only value on the board"
+   ],
+   "a": 1,
+   "e": "SMD (surface-mounted) LEDs need very little current; through-hole LEDs need more, so a smaller resistor."
+  },
+  {
+   "q": "PCMSK1 has no bit 7 because...",
+   "o": [
+    "Port C has only 7 pins (PC0-PC6)",
+    "Bit 7 is the I bit",
+    "Port C cannot interrupt",
+    "PCMSK1 is for port B"
+   ],
+   "a": 0,
+   "e": "PCMSK1 covers port C, which has 7 pins, so bit 7 has no pin."
+  },
+  {
+   "q": "Ceramic capacitor code 104 means...",
+   "o": [
+    "104 pF",
+    "10 nF",
+    "100 nF (0.1 µF)",
+    "1 µF"
+   ],
+   "a": 2,
+   "e": "10 followed by 4 zeros pF = 100 000 pF = 100 nF = 0.1 µF."
+  },
+  {
+   "q": "Which is NOT one of the problems of polling the lecturer listed?",
+   "o": [
+    "Fast changes may be missed",
+    "A long checking interval may miss events",
+    "No priority",
+    "The ISR may be too long"
+   ],
+   "a": 3,
+   "e": "Long ISRs are an interrupt issue. Polling's problems: missed events, no priority, wasted CPU checking."
+  }
  ],
  "written": [
-  {"q":"Compare polling and interrupts, giving the problems of polling.","a":"<p>Polling: the CPU repeatedly checks device status while doing another task; simple but a fast change can be missed if the interval is long (a quick button press during a 2 s delay is lost), the CPU wastes time monitoring and there is no priority because all devices are checked in the same order. Interrupts: the device interrupts the CPU, which suspends its task, runs the ISR and resumes. The CPU is free from monitoring, events are caught immediately and priorities are supported (lower vector address = higher priority).</p>"},
-  {"q":"Describe how an interrupt is handled by the ATmega328P.","a":"<p>A source sets its flag; if its enable bit and the global I bit (<code>sei()</code>) are set the CPU finishes the current instruction, pushes the return address on the stack, clears I and jumps to the vector table entry of that source, which leads to the ISR. The ISR runs and <code>RETI</code> pops the return address and re-enables interrupts so the interrupted program continues.</p>"},
-  {"q":"Write the registers and C code to toggle an LED on PB0 each time a button on PD2 is pressed using INT0 on the falling edge, while PB5 blinks every second in main.","a":"<pre><code>DDRB |= (1&lt;&lt;DDB0)|(1&lt;&lt;DDB5);\nDDRD &amp;= ~(1&lt;&lt;DDD2); PORTD |= (1&lt;&lt;PORTD2);   // input + pull-up\nEICRA |= (1&lt;&lt;ISC01); EICRA &amp;= ~(1&lt;&lt;ISC00);     // falling edge\nEIMSK |= (1&lt;&lt;INT0); sei();\nwhile(1){ PORTB ^= (1&lt;&lt;PORTB5); _delay_ms(1000); }\nISR(INT0_vect){ PORTB ^= (1&lt;&lt;PORTB0); }</code></pre><p>A 100 nF capacitor across the switch debounces it.</p>"},
-  {"q":"Explain the difference between external interrupts and pin change interrupts and how each is configured.","a":"<p>External interrupts exist only on INT0 (PD2) and INT1 (PD3), have their own vectors and a selectable trigger (low, change, falling, rising) set in EICRA and enabled in EIMSK. Pin change interrupts work on any pin, fire on any logic change and share one vector per port (PCINT0_vect, PCINT1_vect, PCINT2_vect), so the ISR must test the pin state. They are enabled with PCICR (PCIE0/1/2 for ports B/C/D) and the pin's bit in PCMSK0/1/2.</p>"}
+  {
+   "q": "Compare polling and interrupts, giving the problems of polling.",
+   "a": "<p>Polling: the CPU repeatedly checks device status while doing another task; simple but a fast change can be missed if the interval is long (a quick button press during a 2 s delay is lost), the CPU wastes time monitoring and there is no priority because all devices are checked in the same order. Interrupts: the device interrupts the CPU, which suspends its task, runs the ISR and resumes. The CPU is free from monitoring, events are caught immediately and priorities are supported (lower vector address = higher priority).</p>"
+  },
+  {
+   "q": "Describe how an interrupt is handled by the ATmega328P.",
+   "a": "<p>A source sets its flag; if its enable bit and the global I bit (<code>sei()</code>) are set the CPU finishes the current instruction, pushes the return address on the stack, clears I and jumps to the vector table entry of that source, which leads to the ISR. The ISR runs and <code>RETI</code> pops the return address and re-enables interrupts so the interrupted program continues.</p>"
+  },
+  {
+   "q": "Write the registers and C code to toggle an LED on PB0 each time a button on PD2 is pressed using INT0 on the falling edge, while PB5 blinks every second in main.",
+   "a": "<pre><code>DDRB |= (1&lt;&lt;DDB0)|(1&lt;&lt;DDB5);\nDDRD &amp;= ~(1&lt;&lt;DDD2); PORTD |= (1&lt;&lt;PORTD2);   // input + pull-up\nEICRA |= (1&lt;&lt;ISC01); EICRA &amp;= ~(1&lt;&lt;ISC00);     // falling edge\nEIMSK |= (1&lt;&lt;INT0); sei();\nwhile(1){ PORTB ^= (1&lt;&lt;PORTB5); _delay_ms(1000); }\nISR(INT0_vect){ PORTB ^= (1&lt;&lt;PORTB0); }</code></pre><p>A 100 nF capacitor across the switch debounces it.</p>"
+  },
+  {
+   "q": "Explain the difference between external interrupts and pin change interrupts and how each is configured.",
+   "a": "<p>External interrupts exist only on INT0 (PD2) and INT1 (PD3), have their own vectors and a selectable trigger (low, change, falling, rising) set in EICRA and enabled in EIMSK. Pin change interrupts work on any pin, fire on any logic change and share one vector per port (PCINT0_vect, PCINT1_vect, PCINT2_vect), so the ISR must test the pin state. They are enabled with PCICR (PCIE0/1/2 for ports B/C/D) and the pin's bit in PCMSK0/1/2.</p>"
+  },
+  {
+   "q": "Describe, step by step, what happens from the moment an interrupt arrives until the main program resumes.",
+   "a": "<p>The CPU finishes the current instruction, saves the address of the next instruction (program counter) on the stack and disables interrupts. It jumps to the interrupt vector table, takes the address of the relevant ISR and jumps there; the ISR runs. At the end interrupts are enabled again, the return address is taken off the stack and execution resumes where it stopped.</p>"
+  },
+  {
+   "q": "Why must ISRs be kept short? Give an example.",
+   "a": "<p>While an ISR runs all other interrupts are disabled, so a long ISR delays the main task and can cause other events to be missed. Example: a long ADC ISR is still running when the timer overflows, so the overflow interrupt is lost.</p>"
+  },
+  {
+   "q": "What is switch bounce and how does a capacitor across the switch remove it?",
+   "a": "<p>A mechanical switch's contacts bounce several times before settling because of their momentum, so the microcontroller sees several HIGH-LOW changes and may interrupt several times. A 100 nF capacitor across the switch is charged through the pull-up while open and discharges to fill the gaps during bouncing, giving a single clean transition.</p>"
+  }
  ]
 }

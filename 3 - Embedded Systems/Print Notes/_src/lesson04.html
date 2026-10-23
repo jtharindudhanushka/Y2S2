@@ -70,7 +70,7 @@ The <b>device tells the CPU</b> when it needs service. The CPU pauses the main t
 </div>
 
 <h2>2. System 5: <code>pollingBasedTrigger</code></h2>
-<p><b>Task:</b> blink the LED on <b>PB5</b> (pin 13) every 2 s, and toggle a second LED on <b>PB0</b> (pin 8, through 1 k&Omega;) when the button on <b>PD2</b> (pin 2) is pressed. Button between PD2 and GND, internal pull-up on.</p>
+<p><b>Task:</b> blink the LED on <b>PB5</b> (pin 13) every 2 s, and toggle a second LED on <b>PB0</b> (pin 8, through 220 &Omega;; the on-board pin 13 LED has its own 1 k&Omega;) when the button on <b>PD2</b> (pin 2) is pressed. Button between PD2 and GND, internal pull-up on.</p>
 <div class="two">
 <div>
 <pre>#include &lt;avr/io.h&gt;
@@ -599,6 +599,124 @@ ISR(INT1_vect)                             // button 2: show, or clear
 Use the method from Lesson 3, section P (breadboard, schematic, wiring order, fault checklist). The only new part here is the <b>100 nF capacitor</b>: one leg in the same column as the button's pin wire (pin 2 / pin 3), the other leg to the GND rail, so it sits in parallel with the button.<br>
 <b>Try the theory on the bench:</b> with the System 5/6 wiring, tap the button quickly. Polling (System 5) misses taps; the interrupt (System 6) never does; remove the capacitor and you will sometimes see a double toggle from bounce.
 </div>
+
+<h2 class="pb">L. What the lecturer explained in the lectures (2020 recordings)</h2>
+<p class="small">From the four polling and interrupt recordings (folders 09&ndash;12 in <code>Embedded Systems Lectures</code>). <b>[EXAM]</b> marks things he tied to the exam.</p>
+
+<div class="key">
+<b class="t">L1. How the exam is set [EXAM]</b>
+"The learning outcomes slide is the most important slide in the entire slide set": the paper is set to check exactly those outcomes. For this lesson they are: compare polling vs interrupts; build a system that does two tasks with polling; explain how interrupt handling works; explain the interrupt registers; build the same system with interrupts.<br>
+<b>Do not memorise register names or bit positions.</b> "Even for the exam you get all these names": the practical and the written exam both give you the summarised datasheet. What you must know is <i>which register to use for what</i> and how to read the datasheet.
+</div>
+
+<h3>L2. "Seemingly at the same time": multitasking is an illusion</h3>
+<ul class="small">
+<li>One CPU can run only <b>one instruction stream at a time</b>. It switches between tasks so fast that they look simultaneous, like a juggler who holds only one ball at a time while the others are in the air. This is <b>multitasking</b>.</li>
+<li>Truly simultaneous work needs <b>several CPUs</b> (a multi-core processor or multi-core microcontroller), each running its own task. This is <b>multiprocessing</b>.</li>
+<li>On a PC the <b>operating system</b> handles task switching (context switching). A microcontroller has <b>no OS</b>, so <b>multitasking is the programmer's responsibility</b>. Polling and interrupts are the two ways to do it.</li>
+<li>The purpose: to give the CPU's service to <b>peripheral devices</b> while the CPU is busy with another task. Peripherals can be <b>external</b> (buttons, sensors) or <b>internal</b> (timers, the ADC, the USART).</li>
+</ul>
+
+<h3>L3. His polling analogy, and why System 4 was already polling</h3>
+<p class="small"><b>Reading the newspaper with a baby on the floor.</b> Main task: read the paper. Peripheral: the baby's nappy. With polling you read one article, touch the nappy to check it, read the next article, check again&hellip;. If it is wet, you stop, change it, then carry on reading from the next article. <b>ABS example:</b> the controller checks wheel 1, 2, 3, 4, then wheel 1 again; if one wheel is slower it releases that brake, then carries on checking.<br>
+A student asked how this differs from last week's dual-rate blinker: it doesn't. <b>System 4 was already polling</b>: it checked the button once per loop. The idea just wasn't named yet.</p>
+
+<h3>L4. Polling's problems, the full list he gave [EXAM]</h3>
+<ol class="small">
+<li><b>Missed events</b>, in two situations: the device changes <b>too fast</b> (a quick tap), <b>or</b> the checking interval is <b>too long</b> (even a normal press is missed if you only check every 5&ndash;10 s). His ABS case: while the controller checks wheel 2, wheel 1 slows down and recovers before it is checked again, so the car can slide off course. This is dangerous in a safety-critical system.</li>
+<li><b>No priority:</b> every task runs in the same fixed order, so an urgent device can't be served first.</li>
+<li><b>Wasted CPU work:</b> the CPU spends time checking devices that usually don't need anything ("opening the door again and again to see if a visitor has come").</li>
+</ol>
+<p class="small"><b>The class experiment</b> (try it yourself): with a 2 s interval, quick taps are often missed and you must hold the button; at 200 ms most presses are caught, but still not all. A shorter interval catches more presses but also changes how fast the LED blinks. Interrupts remove the interval problem altogether.</p>
+
+<h3>L5. Two hardware details from the System 5 circuit</h3>
+<ul class="small">
+<li><b>Why 1 k&Omega; on the on-board LED but 220 &Omega; on ours?</b> The pin 13 LED on the Uno is an <b>SMD</b> (surface-mounted device) LED: tiny, needs very little current, so a larger 1 k&Omega; resistor limits it. Our breadboard LED is a <b>through-hole</b> LED (its legs go through holes in the board): bigger, needs more current, so a smaller 220 &Omega;. He asked this in class.</li>
+<li><b>Schematic diagram</b> = how components are connected, using <b>standard symbols</b>. <b>Wiring diagram</b> = a simplified pictorial view using <b>realistic pictures</b>, showing where parts sit relative to each other.</li>
+</ul>
+
+<h3>L6. Interrupts in his words</h3>
+<p class="small">An interrupt is a <b>hardware mechanism</b> (polling is a software technique). The baby <b>cries</b> when the nappy is wet, so you just keep reading and react only when it cries. A visitor <b>knocks</b> instead of you checking the door. Three gains: <b>no monitoring work</b>, <b>no missed events</b> however fast or slow they are, and <b>priority</b> (if two children cry, you can decide who comes first).</p>
+
+<h3>L7. The handling steps exactly as he taught them</h3>
+<ol class="small">
+<li>Execution starts at <b>address 0</b>. If interrupts are used, the <b>interrupt vector table</b> sits at the start of program memory, and the program <b>jumps over it</b> to the code.</li>
+<li>An interrupt arrives while an instruction is running. The CPU finishes it and saves the <b>address of the next instruction</b> (the program counter) on the <b>stack</b>.</li>
+<li>The CPU <b>turns off interrupts</b> so that no other interrupt breaks in while this one is handled.</li>
+<li>It jumps to the <b>vector table</b>, which holds the <b>address of each ISR</b>, then jumps to the right ISR and runs it. You, the programmer, write what the ISR does.</li>
+<li>At the end of the ISR it <b>turns interrupts on again</b>, takes the saved address off the stack, and <b>resumes</b> exactly where it stopped.</li>
+</ol>
+<p class="small"><b>His analogies:</b> you put a <b>bookmark</b> in page 5 (the stack), go and change the nappy (the ISR), then open the book at the bookmark (the return). While changing the older brother's nappy you <b>stop the younger one from crying</b> (interrupts disabled); afterwards you let him cry again (interrupts re-enabled).</p>
+
+<div class="key small"><b class="t">Keep ISRs short [EXAM reasoning]</b>
+While an ISR runs, all other interrupts are disabled. A long ISR therefore (1) delays the main task, and (2) can make other events go <b>unnoticed</b>. His example: a long ADC ISR is still running when the timer overflows, so the overflow interrupt is missed. Writing short ISRs is <b>the programmer's responsibility</b>; there is no OS to protect you.</div>
+
+<h3>L8. Priority and the vector table</h3>
+<p class="small">Each interrupt source has its <b>own ISR</b> and its own vector-table entry. <b>Lower vector address = higher priority</b>: if INT0 and the ADC interrupt arrive together, INT0 runs first. INT0 has a higher priority than INT1. Timer overflow happens when a timer counts past its maximum (255 for an 8-bit timer) back to 0.</p>
+
+<h3>L9. The stack (and an aside on recursion)</h3>
+<p class="small">The stack is <b>last in, first out</b>. When main calls A, A calls B and B calls C, the return addresses are stacked; they come back off in the order C &rarr; B &rarr; A &rarr; main. Each call also stores its local variables there. <b>Deep recursion</b> keeps adding to the stack and can <b>run out of memory and crash</b> the system; attackers have exploited this. Recursion is still the natural solution to some problems (the classic <i>Towers of Hanoi</i>), but for performance and safety he prefers iteration on small machines.</p>
+
+<h3>L10. Rules of an ISR in C, and why [EXAM]</h3>
+<ul class="small">
+<li>Written as <code>ISR(vector_name) { ... }</code>. Books also call it an <b>interrupt handler</b>.</li>
+<li><b>No return value</b> and <b>no parameters</b> except the vector. <b>Why?</b> It is called automatically by the hardware at a moment nobody knows when the code is written or compiled. There is no calling statement, so there is nowhere to pass arguments from and nowhere to return a value to. ("If you are asked why ISRs look like functions but have no return type and no arguments, can you explain?")</li>
+<li><b>To pass data in or out, use global variables declared <code>volatile</code>.</b> <b>Why volatile?</b> The compiler sees no call to the ISR, so it assumes the ISR never runs and that a variable changed only inside it never changes. With optimisation on, it may then replace the variable with a <b>literal constant</b> (e.g. always 5), and main never sees the change. <code>volatile</code> means "this can change at any time, don't optimise it away".</li>
+<li><b>Literal constant</b> = a plain number in the code (<code>5</code>), with no memory reserved. A <code>const int y = 5;</code> still occupies memory.</li>
+<li><b>All interrupts are disabled by default</b>, and most peripherals are off by default, <b>to save power</b>. <code>sei()</code> sets the <b>I bit (bit 7) of SREG</b>, the status register; <code>cli()</code> clears it.</li>
+<li><b>[EXAM]</b> <code>sei()</code>, <code>cli()</code>, <code>ISR()</code> and the vector names are defined in <code>avr/interrupt.h</code>. "One time" an exam gave interrupt code with blanks to fill, and the <code>#include &lt;avr/interrupt.h&gt;</code> line was missing. <b>No student noticed it</b>, although without it the program does not compile.</li>
+</ul>
+
+<h3>L11. External interrupt details</h3>
+<ul class="small">
+<li>The ATmega328P has only <b>two</b> external interrupt pins: <b>INT0 = PD2 = Arduino pin 2</b>, <b>INT1 = PD3 = Arduino pin 3</b>. More need a different chip, or pin change interrupts.</li>
+<li><b>Low level</b> means the pin must be <b>held LOW until the current instruction finishes</b>. <b>Falling edge</b> = "going low" (the moment between HIGH and LOW). <b>Rising edge</b> = "going high". <b>Logic change</b> = either.</li>
+<li>INT0 and INT1 can use <b>different</b> trigger choices (e.g. INT0 on any change, INT1 on rising edge).</li>
+<li>EICRA only chooses <b>when</b>; EIMSK <b>enables</b>. You need both, plus <code>sei()</code>. In System 6 only INT0 is enabled, because nothing is connected to INT1.</li>
+<li><b>How to read his register slides:</b> bits with names are explained on that slide; "n/a" bits are explained later in the set; "&ndash;" bits are not covered in that slide set. If you are curious, read the datasheet.</li>
+</ul>
+
+<h3>L12. Capacitors, as he taught them</h3>
+<table class="small">
+<tr><th style="width:24%">Point</th><th>Detail</th></tr>
+<tr><td>What it is</td><td>Two metal plates with an <b>insulator</b> (ceramic, mica, polyester&hellip;) between them. It stores charge <b>temporarily</b>: the charge slowly leaks away (the same reason DRAM must be refreshed).</td></tr>
+<tr><td>Unit</td><td><b>Farad</b> (after Michael Faraday). It is huge, so we use &micro;F, nF, pF: 1000 pF = 1 nF, 1000 nF = 1 &micro;F.</td></tr>
+<tr><td>Typical use</td><td><b>Smoothing a power supply</b>: placed across + and GND, it charges, then discharges into any dip, so the device sees a steady voltage.</td></tr>
+<tr><td>Polarised (electrolytic)</td><td>Has + and &minus; legs that must go the right way. Value and max voltage are printed (e.g. 10 &micro;F 50 V).</td></tr>
+<tr><td>Non-polarised (ceramic)</td><td>Either way round. <b>Code "104"</b> = 10 followed by 4 zeros pF = 100,000 pF = <b>100 nF = 0.1 &micro;F</b> (the one in your kit). Voltage code e.g. <b>2E = 250 V</b>. Tolerance letter: <b>K = &plusmn;10%</b>, J = &plusmn;5%. Cheap ones may show only the value.</td></tr>
+</table>
+
+<h3>L13. Bounce and debouncing in his words</h3>
+<p class="small">The contacts of a mechanical switch don't close once and stay closed: due to their <b>momentum they bounce</b> several times in a few milliseconds before settling. This is the nature of switches, not a fault. The microcontroller sees several HIGH&ndash;LOW changes, so with interrupts enabled <b>one press can interrupt the CPU several times</b> and the LED toggles several times. <b>Hardware fix:</b> 100 nF across the switch. When the switch is open, the capacitor is <b>charged through the internal pull-up</b>; during bouncing it <b>discharges and fills the gaps</b>, giving one clean change, "like a reservoir". <b>Software fix:</b> he set this as <b>homework</b> ("you know coding, find it out"). One answer is the edge-detect-plus-short-delay code in section 2 of these notes.</p>
+
+<h3>L14. Pin change interrupts: extra points</h3>
+<ul class="small">
+<li>Why they exist: INT0/INT1 give only two interrupt pins, but pin change interrupts make <b>virtually every I/O pin</b> interrupt-capable.</li>
+<li>Difference from external interrupts: <b>only one trigger choice, "logic change"</b> (equivalent to the INT "logic change" option), but on <b>any pin</b>.</li>
+<li>Two steps: <b>enable the port</b> with PCICR (PCIE0 = port B, PCIE1 = port C, PCIE2 = port D), <b>then the pin</b> with PCMSK0/1/2.</li>
+<li><b>Why is bit 7 of PCMSK1 unused?</b> PCMSK1 is port C, and port C has only <b>7 pins</b> (PC0&ndash;PC6), so there is no pin for bit 7. (A student asked this.)</li>
+<li><b>One pin, several labels:</b> Arduino <b>2</b> = <b>PD2</b> (as I/O) = <b>INT0</b> (as external interrupt) = <b>PCINT18</b> (as pin change interrupt). All mean the same pin. <b>Use the label that matches how you use it</b>, so the reader is not misled (writing INT0 in pin change code suggests an external interrupt).</li>
+<li>The ISR runs on <b>press and release</b>, so it must test the pin. "Currently LOW and an interrupt happened" means it was HIGH before: a <b>falling edge</b>, a press. "Currently HIGH" means a release.</li>
+<li><code>DDRD &amp;= ~(1&lt;&lt;2);</code> is not strictly needed (pins are inputs after reset) but is <b>good practice</b> for readability, at the cost of one clock cycle.</li>
+<li><b>Arduino has no official pin change interrupt support</b>, so in Arduino you only have the two INT pins. A <b>third-party library, PinChangeInt</b>, exists but is not official.</li>
+</ul>
+
+<h3>L15. Arduino's attachInterrupt</h3>
+<p class="small"><code>digitalPinToInterrupt(2)</code> converts Arduino pin 2 to interrupt number 0 (INT0), so Arduino users never need to know interrupt numbers. <code>attachInterrupt(num, toggle, FALLING)</code> links a normal function to it; behind the scenes the real ISR calls your function. Modes: <b>LOW, CHANGE, RISING, FALLING</b>. "Most Arduino users don't know you can do interrupts at all."</p>
+
+<h3>L16. Code style and addresses</h3>
+<ul class="small">
+<li>Binary strings, hex (<code>0x21</code>), shifts (<code>(1&lt;&lt;5)|(1&lt;&lt;0)</code>) and labels (<code>PCINT18</code>) give <b>exactly the same machine code</b>: no difference in speed or size, because the compiler converts them. Shifts and labels matter most on 32-bit chips, where counting 32 bits is error-prone.</li>
+<li>Register names are <b>labels for memory addresses</b>. <code>avr/io.h</code> is common to all AVR chips; the chip-specific <code>iom328p.h</code> (added when you select the device) gives the real addresses. Each I/O register has an <b>I/O address</b> (relative to the start of I/O memory) and a <b>data-memory address</b>.</li>
+<li>Size of the System 5 firmware: <b>C &asymp; 180 bytes, Arduino &gt; 1100 bytes</b>.</li>
+</ul>
+
+<h3>L17. Assignment hints he gave</h3>
+<ul class="small">
+<li>Exercise 2 Q1 in assembly: use <b><code>SBIC PIND, 2</code></b> (skip the next instruction if the bit is clear, i.e. the button is pressed) to skip one call of a <b>200 ms delay</b>, and call it <b>twice</b> for 400 ms. Writing one 200 ms routine and calling it twice is better than two separate delay loops.</li>
+<li>Toggle in assembly with <b><code>EOR</code></b> (exclusive OR). Move a port register into a working register with <b><code>IN</code></b> and back with <b><code>OUT</code></b>.</li>
+<li>He refused to hand out full answers: "otherwise you become good typists, not good programmers". <b>Do every practical yourself</b>, try different polling intervals, and bring your questions. Exercise 3 (the click counter) belongs to this lesson.</li>
+</ul>
 
 <h2>9. Common mistakes</h2>
 <table>
