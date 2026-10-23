@@ -331,6 +331,89 @@ void loop()
 <li><b>Signs of a fault:</b> Uno resets when the motor starts (motor on the Uno supply); motor always on (C and E swapped or transistor damaged); transistor hot (diode reversed, or motor current above 100 mA).</li>
 </ol>
 
+<h2 class="pb">L. What the lecturer explained in the lectures (2020 recordings)</h2>
+<p class="small">From the two transducer recordings (folders 18&ndash;19 in <code>Embedded Systems Lectures</code>). <b>[EXAM]</b> marks things he tied to the exam.</p>
+
+<div class="key">
+<b class="t">L1. The practical exam, in his words [EXAM]</b>
+50% of the module is the practical exam and 50% the written paper. In the practical you get <b>3 hours</b> to <b>assemble the hardware, write the firmware and show a working system</b>. "If you talk to seniors, they will say the practical exam is the most difficult part of this module", because students don't practise. You can't do it in 3 hours without prior hands-on practice.
+</div>
+
+<h3>L2. Transducers: the idea</h3>
+<ul class="small">
+<li>A transducer converts energy from one form to another, in either direction. <b>Inward</b> (other energy &rarr; electrical) = <b>sensor</b>: LM35 (thermal), LDR (light), potentiometer (rotation). <b>Outward</b> (electrical &rarr; other) = <b>actuator</b>: LED (light), motor (motion), speaker or buzzer (sound).</li>
+<li>Transducers sit at the <b>boundary</b> of the embedded system.</li>
+<li>A digital sensor's two voltages are not exactly 0 and 5 V: roughly <b>0&ndash;0.8 V reads LOW, 2&ndash;5 V reads HIGH</b>. The pushbutton you already used is a digital sensor.</li>
+<li>If you understand these common sensors and how to connect them, you can connect any other sensor the same way.</li>
+</ul>
+
+<h3>L3. Digital sensors: points from class</h3>
+<table class="small">
+<tr><th style="width:17%">Sensor</th><th>What he added</th></tr>
+<tr><td><b>Reed switch</b> (~Rs 25)</td><td>Contacts sealed in a glass tube filled with inert gas. Because any <b>spark stays inside the sealed tube</b>, reed switches are used in <b>dusty and hazardous places with flammable gases or liquids</b>, where an ordinary switch's spark could start a fire (his example: switching on a kitchen light after an overnight LP-gas leak). Also used in <b>door/window security</b>: reed on the frame, magnet on the door. Door closed &rarr; switch on &rarr; Dout LOW; opened &rarr; Dout HIGH, which signals a break-in. Read it with <code>PINx</code> in C or <code>digitalRead</code> in Arduino. With the internal pull-up, no external 10 k&Omega; is needed.</td></tr>
+<tr><td><b>Hall effect</b></td><td>Same behaviour as a reed switch (Dout normally HIGH with a pull-up, LOW near a magnet) but <b>smaller, solid state, no mechanical contacts</b>, so it switches <b>faster</b>, has <b>no wear</b>, and lasts longer. Main use: <b>wheel-speed sensing in ABS</b>. A small magnet on the wheel hub passes the sensor once per turn, producing pulses; more pulses per second means a faster wheel, so you can work out the RPM. Stray magnetic fields don't matter, because the magnet must come very close.</td></tr>
+<tr><td><b>PIR</b> (~Rs 200)</td><td><b>PIR = Pyroelectric InfraRed, not "passive infrared"</b>. He said 90 out of 100 people get this wrong. Output is <b>normally LOW</b> and goes <b>HIGH</b> when the IR energy in its field of view changes (a warm body moving). Pets and hot vehicle engines also trigger it; turn the sensitivity down to ignore cats and dogs. <b>It only detects movement <i>across</i> its field of view</b>: someone walking straight towards it is not seen, so mount it where people will cross in front of it. It can be fooled by hiding body heat (a thermal blanket or aluminium foil). It is used to switch on CCTV recording and floodlights.</td></tr>
+<tr><td><b>Flame</b> (~Rs 200)</td><td>Detects the IR a fire gives off (wavelength about <b>760&ndash;1100 nm</b>, different from body heat). Dout <b>normally HIGH, LOW when a flame is seen</b>; sensitivity set with the screw pot. The module's <b>LM393</b> chip is a comparator (an op-amp circuit) that turns the sensor's analog signal into a digital output. Used in fire alarms.</td></tr>
+</table>
+
+<h3>L4. Analog and analog/digital sensors: points from class</h3>
+<table class="small">
+<tr><th style="width:17%">Sensor</th><th>What he added</th></tr>
+<tr><td><b>Water level</b> (~Rs 80)</td><td>Interleaved copper traces. More water bridges more traces, so resistance drops and Aout rises. Needs the ADC.</td></tr>
+<tr><td><b>Accelerometer</b></td><td>Aout X, Y, Z are each proportional to acceleration along that axis. Used for <b>phone orientation</b>, <b>camera shake detection</b> and <b>drone motion</b>. The breakout board is for prototyping; phones use a tiny SMD chip.</td></tr>
+<tr><td><b>Thumb joystick</b></td><td>Simply <b>two independent potentiometers</b>, one per axis, giving Aout X and Aout Y.</td></tr>
+<tr><td><b>Sound</b> (~Rs 150)</td><td>Aout is proportional to the sound's <b>amplitude</b>. Dout is <b>normally HIGH, LOW above the threshold</b> set by the pot. Used for <b>clap-operated</b> or <b>door-knock-operated</b> systems.</td></tr>
+<tr><td><b>Soil moisture</b></td><td>Two fork-shaped probes; water bridges them, lowering the resistance. Dout is <b>normally HIGH, LOW when moisture is above the threshold</b>.</td></tr>
+<tr><td><b>Gas / smoke</b></td><td>Pick the right model: <b>MQ2 = LPG</b> (~Rs 300), <b>MQ3 = alcohol</b>, <b>MQ4 = methane</b>; others detect carbon monoxide. Aout is proportional to concentration. Dout is <b>normally LOW, HIGH above the threshold</b>.</td></tr>
+</table>
+<p class="small"><b>Watch the Dout direction, it differs by module:</b> reed, Hall, flame, sound and soil are normally HIGH, going LOW on detection; PIR and gas are normally LOW, going HIGH on detection.</p>
+
+<h3>L5. Actuators: the numbers he used</h3>
+<ul class="small">
+<li>An ATmega328P pin gives 5 V and <b>at most 40 mA</b>. If a load tries to draw more, the pin heats up and burns out: "the motor doesn't care what the pin can deliver".</li>
+<li><b>Kit motor (6&ndash;9 V)</b>: about <b>75 mA with no load</b>, more with a fan or wheel attached. Too much for a pin.</li>
+<li><b>Solenoid</b>: straight-line motion (a plunger), about <b>12 V and 500&ndash;600 mA</b>. Typical use: an electric (even IoT) <b>door lock</b>.</li>
+<li><b>Thermoelectric / Peltier</b> (named after Jean Charles Peltier): current moves heat from one face to the other, with about <b>70 &deg;C</b> between the faces. Keep the hot side at 70 &deg;C with a heat sink and fan, and the cold side reaches about 0 &deg;C. A 2&times;2-inch module needs <b>12 V 5 A = 60 W</b> (~Rs 1500).<br>
+<b>Pros:</b> no moving parts, no compressed gas, long life, no maintenance, one device for both heating and cooling.<br>
+<b>Cons:</b> high cost per unit of cooling, and poor power efficiency compared with a compressor fridge.<br>
+<b>Uses:</b> cooling overclocked CPUs and the IR sensor of heat-seeking missiles.</li>
+<li><b>Incandescent bulb</b>: the filament gives light <i>and</i> heat. 12 V or 230 V and up to amps, so it cannot go on a pin.</li>
+<li><b>RGB LED</b>: the <b>longest leg is the common cathode</b>. With it on the left, the others are R, G, B. Treat it like three LEDs, each with its own resistor. Mixing the three gives almost any colour.</li>
+</ul>
+
+<h3>L6. The BJT as he taught it</h3>
+<ul class="small">
+<li><b>Bipolar</b> junction transistor: it has <b>two</b> P&ndash;N junctions. It is <b>current-driven</b>: a tiny base&ndash;emitter current (&micro;A) lets a much larger collector&ndash;emitter current (mA) flow. In his demo the collector current was about 1000&times; the base current. More base current gives more collector current; zero base current turns it off. So it is an electronic switch, a small current controlling a large one (his water-gate analogy).</li>
+<li><b>NPN</b> = P sandwiched between two N layers. You push current base &rarr; emitter, and the large current flows collector &rarr; emitter. <b>PNP</b> = N between two P layers; current flows emitter &rarr; base and emitter &rarr; collector. The <b>arrow on the emitter shows the current direction</b>.</li>
+<li><b>BC547</b> datasheet: <b>pin 1 C, pin 2 B, pin 3 E</b>; collector current max <b>100 mA</b>; up to <b>45 V</b> between collector and emitter. Very cheap. Big <b>power transistors</b> handle amps and have a hole for bolting to an aluminium <b>heat sink</b>. Small ones need no heat sink.</li>
+<li><b>Two separate circuits:</b> the pin supplies only the tiny base current (through the <b>1 k&Omega;</b>); the motor's current flows in the collector&ndash;emitter circuit from the <b>9 V battery</b>, whose &minus; terminal is joined to the Uno GND (<b>common ground</b>). The pin never carries the motor current.</li>
+<li><b>How to choose a transistor:</b> check two datasheet numbers against your load, the continuous collector (or drain) current and the maximum voltage. The kit motor (75 mA, 9 V) is fine on a BC547 (100 mA, 45 V). Don't buy a far bigger transistor than needed, as it just costs more.</li>
+</ul>
+
+<h3>L7. Flyback diode, in his words</h3>
+<p class="small">When the transistor turns off, the motor keeps spinning for a moment from <b>momentum</b>. A coil spinning in a magnetic field acts as a <b>dynamo</b>, and the collapsing field (<b>self-induction</b>) produces a high-voltage spike in the opposite direction. Through the transistor, that spike destroys it. A diode across the motor, <b>anode to the collector side, cathode to +V</b>, gives the spike a safe path to "fly back". Connect it the other way and there is no protection. It must handle the current and voltage: use a <b>1N4001 (1 A, 50 V)</b>, not a small signal diode. Same effect as the <b>choke in a fluorescent tube light</b>, which makes the high voltage that starts the tube when the starter opens. Reading: <code>Web Resources/06 - Applications of Diodes.md</code>.</p>
+
+<h3>L8. MOSFET as he taught it</h3>
+<ul class="small">
+<li><b>M</b>etal <b>O</b>xide <b>S</b>emiconductor <b>F</b>ield <b>E</b>ffect <b>T</b>ransistor. Pins: <b>Gate, Drain, Source</b>. <b>Voltage-driven</b>: the gate takes a voltage, not a current, "pressure, not flow" in his water analogy.</li>
+<li><b>Why modern designs prefer MOSFETs:</b> much <b>faster switching</b> and <b>less heat</b> (important in small wearable and portable devices). Downside: <b>more expensive</b> (2N7000 about Rs 10&ndash;15 vs BC547 a few rupees).</li>
+<li><b>N-channel:</b> a positive gate voltage lets current flow drain &rarr; source. <b>P-channel:</b> a negative gate voltage, current flows source &rarr; drain.</li>
+<li><b>No gate resistor</b> is needed in his circuit: no current flows into the gate, so there is nothing to limit.</li>
+<li><b>2N7000</b>: about <b>200 mA</b> drain current and <b>60 V</b>, plenty for the 75 mA / 9 V motor. Still needs the flyback diode.</li>
+<li>BJTs and MOSFETs <b>look identical</b> (same packages): you can only tell them apart by the part number and datasheet.</li>
+</ul>
+
+<h3>L9. Relays, as he taught them</h3>
+<ul class="small">
+<li>A relay is a <b>spring-loaded electromagnetic switch</b>. Current in the coil makes a magnetic field that pulls the contact over. When the current stops, the field collapses and the spring pulls the contact back. Terminals: <b>COM</b> (common), <b>NC</b> (normally closed), <b>NO</b> (normally open, closes when the coil is energised).</li>
+<li>Used for <b>high voltage and current</b>, e.g. a 230 V AC conveyor motor drawing 5&ndash;10 A, switched by a 5 V coil.</li>
+<li>Even a small 5 V relay coil needs <b>about 70 mA</b>, more than a pin's 40 mA. So drive it with a <b>BC547 + 1 k&Omega; + 1N4001 flyback diode</b> (the coil is an inductor too).</li>
+<li>A <b>relay breakout board</b> (~Rs 100&ndash;125) already has the relay, transistor, resistor, flyback diode, indicator LED and screw terminals. Still know how the circuit works, in case you have to build it.</li>
+<li><b>Rule of thumb:</b> use a <b>relay for 230 V AC</b> loads, a <b>transistor/MOSFET for DC</b> loads.</li>
+<li><b>Safety:</b> avoid experimenting with mains (230 V can be fatal) unless you are trained. Practise relays with DC supplies (a battery or wall adapter) instead.</li>
+<li><b>Ideas he gave:</b> an <b>auto light</b> (LDR + relay switching a 230 V lamp at nightfall) and an <b>auto fan</b> (LM35: fan on above 30 &deg;C, off below).</li>
+</ul>
+
 <h2>12. Common mistakes</h2>
 <table>
 <tr><th style="width:36%">Mistake</th><th>Result / fix</th></tr>

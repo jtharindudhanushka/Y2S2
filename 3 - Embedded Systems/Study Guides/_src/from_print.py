@@ -53,7 +53,38 @@ if old:
     old = ('<h2 style="border-bottom:2px solid var(--accent)">Part 1: Lesson notes (this year\'s slides and peer notes)</h2>\n'
            + old)
     head = ('\n<h2 style="border-bottom:2px solid var(--accent);margin-top:40px">Part 2: Beginner explanations, diagrams and lecture-recording notes (added)</h2>\n'
-            '<div class="box">Part 2 explains the same topics again from zero, with diagrams, worked solutions and building tips, '
-            'then adds <b>section L</b>: what the lecturer said in the 2020 recordings. Part 1 above is unchanged.</div>\n' + head)
-open(out, "w", encoding="utf-8").write(css + old + head + body.strip() + "\n")
+            '<div class="warn" style="color:var(--bad);font-weight:600"><b>About Part 2:</b> the numbered sections re-explain this year\'s slides and exercises from zero for beginners. '
+            '<b>Section L</b> near the end is derived from the <b>2020 lecture recordings</b>, so it may not match this year exactly: study it with caution and follow Part 1 / this year\'s slides where they disagree.</div>\n' + head)
+if old:
+    split = """<style>
+.splitbar{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0;margin:4px 0 10px;border-bottom:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap}
+.splitbar button{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.splitbar button[aria-pressed=true]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.parts.m-p1 .p2,.parts.m-p2 .p1{display:none}
+.parts.m-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.parts.m-split>div{max-height:82vh;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:0 12px}
+body.splitwide .wrap{max-width:1500px}
+@media(max-width:900px){.splitbar .sb-split{display:none}.parts.m-split{display:block}.parts.m-split>div{max-height:none;overflow:visible;border:0;padding:0}}
+</style>
+<div class="splitbar" role="group" aria-label="Choose what to show">
+<button type="button" data-m="both">Part 1 + Part 2</button>
+<button type="button" data-m="p1">Part 1 only (this year)</button>
+<button type="button" data-m="p2">Part 2 only (added)</button>
+<button type="button" data-m="split" class="sb-split">Side by side</button>
+</div>
+"""
+    js = """<script>
+(function(){var p=document.getElementById('parts'),bs=document.querySelectorAll('.splitbar button');
+function set(m){p.className='parts m-'+m;document.body.classList.toggle('splitwide',m==='split');
+for(var i=0;i<bs.length;i++)bs[i].setAttribute('aria-pressed',bs[i].getAttribute('data-m')===m?'true':'false');
+try{localStorage.setItem('es-parts',m)}catch(e){}}
+for(var i=0;i<bs.length;i++)bs[i].addEventListener('click',function(){set(this.getAttribute('data-m'))});
+var v='both';try{v=localStorage.getItem('es-parts')||'both'}catch(e){}set(v);})();
+</script>
+"""
+    page = (css + split + '<div class="parts m-both" id="parts"><div class="p1">' + old + '</div><div class="p2">'
+            + head + body.strip() + '</div></div>\n' + js)
+else:
+    page = css + head + body.strip() + "\n"
+open(out, "w", encoding="utf-8").write(page)
 print("wrote", out, len(body), "chars")

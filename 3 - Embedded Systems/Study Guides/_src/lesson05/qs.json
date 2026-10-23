@@ -1,34 +1,371 @@
 {
  "mcq": [
-  {"q":"A transducer:","o":["Stores energy","Converts energy or physical quantities from one form to another at the boundary of the system","Only amplifies signals","Is only an input"],"a":1,"e":"Sensors (input) and actuators (output)."},
-  {"q":"Which is a digital sensor?","o":["Accelerometer","Reed switch","Thumb joystick","Water level sensor"],"a":1,"e":"It gives two discrete states (closed or open)."},
-  {"q":"A reed switch:","o":["Is normally closed","Is normally open and closes in a magnetic field","Detects heat","Is analog"],"a":1,"e":"Detects presence of magnetic energy."},
-  {"q":"The AH1815 is a(n):","o":["Omnipolar Hall-effect switch with open-drain output","Temperature sensor","Accelerometer","Relay"],"a":0,"e":"Output is pulled low when the field exceeds the operating point (either pole)."},
-  {"q":"The open-drain output of a Hall switch needs:","o":["A pull-up resistor (the internal pull-up can be used)","A capacitor only","A flyback diode","Nothing"],"a":0,"e":"Otherwise the pin floats when the output is off."},
-  {"q":"PIR stands for:","o":["Pulse Interval Register","Pyroelectric InfraRed","Passive Input Relay","Power Input Rectifier"],"a":1,"e":"It detects variation of IR radiation in its field of view."},
-  {"q":"The ADXL335 accelerometer gives:","o":["One digital output","Three analog voltages (X, Y, Z)","A serial stream only","A relay signal"],"a":1,"e":"Needs three ADC channels."},
-  {"q":"A thumb joystick provides:","o":["One digital output","Two analog voltages (X and Y)","Three digital outputs","PWM"],"a":1,"e":"Two potentiometers."},
-  {"q":"A sound sensor module gives:","o":["Only digital output","Only analog output","Both an analog voltage and a threshold digital output","No output"],"a":2,"e":"Analog/digital sensor."},
-  {"q":"Actuators:","o":["Convert physical quantities to voltages","Convert electrical energy into other forms to change the physical world","Store data","Measure time"],"a":1,"e":"Motors, solenoids, lamps, heaters, relays."},
-  {"q":"Why can't a DC motor be driven directly from an I/O pin?","o":["It needs more current than the pin can supply","It is analog","Pins are inputs only","It needs a clock"],"a":0,"e":"Pins supply only about 20 mA."},
-  {"q":"The purpose of a flyback diode across a motor or relay coil is to:","o":["Increase torque","Absorb the voltage spike when the inductive load is switched off","Limit the supply voltage","Debounce"],"a":1,"e":"It gives the collapsing coil current a safe path."},
-  {"q":"A flyback diode is connected with its cathode to:","o":["Ground","The +V supply side of the coil","The transistor base","The pin"],"a":1,"e":"Reverse biased in normal operation."},
-  {"q":"In a BJT switch the base resistor:","o":["Is not needed","Limits the base current taken from the pin","Sets the motor speed","Replaces the flyback diode"],"a":1,"e":"R_B = (5 − 0.7) / I_B."},
-  {"q":"To saturate a BJT switching 100 mA you supply a base current of about:","o":["0.1 mA","1 mA","10 mA","100 mA"],"a":2,"e":"Rule of thumb: I_B ≈ I_C / 10."},
-  {"q":"The correct base resistor for I_B = 10 mA from a 5 V pin (V_BE = 0.7 V):","o":["43 Ω","430 Ω (use 330 or 470 Ω)","4.3 kΩ","43 kΩ"],"a":1,"e":"(5 − 0.7) / 0.01 = 430 Ω."},
-  {"q":"A MOSFET differs from a BJT because it is controlled by:","o":["Gate voltage (almost no current)","Base current","Heat","Magnetic field"],"a":0,"e":"The gate is insulated."},
-  {"q":"Why add a 10 kΩ resistor from the MOSFET gate to GND?","o":["To keep it off while the pin floats","To increase speed","To protect the load","It is the flyback diode"],"a":0,"e":"Defines the gate level during reset or programming."},
-  {"q":"The 2N7000 can switch up to about:","o":["2 mA","20 mA","200 mA","20 A"],"a":2,"e":"60 V and 200 mA continuous."},
-  {"q":"The BC547 is a:","o":["PNP transistor","NPN transistor","N-channel MOSFET","Diode"],"a":1,"e":"BC547: NPN, 45 V, 100 mA."},
-  {"q":"Which load is best switched by a relay?","o":["An LED","A 230 V lamp","A switch","An LM35"],"a":1,"e":"Isolated contacts. Only with qualified supervision."},
-  {"q":"The relay terminals COM and NO mean:","o":["Common and normally open","Coil and negative output","Control and no output","Counter and none"],"a":0,"e":"NO closes when the coil energises; NC opens."},
-  {"q":"When a motor and Arduino use separate supplies, you must:","o":["Not connect them","Join their grounds","Join their positive rails","Remove the diode"],"a":1,"e":"The transistor needs a common reference."},
-  {"q":"In the Hall sensor code, magnet present with a pull-up gives PIND bit:","o":["1","0","Undefined","Toggles"],"a":1,"e":"The open-drain output pulls the pin low."}
+  {
+   "q": "A transducer:",
+   "o": [
+    "Stores energy",
+    "Converts energy or physical quantities from one form to another at the boundary of the system",
+    "Only amplifies signals",
+    "Is only an input"
+   ],
+   "a": 1,
+   "e": "Sensors (input) and actuators (output)."
+  },
+  {
+   "q": "Which is a digital sensor?",
+   "o": [
+    "Accelerometer",
+    "Reed switch",
+    "Thumb joystick",
+    "Water level sensor"
+   ],
+   "a": 1,
+   "e": "It gives two discrete states (closed or open)."
+  },
+  {
+   "q": "A reed switch:",
+   "o": [
+    "Is normally closed",
+    "Is normally open and closes in a magnetic field",
+    "Detects heat",
+    "Is analog"
+   ],
+   "a": 1,
+   "e": "Detects presence of magnetic energy."
+  },
+  {
+   "q": "The AH1815 is a(n):",
+   "o": [
+    "Omnipolar Hall-effect switch with open-drain output",
+    "Temperature sensor",
+    "Accelerometer",
+    "Relay"
+   ],
+   "a": 0,
+   "e": "Output is pulled low when the field exceeds the operating point (either pole)."
+  },
+  {
+   "q": "The open-drain output of a Hall switch needs:",
+   "o": [
+    "A pull-up resistor (the internal pull-up can be used)",
+    "A capacitor only",
+    "A flyback diode",
+    "Nothing"
+   ],
+   "a": 0,
+   "e": "Otherwise the pin floats when the output is off."
+  },
+  {
+   "q": "PIR stands for:",
+   "o": [
+    "Pulse Interval Register",
+    "Pyroelectric InfraRed",
+    "Passive Input Relay",
+    "Power Input Rectifier"
+   ],
+   "a": 1,
+   "e": "It detects variation of IR radiation in its field of view."
+  },
+  {
+   "q": "The ADXL335 accelerometer gives:",
+   "o": [
+    "One digital output",
+    "Three analog voltages (X, Y, Z)",
+    "A serial stream only",
+    "A relay signal"
+   ],
+   "a": 1,
+   "e": "Needs three ADC channels."
+  },
+  {
+   "q": "A thumb joystick provides:",
+   "o": [
+    "One digital output",
+    "Two analog voltages (X and Y)",
+    "Three digital outputs",
+    "PWM"
+   ],
+   "a": 1,
+   "e": "Two potentiometers."
+  },
+  {
+   "q": "A sound sensor module gives:",
+   "o": [
+    "Only digital output",
+    "Only analog output",
+    "Both an analog voltage and a threshold digital output",
+    "No output"
+   ],
+   "a": 2,
+   "e": "Analog/digital sensor."
+  },
+  {
+   "q": "Actuators:",
+   "o": [
+    "Convert physical quantities to voltages",
+    "Convert electrical energy into other forms to change the physical world",
+    "Store data",
+    "Measure time"
+   ],
+   "a": 1,
+   "e": "Motors, solenoids, lamps, heaters, relays."
+  },
+  {
+   "q": "Why can't a DC motor be driven directly from an I/O pin?",
+   "o": [
+    "It needs more current than the pin can supply",
+    "It is analog",
+    "Pins are inputs only",
+    "It needs a clock"
+   ],
+   "a": 0,
+   "e": "Pins supply only about 20 mA."
+  },
+  {
+   "q": "The purpose of a flyback diode across a motor or relay coil is to:",
+   "o": [
+    "Increase torque",
+    "Absorb the voltage spike when the inductive load is switched off",
+    "Limit the supply voltage",
+    "Debounce"
+   ],
+   "a": 1,
+   "e": "It gives the collapsing coil current a safe path."
+  },
+  {
+   "q": "A flyback diode is connected with its cathode to:",
+   "o": [
+    "Ground",
+    "The +V supply side of the coil",
+    "The transistor base",
+    "The pin"
+   ],
+   "a": 1,
+   "e": "Reverse biased in normal operation."
+  },
+  {
+   "q": "In a BJT switch the base resistor:",
+   "o": [
+    "Is not needed",
+    "Limits the base current taken from the pin",
+    "Sets the motor speed",
+    "Replaces the flyback diode"
+   ],
+   "a": 1,
+   "e": "R_B = (5 − 0.7) / I_B."
+  },
+  {
+   "q": "To saturate a BJT switching 100 mA you supply a base current of about:",
+   "o": [
+    "0.1 mA",
+    "1 mA",
+    "10 mA",
+    "100 mA"
+   ],
+   "a": 2,
+   "e": "Rule of thumb: I_B ≈ I_C / 10."
+  },
+  {
+   "q": "The correct base resistor for I_B = 10 mA from a 5 V pin (V_BE = 0.7 V):",
+   "o": [
+    "43 Ω",
+    "430 Ω (use 330 or 470 Ω)",
+    "4.3 kΩ",
+    "43 kΩ"
+   ],
+   "a": 1,
+   "e": "(5 − 0.7) / 0.01 = 430 Ω."
+  },
+  {
+   "q": "A MOSFET differs from a BJT because it is controlled by:",
+   "o": [
+    "Gate voltage (almost no current)",
+    "Base current",
+    "Heat",
+    "Magnetic field"
+   ],
+   "a": 0,
+   "e": "The gate is insulated."
+  },
+  {
+   "q": "Why add a 10 kΩ resistor from the MOSFET gate to GND?",
+   "o": [
+    "To keep it off while the pin floats",
+    "To increase speed",
+    "To protect the load",
+    "It is the flyback diode"
+   ],
+   "a": 0,
+   "e": "Defines the gate level during reset or programming."
+  },
+  {
+   "q": "The 2N7000 can switch up to about:",
+   "o": [
+    "2 mA",
+    "20 mA",
+    "200 mA",
+    "20 A"
+   ],
+   "a": 2,
+   "e": "60 V and 200 mA continuous."
+  },
+  {
+   "q": "The BC547 is a:",
+   "o": [
+    "PNP transistor",
+    "NPN transistor",
+    "N-channel MOSFET",
+    "Diode"
+   ],
+   "a": 1,
+   "e": "BC547: NPN, 45 V, 100 mA."
+  },
+  {
+   "q": "Which load is best switched by a relay?",
+   "o": [
+    "An LED",
+    "A 230 V lamp",
+    "A switch",
+    "An LM35"
+   ],
+   "a": 1,
+   "e": "Isolated contacts. Only with qualified supervision."
+  },
+  {
+   "q": "The relay terminals COM and NO mean:",
+   "o": [
+    "Common and normally open",
+    "Coil and negative output",
+    "Control and no output",
+    "Counter and none"
+   ],
+   "a": 0,
+   "e": "NO closes when the coil energises; NC opens."
+  },
+  {
+   "q": "When a motor and Arduino use separate supplies, you must:",
+   "o": [
+    "Not connect them",
+    "Join their grounds",
+    "Join their positive rails",
+    "Remove the diode"
+   ],
+   "a": 1,
+   "e": "The transistor needs a common reference."
+  },
+  {
+   "q": "In the Hall sensor code, magnet present with a pull-up gives PIND bit:",
+   "o": [
+    "1",
+    "0",
+    "Undefined",
+    "Toggles"
+   ],
+   "a": 1,
+   "e": "The open-drain output pulls the pin low."
+  },
+  {
+   "q": "What does PIR stand for (as the lecturer stressed)?",
+   "o": [
+    "Passive InfraRed",
+    "Pyroelectric InfraRed",
+    "Proximity Infrared Receiver",
+    "Pulse Infrared"
+   ],
+   "a": 1,
+   "e": "Pyroelectric InfraRed; 'passive infrared' is the common mistake he pointed out."
+  },
+  {
+   "q": "Why are reed switches used where flammable gases are present?",
+   "o": [
+    "They are cheaper",
+    "The contacts and any spark are sealed inside a glass tube with inert gas",
+    "They need no power",
+    "They are analog"
+   ],
+   "a": 1,
+   "e": "An open switch's spark can ignite gas; the reed switch keeps it inside the sealed tube."
+  },
+  {
+   "q": "A PIR mounted facing the gate may miss an intruder because...",
+   "o": [
+    "It only detects movement across its field of view, not straight towards it",
+    "It only works at night",
+    "It needs a magnet",
+    "It is digital"
+   ],
+   "a": 0,
+   "e": "Mount it so people cross in front of it."
+  },
+  {
+   "q": "Why use a Hall effect sensor rather than a reed switch for ABS wheel speed?",
+   "o": [
+    "It is bigger",
+    "Solid state: faster switching, no wear, longer life",
+    "It detects light",
+    "It needs no magnet"
+   ],
+   "a": 1,
+   "e": "No mechanical contacts, so it is fast and durable; pulse rate gives RPM."
+  },
+  {
+   "q": "Compared with a BJT, a MOSFET is...",
+   "o": [
+    "Current-driven and cheaper",
+    "Voltage-driven, switches faster, runs cooler, but costs more",
+    "Identical in every way",
+    "Only for AC loads"
+   ],
+   "a": 1,
+   "e": "The gate takes a voltage, not a current; faster and cooler, more expensive."
+  },
+  {
+   "q": "A 5 V relay coil needs about 70 mA. How do you drive it from an ATmega328P pin?",
+   "o": [
+    "Directly from the pin",
+    "Through a BC547 with a 1 kΩ base resistor and a 1N4001 flyback diode across the coil",
+    "Through a 220 Ω resistor only",
+    "Through the ADC"
+   ],
+   "a": 1,
+   "e": "The pin gives at most 40 mA; the coil is an inductor so it needs a flyback diode."
+  },
+  {
+   "q": "Which module output is normally LOW and goes HIGH on detection?",
+   "o": [
+    "Flame sensor",
+    "Sound sensor",
+    "MQ gas sensor",
+    "Soil moisture sensor"
+   ],
+   "a": 2,
+   "e": "Gas (and PIR) go HIGH on detection; flame, sound and soil go LOW."
+  }
  ],
  "written": [
-  {"q":"Classify sensors with two examples of each class and explain how each class is read by the microcontroller.","a":"<p>Digital sensors (reed switch, Hall effect switch, PIR, flame) give two discrete voltages and are read on a digital pin with PINx / digitalRead (pull-up for open-drain or switch types). Analog sensors (water level, accelerometer, joystick, LDR, LM35) give a continuous voltage and are read by the ADC. Analog/digital sensors (sound, soil moisture, gas/smoke modules) provide both a continuous voltage and a threshold output.</p>"},
-  {"q":"A 6 V DC motor (150 mA) must be switched on and off from a 5 V pin. Design the driver with a BC547 and justify the component values.","a":"<p>Pin &rarr; R<sub>B</sub> &rarr; base; emitter to GND (common with the Arduino); motor from the 6 V (or 9 V) supply to the collector; 1N4001 across the motor with the cathode to +V. Saturation needs I<sub>B</sub> &asymp; 150/10 = 15 mA, R<sub>B</sub> = (5 &minus; 0.7)/0.015 = 287 &Omega;, use 270 &Omega;; but the pin limit is about 20 mA, so a MOSFET (2N7000 has 200 mA limit and negligible gate current) is the better driver. The flyback diode absorbs the spike when the motor coil is switched off.</p>"},
-  {"q":"Explain how a relay allows a microcontroller to control a mains lamp, and the precautions needed.","a":"<p>The pin switches a transistor that energises the relay coil (flyback diode across the coil). The relay contacts (COM and NO) are a separate circuit in series with the lamp's live wire, so the mains is isolated from the microcontroller. Precautions: qualified supervision, rated contacts, fuse, insulated enclosure, correct isolation, no breadboard or exposed wiring for mains.</p>"},
-  {"q":"Compare BJT and MOSFET switches for a microcontroller load.","a":"<p>The BJT (BC547) is current controlled and needs a base resistor sized for I<sub>B</sub> &asymp; I<sub>C</sub>/10; limit 100 mA. The MOSFET (2N7000) is voltage controlled, draws almost no gate current, switches faster (good for PWM), limit 200 mA; add a gate pull-down. Both need a flyback diode for inductive loads and a shared ground.</p>"}
+  {
+   "q": "Classify sensors with two examples of each class and explain how each class is read by the microcontroller.",
+   "a": "<p>Digital sensors (reed switch, Hall effect switch, PIR, flame) give two discrete voltages and are read on a digital pin with PINx / digitalRead (pull-up for open-drain or switch types). Analog sensors (water level, accelerometer, joystick, LDR, LM35) give a continuous voltage and are read by the ADC. Analog/digital sensors (sound, soil moisture, gas/smoke modules) provide both a continuous voltage and a threshold output.</p>"
+  },
+  {
+   "q": "A 6 V DC motor (150 mA) must be switched on and off from a 5 V pin. Design the driver with a BC547 and justify the component values.",
+   "a": "<p>Pin &rarr; R<sub>B</sub> &rarr; base; emitter to GND (common with the Arduino); motor from the 6 V (or 9 V) supply to the collector; 1N4001 across the motor with the cathode to +V. Saturation needs I<sub>B</sub> &asymp; 150/10 = 15 mA, R<sub>B</sub> = (5 &minus; 0.7)/0.015 = 287 &Omega;, use 270 &Omega;; but the pin limit is about 20 mA, so a MOSFET (2N7000 has 200 mA limit and negligible gate current) is the better driver. The flyback diode absorbs the spike when the motor coil is switched off.</p>"
+  },
+  {
+   "q": "Explain how a relay allows a microcontroller to control a mains lamp, and the precautions needed.",
+   "a": "<p>The pin switches a transistor that energises the relay coil (flyback diode across the coil). The relay contacts (COM and NO) are a separate circuit in series with the lamp's live wire, so the mains is isolated from the microcontroller. Precautions: qualified supervision, rated contacts, fuse, insulated enclosure, correct isolation, no breadboard or exposed wiring for mains.</p>"
+  },
+  {
+   "q": "Compare BJT and MOSFET switches for a microcontroller load.",
+   "a": "<p>The BJT (BC547) is current controlled and needs a base resistor sized for I<sub>B</sub> &asymp; I<sub>C</sub>/10; limit 100 mA. The MOSFET (2N7000) is voltage controlled, draws almost no gate current, switches faster (good for PWM), limit 200 mA; add a gate pull-down. Both need a flyback diode for inductive loads and a shared ground.</p>"
+  },
+  {
+   "q": "Explain how a BJT lets a microcontroller drive a 75 mA motor, and why a flyback diode is needed.",
+   "a": "<p>The pin (max 40 mA) drives a tiny base current through 1 k&Omega; into an NPN transistor; this allows a much larger collector&ndash;emitter current from a separate 9 V supply (common ground) to flow through the motor. When switched off, the spinning motor coil (self-induction) produces a reverse voltage spike that would destroy the transistor; a 1N4001 across the motor (cathode to +V) gives it a safe path.</p>"
+  },
+  {
+   "q": "Give two advantages and two disadvantages of thermoelectric (Peltier) coolers.",
+   "a": "<p>Advantages: no moving parts or compressed gas (reliable, long life, maintenance free); same device heats and cools. Disadvantages: high cost per unit of cooling; poor power efficiency (e.g. 12 V 5 A = 60 W for a 2&times;2 inch module).</p>"
+  }
  ]
 }

@@ -99,7 +99,23 @@ b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;ma
 table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
 .led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
 </style>
-<h2 style="border-bottom:2px solid var(--accent)">Part 1: Lesson notes (this year's slides and peer notes)</h2>
+<style>
+.splitbar{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0;margin:4px 0 10px;border-bottom:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap}
+.splitbar button{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.splitbar button[aria-pressed=true]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.parts.m-p1 .p2,.parts.m-p2 .p1{display:none}
+.parts.m-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.parts.m-split>div{max-height:82vh;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:0 12px}
+body.splitwide .wrap{max-width:1500px}
+@media(max-width:900px){.splitbar .sb-split{display:none}.parts.m-split{display:block}.parts.m-split>div{max-height:none;overflow:visible;border:0;padding:0}}
+</style>
+<div class="splitbar" role="group" aria-label="Choose what to show">
+<button type="button" data-m="both">Part 1 + Part 2</button>
+<button type="button" data-m="p1">Part 1 only (this year)</button>
+<button type="button" data-m="p2">Part 2 only (added)</button>
+<button type="button" data-m="split" class="sb-split">Side by side</button>
+</div>
+<div class="parts m-both" id="parts"><div class="p1"><h2 style="border-bottom:2px solid var(--accent)">Part 1: Lesson notes (this year's slides and peer notes)</h2>
 <p class="sm" style="color:var(--muted)">Sources: lecture 03 (I/O Port Programming), Exercise 1 with answers, Exercise 2, peer notes pages 13 to 27, and the AVR instruction set manual. The exam gives you the <b>ATmega328P Simplified Data Sheet</b> and the <b>C and Arduino cheat sheets</b>; this lesson shows how to use them.</p>
 
 <h2>Learning outcomes</h2>
@@ -393,9 +409,9 @@ LOOP2: DEC R17
 </ol>
 
 <div class="warn"><b>Common mistakes</b>1) <code>F_CPU</code> defined after <code>#include &lt;util/delay.h&gt;</code>. 2) Writing <code>DDRB = 0x01</code> (destroys other bits) instead of <code>|=</code>. 3) Reading <code>PORTx</code> instead of <code>PINx</code>. 4) LED without a resistor, or LED reversed. 5) No pull-up on the button input (floating pin). 6) <code>BRNE</code> counts: forgetting that the last iteration costs 1 less cycle.</div>
-
+</div><div class="p2">
 <h2 style="border-bottom:2px solid var(--accent);margin-top:40px">Part 2: Beginner explanations, diagrams and lecture-recording notes (added)</h2>
-<div class="box">Part 2 explains the same topics again from zero, with diagrams, worked solutions and building tips, then adds <b>section L</b>: what the lecturer said in the 2020 recordings. Part 1 above is unchanged.</div>
+<div class="warn" style="color:var(--bad);font-weight:600"><b>About Part 2:</b> the numbered sections re-explain this year's slides and exercises from zero for beginners. <b>Section L</b> near the end is derived from the <b>2020 lecture recordings</b>, so it may not match this year exactly: study it with caution and follow Part 1 / this year's slides where they disagree.</div>
 <p class="sm" style="color:var(--muted)">Sources: lecture 03 slides, the six I/O-port lecture recordings from 2020 (section L), Exercises 1 and 2 with answers, and the peer notes. Printable as <code>Print Notes/Lesson 03 - IO Port Programming.pdf</code>.</p>
 <div class="key">
 <b class="t">What you will be able to do after this lesson</b>
@@ -1594,7 +1610,15 @@ Flash is split into a <b>bootloader section</b> and an <b>application section</b
 <tr><td>Mixing Arduino pin numbers and port bits</td><td>Pin 13 = PB5. Pin 8 = PB0. A0 = PC0. Keep the map handy.</td></tr>
 <tr><td>Using pins 0 and 1 for parts</td><td>They are the serial pins (RX, TX). They conflict with uploading and USB.</td></tr>
 <tr><td>No endless loop in <code>main</code></td><td>The CPU runs off the end of the program. Always <code>while(1)</code>.</td></tr>
-</table>
+</table></div></div>
+<script>
+(function(){var p=document.getElementById('parts'),bs=document.querySelectorAll('.splitbar button');
+function set(m){p.className='parts m-'+m;document.body.classList.toggle('splitwide',m==='split');
+for(var i=0;i<bs.length;i++)bs[i].setAttribute('aria-pressed',bs[i].getAttribute('data-m')===m?'true':'false');
+try{localStorage.setItem('es-parts',m)}catch(e){}}
+for(var i=0;i<bs.length;i++)bs[i].addEventListener('click',function(){set(this.getAttribute('data-m'))});
+var v='both';try{v=localStorage.getItem('es-parts')||'both'}catch(e){}set(v);})();
+</script>
 
 </section>
 

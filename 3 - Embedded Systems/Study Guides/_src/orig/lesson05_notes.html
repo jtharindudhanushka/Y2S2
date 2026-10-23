@@ -1,0 +1,112 @@
+<p class="sm" style="color:var(--muted)">Sources: lecture 06 (Transducers), datasheets for the AH1815 Hall switch, ADXL335 accelerometer, BC547 NPN transistor, 2N7000 MOSFET and 1N4001 diode, "Applications of Diodes" reference, peer note page 38 (only the PIR expansion was noted). The component values quoted come from those datasheets.</p>
+
+<h2>Learning outcomes</h2>
+<ul>
+  <li>Explain the role of transducers and classify sensors (digital, analog, both) and actuators</li>
+  <li>Explain how common sensors capture the physical world and how common actuators change it</li>
+  <li>Interface sensors and actuators with an ATmega328P, including loads that need more than a pin can supply</li>
+  <li>Design a transistor / MOSFET / relay driver and explain the flyback diode</li>
+</ul>
+
+<h2>1. What is a transducer?</h2>
+<ul>
+  <li>Converts <b>energy or physical quantities from one form to another</b>.</li>
+  <li>Used at the <b>boundary of an embedded system</b>.</li>
+  <li>Classified by the direction of conversion: <b>sensors</b> (physical quantity &rarr; electrical signal, inputs) and <b>actuators</b> (electrical energy &rarr; other forms, outputs).</li>
+</ul>
+
+<h2>2. Sensors</h2>
+<p>Sensors capture the <b>state of the physical world as inputs</b>. They are <b>digital</b> (two discrete voltages, read through a digital input pin with <code>PINx</code> / <code>digitalRead</code>), <b>analog</b> (a continuous voltage, read with the ADC) or both.</p>
+<table>
+  <tr><th>Sensor</th><th>Type</th><th>What it does</th><th>Interface</th></tr>
+  <tr><td>Reed switch</td><td>Digital</td><td>Normally open; <b>closes when a magnetic field is present</b>. Detects presence or absence of magnetic energy, two discrete voltages.</td><td>One pin to GND, pull-up on</td></tr>
+  <tr><td>Hall effect sensor (AH1815)</td><td>Digital</td><td>Detects presence or absence of a magnet, two discrete voltages. AH1815 is an <b>omnipolar</b> switch: either pole turns the output on (pulled low) when the field exceeds the operating point B<sub>op</sub>, off again below the release point B<sub>rp</sub>. Open-drain output, supply 2.5 to 5.5 V.</td><td>Needs a pull-up on the output (the internal pull-up works); output low = magnet near</td></tr>
+  <tr><td>PIR sensor</td><td>Digital</td><td><b>P</b>yroelectric <b>I</b>nfra<b>R</b>ed: detects variation of IR radiation in its field of view (a moving person), two discrete voltages</td><td>Digital input</td></tr>
+  <tr><td>Flame sensor</td><td>Digital</td><td>Detects IR energy emitted from a fire, two discrete voltages</td><td>Digital input</td></tr>
+  <tr><td>Water level sensor</td><td>Analog</td><td>Continuous water level &rarr; continuous voltage</td><td>ADC</td></tr>
+  <tr><td>Accelerometer (ADXL335)</td><td>Analog</td><td>Linear acceleration in 3D &rarr; <b>three</b> continuous voltages X<sub>out</sub>, Y<sub>out</sub>, Z<sub>out</sub>. &plusmn;3 g, 1.8 to 3.6 V supply, about 300 mV/g at 3 V, 0 g at about half the supply.</td><td>3 ADC channels</td></tr>
+  <tr><td>Thumb joystick</td><td>Analog</td><td>Continuous displacement along X and Y &rarr; <b>two</b> voltages (each a potentiometer)</td><td>2 ADC channels</td></tr>
+  <tr><td>Sound sensor</td><td>Analog/digital</td><td>Sound variation &rarr; continuous voltage <b>and</b> two discrete voltages (threshold comparator)</td><td>ADC or digital pin</td></tr>
+  <tr><td>Soil moisture sensor</td><td>Analog/digital</td><td>Moisture level &rarr; continuous voltage and a threshold output</td><td>ADC or digital pin</td></tr>
+  <tr><td>Gas / smoke sensor</td><td>Analog/digital</td><td>Gas concentration &rarr; continuous voltage and a threshold output</td><td>ADC or digital pin</td></tr>
+  <tr><td>LDR, LM35 (lesson 4)</td><td>Analog</td><td>Light &rarr; resistance; temperature &rarr; 10 mV/&deg;C</td><td>ADC</td></tr>
+</table>
+<div class="box"><b>Choosing digital or analog use</b>Digital output tells only "above the threshold or not" (the threshold is set by a trimmer on the module); the analog output tells <i>how much</i>. For the analog/digital modules use the analog output when you need a value and the digital output when you only need an event (which you can also attach to an interrupt).</div>
+
+<h2>3. Actuators</h2>
+<p>Actuators <b>convert electrical energy into other forms</b> and change the state of the physical world. Many need a higher voltage or more current than an I/O pin can deliver.</p>
+<p><b>The ATmega328P pin limits:</b> about 20 mA per pin recommended (40 mA absolute maximum), about 200 mA total for the chip. A small DC motor, a relay coil, a solenoid or a bulb will exceed this, so a <b>driver</b> is needed.</p>
+<table>
+  <tr><th>Actuator</th><th>Converts to</th><th>Note</th></tr>
+  <tr><td>LED (and RGB LED)</td><td>Light (red, green, blue in an RGB LED)</td><td>Pin + series resistor is enough; RGB LEDs mix colours with PWM</td></tr>
+  <tr><td>Incandescent bulb</td><td>Visible light and heat</td><td>Needs a higher voltage and current than a pin can deliver</td></tr>
+  <tr><td>DC motor</td><td>Kinetic energy (circular motion)</td><td>Even small ones draw more than a pin can deliver; inductive (needs a flyback diode)</td></tr>
+  <tr><td>Solenoid</td><td>Kinetic energy (linear motion)</td><td>Higher voltage and current; inductive</td></tr>
+  <tr><td>Thermoelectric cooler / heater</td><td>Thermal energy</td><td>Higher voltage and current</td></tr>
+  <tr><td>Relay</td><td>Mechanical switching of another circuit</td><td>Allows mains loads; isolated coil and contacts</td></tr>
+</table>
+
+<h2>4. Driving a load with a BJT (BC547)</h2>
+<ul>
+  <li>An <b>NPN</b> BJT is a current-controlled switch: a small <b>base</b> current lets a much larger current flow from <b>collector to emitter</b>. (PNP is the complementary type.)</li>
+  <li>Circuit: microcontroller pin &rarr; <b>base resistor R<sub>B</sub></b> &rarr; base; emitter to <b>GND</b> (common with the microcontroller); load between the <b>load supply +V</b> and the <b>collector</b>.</li>
+  <li><b>Flyback diode</b> across an inductive load (motor, relay, solenoid): <b>cathode to +V, anode to the collector</b>. When the transistor switches off, the coil's collapsing field drives current back through the diode instead of producing a high voltage spike that could destroy the transistor or the pin. The kit uses a <b>1N4001</b> rectifier diode (50 V reverse, 1 A forward, about 1.1 V forward drop).</li>
+</ul>
+<pre><code>          +V (motor supply, e.g. 9 V battery +)
+            |                 |
+          ( M )  motor      -----  1N4001 flyback diode
+            |                 ^    (cathode band to +V, anode to collector)
+            |-----------------|
+            C
+  pin --[ R_B ]-- B   BC547 (NPN)
+            E
+            |
+           GND  (battery - and Arduino GND joined)</code></pre>
+<h3>Choosing R<sub>B</sub></h3>
+<p>To <b>saturate</b> the transistor (fully on) force the base current to about one tenth of the collector current: I<sub>B</sub> &asymp; I<sub>C</sub> / 10 (less than the gain h<sub>FE</sub>, which is 110 or more for a BC547). Then R<sub>B</sub> = (V<sub>pin</sub> &minus; V<sub>BE</sub>) / I<sub>B</sub> with V<sub>pin</sub> = 5 V and V<sub>BE</sub> &asymp; 0.7 V.</p>
+<div class="box"><b>Worked example</b>A 6 V motor draws 100 mA. I<sub>B</sub> = 100 mA / 10 = 10 mA. R<sub>B</sub> = (5 &minus; 0.7) / 0.010 = 430 &Omega;, use <b>330 &Omega; or 470 &Omega;</b> (the pin supplies 13 mA at 330 &Omega;, still within the pin limit). With 1 k&Omega; the base current is 4.3 mA, which saturates the transistor only up to about 43 mA. The BC547 handles up to 100 mA continuous (45 V V<sub>CEO</sub>); above that choose a power transistor.</div>
+
+<h2>5. Driving a load with a MOSFET (2N7000)</h2>
+<ul>
+  <li>An <b>N-channel enhancement MOSFET</b> is <b>voltage</b> controlled: the <b>gate</b> draws practically no current in steady state. Terminals: gate G, drain D (load side), source S (to GND).</li>
+  <li>2N7000: 60 V drain-source, 200 mA continuous, gate threshold 0.8 to 3 V, so a 5 V pin turns it on fully (logic-level). On-resistance a few ohms at V<sub>GS</sub> = 4.5 to 10 V.</li>
+  <li>Wiring: pin &rarr; gate (optionally through about 100 &Omega; to limit switching current); a <b>10 k&Omega; pull-down</b> from gate to GND keeps it off while the pin floats (during reset or programming); load from +V to drain; source to GND; flyback diode across inductive loads.</li>
+</ul>
+<table>
+  <tr><th></th><th>BJT (BC547)</th><th>MOSFET (2N7000)</th></tr>
+  <tr><td>Control</td><td>Base <b>current</b> (needs R<sub>B</sub>)</td><td>Gate <b>voltage</b> (very little current)</td></tr>
+  <tr><td>Load limit (kit parts)</td><td>100 mA continuous</td><td>200 mA continuous</td></tr>
+  <tr><td>Best use</td><td>Simple switching of small loads</td><td>PWM at high speed, low drive current</td></tr>
+</table>
+
+<h2>6. Switching with a relay</h2>
+<ul>
+  <li>A relay is an electromagnetic switch. A small coil current (from a transistor driver) closes the contacts of a <b>separate, isolated circuit</b>, so the microcontroller never touches the load voltage.</li>
+  <li>Contacts: <b>COM</b> (common), <b>NO</b> (normally open), <b>NC</b> (normally closed). The coil needs a <b>transistor driver and a flyback diode</b>. Relay modules include the transistor, diode and an indicator LED.</li>
+  <li>Use a relay (or a solid-state relay) for <b>AC mains</b> loads. Only with qualified supervision, correct isolation and enclosure.</li>
+</ul>
+
+<h2>7. Reading a digital sensor (code pattern)</h2>
+<pre><code>// Hall switch AH1815 on PD2 (output low when a magnet is near), motor driver on PB0
+DDRB |=  (1&lt;&lt;DDB0);                  // motor transistor base
+DDRD &amp;= ~(1&lt;&lt;DDD2);                  // sensor input
+PORTD |= (1&lt;&lt;PORTD2);                 // pull-up for the open-drain output
+while (1) {
+    if ((PIND &amp; (1&lt;&lt;PIND2)) == 0)     // magnet present
+        PORTB |=  (1&lt;&lt;PORTB0);        // motor on
+    else
+        PORTB &amp;= ~(1&lt;&lt;PORTB0);        // motor off
+}</code></pre>
+<pre><code>// Arduino
+void setup() { pinMode(8, OUTPUT); pinMode(2, INPUT_PULLUP); }
+void loop()  { digitalWrite(8, digitalRead(2) == LOW); }</code></pre>
+
+<h2>8. Diode applications (reference reading)</h2>
+<ul>
+  <li><b>Rectification</b> (1N400X series): AC to DC; 1N4001 withstands 50 V reverse and 1 A.</li>
+  <li><b>Flyback / freewheeling</b> protection across relay coils, motors and solenoids.</li>
+  <li><b>Reverse-polarity protection</b> in series with a battery input.</li>
+  <li><b>LED</b> indicators (light emitting diodes), signal clamping and logic.</li>
+</ul>
+
+<div class="warn"><b>Common mistakes</b>1) Driving a motor straight from a pin. 2) Forgetting the flyback diode or fitting it backwards. 3) Not joining the grounds of the motor supply and the Arduino. 4) Using no pull-down on a MOSFET gate. 5) R<sub>B</sub> too large to saturate the BJT, which makes it hot. 6) Powering a motor from the 5 V pin of the Arduino (use a separate supply). 7) Connecting a mains circuit on a breadboard.</div>
