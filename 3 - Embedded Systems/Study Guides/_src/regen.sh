@@ -11,4 +11,5 @@ python -I from_print.py "$P/lesson06.html" lesson05/notes.html "Sources: lecture
 fi
 python -I from_print.py "$P/lesson07.html" lesson06/notes.html "Sources: lecture 07 slides (Systems 10&ndash;13), Exercise 5, and the two timing-and-counting lecture recordings from 2020 (section L). Printable as <code>Print Notes/Lesson 07 - Timing and Counting.pdf</code>." orig/lesson06_notes.html
 python -I from_print.py "$P/lesson08.html" lesson07/notes.html "Sources: lecture 08 slides (System 15), Exercise 6, and the three PWM lecture recordings from 2020 (section L). Printable as <code>Print Notes/Lesson 08 - Pulse Width Modulation.pdf</code>." orig/lesson07_notes.html
+python -I from_print.py "$P/lesson09.html" lesson08/notes.html "Sources: lecture 09 slides (Systems 16&ndash;17), Exercise 7, and the six serial-communication lecture recordings from 2020 (section L). Printable as <code>Print Notes/Lesson 09 - Serial Communication.pdf</code>." orig/lesson08_notes.html
 python -I build.py

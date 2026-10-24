@@ -15,4 +15,7 @@
   <tr><td>Strings</td><td>'-55' / '150' need 3 chars + '\0' = 4 elements. <code>itoa(n, buf, 10)</code>.</td></tr>
   <tr><td>stdio</td><td><code>FDEV_SETUP_STREAM(put, get, _FDEV_SETUP_RW)</code>; <code>stdin = stdout = &amp;stream</code>; getchar/printf. Pros: portable, convenient; cons: memory, speed.</td></tr>
   <tr><td>C# app</td><td>SerialPort, DataReceived on another thread: use Invoke/BeginInvoke; send 'Y'/'N'; close port on exit.</td></tr>
+  <tr><td>2020 lecture: why</td><td>Serial saves pins (8-bit parallel = 16 pins); crosstalk; separate USART frees the single slow CPU ("living on another planet").</td></tr>
+  <tr><td>2020 lecture: hardware</td><td>RS-232 1 = &minus;3..&minus;25 V, 0 = +3..+25 V &rarr; MAX232 (Severino); FT232 needs FTDI driver (Duemilanove); Uno R3 uses ATmega16U2 with its own crystal. TX&rarr;RX crossed. Nothing on D0/D1.</td></tr>
+  <tr><td>2020 lecture: exam whys</td><td>Baud rates are multiples of 80 (80-char terminal lines); UL avoids 16-bit overflow (709 instead of 103); UDRE = max throughput, TXC = all sent (half-duplex, power off); error &lt; 2.5%, 0% with 18.432 MHz.</td></tr>
 </table>
