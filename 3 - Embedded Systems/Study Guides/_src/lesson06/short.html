@@ -11,4 +11,7 @@
   <tr><td>Pattern</td><td>Set CS, load TCNT, poll TOV (or TOIE + sei), reload TCNT, clear TOV.</td></tr>
   <tr><td>Random</td><td><code>stdlib.h</code>: <code>srand(seed)</code>, <code>rand()</code>; <code>1 + rand() % 10</code>. Seed from TCNT0 at a button press or from a floating ADC pin. Arduino: <code>randomSeed</code>, <code>random(min,max)</code>.</td></tr>
   <tr><td>Reaction timer</td><td>Ready, react buttons; blue signal LED; green &lt; 1 s, orange 1 to &lt; 2 s, red &ge; 2 s; T1 overflow = 1 s.</td></tr>
+  <tr><td>2020 lecture: why</td><td>Delay loop = busy wait on the only core; hardware timer frees the CPU and is more precise (use it in critical systems).</td></tr>
+  <tr><td>2020 lecture: pins</td><td>T0 = D4, T1 = D5; Timer2 TOSC pins hold the crystal, so no external counting on Timer2.</td></tr>
+  <tr><td>2020 lecture: rules</td><td>Flag: write 1 to clear; ISR clears TOV itself. Use <code>&gt;=</code> not <code>==</code> when polling a count. Exactly n: preload max &minus; n + 1, reload the preload (not 0). No prescaler on Tn. No optimal prescale.</td></tr>
 </table>

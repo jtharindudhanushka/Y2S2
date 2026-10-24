@@ -70,7 +70,7 @@ document.documentElement.dataset.theme=t;})();
 
   <div class="top"><p class="crumb"><a href="index.html">&larr; Embedded Systems study guides</a> &middot; INTE 22263 &middot; Lesson 06</p><button id="theme" type="button"></button></div>
   <h1>Timing and Counting</h1>
-  <p class="lead">Covers lecture 07 and exercise 5: why timers/counters, how an 8-bit and a 16-bit timer work, elapsed-time and initial-value formulas, the registers TCCRnB, TCNTn, TIFRn (write-one-to-clear) and TIMSKn, systems 10 to 14 (count events, 200 ms blinker, polling and interrupts), and the reaction timer exercise with random numbers. Built from the slides and peer notes pages 39 to 40.</p>
+  <p class="lead">Covers lecture 07 and exercise 5: why timers/counters, how an 8-bit and a 16-bit timer work, elapsed-time and initial-value formulas, the registers TCCRnB, TCNTn, TIFRn (write-one-to-clear) and TIMSKn, systems 10 to 14 (count events, 200 ms blinker, polling and interrupts), and the reaction timer exercise with random numbers. Built from the slides and peer notes pages 39 to 40. Part 2 adds beginner explanations with diagrams, the reaction timer built step by step, and what the lecturer explained in the two 2020 timing-and-counting recordings.</p>
   <div class="warn" style="font-weight:600;color:var(--bad)"><b>Caution:</b> the parts marked as coming from the <b>lecture recordings</b> (section L in Part 2 of the Lesson tab, and related questions) are from <b>old 2020 videos</b>. Some details may not apply to this year's course, so study them with caution. Where they disagree, follow <b>this year's slides and exercises</b> (Part 1).</div>
 
   <nav class="tabs" role="tablist">
@@ -81,6 +81,41 @@ document.documentElement.dataset.theme=t;})();
   </nav>
 
 <section class="panel on" id="notes">
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<style>
+.splitbar{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0;margin:4px 0 10px;border-bottom:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap}
+.splitbar button{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.splitbar button[aria-pressed=true]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.parts.m-p1 .p2,.parts.m-p2 .p1{display:none}
+.parts.m-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.parts.m-split>div{max-height:82vh;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:0 12px}
+body.splitwide .wrap{max-width:1500px}
+@media(max-width:900px){.splitbar .sb-split{display:none}.parts.m-split{display:block}.parts.m-split>div{max-height:none;overflow:visible;border:0;padding:0}}
+</style>
+<div class="splitbar" role="group" aria-label="Choose what to show">
+<button type="button" data-m="both">Part 1 + Part 2</button>
+<button type="button" data-m="p1">Part 1 only (this year)</button>
+<button type="button" data-m="p2">Part 2 only (added)</button>
+<button type="button" data-m="split" class="sb-split">Side by side</button>
+</div>
+<div class="parts m-both" id="parts"><div class="p1"><h2 style="border-bottom:2px solid var(--accent)">Part 1: Lesson notes (this year's slides and peer notes)</h2>
 <p class="sm" style="color:var(--muted)">Sources: lecture 07 (Timing and Counting), Exercise 5, peer notes pages 39 and 40, the ATmega328P simplified data sheet (timer registers). Prerequisites: lessons 2 and 3. PWM modes (lesson 7) use the same timers.</p>
 
 <h2>Learning outcomes</h2>
@@ -339,6 +374,511 @@ void loop() {
   <tr><td>Hardware use</td><td>Uses Timer0/Timer1 directly</td><td>Uses Timer0 internally for <code>millis()</code>/<code>delay()</code></td></tr>
 </table>
 <div class="warn"><b>Common mistakes</b>1) Forgetting to reload TCNT in the loop or ISR. 2) Writing 0 instead of 1 to clear TOV. 3) Wrong initial value (+1 error): initial = max &minus; n + 1. 4) Mixing up the CS bits (for example 011 is /64, 101 is /1024). 5) Using Timer1 registers with TCCR0B. 6) Forgetting that an external-clock timer needs the pin as input with a pull-up. 7) Debounce capacitor missing when counting button presses. 8) <code>rand()</code> without <code>srand()</code> gives the same wait every time.</div>
+</div><div class="p2">
+<h2 style="border-bottom:2px solid var(--accent);margin-top:40px">Part 2: Beginner explanations, diagrams and lecture-recording notes (added)</h2>
+<div class="warn" style="color:var(--bad);font-weight:600"><b>About Part 2:</b> the numbered sections re-explain this year's slides and exercises from zero for beginners. <b>Section L</b> near the end is derived from the <b>2020 lecture recordings</b>, so it may not match this year exactly: study it with caution and follow Part 1 / this year's slides where they disagree.</div>
+<p class="sm" style="color:var(--muted)">Sources: lecture 07 slides (Systems 10&ndash;13), Exercise 5, and the two timing-and-counting lecture recordings from 2020 (section L). Printable as <code>Print Notes/Lesson 07 - Timing and Counting.pdf</code>.</p>
+<div class="key">
+<b class="t">What you will be able to do after this lesson</b>
+<ul>
+<li>Explain <b>why</b> we use hardware timers and counters instead of software delay loops and software counters.</li>
+<li>Explain how a timer counts, what <b>overflow</b> and the <b>TOV flag</b> are, and how elapsed time is calculated.</li>
+<li>Use <code>TCCRnB</code>, <code>TCNTn</code>, <code>TIFRn</code> and <code>TIMSKn</code> to <b>count events</b> on the T0/T1 pin and to make <b>precise delays</b>.</li>
+<li>Calculate the <b>initial (preload) value</b> for any count or any delay, by polling or with an interrupt.</li>
+</ul>
+</div>
+
+<div class="box small">
+<b class="t">Given to you in the exam</b>
+The register sheet shows the bit names and positions of the timer registers (<code>TCCR0B</code>, <code>TCCR1B</code>, <code>TIFR0/1</code>, <code>TIMSK0/1</code>) and the Arduino pin sheet shows that <b>D4 = PD4 = T0</b> and <b>D5 = PD5 = T1</b>. Check your printed copies. <b>What the CS bit codes mean, the formulas and the TOV rules below are "learn it".</b>
+</div>
+
+<h2>1. Why hardware timers and counters?</h2>
+<p>A microcontroller is a <b>single-chip computer</b>: one CPU plus <b>peripherals</b> on the same chip. You already used two peripherals: the <b>ports</b> (Lesson 3) and the <b>ADC</b> (Lesson 5). The <b>timer/counter</b> is a third one. It is a separate piece of hardware that counts pulses <b>by itself</b>, while the CPU does something else.</p>
+<p>Two jobs come up again and again:</p>
+<ul>
+<li><b>Timing</b>: measure the time between two events, or wait a precise time (blink every 200 ms).</li>
+<li><b>Counting</b>: count events, for example items passing on a conveyor belt, or people crossing an infrared beam at a door.</li>
+</ul>
+<p>Both can be done in <b>software</b>, which is what you did so far:</p>
+<div class="two">
+<div>
+<pre>// software timing: 1 minute
+int i = 0;
+while (1) {
+    _delay_ms(1000);   // CPU spins 1 s
+    i++;
+    if (i == 60) { /* 1 minute */ }
+}</pre>
+</div>
+<div>
+<pre>// software counting: people
+int count = 0;
+while (1) {
+    if (beam sensor is LOW)
+        count++;       // CPU watches
+}</pre>
+</div>
+</div>
+<p>The problem: a delay loop is a <b>busy wait</b>. The CPU runs an empty loop just to burn time, so it <b>cannot do anything else</b>. The ATmega328P has <b>one core</b>, so that time is completely wasted. (On a PC you don't notice this, because a multi-core processor runs other work on the other cores.)</p>
+<table>
+<tr><th></th><th>Software (delay loop / variable)</th><th>Hardware timer / counter</th></tr>
+<tr><td>CPU while timing/counting</td><td>tied up (busy wait or constant checking)</td><td><b>free</b> to do another task</td></tr>
+<tr><td>Precision</td><td>approximate (depends on the code around it)</td><td><b>exact</b>: counts crystal clock pulses</td></tr>
+<tr><td>When to use</td><td>quick tests</td><td>anything time-critical; the efficient way</td></tr>
+</table>
+
+<h2>2. Timer or counter? Same hardware, different clock source</h2>
+<p>Inside, a timer is just a <b>register that adds 1 on every pulse it receives</b>. Where the pulses come from decides its name:</p>
+<ul>
+<li>Pulses from the <b>internal oscillator</b> (the 16 MHz crystal, optionally slowed by the <b>prescaler</b>): the pulses arrive at a known rate, so the count tells you <b>time</b>. It works as a <b>timer</b>.</li>
+<li>Pulses from an <b>external source on the Tn pin</b> (a button, an IR beam sensor, a door switch): each pulse is one event, so the count tells you <b>how many events</b>. It works as a <b>counter</b>.</li>
+</ul>
+<p>The choice is made by the three <b>clock select (CS) bits</b> in <code>TCCRnB</code>. The <i>n</i> is the timer number: 0, 1 or 2.</p>
+
+<div class="fig">
+<svg viewBox="0 0 680 230" font-family="Arial" font-size="12">
+  <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.8">
+    <rect x="10" y="30" width="100" height="44"/>
+    <rect x="140" y="30" width="110" height="44"/>
+    <rect x="10" y="140" width="100" height="44"/>
+    <rect x="300" y="70" width="90" height="80"/>
+    <rect x="420" y="88" width="120" height="44"/>
+    <rect x="570" y="88" width="100" height="44"/>
+    <rect x="570" y="170" width="100" height="44"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="60" y="50" font-weight="bold">oscillator</text><text x="60" y="66" font-size="11">16 MHz crystal</text>
+    <text x="195" y="50" font-weight="bold">prescaler</text><text x="195" y="66" font-size="11">&divide; 1, 8, 64, 256, 1024</text>
+    <text x="60" y="160" font-weight="bold">Tn pin</text><text x="60" y="176" font-size="11">button / sensor</text>
+    <text x="345" y="100" font-weight="bold">CS bits</text><text x="345" y="116" font-size="11">of TCCRnB</text><text x="345" y="132" font-size="11">(selector)</text>
+    <text x="480" y="108" font-weight="bold">TCNTn</text><text x="480" y="124" font-size="11">+1 per pulse</text>
+    <text x="620" y="108" font-weight="bold">TOVn flag</text><text x="620" y="124" font-size="11">in TIFRn</text>
+    <text x="620" y="190" font-weight="bold">interrupt</text><text x="620" y="206" font-size="11">if TOIEn = 1</text>
+  </g>
+  <path d="M110 52H138M250 52H275V95H298M110 162H275V125H298M390 110H418M540 110H568M620 132V168" stroke="currentColor" stroke-width="1.8" fill="none" marker-end="url(#a1)"/>
+  <text x="200" y="100" font-size="11" text-anchor="middle">internal pulses = TIMER</text>
+  <text x="190" y="200" font-size="11" text-anchor="middle">external pulses = COUNTER</text>
+  <text x="555" y="80" font-size="11" text-anchor="middle">overflow 255&rarr;0</text>
+  <text x="345" y="20" font-size="11" text-anchor="middle">CS = 000 disconnects both: the timer STOPS</text>
+</svg>
+<div class="cap">Figure 1. One timer/counter. The CS bits choose where the pulses come from; TCNTn counts them; on overflow the TOV flag is raised.</div>
+</div>
+
+<h2>3. How the count register works: count, overflow, TOV</h2>
+<p><code>TCNTn</code> (Timer/CouNTer register) goes up by 1 on every pulse. It has a fixed size:</p>
+<ul>
+<li><b>Timer0 and Timer2 are 8-bit</b>: TCNT0 counts 0, 1, 2 &hellip; <b>255</b>, then the next pulse makes it <b>overflow back to 0</b>.</li>
+<li><b>Timer1 is 16-bit</b>: TCNT1 counts 0 &hellip; <b>65 535</b> (2<sup>16</sup> &minus; 1), then overflows to 0.</li>
+</ul>
+<p>At the moment of the overflow the hardware sets the <b>TOV</b> (Timer OVerflow) <b>flag</b>, bit 0 of <code>TIFRn</code> (Timer Interrupt Flag Register). The flag says: <i>"I counted up to my maximum and started again from 0."</i></p>
+
+<div class="fig">
+<svg viewBox="0 0 640 170" font-family="Arial" font-size="11">
+  <path d="M40 140H620M40 140V20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="34" y="34" text-anchor="end">255</text><text x="34" y="144" text-anchor="end">0</text>
+  <text x="330" y="162" text-anchor="middle">pulses &rarr;</text>
+  <path d="M40 140L200 30L200 140L360 30L360 140L520 30L520 140L580 99" stroke="currentColor" stroke-width="2" fill="none"/>
+  <g stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"><path d="M40 30H520"/></g>
+  <g font-weight="bold" text-anchor="middle"><text x="200" y="18">TOV = 1</text><text x="360" y="18">TOV = 1</text><text x="520" y="18">TOV = 1</text></g>
+  <text x="120" y="120" text-anchor="middle">256 counts</text>
+  <text x="280" y="120" text-anchor="middle">256 counts</text>
+</svg>
+<div class="cap">Figure 2. TCNT0 climbs 0&rarr;255, overflows to 0 and starts again. Each overflow raises the TOV flag. (TCNT1 does the same up to 65 535.)</div>
+</div>
+
+<div class="key">
+<b class="t">The flag rule: write 1 to clear [very important]</b>
+A <b>flag bit is set by the hardware</b>, never by you. You can only <b>clear</b> it, and you clear it by <b>writing a 1 to it</b> (writing 0 does nothing). If you poll the flag you <b>must clear it after each overflow</b>, otherwise it stays 1 and the hardware cannot raise it again for the next overflow.
+<pre>TIFR0 = TIFR0 | 0b00000001;   // write 1 to TOV0 = CLEAR it (slide style)
+TIFR0 = (1 &lt;&lt; TOV0);          // same effect, touches only TOV0</pre>
+When you use the <b>overflow interrupt</b> instead, the hardware clears TOV <b>automatically</b> when the ISR runs, so the ISR does not clear it.
+</div>
+
+<h2>4. Measuring elapsed time</h2>
+<p>The oscillator gives <i>f</i> pulses per second. If TCNT started at <b>A</b> and you stop the timer when it shows <b>B</b>, then B &minus; A pulses passed, each lasting 1/<i>f</i> second:</p>
+<div class="box">
+<b class="t">Elapsed time</b>
+without prescaler: &nbsp; <b>t = (B &minus; A) / f</b> &nbsp;&nbsp;&nbsp;&nbsp; with prescaler N: &nbsp; <b>t = N &times; (B &minus; A) / f</b><br>
+<span class="small">If it overflowed k times in between, add k &times; 256 (8-bit) or k &times; 65 536 (16-bit) pulses. You keep k in a variable.</span>
+</div>
+<p class="small"><b>Example:</b> f = 1 Hz, A = 0, B = 60 &rarr; t = 60 s. With f = 10 Hz and prescaler 10, the timer gets 1 pulse per second, so again A = 0, B = 60 gives 10 &times; 60 / 10 = 60 s.</p>
+<p><b>Why the prescaler?</b> At 16 MHz an 8-bit timer fills up in 256 / 16 000 000 = 16 &micro;s. That is far too fast. The prescaler divides the clock by N so the register climbs slowly enough to measure useful times. External pulses (buttons, sensors) are already slow, so there is <b>no prescaler on the Tn pin</b>.</p>
+<p><b>Stopping the timer</b>: set the CS bits to <b>000</b>. That disconnects every clock source, TCNT freezes, and you can read it.</p>
+
+<h2 class="pb">5. The timer registers bit by bit</h2>
+
+<div class="bitgrp"><div class="title"><code>TCCR0B</code> / <code>TCCR1B</code> (Timer/Counter Control Register B): the CS bits</div>
+<div class="bits pos"><div class="lbl"></div><span class="b">7</span><span class="b">6</span><span class="b">5</span><span class="b">4</span><span class="b">3</span><span class="b">2</span><span class="b">1</span><span class="b">0</span></div>
+<div class="bits"><div class="lbl">TCCRnB</div><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b h" style="font-size:10px">CS2</span><span class="b h" style="font-size:10px">CS1</span><span class="b h" style="font-size:10px">CS0</span><span class="note">only bits 2&ndash;0 matter in this lesson</span></div>
+</div>
+<table>
+<tr><th>CS2 CS1 CS0</th><th>Clock source</th><th>Mode</th><th>One tick at 16 MHz</th></tr>
+<tr><td><code>000</code></td><td>none: timer <b>stopped</b></td><td>&ndash;</td><td>&ndash;</td></tr>
+<tr><td><code>001</code></td><td>F_CPU / 1</td><td>timer</td><td>0.0625 &micro;s</td></tr>
+<tr><td><code>010</code></td><td>F_CPU / 8</td><td>timer</td><td>0.5 &micro;s</td></tr>
+<tr><td><code>011</code></td><td>F_CPU / 64</td><td>timer</td><td>4 &micro;s</td></tr>
+<tr><td><code>100</code></td><td>F_CPU / 256</td><td>timer</td><td>16 &micro;s</td></tr>
+<tr><td><code>101</code></td><td>F_CPU / 1024</td><td>timer</td><td>64 &micro;s</td></tr>
+<tr><td><code>110</code></td><td>Tn pin, <b>falling edge</b> (HIGH&rarr;LOW)</td><td>counter</td><td>&ndash;</td></tr>
+<tr><td><code>111</code></td><td>Tn pin, <b>rising edge</b> (LOW&rarr;HIGH)</td><td>counter</td><td>&ndash;</td></tr>
+</table>
+<p class="small"><b>Falling or rising?</b> A button on a pin with the pull-up ON reads HIGH and goes LOW when pressed. <b>Falling edge (110) counts presses</b>; <b>rising edge (111) counts releases</b>.</p>
+
+<div class="bitgrp"><div class="title"><code>TIFR0</code> / <code>TIFR1</code> (Timer Interrupt Flag Register) and <code>TIMSK0</code> / <code>TIMSK1</code> (Timer Interrupt MaSK)</div>
+<div class="bits"><div class="lbl">TIFRn</div><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&middot;</span><span class="b">&middot;</span><span class="b h" style="width:40px">TOV</span><span class="note">bit 0: set by hardware on overflow; write 1 to clear</span></div>
+<div class="bits"><div class="lbl">TIMSKn</div><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b">&middot;</span><span class="b">&middot;</span><span class="b h" style="width:40px">TOIE</span><span class="note">bit 0: 1 = overflow interrupt enabled (default 0)</span></div>
+</div>
+
+<table>
+<tr><th>Timer</th><th>Size</th><th>Count register</th><th>External pin</th><th>Overflow ISR vector</th></tr>
+<tr><td>Timer0</td><td>8-bit</td><td><code>TCNT0</code> (0&ndash;255)</td><td>T0 = PD4 = <b>D4</b></td><td><code>TIMER0_OVF_vect</code></td></tr>
+<tr><td>Timer1</td><td>16-bit</td><td><code>TCNT1</code> (0&ndash;65 535)</td><td>T1 = PD5 = <b>D5</b></td><td><code>TIMER1_OVF_vect</code></td></tr>
+<tr><td>Timer2</td><td>8-bit</td><td><code>TCNT2</code></td><td>TOSC pins = PB6/PB7: <b>used by the crystal</b> on the Uno</td><td><code>TIMER2_OVF_vect</code></td></tr>
+</table>
+<p class="small">So on the Uno you can count external pulses only with <b>Timer0 (D4)</b> or <b>Timer1 (D5)</b>. Timer2 can still be a timer from the internal clock.</p>
+
+<h2>6. The preload formula (for counts and for delays)</h2>
+<p>The flag is raised only on the overflow. To get the flag after exactly <b>n</b> pulses, start the register <b>n pulses before the overflow</b>:</p>
+<div class="box">
+<b class="t">Initial value</b>
+<b>initial = max &minus; n + 1</b> &nbsp;&nbsp; (max = 255 for 8-bit, 65 535 for 16-bit; the <b>+1 is the step from max to 0</b>, the overflow itself)
+</div>
+<div class="fig">
+<svg viewBox="0 0 640 90" font-family="Arial" font-size="12">
+  <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.6">
+    <rect x="10" y="20" width="80" height="34"/><rect x="120" y="20" width="80" height="34"/><rect x="230" y="20" width="80" height="34"/><rect x="340" y="20" width="80" height="34"/><rect x="450" y="20" width="80" height="34"/>
+  </g>
+  <rect x="560" y="20" width="70" height="34" style="fill:var(--soft)" stroke="currentColor" stroke-width="2.4"/>
+  <g text-anchor="middle" font-weight="bold"><text x="50" y="42">251</text><text x="160" y="42">252</text><text x="270" y="42">253</text><text x="380" y="42">254</text><text x="490" y="42">255</text><text x="595" y="42">0, TOV</text></g>
+  <path d="M90 37H118M200 37H228M310 37H338M420 37H448M530 37H558" stroke="currentColor" stroke-width="1.5" marker-end="url(#a2)"/>
+  <g text-anchor="middle" font-size="11"><text x="104" y="74">pulse 1</text><text x="214" y="74">pulse 2</text><text x="324" y="74">pulse 3</text><text x="434" y="74">pulse 4</text><text x="544" y="74">pulse 5</text><text x="50" y="74">preload</text></g>
+</svg>
+<div class="cap">Figure 3. Count 5 with Timer0: 255 &minus; 5 + 1 = 251. The 5th pulse causes the overflow and raises TOV.</div>
+</div>
+
+<p>For a <b>delay</b>, first find how many timer pulses n the delay needs:</p>
+<div class="box">
+<b class="t">Delay calculation</b>
+one tick = prescale / F_CPU &nbsp;&nbsp;&rArr;&nbsp;&nbsp; delay = (prescale / F_CPU) &times; n &nbsp;&nbsp;&rArr;&nbsp;&nbsp; <b>n = (F_CPU / prescale) &times; delay</b> &nbsp; (delay in <b>seconds</b>)<br>
+then <b>initial = max &minus; n + 1</b>. n must be &le; 256 (8-bit) or &le; 65 536 (16-bit).
+</div>
+<table>
+<tr><th>Worked example</th><th>n</th><th>Fits?</th><th>Initial value</th></tr>
+<tr><td>200 ms, prescale 64 (slides)</td><td>16 000 000 / 64 &times; 0.2 = <b>50 000</b></td><td>not 8-bit; Timer1 yes</td><td>65 535 &minus; 50 000 + 1 = <b>15 536</b></td></tr>
+<tr><td>1 s, prescale 1024 (Exercise 5 Q2)</td><td>16 000 000 / 1024 &times; 1 = <b>15 625</b></td><td>Timer1</td><td>65 535 &minus; 15 625 + 1 = <b>49 911</b></td></tr>
+<tr><td>400 ms, prescale 64</td><td>100 000</td><td><b>no</b> (&gt; 65 536)</td><td>use /256: n = 25 000 &rarr; <b>40 536</b></td></tr>
+</table>
+<table class="small">
+<tr><th>Longest single-overflow delay at 16 MHz</th><th>/1</th><th>/8</th><th>/64</th><th>/256</th><th>/1024</th></tr>
+<tr><td>8-bit (Timer0)</td><td>16 &micro;s</td><td>128 &micro;s</td><td>1.024 ms</td><td>4.096 ms</td><td>16.384 ms</td></tr>
+<tr><td>16-bit (Timer1)</td><td>4.096 ms</td><td>32.768 ms</td><td>262.1 ms</td><td>1.049 s</td><td>4.194 s</td></tr>
+</table>
+<p class="small">Longer than that? Count overflows in a variable (e.g. ten 1-s overflows = 10 s), or use a larger prescaler. There is no "best" prescaler: pick one that makes n fit and gives whole numbers.</p>
+
+<h2>7. Counting events: Systems 10&ndash;12 (button on T0 counts 5 presses, LED toggles)</h2>
+<p><b>Hardware</b> (same for all three): pushbutton from <b>D4 (PD4 = T0)</b> to GND, internal pull-up ON, a <b>100 nF capacitor across the button</b> to debounce it (each bounce would otherwise be counted as a press), and the on-board LED on <b>D13 (PB5)</b>.</p>
+
+<h3>System 10 &mdash; poll the count</h3>
+<pre>#include &lt;avr/io.h&gt;
+
+int main(void)
+{
+    DDRB = DDRB | 0b00100000;        // PB5 output (LED)
+    DDRD = DDRD &amp; 0b11101111;        // PD4 (T0) input (already 0 by default)
+    PORTD = PORTD | 0b00010000;      // pull-up on PD4
+    TCCR0B = TCCR0B | 0b00000110;    // CS = 110: clock = T0 pin, falling edge -&gt; COUNTER
+    TCNT0 = 0;                       // start count (already 0 by default)
+    while (1)
+    {
+        if (TCNT0 &gt;= 5)              // 5 presses counted by HARDWARE
+        {
+            PORTB = PORTB ^ 0b00100000;   // toggle LED
+            TCNT0 = 0;                    // restart count
+        }
+    }
+}</pre>
+<p class="small">Why <code>&gt;= 5</code> and not <code>== 5</code>? If two pulses arrive between two checks (a spike the capacitor missed, or a very fast double press), TCNT0 jumps from 4 to 6. With <code>==</code> the LED would then need 250 more presses (round to 255, overflow, back to 5). <code>&gt;=</code> still catches it.</p>
+
+<h3>System 11 &mdash; exactly 5 presses: preload 251 and poll TOV</h3>
+<pre>    TCNT0 = 251;                         // 255 - 5 + 1
+    while (1)
+    {
+        if (TIFR0 &amp; 0b00000001)          // TOV0 set? (5th press caused overflow)
+        {
+            PORTB = PORTB ^ 0b00100000;  // toggle LED
+            TCNT0 = 251;                 // reload (NOT 0)
+            TIFR0 = TIFR0 | 0b00000001;  // clear TOV0 by writing 1
+        }
+    }</pre>
+<p class="small"><b>How the <code>if</code> works:</b> AND with <code>0b00000001</code> forces bits 7&ndash;1 to 0 and keeps bit 0 as it is. The result is 1 (true) only when TOV0 = 1.</p>
+
+<h3>System 12 &mdash; exactly 5 presses with the overflow interrupt</h3>
+<pre>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+
+int main(void)
+{
+    DDRB = DDRB | 0b00100000;        // PB5 output
+    DDRD = DDRD &amp; 0b11101111;        // PD4 input
+    PORTD = PORTD | 0b00010000;      // pull-up PD4
+    TCCR0B = TCCR0B | 0b00000110;    // clock = T0, falling edge
+    TCNT0 = 251;                     // overflow after 5 presses
+    TIMSK0 = TIMSK0 | 0b00000001;    // TOIE0 = 1: enable overflow interrupt
+    sei();                           // enable global interrupts
+    while (1)
+    {
+        // CPU is free for another task
+    }
+}
+
+ISR(TIMER0_OVF_vect)                 // runs automatically on overflow
+{
+    PORTB = PORTB ^ 0b00100000;      // toggle LED
+    TCNT0 = 251;                     // reload (TOV0 is cleared by hardware)
+}</pre>
+
+<h2 class="pb">8. Precise delays: System 13 (blink the LED every 200 ms with Timer1)</h2>
+<p>No external hardware: on-board LED on PB5. From section 6: prescale 64, n = 50 000, initial = <b>15 536</b>.</p>
+<div class="two">
+<div>
+<b class="small">Polling TOV1</b>
+<pre>#include &lt;avr/io.h&gt;
+
+int main(void)
+{
+    DDRB = DDRB | (1&lt;&lt;DDB5);
+    TCCR1B = TCCR1B | (1&lt;&lt;CS11)
+                    | (1&lt;&lt;CS10); // /64
+    TCNT1 = 15536;
+    while (1)
+    {
+        if (TIFR1 &amp; (1&lt;&lt;TOV1))
+        {
+            PORTB = PORTB ^ (1&lt;&lt;PORTB5);
+            TCNT1 = 15536;
+            TIFR1 = TIFR1 | (1&lt;&lt;TOV1);
+        }
+    }
+}</pre>
+</div>
+<div>
+<b class="small">Overflow interrupt</b>
+<pre>#include &lt;avr/io.h&gt;
+#include &lt;avr/interrupt.h&gt;
+
+int main(void)
+{
+    DDRB = DDRB | (1&lt;&lt;DDB5);
+    TCCR1B = TCCR1B | (1&lt;&lt;CS11)
+                    | (1&lt;&lt;CS10); // /64
+    TCNT1 = 15536;
+    TIMSK1 = TIMSK1 | (1&lt;&lt;TOIE1);
+    sei();
+    while (1) { }   // free
+}
+
+ISR(TIMER1_OVF_vect)
+{
+    PORTB = PORTB ^ (1&lt;&lt;PORTB5);
+    TCNT1 = 15536;
+}</pre>
+</div>
+</div>
+<p class="small">These are the slides' "labeled constants" versions: <code>(1&lt;&lt;CS11)</code> means "a 1 shifted to the CS11 position" = <code>0b00000010</code>. Same result as the binary strings, easier to read. The binary-string versions use <code>TCCR1B | 0b00000011</code> and <code>TIFR1 &amp; 0b00000001</code>.</p>
+
+<h2 class="pb">9. Build example: Exercise 5 &mdash; the reaction timer</h2>
+<p><b>Task:</b> press <b>READY</b> &rarr; all LEDs off, wait a <b>random 1&ndash;10 s</b> &rarr; <b>blue</b> LED on &rarr; user presses <b>REACT</b> as fast as possible &rarr; blue off, show the reaction time: <b>green</b> &lt; 1 s, <b>orange</b> 1 s to &lt; 2 s, <b>red</b> &ge; 2 s.</p>
+
+<div class="fig">
+<svg viewBox="0 0 640 250" font-family="Arial" font-size="12">
+  <rect x="200" y="20" width="160" height="210" style="fill:var(--bg)" stroke="currentColor" stroke-width="2"/>
+  <text x="280" y="125" text-anchor="middle" font-weight="bold">Arduino Uno</text>
+  <text x="280" y="141" text-anchor="middle" font-size="11">(ATmega328P)</text>
+  <g font-size="11"><text x="206" y="64">D2 (PD2)</text><text x="206" y="174">D3 (PD3)</text><text x="206" y="222">GND</text>
+  <text x="354" y="54" text-anchor="end">D8 (PB0)</text><text x="354" y="99" text-anchor="end">D9 (PB1)</text><text x="354" y="144" text-anchor="end">D10 (PB2)</text><text x="354" y="189" text-anchor="end">D11 (PB3)</text></g>
+  <g stroke="currentColor" stroke-width="1.8" fill="none">
+    <path d="M200 60H144M106 60H60V215H200"/><path d="M200 170H144M106 170H60"/>
+    <path d="M100 48H150M125 48V38M100 158H150M125 158V148"/>
+  </g>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.6"><circle cx="110" cy="60" r="4"/><circle cx="140" cy="60" r="4"/><circle cx="110" cy="170" r="4"/><circle cx="140" cy="170" r="4"/></g>
+  <g fill="currentColor"><circle cx="60" cy="170" r="3"/></g>
+  <text x="125" y="30" text-anchor="middle" font-weight="bold">READY</text>
+  <text x="125" y="140" text-anchor="middle" font-weight="bold">REACT</text>
+  <text x="40" y="140" text-anchor="middle" font-size="10" transform="rotate(-90 40 140)">to GND (black)</text>
+  <g stroke="currentColor" stroke-width="1.8" fill="none">
+    <path d="M360 50H400M440 50H470M500 50H600V230H360"/>
+    <path d="M360 95H400M440 95H470M500 95H600"/>
+    <path d="M360 140H400M440 140H470M500 140H600"/>
+    <path d="M360 185H400M440 185H470M500 185H600"/>
+  </g>
+  <g style="fill:var(--bg)" stroke="currentColor" stroke-width="1.6">
+    <rect x="400" y="43" width="40" height="14"/><rect x="400" y="88" width="40" height="14"/><rect x="400" y="133" width="40" height="14"/><rect x="400" y="178" width="40" height="14"/>
+  </g>
+  <g style="fill:var(--soft)" stroke="currentColor" stroke-width="1.6">
+    <path d="M470 40V60L500 50Z"/><path d="M470 85V105L500 95Z"/><path d="M470 130V150L500 140Z"/><path d="M470 175V195L500 185Z"/>
+  </g>
+  <g stroke="currentColor" stroke-width="2"><path d="M500 40V60M500 85V105M500 130V150M500 175V195"/></g>
+  <g font-size="10" text-anchor="middle"><text x="420" y="38">220 &Omega;</text><text x="420" y="83">220 &Omega;</text><text x="420" y="128">220 &Omega;</text><text x="420" y="173">220 &Omega;</text></g>
+  <g font-size="11" font-weight="bold"><text x="510" y="40">blue</text><text x="510" y="85">green</text><text x="510" y="130">orange</text><text x="510" y="175">red</text></g>
+  <text x="610" y="150" font-size="10" transform="rotate(90 610 150)" text-anchor="middle">GND rail</text>
+</svg>
+<div class="cap">Figure 4. Reaction timer. Buttons to GND with internal pull-ups (pressed = LOW). Each LED: pin &rarr; 220 &Omega; &rarr; anode (long leg), cathode (flat side) &rarr; GND.</div>
+</div>
+
+<table class="small">
+<tr><th>Part</th><th>Pin</th><th>Why this choice</th></tr>
+<tr><td>READY button</td><td>D2 / PD2</td><td>any input; pull-up so no resistor needed</td></tr>
+<tr><td>REACT button</td><td>D3 / PD3</td><td>same</td></tr>
+<tr><td>LEDs blue, green, orange, red</td><td>D8&ndash;D11 / PB0&ndash;PB3</td><td>all on port B, so one register controls them</td></tr>
+<tr><td>Timer0 (8-bit)</td><td>&ndash;</td><td>runs freely at 16 MHz; its value when READY is pressed is the random <b>seed</b> (human timing is random)</td></tr>
+<tr><td>Timer1 (16-bit)</td><td>&ndash;</td><td>/1024 &rArr; 1 tick = 64 &micro;s. Preload 49 911 = 1-s overflows for the wait; from 0 it measures up to 4.19 s for the reaction</td></tr>
+</table>
+
+<pre>#include &lt;avr/io.h&gt;
+#include &lt;stdlib.h&gt;                    // srand(), rand()
+
+int main(void)
+{
+    DDRB = DDRB | 0b00001111;           // PB0-PB3 outputs: blue, green, orange, red
+    DDRD = DDRD &amp; 0b11110011;           // PD2 READY, PD3 REACT inputs
+    PORTD = PORTD | 0b00001100;         // pull-ups on PD2, PD3
+    TCCR0B = TCCR0B | 0b00000001;       // Timer0 free-running at F_CPU/1 (seed source)
+    TCCR1B = TCCR1B | 0b00000101;       // Timer1 at F_CPU/1024: 1 tick = 64 us
+
+    while (1)
+    {
+        while (PIND &amp; 0b00000100) { }   // wait until READY pressed (PD2 LOW)
+        srand(TCNT0);                     // fairly random seed
+        while (!(PIND &amp; 0b00000100)) { }  // wait until READY released
+        PORTB = PORTB &amp; 0b11110000;       // all LEDs off
+
+        unsigned char waitSec = rand() % 10 + 1;   // 1..10 s
+        unsigned char sec = 0;
+        TCNT1 = 49911;                    // 65535 - 15625 + 1: overflow after 1 s
+        TIFR1 = TIFR1 | 0b00000001;       // clear old TOV1
+        while (sec &lt; waitSec)             // count 1-s overflows
+        {
+            if (TIFR1 &amp; 0b00000001)
+            {
+                sec++;
+                TCNT1 = 49911;
+                TIFR1 = TIFR1 | 0b00000001;
+            }
+        }
+
+        PORTB = PORTB | 0b00000001;       // blue ON: react now
+        TCNT1 = 0;                        // start measuring
+        TIFR1 = TIFR1 | 0b00000001;
+        while ((PIND &amp; 0b00001000) &amp;&amp; !(TIFR1 &amp; 0b00000001)) { }  // wait for REACT or 4.19 s
+        unsigned int ticks = TCNT1;       // 1 tick = 64 us
+        PORTB = PORTB &amp; 0b11111110;       // blue OFF
+
+        if ((TIFR1 &amp; 0b00000001) || ticks &gt;= 31250)
+            PORTB = PORTB | 0b00001000;   // red: 2 s or more (31250 x 64 us = 2 s)
+        else if (ticks &gt;= 15625)
+            PORTB = PORTB | 0b00000100;   // orange: 1 s to &lt; 2 s
+        else
+            PORTB = PORTB | 0b00000010;   // green: under 1 s
+    }
+}</pre>
+<div class="two small">
+<div class="box small"><b class="t">Q4: seed from a floating analog input</b>
+Leave A0 unconnected. Its reading drifts randomly (noise). Read it once with the ADC (Lesson 5: <code>ADMUX</code> = AVcc ref, channel 0; <code>ADCSRA</code> enable + start; wait for ADSC = 0) and use <code>srand(ADCW);</code> instead of <code>srand(TCNT0);</code>. Then Timer0 is no longer needed.</div>
+<div class="box small"><b class="t">Q5&ndash;Q6: Arduino version and comparison</b>
+<code>randomSeed(analogRead(A0));</code> &nbsp;<code>random(1000, 10001)</code> ms wait with <code>delay()</code>; reaction with <code>millis()</code>; <code>digitalRead/digitalWrite</code>.<br>
+<b>Compare:</b> Arduino is shorter and easier to read, but larger and slower, its <code>delay()</code> busy-waits, and the platform gives <b>no direct timer access</b>. The C version uses the hardware timers directly: precise, small, fast, CPU free.</div>
+</div>
+
+<h2 class="pb">L. What the lecturer explained in the lectures (2020 recordings)</h2>
+<p class="small">From the two timing-and-counting recordings (folders 20&ndash;21 in <code>Embedded Systems Lectures</code>). <b>[EXAM]</b> marks things he tied to the exam.</p>
+
+<div class="key">
+<b class="t">L1. Why he wants the internals [EXAM]</b>
+"Many people know how to <b>use</b> timers, but if you ask them to explain the <b>internal working</b>, they don't know." As university students you are expected to explain how a timer works (Figure 1 and Figure 2), not just call it. He also said some written questions are set to check whether you <b>think beyond what was taught</b>, which is why the module has a reputation for being hard.
+</div>
+
+<h3>L2. Where timers fit</h3>
+<ul class="small">
+<li>So far: inputs (digital via ports, analog via ADC) and driving digital actuators (directly, or via BJT / MOSFET / relay). Analog actuators come next with <b>PWM</b>.</li>
+<li>A microcontroller is a "single-chip computer": processor + peripherals. Ports and ADC are peripherals; the timer is another.</li>
+<li>Small chips (ATtiny) have 1&ndash;2 timers named T0, T1&hellip;; ATmega has 3&ndash;5; XMega even more. "Large" means capability, not size: many big microcontrollers are tiny SMD (surface-mount) packages that are <b>not breadboard friendly</b>.</li>
+</ul>
+
+<h3>L3. Software vs hardware timing, in his words</h3>
+<ul class="small">
+<li>A delay loop is a <b>busy wait</b>: "we tie up the CPU to run a loop but doing nothing", just to consume time. That CPU time could have been used for something else.</li>
+<li>On PCs you never feel this because of multi-core processors; the microcontroller has <b>one core</b>, so it matters.</li>
+<li>"This is the first time you are going to use a hardware timer." Two advantages: <b>CPU is free</b> during the delay, and hardware timing is <b>highly precise</b>. "If the system is a critical system which depends on time measurements, you better use hardware timers."</li>
+<li>The same applies to counting: a software counter (<code>if (sensor LOW) i++;</code>) ties up the CPU.</li>
+</ul>
+
+<h3>L4. Timer becomes counter</h3>
+<ul class="small">
+<li>Internal clock connected = timer. "The timer becomes a counter when an external pulse source is connected."</li>
+<li>His examples of external pulses: an <b>IR beam</b> across a lecture-hall entrance (beam present = HIGH, person crossing = LOW, so people produce a square wave); items on a <b>conveyor belt</b>; and the cheapest one, a <b>push button between a door and its frame</b> with an automatic door closer. Count 5 openings, then drive a <b>solenoid</b> through a transistor to lock the door: "we allowed only five people". He said this is the kind of thing that could be a practical exam question.</li>
+<li>Elapsed time worked example: f = 1 Hz, count 100 &rArr; 100 s. Fast oscillator + small register &rArr; fills too quickly &rArr; use the prescaler.</li>
+<li>Student asked: is there a prescaler for the external source? <b>No</b>: external sources are always slow compared with the CPU.</li>
+</ul>
+
+<h3>L5. Flag bits [EXAM]</h3>
+<ul class="small">
+<li>"Flag bit means: if something happens, you raise the flag to indicate", like a white flag to surrender.</li>
+<li><b>"To clear a flag bit, set it."</b> Writing 1 makes it 0; writing 0 does nothing. The hardware sets flags, you only clear them. This is standard on many architectures, not only AVR (he named Intel and Motorola, now NXP).</li>
+<li>To know whether a bit is a flag bit, <b>check the datasheet</b>.</li>
+<li>When you use the overflow <b>ISR</b>, the flag is cleared by hardware automatically; only when polling must you clear it yourself.</li>
+</ul>
+
+<h3>L6. Details from Systems 10&ndash;12</h3>
+<ul class="small">
+<li>Pins: <b>T0 = PD4 (Arduino 4)</b>, <b>T1 = PD5 (Arduino 5)</b>. Timer2's TOSC pins (PB6/PB7) already have the 16 MHz crystal, "so we cannot use Timer2" for an external clock.</li>
+<li>The on-board LED uses a <b>1 k&Omega;</b> resistor because an SMD LED needs very little current. The <b>100 nF capacitor in parallel with the button</b> debounces the input. Place buttons <b>diagonally</b> on the breadboard.</li>
+<li><code>DDRD &amp;= ...</code> for PD4 and <code>TCNT0 = 0</code> are <b>not necessary</b> (both are 0 after reset), but "make your algorithm more clear". The cost is one extra clock cycle each.</li>
+<li><b>Why <code>&gt;=</code> not <code>==</code> [EXAM-style reasoning]:</b> a spike the capacitor misses, or a very fast double press, can take the count from 4 straight to 6. With <code>==</code> you'd have to press until 255, overflow and come back to 5. The chance is slim, but "as programmers you have to consider all possible situations", especially in mission-critical, safety-critical, medical, military or aerospace systems.</li>
+<li>If the client requires <b>exactly</b> 5 presses, use the preload 251 + TOV method (System 11). Formula: max &minus; count + 1; "plus 1 to account for the overflow". Reset means reload <b>251, not 0</b>.</li>
+<li>Polling TOV still wastes the CPU, so the best approach is the overflow interrupt (System 12). "This is the most efficient way of using counters."</li>
+<li>Arduino platform: <b>no direct access to timers</b> and <b>no wrapper for timer interrupts</b> (<code>attachInterrupt</code> is only for external interrupts). Some Arduino libraries use timers internally, but you can't. This is another reason for C.</li>
+<li>A student asked whether Exercise 3 could use counters. Yes, but he expected Exercise 3 to be done without them.</li>
+</ul>
+
+<h3>L7. Delays with Timer1 (System 13)</h3>
+<ul class="small">
+<li>Derivation: f = 1/t, so one tick = 1 / (F_CPU / prescale) = prescale / F_CPU. Then delay = tick &times; n, so n = F_CPU / prescale &times; delay. <b>Give the delay in seconds</b> (200 ms = 200 &times; 10<sup>&minus;3</sup>).</li>
+<li>200 ms at /64 &rArr; n = 50 000: "can you put it into an 8-bit timer? No." So use Timer1 (16-bit). Initial = 65 535 &minus; 50 000 + 1 = <b>15 536</b>.</li>
+<li>400 ms needs 100 000 counts, too many even for 16 bits. Three fixes he listed: <b>(1)</b> a bigger prescaler (256, 1024; but even 1024 has a limit), <b>(2)</b> a variable counting overflows, <b>(3)</b> in your own hardware, a slower crystal (8 or 4 MHz).</li>
+<li>"Is /64 the optimal prescale?" <b>No optimal value</b>: "I just use 64, because I like 64." The prescaler scales the CPU clock down to suit the job (the ADC needs it too).</li>
+<li>He explained <code>if (TIFR1 &amp; 0b00000001)</code> bit by bit: x AND 0 = 0 for bits 7&ndash;1; x AND 1 = x for bit 0, so the condition is true only when TOV1 = 1.</li>
+</ul>
+
+<div class="key">
+<b class="t">L8. Marks and the practical exam [EXAM]</b>
+<b>50% practical, 50% written</b> (most other modules are about 70 / 25 / 25). In the practical, within <b>3 hours</b> you design the hardware, assemble it, design and implement the firmware, run it and show it. If you score only 25/50 in the practical, you need 45/50 (90%) in the written paper for an A, which is very hard. "I know all the theories about swimming, but I can't swim": practise with your own kit. When doing exercises, also try <b>other ways</b> of solving the same exercise.
+</div>
+
+<h2>10. Common mistakes</h2>
+<table>
+<tr><th>Mistake</th><th>What happens / fix</th></tr>
+<tr><td>Forgetting to clear TOV when polling</td><td>Flag stays 1, the <code>if</code> is true every loop. Write 1 to it after handling.</td></tr>
+<tr><td>Clearing TOV by writing 0</td><td>Nothing happens. Flags clear by writing <b>1</b>.</td></tr>
+<tr><td>Clearing TOV inside the ISR</td><td>Not needed (hardware does it), but harmless.</td></tr>
+<tr><td>Reloading 0 instead of the preload</td><td>Next period counts 256 / 65 536 pulses, not n.</td></tr>
+<tr><td>Delay in ms in the formula</td><td>Use seconds: n = F_CPU / prescale &times; 0.2, not &times; 200.</td></tr>
+<tr><td>n bigger than the register</td><td>n &gt; 256 needs Timer1; n &gt; 65 536 needs a bigger prescaler or an overflow counter.</td></tr>
+<tr><td>Forgetting <code>sei()</code> or TOIE</td><td>ISR never runs. You need both, plus <code>#include &lt;avr/interrupt.h&gt;</code>.</td></tr>
+<tr><td>Wrong vector name</td><td>Timer0 = <code>TIMER0_OVF_vect</code>, Timer1 = <code>TIMER1_OVF_vect</code>.</td></tr>
+<tr><td>Button on the wrong pin for counting</td><td>External counting only works on <b>D4 (T0)</b> or <b>D5 (T1)</b>.</td></tr>
+<tr><td>No pull-up / no debounce on T0</td><td>Floating pin counts noise; bounces count as many presses.</td></tr>
+</table></div></div>
+<script>
+(function(){var p=document.getElementById('parts'),bs=document.querySelectorAll('.splitbar button');
+function set(m){p.className='parts m-'+m;document.body.classList.toggle('splitwide',m==='split');
+for(var i=0;i<bs.length;i++)bs[i].setAttribute('aria-pressed',bs[i].getAttribute('data-m')===m?'true':'false');
+try{localStorage.setItem('es-parts',m)}catch(e){}}
+for(var i=0;i<bs.length;i++)bs[i].addEventListener('click',function(){set(this.getAttribute('data-m'))});
+var v='both';try{v=localStorage.getItem('es-parts')||'both'}catch(e){}set(v);})();
+</script>
 
 </section>
 
@@ -366,6 +906,14 @@ ISR(TIMER1_OVF_vect){ PORTB ^= (1&lt;&lt;PORTB5); TCNT1 = 40536; }</code></pre>
 <details>
 <summary>W4. What is the W1C flag clearing convention and why is it used?</summary>
 <p>Write one to clear: a flag such as TOVn is cleared by writing a 1 to its bit. Writing a mask that has a single 1 clears only that flag and leaves other flags (which also live in TIFRn) untouched; a read-modify-write to clear by writing 0 could clear flags set in between.</p>
+</details>
+<details>
+<summary>W5. [2020 recording] A push button is fixed between a door and its frame. Design a system that lets exactly five people in and then locks the door with a solenoid. Explain why a hardware counter is used and give the key register settings.</summary>
+<p>Button on <b>T0 = PD4 (D4)</b> to GND, pull-up ON, 100 nF across it for debouncing. <code>TCCR0B</code> CS = 110 (T0 falling edge), so Timer0 becomes a <b>counter</b>. Preload <code>TCNT0 = 255 &minus; 5 + 1 = 251</code>; the 5th opening overflows TCNT0 and sets TOV0. Enable <code>TOIE0</code> + <code>sei()</code>; in <code>ISR(TIMER0_OVF_vect)</code> switch the solenoid ON through a transistor (with a flyback diode) to lock the door. The hardware counter counts by itself, so the CPU is free and no opening is missed by slow polling.</p>
+</details>
+<details>
+<summary>W6. [2020 recording] Explain the flag-bit convention and state when you must clear TOV yourself.</summary>
+<p>A flag is <b>set by the hardware</b> when an event happens (TOV on overflow). Software can only clear it, and it is cleared by <b>writing 1</b> to it; writing 0 has no effect. This is common across architectures (AVR, Intel, Motorola/NXP). When <b>polling</b> TOV you must clear it after each overflow, otherwise the condition stays true and the next overflow cannot be seen. When using the <b>overflow ISR</b>, the hardware clears it automatically.</p>
 </details>
 </section>
 
@@ -467,6 +1015,9 @@ void loop() {
   <tr><td>Pattern</td><td>Set CS, load TCNT, poll TOV (or TOIE + sei), reload TCNT, clear TOV.</td></tr>
   <tr><td>Random</td><td><code>stdlib.h</code>: <code>srand(seed)</code>, <code>rand()</code>; <code>1 + rand() % 10</code>. Seed from TCNT0 at a button press or from a floating ADC pin. Arduino: <code>randomSeed</code>, <code>random(min,max)</code>.</td></tr>
   <tr><td>Reaction timer</td><td>Ready, react buttons; blue signal LED; green &lt; 1 s, orange 1 to &lt; 2 s, red &ge; 2 s; T1 overflow = 1 s.</td></tr>
+  <tr><td>2020 lecture: why</td><td>Delay loop = busy wait on the only core; hardware timer frees the CPU and is more precise (use it in critical systems).</td></tr>
+  <tr><td>2020 lecture: pins</td><td>T0 = D4, T1 = D5; Timer2 TOSC pins hold the crystal, so no external counting on Timer2.</td></tr>
+  <tr><td>2020 lecture: rules</td><td>Flag: write 1 to clear; ISR clears TOV itself. Use <code>&gt;=</code> not <code>==</code> when polling a count. Exactly n: preload max &minus; n + 1, reload the preload (not 0). No prescaler on Tn. No optimal prescale.</td></tr>
 </table>
 
 </section>
@@ -474,7 +1025,7 @@ void loop() {
 </div>
 
 <script>
-const Q=[{"q": "A timer becomes a counter when:", "o": ["The prescaler is 1", "An external pulse source is connected on the Tn pin", "The overflow flag is set", "The CPU sleeps"], "a": 1, "e": "It then counts events instead of oscillator pulses."}, {"q": "Why use a hardware timer instead of a software delay loop?", "o": ["It is slower", "It leaves the CPU free for other work", "It uses more power", "It needs no registers"], "a": 1, "e": "Software timing ties up the CPU, which is small in a microcontroller."}, {"q": "Timer0 and Timer2 are __-bit; Timer1 is __-bit:", "o": ["8 and 16", "16 and 8", "8 and 8", "16 and 16"], "a": 0, "e": "Counts 0 to 255 and 0 to 65 535."}, {"q": "Time of one timer pulse at F_CPU = 16 MHz and prescale 64:", "o": ["62.5 ns", "1 µs", "4 µs", "64 µs"], "a": 2, "e": "64 / 16 MHz = 4 µs."}, {"q": "Initial value for a 16-bit timer, 200 ms, prescale 64, F_CPU = 16 MHz:", "o": ["15 536", "50 000", "65 536", "49 911"], "a": 0, "e": "n = 50 000; 65 535 − 50 000 + 1 = 15 536."}, {"q": "Initial value for a 16-bit timer to overflow in 1 s at prescale 1024:", "o": ["15 625", "49 911", "65 535", "3 036"], "a": 1, "e": "n = 15 625; 65 535 − 15 625 + 1 = 49 911."}, {"q": "CS02 CS01 CS00 = 101 selects:", "o": ["F_CPU/64", "F_CPU/256", "F_CPU/1024", "External rising edge"], "a": 2, "e": "011 is /64, 100 is /256."}, {"q": "CS02 CS01 CS00 = 110 selects:", "o": ["F_CPU/1024", "External clock on Tn, falling edge", "External clock on Tn, rising edge", "Timer stopped"], "a": 1, "e": "111 is rising edge."}, {"q": "CS bits = 000 means the timer is:", "o": ["Running at F_CPU", "Stopped (clock disconnected)", "In PWM mode", "Counting externally"], "a": 1, "e": "The default after reset."}, {"q": "Which register holds the current count?", "o": ["TCCRnB", "TCNTn", "TIFRn", "TIMSKn"], "a": 1, "e": "Timer/CouNTer register."}, {"q": "TOV0 is set when:", "o": ["Timer0 is started", "TCNT0 overflows from 255 to 0", "A button is pressed", "The ADC finishes"], "a": 1, "e": "TOVn in TIFRn."}, {"q": "To clear the TOV0 flag you:", "o": ["Write 0 to it", "Write 1 to it", "Read TCNT0", "Call cli()"], "a": 1, "e": "W1C, write one to clear."}, {"q": "Why is the flag cleared by writing 1?", "o": ["A hack", "Writing a mask with one 1 clears only that flag without a read-modify-write that could clear other flags", "Hardware cannot write 0", "To save power"], "a": 1, "e": "Writing 0 bits leaves other flags untouched."}, {"q": "Bit TOIE0 is in:", "o": ["TIFR0", "TIMSK0", "TCCR0B", "TCNT0"], "a": 1, "e": "Timer Overflow Interrupt Enable."}, {"q": "The ISR vector for Timer1 overflow is:", "o": ["TIMER0_OVF_vect", "TIMER1_OVF_vect", "TIMER1_COMPA_vect", "TOV1_vect"], "a": 1, "e": "Used with ISR()."}, {"q": "To count 5 external events with an overflow flag, preload Timer0 with:", "o": ["0", "250", "251", "255"], "a": 2, "e": "251 → 255 takes 4 pulses, the 5th overflows."}, {"q": "Which pin is the external clock input T0?", "o": ["PD2", "PD3", "PD4", "PD5"], "a": 2, "e": "T1 is PD5."}, {"q": "In the 200 ms blinker you must reload TCNT1 in the loop because:", "o": ["The timer stops", "Otherwise the next overflow takes 65 536 counts instead of 50 000", "TCNT1 is read-only", "TOV1 clears it"], "a": 1, "e": "The timer continues from 0 after overflow."}, {"q": "Elapsed time with prescaler N, start count A, stop count B and oscillator frequency f:", "o": ["(B − A) / f", "N × (B − A) / f", "f × (B − A) / N", "N / (B − A)"], "a": 1, "e": "Each count takes N / f seconds."}, {"q": "rand() needs a good seed because:", "o": ["It is slow", "The same seed gives the same sequence after each reset", "It only returns 0", "It needs an interrupt"], "a": 1, "e": "Seed with a timer value or a floating ADC input."}, {"q": "Which gives a random whole number of seconds from 1 to 10?", "o": ["rand() % 10", "1 + rand() % 10", "rand() % 11", "10 / rand()"], "a": 1, "e": "rand() % 10 is 0 to 9; add 1."}, {"q": "A fairly random seed for srand() can be obtained from:", "o": ["A constant", "The TCNT0 value at the moment the user presses a button, or ADC of a floating pin", "The PORT register", "TIFR0"], "a": 1, "e": "Both are unpredictable."}, {"q": "In the reaction timer, the reaction time class '1 s to less than 2 s' lights:", "o": ["Green", "Orange", "Red", "Blue"], "a": 1, "e": "Green < 1 s, orange 1 to < 2 s, red ≥ 2 s."}, {"q": "Arduino functions used to measure reaction time in milliseconds:", "o": ["millis()", "analogRead()", "pulseIn() only", "Serial.begin()"], "a": 0, "e": "t = millis() − t0."}, {"q": "When the overflow interrupt is serviced, TOVn is:", "o": ["Cleared automatically by hardware", "Never cleared", "Cleared by cli()", "Cleared by sei()"], "a": 0, "e": "So the ISR need not clear it."}];
+const Q=[{"q": "A timer becomes a counter when:", "o": ["The prescaler is 1", "An external pulse source is connected on the Tn pin", "The overflow flag is set", "The CPU sleeps"], "a": 1, "e": "It then counts events instead of oscillator pulses."}, {"q": "Why use a hardware timer instead of a software delay loop?", "o": ["It is slower", "It leaves the CPU free for other work", "It uses more power", "It needs no registers"], "a": 1, "e": "Software timing ties up the CPU, which is small in a microcontroller."}, {"q": "Timer0 and Timer2 are __-bit; Timer1 is __-bit:", "o": ["8 and 16", "16 and 8", "8 and 8", "16 and 16"], "a": 0, "e": "Counts 0 to 255 and 0 to 65 535."}, {"q": "Time of one timer pulse at F_CPU = 16 MHz and prescale 64:", "o": ["62.5 ns", "1 µs", "4 µs", "64 µs"], "a": 2, "e": "64 / 16 MHz = 4 µs."}, {"q": "Initial value for a 16-bit timer, 200 ms, prescale 64, F_CPU = 16 MHz:", "o": ["15 536", "50 000", "65 536", "49 911"], "a": 0, "e": "n = 50 000; 65 535 − 50 000 + 1 = 15 536."}, {"q": "Initial value for a 16-bit timer to overflow in 1 s at prescale 1024:", "o": ["15 625", "49 911", "65 535", "3 036"], "a": 1, "e": "n = 15 625; 65 535 − 15 625 + 1 = 49 911."}, {"q": "CS02 CS01 CS00 = 101 selects:", "o": ["F_CPU/64", "F_CPU/256", "F_CPU/1024", "External rising edge"], "a": 2, "e": "011 is /64, 100 is /256."}, {"q": "CS02 CS01 CS00 = 110 selects:", "o": ["F_CPU/1024", "External clock on Tn, falling edge", "External clock on Tn, rising edge", "Timer stopped"], "a": 1, "e": "111 is rising edge."}, {"q": "CS bits = 000 means the timer is:", "o": ["Running at F_CPU", "Stopped (clock disconnected)", "In PWM mode", "Counting externally"], "a": 1, "e": "The default after reset."}, {"q": "Which register holds the current count?", "o": ["TCCRnB", "TCNTn", "TIFRn", "TIMSKn"], "a": 1, "e": "Timer/CouNTer register."}, {"q": "TOV0 is set when:", "o": ["Timer0 is started", "TCNT0 overflows from 255 to 0", "A button is pressed", "The ADC finishes"], "a": 1, "e": "TOVn in TIFRn."}, {"q": "To clear the TOV0 flag you:", "o": ["Write 0 to it", "Write 1 to it", "Read TCNT0", "Call cli()"], "a": 1, "e": "W1C, write one to clear."}, {"q": "Why is the flag cleared by writing 1?", "o": ["A hack", "Writing a mask with one 1 clears only that flag without a read-modify-write that could clear other flags", "Hardware cannot write 0", "To save power"], "a": 1, "e": "Writing 0 bits leaves other flags untouched."}, {"q": "Bit TOIE0 is in:", "o": ["TIFR0", "TIMSK0", "TCCR0B", "TCNT0"], "a": 1, "e": "Timer Overflow Interrupt Enable."}, {"q": "The ISR vector for Timer1 overflow is:", "o": ["TIMER0_OVF_vect", "TIMER1_OVF_vect", "TIMER1_COMPA_vect", "TOV1_vect"], "a": 1, "e": "Used with ISR()."}, {"q": "To count 5 external events with an overflow flag, preload Timer0 with:", "o": ["0", "250", "251", "255"], "a": 2, "e": "251 → 255 takes 4 pulses, the 5th overflows."}, {"q": "Which pin is the external clock input T0?", "o": ["PD2", "PD3", "PD4", "PD5"], "a": 2, "e": "T1 is PD5."}, {"q": "In the 200 ms blinker you must reload TCNT1 in the loop because:", "o": ["The timer stops", "Otherwise the next overflow takes 65 536 counts instead of 50 000", "TCNT1 is read-only", "TOV1 clears it"], "a": 1, "e": "The timer continues from 0 after overflow."}, {"q": "Elapsed time with prescaler N, start count A, stop count B and oscillator frequency f:", "o": ["(B − A) / f", "N × (B − A) / f", "f × (B − A) / N", "N / (B − A)"], "a": 1, "e": "Each count takes N / f seconds."}, {"q": "rand() needs a good seed because:", "o": ["It is slow", "The same seed gives the same sequence after each reset", "It only returns 0", "It needs an interrupt"], "a": 1, "e": "Seed with a timer value or a floating ADC input."}, {"q": "Which gives a random whole number of seconds from 1 to 10?", "o": ["rand() % 10", "1 + rand() % 10", "rand() % 11", "10 / rand()"], "a": 1, "e": "rand() % 10 is 0 to 9; add 1."}, {"q": "A fairly random seed for srand() can be obtained from:", "o": ["A constant", "The TCNT0 value at the moment the user presses a button, or ADC of a floating pin", "The PORT register", "TIFR0"], "a": 1, "e": "Both are unpredictable."}, {"q": "In the reaction timer, the reaction time class '1 s to less than 2 s' lights:", "o": ["Green", "Orange", "Red", "Blue"], "a": 1, "e": "Green < 1 s, orange 1 to < 2 s, red ≥ 2 s."}, {"q": "Arduino functions used to measure reaction time in milliseconds:", "o": ["millis()", "analogRead()", "pulseIn() only", "Serial.begin()"], "a": 0, "e": "t = millis() − t0."}, {"q": "When the overflow interrupt is serviced, TOVn is:", "o": ["Cleared automatically by hardware", "Never cleared", "Cleared by cli()", "Cleared by sei()"], "a": 0, "e": "So the ISR need not clear it."}, {"q": "[2020 recording] Why does the lecturer say software delay loops are inefficient on a microcontroller?", "o": ["They need extra hardware", "They are a busy wait: the single CPU core runs an empty loop and can do nothing else", "They cannot be compiled", "They use the ADC"], "a": 1, "e": "On a PC, multi-core processors hide the waste; the ATmega328P has one core."}, {"q": "[2020 recording] Besides freeing the CPU, the second advantage of hardware timing he gave is:", "o": ["Lower power", "Higher precision", "More pins", "No registers"], "a": 1, "e": "Critical systems that depend on time should use hardware timers."}, {"q": "[2020 recording] Why can't Timer2 count external pulses on the Arduino Uno?", "o": ["It is 16-bit", "Its TOSC pins (PB6/PB7) already carry the 16 MHz crystal", "It has no TCNT register", "It has no overflow flag"], "a": 1, "e": "Use Timer0 (T0 = D4) or Timer1 (T1 = D5) for external pulses."}, {"q": "[2020 recording] With CS bits 110 on a pulled-up button pin, the counter counts:", "o": ["Button releases", "Button presses (falling edge)", "Clock pulses", "Nothing"], "a": 1, "e": "111 (rising edge) would count releases."}, {"q": "[2020 recording] Is there a prescaler for an external clock source on the Tn pin?", "o": ["Yes, up to 1024", "No: external sources are already slow compared with the CPU", "Only for Timer1", "Only on the rising edge"], "a": 1, "e": "His answer to a student question."}, {"q": "[2020 recording] In System 10 why does the code use TCNT0 >= 5 instead of TCNT0 == 5?", "o": ["== is not valid C", "A missed spike or fast double press can jump the count from 4 to 6, and == would then need about 250 more presses", "It is faster", "It clears the flag"], "a": 1, "e": "Consider all possible situations, especially in safety-critical systems."}, {"q": "[2020 recording] How do you clear a flag bit such as TOV0?", "o": ["Write 0 to it", "Write 1 to it", "Read TCNT0", "Reset the chip"], "a": 1, "e": "Flags are set by hardware; you clear them by setting them. Standard on many architectures."}, {"q": "[2020 recording] In the overflow ISR, TOV is:", "o": ["Cleared automatically by hardware", "Must be cleared by writing 0", "Must be cleared by writing 1", "Never set"], "a": 0, "e": "Only when polling must you clear it yourself."}, {"q": "[2020 recording] 400 ms at prescale 64 needs 100 000 ticks. Which is NOT one of the fixes he listed?", "o": ["Use a larger prescaler", "Count overflows in a variable", "Use a slower crystal in your own hardware", "Use an 8-bit timer instead"], "a": 3, "e": "An 8-bit timer holds even fewer counts."}, {"q": "[2020 recording] Asked whether /64 is the optimal prescale, he answered:", "o": ["Yes, always use 64", "No optimal value: any prescale that makes n fit is fine", "Only 1024 works", "Only 8 works"], "a": 1, "e": "\"I just use 64, because I like 64.\""}, {"q": "[2020 recording] Can an Arduino-platform sketch use a timer overflow interrupt through a wrapper function?", "o": ["Yes, attachInterrupt", "No: attachInterrupt is only for external interrupts and the platform has no timer wrappers", "Yes, timerInterrupt()", "Only on Timer2"], "a": 1, "e": "Another reason to use C with registers."}];
 const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
 let score=0;
 function build(){
