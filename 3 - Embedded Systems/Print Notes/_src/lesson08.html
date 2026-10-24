@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 8 - Pulse Width Modulation</title>
+<link rel="stylesheet" href="print.css">
+<style>
+@page { size: A4; margin: 14mm 14mm 16mm 14mm;
+  @bottom-center { content: "Lesson 8 - Pulse Width Modulation   |   page " counter(page); font: 8.5pt Arial; color: #444; } }
+</style>
+</head>
+<body>
+
+<h1>Lesson 8 &mdash; Pulse Width Modulation (PWM)</h1>
+<p class="small"><b>ATmega328P / Arduino Uno &nbsp;|&nbsp; Source: lecture 08 slides (System 15 fader), Exercise 6 &nbsp;|&nbsp; Builds on Lessons 5 (ADC), 6 (motor drivers) and 7 (timers)</b></p>
+
+<div class="key">
+<b class="t">What you will be able to do after this lesson</b>
+<ul>
+<li>Explain <b>why</b> we need PWM and why it is "analog-<b>like</b>", not true analog.</li>
+<li>Calculate <b>duty cycle</b>, <b>average voltage</b>, the <b>OCR value</b> for a duty cycle, and the <b>PWM frequency</b> / prescale.</li>
+<li>Explain how a timer, comparator and <b>waveform generator</b> make a PWM signal on an OC pin, in non-inverted and inverted mode.</li>
+<li>Tell the four timer modes apart (normal, CTC, fast PWM, phase correct PWM) and set them with the <b>WGM</b> and <b>COM</b> bits.</li>
+<li>Fade an LED (System 15) and drive a motor speed from a temperature (Exercise 6), in C and with <code>analogWrite</code>.</li>
+</ul>
+</div>
+
+<div class="box small">
+<b class="t">Given to you in the exam</b>
+The register sheet shows the bit positions of <code>TCCR0A/B</code>, <code>TIFR0</code>, <code>TIMSK0</code> and the pin sheet shows the <b>PWM pins marked ~</b> (3, 5, 6, 9, 10, 11) and the OC names. Check your printed copies. <b>The WGM and COM codes, the formulas and the reasoning below are "learn it".</b>
+</div>
+
+<h2>1. Why PWM?</h2>
+<p>So far you can read digital and analog sensors, and you can switch <b>digital actuators</b> fully ON or fully OFF (directly, or through a BJT, MOSFET or relay). But many jobs need something <b>in between</b>:</p>
+<ul>
+<li><b>Dim</b> a light instead of only on/off.</li>
+<li><b>Slow down</b> a motor: a line-following car must slow down before a bend or it topples; a quadcopter must reduce its 4 motors <b>gradually</b> to land, otherwise it crashes.</li>
+</ul>
+<p>The CPU is digital: a pin is either <b>0 V or 5 V</b>. The ATmega328P has <b>no DAC</b> (digital-to-analog converter), so it cannot output 2.5 V. <b>PWM</b> solves this: it gets an <b>analog-like</b> output <b>by digital means</b>.</p>
+
+<div class="key">
+<b class="t">The idea in one sentence</b>
+Toggle a digital pin ON/OFF <b>fast enough</b> that the attached device does not react to each pulse, but to the <b>percentage of time the output is HIGH in one cycle</b>.
+</div>
+<p class="small"><b>The bulb experiment (lecturer's example):</b> a filament bulb needs a short time to fully light and to fully go dark. Switch it on, and before it is fully bright switch it off; before it is fully dark switch it on again, very rapidly. The bulb settles at a brightness <b>in between</b>. Keep it ON for a larger part of each cycle and it is brighter (about 20% on &rarr; dim, 90% on &rarr; nearly full). The signal is still pure on/off (digital), but you <i>see</i> a smooth (analog-like) brightness.</p>
+
+<h2>2. Duty cycle and average voltage</h2>
+<div class="fig">
+<svg viewBox="0 0 640 150" font-family="Arial" font-size="12">
+  <defs><marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#000"/></marker></defs>
+  <path d="M40 115H600M40 115V20" stroke="#000" stroke-width="1.2" fill="none"/>
+  <text x="34" y="44" text-anchor="end">5 V</text><text x="34" y="119" text-anchor="end">0 V</text>
+  <path d="M40 115V40H100V115H220V40H280V115H400V40H460V115H580" stroke="#000" stroke-width="2.2" fill="none"/>
+  <path d="M220 30H400" stroke="#000" stroke-width="1.2" marker-start="url(#b1)" marker-end="url(#b1)"/>
+  <text x="310" y="24" text-anchor="middle" font-weight="bold">period (one cycle) T</text>
+  <path d="M220 132H280" stroke="#000" stroke-width="1.2" marker-start="url(#b1)" marker-end="url(#b1)"/>
+  <text x="250" y="147" text-anchor="middle">t<tspan font-size="9" dy="3">high</tspan><tspan dy="-3"> = pulse width</tspan></text>
+  <path d="M280 132H400" stroke="#000" stroke-width="1.2" marker-start="url(#b1)" marker-end="url(#b1)"/>
+  <text x="345" y="147" text-anchor="middle">t<tspan font-size="9" dy="3">low</tspan></text>
+  <path d="M40 90H600" stroke="#000" stroke-width="1" stroke-dasharray="5 4"/><text x="604" y="94" font-size="11">average</text>
+</svg>
+<div class="cap">Figure 1. A PWM signal. Here t<sub>high</sub> is one third of the period: duty cycle 33%, average 1.67 V.</div>
+</div>
+<div class="box">
+<b class="t">Formulas</b>
+duty cycle = t<sub>high</sub> / (t<sub>high</sub> + t<sub>low</sub>) &times; 100% = <b>pulse width / period &times; 100%</b><br>
+average voltage = <b>V<sub>high</sub> &times; duty cycle</b> &nbsp;&nbsp;(V<sub>high</sub> = 5 V on the Uno)
+</div>
+<p>For a fixed frequency the period is fixed (T = 1/f). So the only thing we change is the <b>width of the pulse</b>: changing (modulating) the pulse width changes the duty cycle, the average voltage, and so the brightness or speed. That is the name: <b>pulse width modulation</b>.</p>
+<table>
+<tr><th>Duty cycle</th><th>0%</th><th>25%</th><th>50%</th><th>75%</th><th>100%</th></tr>
+<tr><td>Average (voltmeter reads)</td><td>0 V</td><td>1.25 V</td><td>2.5 V</td><td>3.75 V</td><td>5 V</td></tr>
+</table>
+<p class="small"><b>Voltmeter vs oscilloscope:</b> a multimeter on a 50% PWM pin shows <b>2.5 V</b>, because it averages, just like your eye or a motor. An <b>oscilloscope</b> (voltage against time) shows the truth: a square wave jumping between 0 and 5 V. PWM is an "illusion" of analog.</p>
+
+<h2>3. How fast? Choosing the PWM frequency</h2>
+<ul>
+<li><b>Too slow</b>: the device follows each pulse. An LED <b>flickers</b>. For LEDs use <b>&gt; 100 Hz</b>; in practice 500 Hz&ndash;1 kHz.</li>
+<li><b>Too fast</b> for a slow device: a <b>motor</b> needs time to start, so it may <b>not start at all</b>. Toggle slower than the fastest change the device can follow.</li>
+<li>The right range comes from the device's <b>datasheet</b> (min and max supported PWM frequency). E.g. the datasheet says 100&ndash;300 Hz &rarr; set about 200 Hz.</li>
+</ul>
+
+<h2 class="pb">4. How a timer makes PWM</h2>
+<div class="fig">
+<svg viewBox="0 0 720 200" font-family="Arial" font-size="12">
+  <defs><marker id="b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#000"/></marker></defs>
+  <g fill="#fff" stroke="#000" stroke-width="1.8">
+    <rect x="10" y="110" width="90" height="44"/><rect x="130" y="110" width="90" height="44"/>
+    <rect x="250" y="110" width="110" height="44"/><rect x="250" y="20" width="110" height="44"/>
+    <path d="M400 50L470 87L400 124Z"/>
+    <rect x="510" y="65" width="120" height="44"/><rect x="510" y="140" width="120" height="44"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="55" y="130" font-weight="bold">oscillator</text><text x="55" y="146" font-size="11">16 MHz</text>
+    <text x="175" y="130" font-weight="bold">prescaler</text><text x="175" y="146" font-size="11">&divide; N (CS bits)</text>
+    <text x="305" y="130" font-weight="bold">TCNTn</text><text x="305" y="146" font-size="11">counts 0&hellip;TOP</text>
+    <text x="305" y="40" font-weight="bold">OCRnA / OCRnB</text><text x="305" y="56" font-size="11">your value (duty)</text>
+    <text x="428" y="92" font-weight="bold" font-size="11">compare</text>
+    <text x="570" y="85" font-weight="bold">waveform</text><text x="570" y="101" font-weight="bold">generator</text>
+    <text x="570" y="160" font-weight="bold">OCFnx flag</text><text x="570" y="176" font-size="11">in TIFRn</text>
+  </g>
+  <path d="M100 132H128M220 132H248M360 132H380V105H405M360 42H380V70H405M470 87H508M470 87H490V162H508" stroke="#000" stroke-width="1.8" fill="none" marker-end="url(#b2)"/>
+  <path d="M630 87H715" stroke="#000" stroke-width="2.4" marker-end="url(#b2)"/>
+  <text x="690" y="77" text-anchor="middle" font-weight="bold" font-size="11">OCnx pin</text>
+  <text x="430" y="150" font-size="11" text-anchor="middle">match</text>
+</svg>
+<div class="cap">Figure 2. PWM hardware of one timer. The comparator compares TCNTn with OCRnx; on a match it sets the OCF flag and triggers the waveform generator, which drives the OC pin.</div>
+</div>
+<ol>
+<li>The timer counts <code>TCNTn</code> from 0 (<b>BOTTOM</b>) up to <b>TOP</b> (255 for 8-bit), then overflows to 0, over and over (Lesson 7).</li>
+<li>You put a number between BOTTOM and TOP into <code>OCRnA</code> (<b>Output Compare Register</b>). This number sets the duty cycle.</li>
+<li>The <b>comparator</b> constantly compares TCNTn with OCRnA. When they are equal (a <b>compare match</b>) it sets the <b>OCFnA</b> flag in TIFRn and triggers the <b>waveform generator</b>.</li>
+<li>The waveform generator switches the <b>OCnA pin</b>. In <b>non-inverted</b> mode it <b>clears</b> the pin (LOW) on the match and <b>sets</b> it (HIGH) when TCNTn returns to BOTTOM.</li>
+</ol>
+
+<div class="fig">
+<svg viewBox="0 0 640 230" font-family="Arial" font-size="11">
+  <path d="M50 110H610M50 110V15" stroke="#000" stroke-width="1.2" fill="none"/>
+  <text x="44" y="24" text-anchor="end">TOP</text><text x="44" y="114" text-anchor="end">0</text><text x="44" y="62" text-anchor="end">OCR</text>
+  <path d="M50 110L190 20V110L330 20V110L470 20V110L610 20" stroke="#000" stroke-width="2" fill="none"/>
+  <path d="M50 58H610" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <g fill="#000"><circle cx="131" cy="58" r="4"/><circle cx="271" cy="58" r="4"/><circle cx="411" cy="58" r="4"/><circle cx="551" cy="58" r="4"/></g>
+  <text x="330" y="126" text-anchor="middle">TCNT (dots = compare match)</text>
+  <path d="M50 210H610M50 210V140" stroke="#000" stroke-width="1.2" fill="none"/>
+  <text x="44" y="154" text-anchor="end">5 V</text><text x="44" y="214" text-anchor="end">0 V</text>
+  <path d="M50 150H131V210H190V150H271V210H330V150H411V210H470V150H551V210H610" stroke="#000" stroke-width="2.2" fill="none"/>
+  <text x="90" y="144" text-anchor="middle">HIGH</text><text x="160" y="204" text-anchor="middle">LOW</text>
+  <text x="330" y="226" text-anchor="middle">OCnx pin, non-inverted: LOW at match, HIGH at BOTTOM</text>
+</svg>
+<div class="cap">Figure 3. Fast PWM, non-inverted. Raise OCR &rarr; the match comes later &rarr; the pin stays HIGH longer &rarr; bigger duty cycle.</div>
+</div>
+<ul class="small">
+<li><b>Inverted mode</b> is the opposite: <b>set</b> the pin on a match, <b>clear</b> it at BOTTOM. The duty cycle becomes (TOP &minus; OCR) / (TOP + 1).</li>
+<li>Each timer has <b>one</b> TCNTn but <b>two</b> OCR registers (A and B), two comparators, two waveform generators and two OC pins. That gives <b>3 timers &times; 2 = 6 PWM pins</b>, marked <b>~</b> on the Uno.</li>
+<li>There are two control registers (TCCRnA and TCCRnB) simply because one 8-bit register cannot hold all the control bits.</li>
+</ul>
+
+<div class="box">
+<b class="t">Duty cycle from OCR (fast PWM, non-inverted)</b>
+<b>duty cycle = (OCR + 1) / (TOP + 1) &times; 100%</b> &nbsp;&rArr;&nbsp; OCR = duty &times; (TOP + 1) &minus; 1<br>
+8-bit: OCR 127 &rarr; 128/256 = <b>50%</b> (2.5 V); OCR 63 &rarr; <b>25%</b> (1.25 V); OCR 191 &rarr; <b>75%</b>; OCR 255 &rarr; 100% (5 V).<br>
+<span class="small">OCR = 0 gives a very narrow spike (1/256), not a perfect 0 V. <code>analogWrite(pin, 0)</code> avoids this by simply writing the pin LOW.</span>
+</div>
+
+<h2>5. PWM frequency and prescale</h2>
+<p>Counting from 0 up to TOP and back to 0 takes <b>TOP + 1</b> timer ticks, and that is <b>one PWM cycle</b>. So:</p>
+<div class="box">
+<b class="t">Fast PWM frequency</b>
+F_timer = F_CPU / prescale &nbsp;&nbsp;&rArr;&nbsp;&nbsp; <b>F_PWM = F_CPU / ((TOP + 1) &times; prescale)</b> &nbsp;&nbsp;&rArr;&nbsp;&nbsp; <b>prescale = F_CPU / ((TOP + 1) &times; F_PWM)</b><br>
+TOP = 2<sup>8</sup> &minus; 1 = 255 for 8-bit, 2<sup>16</sup> &minus; 1 for 16-bit. <span class="small">(Phase correct PWM counts up <i>and</i> down, so it is about <b>half</b> this frequency: F_CPU / (2 &times; TOP &times; prescale).)</span>
+</div>
+<table>
+<tr><th>8-bit, 16 MHz, fast PWM</th><th>/1</th><th>/8</th><th>/64</th><th>/256</th><th>/1024</th></tr>
+<tr><td>F_PWM</td><td>62.5 kHz</td><td>7.8 kHz</td><td><b>976.6 Hz</b></td><td>244 Hz</td><td>61 Hz</td></tr>
+<tr><td>Phase correct</td><td>31.4 kHz</td><td>3.9 kHz</td><td><b>490 Hz</b></td><td>122.5 Hz</td><td>30.6 Hz</td></tr>
+</table>
+<p class="small"><b>Worked (slides):</b> want 1 kHz &rarr; prescale = 16 000 000 / (256 &times; 1000) = 62.5. No such prescale exists, so take the nearest, <b>64</b> &rarr; actual F_PWM = 16 000 000 / (256 &times; 64) = <b>976.5 Hz</b>, close to 1 kHz. (These are also the Arduino defaults: pins 5 and 6 &asymp; 980 Hz, the others &asymp; 490 Hz.)</p>
+
+<h2 class="pb">6. The four timer modes (WGM bits)</h2>
+<table>
+<tr><th>WGM02 WGM01 WGM00</th><th>Mode</th><th>What the counter does</th><th>PWM?</th></tr>
+<tr><td><code>0 0 0</code></td><td><b>Normal</b> (default)</td><td>0 &rarr; TOP, overflow to 0, sets TOV. The timer/counter of Lesson 7.</td><td>no</td></tr>
+<tr><td><code>0 0 1</code></td><td><b>Phase correct PWM</b></td><td>0 &rarr; TOP, then <b>down</b> TOP &rarr; 0 (no overflow). Pin cleared on a match while counting up, set on a match while counting down.</td><td>yes, lower frequency</td></tr>
+<tr><td><code>0 1 0</code></td><td><b>CTC</b> (Clear Timer on Compare)</td><td>0 &rarr; OCRnA, then the timer <b>clears TCNTn to 0</b> by itself and sets OCFnA. TOP is programmable.</td><td>no</td></tr>
+<tr><td><code>0 1 1</code></td><td><b>Fast PWM</b></td><td>0 &rarr; TOP, overflow to 0. Pin cleared on the match, set at BOTTOM (Figure 3).</td><td>yes, higher frequency</td></tr>
+</table>
+<p class="small">WGM01 and WGM00 are bits 1&ndash;0 of <code>TCCR0A</code>; WGM02 is bit 3 of <code>TCCR0B</code>. Because they all default to 0, the timers of Lesson 7 were already in <b>normal</b> mode without you touching them. (Timer1 has four WGM bits; the table above is for the 8-bit Timer0/Timer2.)</p>
+
+<div class="fig">
+<svg viewBox="0 0 640 210" font-family="Arial" font-size="11">
+  <text x="160" y="14" text-anchor="middle" font-weight="bold" font-size="12">Fast PWM</text>
+  <text x="480" y="14" text-anchor="middle" font-weight="bold" font-size="12">Phase correct PWM</text>
+  <path d="M20 100H300M20 100V25M340 100H620M340 100V25" stroke="#000" stroke-width="1.2" fill="none"/>
+  <path d="M20 100L90 30V100L160 30V100L230 30V100L300 30" stroke="#000" stroke-width="2" fill="none"/>
+  <path d="M340 100L410 30L480 100L550 30L620 100" stroke="#000" stroke-width="2" fill="none"/>
+  <path d="M20 58H300M340 58H620" stroke="#000" stroke-dasharray="6 4"/>
+  <path d="M20 190H300M20 190V125M340 190H620M340 190V125" stroke="#000" stroke-width="1.2" fill="none"/>
+  <path d="M20 135H62V190H90V135H132V190H160V135H202V190H230V135H272V190H300" stroke="#000" stroke-width="2.2" fill="none"/>
+  <path d="M340 135H382V190H438V135H522V190H578V135H620" stroke="#000" stroke-width="2.2" fill="none"/>
+  <text x="160" y="205" text-anchor="middle">4 PWM cycles</text>
+  <text x="480" y="205" text-anchor="middle">2 PWM cycles in the same time</text>
+</svg>
+<div class="cap">Figure 4. Same prescale, same OCR: fast PWM gives about twice as many cycles (higher frequency) as phase correct PWM.</div>
+</div>
+<div class="key small">
+<b class="t">Which PWM mode for which device</b>
+Without changing the prescale, <b>fast PWM</b> gives a <b>high</b> frequency, which suits <b>LEDs</b> (no flicker). <b>Phase correct</b> gives about half the frequency, so it is the traditional choice for <b>motors</b>, which need time to start.
+</div>
+
+<h2>7. The PWM registers bit by bit (Timer0)</h2>
+<div class="bitgrp"><div class="title"><code>TCCR0A</code>: compare output mode (COM) and WGM01/00</div>
+<div class="bits pos"><div class="lbl"></div><span class="b">7</span><span class="b">6</span><span class="b">5</span><span class="b">4</span><span class="b">3</span><span class="b">2</span><span class="b">1</span><span class="b">0</span></div>
+<div class="bits"><div class="lbl">TCCR0A</div><span class="b h" style="font-size:9px">CA1</span><span class="b h" style="font-size:9px">CA0</span><span class="b h" style="font-size:9px">CB1</span><span class="b h" style="font-size:9px">CB0</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b h" style="font-size:9px">WG1</span><span class="b h" style="font-size:9px">WG0</span><span class="note">CA = COM0A, CB = COM0B, WG = WGM0</span></div>
+</div>
+<div class="bitgrp"><div class="title"><code>TCCR0B</code>: WGM02 and the clock select bits (Lesson 7)</div>
+<div class="bits"><div class="lbl">TCCR0B</div><span class="b">&middot;</span><span class="b">&middot;</span><span class="b">&ndash;</span><span class="b">&ndash;</span><span class="b h" style="font-size:9px">WG2</span><span class="b h" style="font-size:9px">CS2</span><span class="b h" style="font-size:9px">CS1</span><span class="b h" style="font-size:9px">CS0</span><span class="note">011 = /64</span></div>
+</div>
+<table>
+<tr><th>COMnx1 COMnx0</th><th>OCnx pin (in a PWM mode)</th></tr>
+<tr><td><code>0 0</code></td><td>disconnected: the pin is an ordinary I/O pin</td></tr>
+<tr><td><code>1 0</code></td><td><b>non-inverted</b>: clear on match, set at BOTTOM</td></tr>
+<tr><td><code>1 1</code></td><td><b>inverted</b>: set on match, clear at BOTTOM</td></tr>
+</table>
+<table>
+<tr><th>Register</th><th>Bits for PWM / compare</th></tr>
+<tr><td><code>OCR0A</code>, <code>OCR0B</code></td><td>value compared with TCNT0: 0&ndash;255 (16-bit timer: 0&ndash;65 535)</td></tr>
+<tr><td><code>TIFR0</code></td><td>bit 2 OCF0B, bit 1 <b>OCF0A</b> (compare match flags), bit 0 TOV0. All flags: <b>write 1 to clear</b>.</td></tr>
+<tr><td><code>TIMSK0</code></td><td>bit 2 OCIE0B, bit 1 <b>OCIE0A</b> (compare match interrupt enable), bit 0 TOIE0</td></tr>
+</table>
+<table class="small">
+<tr><th>Uno pin</th><th>3</th><th>5</th><th>6</th><th>9</th><th>10</th><th>11</th></tr>
+<tr><td>AVR pin / OC name</td><td>PD3 / OC2B</td><td>PD5 / OC0B</td><td><b>PD6 / OC0A</b></td><td>PB1 / OC1A</td><td>PB2 / OC1B</td><td>PB3 / OC2A</td></tr>
+<tr><td>Timer</td><td>2 (8-bit)</td><td>0 (8-bit)</td><td>0 (8-bit)</td><td>1 (16-bit)</td><td>1 (16-bit)</td><td>2 (8-bit)</td></tr>
+</table>
+
+<h2 class="pb">8. System 15: the fader (LED fades from full to off, again and again)</h2>
+<p><b>Hardware:</b> LED + 220 &Omega; on <b>D6 (PD6 = OC0A)</b> to GND. It <b>must</b> be a ~ pin: an LED on D8 cannot be dimmed by PWM. <b>Settings:</b> fast PWM (LED, high frequency), non-inverted, prescale 64 &rarr; 976.5 Hz.</p>
+<pre>// faderC.c
+#include &lt;avr/io.h&gt;
+#define F_CPU 16000000UL                      // CPU clock for delay.h
+#include &lt;util/delay.h&gt;                       // _delay_ms()
+
+int main(void)
+{
+    DDRD = DDRD | 0b01000000;                         // PD6 (OC0A) output
+    TCCR0B = TCCR0B &amp; 0b11110111;                     // WGM02 = 0
+    TCCR0A = TCCR0A | 0b00000011;                     // WGM01 = 1, WGM00 = 1: fast PWM
+    TCCR0A = (TCCR0A &amp; 0b10111111) | 0b10000000;      // COM0A1 = 1, COM0A0 = 0: non-inverted
+    TCCR0B = (TCCR0B &amp; 0b11111011) | 0b00000011;      // CS = 011: /64 -&gt; ~1 kHz
+    while (1)
+    {
+        for (int pulseWidth = 255; pulseWidth &gt;= 0; pulseWidth -= 5)
+        {
+            OCR0A = pulseWidth;                       // new duty cycle
+            _delay_ms(30);                            // so the eye can see the fade
+        }
+    }
+    return 0;
+}</pre>
+<div class="two small">
+<div class="box small"><b class="t">Labeled-constant version (same effect)</b>
+<code>DDRD |= (1&lt;&lt;DDD6);</code><br>
+<code>TCCR0B &amp;= ~(1&lt;&lt;WGM02);</code><br>
+<code>TCCR0A |= (1&lt;&lt;WGM01) | (1&lt;&lt;WGM00);</code><br>
+<code>TCCR0A = (TCCR0A &amp; ~(1&lt;&lt;COM0A0)) | (1&lt;&lt;COM0A1);</code><br>
+<code>TCCR0B = (TCCR0B &amp; ~(1&lt;&lt;CS02)) | (1&lt;&lt;CS01) | (1&lt;&lt;CS00);</code></div>
+<div class="box small"><b class="t">Arduino version</b>
+<code>int ledPin = 6;</code><br>
+<code>setup: pinMode(ledPin, OUTPUT);</code><br>
+<code>loop: for (int w = 255; w &gt;= 0; w -= 5)</code><br>
+<code>&nbsp;&nbsp;{ analogWrite(ledPin, w); delay(30); }</code><br>
+<code>analogWrite</code> sets mode, COM and frequency behind the scenes; you only give the pin and the width (0&ndash;255).</div>
+</div>
+<p class="small">OCR 255 &rarr; 5 V, about 125 &rarr; 2.5 V, about 63 &rarr; 1.25 V, down to 0. Without the 30 ms delay the whole fade would take under a millisecond and you would not see it.</p>
+
+<h2>9. True analog output</h2>
+<p>PWM is fine for lights and motors, but for <b>audio or music</b> a real continuously varying voltage gives much better quality. Three options:</p>
+<ol class="small">
+<li><b>A microcontroller with a built-in DAC</b>, e.g. the AT91SAM3X8E on the <b>Arduino Due</b> (10-bit DAC: 0&ndash;1023). Expensive.</li>
+<li><b>A DAC breakout board</b>: cheap, but uses several I/O pins to talk to it.</li>
+<li><b>An RC filter</b> (resistor + capacitor) on the PWM pin smooths the pulses into an analog voltage. R and C depend on the PWM frequency (formula beyond this course).</li>
+</ol>
+
+<h2 class="pb">10. Build example: Exercise 6 &mdash; the auto fan</h2>
+<p><b>Task:</b> an LM35 measures room temperature. <b>&le; 25 &deg;C &rarr; motor OFF</b>, <b>&ge; 35 &deg;C &rarr; full speed</b>, and in between the speed rises and falls <b>smoothly</b>. This one system uses everything: a <b>sensor</b> (Lesson 6), the <b>ADC</b> (Lesson 5), <b>PWM</b> (this lesson) and a <b>transistor driver</b> (Lesson 6).</p>
+
+<div class="fig">
+<svg viewBox="0 0 680 240" font-family="Arial" font-size="12">
+  <rect x="210" y="20" width="150" height="200" fill="#fff" stroke="#000" stroke-width="2"/>
+  <text x="285" y="115" text-anchor="middle" font-weight="bold">Arduino Uno</text>
+  <g font-size="11"><text x="216" y="64">A0 (PC0)</text><text x="216" y="44">5V</text><text x="216" y="210">GND</text><text x="354" y="104" text-anchor="end">D6 (OC0A)</text><text x="354" y="210" text-anchor="end">GND</text></g>
+  <rect x="60" y="40" width="70" height="60" fill="#ddd" stroke="#000" stroke-width="1.8"/>
+  <text x="95" y="66" text-anchor="middle" font-weight="bold">LM35</text><text x="95" y="82" text-anchor="middle" font-size="10">+Vs  Vout  GND</text>
+  <g stroke="#000" stroke-width="1.8" fill="none">
+    <path d="M75 40V30H200V40H210"/><path d="M130 62H210"/>
+    <path d="M115 100V206H210"/>
+    <path d="M360 100H400"/><path d="M440 100H470"/>
+    <path d="M360 206H500"/>
+  </g>
+  <path d="M75 40V30" stroke="#000" stroke-width="1.8"/>
+  <rect x="400" y="93" width="40" height="14" fill="#fff" stroke="#000" stroke-width="1.6"/>
+  <text x="420" y="88" text-anchor="middle" font-size="10">1 k&Omega;</text>
+  <circle cx="495" cy="100" r="24" fill="#fff" stroke="#000" stroke-width="1.8"/>
+  <path d="M470 85V115" stroke="#000" stroke-width="2.4"/>
+  <path d="M470 93L500 78M470 107L500 122" stroke="#000" stroke-width="1.8"/>
+  <path d="M500 122L500 206M500 78V60" stroke="#000" stroke-width="1.8"/>
+  <text x="530" y="104" font-size="10">BC547</text><text x="508" y="140" font-size="10">E</text><text x="508" y="74" font-size="10">C</text><text x="458" y="118" font-size="10">B</text>
+  <circle cx="500" cy="42" r="18" fill="#fff" stroke="#000" stroke-width="1.8"/><text x="500" y="46" text-anchor="middle" font-weight="bold">M</text>
+  <path d="M500 24V12H600M600 12V60M500 60H600" stroke="#000" stroke-width="1.8" fill="none"/>
+  <path d="M590 46L610 46L600 30Z" fill="#ddd" stroke="#000" stroke-width="1.5"/><path d="M590 30H610" stroke="#000" stroke-width="2"/>
+  <text x="616" y="44" font-size="10">1N4001</text>
+  <text x="560" y="8" font-size="10" text-anchor="middle">motor supply + (3&ndash;6 V)</text>
+  <path d="M500 206H620" stroke="#000" stroke-width="1.8"/><text x="590" y="222" font-size="10" text-anchor="middle">motor supply &minus; and Uno GND joined</text>
+</svg>
+<div class="cap">Figure 5. Auto fan. LM35 (flat face toward you: +Vs, Vout, GND) on A0. D6 drives the BC547 base through 1 k&Omega;; motor between its own supply + and the collector; flyback diode across the motor (stripe to +).</div>
+</div>
+<p class="small"><b>Why these choices:</b> D6 is a PWM pin. The motor can't run from the pin (Lesson 6), so a transistor switches it. The motor has its <b>own supply</b> with the grounds joined. Check the motor current: the BC547 handles at most 100 mA; for a bigger motor use a 2N7000 (200 mA) or a power transistor. For a motor, <b>phase correct PWM</b> (&asymp; 490 Hz at /64) is the traditional choice.</p>
+<p><b>The mapping.</b> LM35: 10 mV/&deg;C. With Vref = 5 V: T(&deg;C) = ADC &times; 500 / 1024. Then:</p>
+<div class="box small">T &le; 25 &rarr; OCR = 0 (off) &nbsp;&nbsp;|&nbsp;&nbsp; T &ge; 35 &rarr; OCR = 255 (full) &nbsp;&nbsp;|&nbsp;&nbsp; between: <b>OCR = (T &minus; 25) &times; 255 / 10</b> (e.g. 30 &deg;C &rarr; 127 &asymp; 50%)<br><span class="small">Here Vref = 5 V keeps the maths simple (1 step &asymp; 0.49 &deg;C). The Part 1 notes use the <b>1.1 V internal reference</b> instead (ADMUX REFS = 11, T = ADC &times; 110 / 1024), which gives finer steps (&asymp; 0.11 &deg;C) for the 0&ndash;1 V the LM35 produces in a room. Either is acceptable.</span></div>
+
+<pre>// Exercise 6 Q3: auto fan in C (no wrapper functions)
+#include &lt;avr/io.h&gt;
+
+int main(void)
+{
+    DDRD = DDRD | 0b01000000;                      // PD6 (OC0A) output: motor driver
+    TCCR0A = (TCCR0A &amp; 0b11111100) | 0b00000001;   // WGM01 = 0, WGM00 = 1: phase correct PWM
+    TCCR0B = TCCR0B &amp; 0b11110111;                  // WGM02 = 0
+    TCCR0A = (TCCR0A &amp; 0b10111111) | 0b10000000;   // COM0A = 10: non-inverted
+    TCCR0B = (TCCR0B &amp; 0b11111011) | 0b00000011;   // /64 -&gt; ~490 Hz
+    ADMUX = 0b01000000;                            // Vref = AVcc (5 V), right-adjusted, channel ADC0
+    ADCSRA = 0b10000111;                           // ADC enable, prescale /128
+
+    while (1)
+    {
+        ADCSRA = ADCSRA | 0b01000000;              // ADSC = 1: start conversion
+        while (ADCSRA &amp; 0b01000000) { }            // wait until ADSC = 0 (done)
+        long t10 = (long)ADCW * 5000 / 1024;       // temperature x10 (e.g. 302 = 30.2 C)
+
+        if (t10 &lt;= 250)
+            OCR0A = 0;                             // 25 C or lower: off
+        else if (t10 &gt;= 350)
+            OCR0A = 255;                           // 35 C or higher: full speed
+        else
+            OCR0A = (t10 - 250) * 255 / 100;       // smooth in between
+    }
+}</pre>
+<div class="two small">
+<div class="box small"><b class="t">Q2: Arduino version</b>
+<code>int fan = 6;</code><br>
+<code>setup: pinMode(fan, OUTPUT);</code><br>
+<code>loop:</code><br>
+<code>&nbsp;float t = analogRead(A0) * 500.0 / 1024;</code><br>
+<code>&nbsp;int w = (t - 25) * 255 / 10;</code><br>
+<code>&nbsp;analogWrite(fan, constrain(w, 0, 255));</code><br>
+(<code>constrain</code> clips below 25 &deg;C to 0 and above 35 &deg;C to 255.)</div>
+<div class="box small"><b class="t">Practical tips</b>
+Test the PWM with an <b>LED</b> on D6 first (it should brighten as you warm the LM35 with your fingers), then connect the transistor and motor. Warm the LM35 by holding it; cool it by blowing. A motor may not start at a small duty cycle: that is normal (it needs enough average voltage to overcome friction).</div>
+</div>
+
+<h2 class="pb">L. What the lecturer explained in the lectures (2020 recordings)</h2>
+<p class="small">From the three PWM recordings (folders 22&ndash;24 in <code>Embedded Systems Lectures</code>). <b>[EXAM]</b> marks things he tied to the exam.</p>
+
+<div class="key">
+<b class="t">L1. "Analog-like", not analog [EXAM]</b>
+He stressed the word <b>like</b>: "PWM is not true analog. It gives analog-like output." It is a digital technique, a kind of illusion. Users see and feel analog, a voltmeter even reads 2.5 V, but "only the oscilloscope can tell us the truth": it is a 0/5 V square wave. "You don't need any rocket science to understand PWM" (the bulb example), even though books are full of mathematics.
+</div>
+
+<h3>L2. Why PWM: his examples</h3>
+<ul class="small">
+<li>So far you can turn actuators fully on or off. PWM is how a <b>digital computer drives analog actuators</b>: dim a light, slow a motor.</li>
+<li>A small <b>line-following car</b> must slow down for a bend or junction or it topples, then speed up again. A <b>quadcopter</b> ("quad = four propellers") must take off and land gradually; switching the motors off is a crash landing.</li>
+<li>The filament bulb experiment (section 1): switch on and off faster than the filament can fully heat or cool. 20% on &rarr; dim, 40% &rarr; brighter, 90% &rarr; nearly full.</li>
+</ul>
+
+<h3>L3. Frequency and datasheets</h3>
+<ul class="small">
+<li>"Faster than a human eye can see any flicker": for LEDs <b>&gt; 100 Hz</b>, normally <b>500 Hz to 1 kHz</b>.</li>
+<li>Slow devices like <b>motors</b> take time to start; toggle too fast and "the motor would not start at all". Toggle slower than the maximum speed the device can react.</li>
+<li>Find the supported PWM range in the <b>datasheet</b>. Every reliable component has one (even a resistor): dimensions, voltage, current, heat, PWM range, hazardous materials such as mercury or cadmium.</li>
+<li>Cheap local parts often come with no datasheet. Find the <b>identical clone on SparkFun</b> and download its datasheet ("get the cheap device from Pettah, the datasheet from SparkFun").</li>
+</ul>
+
+<h3>L4. Instruments</h3>
+<ul class="small">
+<li>A <b>multimeter</b> must at least be a voltmeter, ammeter and ohmmeter; modern ones also measure capacitance, inductance and frequency. A good (Japanese) one costs under Rs 10 000; cheap ones about Rs 1 000 are less accurate.</li>
+<li>An <b>oscilloscope</b> plots voltage against time. Even a cheap one costs Rs 40&ndash;50 000; a good one can be about Rs 500 000.</li>
+<li>His quiz: 50% duty &rarr; 2.5 V; for 1.25 V use <b>25%</b>; 75% &rarr; <b>3.75 V</b>.</li>
+</ul>
+
+<h3>L5. How the waveform is made [EXAM]</h3>
+<ul class="small">
+<li>"To use PWM you don't need to know all these things", but as university students you must know <b>how the waveform generator works</b>. He said many good embedded programmers know how to use PWM but not this. At graduation you should be able to <b>self-learn</b> what wasn't covered ("we stopped at S; T to Z you learn yourself").</li>
+<li>Duty cycle formula he wrote: <b>(OCR + 1) &times; 100 / (TOP + 1)</b>. OCR 127 &rarr; 50%, OCR 63 &rarr; 25%.</li>
+<li>OCR at TOP keeps the pin at 5 V; near BOTTOM it is (almost) always 0 V. OCR closer to TOP = longer HIGH time.</li>
+<li>Derivation of F_PWM: with TOP = 3 the counter makes 0&rarr;1&rarr;2&rarr;3&rarr;0 = <b>4 = TOP + 1</b> ticks per PWM cycle. So t<sub>timer</sub> = t<sub>PWM</sub> / (TOP + 1), F_PWM = F_timer / (TOP + 1) = F_CPU / ((TOP + 1) &times; prescale).</li>
+<li>Student asked why there are two control registers (TCCRnA and TCCRnB): there are too many control bits for one 8-bit register. Other peripherals (like the USART) do the same.</li>
+</ul>
+
+<h3>L6. Modes</h3>
+<ul class="small">
+<li>Normal mode is why the Lesson 7 timers worked without touching WGM: all WGM bits default to 0.</li>
+<li><b>CTC</b> example: count to 5 by putting 5 in OCR and watching OCF; no need to reset TCNT, because the timer clears it itself. A student asked why CTC exists when normal mode can do the same. He said honestly he would check and let them know, and that CTC "is not widely used".</li>
+<li>He prompted the class to ask "why two PWM modes?" and answered: for the same prescale, <b>fast PWM gives more pulses (higher frequency) for LEDs</b>, while <b>phase correct gives fewer (about half, e.g. 1 kHz vs 500 Hz) for motors</b>. You get both just by changing the mode.</li>
+<li><b>Dimming a 230 V bulb?</b> Not with a relay: a relay cannot switch on and off fast enough for PWM. Use a <b>TRIAC</b> (3 pins: gate, T1, T2). He <b>discouraged</b> it because of the shock risk with mains, unless you have experience.</li>
+</ul>
+
+<h3>L7. Fader details [EXAM]</h3>
+<ul class="small">
+<li>A common mistake: <b>connecting the device to a pin that is not PWM-capable</b> (e.g. D8) and expecting a fade. Use a ~ pin; he used D6 = OC0A of Timer0.</li>
+<li>Fast PWM for the LED (avoid flicker), non-inverted ("the widely used mode"), 1 kHz.</li>
+<li>Prescale for 1 kHz = 62.5, which does not exist, so use <b>64</b> &rarr; 976.5 Hz, "not exactly 1 kHz".</li>
+<li>The 30 ms delay is there only so the eye can see the fade.</li>
+<li>Demo with <code>analogWrite(9, 250)</code>: the multimeter read <b>4.72 V</b>, not 5 V (250/255 &times; 5 &asymp; 4.9 V; a real pin and meter read a little lower).</li>
+<li>The Arduino version hides WGM, COM and frequency inside <code>analogWrite</code>. You only give the pin and the width.</li>
+</ul>
+
+<h3>L8. True analog, and the reaction-timer seed</h3>
+<ul class="small">
+<li>True analog matters for quality <b>audio/music</b>. Three options: a built-in DAC (<b>Arduino Due</b>, AT91SAM3X8E, 10-bit DAC; about Rs 4 000 for a clone, Rs 12 000 original), a <b>DAC breakout</b> (about Rs 300&ndash;350, but it uses about 4 I/O pins), or an <b>RC filter</b> (formula is beyond the course).</li>
+<li>Exercise 5 question: why seed <code>srand</code>? Without a random seed, anyone who knows the algorithm can predict the numbers. PCs use the system clock; a microcontroller has none. So use the <b>elapsed time from power-up to the first press</b> (a timer), or a <b>floating analog pin</b>, which acts like an <b>antenna</b> and picks up random electromagnetic noise.</li>
+<li>He prefers to <b>guide</b> students to answers rather than give them. Keep asking questions.</li>
+<li>Next lesson: data communication (serial, parallel, synchronous, asynchronous), first what happens behind <code>Serial.print</code>, then Arduino.</li>
+</ul>
+
+<h2>11. Common mistakes</h2>
+<table>
+<tr><th>Mistake</th><th>What happens / fix</th></tr>
+<tr><td>Device on a non-PWM pin</td><td>No fading, only on/off. Use 3, 5, 6, 9, 10 or 11 (~).</td></tr>
+<tr><td>COM bits left 00</td><td>Timer runs but the pin is not connected to the waveform generator. Set COM0A1 = 1.</td></tr>
+<tr><td>Forgetting DDR for the OC pin</td><td>No output. The OC pin must be an output.</td></tr>
+<tr><td>Clock select left 000</td><td>Timer stopped, no PWM.</td></tr>
+<tr><td>Wrong WGM split</td><td>WGM01/00 are in TCCR0A, WGM02 in TCCR0B.</td></tr>
+<tr><td>Expecting exactly 1 kHz</td><td>Only 1, 8, 64, 256, 1024 exist: /64 gives 976.5 Hz.</td></tr>
+<tr><td>Motor straight on the pin</td><td>Too much current. Use a transistor, a flyback diode and its own supply.</td></tr>
+<tr><td>PWM too fast for a motor / too slow for an LED</td><td>Motor won't start / LED flickers. Pick the frequency from the datasheet.</td></tr>
+<tr><td>Inverted when you wanted non-inverted</td><td>Brightness goes the opposite way. COM = 10 non-inverted, 11 inverted.</td></tr>
+</table>
+
+<h2>Cheat sheet</h2>
+<div class="two">
+<table>
+<tr><th colspan="2">Formulas</th></tr>
+<tr><td>Duty</td><td>t<sub>high</sub> / period &times; 100%</td></tr>
+<tr><td>Average V</td><td>5 V &times; duty</td></tr>
+<tr><td>Duty from OCR</td><td>(OCR + 1) / (TOP + 1)</td></tr>
+<tr><td>Fast PWM f</td><td>F_CPU / ((TOP+1) &times; N)</td></tr>
+<tr><td>Prescale</td><td>F_CPU / ((TOP+1) &times; f)</td></tr>
+<tr><td>Phase correct</td><td>&asymp; half of fast PWM</td></tr>
+<tr><td>8-bit /64</td><td>976.5 Hz fast, 490 Hz phase correct</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Registers (Timer0)</th></tr>
+<tr><td>WGM02:00</td><td>000 normal, 001 phase correct, 010 CTC, 011 fast PWM</td></tr>
+<tr><td>COM0A1:0</td><td>10 non-inverted, 11 inverted (TCCR0A bits 7:6)</td></tr>
+<tr><td>OCR0A</td><td>duty value 0&ndash;255 &rarr; pin D6</td></tr>
+<tr><td>TIFR0 / TIMSK0</td><td>OCF0A / OCIE0A bit 1, OCF0B / OCIE0B bit 2</td></tr>
+<tr><td>PWM pins</td><td>T0: D6 (A), D5 (B); T1: D9, D10; T2: D11, D3</td></tr>
+<tr><td>Arduino</td><td><code>analogWrite(pin, 0&ndash;255)</code></td></tr>
+</table>
+</div>
+
+</body>
+</html>

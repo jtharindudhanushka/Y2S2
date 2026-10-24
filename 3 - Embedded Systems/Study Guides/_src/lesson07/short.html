@@ -12,4 +12,7 @@
   <tr><td>Arduino</td><td><code>analogWrite(pin, 0..255)</code> on ~ pins; 5, 6 about 977 Hz fast PWM, others about 490 Hz phase correct.</td></tr>
   <tr><td>Analog output</td><td>MCU with DAC, DAC breakout, or RC low-pass filter.</td></tr>
   <tr><td>Auto fan</td><td>LM35 on A0, 1.1 V reference; duty 0 at &le; 25 &deg;C, 255 at &ge; 35 &deg;C, linear (T&minus;25)/10 &times; 255; motor via BC547/2N7000, flyback diode, common ground.</td></tr>
+  <tr><td>2020 lecture: idea</td><td>Analog-<b>like</b>, not analog: voltmeter reads the average, oscilloscope shows the square wave. Bulb on/off faster than the filament reacts.</td></tr>
+  <tr><td>2020 lecture: frequency</td><td>LED &gt; 100 Hz (500 Hz&ndash;1 kHz); motors need lower (may not start if too fast); take the range from the datasheet (SparkFun clone if none).</td></tr>
+  <tr><td>2020 lecture: rules</td><td>Duty = (OCR+1)/(TOP+1); 1 kHz needs /62.5 so use /64 &rarr; 976.5 Hz; fast PWM for LEDs, phase correct (&asymp; half f) for motors; only ~ pins; mains dimming needs a TRIAC (avoid), not a relay.</td></tr>
 </table>
