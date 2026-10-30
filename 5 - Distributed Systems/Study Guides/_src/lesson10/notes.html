@@ -1,0 +1,207 @@
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Source: Lessons 1 to 9 (Lectures 01 to 08, Lab 01, Assignment 01). Final exam 02.11.2026, 2 hours, closed book.</p>
+<div class="key">
+<b class="t">How to use this lesson</b>
+<ol class="small">
+<li><b>Part A</b>: learn the definitions word for word; most answers start with one.</li>
+<li><b>Part B</b>: for each lesson, the questions most likely to be asked, with the points a full answer must contain. Practise writing them from memory.</li>
+<li><b>Part C</b>: the comparison tables examiners love. Be able to draw each one.</li>
+<li><b>Part D</b>: a full mock paper with model answers (also in the Practice questions tab).</li>
+</ol>
+</div>
+
+<div class="box small">
+<b class="t">Answer technique for a 2-hour closed-book paper</b>
+<b>Define &rarr; explain &rarr; example &rarr; diagram.</b> Start every answer with the definition; give one point per mark; add a concrete example (bank, Google, AWS, online shop); draw a labelled diagram whenever the topic has one (architecture, 2PC, CAP triangle, hypervisor stack, GFS, HA design). For "compare" questions always use a <b>table</b> with 4&ndash;6 rows. For "discuss trade-offs" give <b>both</b> sides and say when each is preferred. Budget about 1.2 minutes per mark.
+</div>
+
+<h2>Part A &mdash; Definitions to memorise</h2>
+<table class="small long">
+<tr><th colspan="2">Lesson 1 &mdash; Distributed systems</th></tr>
+<tr><td class="t">Distributed system</td><td>A collection of independent computers that appears to its users as a single coherent system, communicating over a network to achieve a common goal.</td></tr>
+<tr><td class="t">Transparency</td><td>Hiding the distribution from users (access, location, migration, replication, concurrency, failure).</td></tr>
+<tr><td class="t">Scalability</td><td>Ability to grow capacity, preferably by adding nodes (horizontal scaling), while performing well.</td></tr>
+<tr><td class="t">Partial failure</td><td>Some components fail while others keep running.</td></tr>
+<tr><td class="t">CAP theorem</td><td>A distributed data store can guarantee at most two of Consistency, Availability and Partition tolerance; under a partition choose C or A.</td></tr>
+<tr><td class="t">Middleware</td><td>Software layer that hides heterogeneity and gives a uniform interface.</td></tr>
+<tr><td class="t">Openness / heterogeneity</td><td>Built on standard published interfaces / nodes differ in hardware, OS, network, language.</td></tr>
+<tr><th colspan="2">Lesson 2 &mdash; Cloud computing</th></tr>
+<tr><td class="t">Cloud computing</td><td>Delivery of computing as a service rather than a product, where shared resources, software and information are provided as a metered service over a network: on-demand IT, pay-as-you-go.</td></tr>
+<tr><td class="t">NIST characteristics</td><td>On-demand self-service, broad network access, resource pooling, rapid elasticity, measured service.</td></tr>
+<tr><td class="t">Big data</td><td>Large pools of data that can be captured, communicated, aggregated, stored and analysed to deliver insights and value (5 V's).</td></tr>
+<tr><td class="t">Multi-tenancy</td><td>Multiple customers share the same physical infrastructure securely and independently.</td></tr>
+<tr><td class="t">IaaS / PaaS / SaaS</td><td>Virtual infrastructure (you manage OS and up) / platform to build and deploy apps (you manage app and data) / complete software over the Internet (you just use it).</td></tr>
+<tr><td class="t">Public / private / hybrid / multi-cloud</td><td>Third-party shared / one organisation only / public + private with portability / several public providers.</td></tr>
+<tr><td class="t">Serverless (FaaS)</td><td>Developers don't manage servers; functions run on events, scale to zero, pay per invocation.</td></tr>
+<tr><td class="t">Edge / fog computing</td><td>Processing close to where data is generated (&lt;10 ms) / a middle layer between edge and cloud that aggregates edge data (10&ndash;50 ms).</td></tr>
+<tr><td class="t">Shared responsibility</td><td>Provider secures OF the cloud (physical, network hardware, hypervisor); customer secures IN the cloud (data, IAM, network config, apps).</td></tr>
+<tr><td class="t">Zero Trust</td><td>"Never trust, always verify": verify explicitly, least privilege, assume breach.</td></tr>
+<tr><td class="t">FinOps</td><td>Bringing financial accountability to cloud spending.</td></tr>
+<tr><th colspan="2">Lesson 3 &mdash; NFV, SDN, Docker, HA</th></tr>
+<tr><td class="t">NFV</td><td>Decoupling network functions (firewall, encryption) from dedicated hardware and running them on virtual servers.</td></tr>
+<tr><td class="t">SDN</td><td>Separating the network control plane from the data plane and centralising control in software.</td></tr>
+<tr><td class="t">Container / image</td><td>Running instance / read-only template built from a Dockerfile in layers.</td></tr>
+<tr><td class="t">Availability zone</td><td>Cluster of data centres in a region with independent power, cooling and redundant networking.</td></tr>
+<tr><td class="t">RTO / RPO</td><td>Maximum acceptable downtime / maximum acceptable data loss measured in time.</td></tr>
+<tr><th colspan="2">Lesson 4 &mdash; Consistency, fault tolerance</th></tr>
+<tr><td class="t">Consistency model</td><td>A contract between the data store and processes specifying what values a read may return after writes.</td></tr>
+<tr><td class="t">Strict / sequential / causal / eventual</td><td>Latest write in real time / one interleaving for all / same order only for causally related writes / converge when updates stop.</td></tr>
+<tr><td class="t">Fault &rarr; error &rarr; failure</td><td>Defect in a component &rarr; incorrect internal state &rarr; visible service breakdown.</td></tr>
+<tr><td class="t">Fault tolerance</td><td>Continuing to operate correctly despite failures of some components.</td></tr>
+<tr><td class="t">Byzantine failure</td><td>Arbitrary output at arbitrary times, including malicious behaviour.</td></tr>
+<tr><td class="t">Atomic multicast</td><td>A message is delivered to every non-faulty group member or to none.</td></tr>
+<tr><td class="t">2PC</td><td>Coordinator collects YES/NO votes; all YES &rArr; COMMIT, any NO &rArr; ABORT; blocking if the coordinator fails after YES votes.</td></tr>
+<tr><td class="t">PACELC</td><td>If Partition: A or C; Else: Latency or Consistency.</td></tr>
+<tr><th colspan="2">Lesson 5 &mdash; Infrastructure and virtualization</th></tr>
+<tr><td class="t">Virtualization</td><td>Creating a software-based version of a resource so one physical machine behaves like several.</td></tr>
+<tr><td class="t">Hypervisor (VMM)</td><td>Software that creates, runs and manages VMs, allocating hardware and isolating them.</td></tr>
+<tr><td class="t">Type 1 / Type 2</td><td>Runs directly on hardware (ESXi, Hyper-V, Xen, KVM) / runs as an app on a host OS (VirtualBox, Workstation).</td></tr>
+<tr><td class="t">Cloud infrastructure</td><td>Hardware and software (servers, storage, networking, virtualization) needed to support cloud computing.</td></tr>
+<tr><td class="t">Resource pooling</td><td>Physical compute, storage and network combined into a shared pool from which slices are allocated on demand.</td></tr>
+<tr><th colspan="2">Lesson 6 &mdash; Management, Kubernetes</th></tr>
+<tr><td class="t">Cloud management</td><td>Controlling and monitoring cloud resources, storage, networks, apps, security policies and access.</td></tr>
+<tr><td class="t">Infrastructure as Code</td><td>Managing infrastructure through code instead of manual configuration.</td></tr>
+<tr><td class="t">Load balancer</td><td>Distributes incoming traffic among multiple servers or instances.</td></tr>
+<tr><td class="t">Auto-scaling</td><td>Automatically increasing or decreasing resources according to demand.</td></tr>
+<tr><td class="t">Kubernetes</td><td>Open-source container orchestration platform for deploying, managing and scaling containerized apps.</td></tr>
+<tr><td class="t">Pod</td><td>Smallest deployable unit: one or more containers sharing one IP and optional volumes, co-scheduled, ephemeral.</td></tr>
+<tr><td class="t">Resilience</td><td>Ability of a system to continue operating when failures occur.</td></tr>
+<tr><th colspan="2">Lesson 7 &mdash; Storage</th></tr>
+<tr><td class="t">Block / file / object storage</td><td>Fixed-size addressable blocks / hierarchical files over NFS/SMB / immutable objects (data + metadata + key) over REST.</td></tr>
+<tr><td class="t">GFS / HDFS</td><td>Google's master/chunkserver DFS with 64 MB chunks / open-source NameNode/DataNode DFS with 128 MB blocks.</td></tr>
+<tr><td class="t">Durability</td><td>Data is not lost (S3: 11 nines); different from availability.</td></tr>
+<tr><td class="t">Erasure coding</td><td>Storing data plus parity so lost blocks can be rebuilt; ~1.5&times; overhead instead of 3&times;.</td></tr>
+<tr><th colspan="2">Lesson 8 &mdash; Server virtualization</th></tr>
+<tr><td class="t">Full / para / hardware-assisted</td><td>Binary translation, unmodified guest / modified guest with hypercalls / CPU extensions (VT-x, AMD-V).</td></tr>
+<tr><td class="t">vMotion / Storage vMotion</td><td>Live migration of a running VM to another host / of its disk files to another datastore on the same host.</td></tr>
+<tr><td class="t">vSwitch</td><td>Software Ethernet switch inside ESX connecting VM vNICs to physical uplinks (vmnics).</td></tr>
+<tr><td class="t">DRS / HA / SRM</td><td>Auto load balancing across hosts / restart VMs after host failure / failover to a DR site.</td></tr>
+</table>
+
+<h2>Part B &mdash; Likely questions per lesson (with answer points)</h2>
+<table class="small long">
+<tr><th style="width:38%">Question</th><th>A full answer must contain</th></tr>
+<tr><th colspan="2">Lesson 1 &mdash; Introduction to distributed systems</th></tr>
+<tr><td>Define a distributed system; explain its characteristics.</td><td>Definition; no shared memory, message passing, single view, no global clock; resource sharing, scalability, concurrency, fault tolerance, no global clock, transparency (each with example).</td></tr>
+<tr><td>Advantages and challenges of distributed systems.</td><td>Scalability, fault tolerance, performance, resource efficiency, geographic reach, cost; complexity, partial failures, consistency, synchronization, security, network reliability.</td></tr>
+<tr><td>State and explain the CAP theorem with examples.</td><td>Three definitions; only two at once; partitions inevitable &rArr; C or A; CP bank vs AP social feed; triangle diagram.</td></tr>
+<tr><td>Client-server vs P2P (vs microservices).</td><td>Structure, control, scalability, SPOF/churn, examples; diagram.</td></tr>
+<tr><td>Explain how Google / AWS / banks use distributed systems.</td><td>Google: server farms, GFS chunks replicated, MapReduce. AWS: regions/AZs, EC2, S3. Banks: strong consistency, distributed transactions, HA.</td></tr>
+<tr><th colspan="2">Lesson 2 &mdash; Cloud computing</th></tr>
+<tr><td>Define cloud computing; NIST five characteristics.</td><td>Definition (service not product, metered, network); five characteristics with examples.</td></tr>
+<tr><td>Compare IaaS, PaaS, SaaS (diagram).</td><td>Responsibility stack; what you manage; examples; best use.</td></tr>
+<tr><td>Compare deployment models.</td><td>Public, private, hybrid (+ community, multi-cloud): definition, pros, cons, example.</td></tr>
+<tr><td>Shared responsibility model; Zero Trust.</td><td>OF vs IN the cloud with S3 example; verify explicitly, least privilege, assume breach.</td></tr>
+<tr><td>Serverless vs containers; edge vs fog vs cloud.</td><td>Not "no servers"; pros/cons; when to use; latency tiers and use cases (autonomous cars).</td></tr>
+<tr><td>Why virtualization is the core enabler; FinOps; multi-cloud reasons.</td><td>Pooling, consolidation, isolation, rapid provisioning; right-size, reserved, spot, auto-scale, tiering, tags; lock-in, best-of-breed, compliance, cost, redundancy.</td></tr>
+<tr><th colspan="2">Lesson 3 &mdash; NFV, SDN, Docker, AWS HA, DR</th></tr>
+<tr><td>What is NFV? Advantages. NFV vs SDN.</td><td>Decouple functions from hardware onto VMs; six advantages; functions vs control-plane separation.</td></tr>
+<tr><td>Docker architecture; image vs container; volumes.</td><td>Client &rarr; daemon &harr; registry; read-only template vs running instance; Dockerfile layers; ephemeral &rArr; volumes.</td></tr>
+<tr><td>Design a highly available architecture on AWS.</td><td>VPC, 2 AZs, public/private subnets, NAT GW, ALB, Auto Scaling groups, RDS primary &rarr; secondary; no SPOF; diagram.</td></tr>
+<tr><td>Auto scaling policies; scaling types; launch templates.</td><td>Target tracking, simple, step; out/in/up; versioned, recommended templates.</td></tr>
+<tr><td>Define RTO/RPO; compare DR strategies.</td><td>Definitions; backup &amp; restore, pilot light, warm standby, multi-site with RTO and cost.</td></tr>
+<tr><th colspan="2">Lesson 4 &mdash; Consistency, replication, fault tolerance (highest weight in theory)</th></tr>
+<tr><td>Data-centric vs client-centric; describe each model.</td><td>Two views; strict, sequential, causal, eventual; four client guarantees with examples; spectrum.</td></tr>
+<tr><td>Is this history sequentially/causally consistent?</td><td>Find one interleaving for all; check causal (happened-before) pairs.</td></tr>
+<tr><td>Push vs pull; replica placement; why replicate.</td><td>Read/write ratio, freshness, bandwidth; permanent, server-, client-initiated; performance, reliability, scalability, availability.</td></tr>
+<tr><td>CAP in practice; PACELC.</td><td>CP (ZooKeeper, quorum DBs), AP (DNS, NoSQL, carts), CA (single site); tuning quorums; Else L vs C.</td></tr>
+<tr><td>Failure types; redundancy; fault &rarr; error &rarr; failure.</td><td>Crash, omission, timing, response, Byzantine; information, time, physical redundancy.</td></tr>
+<tr><td>Heartbeat vs gossip.</td><td>Centralized vs decentralized; speed; scalability; SPOF; best fit; O(log N).</td></tr>
+<tr><td>Reliable client-server and group communication.</td><td>Four failure points; at-most/at-least/exactly-once; atomic multicast; FIFO/causal/total order.</td></tr>
+<tr><td>Explain 2PC and 3PC; why 3PC exists.</td><td>Roles, phases, ABORT on any NO, blocking scenario, prepare-to-commit, comparison table, diagram.</td></tr>
+<tr><th colspan="2">Lesson 5 &mdash; Cloud infrastructure and virtualization</th></tr>
+<tr><td>Type 1 vs Type 2 hypervisors.</td><td>Runs on, performance, installation, use, security, examples; stack diagrams.</td></tr>
+<tr><td>Types of virtualization; benefits and limitations.</td><td>Server, storage, network, desktop; utilisation, cost, provisioning, DR; overhead, licensing, host SPOF, hyperjacking.</td></tr>
+<tr><td>VMs vs containers; when to use each.</td><td>Isolation, size, boot, density, use; choice lists; containers inside VMs.</td></tr>
+<tr><td>Data centre architecture.</td><td>Components; regions and AZs; pooling; multi-tenancy; four layers; Kubernetes; elasticity.</td></tr>
+<tr><th colspan="2">Lesson 6 &mdash; Cloud management and Kubernetes</th></tr>
+<tr><td>Resource provisioning and IaC.</td><td>Traditional vs cloud; IaC steps, tools, benefits.</td></tr>
+<tr><td>Load balancing (types) and auto-scaling (benefits/challenges).</td><td>Application/network/global; metrics; horizontal vs vertical.</td></tr>
+<tr><td>Kubernetes architecture and objects.</td><td>Control plane (API server, scheduler, controller manager, DB) and workers (kubelet, runtime, kube-proxy); Pod, Deployment, Service, Ingress, ConfigMap/Secret, Namespace.</td></tr>
+<tr><td>What is a Pod? Lifecycle and restart policies.</td><td>Shared IP/volumes, co-scheduled, ephemeral; sidecar and init; phases; Always/OnFailure/Never; Deployment recreates Pods.</td></tr>
+<tr><td>Design for resilience / flexibility / cost.</td><td>Slide lists 19&ndash;21.</td></tr>
+<tr><th colspan="2">Lesson 7 &mdash; Storage and DFS</th></tr>
+<tr><td>Block vs file vs object storage.</td><td>How it works, latency, scale, metadata, use, examples.</td></tr>
+<tr><td>GFS architecture and consistency; GFS vs HDFS.</td><td>Master, chunkservers, 64 MB, 3&times;, metadata vs data path, relaxed consistency; HDFS HA, 128 MB, rack awareness, erasure coding.</td></tr>
+<tr><td>Amazon S3; S3 vs EBS vs EFS.</td><td>Bucket/object/key, 11 nines, classes, strong consistency, security; comparison table.</td></tr>
+<tr><td>DFS design trade-offs.</td><td>Consistency vs availability; central vs distributed metadata; replication vs erasure coding; block size.</td></tr>
+<tr><th colspan="2">Lesson 8 &mdash; Server virtualization and lab</th></tr>
+<tr><td>Full vs para vs hardware-assisted virtualization.</td><td>Binary translation; modified guest/hypercalls; VT-x/AMD-V; examples; performance.</td></tr>
+<tr><td>Hardware-assisted CPU, MMU, I/O.</td><td>VT-x/AMD-V (XD/NX, power cycle); EPT/RVI vs shadow page tables; VT-d/AMD-Vi, VMDirectPath.</td></tr>
+<tr><td>vMotion steps; vMotion vs Storage vMotion.</td><td>Nine steps with memory bitmap and quiesce; host vs datastore.</td></tr>
+<tr><td>VMware networking; vSwitch vs physical switch.</td><td>vNIC, port group, vSwitch, vmnic; no MAC learning, no STP, no trunks, VLAN 802.1Q.</td></tr>
+<tr><td>Lab: create a VM and set a static IP.</td><td>ESXi steps; nmcli modify with address/24, gateway, DNS, manual; down/up; ip addr, ip route, ping by IP and name.</td></tr>
+</table>
+
+<h2>Part C &mdash; Comparison tables to be able to draw</h2>
+<table class="small">
+<tr><th>#</th><th>Comparison</th><th>Rows to include</th><th>Lesson</th></tr>
+<tr><td>1</td><td>Centralized vs parallel vs distributed</td><td>Memory, clock, cooperation, failure, example</td><td>1</td></tr>
+<tr><td>2</td><td>Client-server vs P2P vs microservices</td><td>Idea, control, scalability, weakness, example</td><td>1</td></tr>
+<tr><td>3</td><td>IaaS vs PaaS vs SaaS</td><td>What you get, you manage, examples, best for</td><td>2</td></tr>
+<tr><td>4</td><td>Public vs private vs hybrid vs community vs multi</td><td>Definition, pros, cons, example</td><td>2</td></tr>
+<tr><td>5</td><td>Edge vs fog vs cloud</td><td>Where, latency, compute, use, examples</td><td>2</td></tr>
+<tr><td>6</td><td>NFV vs SDN</td><td>What changes, goal, relationship</td><td>3</td></tr>
+<tr><td>7</td><td>Four DR strategies</td><td>Standby, after event, RTO/RPO, cost</td><td>3</td></tr>
+<tr><td>8</td><td>Consistency models</td><td>Rule, real time?, cost, example</td><td>4</td></tr>
+<tr><td>9</td><td>Push vs pull</td><td>How, freshness, bandwidth, fit</td><td>4</td></tr>
+<tr><td>10</td><td>Heartbeat vs gossip</td><td>Architecture, scalability, speed, SPOF, fit</td><td>4</td></tr>
+<tr><td>11</td><td>2PC vs 3PC</td><td>Phases, blocking, messages, complexity</td><td>4</td></tr>
+<tr><td>12</td><td>Type 1 vs Type 2</td><td>Runs on, performance, install, use, security, examples</td><td>5</td></tr>
+<tr><td>13</td><td>VM vs container</td><td>Isolation, size, boot, density, use</td><td>5</td></tr>
+<tr><td>14</td><td>Block vs file vs object; S3 vs EBS vs EFS</td><td>Unit, latency, scale, metadata, use; attach point, durability</td><td>7</td></tr>
+<tr><td>15</td><td>GFS vs HDFS</td><td>Origin, metadata node, block size, replication, placement, workload</td><td>7</td></tr>
+<tr><td>16</td><td>Full vs para vs hardware-assisted</td><td>Mechanism, guest modified?, performance, examples</td><td>8</td></tr>
+</table>
+
+<h2>Part D &mdash; Exam-style questions with model answers</h2>
+<p class="small">A mock paper mixing all lessons. Attempt each under timed conditions before reading the answer.</p>
+<p><b>Q1. Define a distributed system. Explain four of its characteristics and two of its challenges. (10 marks)</b><br>
+A distributed system is a collection of independent computers that appears to its users as a single coherent system, communicating over a network to achieve a common goal; nodes do not share memory, cooperate only by messages and have no global clock. Characteristics: resource sharing (hardware, data and services shared, e.g. one file server); scalability (grow by adding nodes horizontally); concurrency (many requests processed simultaneously, so shared data must be protected); transparency (distribution hidden, e.g. location and failure transparency). Challenges: partial failures (some nodes fail while others run, and a node cannot tell crashed from slow); consistency (keeping replicated data in sync under concurrent updates).</p>
+<p><b>Q2. A bank and a social network both replicate data across data centres. Using the CAP theorem, explain which property each should give up during a network partition and why. (8)</b><br>
+CAP: a distributed data store can provide at most two of consistency (every read returns the latest write or an error), availability (every request gets a non-error response) and partition tolerance (keeps operating despite lost/delayed messages). Partitions are unavoidable, so the choice is C or A. The bank should be CP: during a partition a replica that cannot coordinate refuses or delays withdrawals and balance reads, because showing a stale balance could allow overdrawing, a real financial loss. The social network should be AP: replicas keep serving posts that may be slightly stale and converge later (eventual consistency), because an old feed is acceptable but downtime loses users.</p>
+<p><b>Q3. Compare IaaS, PaaS and SaaS using a diagram of the responsibility stack. Give an example and suitable use of each. (10)</b><br>
+(Draw the stack: applications, data, runtime, middleware, OS, virtualization, servers, storage, networking.) IaaS: provider manages virtualization and below; customer manages the OS, middleware, runtime, data and applications; e.g. AWS EC2; for lift-and-shift migrations, dev/test, HPC. PaaS: the provider also manages OS, middleware and runtime; the customer manages only the app and data; e.g. Google App Engine, Heroku; for developers who want to deploy code with auto-scaling, CI/CD and managed databases. SaaS: provider manages everything; customer just uses the software; e.g. Gmail, Microsoft 365; for end users needing ready applications.</p>
+<p><b>Q4. Explain the difference between sequential consistency and eventual consistency. For P1: W(x)a; P2: W(x)b; P3: R(x)a, R(x)b; P4: R(x)a, R(x)b, state whether the history is sequentially consistent. (8)</b><br>
+Sequential consistency: the result is as if all operations were executed in one sequential order seen identically by all processes, respecting each process's program order but not real time. Eventual consistency: if updates stop, all replicas eventually converge to the same value, with no ordering or timing guarantee meanwhile; it favours availability (DNS, NoSQL). The history is sequentially consistent: P3 and P4 both observe a then b, so the single order W(x)a, W(x)b explains every read.</p>
+<p><b>Q5. Describe the Two-Phase Commit protocol with a diagram. Explain the situation in which it blocks and how Three-Phase Commit avoids it. (12)</b><br>
+(Draw coordinator and participants with VOTE-REQUEST, YES/NO, COMMIT/ABORT.) Phase 1: the coordinator asks every participant whether it can commit; each prepares, logs and votes YES or NO. Phase 2: if all voted YES the coordinator broadcasts COMMIT, otherwise ABORT; participants apply it, giving all-or-nothing atomicity. Blocking: if the coordinator crashes after participants voted YES but before they receive the decision, they cannot commit or abort alone and must wait holding locks. 3PC inserts a PREPARE-TO-COMMIT phase acknowledged by participants before the final COMMIT, so every participant knows the group's intent; after a coordinator crash survivors use timeouts or a new coordinator: if any received PREPARE-TO-COMMIT they commit, otherwise they abort. It avoids blocking under crash-only failures without partitions, at the cost of more messages and complexity.</p>
+<p><b>Q6. Compare Type 1 and Type 2 hypervisors, and virtual machines with containers. Recommend a technology for (a) running Windows and Linux on one server, (b) a microservice web shop with sudden traffic spikes. (12)</b><br>
+Type 1 runs directly on hardware (ESXi, Hyper-V, Xen, KVM): near-native performance, smaller attack surface, used in data centres. Type 2 runs as an application on a host OS (VirtualBox, VMware Workstation): easy to install, more overhead, inherits host OS risks, used on laptops. VMs include a full guest OS: strong isolation, GBs, minutes to boot, lower density. Containers share the host kernel: weaker isolation, MBs, seconds to start, higher density. (a) VMs on a Type 1 hypervisor, since different guest operating systems are needed. (b) Containers orchestrated by Kubernetes (possibly inside VMs for tenant isolation), since microservices need fast startup, density and rapid horizontal scaling.</p>
+<p><b>Q7. Draw a highly available three-tier web architecture on AWS and explain how it survives the loss of an availability zone. Define RTO and RPO and recommend a DR strategy for an online shop that may be down for at most 30 minutes. (12)</b><br>
+(Draw VPC across two AZs: public subnets with NAT gateways, private subnets with web and app servers in Auto Scaling groups, an ALB in front, RDS primary in AZ1 replicating to a secondary in AZ2.) If AZ1 fails, the ALB's health checks send traffic only to AZ2, the Auto Scaling group launches replacement instances there, and RDS fails over to the secondary, so no single point of failure stops the service. RTO is the maximum acceptable downtime; RPO is the maximum acceptable data loss measured in time. With an RTO of about 30 minutes, pilot light suits: the database is continuously replicated to the DR region (small RPO) and application servers are started and DNS (Route 53) switched over in tens of minutes, more cheaply than warm standby or multi-site.</p>
+<p><b>Q8. Explain the Kubernetes architecture and the role of a Pod. What happens when (a) a container in a Pod crashes, (b) the node running a Deployment's Pod fails? (10)</b><br>
+A cluster has a control plane (API server as the entry point, scheduler choosing nodes, controller manager keeping actual state equal to desired state, cluster database storing state) and worker nodes (kubelet running and reporting Pods, container runtime, kube-proxy for Service networking). A Pod is the smallest deployable unit: one or more containers that share one IP (localhost), optional volumes, are co-scheduled on one node and are ephemeral. (a) The kubelet restarts the container in place according to the restart policy (Always by default), with growing backoff (CrashLoopBackOff). (b) The Pod is lost; the Deployment controller sees fewer replicas than desired and the scheduler places a new Pod on a healthy node.</p>
+<p><b>Q9. Explain the GFS architecture with a diagram. Why does data not flow through the Master? Compare GFS with HDFS. (12)</b><br>
+(Draw client, Master, chunkservers with replicated chunks.) A single Master keeps metadata (namespace, file-to-chunk mapping, chunk locations); chunkservers store 64 MB chunks, each replicated 3&times; across machines/racks. A client asks the Master for the chunk handle and locations, then reads/writes directly with chunkservers. Separating the metadata path from the data path stops the single Master becoming a throughput bottleneck. HDFS: open source (Hadoop); NameNode/DataNodes; 128 MB blocks; Active/Standby NameNodes for HA; explicit rack awareness; erasure coding in 3.x; general Hadoop workloads. GFS: internal Google, single Master, 64 MB, basic placement, Google batch workloads.</p>
+<p><b>Q10. Compare full virtualization, para-virtualization and hardware-assisted virtualization. Explain vMotion. (10)</b><br>
+Full virtualization: the hypervisor uses binary translation to rewrite sensitive instructions, so unmodified guests run (ESXi, Hyper-V). Para-virtualization: the guest kernel is modified to make hypercalls, giving the best performance but needing OS changes (Xen, Oracle VM). Hardware-assisted: CPU extensions (Intel VT-x, AMD-V) trap sensitive instructions in hardware, so unmodified guests run with simpler, faster hypervisors; MMU (EPT/RVI) and I/O (VT-d/AMD-Vi) extensions extend this. vMotion live-migrates a running VM between ESX hosts without downtime: vCenter checks compatibility, registers the VM on the target, copies memory and state while tracking changed pages in a bitmap, briefly quiesces the VM, copies the bitmap, starts it on the target, makes a final memory copy and unregisters it from the source; shared VMFS storage means disks do not move.</p>
+
+<h2>Common mistakes in exam answers</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Fix</th></tr>
+<tr><td>Writing a list of words without explanation</td><td>One explained point per mark, with an example.</td></tr>
+<tr><td>"Compare" answered as two separate paragraphs</td><td>Use a table with the same rows for both sides.</td></tr>
+<tr><td>No diagram for an architecture question</td><td>Draw and label it; it earns marks and saves words.</td></tr>
+<tr><td>Confusing service and deployment models</td><td>IaaS/PaaS/SaaS = what; public/private/hybrid = who owns/uses.</td></tr>
+<tr><td>Saying CA is a good choice for big distributed systems</td><td>Partitions happen; choose C or A.</td></tr>
+<tr><td>2PC "blocks when a participant says NO"</td><td>It aborts; it blocks when the coordinator fails after YES votes.</td></tr>
+<tr><td>Mixing RTO and RPO; vMotion and Storage vMotion; image and container; edge and fog</td><td>Learn the Part A definitions word for word.</td></tr>
+</table>

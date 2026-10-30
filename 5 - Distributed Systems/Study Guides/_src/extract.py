@@ -18,7 +18,7 @@ for m in re.finditer(r"<p><b>Q\d+\.\s*(.*?)</b><br>\s*(.*?)</p>", ex, re.S):
 mcq = json.load(open(os.path.join(d, "mcq.json"), encoding="utf-8"))
 json.dump({"mcq": mcq, "written": written}, open(os.path.join(d, "qs.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 cs = s[re.search(r"<h2[^>]*>Cheat sheet", s).end():s.index("</body>")]
-cm = re.search(r"<h2[^>]*>\d+\. Common mistakes</h2>(.*?)(?=<h2)", s, re.S)
+cm = re.search(r"<h2[^>]*>(?:\d+\. )?Common mistakes[^<]*</h2>(.*?)(?=<h2)", s, re.S)
 short = ('<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>\n'
          '<h2>Short note: revision sheet</h2>\n' + cs.strip() + '\n<h2>Common mistakes</h2>\n' + (cm.group(1).strip() if cm else ""))
 open(os.path.join(d, "short.html"), "w", encoding="utf-8").write(short)
