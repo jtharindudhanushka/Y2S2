@@ -1,0 +1,329 @@
+{
+ "mcq": [
+  {
+   "q": "Which storage model is the closest cloud analog to a physical disk?",
+   "o": [
+    "Object",
+    "File",
+    "Block",
+    "Archive"
+   ],
+   "a": 2,
+   "e": "Fixed-size addressable blocks; the OS adds a file system."
+  },
+  {
+   "q": "File storage is typically accessed using:",
+   "o": [
+    "REST GET/PUT",
+    "NFS or SMB",
+    "SQL",
+    "SSH only"
+   ],
+   "a": 1,
+   "e": "Hierarchical, POSIX-like, shared mounts."
+  },
+  {
+   "q": "In object storage, an object consists of:",
+   "o": [
+    "Only data",
+    "Data, rich metadata and a unique key",
+    "A fixed-size block",
+    "A directory"
+   ],
+   "a": 1,
+   "e": "Objects are immutable; updates rewrite the whole object."
+  },
+  {
+   "q": "Which storage type has the lowest latency?",
+   "o": [
+    "Object",
+    "File",
+    "Block",
+    "Glacier"
+   ],
+   "a": 2,
+   "e": "Best for databases and boot volumes."
+  },
+  {
+   "q": "Which storage type scales to exabytes with no capacity planning?",
+   "o": [
+    "Block",
+    "File",
+    "Object",
+    "RAID"
+   ],
+   "a": 2,
+   "e": "S3, GCS, Azure Blob."
+  },
+  {
+   "q": "GFS assumes that hardware failure is:",
+   "o": [
+    "Rare",
+    "The norm, not the exception",
+    "Impossible",
+    "Handled by special hardware"
+   ],
+   "a": 1,
+   "e": "Reliability comes from software replication."
+  },
+  {
+   "q": "The GFS default chunk size is:",
+   "o": [
+    "4 KB",
+    "64 MB",
+    "128 MB",
+    "1 GB"
+   ],
+   "a": 1,
+   "e": "HDFS default block size is 128 MB."
+  },
+  {
+   "q": "In GFS, bulk data flows:",
+   "o": [
+    "Through the Master",
+    "Directly between client and chunkserver",
+    "Through DNS",
+    "Through the NameNode"
+   ],
+   "a": 1,
+   "e": "Only metadata goes through the Master."
+  },
+  {
+   "q": "GFS record appends are:",
+   "o": [
+    "Exactly-once",
+    "At-most-once",
+    "At-least-once (duplicates possible)",
+    "Never allowed"
+   ],
+   "a": 2,
+   "e": "Applications use unique IDs to drop duplicates."
+  },
+  {
+   "q": "A 1,024 MB file in GFS with 3x replication has how many chunk replicas?",
+   "o": [
+    "16",
+    "32",
+    "48",
+    "64"
+   ],
+   "a": 2,
+   "e": "1024/64 = 16 chunks x 3 = 48."
+  },
+  {
+   "q": "In HDFS, metadata is held by the:",
+   "o": [
+    "DataNode",
+    "NameNode",
+    "Chunkserver",
+    "Bucket"
+   ],
+   "a": 1,
+   "e": "DataNodes store the blocks."
+  },
+  {
+   "q": "HDFS removes the metadata single point of failure using:",
+   "o": [
+    "Erasure coding",
+    "Active/Standby NameNodes",
+    "Rack awareness",
+    "Bigger blocks"
+   ],
+   "a": 1,
+   "e": "Kept in sync by the edit log."
+  },
+  {
+   "q": "HDFS rack awareness typically places replicas as:",
+   "o": [
+    "All 3 on one rack",
+    "2 on one rack, 1 on another",
+    "1 per data centre",
+    "No replicas"
+   ],
+   "a": 1,
+   "e": "Survives a whole-rack failure."
+  },
+  {
+   "q": "Erasure coding in HDFS 3.x cuts storage overhead to about:",
+   "o": [
+    "3x",
+    "2x",
+    "1.5x",
+    "1x"
+   ],
+   "a": 2,
+   "e": "At the cost of CPU-heavy rebuilds."
+  },
+  {
+   "q": "The HDFS small-file problem is caused by:",
+   "o": [
+    "Small disks",
+    "All metadata living in NameNode RAM",
+    "Slow networks",
+    "Erasure coding"
+   ],
+   "a": 1,
+   "e": "Millions of files = millions of metadata entries."
+  },
+  {
+   "q": "In S3, 'folders' are:",
+   "o": [
+    "Real directories",
+    "Key prefixes in a flat namespace",
+    "Separate buckets",
+    "EBS volumes"
+   ],
+   "a": 1,
+   "e": "e.g. photos/2026/cat.jpg is one key."
+  },
+  {
+   "q": "S3's designed durability is:",
+   "o": [
+    "99.9%",
+    "99.99%",
+    "99.999999999% (11 nines)",
+    "100%"
+   ],
+   "a": 2,
+   "e": "Objects stored across multiple AZs."
+  },
+  {
+   "q": "Since December 2020, S3 provides:",
+   "o": [
+    "Eventual consistency for all",
+    "Strong read-after-write consistency",
+    "No consistency",
+    "Causal consistency only"
+   ],
+   "a": 1,
+   "e": "For new PUTs, overwrites and DELETEs."
+  },
+  {
+   "q": "Which S3 class has the lowest cost and retrieval up to 12 hours?",
+   "o": [
+    "S3 Standard",
+    "Standard-IA",
+    "Glacier Deep Archive",
+    "Intelligent-Tiering"
+   ],
+   "a": 2,
+   "e": "For long-term compliance archives."
+  },
+  {
+   "q": "Object Lock provides:",
+   "o": [
+    "Faster reads",
+    "WORM protection for compliance",
+    "Block storage",
+    "Load balancing"
+   ],
+   "a": 1,
+   "e": "Retention periods and legal holds."
+  },
+  {
+   "q": "Amazon EBS volumes are:",
+   "o": [
+    "Multi-region by default",
+    "Bound to a single Availability Zone",
+    "Object storage",
+    "Shared by thousands of instances"
+   ],
+   "a": 1,
+   "e": "Snapshot to move across AZs/regions."
+  },
+  {
+   "q": "Which EBS type suits high-performance databases?",
+   "o": [
+    "sc1",
+    "st1",
+    "io2 Block Express",
+    "gp2 HDD"
+   ],
+   "a": 2,
+   "e": "Up to 256,000 IOPS, sub-ms latency."
+  },
+  {
+   "q": "Ten web servers in different AZs must share one set of files. Choose:",
+   "o": [
+    "EBS",
+    "EFS",
+    "Glacier",
+    "Snow Family"
+   ],
+   "a": 1,
+   "e": "EFS is an elastic NFS file system across AZs."
+  },
+  {
+   "q": "Distributed metadata (e.g. Ceph) needs which kind of protocol?",
+   "o": [
+    "Gossip only",
+    "Consensus (Paxos/Raft)",
+    "FTP",
+    "SMTP"
+   ],
+   "a": 1,
+   "e": "So metadata servers agree."
+  },
+  {
+   "q": "Large blocks (64-128 MB) are best for:",
+   "o": [
+    "Random small writes",
+    "Sequential big-file workloads",
+    "Interactive apps",
+    "Many tiny files"
+   ],
+   "a": 1,
+   "e": "Small blocks inflate metadata."
+  }
+ ],
+ "written": [
+  {
+   "q": "Compare block, file and object storage with an example and a use case of each. (9 marks)",
+   "a": "<p>Block: data in fixed-size independently addressable blocks; the OS puts a file system on top; lowest latency, random read/write; usually attached to one VM; scales per volume; for databases and boot volumes (AWS EBS). File: hierarchical directories and files accessed over NFS/SMB with POSIX semantics (permissions, locking); many clients mount it at once; medium scalability; for shared home directories, CMS, lift-and-shift apps (AWS EFS). Object: flat namespace of immutable objects (data + rich metadata + unique key) accessed by REST HTTP calls; higher latency but virtually unlimited scale; for backups, static assets, data lakes, media archives (Amazon S3).</p>"
+  },
+  {
+   "q": "Draw and explain the GFS architecture, including how a read works. (8)",
+   "a": "<p>(Draw Figure 2.) A single Master stores all metadata (namespace, file-to-chunk mapping, chunk locations); many chunkservers store 64 MB chunks, each replicated 3&times; across chunkservers/racks. Read: the client computes the chunk index from the byte offset and asks the Master; the Master returns the chunk handle and replica locations; the client then reads the data directly from a chunkserver. Separating the metadata path from the data path keeps the Master from becoming a throughput bottleneck.</p>"
+  },
+  {
+   "q": "Describe the GFS consistency model and two limitations. (5)",
+   "a": "<p>GFS uses relaxed consistency for throughput: concurrent writes can leave a region consistent but undefined (same bytes on all replicas but mixed fragments), and record appends are at-least-once, so duplicates and padding can occur; applications use checksums and unique IDs. Limitations: the single Master is a metadata bottleneck and single point of failure; poor for many small files; not for low-latency random writes; never released as a product.</p>"
+  },
+  {
+   "q": "How does HDFS improve on GFS? (6)",
+   "a": "<p>HDFS is open source (Apache Hadoop); uses a NameNode/DataNode design with 128 MB blocks (less metadata); provides high availability with Active/Standby NameNodes synchronised by the edit log, removing the SPOF; uses explicit rack awareness (e.g. two replicas on one rack, one on another) to survive rack failures; and supports erasure coding in 3.x, cutting overhead from 3&times; to about 1.5&times;.</p>"
+  },
+  {
+   "q": "What is the small-file problem in HDFS? (3)",
+   "a": "<p>All file and block metadata is held in NameNode RAM, so millions of small files create millions of metadata entries that can exhaust NameNode memory and slow it down, even when the total data is small.</p>"
+  },
+  {
+   "q": "Compare 3&times; replication with erasure coding. (4)",
+   "a": "<p>3&times; replication keeps three full copies: simple, fast recovery, but 200% storage overhead. Erasure coding (Reed-Solomon) stores data plus parity blocks and rebuilds lost blocks mathematically: ~1.5&times; storage, but rebuilding costs CPU and is slower.</p>"
+  },
+  {
+   "q": "Explain buckets, objects and keys in S3, and how S3 achieves durability. (6)",
+   "a": "<p>A bucket is a globally uniquely named, region-bound container; an object is data plus metadata; a key uniquely identifies an object in a bucket, in a flat namespace where \"folders\" are key prefixes; all access is through the REST API. S3 is designed for 11 nines durability by storing objects redundantly across multiple AZs automatically, with versioning, cross-region replication and Object Lock for further protection.</p>"
+  },
+  {
+   "q": "What consistency model does S3 provide today? Why does it matter? (3)",
+   "a": "<p>Strong read-after-write consistency for all PUTs (new and overwrite) and DELETEs since December 2020, replacing eventual consistency for overwrites and deletes. Applications no longer need to handle stale reads after a write.</p>"
+  },
+  {
+   "q": "Recommend S3 storage classes for: website images, unknown access pattern, 7-year compliance archive. (3)",
+   "a": "<p>S3 Standard (frequent, milliseconds); S3 Intelligent-Tiering (unknown/changing pattern, auto-optimised); Glacier Deep Archive (lowest cost, retrieval up to 12 h), ideally with Object Lock.</p>"
+  },
+  {
+   "q": "Compare S3, EBS and EFS. (6)",
+   "a": "<p>S3: object, accessed by API, unlimited scale, higher latency, backups/data lakes, 11 nines multi-AZ. EBS: block, attached to one EC2 instance, fixed but resizable, lowest latency, databases/boot volumes, single AZ with snapshots to S3. EFS: file (NFS), shared by many instances across AZs, elastic, low-medium latency, shared content/home directories, multi-AZ in Standard class.</p>"
+  },
+  {
+   "q": "Classify GFS, HDFS and S3 as block, file or object storage and justify. (Assignment Part B) (6)",
+   "a": "<p>GFS and HDFS are distributed <b>file</b> systems: they expose a hierarchical namespace of files and directories, internally split into large chunks/blocks stored on many servers. S3 is <b>object</b> storage: a flat namespace of immutable objects with metadata, addressed by key via a REST API, with no real directories or in-place updates.</p>"
+  },
+  {
+   "q": "Discuss four design trade-offs when building a distributed file system. (8)",
+   "a": "<p>Consistency vs availability (strong costs latency/availability under partitions; eventual risks stale reads). Centralized vs distributed metadata (a single master is simple but a bottleneck/SPOF; distributed metadata scales but needs Paxos/Raft consensus). Replication strategy (3&times; is simple and quick to recover but costly; erasure coding saves space but costs CPU on rebuild). Block size (large blocks suit sequential big files and small metadata; small blocks suit random access but inflate metadata).</p>"
+  }
+ ]
+}

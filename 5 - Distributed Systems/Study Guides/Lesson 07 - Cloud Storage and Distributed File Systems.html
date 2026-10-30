@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DS Lesson 7 - Cloud Storage and Distributed File Systems</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .warn{background:var(--badbg);border-left:3px solid var(--bad);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  td.c{white-space:normal}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Distributed Systems study guides</a> &middot; INTE 22253 &middot; Lesson 07</p><button id="theme" type="button"></button></div>
+  <h1>Cloud Storage and Distributed File Systems</h1>
+  <p class="lead">Lecture 07: why storage is distributed, block vs file vs object storage, Google File System (architecture, read path, relaxed consistency, limits), HDFS (NameNode / DataNode, HA, rack awareness, erasure coding, small-file problem), GFS vs HDFS, Amazon S3 (buckets, keys, 11 nines, storage classes, strong consistency, security), EBS, EFS, the AWS storage ecosystem and the four DFS design trade-offs.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Source: Lecture 07 Cloud Storage and Distributed File Systems (28 slides); also covers Assignment 01 Part B.</p>
+<div class="key">
+<b class="t">What you will be able to do after this lesson</b>
+<ul>
+<li>Explain why storage must be distributed (scale, durability, elasticity).</li>
+<li>Compare <b>block, file and object storage</b> and pick one for a workload.</li>
+<li>Draw and explain the <b>GFS</b> and <b>HDFS</b> architectures, their consistency models and limitations, and compare them.</li>
+<li>Explain <b>Amazon S3</b>: buckets, objects, keys, durability, storage classes, consistency and access control.</li>
+<li>Compare <b>S3, EBS and EFS</b>, and discuss the four DFS design trade-offs.</li>
+</ul>
+</div>
+
+<h2>1. Why cloud storage matters (slide 3)</h2>
+<p>Numbers on the slide: <b>181 ZB</b> of global data created/replicated by 2025 (IDC estimate); <b>99.999999999%</b> (11 nines) designed object durability for Amazon S3; distributed file systems like GFS built to reach <b>exabytes</b> (1 EB = 10<sup>18</sup> bytes = a million terabytes).</p>
+<table class="small">
+<tr><th>Force</th><th>Why it pushes storage to be distributed</th></tr>
+<tr><td><b>Scale</b></td><td>Single machines cannot hold or serve modern datasets</td></tr>
+<tr><td><b>Durability</b></td><td>Hardware fails constantly at scale, so redundancy must be automatic</td></tr>
+<tr><td><b>Elasticity</b></td><td>Storage must grow and shrink independently of compute</td></tr>
+</table>
+<p>So storage designs go in one direction: <b>decoupled, distributed and fault-tolerant</b>.</p>
+
+<h2>2. The three cloud storage models (slides 4&ndash;9)</h2>
+<div class="fig">
+<svg viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
+<text x="110" y="16" text-anchor="middle" font-size="12" font-weight="bold">Block</text>
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="40" y="28" width="30" height="24"/><rect x="72" y="28" width="30" height="24"/><rect x="104" y="28" width="30" height="24"/><rect x="136" y="28" width="30" height="24"/><rect x="40" y="54" width="30" height="24"/><rect x="72" y="54" width="30" height="24"/><rect x="104" y="54" width="30" height="24" style="fill:var(--soft)"/><rect x="136" y="54" width="30" height="24"/></g>
+<g font-size="8" text-anchor="middle"><text x="55" y="44">#0</text><text x="87" y="44">#1</text><text x="119" y="44">#2</text><text x="151" y="44">#3</text><text x="55" y="70">#4</text><text x="87" y="70">#5</text><text x="119" y="70">#6</text><text x="151" y="70">#7</text></g>
+<g font-size="9" text-anchor="middle"><text x="110" y="96">fixed-size numbered blocks</text><text x="110" y="109">"read block #6" (raw disk)</text><text x="110" y="122">OS puts a file system on top</text><text x="110" y="140" font-weight="bold">EBS, Persistent Disk</text></g>
+<line x1="225" y1="10" x2="225" y2="165" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="340" y="16" text-anchor="middle" font-size="12" font-weight="bold">File</text>
+<g font-size="10" font-family="Consolas, monospace"><text x="275" y="38">/ (root)</text><text x="290" y="54">home/</text><text x="305" y="70">alice/report.docx</text><text x="290" y="86">shared/</text><text x="305" y="102">logo.png</text></g>
+<g font-size="9" text-anchor="middle"><text x="340" y="122">folders + files (hierarchy)</text><text x="340" y="135">mounted over NFS/SMB by many</text><text x="340" y="152" font-weight="bold">EFS, Azure Files</text></g>
+<line x1="455" y1="10" x2="455" y2="165" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="567" y="16" text-anchor="middle" font-size="12" font-weight="bold">Object</text>
+<rect x="475" y="28" width="185" height="78" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="4 3"/><text x="567" y="42" text-anchor="middle" font-size="9">bucket (flat namespace)</text>
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="485" y="50" width="80" height="48"/><rect x="572" y="50" width="80" height="48"/></g>
+<g font-size="8"><text x="490" y="62">key: img/cat.jpg</text><text x="490" y="75">data (bytes)</text><text x="490" y="88">metadata</text><text x="577" y="62">key: logs/1.txt</text><text x="577" y="75">data (bytes)</text><text x="577" y="88">metadata</text></g>
+<g font-size="9" text-anchor="middle"><text x="567" y="122">GET / PUT / DELETE over HTTP</text><text x="567" y="135">whole object, immutable</text><text x="567" y="152" font-weight="bold">S3, GCS, Azure Blob</text></g>
+</svg>
+<div class="cap">Figure 1 &mdash; Three storage models (slide 5). Each trades access granularity, latency and scale differently.</div>
+</div>
+<table>
+<tr><th style="width:12%"></th><th>Block storage (slide 6)</th><th>File storage (slide 7)</th><th>Object storage (slide 8)</th></tr>
+<tr><td>Idea</td><td>Raw, addressable blocks &mdash; the closest cloud analog to a physical disk</td><td>A shared, hierarchical namespace accessed like a network drive</td><td>A flat namespace of immutable objects addressed by key over HTTP</td></tr>
+<tr><td>How it works</td><td>Data split into fixed-size blocks, each independently addressable; the OS/app layers a file system on top (ext4, NTFS, XFS); random reads/writes at very low latency; typically attached to <b>one VM at a time</b> (AZ-bound)</td><td>Directories and files; accessed via <b>NFS, SMB/CIFS</b>; POSIX-like semantics (permissions, file locking); many clients mount it concurrently</td><td>Object = <b>data + rich metadata + unique key</b>; no true folders (prefixes simulate them); accessed via <b>REST API</b> (HTTP GET/PUT/DELETE); <b>immutable</b>: an update rewrites the whole object</td></tr>
+<tr><td>Best for</td><td>Databases, boot volumes, transactional workloads; high IOPS, predictable</td><td>Shared home directories, CMS, lift-and-shift of legacy file-based apps</td><td>Backups, static assets, data lakes, media archives</td></tr>
+<tr><td>Scale</td><td>Per volume, not automatically across a fleet</td><td>More elastic than block, less than object</td><td>Virtually unlimited (exabytes), no capacity planning</td></tr>
+<tr><td>Examples</td><td>AWS EBS, Google Persistent Disk, Azure Managed Disks</td><td>AWS EFS, Azure Files, Google Filestore</td><td>Amazon S3, Google Cloud Storage, Azure Blob</td></tr>
+</table>
+<p class="small"><b>Terms:</b> <b>IOPS</b> = input/output operations per second. <b>POSIX</b> = the standard Unix file-system behaviour (open, read, write, permissions, locks). <b>NFS</b> (Unix/Linux) and <b>SMB/CIFS</b> (Windows) are network file-sharing protocols. <b>Data lake</b> = a huge store of raw data of all kinds kept for later analytics.</p>
+<table class="small">
+<tr><th>At a glance (slide 9)</th><th>Block</th><th>File</th><th>Object</th></tr>
+<tr><td>Access unit</td><td>Block</td><td>File / directory</td><td>Whole object</td></tr>
+<tr><td>Latency</td><td>Lowest</td><td>Low&ndash;medium</td><td>Higher</td></tr>
+<tr><td>Scalability</td><td>Limited (per volume)</td><td>Medium</td><td>Massive (exabyte)</td></tr>
+<tr><td>Metadata</td><td>Minimal</td><td>File-system attributes</td><td>Rich and custom</td></tr>
+<tr><td>Best for</td><td>Databases, VMs</td><td>Shared file access</td><td>Unstructured, large-scale</td></tr>
+</table>
+<p><b>Takeaway:</b> block for low-latency structured I/O, file for shared hierarchical access, object for massive-scale unstructured data.</p>
+
+<h2>3. Google File System (GFS) (slides 11&ndash;13)</h2>
+<table class="small">
+<tr><th style="width:22%">Aspect</th><th>Slide 11</th></tr>
+<tr><td>Design philosophy</td><td>Assumes <b>hardware failure is the norm, not the exception</b> &mdash; reliability comes from software-level replication, not fault-tolerant hardware</td></tr>
+<tr><td>Workload fit</td><td>Optimised for <b>large files (100 MB+)</b> with <b>sequential reads</b> and <b>append-heavy writes</b> &mdash; not general-purpose small-file access</td></tr>
+<tr><td>Consistency</td><td>Deliberately <b>relaxed/weak</b>, traded for higher throughput on Google's workloads (crawling, indexing, MapReduce I/O)</td></tr>
+<tr><td>Legacy</td><td>Its master/chunkserver design directly inspired HDFS and later systems</td></tr>
+</table>
+<h3>GFS architecture (slide 12)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 210" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="g1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="20" width="110" height="44" style="fill:var(--bg)" stroke="currentColor"/><text x="75" y="47" text-anchor="middle" font-size="12" font-weight="bold">Client</text>
+<rect x="420" y="10" width="200" height="64" style="fill:var(--soft)" stroke="currentColor"/><text x="520" y="30" text-anchor="middle" font-size="12" font-weight="bold">Master</text><text x="520" y="46" text-anchor="middle" font-size="9">metadata: namespace, file &#8594; chunks,</text><text x="520" y="59" text-anchor="middle" font-size="9">chunk &#8594; chunkserver locations</text>
+<line x1="130" y1="30" x2="418" y2="30" stroke="currentColor" stroke-width="1.3" marker-end="url(#g1)"/><text x="270" y="24" text-anchor="middle" font-size="9">1. metadata request (file, chunk index)</text>
+<line x1="418" y1="56" x2="132" y2="56" stroke="currentColor" stroke-width="1.3" marker-end="url(#g1)"/><text x="270" y="70" text-anchor="middle" font-size="9">2. chunk handle + locations</text>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="150" y="125" width="140" height="70"/><rect x="310" y="125" width="140" height="70"/><rect x="470" y="125" width="140" height="70"/></g>
+<g font-size="11" text-anchor="middle" font-weight="bold"><text x="220" y="143">Chunkserver 1</text><text x="380" y="143">Chunkserver 2</text><text x="540" y="143">Chunkserver 3</text></g>
+<g style="fill:var(--bg)" stroke="currentColor"><rect x="165" y="152" width="50" height="20"/><rect x="225" y="152" width="50" height="20"/><rect x="325" y="152" width="50" height="20"/><rect x="385" y="152" width="50" height="20"/><rect x="485" y="152" width="50" height="20"/><rect x="545" y="152" width="50" height="20"/></g>
+<g font-size="9" text-anchor="middle"><text x="190" y="166">Chunk A</text><text x="250" y="166">Chunk B</text><text x="350" y="166">Chunk A</text><text x="410" y="166">Chunk B</text><text x="510" y="166">Chunk A</text><text x="570" y="166">Chunk B</text></g>
+<line x1="75" y1="64" x2="210" y2="123" stroke="currentColor" stroke-width="2.5" marker-end="url(#g1)"/>
+<text x="40" y="100" font-size="9">3. read/write data</text><text x="40" y="112" font-size="9">DIRECTLY (bulk transfer</text><text x="40" y="124" font-size="9">bypasses the Master)</text>
+<g stroke="currentColor" stroke-dasharray="3 3"><line x1="470" y1="74" x2="230" y2="123"/><line x1="500" y1="74" x2="390" y2="123"/><line x1="530" y1="74" x2="545" y2="123"/></g>
+<text x="600" y="100" font-size="8" text-anchor="middle">heartbeats /</text><text x="600" y="110" font-size="8" text-anchor="middle">instructions</text>
+<text x="380" y="207" text-anchor="middle" font-size="9">each 64 MB chunk replicated 3&#215; across chunkservers (often across racks)</text>
+</svg>
+<div class="cap">Figure 2 &mdash; A single Master holds metadata; chunkservers store replicated 64 MB chunks; data flows client &harr; chunkserver directly.</div>
+</div>
+<ol class="small">
+<li><b>Metadata request:</b> the client turns "byte offset in file" into a chunk index (offset &divide; 64 MB) and asks the Master for that chunk.</li>
+<li><b>Chunk location:</b> the Master replies with the chunk handle (ID) and which chunkservers hold its replicas. The client caches this.</li>
+<li><b>Data transfer:</b> the client reads/writes the data <b>directly</b> with a chunkserver. The Master never touches the data.</li>
+</ol>
+<p><b>Replication:</b> each 64 MB chunk is replicated <b>3&times; by default</b> across chunkservers (often across racks), so losing any single machine never loses data. <b>Key design choice:</b> separating the <b>metadata path</b> (through the Master) from the <b>data path</b> (client &harr; chunkserver) stops the Master becoming a throughput bottleneck, even though it remains a single point of coordination.</p>
+<h3>Worked example: chunks and replicas</h3>
+<p class="small">A 1 GB (1,024 MB) log file in GFS: 1,024 &divide; 64 = <b>16 chunks</b>. With 3&times; replication: 16 &times; 3 = <b>48 chunk replicas</b>, using 3 GB of raw disk. To read byte offset 200 MB the client asks for chunk index &lfloor;200 &divide; 64&rfloor; = <b>3</b> (the 4th chunk, counting from 0). The Master stores only a small metadata record per chunk; the 1 GB of data never passes through it.</p>
+<h3>GFS consistency model and limitations (slide 13)</h3>
+<div class="two">
+<div><b>Consistency model</b><ul class="small">
+<li><b>Relaxed</b> rather than strict: favours throughput over strict correctness guarantees.</li>
+<li>Concurrent writes to the same region may leave it <b>"consistent but undefined"</b>: all replicas hold the same bytes, but they may be a mix of fragments from several writers, so no single write is visible whole.</li>
+<li><b>Record appends are at-least-once</b>: if an append fails on one replica the client retries, so <b>duplicates and padding</b> are possible.</li>
+<li>Applications must tolerate this (checksums, unique record IDs to drop duplicates).</li></ul></div>
+<div><b>Key limitations</b><ul class="small">
+<li><b>Single Master</b> is a metadata bottleneck and historical single point of failure.</li>
+<li>Poor fit for <b>many small files</b> (all metadata in Master memory).</li>
+<li>Not for <b>low-latency random writes</b> or interactive apps.</li>
+<li>Tightly coupled to Google's workloads &mdash; <b>never released as a product</b>.</li></ul></div>
+</div>
+
+<h2>4. Hadoop Distributed File System (HDFS) (slides 14&ndash;17)</h2>
+<p>An <b>open-source</b> file system heavily inspired by GFS, built for the <b>Apache Hadoop</b> ecosystem. Originally built to support MapReduce; now underlies Spark, Hive and more. Widely deployed outside any single company, on commodity hardware, on-premises or in the cloud.</p>
+<table class="small">
+<tr><th>GFS term</th><th>HDFS term</th><th>Role</th></tr>
+<tr><td>Master</td><td><b>NameNode</b></td><td>Holds metadata (namespace, block locations)</td></tr>
+<tr><td>Chunkserver</td><td><b>DataNode</b></td><td>Stores the actual data blocks</td></tr>
+<tr><td>Chunk (64 MB)</td><td><b>Block (128 MB default)</b></td><td>Unit of storage and replication; 3&times; by default</td></tr>
+</table>
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<rect x="150" y="10" width="150" height="40" style="fill:var(--soft)" stroke="currentColor"/><text x="225" y="35" text-anchor="middle" font-size="11" font-weight="bold">Active NameNode</text>
+<rect x="380" y="10" width="150" height="40" style="fill:var(--soft)" stroke="currentColor" stroke-dasharray="4 3"/><text x="455" y="35" text-anchor="middle" font-size="11" font-weight="bold">Standby NameNode</text>
+<line x1="300" y1="30" x2="380" y2="30" stroke="currentColor" stroke-dasharray="4 3"/><text x="340" y="24" text-anchor="middle" font-size="9">sync (edit log)</text>
+<rect x="40" y="80" width="280" height="110" style="fill:var(--bg)" stroke="currentColor"/><text x="180" y="96" text-anchor="middle" font-size="11" font-weight="bold">Rack 1</text>
+<rect x="360" y="80" width="280" height="110" style="fill:var(--bg)" stroke="currentColor"/><text x="500" y="96" text-anchor="middle" font-size="11" font-weight="bold">Rack 2</text>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="55" y="105" width="120" height="70"/><rect x="185" y="105" width="120" height="70"/><rect x="375" y="105" width="120" height="70"/><rect x="505" y="105" width="120" height="70"/></g>
+<g font-size="10" text-anchor="middle" font-weight="bold"><text x="115" y="122">DataNode 1</text><text x="245" y="122">DataNode 2</text><text x="435" y="122">DataNode 3</text><text x="565" y="122">DataNode 4</text></g>
+<g style="fill:var(--bg)" stroke="currentColor"><rect x="65" y="132" width="48" height="18"/><rect x="195" y="132" width="48" height="18"/><rect x="385" y="132" width="48" height="18"/><rect x="117" y="152" width="48" height="18"/><rect x="447" y="152" width="48" height="18"/><rect x="567" y="152" width="48" height="18"/></g>
+<g font-size="9" text-anchor="middle"><text x="89" y="145">Blk A</text><text x="219" y="145">Blk A</text><text x="409" y="145">Blk A</text><text x="141" y="165">Blk B</text><text x="471" y="165">Blk B</text><text x="591" y="165">Blk B</text></g>
+<line x1="225" y1="50" x2="180" y2="78" stroke="currentColor"/><line x1="225" y1="50" x2="500" y2="78" stroke="currentColor"/><text x="350" y="70" text-anchor="middle" font-size="9">block ops / heartbeats</text>
+</svg>
+<div class="cap">Figure 3 &mdash; HDFS (slide 15): Active/Standby NameNodes for high availability; DataNodes with rack-aware replicas (block A: 2 copies on rack 1, 1 on rack 2).</div>
+</div>
+<ul class="small">
+<li><b>High availability:</b> an <b>Active</b> NameNode serves requests; a <b>Standby</b> NameNode keeps in sync through the shared <b>edit log</b> (the journal of every metadata change) and takes over if the active fails. This fixes the original single point of failure.</li>
+<li><b>Rack awareness:</b> HDFS deliberately places replicas across racks (e.g. <b>2 copies on one rack, 1 on another</b>), so a whole rack or its top-of-rack switch failing never loses data &mdash; a refinement beyond GFS's original design. Two on the same rack keeps write traffic cheaper; one elsewhere protects against rack loss.</li>
+</ul>
+<h3>HDFS features and the small-file problem (slide 16)</h3>
+<table class="small">
+<tr><th>Feature</th><th>Explanation</th></tr>
+<tr><td><b>Write-once, read-many</b></td><td>Optimised for batch analytics (MapReduce, Spark, Hive), not transactional updates. Files are written, closed, then read many times.</td></tr>
+<tr><td><b>128 MB default block size</b></td><td>Large blocks minimise metadata and suit sequential scans of huge datasets.</td></tr>
+<tr><td><b>Erasure coding (HDFS 3.x)</b></td><td><b>Reed-Solomon</b> coding stores data blocks plus a few calculated <b>parity</b> blocks; lost blocks can be rebuilt from the rest. Storage overhead drops to <b>~1.5&times;</b> instead of 3&times;, at extra CPU cost to rebuild.</td></tr>
+<tr><td><b>Small-file problem</b></td><td>Every file's and block's metadata lives in <b>NameNode RAM</b>; millions of small files can exhaust memory and hurt performance.</td></tr>
+</table>
+<h3>Worked example: replication vs erasure coding, and small files</h3>
+<table class="small">
+<tr><th>Case</th><th>Calculation</th></tr>
+<tr><td>Store 600 MB with 3&times; replication</td><td>600 &times; 3 = <b>1,800 MB</b> raw disk; survives losing any 2 copies</td></tr>
+<tr><td>Same 600 MB with Reed-Solomon RS(6,3): 6 data blocks + 3 parity blocks</td><td>Raw = 600 &times; 9/6 = <b>900 MB (1.5&times;)</b>; survives losing any 3 of the 9 blocks, but rebuilding needs CPU</td></tr>
+<tr><td>1 GB stored as one file vs as 10,000 files of 100 KB</td><td>One file = 8 blocks (128 MB) &rArr; ~9 metadata objects. 10,000 small files = 10,000 file entries + 10,000 blocks &rArr; ~20,000 objects in NameNode RAM for the same data: about <b>2,000&times;</b> the metadata.</td></tr>
+</table>
+<h3>GFS vs HDFS (slide 17)</h3>
+<table>
+<tr><th></th><th>GFS</th><th>HDFS</th></tr>
+<tr><td>Origin</td><td>Internal Google system (2003 paper)</td><td>Open-source, Apache Hadoop project</td></tr>
+<tr><td>Metadata node</td><td>Single Master</td><td>NameNode (HA Active/Standby pairs)</td></tr>
+<tr><td>Default chunk/block size</td><td>64 MB</td><td>128 MB</td></tr>
+<tr><td>Replication</td><td>3&times; (default)</td><td>3&times; default, or erasure coding (3.x)</td></tr>
+<tr><td>Placement awareness</td><td>Basic</td><td>Explicit rack awareness</td></tr>
+<tr><td>Primary workload</td><td>Google internal batch (search, indexing)</td><td>General-purpose Hadoop ecosystem (Spark, Hive)</td></tr>
+</table>
+
+<h2>5. Amazon S3 (slides 18&ndash;21)</h2>
+<p>A <b>managed object storage service</b> &mdash; not a traditional distributed file system.</p>
+<table class="small">
+<tr><th>Concept</th><th>Meaning</th></tr>
+<tr><td><b>Bucket</b></td><td>Top-level container for objects; <b>globally unique name</b>; bound to one AWS region</td></tr>
+<tr><td><b>Object</b></td><td>The unit of storage: data plus metadata, addressed by a key inside a bucket</td></tr>
+<tr><td><b>Key</b></td><td>The unique identifier of an object in a bucket. <b>Flat namespace</b>: "folders" are just key prefixes (<code>photos/2026/cat.jpg</code> is one key)</td></tr>
+<tr><td><b>REST API</b></td><td>All access (console, CLI, SDKs) goes through HTTP(S) calls: GET, PUT, DELETE, LIST</td></tr>
+</table>
+<pre>PUT    https://my-bucket.s3.amazonaws.com/photos/2026/cat.jpg   # upload (whole object)
+GET    https://my-bucket.s3.amazonaws.com/photos/2026/cat.jpg   # download
+GET    https://my-bucket.s3.amazonaws.com/?prefix=photos/2026/  # LIST keys with this prefix
+DELETE https://my-bucket.s3.amazonaws.com/photos/2026/cat.jpg</pre>
+<h3>Durability and replication (slide 19)</h3>
+<ul class="small">
+<li><b>99.999999999% ("11 nines")</b> designed durability per year. Intuition: store 10 million objects and you would expect to lose one about once every 10,000 years.</li>
+<li><b>Multi-AZ by default:</b> objects stored redundantly across multiple Availability Zones in the region; a whole AZ can fail without data loss.</li>
+<li><b>No server management:</b> replication, hardware failures and scaling are handled internally; users never provision nodes.</li>
+<li><b>Versioning</b>: keeps every version of an object (protects against accidental overwrite/delete). <b>Cross-Region Replication (CRR)</b>: asynchronously copies objects to a bucket in another region. <b>Object Lock</b>: <b>WORM</b> (write once, read many) protection for compliance (retention periods, legal holds).</li>
+</ul>
+<p class="small"><b>Durability vs availability:</b> durability = the data is not lost; availability = you can reach it right now. S3 can be briefly unreachable yet still durable.</p>
+<h3>S3 storage classes (slide 20)</h3>
+<table class="small">
+<tr><th>Storage class</th><th>Access pattern</th><th>Retrieval time</th><th>Relative cost</th></tr>
+<tr><td>S3 Standard</td><td>Frequent access</td><td>Milliseconds</td><td>Highest</td></tr>
+<tr><td>S3 Intelligent-Tiering</td><td>Unknown/changing</td><td>Milliseconds</td><td>Auto-optimised</td></tr>
+<tr><td>S3 Standard-IA (Infrequent Access)</td><td>Infrequent access</td><td>Milliseconds</td><td>Lower storage, retrieval fee</td></tr>
+<tr><td>S3 One Zone-IA</td><td>Infrequent, re-creatable data</td><td>Milliseconds</td><td>Lower (single AZ)</td></tr>
+<tr><td>Glacier Instant Retrieval</td><td>Rarely accessed archives</td><td>Milliseconds</td><td>Very low</td></tr>
+<tr><td>Glacier Flexible Retrieval</td><td>Archival</td><td>Minutes&ndash;hours</td><td>Very low</td></tr>
+<tr><td>Glacier Deep Archive</td><td>Long-term compliance archive</td><td>Hours (up to 12 h)</td><td>Lowest</td></tr>
+</table>
+<p class="small"><b>Lifecycle policies</b> move objects between classes automatically as they age. Example: website images in Standard &rarr; after 30 days to Standard-IA &rarr; after 1 year to Glacier Deep Archive for a 7-year legal retention.</p>
+<h3>Consistency and access control (slide 21)</h3>
+<div class="two">
+<div><b>Consistency model</b><ul class="small">
+<li><b>Strong read-after-write consistency</b> for all requests <b>since December 2020</b>.</li>
+<li>Applies to new-object PUTs, overwrite PUTs and DELETEs alike.</li>
+<li>Replaced the earlier <b>eventual</b> consistency for overwrites/deletes.</li>
+<li>Simplifies apps: no stale reads after a write.</li></ul></div>
+<div><b>Security &amp; access control</b><ul class="small">
+<li><b>IAM policies</b>: which users/roles can act on which buckets.</li>
+<li><b>Bucket policies</b>: resource-level rules (allow/deny by IP, VPC).</li>
+<li><b>Encryption at rest</b>: SSE-S3 (S3-managed keys), SSE-KMS (AWS Key Management Service keys), SSE-C (customer-provided keys).</li>
+<li><b>Block Public Access</b> guards against accidental public exposure.</li></ul></div>
+</div>
+
+<h2>6. The AWS storage ecosystem (slides 22&ndash;26)</h2>
+<table class="small">
+<tr><th>Service</th><th>Type</th><th>What it is (slide 23)</th></tr>
+<tr><td>EBS</td><td>Block</td><td>Persistent block volumes for EC2 instances</td></tr>
+<tr><td>EFS</td><td>File</td><td>Elastic NFS file system, multi-AZ</td></tr>
+<tr><td>S3</td><td>Object</td><td>Scalable object storage, 11 nines durability</td></tr>
+<tr><td>Glacier</td><td>Archive</td><td>Low-cost long-term archival (an S3 class)</td></tr>
+<tr><td>FSx</td><td>File</td><td>Managed Windows / Lustre / NetApp / OpenZFS file systems</td></tr>
+<tr><td>Storage Gateway</td><td>Hybrid</td><td>Bridges on-premises environments to AWS storage</td></tr>
+<tr><td>Snow Family</td><td>Transfer</td><td>Physical devices shipped to you for offline bulk data migration</td></tr>
+<tr><td>Backup</td><td>Management</td><td>Centralized backup policy across AWS services</td></tr>
+</table>
+<h3>EBS: Elastic Block Store (slide 24)</h3>
+<table class="small">
+<tr><th>Volume type</th><th>Best for</th><th>Key spec</th></tr>
+<tr><td>gp3 (General Purpose SSD)</td><td>Boot volumes, dev/test, most workloads</td><td>3,000 IOPS / 125 MB/s baseline, scalable independently</td></tr>
+<tr><td>io2 Block Express</td><td>High-performance databases (Oracle, SAP)</td><td>Up to 256,000 IOPS, sub-ms latency, 99.999% durability</td></tr>
+<tr><td>st1 (Throughput HDD)</td><td>Big data, log processing, streaming</td><td>Low cost, high throughput, not for random I/O</td></tr>
+<tr><td>sc1 (Cold HDD)</td><td>Infrequently accessed data</td><td>Lowest cost per GB of EBS</td></tr>
+</table>
+<p class="small">EBS is <b>bound to a single AZ</b> &mdash; snapshot it to move across AZs/regions. <b>Point-in-time snapshots</b> are stored durably in S3, <b>incremental</b> after the first (only changed blocks). Volumes can be resized and their type changed without downtime.</p>
+<h3>EFS: Elastic File System (slide 25)</h3>
+<p class="small">A fully managed, elastic <b>NFSv4</b> file system shared across many instances and AZs. <b>Storage classes:</b> EFS Standard (frequent, multi-AZ), EFS Standard-IA (auto-tiers infrequent files, cheaper), EFS One Zone / One Zone-IA (single AZ, cheaper); lifecycle management moves files between classes. <b>Throughput modes:</b> <b>bursting</b> (throughput scales with storage size, with burst credits), <b>provisioned</b> (fixed throughput regardless of size), <b>elastic</b> (scales up/down automatically with the workload). Grows and shrinks automatically &mdash; no capacity planning.</p>
+<h3>S3 vs EBS vs EFS (slide 26)</h3>
+<table>
+<tr><th></th><th>Amazon S3</th><th>Amazon EBS</th><th>Amazon EFS</th></tr>
+<tr><td>Storage type</td><td>Object</td><td>Block</td><td>File</td></tr>
+<tr><td>Attach point</td><td>Accessed over network/API</td><td>One EC2 instance at a time*</td><td>Many instances, multi-AZ</td></tr>
+<tr><td>Scalability</td><td>Virtually unlimited</td><td>Fixed size (resizable)</td><td>Elastic, grows automatically</td></tr>
+<tr><td>Latency</td><td>Higher (network/API calls)</td><td>Lowest (near-local disk)</td><td>Low&ndash;medium (network FS)</td></tr>
+<tr><td>Typical use</td><td>Backups, data lakes, static assets</td><td>Databases, boot volumes</td><td>Shared content, home directories</td></tr>
+<tr><td>Durability model</td><td>11 nines, multi-AZ automatic</td><td>Single AZ; snapshots to S3</td><td>Multi-AZ (Standard class)</td></tr>
+</table>
+<p class="small">*io2 Block Express Multi-Attach lets one io2 volume attach to several instances in limited scenarios.</p>
+<h3>Worked example: pick the storage</h3>
+<table class="small">
+<tr><th>Need</th><th>Choice</th><th>Why</th></tr>
+<tr><td>MySQL database on an EC2 instance</td><td>EBS (gp3, or io2 for heavy load)</td><td>Low-latency random block I/O</td></tr>
+<tr><td>Ten web servers must share the same uploaded files</td><td>EFS</td><td>Many instances, many AZs, one file system</td></tr>
+<tr><td>Millions of product photos served to a website</td><td>S3 Standard</td><td>Unlimited scale, HTTP access, cheap</td></tr>
+<tr><td>Bank records kept 7 years, almost never read</td><td>S3 Glacier Deep Archive + Object Lock</td><td>Lowest cost; WORM for compliance</td></tr>
+<tr><td>Nightly MapReduce over 50 TB of logs on-premises</td><td>HDFS</td><td>Large sequential batch reads, open source, commodity cluster</td></tr>
+</table>
+
+<h2>7. DFS design trade-offs (slide 27)</h2>
+<table>
+<tr><th style="width:24%">Trade-off</th><th>Explanation</th></tr>
+<tr><td><b>1. Consistency vs availability</b></td><td>Strong consistency costs latency/availability during partitions; eventual consistency improves availability but risks stale reads. GFS/HDFS are relaxed; S3 is strong (CAP, Lesson 4).</td></tr>
+<tr><td><b>2. Metadata: centralized vs distributed</b></td><td>A single master (GFS) is simple but a scaling/SPOF risk; distributed metadata (Ceph, HDFS Federation) scales further but needs <b>consensus protocols</b> (Paxos/Raft) so the metadata servers agree.</td></tr>
+<tr><td><b>3. Replication strategy</b></td><td>Full 3&times; replication is simple and fast to recover but costly; erasure coding cuts storage to ~1.5&times; at the cost of CPU-heavy rebuilds.</td></tr>
+<tr><td><b>4. Block size and access pattern</b></td><td>Large blocks (64&ndash;128 MB) suit sequential big-file workloads; small blocks suit random access but blow up metadata overhead.</td></tr>
+</table>
+<p><b>Key takeaways (slide 28):</b> (1) match storage type to access pattern; (2) GFS and HDFS pioneered the master/worker DFS pattern with relaxed consistency for large sequential batch work; (3) S3 is a different design point: managed object storage trading file-system semantics for massive scale and near-zero operations; (4) AWS pairs S3 with EBS (block) and EFS (file), each with its own durability, scaling and cost model; (5) storage design is a continuous set of trade-offs: consistency vs availability, replication cost vs durability, latency vs throughput.</p>
+
+<h2>8. Exam-style questions with model answers</h2>
+<p><b>Q1. Compare block, file and object storage with an example and a use case of each. (9 marks)</b><br>
+Block: data in fixed-size independently addressable blocks; the OS puts a file system on top; lowest latency, random read/write; usually attached to one VM; scales per volume; for databases and boot volumes (AWS EBS). File: hierarchical directories and files accessed over NFS/SMB with POSIX semantics (permissions, locking); many clients mount it at once; medium scalability; for shared home directories, CMS, lift-and-shift apps (AWS EFS). Object: flat namespace of immutable objects (data + rich metadata + unique key) accessed by REST HTTP calls; higher latency but virtually unlimited scale; for backups, static assets, data lakes, media archives (Amazon S3).</p>
+<p><b>Q2. Draw and explain the GFS architecture, including how a read works. (8)</b><br>
+(Draw Figure 2.) A single Master stores all metadata (namespace, file-to-chunk mapping, chunk locations); many chunkservers store 64 MB chunks, each replicated 3&times; across chunkservers/racks. Read: the client computes the chunk index from the byte offset and asks the Master; the Master returns the chunk handle and replica locations; the client then reads the data directly from a chunkserver. Separating the metadata path from the data path keeps the Master from becoming a throughput bottleneck.</p>
+<p><b>Q3. Describe the GFS consistency model and two limitations. (5)</b><br>
+GFS uses relaxed consistency for throughput: concurrent writes can leave a region consistent but undefined (same bytes on all replicas but mixed fragments), and record appends are at-least-once, so duplicates and padding can occur; applications use checksums and unique IDs. Limitations: the single Master is a metadata bottleneck and single point of failure; poor for many small files; not for low-latency random writes; never released as a product.</p>
+<p><b>Q4. How does HDFS improve on GFS? (6)</b><br>
+HDFS is open source (Apache Hadoop); uses a NameNode/DataNode design with 128 MB blocks (less metadata); provides high availability with Active/Standby NameNodes synchronised by the edit log, removing the SPOF; uses explicit rack awareness (e.g. two replicas on one rack, one on another) to survive rack failures; and supports erasure coding in 3.x, cutting overhead from 3&times; to about 1.5&times;.</p>
+<p><b>Q5. What is the small-file problem in HDFS? (3)</b><br>
+All file and block metadata is held in NameNode RAM, so millions of small files create millions of metadata entries that can exhaust NameNode memory and slow it down, even when the total data is small.</p>
+<p><b>Q6. Compare 3&times; replication with erasure coding. (4)</b><br>
+3&times; replication keeps three full copies: simple, fast recovery, but 200% storage overhead. Erasure coding (Reed-Solomon) stores data plus parity blocks and rebuilds lost blocks mathematically: ~1.5&times; storage, but rebuilding costs CPU and is slower.</p>
+<p><b>Q7. Explain buckets, objects and keys in S3, and how S3 achieves durability. (6)</b><br>
+A bucket is a globally uniquely named, region-bound container; an object is data plus metadata; a key uniquely identifies an object in a bucket, in a flat namespace where "folders" are key prefixes; all access is through the REST API. S3 is designed for 11 nines durability by storing objects redundantly across multiple AZs automatically, with versioning, cross-region replication and Object Lock for further protection.</p>
+<p><b>Q8. What consistency model does S3 provide today? Why does it matter? (3)</b><br>
+Strong read-after-write consistency for all PUTs (new and overwrite) and DELETEs since December 2020, replacing eventual consistency for overwrites and deletes. Applications no longer need to handle stale reads after a write.</p>
+<p><b>Q9. Recommend S3 storage classes for: website images, unknown access pattern, 7-year compliance archive. (3)</b><br>
+S3 Standard (frequent, milliseconds); S3 Intelligent-Tiering (unknown/changing pattern, auto-optimised); Glacier Deep Archive (lowest cost, retrieval up to 12 h), ideally with Object Lock.</p>
+<p><b>Q10. Compare S3, EBS and EFS. (6)</b><br>
+S3: object, accessed by API, unlimited scale, higher latency, backups/data lakes, 11 nines multi-AZ. EBS: block, attached to one EC2 instance, fixed but resizable, lowest latency, databases/boot volumes, single AZ with snapshots to S3. EFS: file (NFS), shared by many instances across AZs, elastic, low-medium latency, shared content/home directories, multi-AZ in Standard class.</p>
+<p><b>Q11. Classify GFS, HDFS and S3 as block, file or object storage and justify. (Assignment Part B) (6)</b><br>
+GFS and HDFS are distributed <b>file</b> systems: they expose a hierarchical namespace of files and directories, internally split into large chunks/blocks stored on many servers. S3 is <b>object</b> storage: a flat namespace of immutable objects with metadata, addressed by key via a REST API, with no real directories or in-place updates.</p>
+<p><b>Q12. Discuss four design trade-offs when building a distributed file system. (8)</b><br>
+Consistency vs availability (strong costs latency/availability under partitions; eventual risks stale reads). Centralized vs distributed metadata (a single master is simple but a bottleneck/SPOF; distributed metadata scales but needs Paxos/Raft consensus). Replication strategy (3&times; is simple and quick to recover but costly; erasure coding saves space but costs CPU on rebuild). Block size (large blocks suit sequential big files and small metadata; small blocks suit random access but inflate metadata).</p>
+
+<h2>9. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>S3 has real folders</td><td>Flat namespace; "folders" are key prefixes.</td></tr>
+<tr><td>Objects can be edited in place</td><td>Objects are immutable; an update rewrites the whole object.</td></tr>
+<tr><td>Data in GFS flows through the Master</td><td>Only metadata goes through the Master; data goes client &harr; chunkserver.</td></tr>
+<tr><td>GFS block size 128 MB, HDFS 64 MB</td><td>GFS 64 MB chunks; HDFS 128 MB blocks.</td></tr>
+<tr><td>S3 is eventually consistent</td><td>Strong read-after-write since December 2020.</td></tr>
+<tr><td>Durability = availability</td><td>Durability = not losing data; availability = being reachable now.</td></tr>
+<tr><td>EBS can be shared by many instances like EFS</td><td>EBS attaches to one instance (except io2 Multi-Attach); EFS is shared.</td></tr>
+<tr><td>EBS survives an AZ failure automatically</td><td>EBS is AZ-bound; use snapshots (stored in S3) to recover elsewhere.</td></tr>
+<tr><td>HDFS is good for millions of tiny files</td><td>Small-file problem: NameNode memory.</td></tr>
+<tr><td>Erasure coding is free</td><td>Saves storage (~1.5&times;) but costs CPU for rebuilds.</td></tr>
+</table>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Compare block, file and object storage with an example and a use case of each. (9 marks)</summary>
+<p>Block: data in fixed-size independently addressable blocks; the OS puts a file system on top; lowest latency, random read/write; usually attached to one VM; scales per volume; for databases and boot volumes (AWS EBS). File: hierarchical directories and files accessed over NFS/SMB with POSIX semantics (permissions, locking); many clients mount it at once; medium scalability; for shared home directories, CMS, lift-and-shift apps (AWS EFS). Object: flat namespace of immutable objects (data + rich metadata + unique key) accessed by REST HTTP calls; higher latency but virtually unlimited scale; for backups, static assets, data lakes, media archives (Amazon S3).</p>
+</details>
+<details>
+<summary>W2. Draw and explain the GFS architecture, including how a read works. (8)</summary>
+<p>(Draw Figure 2.) A single Master stores all metadata (namespace, file-to-chunk mapping, chunk locations); many chunkservers store 64 MB chunks, each replicated 3&times; across chunkservers/racks. Read: the client computes the chunk index from the byte offset and asks the Master; the Master returns the chunk handle and replica locations; the client then reads the data directly from a chunkserver. Separating the metadata path from the data path keeps the Master from becoming a throughput bottleneck.</p>
+</details>
+<details>
+<summary>W3. Describe the GFS consistency model and two limitations. (5)</summary>
+<p>GFS uses relaxed consistency for throughput: concurrent writes can leave a region consistent but undefined (same bytes on all replicas but mixed fragments), and record appends are at-least-once, so duplicates and padding can occur; applications use checksums and unique IDs. Limitations: the single Master is a metadata bottleneck and single point of failure; poor for many small files; not for low-latency random writes; never released as a product.</p>
+</details>
+<details>
+<summary>W4. How does HDFS improve on GFS? (6)</summary>
+<p>HDFS is open source (Apache Hadoop); uses a NameNode/DataNode design with 128 MB blocks (less metadata); provides high availability with Active/Standby NameNodes synchronised by the edit log, removing the SPOF; uses explicit rack awareness (e.g. two replicas on one rack, one on another) to survive rack failures; and supports erasure coding in 3.x, cutting overhead from 3&times; to about 1.5&times;.</p>
+</details>
+<details>
+<summary>W5. What is the small-file problem in HDFS? (3)</summary>
+<p>All file and block metadata is held in NameNode RAM, so millions of small files create millions of metadata entries that can exhaust NameNode memory and slow it down, even when the total data is small.</p>
+</details>
+<details>
+<summary>W6. Compare 3&times; replication with erasure coding. (4)</summary>
+<p>3&times; replication keeps three full copies: simple, fast recovery, but 200% storage overhead. Erasure coding (Reed-Solomon) stores data plus parity blocks and rebuilds lost blocks mathematically: ~1.5&times; storage, but rebuilding costs CPU and is slower.</p>
+</details>
+<details>
+<summary>W7. Explain buckets, objects and keys in S3, and how S3 achieves durability. (6)</summary>
+<p>A bucket is a globally uniquely named, region-bound container; an object is data plus metadata; a key uniquely identifies an object in a bucket, in a flat namespace where "folders" are key prefixes; all access is through the REST API. S3 is designed for 11 nines durability by storing objects redundantly across multiple AZs automatically, with versioning, cross-region replication and Object Lock for further protection.</p>
+</details>
+<details>
+<summary>W8. What consistency model does S3 provide today? Why does it matter? (3)</summary>
+<p>Strong read-after-write consistency for all PUTs (new and overwrite) and DELETEs since December 2020, replacing eventual consistency for overwrites and deletes. Applications no longer need to handle stale reads after a write.</p>
+</details>
+<details>
+<summary>W9. Recommend S3 storage classes for: website images, unknown access pattern, 7-year compliance archive. (3)</summary>
+<p>S3 Standard (frequent, milliseconds); S3 Intelligent-Tiering (unknown/changing pattern, auto-optimised); Glacier Deep Archive (lowest cost, retrieval up to 12 h), ideally with Object Lock.</p>
+</details>
+<details>
+<summary>W10. Compare S3, EBS and EFS. (6)</summary>
+<p>S3: object, accessed by API, unlimited scale, higher latency, backups/data lakes, 11 nines multi-AZ. EBS: block, attached to one EC2 instance, fixed but resizable, lowest latency, databases/boot volumes, single AZ with snapshots to S3. EFS: file (NFS), shared by many instances across AZs, elastic, low-medium latency, shared content/home directories, multi-AZ in Standard class.</p>
+</details>
+<details>
+<summary>W11. Classify GFS, HDFS and S3 as block, file or object storage and justify. (Assignment Part B) (6)</summary>
+<p>GFS and HDFS are distributed <b>file</b> systems: they expose a hierarchical namespace of files and directories, internally split into large chunks/blocks stored on many servers. S3 is <b>object</b> storage: a flat namespace of immutable objects with metadata, addressed by key via a REST API, with no real directories or in-place updates.</p>
+</details>
+<details>
+<summary>W12. Discuss four design trade-offs when building a distributed file system. (8)</summary>
+<p>Consistency vs availability (strong costs latency/availability under partitions; eventual risks stale reads). Centralized vs distributed metadata (a single master is simple but a bottleneck/SPOF; distributed metadata scales but needs Paxos/Raft consensus). Replication strategy (3&times; is simple and quick to recover but costly; erasure coding saves space but costs CPU on rebuild). Block size (large blocks suit sequential big files and small metadata; small blocks suit random access but inflate metadata).</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th></th><th>Block</th><th>File</th><th>Object</th></tr>
+<tr><td>Unit</td><td>Block</td><td>File/dir</td><td>Whole object</td></tr>
+<tr><td>Access</td><td>Raw disk, FS on top</td><td>NFS / SMB, POSIX</td><td>REST GET/PUT/DELETE</td></tr>
+<tr><td>Latency</td><td>Lowest</td><td>Low&ndash;med</td><td>Higher</td></tr>
+<tr><td>Scale</td><td>Per volume</td><td>Medium</td><td>Exabytes</td></tr>
+<tr><td>Metadata</td><td>Minimal</td><td>FS attrs</td><td>Rich, custom</td></tr>
+<tr><td>Use</td><td>DBs, VMs, boot</td><td>Shared dirs, CMS</td><td>Backups, data lakes, media</td></tr>
+<tr><td>AWS</td><td>EBS</td><td>EFS, FSx</td><td>S3, Glacier</td></tr>
+</table>
+<table>
+<tr><th></th><th>GFS</th><th>HDFS</th></tr>
+<tr><td>Origin</td><td>Google 2003, internal</td><td>Apache Hadoop, open</td></tr>
+<tr><td>Metadata</td><td>Single Master</td><td>NameNode Active/Standby (edit log)</td></tr>
+<tr><td>Data</td><td>Chunkservers</td><td>DataNodes</td></tr>
+<tr><td>Unit</td><td>64 MB chunk</td><td>128 MB block</td></tr>
+<tr><td>Replicas</td><td>3&times;</td><td>3&times; or erasure coding (~1.5&times;)</td></tr>
+<tr><td>Placement</td><td>Basic</td><td>Rack aware (2 + 1)</td></tr>
+<tr><td>Consistency</td><td colspan="2">Relaxed; GFS appends at-least-once ("consistent but undefined")</td></tr>
+<tr><td>Weakness</td><td colspan="2">Master/NameNode memory: small files; not for low-latency random writes</td></tr>
+<tr><td>Read</td><td colspan="2">Ask master for location &rarr; read data directly from server</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Amazon S3</th></tr>
+<tr><td>Concepts</td><td>Bucket (unique, region) &middot; object (data + metadata) &middot; key (flat, prefixes) &middot; REST</td></tr>
+<tr><td>Durability</td><td>11 nines, multi-AZ; versioning, CRR, Object Lock (WORM)</td></tr>
+<tr><td>Consistency</td><td>Strong read-after-write since Dec 2020</td></tr>
+<tr><td>Security</td><td>IAM, bucket policies, SSE-S3/KMS/C, Block Public Access</td></tr>
+<tr><td>Classes</td><td>Standard &rarr; Intelligent-Tiering &rarr; Standard-IA &rarr; One Zone-IA &rarr; Glacier Instant &rarr; Glacier Flexible (min&ndash;h) &rarr; Deep Archive (&le;12 h); lifecycle policies</td></tr>
+</table>
+<table>
+<tr><th colspan="2">EBS / EFS</th></tr>
+<tr><td>EBS</td><td>gp3 (3,000 IOPS), io2 (256K IOPS, DBs), st1 (throughput HDD), sc1 (cold). One AZ; incremental snapshots to S3; resize live</td></tr>
+<tr><td>EFS</td><td>Managed NFSv4, many instances + AZs; Standard / IA / One Zone; bursting / provisioned / elastic throughput</td></tr>
+<tr><td>Others</td><td>FSx, Storage Gateway (hybrid), Snow (offline transfer), Backup</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Trade-offs</th></tr>
+<tr><td>1</td><td>Consistency vs availability</td></tr>
+<tr><td>2</td><td>Central vs distributed metadata (Paxos/Raft)</td></tr>
+<tr><td>3</td><td>3&times; replication vs erasure coding</td></tr>
+<tr><td>4</td><td>Large vs small blocks</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>S3 has real folders</td><td>Flat namespace; "folders" are key prefixes.</td></tr>
+<tr><td>Objects can be edited in place</td><td>Objects are immutable; an update rewrites the whole object.</td></tr>
+<tr><td>Data in GFS flows through the Master</td><td>Only metadata goes through the Master; data goes client &harr; chunkserver.</td></tr>
+<tr><td>GFS block size 128 MB, HDFS 64 MB</td><td>GFS 64 MB chunks; HDFS 128 MB blocks.</td></tr>
+<tr><td>S3 is eventually consistent</td><td>Strong read-after-write since December 2020.</td></tr>
+<tr><td>Durability = availability</td><td>Durability = not losing data; availability = being reachable now.</td></tr>
+<tr><td>EBS can be shared by many instances like EFS</td><td>EBS attaches to one instance (except io2 Multi-Attach); EFS is shared.</td></tr>
+<tr><td>EBS survives an AZ failure automatically</td><td>EBS is AZ-bound; use snapshots (stored in S3) to recover elsewhere.</td></tr>
+<tr><td>HDFS is good for millions of tiny files</td><td>Small-file problem: NameNode memory.</td></tr>
+<tr><td>Erasure coding is free</td><td>Saves storage (~1.5&times;) but costs CPU for rebuilds.</td></tr>
+</table>
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Which storage model is the closest cloud analog to a physical disk?", "o": ["Object", "File", "Block", "Archive"], "a": 2, "e": "Fixed-size addressable blocks; the OS adds a file system."}, {"q": "File storage is typically accessed using:", "o": ["REST GET/PUT", "NFS or SMB", "SQL", "SSH only"], "a": 1, "e": "Hierarchical, POSIX-like, shared mounts."}, {"q": "In object storage, an object consists of:", "o": ["Only data", "Data, rich metadata and a unique key", "A fixed-size block", "A directory"], "a": 1, "e": "Objects are immutable; updates rewrite the whole object."}, {"q": "Which storage type has the lowest latency?", "o": ["Object", "File", "Block", "Glacier"], "a": 2, "e": "Best for databases and boot volumes."}, {"q": "Which storage type scales to exabytes with no capacity planning?", "o": ["Block", "File", "Object", "RAID"], "a": 2, "e": "S3, GCS, Azure Blob."}, {"q": "GFS assumes that hardware failure is:", "o": ["Rare", "The norm, not the exception", "Impossible", "Handled by special hardware"], "a": 1, "e": "Reliability comes from software replication."}, {"q": "The GFS default chunk size is:", "o": ["4 KB", "64 MB", "128 MB", "1 GB"], "a": 1, "e": "HDFS default block size is 128 MB."}, {"q": "In GFS, bulk data flows:", "o": ["Through the Master", "Directly between client and chunkserver", "Through DNS", "Through the NameNode"], "a": 1, "e": "Only metadata goes through the Master."}, {"q": "GFS record appends are:", "o": ["Exactly-once", "At-most-once", "At-least-once (duplicates possible)", "Never allowed"], "a": 2, "e": "Applications use unique IDs to drop duplicates."}, {"q": "A 1,024 MB file in GFS with 3x replication has how many chunk replicas?", "o": ["16", "32", "48", "64"], "a": 2, "e": "1024/64 = 16 chunks x 3 = 48."}, {"q": "In HDFS, metadata is held by the:", "o": ["DataNode", "NameNode", "Chunkserver", "Bucket"], "a": 1, "e": "DataNodes store the blocks."}, {"q": "HDFS removes the metadata single point of failure using:", "o": ["Erasure coding", "Active/Standby NameNodes", "Rack awareness", "Bigger blocks"], "a": 1, "e": "Kept in sync by the edit log."}, {"q": "HDFS rack awareness typically places replicas as:", "o": ["All 3 on one rack", "2 on one rack, 1 on another", "1 per data centre", "No replicas"], "a": 1, "e": "Survives a whole-rack failure."}, {"q": "Erasure coding in HDFS 3.x cuts storage overhead to about:", "o": ["3x", "2x", "1.5x", "1x"], "a": 2, "e": "At the cost of CPU-heavy rebuilds."}, {"q": "The HDFS small-file problem is caused by:", "o": ["Small disks", "All metadata living in NameNode RAM", "Slow networks", "Erasure coding"], "a": 1, "e": "Millions of files = millions of metadata entries."}, {"q": "In S3, 'folders' are:", "o": ["Real directories", "Key prefixes in a flat namespace", "Separate buckets", "EBS volumes"], "a": 1, "e": "e.g. photos/2026/cat.jpg is one key."}, {"q": "S3's designed durability is:", "o": ["99.9%", "99.99%", "99.999999999% (11 nines)", "100%"], "a": 2, "e": "Objects stored across multiple AZs."}, {"q": "Since December 2020, S3 provides:", "o": ["Eventual consistency for all", "Strong read-after-write consistency", "No consistency", "Causal consistency only"], "a": 1, "e": "For new PUTs, overwrites and DELETEs."}, {"q": "Which S3 class has the lowest cost and retrieval up to 12 hours?", "o": ["S3 Standard", "Standard-IA", "Glacier Deep Archive", "Intelligent-Tiering"], "a": 2, "e": "For long-term compliance archives."}, {"q": "Object Lock provides:", "o": ["Faster reads", "WORM protection for compliance", "Block storage", "Load balancing"], "a": 1, "e": "Retention periods and legal holds."}, {"q": "Amazon EBS volumes are:", "o": ["Multi-region by default", "Bound to a single Availability Zone", "Object storage", "Shared by thousands of instances"], "a": 1, "e": "Snapshot to move across AZs/regions."}, {"q": "Which EBS type suits high-performance databases?", "o": ["sc1", "st1", "io2 Block Express", "gp2 HDD"], "a": 2, "e": "Up to 256,000 IOPS, sub-ms latency."}, {"q": "Ten web servers in different AZs must share one set of files. Choose:", "o": ["EBS", "EFS", "Glacier", "Snow Family"], "a": 1, "e": "EFS is an elastic NFS file system across AZs."}, {"q": "Distributed metadata (e.g. Ceph) needs which kind of protocol?", "o": ["Gossip only", "Consensus (Paxos/Raft)", "FTP", "SMTP"], "a": 1, "e": "So metadata servers agree."}, {"q": "Large blocks (64-128 MB) are best for:", "o": ["Random small writes", "Sequential big-file workloads", "Interactive apps", "Many tiny files"], "a": 1, "e": "Small blocks inflate metadata."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

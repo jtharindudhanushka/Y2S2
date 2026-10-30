@@ -1,0 +1,66 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th></th><th>Block</th><th>File</th><th>Object</th></tr>
+<tr><td>Unit</td><td>Block</td><td>File/dir</td><td>Whole object</td></tr>
+<tr><td>Access</td><td>Raw disk, FS on top</td><td>NFS / SMB, POSIX</td><td>REST GET/PUT/DELETE</td></tr>
+<tr><td>Latency</td><td>Lowest</td><td>Low&ndash;med</td><td>Higher</td></tr>
+<tr><td>Scale</td><td>Per volume</td><td>Medium</td><td>Exabytes</td></tr>
+<tr><td>Metadata</td><td>Minimal</td><td>FS attrs</td><td>Rich, custom</td></tr>
+<tr><td>Use</td><td>DBs, VMs, boot</td><td>Shared dirs, CMS</td><td>Backups, data lakes, media</td></tr>
+<tr><td>AWS</td><td>EBS</td><td>EFS, FSx</td><td>S3, Glacier</td></tr>
+</table>
+<table>
+<tr><th></th><th>GFS</th><th>HDFS</th></tr>
+<tr><td>Origin</td><td>Google 2003, internal</td><td>Apache Hadoop, open</td></tr>
+<tr><td>Metadata</td><td>Single Master</td><td>NameNode Active/Standby (edit log)</td></tr>
+<tr><td>Data</td><td>Chunkservers</td><td>DataNodes</td></tr>
+<tr><td>Unit</td><td>64 MB chunk</td><td>128 MB block</td></tr>
+<tr><td>Replicas</td><td>3&times;</td><td>3&times; or erasure coding (~1.5&times;)</td></tr>
+<tr><td>Placement</td><td>Basic</td><td>Rack aware (2 + 1)</td></tr>
+<tr><td>Consistency</td><td colspan="2">Relaxed; GFS appends at-least-once ("consistent but undefined")</td></tr>
+<tr><td>Weakness</td><td colspan="2">Master/NameNode memory: small files; not for low-latency random writes</td></tr>
+<tr><td>Read</td><td colspan="2">Ask master for location &rarr; read data directly from server</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Amazon S3</th></tr>
+<tr><td>Concepts</td><td>Bucket (unique, region) &middot; object (data + metadata) &middot; key (flat, prefixes) &middot; REST</td></tr>
+<tr><td>Durability</td><td>11 nines, multi-AZ; versioning, CRR, Object Lock (WORM)</td></tr>
+<tr><td>Consistency</td><td>Strong read-after-write since Dec 2020</td></tr>
+<tr><td>Security</td><td>IAM, bucket policies, SSE-S3/KMS/C, Block Public Access</td></tr>
+<tr><td>Classes</td><td>Standard &rarr; Intelligent-Tiering &rarr; Standard-IA &rarr; One Zone-IA &rarr; Glacier Instant &rarr; Glacier Flexible (min&ndash;h) &rarr; Deep Archive (&le;12 h); lifecycle policies</td></tr>
+</table>
+<table>
+<tr><th colspan="2">EBS / EFS</th></tr>
+<tr><td>EBS</td><td>gp3 (3,000 IOPS), io2 (256K IOPS, DBs), st1 (throughput HDD), sc1 (cold). One AZ; incremental snapshots to S3; resize live</td></tr>
+<tr><td>EFS</td><td>Managed NFSv4, many instances + AZs; Standard / IA / One Zone; bursting / provisioned / elastic throughput</td></tr>
+<tr><td>Others</td><td>FSx, Storage Gateway (hybrid), Snow (offline transfer), Backup</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Trade-offs</th></tr>
+<tr><td>1</td><td>Consistency vs availability</td></tr>
+<tr><td>2</td><td>Central vs distributed metadata (Paxos/Raft)</td></tr>
+<tr><td>3</td><td>3&times; replication vs erasure coding</td></tr>
+<tr><td>4</td><td>Large vs small blocks</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>S3 has real folders</td><td>Flat namespace; "folders" are key prefixes.</td></tr>
+<tr><td>Objects can be edited in place</td><td>Objects are immutable; an update rewrites the whole object.</td></tr>
+<tr><td>Data in GFS flows through the Master</td><td>Only metadata goes through the Master; data goes client &harr; chunkserver.</td></tr>
+<tr><td>GFS block size 128 MB, HDFS 64 MB</td><td>GFS 64 MB chunks; HDFS 128 MB blocks.</td></tr>
+<tr><td>S3 is eventually consistent</td><td>Strong read-after-write since December 2020.</td></tr>
+<tr><td>Durability = availability</td><td>Durability = not losing data; availability = being reachable now.</td></tr>
+<tr><td>EBS can be shared by many instances like EFS</td><td>EBS attaches to one instance (except io2 Multi-Attach); EFS is shared.</td></tr>
+<tr><td>EBS survives an AZ failure automatically</td><td>EBS is AZ-bound; use snapshots (stored in S3) to recover elsewhere.</td></tr>
+<tr><td>HDFS is good for millions of tiny files</td><td>Small-file problem: NameNode memory.</td></tr>
+<tr><td>Erasure coding is free</td><td>Saves storage (~1.5&times;) but costs CPU for rebuilds.</td></tr>
+</table>
