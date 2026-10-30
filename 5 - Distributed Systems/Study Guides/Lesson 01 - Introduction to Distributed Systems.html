@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DS Lesson 1 - Introduction to Distributed Systems</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .warn{background:var(--badbg);border-left:3px solid var(--bad);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  td.c{white-space:normal}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Distributed Systems study guides</a> &middot; INTE 22253 &middot; Lesson 01</p><button id="theme" type="button"></button></div>
+  <h1>Introduction to Distributed Systems</h1>
+  <p class="lead">Lecture 01: what a distributed system is, its six characteristics, advantages and challenges, transparency, the CAP theorem, the fundamental models (client-server, P2P, microservices; synchronous vs asynchronous; crash, omission, timing and Byzantine failures; security threats) and the Google, AWS and banking examples.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Source: Lecture 01 (module overview and Introduction to Distributed Systems). Sections marked [outline] explain topics the slides only name, at standard textbook level.</p>
+<div class="key">
+<b class="t">What you will be able to do after this lesson</b>
+<ul>
+<li>Define a distributed system and explain each part of the definition (autonomous nodes, message passing, single coherent view, no global clock).</li>
+<li>Explain the six core characteristics, the six advantages and the six challenges from the slides, with an example of each.</li>
+<li>State the <b>CAP theorem</b>, explain why a partition forces a choice between C and A, and say which side a bank and a social feed pick.</li>
+<li>Describe the fundamental models: <b>architectural</b> (client-server, peer-to-peer, microservices), <b>interaction</b> (synchronous vs asynchronous), <b>failure</b> (crash, omission, timing, Byzantine) and <b>security</b>.</li>
+<li>Use Google, AWS and banking as examples of distributed systems in practice.</li>
+</ul>
+</div>
+
+<div class="box small">
+<b class="t">About the module (Lecture 01, slides 2&ndash;12)</b>
+<b>Assessment:</b> 50% continuous assessment (assignment + mini-project), <b>50% final exam: 2 hours, closed book</b>.
+<b>Module map:</b> distributed system models &rarr; IPC and synchronization &rarr; time and consistency &rarr; replication and fault tolerance &rarr; distributed file systems and security &rarr; cloud computing &rarr; virtualization and management &rarr; cloud storage &rarr; distributed transactions &rarr; multi-agent systems &rarr; distributed search engines &rarr; P2P and blockchain.
+<b>Learning outcomes:</b> LO1 compare architectures and communication models; LO2 synchronization and time ordering; LO3 consistency models and fault-tolerant replication; LO4 IaaS/PaaS/SaaS; LO5 distributed file systems and cloud storage; LO6 distributed transactions, multi-agent systems, P2P, blockchain.
+</div>
+
+<h2>1. What is a distributed system?</h2>
+<div class="key">
+<b class="t">Definition (learn word for word)</b>
+A distributed system is <b>a collection of independent computers that appears to its users as a single coherent system</b> &mdash; working together, communicating over a network, to achieve a common goal.
+</div>
+<p>Take the definition apart. Each phrase is a separate exam point.</p>
+<table>
+<tr><th style="width:30%">Phrase / slide point</th><th>What it means for a beginner</th></tr>
+<tr><td><b>Independent (autonomous) computers, "nodes"</b></td><td>Each machine has its own CPU, its own memory and its own operating system. A <b>node</b> is just one such computer in the system. Nodes can start, stop or crash independently of each other.</td></tr>
+<tr><td><b>Do not share physical memory</b></td><td>Node A cannot read a variable in Node B's RAM. This is the big difference from a multi-core PC, where all cores share one RAM.</td></tr>
+<tr><td><b>Coordinate solely by passing messages</b></td><td>Because there is no shared memory, the <i>only</i> way to cooperate is to send <b>messages</b> (packets of data) over the network: "please store this", "here is the result", "are you alive?".</td></tr>
+<tr><td><b>Appears as a single coherent system</b></td><td>The user sends <i>one</i> request (e.g. a Google search) and gets <i>one</i> answer. They do not see, and should not need to know, that thousands of machines worked on it. Hiding this is called <b>transparency</b>.</td></tr>
+<tr><td><b>No global clock</b></td><td>Every node has its own clock and the clocks drift apart. There is no single "true time" all nodes can read, so deciding <i>which event happened first</i> is hard.</td></tr>
+<tr><td><b>No shared state &mdash; coordination must be explicit</b></td><td>No node automatically knows what the others are doing. If they must agree (e.g. on a bank balance), a protocol must make them agree, using messages.</td></tr>
+</table>
+
+<div class="fig">
+<svg viewBox="0 0 680 210" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="200" height="190" style="fill:var(--soft)" stroke="currentColor"/>
+<text x="110" y="32" text-anchor="middle" font-size="12" font-weight="bold">What the client sees</text>
+<rect x="45" y="60" width="130" height="34" style="fill:var(--bg)" stroke="currentColor"/><text x="110" y="82" text-anchor="middle" font-size="12">Client (browser)</text>
+<line x1="110" y1="94" x2="110" y2="128" stroke="currentColor" stroke-width="1.5" marker-end="url(#a1)"/>
+<rect x="30" y="130" width="160" height="50" style="fill:var(--bg)" stroke="currentColor" stroke-width="2"/><text x="110" y="152" text-anchor="middle" font-size="12" font-weight="bold">ONE system</text><text x="110" y="170" text-anchor="middle" font-size="10">"the service"</text>
+<text x="235" y="110" font-size="22">&#8594;</text>
+<rect x="265" y="10" width="405" height="190" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="5 3"/>
+<text x="467" y="32" text-anchor="middle" font-size="12" font-weight="bold">Behind the scenes</text>
+<rect x="400" y="45" width="135" height="30" style="fill:var(--soft)" stroke="currentColor"/><text x="467" y="65" text-anchor="middle" font-size="11">single request arrives</text>
+<rect x="290" y="130" width="100" height="50" style="fill:var(--soft)" stroke="currentColor"/><text x="340" y="152" text-anchor="middle" font-size="12" font-weight="bold">Node A</text><text x="340" y="168" text-anchor="middle" font-size="9">own CPU, RAM, clock</text>
+<rect x="418" y="130" width="100" height="50" style="fill:var(--soft)" stroke="currentColor"/><text x="468" y="152" text-anchor="middle" font-size="12" font-weight="bold">Node B</text><text x="468" y="168" text-anchor="middle" font-size="9">data centre 1</text>
+<rect x="546" y="130" width="100" height="50" style="fill:var(--soft)" stroke="currentColor"/><text x="596" y="152" text-anchor="middle" font-size="12" font-weight="bold">Node C</text><text x="596" y="168" text-anchor="middle" font-size="9">data centre 2</text>
+<line x1="440" y1="75" x2="350" y2="130" stroke="currentColor"/><line x1="467" y1="75" x2="467" y2="130" stroke="currentColor"/><line x1="495" y1="75" x2="590" y2="130" stroke="currentColor"/>
+<line x1="390" y1="155" x2="418" y2="155" stroke="currentColor" stroke-dasharray="3 2"/><line x1="518" y1="155" x2="546" y2="155" stroke="currentColor" stroke-dasharray="3 2"/>
+<text x="467" y="122" text-anchor="middle" font-size="9">messages over the network (dashed)</text>
+<defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+</svg>
+<div class="cap">Figure 1 &mdash; Slide 16: the client sends one request to "one system"; behind the scenes independent nodes, possibly in different data centres, coordinate by messages.</div>
+</div>
+
+<h3>Distributed vs centralized vs parallel (common comparison question)</h3>
+<table>
+<tr><th>Type</th><th>Memory</th><th>Clock</th><th>How parts cooperate</th><th>Failure</th><th>Example</th></tr>
+<tr><td>Centralized</td><td>One computer</td><td>One clock</td><td>Inside one OS</td><td>All-or-nothing: the machine works or it is down</td><td>A single office server</td></tr>
+<tr><td>Parallel (multi-core)</td><td>Shared RAM</td><td>One (shared)</td><td>Shared variables</td><td>Usually all-or-nothing</td><td>A multi-core laptop</td></tr>
+<tr><td><b>Distributed</b></td><td><b>Each node its own</b></td><td><b>Many, drifting</b></td><td><b>Messages over a network</b></td><td><b>Partial: some nodes fail, others keep running</b></td><td>Google Search, AWS, ATM network</td></tr>
+</table>
+<p><b>Middleware</b> (named in Lecture 04's recap): the software layer that sits between the applications and the operating systems/network of each node. It hides the differences between machines (heterogeneity) and gives programmers one uniform interface, e.g. "call a function on another machine as if it were local". Examples: RPC frameworks, message queues, web-service platforms.</p>
+
+<h2>2. Core characteristics (slide 17)</h2>
+<p>These six properties are shared by every distributed system. Learn them as a list of six, each with one sentence and one example.</p>
+<table>
+<tr><th style="width:18%">Characteristic</th><th>Slide meaning</th><th>Explanation and example</th></tr>
+<tr><td><b>Resource sharing</b></td><td>Hardware, data and services are shared across nodes rather than duplicated on one machine.</td><td>A <b>resource</b> is anything useful: a printer, a disk, a database, a service. Example: all staff use one shared file server; millions of users share Google's index.</td></tr>
+<tr><td><b>Scalability</b></td><td>Capacity grows by <b>adding more nodes</b> (horizontal scaling) rather than upgrading one machine.</td><td>A system is <b>scalable</b> if it keeps working well when users, data or machines grow. Adding machines = <b>scale out / horizontal</b>; buying a bigger machine = <b>scale up / vertical</b> (Figure 2).</td></tr>
+<tr><td><b>Concurrency</b></td><td>Many nodes process requests simultaneously, independently of one another.</td><td>Thousands of users act at the same time, so two requests may touch the same data at once (two people booking the last seat). The system must keep shared data correct.</td></tr>
+<tr><td><b>Fault tolerance</b></td><td>The system keeps running correctly even when individual nodes fail or disconnect.</td><td>With many machines, something is always broken. Copies of data (<b>replication</b>) and spare nodes let the service continue.</td></tr>
+<tr><td><b>No global clock</b></td><td>Nodes can't rely on perfectly synchronized time, complicating event ordering.</td><td>If Node A's clock says 10:00:01 and Node B's says 10:00:00, which event was really first? Clocks can be synchronized only approximately.</td></tr>
+<tr><td><b>Transparency</b></td><td>Distribution is hidden &mdash; users interact with one logical system.</td><td>The user does not know where data is, how many copies exist, or that a server just failed. Types below.</td></tr>
+</table>
+
+<div class="fig">
+<svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg">
+<text x="160" y="18" text-anchor="middle" font-size="12" font-weight="bold">Vertical scaling = scale UP</text>
+<rect x="60" y="95" width="50" height="45" style="fill:var(--soft)" stroke="currentColor"/><text x="85" y="122" text-anchor="middle" font-size="10">small</text>
+<text x="140" y="122" font-size="20">&#8594;</text>
+<rect x="180" y="35" width="90" height="105" style="fill:var(--soft)" stroke="currentColor" stroke-width="2"/><text x="225" y="85" text-anchor="middle" font-size="10">bigger CPU,</text><text x="225" y="99" text-anchor="middle" font-size="10">more RAM</text>
+<text x="160" y="155" text-anchor="middle" font-size="9">limit: one machine's maximum; still one point of failure</text>
+<line x1="340" y1="10" x2="340" y2="150" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="510" y="18" text-anchor="middle" font-size="12" font-weight="bold">Horizontal scaling = scale OUT</text>
+<rect x="380" y="95" width="45" height="45" style="fill:var(--soft)" stroke="currentColor"/>
+<text x="440" y="122" font-size="20">&#8594;</text>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="480" y="95" width="45" height="45"/><rect x="535" y="95" width="45" height="45"/><rect x="590" y="95" width="45" height="45"/><rect x="535" y="40" width="45" height="45"/></g>
+<text x="510" y="155" text-anchor="middle" font-size="9">add commodity nodes; no ceiling; survives one node failing</text>
+</svg>
+<div class="cap">Figure 2 &mdash; Scale up vs scale out. Distributed systems scale out.</div>
+</div>
+
+<h3>Forms of transparency (Lecture 04 recap lists six)</h3>
+<table>
+<tr><th>Transparency</th><th>What is hidden from the user</th><th>Example</th></tr>
+<tr><td>Access</td><td>Differences in how data is represented and how a resource is accessed (local vs remote look the same)</td><td>A network drive opens like a local folder</td></tr>
+<tr><td>Location</td><td>Where a resource physically is</td><td>A URL <code>www.example.com</code> says nothing about which data centre</td></tr>
+<tr><td>Migration</td><td>That a resource may move to another location</td><td>A VM moved to another host while users keep working</td></tr>
+<tr><td>Replication</td><td>That several copies of a resource exist</td><td>You see one Gmail inbox, stored as several copies</td></tr>
+<tr><td>Concurrency</td><td>That other users share the same resource at the same time</td><td>Two people edit a shared document without corrupting it</td></tr>
+<tr><td>Failure</td><td>The failure and recovery of a component</td><td>A server crashes; your request is silently retried on another</td></tr>
+</table>
+
+<h3>Two more design goals named in the outline <i>[outline]</i></h3>
+<ul>
+<li><b>Openness</b>: the system is built on <b>published, standard interfaces and protocols</b> (e.g. HTTP, TCP/IP, REST APIs), so new components from different vendors can be added or replaced. An open system is extensible and interoperable.</li>
+<li><b>Heterogeneity</b>: the nodes differ &mdash; different hardware, operating systems, networks, programming languages. Middleware and standard protocols hide these differences.</li>
+<li><b>Reliability</b>: the system continues to give correct service over time; closely tied to fault tolerance and availability.</li>
+</ul>
+
+<h2>3. Why go distributed? Advantages (slide 18)</h2>
+<table>
+<tr><th style="width:22%">Advantage</th><th>Explanation</th></tr>
+<tr><td><b>Scalability</b></td><td>Add more machines on demand to handle growth &mdash; no ceiling imposed by a single server's hardware.</td></tr>
+<tr><td><b>Fault tolerance</b></td><td>If one node fails, others take over. There is <b>no single point of failure (SPOF)</b> for the whole system. A SPOF is one component whose failure stops everything.</td></tr>
+<tr><td><b>Performance</b></td><td>Workloads run <b>in parallel</b> across many nodes, cutting response time for large or complex tasks (e.g. MapReduce, section 7).</td></tr>
+<tr><td><b>Resource efficiency</b></td><td>Hardware, storage and bandwidth are pooled and shared rather than sitting idle on one machine.</td></tr>
+<tr><td><b>Geographic reach</b></td><td>Nodes placed near users worldwide reduce <b>latency</b> (the delay before a response arrives) and keep services available regionally.</td></tr>
+<tr><td><b>Cost-effective growth</b></td><td>Scaling out with cheap <b>commodity servers</b> (ordinary, mass-produced machines) is often cheaper than scaling up one very powerful machine.</td></tr>
+</table>
+
+<h2>4. The hard trade-offs: challenges (slide 19)</h2>
+<table>
+<tr><th style="width:22%">Challenge</th><th>Why it is hard</th></tr>
+<tr><td><b>Complexity</b></td><td>More moving parts &rArr; harder design, debugging, deployment and testing. A bug may appear only when messages arrive in an unusual order.</td></tr>
+<tr><td><b>Partial failures</b></td><td>Some nodes fail while others keep running. A single PC either works or crashes; a distributed system can be "half working", and a node often cannot tell whether another node crashed or is just slow.</td></tr>
+<tr><td><b>Consistency</b></td><td>Keeping copies of data in sync across nodes is hard, especially under concurrent updates (Lesson 4).</td></tr>
+<tr><td><b>Synchronization</b></td><td>No global clock &rArr; ordering events and coordinating actions is genuinely difficult.</td></tr>
+<tr><td><b>Security</b></td><td>More network communication paths &rArr; a larger <b>attack surface</b> (more places an attacker can try to get in).</td></tr>
+<tr><td><b>Network reliability</b></td><td>Latency, <b>partitions</b> (the network splits so groups of nodes cannot reach each other) and message loss are normal &mdash; they must be designed for, not assumed away.</td></tr>
+</table>
+<div class="box small">
+<b class="t">Extra: the classic list of challenges (Coulouris) &mdash; matches the course Overview</b>
+Heterogeneity &middot; Openness &middot; Security &middot; Scalability &middot; Failure handling &middot; Concurrency &middot; Transparency &middot; Quality of service. If a question says "discuss the challenges of designing a distributed system", you can combine this list with slide 19.
+</div>
+
+<h2>5. The CAP theorem (slide 20)</h2>
+<div class="key">
+<b class="t">Statement</b>
+In a distributed system you can only <b>fully guarantee two</b> of these three properties at the same time:
+<b>C</b>onsistency &mdash; every node sees the same data at the same time; <b>A</b>vailability &mdash; every request gets a response, even if some nodes are down; <b>P</b>artition tolerance &mdash; the system keeps working despite network failures between nodes.
+</div>
+<p><b>Why only two?</b> Partitions <i>will</i> happen in any real network (cables are cut, switches fail). So P is not optional. When a partition happens, a node that cannot reach the others has only two choices when a request arrives:</p>
+<ul>
+<li><b>Refuse or wait</b> (return an error) &rArr; it stays <b>consistent</b> but is <b>not available</b> &rArr; a <b>CP</b> system.</li>
+<li><b>Answer anyway</b> with the data it has &rArr; it stays <b>available</b> but may return <b>stale</b> (out-of-date) data &rArr; an <b>AP</b> system.</li>
+</ul>
+
+<h3>Worked example: one partition, two choices</h3>
+<div class="fig">
+<svg viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
+<rect x="40" y="40" width="150" height="60" style="fill:var(--soft)" stroke="currentColor"/><text x="115" y="65" text-anchor="middle" font-size="12" font-weight="bold">Replica 1</text><text x="115" y="85" text-anchor="middle" font-size="11">balance = 500</text>
+<rect x="490" y="40" width="150" height="60" style="fill:var(--soft)" stroke="currentColor"/><text x="565" y="65" text-anchor="middle" font-size="12" font-weight="bold">Replica 2</text><text x="565" y="85" text-anchor="middle" font-size="11">balance = 500</text>
+<line x1="190" y1="70" x2="490" y2="70" stroke="currentColor" stroke-dasharray="6 4"/>
+<text x="340" y="46" text-anchor="middle" font-size="11">replication link</text>
+<line x1="325" y1="55" x2="355" y2="85" stroke="currentColor" stroke-width="3"/><line x1="355" y1="55" x2="325" y2="85" stroke="currentColor" stroke-width="3"/>
+<text x="340" y="104" text-anchor="middle" font-size="11" font-weight="bold">PARTITION</text>
+<text x="115" y="125" text-anchor="middle" font-size="10">1. ATM withdraws 200 here</text><text x="115" y="139" text-anchor="middle" font-size="10">&#8658; balance = 300</text>
+<text x="565" y="125" text-anchor="middle" font-size="10">2. Phone app reads balance here</text>
+<text x="565" y="145" text-anchor="middle" font-size="10"><tspan font-weight="bold">CP:</tspan> "error, try later"</text>
+<text x="565" y="162" text-anchor="middle" font-size="10"><tspan font-weight="bold">AP:</tspan> shows 500 (stale)</text>
+</svg>
+<div class="cap">Figure 3 &mdash; The link between two replicas breaks. Replica 2 cannot know about the withdrawal.</div>
+</div>
+<table class="small">
+<tr><th>Step</th><th>CP choice (consistency first)</th><th>AP choice (availability first)</th></tr>
+<tr><td>Withdraw 200 at Replica 1</td><td>Allowed only if it can also update Replica 2 (it can't) &rArr; may be refused</td><td>Accepted; Replica 1 now 300</td></tr>
+<tr><td>Read at Replica 2</td><td>Refused / waits until the link is back</td><td>Answers 500 &mdash; wrong but fast</td></tr>
+<tr><td>After the link is repaired</td><td>Nothing to fix; data never diverged</td><td>Replicas exchange updates and <b>converge</b> to 300 (eventual consistency)</td></tr>
+<tr><td>Who picks this</td><td><b>Banking systems</b> (consistency is non-negotiable)</td><td><b>Social feeds</b> (a slightly old feed is acceptable; being down is not)</td></tr>
+</table>
+<p>The <b>CA</b> combination is only possible when there is no network to partition (e.g. one database on one site). Lecture 04 extends this (CP/AP examples, PACELC).</p>
+
+<h2>6. Fundamental models for distributed systems <i>[outline]</i></h2>
+<p>Lecture 01 slide 4 names five model topics. A <b>model</b> is a simplified description that captures the important properties so we can reason about a design. The slides do not explain them, so here they are at textbook level.</p>
+
+<h3>6.1 Architectural models: how the parts are arranged</h3>
+<div class="fig">
+<svg viewBox="0 0 680 190" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<text x="105" y="16" text-anchor="middle" font-size="12" font-weight="bold">(a) Client-server</text>
+<rect x="65" y="30" width="80" height="34" style="fill:var(--soft)" stroke="currentColor" stroke-width="2"/><text x="105" y="52" text-anchor="middle" font-size="11">Server</text>
+<g style="fill:var(--bg)" stroke="currentColor"><rect x="10" y="130" width="55" height="28"/><rect x="78" y="130" width="55" height="28"/><rect x="146" y="130" width="55" height="28"/></g>
+<g font-size="10" text-anchor="middle"><text x="37" y="148">client</text><text x="105" y="148">client</text><text x="173" y="148">client</text></g>
+<line x1="37" y1="130" x2="90" y2="66" stroke="currentColor" marker-end="url(#a2)"/><line x1="105" y1="130" x2="105" y2="66" stroke="currentColor" marker-end="url(#a2)"/><line x1="173" y1="130" x2="120" y2="66" stroke="currentColor" marker-end="url(#a2)"/>
+<text x="105" y="180" text-anchor="middle" font-size="9">request &#8594; / &#8592; reply</text>
+<text x="340" y="16" text-anchor="middle" font-size="12" font-weight="bold">(b) Peer-to-peer</text>
+<g style="fill:var(--soft)" stroke="currentColor"><circle cx="290" cy="60" r="20"/><circle cx="390" cy="60" r="20"/><circle cx="270" cy="140" r="20"/><circle cx="410" cy="140" r="20"/><circle cx="340" cy="105" r="20"/></g>
+<g stroke="currentColor"><line x1="310" y1="60" x2="370" y2="60"/><line x1="290" y1="80" x2="275" y2="120"/><line x1="390" y1="80" x2="405" y2="120"/><line x1="290" y1="140" x2="390" y2="140"/><line x1="305" y1="72" x2="325" y2="92"/><line x1="375" y1="72" x2="355" y2="92"/><line x1="285" y1="128" x2="322" y2="113"/></g>
+<g font-size="9" text-anchor="middle"><text x="290" y="64">peer</text><text x="390" y="64">peer</text><text x="270" y="144">peer</text><text x="410" y="144">peer</text><text x="340" y="109">peer</text></g>
+<text x="340" y="180" text-anchor="middle" font-size="9">every node is both client and server</text>
+<text x="575" y="16" text-anchor="middle" font-size="12" font-weight="bold">(c) Microservices</text>
+<rect x="525" y="28" width="100" height="26" style="fill:var(--soft)" stroke="currentColor"/><text x="575" y="45" text-anchor="middle" font-size="10">API gateway</text>
+<g style="fill:var(--bg)" stroke="currentColor"><rect x="480" y="90" width="58" height="30"/><rect x="546" y="90" width="58" height="30"/><rect x="612" y="90" width="58" height="30"/></g>
+<g font-size="9" text-anchor="middle"><text x="509" y="109">users</text><text x="575" y="109">orders</text><text x="641" y="109">payment</text></g>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="492" y="140" width="34" height="20"/><rect x="558" y="140" width="34" height="20"/><rect x="624" y="140" width="34" height="20"/></g>
+<g font-size="8" text-anchor="middle"><text x="509" y="154">DB</text><text x="575" y="154">DB</text><text x="641" y="154">DB</text></g>
+<g stroke="currentColor"><line x1="550" y1="54" x2="509" y2="90"/><line x1="575" y1="54" x2="575" y2="90"/><line x1="600" y1="54" x2="641" y2="90"/><line x1="509" y1="120" x2="509" y2="140"/><line x1="575" y1="120" x2="575" y2="140"/><line x1="641" y1="120" x2="641" y2="140"/></g>
+<text x="575" y="180" text-anchor="middle" font-size="9">small services, each with its own data</text>
+</svg>
+<div class="cap">Figure 4 &mdash; The three architectural models named on slide 4.</div>
+</div>
+<table class="small">
+<tr><th>Aspect</th><th>Client-server</th><th>Peer-to-peer (P2P)</th><th>Microservices</th></tr>
+<tr><td>Idea</td><td>Servers provide services; clients request them (request&ndash;reply)</td><td>All nodes (peers) are equal and both use and provide resources</td><td>One application split into many small, independently deployable services that talk over the network (usually HTTP/REST or messages)</td></tr>
+<tr><td>Control</td><td>Centralized at the server</td><td>Decentralized</td><td>Each service owned by one team</td></tr>
+<tr><td>Scalability</td><td>Limited by the server; add servers to scale</td><td>Grows naturally: every new peer adds capacity</td><td>Scale each service separately (only "orders" during a sale)</td></tr>
+<tr><td>Weak point</td><td>Server is a bottleneck and SPOF</td><td>Hard to manage, search, secure; peers join and leave (<b>churn</b>)</td><td>Many network calls; complex deployment and monitoring</td></tr>
+<tr><td>Examples</td><td>Web browser + web server, email</td><td>BitTorrent, blockchain networks</td><td>Netflix, Amazon (cloud-native apps, Lesson 2)</td></tr>
+</table>
+
+<h3>6.2 Interaction models: synchronous vs asynchronous</h3>
+<p>Two meanings are used; know both.</p>
+<div class="two">
+<div><p><b>(a) Synchronous vs asynchronous <i>communication</i></b></p>
+<ul>
+<li><b>Synchronous (blocking)</b>: the sender sends a request and <b>waits</b> until the reply arrives before continuing. Simple to program (like a phone call). Example: an HTTP request, RPC.</li>
+<li><b>Asynchronous (non-blocking)</b>: the sender sends the message and <b>continues immediately</b>; the reply (if any) is handled later. Example: email, message queues. Better throughput and resilience; harder to program.</li>
+</ul></div>
+<div><p><b>(b) Synchronous vs asynchronous <i>system model</i></b></p>
+<ul>
+<li><b>Synchronous system</b>: known <b>upper bounds</b> on process execution time, message delay and clock drift. A timeout can then <i>prove</i> a node has crashed.</li>
+<li><b>Asynchronous system</b>: <b>no bounds</b> &mdash; a message may take any time. You cannot tell a crashed node from a slow one. The Internet behaves like this.</li>
+</ul></div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<text x="160" y="15" text-anchor="middle" font-size="12" font-weight="bold">Synchronous (blocking)</text>
+<text x="20" y="45" font-size="10">Client</text><line x1="70" y1="42" x2="320" y2="42" stroke="currentColor"/>
+<text x="20" y="115" font-size="10">Server</text><line x1="70" y1="112" x2="320" y2="112" stroke="currentColor"/>
+<line x1="90" y1="42" x2="150" y2="110" stroke="currentColor" marker-end="url(#a3)"/><rect x="150" y="104" width="70" height="16" style="fill:var(--soft)" stroke="currentColor"/><text x="185" y="116" text-anchor="middle" font-size="9">work</text>
+<line x1="220" y1="110" x2="280" y2="44" stroke="currentColor" marker-end="url(#a3)"/>
+<rect x="90" y="34" width="190" height="16" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="3 2"/><text x="185" y="46" text-anchor="middle" font-size="9">client BLOCKED (waiting)</text>
+<text x="500" y="15" text-anchor="middle" font-size="12" font-weight="bold">Asynchronous (non-blocking)</text>
+<text x="360" y="45" font-size="10">Client</text><line x1="410" y1="42" x2="670" y2="42" stroke="currentColor"/>
+<text x="360" y="115" font-size="10">Server</text><line x1="410" y1="112" x2="670" y2="112" stroke="currentColor"/>
+<line x1="430" y1="42" x2="490" y2="110" stroke="currentColor" marker-end="url(#a3)"/><rect x="490" y="104" width="70" height="16" style="fill:var(--soft)" stroke="currentColor"/><text x="525" y="116" text-anchor="middle" font-size="9">work</text>
+<line x1="560" y1="110" x2="620" y2="44" stroke="currentColor" marker-end="url(#a3)"/>
+<rect x="440" y="34" width="170" height="16" style="fill:var(--soft)" stroke="currentColor"/><text x="525" y="46" text-anchor="middle" font-size="9">client keeps doing other work</text>
+<text x="625" y="32" font-size="9">reply handled</text>
+<text x="340" y="142" text-anchor="middle" font-size="9">time &#8594;</text>
+</svg>
+<div class="cap">Figure 5 &mdash; Synchronous vs asynchronous communication on a time line.</div>
+</div>
+
+<h3>6.3 Failure models: what can go wrong (detailed in Lesson 4)</h3>
+<table class="small">
+<tr><th>Failure</th><th>What happens</th><th>Example</th></tr>
+<tr><td><b>Crash</b></td><td>A process stops and does nothing more; it worked correctly until it stopped</td><td>Server loses power</td></tr>
+<tr><td><b>Omission</b></td><td>A process or channel fails to send or receive a message</td><td>A request packet is dropped</td></tr>
+<tr><td><b>Timing</b></td><td>The response is correct but arrives outside the allowed time interval (too late)</td><td>A video frame that arrives after it was due</td></tr>
+<tr><td><b>Byzantine (arbitrary)</b></td><td>A process behaves in any way at all, including sending wrong or malicious data; the hardest to tolerate</td><td>A hacked node sending fake results</td></tr>
+</table>
+<p>Severity increases down the table: a crash is easy to reason about; a Byzantine node may lie.</p>
+
+<h3>6.4 Security models: threats and trust</h3>
+<p>The security model assumes an <b>enemy (attacker)</b> who can read, copy, change, insert or replay messages on the network. Main threats (Lecture 01 slide 6 lists them for DFS):</p>
+<ul>
+<li><b>Eavesdropping</b>: reading private messages. <b>Man-in-the-middle (MITM)</b>: secretly sitting between two parties and relaying/altering messages.</li>
+<li><b>Masquerading / spoofing</b>: pretending to be another user or server. <b>Tampering</b>: changing messages in transit.</li>
+<li><b>Replay</b>: recording a valid message and sending it again later (e.g. replaying "pay Rs. 1000").</li>
+<li><b>Denial of Service (DoS)</b>: flooding a service with requests so genuine users cannot use it.</li>
+</ul>
+<p>Defences: <b>authentication</b> (prove who you are), <b>authorization</b> (decide what you may do), <b>secure channels</b> with encryption such as <b>TLS/SSL</b>. A <b>trust hierarchy</b> means deciding which components are trusted (e.g. a certificate authority, an authentication server) and building other trust on them.</p>
+
+<h2>7. Real-world examples (slides 21&ndash;23)</h2>
+<h3>7.1 Google: search at planetary scale</h3>
+<ul>
+<li><b>Massive server farms</b>: millions of commodity servers across data centres working as one logical system.</li>
+<li><b>Distributed file system (GFS)</b>: files split into <b>chunks</b>, replicated across many machines for durability and speed (details: Lesson 7).</li>
+<li><b>MapReduce</b>: huge computations split into small tasks, run in parallel, then combined &mdash; built for failure-prone clusters (a failed task is simply re-run on another machine).</li>
+</ul>
+<p>Why it matters: a query answered in milliseconds is the product of thousands of machines cooperating.</p>
+
+<h3>Worked example: MapReduce word count</h3>
+<p>Count words in two documents using two "map" workers and one "reduce" step.</p>
+<table class="small">
+<tr><th>Step</th><th>Worker 1 (doc: "cloud data cloud")</th><th>Worker 2 (doc: "data node")</th></tr>
+<tr><td><b>Map</b>: emit (word, 1) for every word</td><td>(cloud,1) (data,1) (cloud,1)</td><td>(data,1) (node,1)</td></tr>
+<tr><td><b>Shuffle</b>: group pairs by word</td><td colspan="2">cloud &rarr; [1,1] &nbsp;&nbsp; data &rarr; [1,1] &nbsp;&nbsp; node &rarr; [1]</td></tr>
+<tr><td><b>Reduce</b>: add the list for each word</td><td colspan="2"><b>cloud = 2, data = 2, node = 1</b></td></tr>
+</table>
+<p>The map steps run at the same time on different machines (performance). If Worker 2 crashes, the master re-runs its map task elsewhere (fault tolerance).</p>
+
+<h3>7.2 AWS: cloud infrastructure as a service</h3>
+<ul>
+<li><b>Global regions and availability zones</b>: data centres are grouped into <b>regions</b> (geographic areas) and <b>availability zones</b> (separate facilities with independent power/cooling inside a region), so apps can survive losing an entire facility.</li>
+<li><b>Elastic Compute (EC2)</b>: virtual servers spin up or down automatically as demand changes.</li>
+<li><b>Distributed storage (S3)</b>: objects replicated across multiple devices and facilities for extreme durability.</li>
+</ul>
+<div class="fig">
+<svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="660" height="100" style="fill:var(--bg)" stroke="currentColor"/>
+<text x="20" y="28" font-size="11" font-weight="bold">Region (e.g. Asia Pacific - Mumbai)</text>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="40" y="40" width="180" height="58"/><rect x="250" y="40" width="180" height="58"/><rect x="460" y="40" width="180" height="58"/></g>
+<g font-size="11" text-anchor="middle"><text x="130" y="62" font-weight="bold">Availability Zone A</text><text x="340" y="62" font-weight="bold">Availability Zone B</text><text x="550" y="62" font-weight="bold">Availability Zone C</text></g>
+<g font-size="9" text-anchor="middle"><text x="130" y="80">own power, cooling, network</text><text x="340" y="80">app copy + data replica</text><text x="550" y="80">app copy + data replica</text></g>
+</svg>
+<div class="cap">Figure 6 &mdash; Regions contain several isolated availability zones; copies in different zones survive a facility failure.</div>
+</div>
+
+<h3>7.3 Banking systems: consistency at stake</h3>
+<ul>
+<li><b>Strong consistency</b>: a withdrawal at an ATM must be reflected instantly everywhere &mdash; no two systems may show different balances.</li>
+<li><b>Distributed transactions</b>: transfers between accounts at different banks use protocols ensuring <b>both sides commit, or neither does</b> (atomicity; Two-Phase Commit, Lesson 4).</li>
+<li><b>High availability</b>: core banking and card networks must stay up nationally even if individual data centres fail.</li>
+</ul>
+<p>Banking shows the CAP trade-off in action: consistency is non-negotiable, even at some cost to availability.</p>
+
+<h2>8. Key takeaways (slide 24)</h2>
+<ol>
+<li><b>Many machines, one experience</b>: independent nodes cooperate over a network to appear as a single unified system.</li>
+<li><b>Power comes with complexity</b>: scalability and fault tolerance are real wins, but they demand careful design for failure, consistency and timing.</li>
+<li><b>Trade-offs are the design</b>: CAP reminds us that C, A and P cannot all be maximized at once.</li>
+<li><b>It's already everywhere</b>: Google, AWS and banking run daily life on distributed systems.</li>
+</ol>
+
+<h2>9. Exam-style questions with model answers</h2>
+<p><b>Q1. Define a distributed system and explain three of its characteristics. (6 marks)</b><br>
+A distributed system is a collection of independent computers that appears to its users as a single coherent system, communicating over a network to achieve a common goal. (1) <i>Resource sharing</i>: hardware, data and services are shared across nodes, e.g. a shared file server. (2) <i>Concurrency</i>: many nodes process requests simultaneously, so shared data must be protected from conflicting updates. (3) <i>No global clock</i>: each node has its own clock, so ordering events requires explicit coordination. (Others: scalability, fault tolerance, transparency.)</p>
+<p><b>Q2. Compare horizontal and vertical scaling. Why do distributed systems prefer horizontal scaling? (4)</b><br>
+Vertical scaling (scale up) adds CPU/RAM to one machine; horizontal scaling (scale out) adds more machines. Horizontal scaling is preferred because there is no ceiling set by one machine's hardware, commodity servers are cheaper, and with many nodes there is no single point of failure.</p>
+<p><b>Q3. State the CAP theorem. Explain with an example why a banking system and a social media feed make different choices. (6)</b><br>
+A distributed system can guarantee at most two of Consistency, Availability and Partition tolerance at once. Since partitions always happen, the real choice during a partition is C or A. A bank chooses C (CP): if replicas cannot communicate it refuses or delays requests rather than show a wrong balance, because an incorrect balance causes financial loss. A social feed chooses A (AP): it keeps answering with possibly stale posts, because a slightly old feed is acceptable but being unavailable loses users.</p>
+<p><b>Q4. What is meant by "partial failure"? Why does it make distributed systems harder than centralized ones? (4)</b><br>
+A partial failure is when some components fail while others continue. In a centralized system failure is all-or-nothing. In a distributed system a node cannot easily tell whether another node crashed, is slow, or the network dropped the message, so it must use timeouts, retries and replication, and must avoid leaving work half-done.</p>
+<p><b>Q5. Explain four types of transparency. (4)</b><br>
+Location (user does not know where a resource is), replication (does not know there are several copies), failure (does not notice a component failing and recovering), concurrency (does not notice other users sharing the resource). Also access and migration.</p>
+<p><b>Q6. Compare the client-server and peer-to-peer architectures. (6)</b><br>
+Client-server: dedicated servers provide services and clients request them; control is centralized, simple to manage and secure, but the server is a bottleneck and single point of failure. P2P: every peer acts as both client and server; it scales naturally because each peer adds capacity and has no central SPOF, but it is harder to manage, search and secure, and must cope with peers joining and leaving.</p>
+<p><b>Q7. Distinguish synchronous and asynchronous communication. Give one advantage of each. (4)</b><br>
+Synchronous: the sender blocks until the reply arrives &mdash; simple to program and reason about. Asynchronous: the sender continues immediately and handles the reply later &mdash; better throughput, and the sender is not stuck if the receiver is slow.</p>
+<p><b>Q8. Describe four failure models. Which is hardest to tolerate and why? (5)</b><br>
+Crash (process stops), omission (message not sent/received), timing (correct response outside the time limit), Byzantine (arbitrary, possibly malicious behaviour). Byzantine is hardest because a faulty node may send different wrong answers to different nodes, so it cannot be detected by silence alone; the others must cross-check and vote.</p>
+<p><b>Q9. Using Google, AWS or banking as an example, explain how a distributed system achieves fault tolerance and performance. (6)</b><br>
+Google: GFS splits files into chunks and replicates each chunk on several machines, so losing one machine loses no data (fault tolerance); MapReduce splits a job into many small tasks run in parallel on thousands of commodity servers (performance), re-running any task whose machine fails.</p>
+<p><b>Q10. List three advantages and three challenges of distributed systems. (6)</b><br>
+Advantages: scalability, fault tolerance (no SPOF), performance via parallelism (also resource efficiency, geographic reach, cost-effective growth). Challenges: complexity, partial failures, consistency of replicated data (also synchronization without a global clock, security attack surface, network unreliability).</p>
+
+<h2>10. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>"A distributed system is many computers sharing memory."</td><td>Nodes do <b>not</b> share physical memory; they cooperate only by messages.</td></tr>
+<tr><td>"CAP: just pick any two you like, e.g. CA for big systems."</td><td>Partitions always happen in a real network, so P is required; the real choice is C <i>or</i> A during a partition. CA only fits a single site.</td></tr>
+<tr><td>Confusing consistency (CAP) with ACID consistency</td><td>CAP consistency = all nodes see the same latest data. ACID consistency = a transaction keeps the database rules valid.</td></tr>
+<tr><td>"Availability means the system never fails."</td><td>It means every request gets a (non-error) response, possibly with old data.</td></tr>
+<tr><td>Scale up = adding machines</td><td>Scale <b>up</b> = bigger machine (vertical); scale <b>out</b> = more machines (horizontal).</td></tr>
+<tr><td>"No global clock" means nodes have no clocks</td><td>Every node has a clock; they are not perfectly synchronized, so there is no single shared time.</td></tr>
+<tr><td>Writing "transparency = security" or "= visibility"</td><td>Transparency = <b>hiding</b> distribution from the user.</td></tr>
+<tr><td>Thinking P2P has servers</td><td>Every peer is both client and server.</td></tr>
+</table>
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Define a distributed system and explain three of its characteristics. (6 marks)</summary>
+<p>A distributed system is a collection of independent computers that appears to its users as a single coherent system, communicating over a network to achieve a common goal. (1) <i>Resource sharing</i>: hardware, data and services are shared across nodes, e.g. a shared file server. (2) <i>Concurrency</i>: many nodes process requests simultaneously, so shared data must be protected from conflicting updates. (3) <i>No global clock</i>: each node has its own clock, so ordering events requires explicit coordination. (Others: scalability, fault tolerance, transparency.)</p>
+</details>
+<details>
+<summary>W2. Compare horizontal and vertical scaling. Why do distributed systems prefer horizontal scaling? (4)</summary>
+<p>Vertical scaling (scale up) adds CPU/RAM to one machine; horizontal scaling (scale out) adds more machines. Horizontal scaling is preferred because there is no ceiling set by one machine's hardware, commodity servers are cheaper, and with many nodes there is no single point of failure.</p>
+</details>
+<details>
+<summary>W3. State the CAP theorem. Explain with an example why a banking system and a social media feed make different choices. (6)</summary>
+<p>A distributed system can guarantee at most two of Consistency, Availability and Partition tolerance at once. Since partitions always happen, the real choice during a partition is C or A. A bank chooses C (CP): if replicas cannot communicate it refuses or delays requests rather than show a wrong balance, because an incorrect balance causes financial loss. A social feed chooses A (AP): it keeps answering with possibly stale posts, because a slightly old feed is acceptable but being unavailable loses users.</p>
+</details>
+<details>
+<summary>W4. What is meant by "partial failure"? Why does it make distributed systems harder than centralized ones? (4)</summary>
+<p>A partial failure is when some components fail while others continue. In a centralized system failure is all-or-nothing. In a distributed system a node cannot easily tell whether another node crashed, is slow, or the network dropped the message, so it must use timeouts, retries and replication, and must avoid leaving work half-done.</p>
+</details>
+<details>
+<summary>W5. Explain four types of transparency. (4)</summary>
+<p>Location (user does not know where a resource is), replication (does not know there are several copies), failure (does not notice a component failing and recovering), concurrency (does not notice other users sharing the resource). Also access and migration.</p>
+</details>
+<details>
+<summary>W6. Compare the client-server and peer-to-peer architectures. (6)</summary>
+<p>Client-server: dedicated servers provide services and clients request them; control is centralized, simple to manage and secure, but the server is a bottleneck and single point of failure. P2P: every peer acts as both client and server; it scales naturally because each peer adds capacity and has no central SPOF, but it is harder to manage, search and secure, and must cope with peers joining and leaving.</p>
+</details>
+<details>
+<summary>W7. Distinguish synchronous and asynchronous communication. Give one advantage of each. (4)</summary>
+<p>Synchronous: the sender blocks until the reply arrives &mdash; simple to program and reason about. Asynchronous: the sender continues immediately and handles the reply later &mdash; better throughput, and the sender is not stuck if the receiver is slow.</p>
+</details>
+<details>
+<summary>W8. Describe four failure models. Which is hardest to tolerate and why? (5)</summary>
+<p>Crash (process stops), omission (message not sent/received), timing (correct response outside the time limit), Byzantine (arbitrary, possibly malicious behaviour). Byzantine is hardest because a faulty node may send different wrong answers to different nodes, so it cannot be detected by silence alone; the others must cross-check and vote.</p>
+</details>
+<details>
+<summary>W9. Using Google, AWS or banking as an example, explain how a distributed system achieves fault tolerance and performance. (6)</summary>
+<p>Google: GFS splits files into chunks and replicates each chunk on several machines, so losing one machine loses no data (fault tolerance); MapReduce splits a job into many small tasks run in parallel on thousands of commodity servers (performance), re-running any task whose machine fails.</p>
+</details>
+<details>
+<summary>W10. List three advantages and three challenges of distributed systems. (6)</summary>
+<p>Advantages: scalability, fault tolerance (no SPOF), performance via parallelism (also resource efficiency, geographic reach, cost-effective growth). Challenges: complexity, partial failures, consistency of replicated data (also synchronization without a global clock, security attack surface, network unreliability).</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Definition &amp; characteristics</th></tr>
+<tr><td colspan="2">Independent computers that <b>appear as one coherent system</b>; no shared memory; message passing; no global clock; no shared state.</td></tr>
+<tr><td>6 characteristics</td><td>Resource sharing, Scalability, Concurrency, Fault tolerance, No global clock, Transparency</td></tr>
+<tr><td>6 advantages</td><td>Scalability, Fault tolerance, Performance, Resource efficiency, Geographic reach, Cost-effective growth</td></tr>
+<tr><td>6 challenges</td><td>Complexity, Partial failures, Consistency, Synchronization, Security, Network reliability</td></tr>
+<tr><td>Transparency</td><td>Access, Location, Migration, Replication, Concurrency, Failure</td></tr>
+<tr><td>Also</td><td>Openness (standard interfaces), Heterogeneity (different HW/OS/lang), Middleware hides it</td></tr>
+<tr><td>Scaling</td><td>Up = vertical = bigger box; Out = horizontal = more boxes (preferred)</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Real-world</th></tr>
+<tr><td>Google</td><td>Server farms, GFS (chunks, replicated), MapReduce (map &rarr; shuffle &rarr; reduce)</td></tr>
+<tr><td>AWS</td><td>Regions + AZs, EC2 elastic compute, S3 replicated storage</td></tr>
+<tr><td>Banks</td><td>Strong consistency, distributed transactions (both commit or neither), high availability</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">CAP theorem</th></tr>
+<tr><td>C</td><td>Every node sees the same data at the same time</td></tr>
+<tr><td>A</td><td>Every request gets a response, even if nodes are down</td></tr>
+<tr><td>P</td><td>Keeps working despite network failures between nodes</td></tr>
+<tr><td>Rule</td><td>Only 2 of 3. Partitions happen &rArr; choose C or A</td></tr>
+<tr><td>CP</td><td>Refuse during partition &mdash; banking</td></tr>
+<tr><td>AP</td><td>Answer with stale data, converge later &mdash; social feed</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Fundamental models</th></tr>
+<tr><td>Architecture</td><td>Client-server (central, SPOF) &middot; P2P (equal peers, churn) &middot; Microservices (small independent services)</td></tr>
+<tr><td>Interaction</td><td>Sync = block &amp; wait (bounds known) &middot; Async = continue (no bounds)</td></tr>
+<tr><td>Failure</td><td>Crash &lt; Omission &lt; Timing &lt; Byzantine (arbitrary/malicious)</td></tr>
+<tr><td>Security</td><td>Eavesdrop, MITM, spoof, tamper, replay, DoS; defend with authentication, authorization, TLS</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Exam</th></tr>
+<tr><td colspan="2">Final 50%, 2 hours, closed book.</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>"A distributed system is many computers sharing memory."</td><td>Nodes do <b>not</b> share physical memory; they cooperate only by messages.</td></tr>
+<tr><td>"CAP: just pick any two you like, e.g. CA for big systems."</td><td>Partitions always happen in a real network, so P is required; the real choice is C <i>or</i> A during a partition. CA only fits a single site.</td></tr>
+<tr><td>Confusing consistency (CAP) with ACID consistency</td><td>CAP consistency = all nodes see the same latest data. ACID consistency = a transaction keeps the database rules valid.</td></tr>
+<tr><td>"Availability means the system never fails."</td><td>It means every request gets a (non-error) response, possibly with old data.</td></tr>
+<tr><td>Scale up = adding machines</td><td>Scale <b>up</b> = bigger machine (vertical); scale <b>out</b> = more machines (horizontal).</td></tr>
+<tr><td>"No global clock" means nodes have no clocks</td><td>Every node has a clock; they are not perfectly synchronized, so there is no single shared time.</td></tr>
+<tr><td>Writing "transparency = security" or "= visibility"</td><td>Transparency = <b>hiding</b> distribution from the user.</td></tr>
+<tr><td>Thinking P2P has servers</td><td>Every peer is both client and server.</td></tr>
+</table>
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "A distributed system is best defined as:", "o": ["One powerful computer with many CPU cores", "A collection of independent computers that appears to its users as a single coherent system", "A network of computers sharing one physical memory", "Any computer connected to the Internet"], "a": 1, "e": "Independent nodes, message passing, one coherent view (slide 16)."}, {"q": "How do nodes in a distributed system coordinate?", "o": ["Through shared physical memory", "Solely by passing messages over a network", "Through a shared global clock", "Through a shared hard disk only"], "a": 1, "e": "No shared memory and no global clock, so messages are the only way."}, {"q": "Which is NOT one of the six core characteristics on slide 17?", "o": ["Resource sharing", "Concurrency", "Global clock", "Transparency"], "a": 2, "e": "The characteristic is NO global clock."}, {"q": "Scaling 'horizontally' means:", "o": ["Buying a faster CPU", "Adding more RAM to one server", "Adding more nodes", "Reducing the number of users"], "a": 2, "e": "Horizontal = scale out = more machines. Vertical = scale up = bigger machine."}, {"q": "A failure in which some nodes fail while others keep running is called:", "o": ["Total failure", "Partial failure", "Byzantine failure", "Timing failure"], "a": 1, "e": "Partial failures are a key challenge (slide 19)."}, {"q": "In the CAP theorem, 'Availability' means:", "o": ["Every node sees the same data at the same time", "Every request gets a response, even if some nodes are down", "The system survives network splits", "Data is never lost"], "a": 1, "e": "The response may not contain the latest write."}, {"q": "During a network partition, a CP system will:", "o": ["Answer every request with possibly stale data", "Refuse or delay some requests to keep data consistent", "Ignore the partition", "Lose all data"], "a": 1, "e": "It gives up availability to keep consistency."}, {"q": "According to the slides, banking systems usually favour:", "o": ["Availability", "Consistency", "Neither", "Latency"], "a": 1, "e": "A balance must be the same everywhere; social feeds favour availability."}, {"q": "Why is CA rarely a real option for distributed systems?", "o": ["Consistency is impossible", "Network partitions will happen, so partition tolerance cannot be given up", "Availability is too expensive", "CA is the default for all clouds"], "a": 1, "e": "CA only fits a single site with no network split."}, {"q": "Which transparency hides that several copies of a resource exist?", "o": ["Location", "Migration", "Replication", "Access"], "a": 2, "e": "Replication transparency."}, {"q": "In a peer-to-peer architecture:", "o": ["One server serves all clients", "Every node acts as both client and server", "Only microservices communicate", "Clients never talk to each other"], "a": 1, "e": "Peers are equal; e.g. BitTorrent."}, {"q": "A main weakness of the client-server model is:", "o": ["Peers join and leave frequently", "The server is a bottleneck and single point of failure", "No one can manage it", "It cannot use a network"], "a": 1, "e": "Control and load are centralized at the server."}, {"q": "In synchronous (blocking) communication the sender:", "o": ["Continues immediately after sending", "Waits until the reply arrives", "Never receives a reply", "Sends to all nodes"], "a": 1, "e": "Asynchronous senders continue immediately."}, {"q": "Which failure type includes malicious or arbitrary behaviour?", "o": ["Crash", "Omission", "Timing", "Byzantine"], "a": 3, "e": "Byzantine (arbitrary) failures are the hardest to tolerate."}, {"q": "A response that is correct but arrives too late is a:", "o": ["Crash failure", "Timing failure", "Omission failure", "Response failure"], "a": 1, "e": "Timing failure: outside the specified time interval."}, {"q": "Replaying a recorded valid message later is called a:", "o": ["DoS attack", "Replay attack", "Eavesdropping", "Masquerade"], "a": 1, "e": "Defend with timestamps/nonces and secure channels."}, {"q": "In Google's architecture, which component splits huge computations into small parallel tasks?", "o": ["GFS", "MapReduce", "S3", "EC2"], "a": 1, "e": "GFS stores data in replicated chunks; MapReduce processes it."}, {"q": "In MapReduce word count, the step that groups all (word,1) pairs by word is:", "o": ["Map", "Shuffle", "Reduce", "Replicate"], "a": 1, "e": "Map emits pairs, shuffle groups by key, reduce sums."}, {"q": "AWS availability zones exist so that applications can:", "o": ["Run without virtualization", "Survive the loss of an entire facility", "Avoid paying for storage", "Use a global clock"], "a": 1, "e": "AZs have independent power, cooling and networking."}, {"q": "Openness in a distributed system means:", "o": ["All data is public", "The system uses published, standard interfaces so components can be added or replaced", "There is no security", "Anyone can shut it down"], "a": 1, "e": "E.g. HTTP, TCP/IP, REST APIs."}, {"q": "The final exam for INTE 22253 is:", "o": ["1 hour, open book", "2 hours, closed book", "3 hours, open book", "Practical only"], "a": 1, "e": "50% final exam, 2 hours, closed book (slide 3)."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>

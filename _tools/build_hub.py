@@ -24,7 +24,7 @@ SUBJECTS = [
     ("2 - Mobile Applications", "INTE 22283", "Mobile Application Development", [("Paper", "2026-10-22T09:00")], 0),
     ("3 - Embedded Systems", "INTE 22263", "Embedded Systems", [("Practical", "2026-10-26T09:00"), ("Paper", "2026-10-27T09:00")], 10),
     ("4 - AI", "INTE 22303", "Artificial Intelligence", [("Paper", "2026-10-30T09:00")], 14),
-    ("5 - Distributed Systems", "INTE 22253", "Distributed Systems & Cloud Computing", [("Paper", "2026-11-02T09:00")], 0),
+    ("5 - Distributed Systems", "INTE 22253", "Distributed Systems & Cloud Computing", [("Paper", "2026-11-02T09:00")], 10),
     ("6 - Design Patterns", "INTE 22313", "Design Patterns & Frameworks", [("Paper (open book)", "2026-11-04T09:00")], 0),
     ("7 - Software Architecture", "INTE 22293", "Software Architecture & Process Model", [("Paper", "2026-11-06T13:00")], 10),
 ]

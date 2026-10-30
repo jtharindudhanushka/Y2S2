@@ -1,0 +1,57 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Definition &amp; characteristics</th></tr>
+<tr><td colspan="2">Independent computers that <b>appear as one coherent system</b>; no shared memory; message passing; no global clock; no shared state.</td></tr>
+<tr><td>6 characteristics</td><td>Resource sharing, Scalability, Concurrency, Fault tolerance, No global clock, Transparency</td></tr>
+<tr><td>6 advantages</td><td>Scalability, Fault tolerance, Performance, Resource efficiency, Geographic reach, Cost-effective growth</td></tr>
+<tr><td>6 challenges</td><td>Complexity, Partial failures, Consistency, Synchronization, Security, Network reliability</td></tr>
+<tr><td>Transparency</td><td>Access, Location, Migration, Replication, Concurrency, Failure</td></tr>
+<tr><td>Also</td><td>Openness (standard interfaces), Heterogeneity (different HW/OS/lang), Middleware hides it</td></tr>
+<tr><td>Scaling</td><td>Up = vertical = bigger box; Out = horizontal = more boxes (preferred)</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Real-world</th></tr>
+<tr><td>Google</td><td>Server farms, GFS (chunks, replicated), MapReduce (map &rarr; shuffle &rarr; reduce)</td></tr>
+<tr><td>AWS</td><td>Regions + AZs, EC2 elastic compute, S3 replicated storage</td></tr>
+<tr><td>Banks</td><td>Strong consistency, distributed transactions (both commit or neither), high availability</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">CAP theorem</th></tr>
+<tr><td>C</td><td>Every node sees the same data at the same time</td></tr>
+<tr><td>A</td><td>Every request gets a response, even if nodes are down</td></tr>
+<tr><td>P</td><td>Keeps working despite network failures between nodes</td></tr>
+<tr><td>Rule</td><td>Only 2 of 3. Partitions happen &rArr; choose C or A</td></tr>
+<tr><td>CP</td><td>Refuse during partition &mdash; banking</td></tr>
+<tr><td>AP</td><td>Answer with stale data, converge later &mdash; social feed</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Fundamental models</th></tr>
+<tr><td>Architecture</td><td>Client-server (central, SPOF) &middot; P2P (equal peers, churn) &middot; Microservices (small independent services)</td></tr>
+<tr><td>Interaction</td><td>Sync = block &amp; wait (bounds known) &middot; Async = continue (no bounds)</td></tr>
+<tr><td>Failure</td><td>Crash &lt; Omission &lt; Timing &lt; Byzantine (arbitrary/malicious)</td></tr>
+<tr><td>Security</td><td>Eavesdrop, MITM, spoof, tamper, replay, DoS; defend with authentication, authorization, TLS</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Exam</th></tr>
+<tr><td colspan="2">Final 50%, 2 hours, closed book.</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>"A distributed system is many computers sharing memory."</td><td>Nodes do <b>not</b> share physical memory; they cooperate only by messages.</td></tr>
+<tr><td>"CAP: just pick any two you like, e.g. CA for big systems."</td><td>Partitions always happen in a real network, so P is required; the real choice is C <i>or</i> A during a partition. CA only fits a single site.</td></tr>
+<tr><td>Confusing consistency (CAP) with ACID consistency</td><td>CAP consistency = all nodes see the same latest data. ACID consistency = a transaction keeps the database rules valid.</td></tr>
+<tr><td>"Availability means the system never fails."</td><td>It means every request gets a (non-error) response, possibly with old data.</td></tr>
+<tr><td>Scale up = adding machines</td><td>Scale <b>up</b> = bigger machine (vertical); scale <b>out</b> = more machines (horizontal).</td></tr>
+<tr><td>"No global clock" means nodes have no clocks</td><td>Every node has a clock; they are not perfectly synchronized, so there is no single shared time.</td></tr>
+<tr><td>Writing "transparency = security" or "= visibility"</td><td>Transparency = <b>hiding</b> distribution from the user.</td></tr>
+<tr><td>Thinking P2P has servers</td><td>Every peer is both client and server.</td></tr>
+</table>
