@@ -1,0 +1,74 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Consistency</th></tr>
+<tr><td>Model</td><td>Contract: what a read may return after writes</td></tr>
+<tr><td>Strict</td><td>Latest write in real time; needs global clock; not achievable</td></tr>
+<tr><td>Sequential</td><td>Same interleaving for all; own program order; not real time</td></tr>
+<tr><td>Causal</td><td>Related writes same order; concurrent any order</td></tr>
+<tr><td>Eventual</td><td>No new updates &rArr; converge; DNS, NoSQL</td></tr>
+<tr><td>Mono. reads</td><td>read&rarr;read: never older</td></tr>
+<tr><td>Mono. writes</td><td>write&rarr;write: your order everywhere</td></tr>
+<tr><td>Read your writes</td><td>write&rarr;read: see own write</td></tr>
+<tr><td>Writes follow reads</td><td>read&rarr;write: write on same/newer state</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Replication</th></tr>
+<tr><td>Why</td><td>Performance, reliability, scalability, availability</td></tr>
+<tr><td>Push</td><td>Server-initiated; fresh; high read:write</td></tr>
+<tr><td>Pull</td><td>Client-initiated; saves bandwidth; low read:write</td></tr>
+<tr><td>Placement</td><td>Permanent (core) &middot; server-initiated (regional) &middot; client-initiated caches (edge)</td></tr>
+<tr><td>Quorum</td><td>R + W &gt; N &rArr; reads see latest write</td></tr>
+</table>
+<table>
+<tr><th colspan="2">CAP / PACELC</th></tr>
+<tr><td>CP</td><td>Refuse minority side: quorum DBs, ZooKeeper</td></tr>
+<tr><td>AP</td><td>Answer both sides, reconcile: NoSQL, DNS, carts</td></tr>
+<tr><td>CA</td><td>Single site, one LAN</td></tr>
+<tr><td>PACELC</td><td>P: A or C; Else: L or C</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Fault tolerance</th></tr>
+<tr><td>Chain</td><td>Fault &rarr; error &rarr; failure</td></tr>
+<tr><td>Dependability</td><td>Availability, reliability, safety, maintainability</td></tr>
+<tr><td>Failures</td><td>Crash &lt; omission &lt; timing &lt; response &lt; Byzantine</td></tr>
+<tr><td>Redundancy</td><td>Information (parity, ECC) &middot; time (retry) &middot; physical (replicas, RAID)</td></tr>
+<tr><td>Groups</td><td>Flat (robust, voting) &middot; hierarchical (simple, coordinator SPOF)</td></tr>
+<tr><td>Heartbeat</td><td>"I'm alive" to monitor; timeout &rArr; suspect; fast; SPOF; false positives</td></tr>
+<tr><td>Gossip</td><td>Random peers; epidemic; O(log N) rounds; scalable; probabilistic</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Reliable communication</th></tr>
+<tr><td>C-S failures</td><td>Request lost, server crash, reply lost, client crash (orphans)</td></tr>
+<tr><td>Semantics</td><td>At-most-once &middot; at-least-once (idempotent) &middot; exactly-once</td></tr>
+<tr><td>Atomic multicast</td><td>All non-faulty members or none</td></tr>
+<tr><td>Ordering</td><td>FIFO (per sender) &middot; causal &middot; total (same order for all)</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Commit &amp; security</th></tr>
+<tr><td>2PC</td><td>VOTE-REQUEST &rarr; YES/NO &rarr; COMMIT (all yes) / ABORT (any no). <b>Blocks</b> if coordinator dies after YES votes</td></tr>
+<tr><td>3PC</td><td>Vote &rarr; PREPARE-TO-COMMIT + ACK &rarr; COMMIT. Non-blocking (crash-only, no partitions); more messages</td></tr>
+<tr><td>DFS security</td><td>Authenticate (Kerberos, mTLS) &rarr; authorize (ACL, capability, RBAC) &rarr; encrypt (TLS, at rest) + checksums; same policy on all replicas; auditing</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Sequential consistency must follow real time</td><td>Only strict consistency needs real time; sequential needs one agreed interleaving.</td></tr>
+<tr><td>Causal consistency orders all writes</td><td>Only causally related writes; concurrent writes may be seen in different orders.</td></tr>
+<tr><td>Eventual consistency = data may be lost</td><td>All replicas converge to the last value once updates stop; reads may only be temporarily stale.</td></tr>
+<tr><td>Mixing up monotonic reads and read-your-writes</td><td>Monotonic reads: read &rarr; read never goes back. Read-your-writes: write &rarr; read sees your own write.</td></tr>
+<tr><td>Push is better for rarely-read replicas</td><td>Push wastes bandwidth there; pull fits a low read-to-write ratio.</td></tr>
+<tr><td>CAP availability = 99.99% uptime</td><td>CAP availability = every request gets a non-error response.</td></tr>
+<tr><td>Fault and failure used as synonyms</td><td>Fault (cause) &rarr; error (bad state) &rarr; failure (visible).</td></tr>
+<tr><td>Heartbeat is decentralized</td><td>Heartbeat uses a monitor (centralized); gossip is decentralized.</td></tr>
+<tr><td>2PC blocks when a participant votes NO</td><td>A NO just causes ABORT. Blocking happens when the <b>coordinator crashes</b> after YES votes, before the decision.</td></tr>
+<tr><td>3PC works under any failure</td><td>Only crash-only failures without network partitions.</td></tr>
+<tr><td>Retrying any request is safe</td><td>Only idempotent ones; otherwise at-least-once can execute twice.</td></tr>
+</table>

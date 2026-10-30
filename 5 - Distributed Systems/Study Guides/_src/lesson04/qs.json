@@ -1,0 +1,377 @@
+{
+ "mcq": [
+  {
+   "q": "A consistency model is:",
+   "o": [
+    "A backup schedule",
+    "A contract specifying what values a read may return after writes",
+    "A type of hypervisor",
+    "A load-balancing rule"
+   ],
+   "a": 1,
+   "e": "Contract between the data store and processes."
+  },
+  {
+   "q": "Which model requires an absolute global clock and is rarely achievable?",
+   "o": [
+    "Eventual",
+    "Causal",
+    "Sequential",
+    "Strict"
+   ],
+   "a": 3,
+   "e": "It is the theoretical upper bound."
+  },
+  {
+   "q": "In sequential consistency:",
+   "o": [
+    "Reads follow real time exactly",
+    "All processes see the same interleaving, not necessarily real-time order",
+    "Only related writes are ordered",
+    "Replicas never converge"
+   ],
+   "a": 1,
+   "e": "Implementable, no global clock needed."
+  },
+  {
+   "q": "In causal consistency, concurrent writes:",
+   "o": [
+    "Must be seen in the same order by all",
+    "May be seen in different orders by different processes",
+    "Are rejected",
+    "Are merged"
+   ],
+   "a": 1,
+   "e": "Only causally related writes need the same order."
+  },
+  {
+   "q": "DNS and many NoSQL stores use:",
+   "o": [
+    "Strict consistency",
+    "Eventual consistency",
+    "Sequential consistency",
+    "Exactly-once consistency"
+   ],
+   "a": 1,
+   "e": "Replicas converge when updates stop."
+  },
+  {
+   "q": "Client-centric consistency models take the point of view of:",
+   "o": [
+    "The data store",
+    "A single (mobile) client",
+    "The network",
+    "The hypervisor"
+   ],
+   "a": 1,
+   "e": "What one process sees across replicas."
+  },
+  {
+   "q": "You post a comment, refresh, and it is missing. Which guarantee is violated?",
+   "o": [
+    "Monotonic writes",
+    "Read your writes",
+    "Writes follow reads",
+    "Monotonic reads"
+   ],
+   "a": 1,
+   "e": "Your own write must be visible to you."
+  },
+  {
+   "q": "Your phone shows fewer emails than your laptop already showed. Which guarantee is violated?",
+   "o": [
+    "Monotonic reads",
+    "Monotonic writes",
+    "Read your writes",
+    "Total order"
+   ],
+   "a": 0,
+   "e": "Never go backward in time."
+  },
+  {
+   "q": "Push-based propagation suits:",
+   "o": [
+    "Low read-to-write ratio",
+    "High read-to-write ratio and need for freshness",
+    "Bandwidth-constrained clients only",
+    "No replication"
+   ],
+   "a": 1,
+   "e": "Pull suits low read-to-write ratios."
+  },
+  {
+   "q": "A browser cache is an example of a:",
+   "o": [
+    "Permanent replica",
+    "Server-initiated replica",
+    "Client-initiated replica",
+    "Primary replica"
+   ],
+   "a": 2,
+   "e": "Created at the client's request, temporary."
+  },
+  {
+   "q": "In CAP, Consistency means every read receives:",
+   "o": [
+    "Any response",
+    "The most recent write or an error",
+    "A cached value",
+    "A response within 10 ms"
+   ],
+   "a": 1,
+   "e": "Availability = a non-error response, maybe not latest."
+  },
+  {
+   "q": "ZooKeeper-style coordination services are classified as:",
+   "o": [
+    "AP",
+    "CP",
+    "CA",
+    "None"
+   ],
+   "a": 1,
+   "e": "They reject requests on the minority side."
+  },
+  {
+   "q": "PACELC says that when there is NO partition you trade off:",
+   "o": [
+    "Availability vs consistency",
+    "Latency vs consistency",
+    "Cost vs security",
+    "Push vs pull"
+   ],
+   "a": 1,
+   "e": "Else: L or C."
+  },
+  {
+   "q": "With N=3 replicas, which quorum setting guarantees reads see the latest write?",
+   "o": [
+    "R=1, W=1",
+    "R=2, W=2",
+    "R=1, W=2",
+    "R=0, W=3"
+   ],
+   "a": 1,
+   "e": "R + W > N: 4 > 3."
+  },
+  {
+   "q": "A corrupted block caused by a bad disk sector is an example of a(n):",
+   "o": [
+    "Fault",
+    "Error",
+    "Failure",
+    "Omission"
+   ],
+   "a": 1,
+   "e": "Fault (bad sector) -> error (corrupted block) -> failure (file unreadable)."
+  },
+  {
+   "q": "Which failure type is the most severe?",
+   "o": [
+    "Crash",
+    "Omission",
+    "Timing",
+    "Byzantine"
+   ],
+   "a": 3,
+   "e": "Arbitrary, possibly malicious behaviour."
+  },
+  {
+   "q": "Retrying a transaction after a timeout is:",
+   "o": [
+    "Information redundancy",
+    "Time redundancy",
+    "Physical redundancy",
+    "Byzantine tolerance"
+   ],
+   "a": 1,
+   "e": "Physical = extra hardware; information = extra bits."
+  },
+  {
+   "q": "In a hierarchical process group, the main weakness is:",
+   "o": [
+    "Decisions need voting",
+    "The coordinator is a single point of failure",
+    "No one can make decisions",
+    "It cannot detect failures"
+   ],
+   "a": 1,
+   "e": "Unless it is replaced automatically."
+  },
+  {
+   "q": "A heartbeat protocol suspects a process has failed when:",
+   "o": [
+    "It sends two heartbeats",
+    "No heartbeat arrives within the timeout",
+    "Gossip says so",
+    "The client retries"
+   ],
+   "a": 1,
+   "e": "Delays can cause false positives."
+  },
+  {
+   "q": "Gossip spreads information across N nodes in about:",
+   "o": [
+    "O(N^2) rounds",
+    "O(N) rounds",
+    "O(log N) rounds",
+    "1 round"
+   ],
+   "a": 2,
+   "e": "Informed nodes roughly double each round."
+  },
+  {
+   "q": "Which semantics is safe only for idempotent operations?",
+   "o": [
+    "At-most-once",
+    "At-least-once",
+    "Exactly-once",
+    "None"
+   ],
+   "a": 1,
+   "e": "Retries may execute the request more than once."
+  },
+  {
+   "q": "Atomic multicast guarantees a message is delivered to:",
+   "o": [
+    "At least one member",
+    "Every non-faulty member or none",
+    "Only the coordinator",
+    "Members in random order"
+   ],
+   "a": 1,
+   "e": "No partial delivery."
+  },
+  {
+   "q": "Total-order multicast means:",
+   "o": [
+    "One sender's messages arrive in order",
+    "All members see all messages in the same order",
+    "Only causal messages are ordered",
+    "Messages are never lost"
+   ],
+   "a": 1,
+   "e": "FIFO is per sender; causal respects happened-before."
+  },
+  {
+   "q": "In 2PC, if any participant votes NO, the coordinator:",
+   "o": [
+    "Commits anyway",
+    "Broadcasts ABORT",
+    "Blocks forever",
+    "Starts 3PC"
+   ],
+   "a": 1,
+   "e": "All-or-nothing atomicity."
+  },
+  {
+   "q": "2PC blocks when:",
+   "o": [
+    "A participant votes NO",
+    "The coordinator crashes after YES votes, before sending the decision",
+    "The network is fast",
+    "All participants commit"
+   ],
+   "a": 1,
+   "e": "Participants cannot decide alone and hold locks."
+  },
+  {
+   "q": "3PC adds which phase?",
+   "o": [
+    "Rollback",
+    "Prepare-to-commit",
+    "Gossip",
+    "Heartbeat"
+   ],
+   "a": 1,
+   "e": "Vote -> prepare-to-commit (ACK) -> commit."
+  },
+  {
+   "q": "A drawback of 3PC compared with 2PC is:",
+   "o": [
+    "It always blocks",
+    "Higher message overhead and complexity",
+    "It has no coordinator",
+    "It cannot abort"
+   ],
+   "a": 1,
+   "e": "Extra round and timeouts."
+  },
+  {
+   "q": "An access control list (ACL) is stored:",
+   "o": [
+    "With the object (file)",
+    "With the user as a token",
+    "In the hypervisor",
+    "In DNS"
+   ],
+   "a": 0,
+   "e": "A capability is held by the subject."
+  },
+  {
+   "q": "Kerberos-style tickets are used for:",
+   "o": [
+    "Authorization",
+    "Authentication",
+    "Replication",
+    "Load balancing"
+   ],
+   "a": 1,
+   "e": "Verifying who is making a request."
+  }
+ ],
+ "written": [
+  {
+   "q": "What is a consistency model? Distinguish data-centric and client-centric models with one example of each. (6 marks)",
+   "a": "<p>A consistency model is a contract between a data store and processes that specifies what values a read may return after a sequence of writes. Data-centric models define consistency from the data store's view, as rules on the ordering of operations by all processes on shared data (e.g. sequential consistency: all processes see the same interleaving). Client-centric models define it from one (mobile) client's view across successive accesses to different replicas (e.g. read-your-writes: a process always sees its own earlier writes).</p>"
+  },
+  {
+   "q": "Compare strict, sequential, causal and eventual consistency. (8)",
+   "a": "<p>Strict: every read returns the most recent write in real time, as with one global clock and one copy &mdash; strongest, not achievable in practice. Sequential: all processes see the same single interleaving of all operations, respecting each process's program order but not real time &mdash; implementable. Causal: only causally related writes must be seen in the same order by everyone; concurrent writes may be seen in different orders &mdash; cheaper. Eventual: if updates stop, all replicas eventually converge; no ordering or timing guarantee in between &mdash; weakest, most available (DNS, NoSQL). Performance and availability increase as guarantees weaken.</p>"
+  },
+  {
+   "q": "P1: W(x)a. P2: W(x)b. P3: R(x)b, R(x)a. P4: R(x)a, R(x)b. Is this sequentially consistent? Explain. (4)",
+   "a": "<p>No. P3 observes b before a, while P4 observes a before b. Sequential consistency requires all processes to see the same interleaving of writes, and no single order of W(x)a and W(x)b explains both P3's and P4's reads.</p>"
+  },
+  {
+   "q": "Explain the four client-centric consistency guarantees with an example each. (8)",
+   "a": "<p>Monotonic reads: once a process has read a value it never later reads an older one (a phone must not show fewer emails than the laptop already showed). Monotonic writes: a process's writes are applied on every replica in the order issued (title update before body update). Read your writes: a process always sees its own writes (a posted comment appears after refresh). Writes follow reads: a write is applied on the same or newer state than the value previously read (a reply is ordered after the post it answers).</p>"
+  },
+  {
+   "q": "Compare push-based and pull-based update propagation. When is each suitable? (5)",
+   "a": "<p>Push: the server sends updates to replicas immediately; replicas stay fresh and reads are fast, but bandwidth is wasted if replicas are rarely read; suitable for a high read-to-write ratio and strong freshness needs. Pull: replicas poll for updates when needed; bandwidth-efficient but reads may be stale between polls; suitable for a low read-to-write ratio and bandwidth-limited clients.</p>"
+  },
+  {
+   "q": "Describe the three types of replica placement. (3)",
+   "a": "<p>Permanent replicas: the fixed initial set of servers of the data store (origin data centres). Server-initiated replicas: created dynamically by the system to handle demand (copy of a popular page pushed to a busy region). Client-initiated replicas: caches created at the client's request, usually temporary (browser cache).</p>"
+  },
+  {
+   "q": "State the CAP theorem. Classify ZooKeeper, DNS and a single-site database cluster. What does PACELC add? (7)",
+   "a": "<p>A distributed data store can provide at most two of consistency, availability and partition tolerance. ZooKeeper-style coordination services are CP (reject requests on the minority side to stay consistent). DNS is AP (keeps answering, possibly stale, converges later). A single-site cluster on one reliable LAN is CA (meaningful only without partitions). PACELC adds that when there is no partition (Else), there is still a trade-off between Latency and Consistency, because strong consistency requires coordination that adds latency.</p>"
+  },
+  {
+   "q": "Explain fault, error and failure with an example. Name the three redundancy techniques. (6)",
+   "a": "<p>A fault is a defect in a component (a bad disk sector); it can cause an error, an incorrect internal state (a corrupted block); if the error reaches the service, a failure occurs, a visible breakdown (file unreadable). Redundancy: information (parity, checksums, ECC), time (retry, timeout and resend), physical (replica servers, redundant links, RAID).</p>"
+  },
+  {
+   "q": "Compare heartbeat and gossip failure detection. (6)",
+   "a": "<p>Heartbeat: each process periodically sends \"I'm alive\" to a monitor; no heartbeat within the timeout means suspected failure. Centralized, fast and bounded detection, simple, but the monitor is a bottleneck and single point of failure, and delays cause false positives. Gossip: processes exchange membership state with random peers; information spreads epidemically in O(log N) rounds. Decentralized, highly scalable, no single point of failure, but detection is probabilistic and slower. Heartbeat suits small/medium clusters; gossip suits very large dynamic systems.</p>"
+  },
+  {
+   "q": "Explain at-most-once, at-least-once and exactly-once semantics. Why is a lost reply a problem? (6)",
+   "a": "<p>At-most-once: the request is executed zero or one times (no duplicates, but may not run). At-least-once: retried until a reply arrives, so it runs one or more times; safe only for idempotent operations. Exactly-once: runs exactly once; ideal but needs duplicate detection and recovery. A lost reply is a problem because the client cannot tell whether the server executed the request; retrying may execute it twice, not retrying may leave it undone.</p>"
+  },
+  {
+   "q": "What is atomic multicast? Explain FIFO, causal and total ordering. (6)",
+   "a": "<p>Atomic multicast delivers a message to every non-faulty group member or to none, even if the sender crashes midway. FIFO: messages from one sender arrive in the order sent. Causal: causally related messages from any senders are delivered respecting happened-before. Total: all members deliver all messages in the same order.</p>"
+  },
+  {
+   "q": "Describe Two-Phase Commit. Explain its blocking problem and how Three-Phase Commit solves it. (10)",
+   "a": "<p>2PC has a coordinator and participants. Phase 1 (voting): the coordinator sends VOTE-REQUEST; each participant votes YES (ready) or NO. Phase 2 (decision): if all vote YES the coordinator broadcasts COMMIT; if any votes NO it broadcasts ABORT; all participants follow, giving all-or-nothing atomicity. Blocking: if the coordinator crashes after participants voted YES but before they receive the decision, they cannot commit or abort on their own and must wait, holding locks, until it recovers. 3PC adds a prepare-to-commit phase: after all YES votes the coordinator sends PREPARE-TO-COMMIT and waits for ACKs, then sends COMMIT. Every participant therefore knows the group's intent before anyone commits, so after a coordinator crash the survivors (or a new coordinator) can use timeouts: if any has received PREPARE-TO-COMMIT they commit, otherwise they abort. This avoids indefinite blocking under crash-only failures without partitions, at the cost of an extra round of messages and more complexity.</p>"
+  },
+  {
+   "q": "Identify the core access-control mechanisms used to secure a distributed file system. (6)",
+   "a": "<p>Authentication (who: Kerberos tickets, mutual TLS); authorization (what: ACLs, capabilities, RBAC); integrity and confidentiality (TLS in transit, encryption at rest, checksums/signatures); consistent policy enforcement on every replica; auditing (logging access and changes).</p>"
+  }
+ ]
+}

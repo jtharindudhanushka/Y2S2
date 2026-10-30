@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 4 - Consistency, Replication, Fault Tolerance and Security</title>
+<link rel="stylesheet" href="print.css">
+<style>
+@page { size: A4; margin: 14mm 14mm 16mm 14mm;
+  @bottom-center { content: "DS Lesson 4 - Consistency, Replication, Fault Tolerance and Security   |   page " counter(page); font: 8.5pt Arial; color: #444; } }
+svg text { font-family: Arial, Helvetica, sans-serif; }
+</style>
+</head>
+<body>
+
+<h1>Lesson 4 &mdash; Consistency, Replication, Fault Tolerance and Security</h1>
+<p class="small"><b>INTE 22253 &nbsp;|&nbsp; Source: Lecture 04 (45 slides): consistency models, replication, CAP theorem, fault tolerance, failure detection, reliable communication, commit protocols, DFS security &nbsp;|&nbsp; Builds on Lesson 1 (CAP, failure models)</b></p>
+
+<div class="key">
+<b class="t">Learning objectives (slide 4)</b>
+<ul>
+<li>Distinguish <b>data-centric</b> from <b>client-centric</b> consistency models and give an example of each.</li>
+<li>Explain replica placement strategies and the trade-offs in choosing where copies live.</li>
+<li>State the <b>CAP theorem</b> and classify real systems as CP, AP or CA; explain PACELC.</li>
+<li>Describe failure models and how <b>heartbeat</b> and <b>gossip</b> protocols detect failures.</li>
+<li>Compare reliable client-server communication with reliable group (multicast) communication.</li>
+<li>Walk through <b>Two-Phase and Three-Phase Commit</b> and explain why 3PC exists.</li>
+<li>Identify the core access-control mechanisms used to secure distributed file systems.</li>
+</ul>
+</div>
+
+<div class="box small">
+<b class="t">Where we left off (slide 3)</b>
+Distributed system: independent computers that appear as one coherent system. <b>Middleware</b>: software layer that hides heterogeneity and gives a uniform interface. <b>Transparency goals</b>: access, location, migration, replication, concurrency, failure. <b>Why replicate?</b> To improve reliability and performance &mdash; but every copy raises a new question: <i>are all copies the same?</i> Today's question: once data is copied across nodes, how do we keep those copies close enough to "the truth" for applications to trust them?
+</div>
+
+<h2>1. Why consistency matters (slide 6)</h2>
+<p>A <b>replica</b> is a copy of a data item kept on another node. Replication helps performance, but each replica can be updated independently, so copies can <b>drift apart</b>.</p>
+<div class="key"><b class="t">Consistency model (definition)</b>
+A <b>contract between the data store and processes</b>: it specifies <b>what values a read is allowed to return</b> after a sequence of writes.</div>
+<ul>
+<li><b>Stronger models</b>: easier to reason about, but costlier to implement (more coordination, more latency).</li>
+<li><b>Weaker models</b>: scale better and tolerate partitions, at the cost of applications seeing stale or out-of-order data.</li>
+</ul>
+<p><b>Mental model (slide 6):</b> a client writes <code>x = 7</code> on Replica A. What does a read on Replica B or C return right now? The consistency model is the answer to that question.</p>
+<p class="small"><b>Notation used below</b> (Tanenbaum): <code>W(x)a</code> = write value <i>a</i> to item <i>x</i>; <code>R(x)a</code> = a read of <i>x</i> that returned <i>a</i>. Each process (P1, P2&hellip;) has its own horizontal time line; time runs left to right.</p>
+
+<h2>2. Data-centric vs client-centric (slide 7)</h2>
+<table>
+<tr><th style="width:18%"></th><th>Data-centric models</th><th>Client-centric models</th></tr>
+<tr><td>Point of view</td><td>The <b>data store's</b>: rules about the ordering of operations across <b>all</b> processes on shared data</td><td>A <b>single (mobile) client's</b>: what <b>one</b> process sees across successive accesses, even as it moves between replicas</td></tr>
+<tr><td>Examples</td><td>Strict, sequential, causal, eventual</td><td>Monotonic reads, monotonic writes, read-your-writes, writes-follow-reads</td></tr>
+<tr><td>Best for</td><td>Many processes concurrently sharing data (a database, distributed shared memory)</td><td>Weakly consistent stores with occasional/lazy replica updates (a mobile calendar app)</td></tr>
+</table>
+
+<h2>3. Data-centric consistency models (slides 8&ndash;12)</h2>
+<h3>3.1 Strict consistency &mdash; strongest</h3>
+<p><b>Rule:</b> any read returns the value of the <b>most recent write</b>, as if there were a single global clock and a single copy of the data. Tanenbaum &amp; van Steen: "Any read on a data item x returns a value corresponding to the result of the most recent write on x."</p>
+<p>It requires <b>absolute global time</b>, which real distributed systems cannot have (network delay, clock skew). So it is <b>rarely achievable</b>; it is the theoretical upper bound other models are measured against. Picture: P1 writes, P2 reads an instant later on another machine &mdash; the read must already see the new value, even though no message could have travelled that fast.</p>
+
+<h3>3.2 Sequential consistency &mdash; the practical strong model</h3>
+<p><b>Rule:</b> the result of any execution is the same as if the operations of all processes were executed in <b>some sequential order</b>, and each process's own operations appear in that order <b>in the order it issued them</b>. All processes see the <b>same interleaving</b>, but that interleaving <b>does not have to match real (wall-clock) time</b>. No global clock is needed, so it is implementable (used in some distributed shared-memory systems).</p>
+
+<h3>Worked example: is it sequentially consistent?</h3>
+<p>P1 does <code>W(x)a</code>; P2 does <code>W(x)b</code> slightly later in real time. P3 and P4 each read x twice.</p>
+<table class="small">
+<tr><th>Case</th><th>P3 reads</th><th>P4 reads</th><th>Sequentially consistent?</th></tr>
+<tr><td>A</td><td><code>R(x)b</code> then <code>R(x)a</code></td><td><code>R(x)b</code> then <code>R(x)a</code></td><td><b>Yes.</b> Both agree on the order W(x)b &rarr; W(x)a. It differs from real time (a was written first), but sequential consistency does not care about real time. (Strict consistency would be violated.)</td></tr>
+<tr><td>B</td><td><code>R(x)b</code> then <code>R(x)a</code></td><td><code>R(x)a</code> then <code>R(x)b</code></td><td><b>No.</b> P3 saw b before a, P4 saw a before b. There is no single interleaving that both agree on.</td></tr>
+</table>
+<p class="small">Test method: try to write ONE list of all writes that explains every process's reads. If one exists (and keeps each process's own order), the history is sequentially consistent.</p>
+
+<h3>3.3 Causal consistency &mdash; weaker, widely used</h3>
+<p><b>Rule:</b> writes that are <b>causally related</b> must be seen by every process in the same order; <b>concurrent</b> (unrelated) writes may be seen in different orders by different processes.</p>
+<p><b>Causally related</b> = one write <i>happened-before</i> the other, i.e. it could have influenced it: the writer had read or written the earlier value first. Example: a forum reply B that references post A must never be seen by anyone before A; but two unrelated posts C and D can appear in any order. It is cheaper than sequential consistency because unrelated operations need no global agreement.</p>
+<table class="small">
+<tr><th>Process</th><th>Operations</th></tr>
+<tr><td>P1</td><td><code>W(x)a</code> (post A)</td></tr>
+<tr><td>P2</td><td><code>R(x)a</code>, then <code>W(x)b</code> (reply B: it read A first &rArr; A &rarr; B are causally related)</td></tr>
+<tr><td>P3</td><td><code>R(x)a</code>, <code>R(x)b</code> &mdash; allowed (A before B)</td></tr>
+<tr><td>P4</td><td><code>R(x)b</code>, <code>R(x)a</code> &mdash; <b>violates causal consistency</b> (sees the reply before the post)</td></tr>
+</table>
+<p class="small">If P2 had <b>not</b> read A before writing B, A and B would be concurrent and P4's order would be allowed.</p>
+
+<h3>3.4 Eventual consistency &mdash; weakest common model</h3>
+<p><b>Rule:</b> if no new updates are made, all replicas will <b>eventually converge</b> to the same value &mdash; no guarantee about ordering or timing in between. "In the absence of new updates, all accesses will eventually return the last updated value." Optimised for <b>availability and performance</b>; used in <b>DNS</b>, web caches and many NoSQL key-value stores (DynamoDB-style). Trade-off: readers can see <b>stale data</b> for an unbounded (but usually short) period. Slide example: R1 has 7; R2 and R3 still show 5 and change to 7 at different moments.</p>
+
+<div class="fig">
+<svg viewBox="0 0 680 95" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker><marker id="d0" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#000"/></marker></defs>
+<line x1="20" y1="20" x2="660" y2="20" stroke="#000" stroke-width="1.5" marker-start="url(#d0)" marker-end="url(#d1)"/>
+<text x="20" y="14" font-size="10" font-weight="bold">STRONGER guarantees</text><text x="660" y="14" font-size="10" font-weight="bold" text-anchor="end">WEAKER guarantees</text>
+<g stroke="#000" fill="#f3f3f3"><rect x="20" y="32" width="145" height="50"/><rect x="185" y="32" width="145" height="50"/><rect x="350" y="32" width="145" height="50"/><rect x="515" y="32" width="145" height="50"/></g>
+<g text-anchor="middle"><text x="92" y="50" font-size="12" font-weight="bold">Strict</text><text x="257" y="50" font-size="12" font-weight="bold">Sequential</text><text x="422" y="50" font-size="12" font-weight="bold">Causal</text><text x="587" y="50" font-size="12" font-weight="bold">Eventual</text>
+<g font-size="9"><text x="92" y="68">real-time order,</text><text x="92" y="79">single-copy illusion</text><text x="257" y="68">one global</text><text x="257" y="79">interleaving</text><text x="422" y="68">order only for</text><text x="422" y="79">related ops</text><text x="587" y="68">convergence, no</text><text x="587" y="79">ordering guarantee</text></g></g>
+</svg>
+<div class="cap">Figure 1 &mdash; The consistency spectrum (slide 12). Performance and availability generally increase as guarantees weaken; choosing a model means choosing a point on this line.</div>
+</div>
+
+<h2>4. Client-centric consistency (slides 13&ndash;17)</h2>
+<p><b>Setting:</b> a mobile client reads and writes through <b>different replicas</b> over time (home Wi-Fi replica at t1, office at t2, mobile-data at t3). <b>Goal:</b> from that one client's view the world still makes sense, even though replicas sync lazily in the background. The four guarantees are <b>not alternatives</b>: a system can, and often does, offer several at once.</p>
+<table>
+<tr><th style="width:17%">Guarantee</th><th>Rule (same process)</th><th>Ordering</th><th>Slide example of what it prevents</th></tr>
+<tr><td><b>Monotonic reads</b></td><td>If a process reads value v of x, any later read by that process never returns an <b>older</b> value than v. You never "go backward in time".</td><td>read &rarr; read</td><td>You see 5 new emails on your laptop; on your phone (a lagging replica) you must not see fewer than those 5.</td></tr>
+<tr><td><b>Monotonic writes</b></td><td>A write by a process on x completes before any later write on x by the same process; your writes are applied <b>everywhere in the order you issued them</b>.</td><td>write &rarr; write</td><td>Update a document's title, then its body: every replica must apply the title update first. Otherwise a late sync could overwrite a newer value with an older one.</td></tr>
+<tr><td><b>Read your writes</b></td><td>The effect of a write by a process on x is <b>always seen</b> by a later read of x by the same process.</td><td>write &rarr; read</td><td>You post a comment, refresh, and it is missing because the read hit a replica without your write. Or: change your password, then a stale replica asks for the old one.</td></tr>
+<tr><td><b>Writes follow reads</b></td><td>A write by a process on x, after it read x, takes place on the <b>same or a more recent</b> value than the one read.</td><td>read &rarr; write</td><td>You read a forum post, then reply: every replica must apply your reply <b>after</b> the post you read.</td></tr>
+</table>
+<h3>Worked example: name the violated guarantee</h3>
+<table class="small">
+<tr><th>Scenario</th><th>Violated</th></tr>
+<tr><td>Alice sets her status to "busy" on her phone, then opens the app on her laptop and sees "available".</td><td>Read your writes</td></tr>
+<tr><td>Bob's bank app shows balance 5,000 (after a deposit), refreshes and shows 3,000 (before the deposit).</td><td>Monotonic reads</td></tr>
+<tr><td>Carol changes price to 100 then to 120; one replica ends with 100.</td><td>Monotonic writes</td></tr>
+<tr><td>Dan reads a question and posts an answer; another user's replica shows the answer but not the question.</td><td>Writes follow reads</td></tr>
+</table>
+
+<h2>5. Replication (slides 18&ndash;22)</h2>
+<h3>5.1 Why replicate data? (slide 19)</h3>
+<table class="small">
+<tr><th>Benefit</th><th>How</th></tr>
+<tr><td>Performance</td><td>Serve reads from a nearby replica: lower latency, higher throughput, load spread across servers</td></tr>
+<tr><td>Reliability</td><td>If one replica fails or is partitioned away, others keep serving &mdash; no single point of failure</td></tr>
+<tr><td>Scalability</td><td>Read-heavy workloads scale horizontally by adding replicas</td></tr>
+<tr><td>Availability</td><td>Geographically distributed replicas keep the service reachable during regional outages</td></tr>
+</table>
+<p><b>The catch:</b> every benefit requires <b>keeping copies up to date</b>, which costs coordination, bandwidth and time. Replication and consistency are always in tension.</p>
+
+<h3>5.2 Update propagation: push vs pull (slide 20)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<text x="160" y="15" text-anchor="middle" font-size="12" font-weight="bold">Push (server-initiated)</text>
+<rect x="125" y="25" width="70" height="30" fill="#bbb" stroke="#000"/><text x="160" y="44" text-anchor="middle" font-size="11">Server</text>
+<g stroke="#000" fill="#fff"><rect x="40" y="80" width="70" height="28"/><rect x="210" y="80" width="70" height="28"/></g><g font-size="10" text-anchor="middle"><text x="75" y="98">Replica</text><text x="245" y="98">Replica</text></g>
+<g stroke="#000" stroke-width="1.5"><line x1="140" y1="55" x2="85" y2="78" marker-end="url(#d2)"/><line x1="180" y1="55" x2="235" y2="78" marker-end="url(#d2)"/></g>
+<text x="160" y="75" text-anchor="middle" font-size="9">update sent at once</text>
+<text x="510" y="15" text-anchor="middle" font-size="12" font-weight="bold">Pull (client-initiated)</text>
+<rect x="475" y="25" width="70" height="30" fill="#bbb" stroke="#000"/><text x="510" y="44" text-anchor="middle" font-size="11">Server</text>
+<g stroke="#000" fill="#fff"><rect x="390" y="80" width="70" height="28"/><rect x="560" y="80" width="70" height="28"/></g><g font-size="10" text-anchor="middle"><text x="425" y="98">Replica</text><text x="595" y="98">Replica</text></g>
+<g stroke="#000" stroke-width="1.5"><line x1="435" y1="78" x2="490" y2="57" marker-end="url(#d2)"/><line x1="585" y1="78" x2="530" y2="57" marker-end="url(#d2)"/></g>
+<text x="510" y="75" text-anchor="middle" font-size="9">"anything new?"</text>
+</svg>
+<div class="cap">Figure 2 &mdash; Push vs pull update propagation.</div>
+</div>
+<table class="small">
+<tr><th></th><th>Push-based (server-initiated)</th><th>Pull-based (client-initiated)</th></tr>
+<tr><td>How</td><td>Master pushes updates to replicas as soon as they occur</td><td>Replicas poll the server/cache for updates on demand</td></tr>
+<tr><td>Freshness</td><td>Low read latency; replicas always (nearly) fresh</td><td>Reads may return stale data between polls</td></tr>
+<tr><td>Bandwidth</td><td>Wasted if replicas are read infrequently</td><td>Saved: only fetch when actually needed</td></tr>
+<tr><td>Good fit</td><td><b>High read-to-write ratio</b>, need for strong freshness</td><td><b>Low read-to-write ratio</b>, bandwidth-constrained clients</td></tr>
+</table>
+
+<h3>5.3 Placement of replicas (slide 21)</h3>
+<table class="small">
+<tr><th>Type</th><th>Who creates it</th><th>Where / example</th></tr>
+<tr><td><b>Permanent replicas</b></td><td>The fixed, initial set of servers that make up the data store</td><td>Core/origin: the primary data centres</td></tr>
+<tr><td><b>Server-initiated replicas</b></td><td>Created dynamically <b>by the system</b> to improve performance</td><td>Regional: pushing a popular page's copy closer to a region with a traffic spike</td></tr>
+<tr><td><b>Client-initiated replicas (caches)</b></td><td>Created at the <b>client's</b> request, usually temporary</td><td>Edge/client: a browser cache</td></tr>
+</table>
+<p>Distance from clients increases from client caches (closest) &rarr; server-initiated &rarr; permanent (furthest, the core).</p>
+
+<h3>5.4 Consistency&ndash;replication trade-offs (slide 22)</h3>
+<table class="small">
+<tr><th>Design choice</th><th>Gains</th><th>Costs</th></tr>
+<tr><td>More replicas</td><td>Higher availability, read throughput</td><td>Harder to keep in sync, more write coordination</td></tr>
+<tr><td>Stronger consistency</td><td>Simpler application logic, no stale reads</td><td>Higher write latency, lower availability under partition</td></tr>
+<tr><td>Push propagation</td><td>Replicas stay fresh</td><td>Bandwidth cost even when unread</td></tr>
+<tr><td>Pull propagation</td><td>Bandwidth-efficient</td><td>Readers may see stale data</td></tr>
+<tr><td>Replicas placed near clients</td><td>Low read latency</td><td>More nodes to keep consistent; cache invalidation complexity</td></tr>
+</table>
+<p>Every row trades consistency for availability/performance or vice versa &mdash; the bridge to CAP.</p>
+
+<h2>6. The CAP theorem and PACELC (slides 23&ndash;27)</h2>
+<table class="small">
+<tr><th style="width:18%">Property</th><th>Formal definition (slide 24)</th></tr>
+<tr><td><b>C</b>onsistency</td><td>Every read receives the most recent write <b>or an error</b>; all nodes see the same data at the same time.</td></tr>
+<tr><td><b>A</b>vailability</td><td>Every request receives a <b>(non-error) response</b>, without the guarantee that it contains the most recent write.</td></tr>
+<tr><td><b>P</b>artition tolerance</td><td>The system continues to operate despite an arbitrary number of messages being dropped or delayed by the network.</td></tr>
+</table>
+<p><b>CAP theorem:</b> a distributed data store can provide <b>at most two of these three</b> guarantees at the same time.</p>
+<div class="two">
+<div>
+<div class="fig">
+<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<polygon points="150,20 30,180 270,180" fill="#f3f3f3" stroke="#000" stroke-width="1.5"/>
+<g font-size="16" font-weight="bold" text-anchor="middle"><text x="150" y="15">C</text><text x="18" y="194">A</text><text x="284" y="194">P</text></g>
+<g font-size="12" font-weight="bold" text-anchor="middle"><text x="75" y="100">CA</text><text x="225" y="100">CP</text><text x="150" y="196">AP</text></g>
+<text x="150" y="130" text-anchor="middle" font-size="10">pick any TWO</text>
+</svg>
+<div class="cap">Figure 3 &mdash; The CAP triangle (slide 25): each edge is a pair.</div>
+</div>
+</div>
+<div>
+<ul class="small">
+<li><b>CA</b>: consistent and available but cannot tolerate a partition &mdash; rare in practice; only works on a single site with no network split.</li>
+<li><b>CP</b>: consistent and partition-tolerant &mdash; sacrifices availability: some nodes refuse requests during a split.</li>
+<li><b>AP</b>: available and partition-tolerant &mdash; sacrifices strict consistency: nodes keep answering, possibly with stale data.</li>
+</ul>
+<p class="small">Summary sentence (slide 45): under a network partition you must choose Consistency or Availability &mdash; you always keep Partition tolerance.</p>
+</div>
+</div>
+<table class="small">
+<tr><th>Category</th><th>Behaviour under partition</th><th>Example-style systems (slide 26)</th></tr>
+<tr><td><b>CP</b></td><td>Reject or queue requests on the minority side to keep data consistent</td><td>Distributed relational DBs with strong quorum writes; ZooKeeper-style coordination services</td></tr>
+<tr><td><b>AP</b></td><td>Keep answering reads/writes on both sides; reconcile later</td><td>Highly available key-value/NoSQL stores; DNS; shopping-cart style services</td></tr>
+<tr><td><b>CA</b></td><td>Only meaningful without a real network partition</td><td>A single-site database cluster on one reliable LAN</td></tr>
+</table>
+<p class="small"><b>Note (slide 26):</b> real products often let you <b>tune</b> the trade-off per operation (e.g. read/write <b>quorum</b> sizes) rather than being purely one category. <b>Quorum rule</b> (standard): with N replicas, a write must reach W replicas and a read must ask R replicas. If <b>R + W &gt; N</b>, every read set overlaps every write set, so a read always sees the latest write (CP-like). Example: N = 3, W = 2, R = 2 &rArr; 4 &gt; 3 &rArr; consistent; but if 2 replicas are unreachable, writes fail (less available). W = 1, R = 1 &rArr; 2 &le; 3 &rArr; fast and available, but reads may be stale (AP-like).</p>
+
+<h3>PACELC &mdash; extending CAP (slide 27)</h3>
+<p>CAP only describes behaviour <b>during</b> a partition. But there is a trade-off even when the network is healthy: <b>if Partition (P), choose Availability (A) or Consistency (C); Else (E), choose Latency (L) or Consistency (C).</b> Why it matters: strong consistency needs coordination between replicas (waiting for acknowledgements), which adds latency even when nothing is broken.</p>
+<div class="fig">
+<svg viewBox="0 0 680 90" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect x="20" y="28" width="130" height="34" fill="#bbb" stroke="#000"/><text x="85" y="50" text-anchor="middle" font-size="12" font-weight="bold">Partition?</text>
+<line x1="150" y1="38" x2="300" y2="20" stroke="#000" stroke-width="1.5" marker-end="url(#d3)"/><line x1="150" y1="52" x2="300" y2="72" stroke="#000" stroke-width="1.5" marker-end="url(#d3)"/>
+<rect x="305" y="4" width="350" height="30" fill="#f3f3f3" stroke="#000"/><text x="480" y="24" text-anchor="middle" font-size="11"><tspan font-weight="bold">YES &#8594; A or C</tspan> (this is CAP)</text>
+<rect x="305" y="56" width="350" height="30" fill="#fff" stroke="#000"/><text x="480" y="76" text-anchor="middle" font-size="11"><tspan font-weight="bold">NO (Else) &#8594; L or C</tspan> (the new part)</text>
+</svg>
+<div class="cap">Figure 4 &mdash; PACELC decision path. Read as "if Partition &rarr; A or C; Else &rarr; L or C".</div>
+</div>
+
+<h2>7. Fault tolerance (slides 28&ndash;32)</h2>
+<p><b>Fault tolerance</b>: a system's ability to continue operating correctly despite the failure of some of its components.</p>
+<div class="fig">
+<svg viewBox="0 0 680 80" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g stroke="#000"><rect x="20" y="10" width="180" height="60" fill="#fff"/><rect x="250" y="10" width="180" height="60" fill="#ddd"/><rect x="480" y="10" width="180" height="60" fill="#bbb"/></g>
+<g text-anchor="middle"><text x="110" y="32" font-size="12" font-weight="bold">1. FAULT</text><text x="110" y="50" font-size="10">root defect in a component</text><text x="110" y="63" font-size="9">e.g. bad disk sector</text>
+<text x="340" y="32" font-size="12" font-weight="bold">2. ERROR</text><text x="340" y="50" font-size="10">incorrect internal state</text><text x="340" y="63" font-size="9">e.g. corrupted block</text>
+<text x="570" y="32" font-size="12" font-weight="bold">3. FAILURE</text><text x="570" y="50" font-size="10">service visibly breaks</text><text x="570" y="63" font-size="9">e.g. file unreadable</text></g>
+<g stroke="#000" stroke-width="2"><line x1="200" y1="40" x2="248" y2="40" marker-end="url(#d4)"/><line x1="430" y1="40" x2="478" y2="40" marker-end="url(#d4)"/></g>
+</svg>
+<div class="cap">Figure 5 &mdash; Fault &rarr; error &rarr; failure (slide 29). Design goal: stop faults from becoming failures.</div>
+</div>
+<p><b>Design goal:</b> prevent faults from becoming failures &mdash; <b>mask</b> them with redundancy, <b>detect</b> them quickly, and <b>recover</b> gracefully. <b>Dependability properties</b> (the pillars): <b>availability</b> (ready for use at any moment), <b>reliability</b> (runs continuously without failure over a period), <b>safety</b> (a failure causes nothing catastrophic), <b>maintainability</b> (easy to repair).</p>
+
+<h3>7.1 Types of failures (slide 30)</h3>
+<table class="small">
+<tr><th>Failure type</th><th>Description</th><th>Severity</th></tr>
+<tr><td>Crash</td><td>A process simply halts, but behaved correctly until it stopped</td><td>Low</td></tr>
+<tr><td>Omission</td><td>A process fails to respond to incoming requests (send omission / receive omission)</td><td>Low&ndash;Medium</td></tr>
+<tr><td>Timing</td><td>A response is correct but arrives outside a specified time interval</td><td>Medium</td></tr>
+<tr><td>Response</td><td>The process responds incorrectly &mdash; wrong value or wrong control flow</td><td>Medium&ndash;High</td></tr>
+<tr><td>Arbitrary (Byzantine)</td><td>Arbitrary output at arbitrary times, including malicious behaviour</td><td>Highest</td></tr>
+</table>
+<p class="small">Severity increases down the table: failures become harder to detect and tolerate.</p>
+
+<h3>7.2 Redundancy techniques (slide 31)</h3>
+<table class="small">
+<tr><th>Technique</th><th>Idea</th><th>Examples</th></tr>
+<tr><td><b>Information redundancy</b></td><td>Extra bits added to data so errors can be detected/corrected</td><td>Parity, checksums, error-correcting codes</td></tr>
+<tr><td><b>Time redundancy</b></td><td>An action is performed, and if needed, repeated</td><td>Transaction retries, timeout + resend</td></tr>
+<tr><td><b>Physical redundancy</b></td><td>Extra hardware or processes duplicate functionality</td><td>Replica servers, redundant network links, RAID disks</td></tr>
+</table>
+<p class="small">Replication (section 5) is physical redundancy applied specifically to data.</p>
+
+<h3>7.3 Process resilience: process groups (slide 32)</h3>
+<p>Idea: tolerate the failure of a process by organising several <b>identical</b> processes into a <b>group</b>; if one fails, others carry on.</p>
+<div class="fig">
+<svg viewBox="0 0 680 140" xmlns="http://www.w3.org/2000/svg">
+<text x="170" y="15" text-anchor="middle" font-size="12" font-weight="bold">Flat group</text>
+<g fill="#f3f3f3" stroke="#000"><circle cx="110" cy="45" r="16"/><circle cx="230" cy="45" r="16"/><circle cx="110" cy="115" r="16"/><circle cx="230" cy="115" r="16"/></g>
+<g stroke="#000"><line x1="126" y1="45" x2="214" y2="45"/><line x1="126" y1="115" x2="214" y2="115"/><line x1="110" y1="61" x2="110" y2="99"/><line x1="230" y1="61" x2="230" y2="99"/><line x1="122" y1="57" x2="218" y2="103"/><line x1="218" y1="57" x2="122" y2="103"/></g>
+<text x="170" y="138" text-anchor="middle" font-size="9">all equal; decide by voting</text>
+<text x="510" y="15" text-anchor="middle" font-size="12" font-weight="bold">Hierarchical group</text>
+<circle cx="510" cy="45" r="18" fill="#bbb" stroke="#000"/><text x="510" y="50" text-anchor="middle" font-size="12" font-weight="bold">C</text>
+<g fill="#f3f3f3" stroke="#000"><circle cx="420" cy="115" r="16"/><circle cx="480" cy="115" r="16"/><circle cx="540" cy="115" r="16"/><circle cx="600" cy="115" r="16"/></g>
+<g stroke="#000"><line x1="498" y1="59" x2="425" y2="100"/><line x1="505" y1="63" x2="482" y2="99"/><line x1="515" y1="63" x2="538" y2="99"/><line x1="522" y1="59" x2="595" y2="100"/></g>
+<text x="510" y="138" text-anchor="middle" font-size="9">coordinator C decides; C is a SPOF unless replaced</text>
+</svg>
+<div class="cap">Figure 6 &mdash; Flat vs hierarchical groups (slide 32).</div>
+</div>
+<table class="small">
+<tr><th></th><th>Flat group</th><th>Hierarchical group</th></tr>
+<tr><td>Structure</td><td>All processes equal/symmetric</td><td>One coordinator manages the workers</td></tr>
+<tr><td>Strength</td><td>More robust: no single point of failure</td><td>Simpler, faster decisions</td></tr>
+<tr><td>Weakness</td><td>Decisions need coordination (e.g. voting) &rArr; slower, more messages</td><td>Coordinator is a SPOF unless replaced automatically (an election picks a new one)</td></tr>
+</table>
+<p>Both need a way to know when a member is gone: <b>failure detection</b>.</p>
+
+<h2>8. Failure detection: heartbeat and gossip (slides 33&ndash;35)</h2>
+<h3>8.1 Heartbeat protocol</h3>
+<p>Each process periodically sends an <b>"I'm alive" (heartbeat)</b> message to a monitor (or its neighbours). <b>Detection rule:</b> if no heartbeat arrives within a <b>timeout</b> window, the process is <b>suspected</b> failed. Simple, low overhead; but one missed heartbeat caused by network delay (not a crash) can give a <b>false positive</b>. <b>Tuning trade-off:</b> shorter intervals detect failures faster but create more traffic and more false suspicions.</p>
+<div class="fig">
+<svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<text x="15" y="28" font-size="11">Monitor</text><line x1="80" y1="25" x2="660" y2="25" stroke="#000"/>
+<text x="15" y="88" font-size="11">Process</text><line x1="80" y1="85" x2="380" y2="85" stroke="#000"/><line x1="380" y1="85" x2="660" y2="85" stroke="#000" stroke-dasharray="4 3"/>
+<g stroke="#000" stroke-width="1.3"><line x1="110" y1="85" x2="125" y2="27" marker-end="url(#d5)"/><line x1="210" y1="85" x2="225" y2="27" marker-end="url(#d5)"/><line x1="310" y1="85" x2="325" y2="27" marker-end="url(#d5)"/></g>
+<g font-size="9" text-anchor="middle"><text x="110" y="100">beat (t=0)</text><text x="210" y="100">beat (t=1s)</text><text x="310" y="100">beat (t=2s)</text></g>
+<text x="380" y="90" font-size="16" text-anchor="middle" font-weight="bold">&#215;</text><text x="380" y="104" font-size="9" text-anchor="middle">crash (t=2.5s)</text>
+<rect x="325" y="14" width="235" height="22" fill="#f3f3f3" stroke="#000" stroke-dasharray="3 2"/><text x="442" y="29" text-anchor="middle" font-size="9">timeout window (3 s) since last beat</text>
+<rect x="560" y="10" width="95" height="30" fill="#bbb" stroke="#000"/><text x="607" y="29" text-anchor="middle" font-size="10" font-weight="bold">t=5s: suspect!</text>
+</svg>
+<div class="cap">Figure 7 &mdash; Heartbeat every 1 s, timeout 3 s. Last beat at t = 2 s, so the monitor suspects failure at t = 5 s (detection delay 2.5 s after the crash).</div>
+</div>
+<h3>8.2 Gossip protocol (decentralized)</h3>
+<p>Each process periodically exchanges membership/state information with a few <b>randomly chosen peers</b>, not a central monitor. Information spreads <b>epidemically</b>, like a rumour: updates (including failure suspicions) reach the whole system in <b>O(log N)</b> rounds. Highly scalable and resilient: no single point of failure, works in very large, dynamic clusters. Trade-off: detection is <b>probabilistic</b> and takes a few rounds to spread &mdash; not instantaneous.</p>
+<p class="small"><b>Worked example (why log N):</b> if every informed node tells one new random node each round, the number informed roughly doubles: 1 &rarr; 2 &rarr; 4 &rarr; 8 &hellip; After r rounds about 2<sup>r</sup> nodes know. For N = 1,000 nodes: 2<sup>10</sup> = 1,024 &rArr; about <b>10 rounds</b>; for N = 1,000,000 only about 20 rounds. (Real gossip needs a few extra rounds because random picks sometimes hit already-informed nodes.)</p>
+<table class="small">
+<tr><th>Aspect (slide 35)</th><th>Heartbeat</th><th>Gossip</th></tr>
+<tr><td>Architecture</td><td>Centralized (monitor watches processes)</td><td>Decentralized (peer-to-peer exchange)</td></tr>
+<tr><td>Scalability</td><td>Limited &mdash; monitor can bottleneck</td><td>High &mdash; load spread across all nodes</td></tr>
+<tr><td>Detection speed</td><td>Fast, bounded by timeout</td><td>Slower, probabilistic, spreads over rounds</td></tr>
+<tr><td>Single point of failure</td><td>Yes (the monitor)</td><td>No</td></tr>
+<tr><td>Best fit</td><td>Small-to-medium clusters, simple setups</td><td>Very large, dynamic, peer-to-peer systems</td></tr>
+</table>
+
+<h2>9. Reliable communication (slides 36&ndash;39)</h2>
+<h3>9.1 Reliable client-server (point-to-point)</h3>
+<p>Point-to-point reliability usually builds on a reliable transport like <b>TCP</b>, but <b>reliable bytes are not the same as a reliable RPC</b> (Remote Procedure Call: calling a function on another machine). Things that can go wrong:</p>
+<div class="fig">
+<svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect x="20" y="35" width="70" height="40" fill="#f3f3f3" stroke="#000"/><text x="55" y="60" text-anchor="middle" font-size="13" font-weight="bold">C</text>
+<rect x="300" y="35" width="70" height="40" fill="#bbb" stroke="#000"/><text x="335" y="60" text-anchor="middle" font-size="13" font-weight="bold">S</text>
+<line x1="90" y1="45" x2="298" y2="45" stroke="#000" stroke-width="1.5" marker-end="url(#d6)"/><text x="195" y="38" text-anchor="middle" font-size="10">request</text>
+<line x1="298" y1="68" x2="92" y2="68" stroke="#000" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#d6)"/><text x="195" y="84" text-anchor="middle" font-size="10">reply (lost?)</text>
+<g font-size="11"><text x="420" y="30">1. Request lost in transit</text><text x="420" y="52">2. Server crashes mid-execution</text><text x="420" y="74">3. Reply lost in transit</text><text x="420" y="96">4. Client crashes awaiting reply</text></g>
+</svg>
+<div class="cap">Figure 8 &mdash; Where client-server communication can go wrong (slide 37).</div>
+</div>
+<ul class="small">
+<li><b>Failure at the client</b>: the client crashes before getting the reply &rArr; the server's work becomes an <b>orphan computation</b> that needs cleanup.</li>
+<li><b>Failure at the server</b>: did it crash <b>before or after</b> executing the request? The client often cannot tell. If it retries, the operation might run twice.</li>
+</ul>
+<table class="small">
+<tr><th>Semantics</th><th>Guarantee</th><th>How / when it fits</th></tr>
+<tr><td><b>At-most-once</b></td><td>The operation runs 0 or 1 times, never twice</td><td>Do not retry blindly (or detect duplicate requests). Good for non-repeatable actions like payments, but the action may not happen at all.</td></tr>
+<tr><td><b>At-least-once</b></td><td>Runs 1 or more times</td><td>Keep retrying until a reply arrives. Safe only for <b>idempotent</b> operations (same result if repeated, e.g. "set balance = 500", "read file").</td></tr>
+<tr><td><b>Exactly-once</b></td><td>Runs exactly one time</td><td>Ideal but hard: needs request IDs, duplicate filtering and stored results, plus recovery.</td></tr>
+</table>
+<p class="small">Trade-off on the slide: simplicity vs correctness. Example: "withdraw Rs. 1000" with at-least-once could withdraw twice if the reply was lost and the client retried.</p>
+
+<h3>9.2 Reliable group (one-to-many) communication</h3>
+<p><b>Goal:</b> reliably deliver one message to <b>all</b> members of a process group, even if some members or the sender fail mid-multicast. <b>Multicast</b> = one sender, many receivers.</p>
+<ul class="small">
+<li><b>Atomic multicast</b>: a message is delivered to <b>every non-faulty member or to none</b> &mdash; no partial delivery.</li>
+<li><b>Challenge</b>: the sender may crash partway through sending; the group must agree whether the message "counts" as delivered.</li>
+<li>Slide 39 demo: the sender multicasts to five members; one (&times;) misses it. Atomic multicast either <b>resends</b> or <b>rolls back</b> so all non-faulty members end up consistent.</li>
+</ul>
+<table class="small">
+<tr><th>Ordering guarantee</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><b>FIFO order</b></td><td>Messages from <b>one sender</b> arrive in the order sent</td><td>Alice's m1 then m2 is delivered as m1, m2 everywhere</td></tr>
+<tr><td><b>Causal order</b></td><td>Causally related messages, from any senders, respect happened-before</td><td>A reply is delivered after the message it answers</td></tr>
+<tr><td><b>Total order</b></td><td><b>All</b> members see <b>all</b> messages in the <b>same</b> order</td><td>Every replica applies updates u1, u2, u3 in one agreed order</td></tr>
+</table>
+
+<h2>10. Distributed commit protocols (slides 40&ndash;43)</h2>
+<p>A <b>distributed transaction</b> changes data on several machines (e.g. a transfer debits a Commercial Bank account and credits an HNB account). It must be <b>atomic</b>: ALL parts commit or ALL abort &mdash; no partial commits.</p>
+<h3>10.1 Two-Phase Commit (2PC)</h3>
+<p><b>Roles:</b> one <b>coordinator</b> drives the protocol; several <b>participants</b> (cohorts) hold pieces of the transaction.</p>
+<div class="fig">
+<svg viewBox="0 0 680 210" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g font-size="11" font-weight="bold"><text x="10" y="34">Coordinator</text><text x="10" y="104">P1</text><text x="10" y="144">P2</text><text x="10" y="184">P3</text></g>
+<g stroke="#000"><line x1="90" y1="30" x2="670" y2="30"/><line x1="90" y1="100" x2="670" y2="100"/><line x1="90" y1="140" x2="670" y2="140"/><line x1="90" y1="180" x2="670" y2="180"/></g>
+<rect x="95" y="4" width="285" height="16" fill="#f3f3f3" stroke="#000"/><text x="237" y="16" text-anchor="middle" font-size="10" font-weight="bold">PHASE 1 &#8212; VOTING</text>
+<rect x="400" y="4" width="265" height="16" fill="#bbb" stroke="#000"/><text x="532" y="16" text-anchor="middle" font-size="10" font-weight="bold">PHASE 2 &#8212; DECISION</text>
+<g stroke="#000" stroke-width="1.2"><line x1="110" y1="30" x2="150" y2="98" marker-end="url(#d7)"/><line x1="110" y1="30" x2="160" y2="138" marker-end="url(#d7)"/><line x1="110" y1="30" x2="170" y2="178" marker-end="url(#d7)"/></g>
+<text x="165" y="58" font-size="9">VOTE-REQUEST</text>
+<g font-size="9"><text x="180" y="96">prepare, log</text><text x="190" y="136">prepare, log</text><text x="200" y="176">prepare, log</text></g>
+<g stroke="#000" stroke-width="1.2" stroke-dasharray="4 2"><line x1="260" y1="100" x2="320" y2="32" marker-end="url(#d7)"/><line x1="270" y1="140" x2="330" y2="32" marker-end="url(#d7)"/><line x1="280" y1="180" x2="340" y2="32" marker-end="url(#d7)"/></g>
+<text x="345" y="88" font-size="9">YES / NO</text>
+<text x="352" y="46" font-size="9">all YES?</text>
+<g stroke="#000" stroke-width="1.6"><line x1="420" y1="30" x2="470" y2="98" marker-end="url(#d7)"/><line x1="420" y1="30" x2="480" y2="138" marker-end="url(#d7)"/><line x1="420" y1="30" x2="490" y2="178" marker-end="url(#d7)"/></g>
+<text x="455" y="56" font-size="9">COMMIT (or ABORT)</text>
+<g font-size="9"><text x="500" y="96">apply</text><text x="510" y="136">apply</text><text x="520" y="176">apply</text></g>
+<g stroke="#000" stroke-dasharray="2 2"><line x1="590" y1="100" x2="640" y2="32" marker-end="url(#d7)"/><line x1="600" y1="140" x2="645" y2="32" marker-end="url(#d7)"/><line x1="610" y1="180" x2="650" y2="32" marker-end="url(#d7)"/></g>
+<text x="600" y="62" font-size="9">ACK</text>
+<text x="340" y="204" text-anchor="middle" font-size="9">time &#8594;</text>
+</svg>
+<div class="cap">Figure 9 &mdash; 2PC step by step (slide 41). If ANY participant votes NO, the coordinator broadcasts ABORT and everyone rolls back.</div>
+</div>
+<ol class="small">
+<li><b>Phase 1 &mdash; Voting:</b> the coordinator sends VOTE-REQUEST ("can you commit?"). Each participant checks it can (locks held, constraints OK), writes its work to a durable log, and votes <b>YES (ready)</b> or <b>NO (abort)</b>. After voting YES, a participant has promised and may not change its mind.</li>
+<li><b>Phase 2 &mdash; Decision:</b> if <b>all</b> voted YES, the coordinator broadcasts <b>COMMIT</b>; if <b>any</b> voted NO (or did not answer in time), it broadcasts <b>ABORT</b>. Participants apply the decision and release locks.</li>
+</ol>
+<h3>Worked example: 2PC traces</h3>
+<table class="small">
+<tr><th>Case</th><th>What happens</th><th>Outcome</th></tr>
+<tr><td>P1 YES, P2 YES, P3 YES</td><td>Coordinator sends COMMIT; all apply</td><td>Committed everywhere</td></tr>
+<tr><td>P1 YES, P2 NO, P3 YES</td><td>One NO &rArr; coordinator sends ABORT; P1 and P3 roll back</td><td>Aborted everywhere (atomicity kept)</td></tr>
+<tr><td>P3 crashes before voting</td><td>Coordinator times out waiting &rArr; treats as NO &rArr; ABORT</td><td>Aborted</td></tr>
+<tr><td><b>All vote YES, then the coordinator crashes before sending the decision</b></td><td>Participants are in the "ready" state: they cannot COMMIT (maybe someone voted NO) and cannot ABORT (maybe the coordinator decided COMMIT and some already applied it). They must <b>wait, holding locks</b>, until the coordinator recovers.</td><td><b>BLOCKED</b></td></tr>
+</table>
+<div class="key"><b class="t">Key weakness of 2PC (slide 40)</b>
+2PC is a <b>blocking protocol</b>: if the coordinator crashes after participants vote YES but before they hear the decision, they are stuck &mdash; they cannot safely commit or abort on their own and must wait (potentially holding locks) until the coordinator recovers. This is what 3PC is designed to fix.</div>
+
+<h3>10.2 Three-Phase Commit (3PC)</h3>
+<p><b>Motivation:</b> remove 2PC's blocking problem by adding a buffer phase before the final commit.</p>
+<ol class="small">
+<li><b>Phase 1 &mdash; Voting:</b> identical to 2PC: VOTE-REQUEST &rarr; YES/NO.</li>
+<li><b>Phase 2 &mdash; Prepare-to-commit:</b> if all voted YES, the coordinator sends <b>PREPARE-TO-COMMIT</b> (not a final commit yet). Participants acknowledge (<b>ACK</b>) &mdash; they now know a commit <b>is</b> coming and that everyone voted YES.</li>
+<li><b>Phase 3 &mdash; Commit:</b> the coordinator sends the final <b>COMMIT</b>; participants apply it.</li>
+</ol>
+<div class="fig">
+<svg viewBox="0 0 680 80" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<text x="10" y="25" font-size="12" font-weight="bold">2PC:</text>
+<g stroke="#000"><rect x="70" y="10" width="160" height="24" fill="#f3f3f3"/><rect x="270" y="10" width="160" height="24" fill="#bbb"/></g>
+<g font-size="10" text-anchor="middle"><text x="150" y="26">Vote</text><text x="350" y="26">Commit / Abort</text></g>
+<line x1="230" y1="22" x2="268" y2="22" stroke="#000" marker-end="url(#d8)"/>
+<text x="10" y="65" font-size="12" font-weight="bold">3PC:</text>
+<g stroke="#000"><rect x="70" y="50" width="160" height="24" fill="#f3f3f3"/><rect x="270" y="50" width="160" height="24" fill="#ddd"/><rect x="470" y="50" width="160" height="24" fill="#bbb"/></g>
+<g font-size="10" text-anchor="middle"><text x="150" y="66">Vote</text><text x="350" y="66">Prepare-to-commit (ACK)</text><text x="550" y="66">Commit / Abort</text></g>
+<g stroke="#000"><line x1="230" y1="62" x2="268" y2="62" marker-end="url(#d8)"/><line x1="430" y1="62" x2="468" y2="62" marker-end="url(#d8)"/></g>
+</svg>
+<div class="cap">Figure 10 &mdash; 2PC vs 3PC phases (slide 42).</div>
+</div>
+<p><b>Why it doesn't block:</b> the extra middle step means every participant knows the group's <b>intent</b> before anyone commits. With timeouts, a recovering or newly elected coordinator can safely infer the outcome:</p>
+<ul class="small">
+<li>If <b>any</b> surviving participant has received PREPARE-TO-COMMIT, then everyone voted YES &rArr; it is safe to <b>COMMIT</b>.</li>
+<li>If <b>no</b> survivor has received it, no one can have committed yet &rArr; it is safe to <b>ABORT</b>.</li>
+</ul>
+<p class="small">Slide 43: if the coordinator fails after Phase 2, surviving participants can elect a new coordinator and COMMIT, because they already know everyone was ready. This holds <b>under crash-only (non-Byzantine) failures and no network partition</b>; with a partition, 3PC can still go wrong.</p>
+<table class="small">
+<tr><th>2PC</th><th>3PC</th></tr>
+<tr><td>2 phases</td><td>3 phases</td></tr>
+<tr><td>Can block on coordinator crash</td><td>Avoids blocking (crash-only faults)</td></tr>
+<tr><td>Lower message overhead</td><td>Higher message overhead (extra round)</td></tr>
+<tr><td>Simpler to implement</td><td>More complex, extra timeouts</td></tr>
+</table>
+
+<h2>11. Security and access control in distributed file systems (slide 44)</h2>
+<div class="fig">
+<svg viewBox="0 0 680 60" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="d9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g stroke="#000"><rect x="10" y="12" width="130" height="36" fill="#fff"/><rect x="180" y="12" width="140" height="36" fill="#f3f3f3"/><rect x="360" y="12" width="140" height="36" fill="#ddd"/><rect x="540" y="12" width="130" height="36" fill="#bbb"/></g>
+<g font-size="11" text-anchor="middle"><text x="75" y="35">Client request</text><text x="250" y="28" font-weight="bold">Authenticate</text><text x="250" y="42" font-size="9">who are you?</text><text x="430" y="28" font-weight="bold">Authorize</text><text x="430" y="42" font-size="9">what can you do?</text><text x="605" y="35">Granted / denied</text></g>
+<g stroke="#000" stroke-width="1.5"><line x1="140" y1="30" x2="178" y2="30" marker-end="url(#d9)"/><line x1="320" y1="30" x2="358" y2="30" marker-end="url(#d9)"/><line x1="500" y1="30" x2="538" y2="30" marker-end="url(#d9)"/></g>
+</svg>
+<div class="cap">Figure 11 &mdash; Access control flow (slide 44).</div>
+</div>
+<table class="small">
+<tr><th style="width:24%">Mechanism</th><th>Meaning</th></tr>
+<tr><td><b>Authentication</b></td><td>Verifying <b>who</b> is making a request: Kerberos-style <b>ticket</b> systems (log in once to a trusted server, get a time-limited ticket to show to file servers), <b>mutual TLS</b> certificates (both client and server prove identity).</td></tr>
+<tr><td><b>Authorization / access control</b></td><td>Deciding <b>what</b> an authenticated user may do: <b>ACLs</b> (access control lists: each file stores a list of users and their rights), <b>capability-based</b> access (the user holds an unforgeable token naming the object and rights), <b>RBAC</b> (role-based: rights are given to roles like "lecturer", users get roles).</td></tr>
+<tr><td><b>Integrity &amp; confidentiality</b></td><td>Encryption <b>in transit</b> (TLS) and <b>at rest</b> (on disk), plus checksums/signatures to detect tampering.</td></tr>
+<tr><td><b>Replication risk</b></td><td>Every replica is another copy an attacker could target; the access-control policy must be enforced <b>consistently across all replicas</b>.</td></tr>
+<tr><td><b>Auditing</b></td><td>Logging access and changes so breaches or misuse can be detected and traced afterwards.</td></tr>
+</table>
+<p class="small"><b>ACL vs capability:</b> an ACL is stored <i>with the object</i> ("file F: Alice read/write, Bob read"); a capability is held <i>by the subject</i> ("Bob's token: read F"). ACLs make it easy to see/revoke who can access a file; capabilities make it easy to delegate and check quickly without a central lookup.</p>
+
+<h2>12. Summary (slide 45)</h2>
+<ul class="small">
+<li><b>Consistency:</b> data-centric models define global rules; client-centric models protect one client's personal view.</li>
+<li><b>Replication:</b> push/pull propagation and replica placement (permanent, server-, client-initiated) trade freshness for cost.</li>
+<li><b>CAP:</b> under a partition, choose C or A; always keep P. PACELC adds latency vs consistency when there is no partition.</li>
+<li><b>Fault tolerance:</b> faults &rarr; errors &rarr; failures; redundancy (information, time, physical) masks faults before they become failures.</li>
+<li><b>Failure detection:</b> heartbeat = centralized and fast; gossip = decentralized and scalable.</li>
+<li><b>Commit protocols:</b> 2PC is simple but can block; 3PC adds a phase to avoid blocking under crash-only failures.</li>
+<li><b>Security:</b> authentication + authorization + encryption, enforced consistently on every replica.</li>
+</ul>
+
+<h2>13. Exam-style questions with model answers</h2>
+<p><b>Q1. What is a consistency model? Distinguish data-centric and client-centric models with one example of each. (6 marks)</b><br>
+A consistency model is a contract between a data store and processes that specifies what values a read may return after a sequence of writes. Data-centric models define consistency from the data store's view, as rules on the ordering of operations by all processes on shared data (e.g. sequential consistency: all processes see the same interleaving). Client-centric models define it from one (mobile) client's view across successive accesses to different replicas (e.g. read-your-writes: a process always sees its own earlier writes).</p>
+<p><b>Q2. Compare strict, sequential, causal and eventual consistency. (8)</b><br>
+Strict: every read returns the most recent write in real time, as with one global clock and one copy &mdash; strongest, not achievable in practice. Sequential: all processes see the same single interleaving of all operations, respecting each process's program order but not real time &mdash; implementable. Causal: only causally related writes must be seen in the same order by everyone; concurrent writes may be seen in different orders &mdash; cheaper. Eventual: if updates stop, all replicas eventually converge; no ordering or timing guarantee in between &mdash; weakest, most available (DNS, NoSQL). Performance and availability increase as guarantees weaken.</p>
+<p><b>Q3. P1: W(x)a. P2: W(x)b. P3: R(x)b, R(x)a. P4: R(x)a, R(x)b. Is this sequentially consistent? Explain. (4)</b><br>
+No. P3 observes b before a, while P4 observes a before b. Sequential consistency requires all processes to see the same interleaving of writes, and no single order of W(x)a and W(x)b explains both P3's and P4's reads.</p>
+<p><b>Q4. Explain the four client-centric consistency guarantees with an example each. (8)</b><br>
+Monotonic reads: once a process has read a value it never later reads an older one (a phone must not show fewer emails than the laptop already showed). Monotonic writes: a process's writes are applied on every replica in the order issued (title update before body update). Read your writes: a process always sees its own writes (a posted comment appears after refresh). Writes follow reads: a write is applied on the same or newer state than the value previously read (a reply is ordered after the post it answers).</p>
+<p><b>Q5. Compare push-based and pull-based update propagation. When is each suitable? (5)</b><br>
+Push: the server sends updates to replicas immediately; replicas stay fresh and reads are fast, but bandwidth is wasted if replicas are rarely read; suitable for a high read-to-write ratio and strong freshness needs. Pull: replicas poll for updates when needed; bandwidth-efficient but reads may be stale between polls; suitable for a low read-to-write ratio and bandwidth-limited clients.</p>
+<p><b>Q6. Describe the three types of replica placement. (3)</b><br>
+Permanent replicas: the fixed initial set of servers of the data store (origin data centres). Server-initiated replicas: created dynamically by the system to handle demand (copy of a popular page pushed to a busy region). Client-initiated replicas: caches created at the client's request, usually temporary (browser cache).</p>
+<p><b>Q7. State the CAP theorem. Classify ZooKeeper, DNS and a single-site database cluster. What does PACELC add? (7)</b><br>
+A distributed data store can provide at most two of consistency, availability and partition tolerance. ZooKeeper-style coordination services are CP (reject requests on the minority side to stay consistent). DNS is AP (keeps answering, possibly stale, converges later). A single-site cluster on one reliable LAN is CA (meaningful only without partitions). PACELC adds that when there is no partition (Else), there is still a trade-off between Latency and Consistency, because strong consistency requires coordination that adds latency.</p>
+<p><b>Q8. Explain fault, error and failure with an example. Name the three redundancy techniques. (6)</b><br>
+A fault is a defect in a component (a bad disk sector); it can cause an error, an incorrect internal state (a corrupted block); if the error reaches the service, a failure occurs, a visible breakdown (file unreadable). Redundancy: information (parity, checksums, ECC), time (retry, timeout and resend), physical (replica servers, redundant links, RAID).</p>
+<p><b>Q9. Compare heartbeat and gossip failure detection. (6)</b><br>
+Heartbeat: each process periodically sends "I'm alive" to a monitor; no heartbeat within the timeout means suspected failure. Centralized, fast and bounded detection, simple, but the monitor is a bottleneck and single point of failure, and delays cause false positives. Gossip: processes exchange membership state with random peers; information spreads epidemically in O(log N) rounds. Decentralized, highly scalable, no single point of failure, but detection is probabilistic and slower. Heartbeat suits small/medium clusters; gossip suits very large dynamic systems.</p>
+<p><b>Q10. Explain at-most-once, at-least-once and exactly-once semantics. Why is a lost reply a problem? (6)</b><br>
+At-most-once: the request is executed zero or one times (no duplicates, but may not run). At-least-once: retried until a reply arrives, so it runs one or more times; safe only for idempotent operations. Exactly-once: runs exactly once; ideal but needs duplicate detection and recovery. A lost reply is a problem because the client cannot tell whether the server executed the request; retrying may execute it twice, not retrying may leave it undone.</p>
+<p><b>Q11. What is atomic multicast? Explain FIFO, causal and total ordering. (6)</b><br>
+Atomic multicast delivers a message to every non-faulty group member or to none, even if the sender crashes midway. FIFO: messages from one sender arrive in the order sent. Causal: causally related messages from any senders are delivered respecting happened-before. Total: all members deliver all messages in the same order.</p>
+<p><b>Q12. Describe Two-Phase Commit. Explain its blocking problem and how Three-Phase Commit solves it. (10)</b><br>
+2PC has a coordinator and participants. Phase 1 (voting): the coordinator sends VOTE-REQUEST; each participant votes YES (ready) or NO. Phase 2 (decision): if all vote YES the coordinator broadcasts COMMIT; if any votes NO it broadcasts ABORT; all participants follow, giving all-or-nothing atomicity. Blocking: if the coordinator crashes after participants voted YES but before they receive the decision, they cannot commit or abort on their own and must wait, holding locks, until it recovers. 3PC adds a prepare-to-commit phase: after all YES votes the coordinator sends PREPARE-TO-COMMIT and waits for ACKs, then sends COMMIT. Every participant therefore knows the group's intent before anyone commits, so after a coordinator crash the survivors (or a new coordinator) can use timeouts: if any has received PREPARE-TO-COMMIT they commit, otherwise they abort. This avoids indefinite blocking under crash-only failures without partitions, at the cost of an extra round of messages and more complexity.</p>
+<p><b>Q13. Identify the core access-control mechanisms used to secure a distributed file system. (6)</b><br>
+Authentication (who: Kerberos tickets, mutual TLS); authorization (what: ACLs, capabilities, RBAC); integrity and confidentiality (TLS in transit, encryption at rest, checksums/signatures); consistent policy enforcement on every replica; auditing (logging access and changes).</p>
+
+<h2>14. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Sequential consistency must follow real time</td><td>Only strict consistency needs real time; sequential needs one agreed interleaving.</td></tr>
+<tr><td>Causal consistency orders all writes</td><td>Only causally related writes; concurrent writes may be seen in different orders.</td></tr>
+<tr><td>Eventual consistency = data may be lost</td><td>All replicas converge to the last value once updates stop; reads may only be temporarily stale.</td></tr>
+<tr><td>Mixing up monotonic reads and read-your-writes</td><td>Monotonic reads: read &rarr; read never goes back. Read-your-writes: write &rarr; read sees your own write.</td></tr>
+<tr><td>Push is better for rarely-read replicas</td><td>Push wastes bandwidth there; pull fits a low read-to-write ratio.</td></tr>
+<tr><td>CAP availability = 99.99% uptime</td><td>CAP availability = every request gets a non-error response.</td></tr>
+<tr><td>Fault and failure used as synonyms</td><td>Fault (cause) &rarr; error (bad state) &rarr; failure (visible).</td></tr>
+<tr><td>Heartbeat is decentralized</td><td>Heartbeat uses a monitor (centralized); gossip is decentralized.</td></tr>
+<tr><td>2PC blocks when a participant votes NO</td><td>A NO just causes ABORT. Blocking happens when the <b>coordinator crashes</b> after YES votes, before the decision.</td></tr>
+<tr><td>3PC works under any failure</td><td>Only crash-only failures without network partitions.</td></tr>
+<tr><td>Retrying any request is safe</td><td>Only idempotent ones; otherwise at-least-once can execute twice.</td></tr>
+</table>
+
+<h2 class="pb">Cheat sheet</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Consistency</th></tr>
+<tr><td>Model</td><td>Contract: what a read may return after writes</td></tr>
+<tr><td>Strict</td><td>Latest write in real time; needs global clock; not achievable</td></tr>
+<tr><td>Sequential</td><td>Same interleaving for all; own program order; not real time</td></tr>
+<tr><td>Causal</td><td>Related writes same order; concurrent any order</td></tr>
+<tr><td>Eventual</td><td>No new updates &rArr; converge; DNS, NoSQL</td></tr>
+<tr><td>Mono. reads</td><td>read&rarr;read: never older</td></tr>
+<tr><td>Mono. writes</td><td>write&rarr;write: your order everywhere</td></tr>
+<tr><td>Read your writes</td><td>write&rarr;read: see own write</td></tr>
+<tr><td>Writes follow reads</td><td>read&rarr;write: write on same/newer state</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Replication</th></tr>
+<tr><td>Why</td><td>Performance, reliability, scalability, availability</td></tr>
+<tr><td>Push</td><td>Server-initiated; fresh; high read:write</td></tr>
+<tr><td>Pull</td><td>Client-initiated; saves bandwidth; low read:write</td></tr>
+<tr><td>Placement</td><td>Permanent (core) &middot; server-initiated (regional) &middot; client-initiated caches (edge)</td></tr>
+<tr><td>Quorum</td><td>R + W &gt; N &rArr; reads see latest write</td></tr>
+</table>
+<table>
+<tr><th colspan="2">CAP / PACELC</th></tr>
+<tr><td>CP</td><td>Refuse minority side: quorum DBs, ZooKeeper</td></tr>
+<tr><td>AP</td><td>Answer both sides, reconcile: NoSQL, DNS, carts</td></tr>
+<tr><td>CA</td><td>Single site, one LAN</td></tr>
+<tr><td>PACELC</td><td>P: A or C; Else: L or C</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Fault tolerance</th></tr>
+<tr><td>Chain</td><td>Fault &rarr; error &rarr; failure</td></tr>
+<tr><td>Dependability</td><td>Availability, reliability, safety, maintainability</td></tr>
+<tr><td>Failures</td><td>Crash &lt; omission &lt; timing &lt; response &lt; Byzantine</td></tr>
+<tr><td>Redundancy</td><td>Information (parity, ECC) &middot; time (retry) &middot; physical (replicas, RAID)</td></tr>
+<tr><td>Groups</td><td>Flat (robust, voting) &middot; hierarchical (simple, coordinator SPOF)</td></tr>
+<tr><td>Heartbeat</td><td>"I'm alive" to monitor; timeout &rArr; suspect; fast; SPOF; false positives</td></tr>
+<tr><td>Gossip</td><td>Random peers; epidemic; O(log N) rounds; scalable; probabilistic</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Reliable communication</th></tr>
+<tr><td>C-S failures</td><td>Request lost, server crash, reply lost, client crash (orphans)</td></tr>
+<tr><td>Semantics</td><td>At-most-once &middot; at-least-once (idempotent) &middot; exactly-once</td></tr>
+<tr><td>Atomic multicast</td><td>All non-faulty members or none</td></tr>
+<tr><td>Ordering</td><td>FIFO (per sender) &middot; causal &middot; total (same order for all)</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Commit &amp; security</th></tr>
+<tr><td>2PC</td><td>VOTE-REQUEST &rarr; YES/NO &rarr; COMMIT (all yes) / ABORT (any no). <b>Blocks</b> if coordinator dies after YES votes</td></tr>
+<tr><td>3PC</td><td>Vote &rarr; PREPARE-TO-COMMIT + ACK &rarr; COMMIT. Non-blocking (crash-only, no partitions); more messages</td></tr>
+<tr><td>DFS security</td><td>Authenticate (Kerberos, mTLS) &rarr; authorize (ACL, capability, RBAC) &rarr; encrypt (TLS, at rest) + checksums; same policy on all replicas; auditing</td></tr>
+</table>
+</div>
+</div>
+
+</body>
+</html>
