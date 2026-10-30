@@ -1,0 +1,64 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Basics</th></tr>
+<tr><td>Definition</td><td>Computing as a <b>service, not a product</b>; metered over a network; on-demand, pay-as-you-go</td></tr>
+<tr><td>Key concepts</td><td>Remotely hosted, ubiquitous access, commodified computing, multi-tenancy</td></tr>
+<tr><td>5 V's</td><td>Volume, Velocity, Variety, Veracity, Value</td></tr>
+<tr><td>NIST 5</td><td>On-demand self-service, Broad network access, Resource pooling, Rapid elasticity, Measured service</td></tr>
+<tr><td>Why</td><td>Pay-as-you-go (no CapEx, lower TCO), instant scale, simplified IT, flexible, efficient, green</td></tr>
+</table>
+<table>
+<tr><th>Model</th><th>You manage</th><th>Example</th></tr>
+<tr><td>IaaS</td><td>OS &uarr; (OS, middleware, runtime, data, apps)</td><td>EC2, Azure VMs, GCE</td></tr>
+<tr><td>PaaS</td><td>App + data</td><td>Heroku, App Engine, Beanstalk</td></tr>
+<tr><td>SaaS</td><td>Nothing (just use)</td><td>Gmail, Salesforce, M365, Zoom</td></tr>
+<tr><td>XaaS</td><td colspan="2">FaaS (Lambda), DBaaS (RDS), STaaS (S3), AIaaS (SageMaker), NaaS (SDN), SECaaS (Zscaler)</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Deployment</th></tr>
+<tr><td>Public</td><td>3rd party, shared; cheap, scalable</td></tr>
+<tr><td>Private</td><td>One org; security, control</td></tr>
+<tr><td>Hybrid</td><td>Private + public, portable; flexible</td></tr>
+<tr><td>Community</td><td>Orgs with shared concerns</td></tr>
+<tr><td>Multi-cloud</td><td>Several public; no lock-in (87%)</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Modern developments</th></tr>
+<tr><td>Containers</td><td>Share host kernel; light, fast, portable (Docker)</td></tr>
+<tr><td>Kubernetes</td><td>Auto-scale, self-heal, load balance, rolling updates, service discovery, storage orchestration (EKS/AKS/GKE)</td></tr>
+<tr><td>Serverless</td><td>Trigger &rarr; run &rarr; scale 0..&infin; &rarr; pay per run. Cons: cold start, debugging</td></tr>
+<tr><td>Edge / Fog / Cloud</td><td>&lt;10 ms / 10&ndash;50 ms / 50&ndash;150 ms</td></tr>
+<tr><td>Virtualization</td><td>Consolidation, isolation, rapid provisioning, snapshot &amp; migration</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Security, cost, ops</th></tr>
+<tr><td>Shared resp.</td><td>Provider: OF the cloud (physical, network HW, hypervisor). Customer: IN (data, IAM, network config, apps)</td></tr>
+<tr><td>Zero Trust</td><td>Never trust, always verify: verify explicitly, least privilege, assume breach</td></tr>
+<tr><td>FinOps</td><td>Right-size, reserved (&le;72%), spot (60&ndash;90%), auto-scale, tiering, tags</td></tr>
+<tr><td>Compliance</td><td>GDPR, HIPAA, PCI-DSS, ISO 27001, SOC 2, PDPA</td></tr>
+<tr><td>Multi-cloud why</td><td>Lock-in, best-of-breed, compliance, cost arbitrage, redundancy</td></tr>
+<tr><td>Cloud-native</td><td>Microservices, CI/CD, IaC, observability, chaos eng., GitOps</td></tr>
+<tr><td>Market</td><td>AWS 31%, Azure 25%, GCP 11%, Alibaba 4%</td></tr>
+<tr><td>Green</td><td>DCs 1&ndash;2% of world power; cloud 65&ndash;80% more efficient</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Mixing service models and deployment models</td><td>Service model = <b>what</b> is provided (IaaS/PaaS/SaaS). Deployment model = <b>who owns/uses</b> it (public/private/hybrid/community/multi).</td></tr>
+<tr><td>"In IaaS the provider manages the OS."</td><td>In IaaS <b>you</b> manage the OS and everything above it.</td></tr>
+<tr><td>Hybrid = multi-cloud</td><td>Hybrid = private + public. Multi-cloud = several public providers.</td></tr>
+<tr><td>"Serverless has no servers."</td><td>Servers exist; you just don't manage them.</td></tr>
+<tr><td>Listing "scalability" or "security" as a NIST characteristic</td><td>The five are on-demand self-service, broad network access, resource pooling, rapid elasticity, measured service.</td></tr>
+<tr><td>"The provider is responsible for all security in the cloud."</td><td>Shared responsibility: the customer secures data, IAM, network config, apps.</td></tr>
+<tr><td>Containers contain their own OS</td><td>They share the host OS kernel; VMs have a full guest OS.</td></tr>
+<tr><td>Edge = fog</td><td>Edge is on/near the device (&lt;10 ms); fog is a middle layer (10&ndash;50 ms) that aggregates edge data.</td></tr>
+<tr><td>Spot instances for a critical always-on server</td><td>Spot can be reclaimed at any time; use it only for fault-tolerant work.</td></tr>
+</table>

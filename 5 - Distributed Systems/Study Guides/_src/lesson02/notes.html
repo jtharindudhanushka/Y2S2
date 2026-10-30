@@ -1,0 +1,437 @@
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Source: Lecture 02 Introduction to Cloud Computing (45 slides). Community cloud comes from Lecture 01.</p>
+<div class="key">
+<b class="t">What you will be able to do after this lesson</b>
+<ul>
+<li>Explain why the data explosion (big data, 5 V's) drives cloud computing, using the electricity analogy.</li>
+<li>Give the definition of cloud computing and the <b>NIST five essential characteristics</b>.</li>
+<li>Explain <b>IaaS, PaaS and SaaS</b> (who manages which layer, examples, best use) and the other "as a service" models.</li>
+<li>Compare <b>public, private, hybrid, community and multi-cloud</b> deployment models.</li>
+<li>Explain the enabling technologies, especially <b>virtualization</b>, and the cloud characteristics.</li>
+<li>Describe modern developments: containers, Kubernetes, serverless, edge and fog computing, AI in the cloud, the <b>shared responsibility model</b>, <b>Zero Trust</b>, FinOps, compliance, green cloud, multi-cloud and DevOps.</li>
+</ul>
+</div>
+
+<h2>1. The world of data (slides 3&ndash;6)</h2>
+<p>Almost everything we do creates digital data: documents and files, media (photos, videos, music), communications (email, chat, video calls), personal data (calendar, contacts, location), health data (wearables, medical records) and financial data (banking, transactions). Scale on the slides: <b>2.5 quintillion bytes created every day</b>, 5B+ Internet users (2024), 500M+ tweets a day, 720K hours of YouTube video uploaded a day.</p>
+<div class="key">
+<b class="t">Big data (definition)</b>
+Large pools of data that can be captured, communicated, aggregated, stored and analysed to deliver insights and value.
+</div>
+<table>
+<tr><th style="width:16%">The 5 V's</th><th>Meaning</th><th>Slide example</th></tr>
+<tr><td><b>Volume</b></td><td>The sheer amount of data</td><td>1.2 ZB (2010) &rarr; 120+ ZB (2024). 1 ZB (zettabyte) = 10<sup>21</sup> bytes</td></tr>
+<tr><td><b>Velocity</b></td><td>The speed at which data arrives and must be processed</td><td>Real-time streaming and processing</td></tr>
+<tr><td><b>Variety</b></td><td>The different forms of data</td><td>Structured (tables), semi-structured (JSON, XML), unstructured (images, video, text)</td></tr>
+<tr><td><b>Veracity</b></td><td>How trustworthy/accurate the data is</td><td>Data quality and accuracy</td></tr>
+<tr><td><b>Value</b></td><td>The useful result we get from it</td><td>Business insights and decisions</td></tr>
+</table>
+<p><b>What we do with data</b> (slide 6): <b>store</b> (databases, file systems, object storage), <b>secure</b> (encryption, access control, compliance), <b>share</b> (APIs, collaboration platforms), <b>process</b> (real-time analytics, batch processing), <b>analyze</b> (ML, AI, BI dashboards), <b>stream</b> (IoT sensors, live pipelines). A single company cannot cheaply buy enough machines for all this &mdash; this is what pushes computing into the cloud.</p>
+
+<h2>2. From product to service: the electricity analogy (slides 7&ndash;8)</h2>
+<div class="fig">
+<svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="10" y="20" width="190" height="80"/><rect x="245" y="20" width="190" height="80"/><rect x="480" y="20" width="190" height="80"/></g>
+<g text-anchor="middle"><text x="105" y="42" font-size="12" font-weight="bold">Innovation</text><text x="340" y="42" font-size="12" font-weight="bold">Product</text><text x="575" y="42" font-size="12" font-weight="bold">Service</text></g>
+<g text-anchor="middle" font-size="10"><text x="105" y="62">new disruptive</text><text x="105" y="76">technology emerges</text><text x="340" y="62">buy and maintain it</text><text x="340" y="76">yourself (own generator,</text><text x="340" y="90">own servers)</text><text x="575" y="62">pay only for what you</text><text x="575" y="76">use (grid electricity,</text><text x="575" y="90">cloud computing)</text></g>
+<line x1="200" y1="60" x2="243" y2="60" stroke="currentColor" stroke-width="1.5" marker-end="url(#b1)"/><line x1="435" y1="60" x2="478" y2="60" stroke="currentColor" stroke-width="1.5" marker-end="url(#b1)"/>
+</svg>
+<div class="cap">Figure 1 &mdash; Electricity, water and banking moved from product to service. Computing follows the same path.</div>
+</div>
+<table class="small">
+<tr><th>Stage</th><th>Electricity</th><th>Computing</th></tr>
+<tr><td>Then</td><td>Companies ran private generators: expensive, unreliable, needed specialists</td><td>Companies bought and ran their own servers in their own server rooms</td></tr>
+<tr><td>Transition</td><td>Electricity became a shared utility from the grid; pay for what you use</td><td>Large providers built huge shared data centres</td></tr>
+<tr><td>Now</td><td>Plug in and pay per unit</td><td><b>Cloud</b>: computing on demand, no upfront servers, pay per use, managed by experts</td></tr>
+</table>
+
+<h2>3. What is cloud computing? (slides 9&ndash;12)</h2>
+<div class="key">
+<b class="t">Definition (slide 9)</b>
+"Cloud computing is the delivery of computing <b>as a service rather than a product</b>, whereby shared resources, software and information are provided to computers and other devices as a <b>metered service over a network</b>."<br>
+Short form: <b>on-demand IT services on a pay-as-you-go basis over the Internet</b>.
+</div>
+<p><b>Key concepts (slide 10):</b></p>
+<ul>
+<li><b>Remotely hosted</b>: services and data are stored and run on remote infrastructure, not on local machines.</li>
+<li><b>Ubiquitous access</b>: accessible from anywhere, anytime, on any device.</li>
+<li><b>Commodified computing</b>: computing as a utility like water or electricity; pay only for what you consume.</li>
+<li><b>Multi-tenancy</b>: multiple users (<b>tenants</b>) share the same physical infrastructure securely and independently, like flats in one apartment block.</li>
+</ul>
+
+<h3>NIST's five essential characteristics (slide 11) &mdash; very likely exam question</h3>
+<p>NIST (the US National Institute of Standards and Technology) wrote the standard definition. A service is "cloud" only if it has all five.</p>
+<table>
+<tr><th style="width:4%">#</th><th style="width:22%">Characteristic</th><th>Meaning</th><th>Example</th></tr>
+<tr><td>1</td><td><b>On-demand self-service</b></td><td>Users provision computing resources automatically, <b>without human interaction</b> from the provider.</td><td>You click "Launch instance" and get a server in a minute; nobody at AWS approves it.</td></tr>
+<tr><td>2</td><td><b>Broad network access</b></td><td>Available over the network through standard mechanisms (phones, tablets, laptops).</td><td>Open Google Drive from a phone or a laptop browser.</td></tr>
+<tr><td>3</td><td><b>Resource pooling</b></td><td>The provider's resources are pooled to serve many consumers using a <b>multi-tenant</b> model; the customer does not know the exact physical location.</td><td>Your VM and another company's VM run on the same physical server.</td></tr>
+<tr><td>4</td><td><b>Rapid elasticity</b></td><td>Capabilities can be provisioned and released quickly, even automatically, to scale with demand.</td><td>An online shop goes from 2 to 20 servers during a sale, then back to 2.</td></tr>
+<tr><td>5</td><td><b>Measured service</b></td><td>Resource use is monitored, controlled and reported &mdash; pay for what you use.</td><td>Bill = CPU-hours + GB stored + GB transferred.</td></tr>
+</table>
+<p>Memory aid: <b>"On Broad Pools, Rapid Meters"</b> (On-demand, Broad, Pooling, Rapid, Measured).</p>
+
+<h3>Why cloud computing? (slide 12)</h3>
+<table class="small">
+<tr><th>Benefit</th><th>Explanation</th></tr>
+<tr><td>Pay-as-you-go</td><td>No upfront <b>capital expenditure (CapEx)</b> on hardware; costs become <b>operating expenditure (OpEx)</b>. Reduces <b>Total Cost of Ownership (TCO)</b> = all costs of owning (hardware, power, cooling, staff, space).</td></tr>
+<tr><td>Scale instantly</td><td>Rent and release resources as needed.</td></tr>
+<tr><td>Simplified IT</td><td>The provider manages the infrastructure; you need only Internet access.</td></tr>
+<tr><td>Flexible options</td><td>Choose software, OS and platforms; access from anywhere.</td></tr>
+<tr><td>Resource efficiency</td><td>Sharing reduces idle resources; better CPU/storage utilisation.</td></tr>
+<tr><td>Green computing</td><td>Sharing = fewer servers, less power, lower carbon footprint.</td></tr>
+</table>
+
+<h3>Worked example: own server vs pay-as-you-go (illustrative numbers)</h3>
+<p>A student project needs a server for a 2-week exam-results peak each semester (2 semesters a year), and almost nothing the rest of the year.</p>
+<table class="small">
+<tr><th>Option</th><th>Calculation</th><th>Yearly cost</th></tr>
+<tr><td>Buy a server (sized for the peak)</td><td>Rs. 600,000 hardware spread over 3 years = 200,000/yr, + power/maintenance 50,000/yr</td><td><b>Rs. 250,000</b>, mostly idle</td></tr>
+<tr><td>Cloud VM, pay per hour</td><td>4 weeks &times; 7 days &times; 24 h = 672 h &times; Rs. 100/h</td><td><b>Rs. 67,200</b>, nothing paid when idle</td></tr>
+</table>
+<p>The point (not the exact numbers): for spiky or uncertain demand, measured service plus elasticity is much cheaper than owning capacity for the peak.</p>
+
+<h2>4. Cloud service models (slides 13&ndash;17)</h2>
+<p>A <b>service model</b> says <b>how much of the computing stack the provider manages for you</b>. The stack (bottom to top): networking, storage, servers, virtualization, operating system (OS), middleware, runtime, data, applications.</p>
+<ul class="small">
+<li><b>Middleware</b>: software between the OS and applications (web servers, message queues, database connectors).</li>
+<li><b>Runtime</b>: the environment the code runs in (Java JVM, Python interpreter, Node.js).</li>
+</ul>
+<div class="fig">
+<svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
+<g font-size="11" text-anchor="middle" font-weight="bold"><text x="85" y="16">On-premises</text><text x="255" y="16">IaaS</text><text x="425" y="16">PaaS</text><text x="595" y="16">SaaS</text></g>
+<g font-size="10" text-anchor="middle">
+
+<g id="col"></g>
+</g>
+<g stroke="currentColor" font-size="10" text-anchor="middle">
+
+<rect x="20" y="26" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="52" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="78" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="104" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="130" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="156" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="182" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="208" width="130" height="26" style="fill:var(--bg)"/><rect x="20" y="234" width="130" height="26" style="fill:var(--bg)"/>
+
+<rect x="190" y="26" width="130" height="26" style="fill:var(--bg)"/><rect x="190" y="52" width="130" height="26" style="fill:var(--bg)"/><rect x="190" y="78" width="130" height="26" style="fill:var(--bg)"/><rect x="190" y="104" width="130" height="26" style="fill:var(--bg)"/><rect x="190" y="130" width="130" height="26" style="fill:var(--bg)"/><rect x="190" y="156" width="130" height="26" style="fill:var(--soft)"/><rect x="190" y="182" width="130" height="26" style="fill:var(--soft)"/><rect x="190" y="208" width="130" height="26" style="fill:var(--soft)"/><rect x="190" y="234" width="130" height="26" style="fill:var(--soft)"/>
+
+<rect x="360" y="26" width="130" height="26" style="fill:var(--bg)"/><rect x="360" y="52" width="130" height="26" style="fill:var(--bg)"/><rect x="360" y="78" width="130" height="26" style="fill:var(--soft)"/><rect x="360" y="104" width="130" height="26" style="fill:var(--soft)"/><rect x="360" y="130" width="130" height="26" style="fill:var(--soft)"/><rect x="360" y="156" width="130" height="26" style="fill:var(--soft)"/><rect x="360" y="182" width="130" height="26" style="fill:var(--soft)"/><rect x="360" y="208" width="130" height="26" style="fill:var(--soft)"/><rect x="360" y="234" width="130" height="26" style="fill:var(--soft)"/>
+
+<rect x="530" y="26" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="52" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="78" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="104" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="130" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="156" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="182" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="208" width="130" height="26" style="fill:var(--soft)"/><rect x="530" y="234" width="130" height="26" style="fill:var(--soft)"/>
+</g>
+<g font-size="10" text-anchor="middle">
+<text x="85" y="43">Applications</text><text x="85" y="69">Data</text><text x="85" y="95">Runtime</text><text x="85" y="121">Middleware</text><text x="85" y="147">OS</text><text x="85" y="173">Virtualization</text><text x="85" y="199">Servers</text><text x="85" y="225">Storage</text><text x="85" y="251">Networking</text>
+<text x="255" y="43">Applications</text><text x="255" y="69">Data</text><text x="255" y="95">Runtime</text><text x="255" y="121">Middleware</text><text x="255" y="147">OS</text><text x="255" y="173">Virtualization</text><text x="255" y="199">Servers</text><text x="255" y="225">Storage</text><text x="255" y="251">Networking</text>
+<text x="425" y="43">Applications</text><text x="425" y="69">Data</text><text x="425" y="95">Runtime</text><text x="425" y="121">Middleware</text><text x="425" y="147">OS</text><text x="425" y="173">Virtualization</text><text x="425" y="199">Servers</text><text x="425" y="225">Storage</text><text x="425" y="251">Networking</text>
+<text x="595" y="43">Applications</text><text x="595" y="69">Data</text><text x="595" y="95">Runtime</text><text x="595" y="121">Middleware</text><text x="595" y="147">OS</text><text x="595" y="173">Virtualization</text><text x="595" y="199">Servers</text><text x="595" y="225">Storage</text><text x="595" y="251">Networking</text>
+</g>
+<rect x="160" y="275" width="16" height="12" style="fill:var(--bg)" stroke="currentColor"/><text x="182" y="285" font-size="10">= you (customer) manage</text>
+<rect x="360" y="275" width="16" height="12" style="fill:var(--soft)" stroke="currentColor"/><text x="382" y="285" font-size="10">= provider manages</text>
+</svg>
+<div class="cap">Figure 2 &mdash; Who manages what. Moving right, the provider takes over more layers and you control less (slide 14 shows the IaaS split).</div>
+</div>
+<table>
+<tr><th style="width:11%">Model</th><th>What you get</th><th>You manage</th><th>Examples (slides)</th><th>Best for</th></tr>
+<tr><td><b>IaaS</b><br>Infrastructure as a Service</td><td>Virtualized computing infrastructure: VMs, storage, networking</td><td>OS and everything above it (OS, middleware, runtime, data, apps)</td><td>AWS EC2, Azure VMs, Google Compute Engine</td><td>Lift-and-shift migrations (moving existing apps unchanged), dev/test environments, HPC workloads</td></tr>
+<tr><td><b>PaaS</b><br>Platform as a Service</td><td>A platform to build and deploy apps; developers focus only on writing code</td><td>Only the application (and its data)</td><td>Heroku, Google App Engine, AWS Elastic Beanstalk, Azure App Service, Firebase</td><td>Developers who want to ship code without managing servers</td></tr>
+<tr><td><b>SaaS</b><br>Software as a Service</td><td>Complete, ready-to-use software over the Internet; no installation; pay-as-you-go/subscription</td><td>Nothing technical &mdash; just your data and settings</td><td>Gmail, Salesforce, Microsoft 365, Zoom</td><td>End users who just need the application</td></tr>
+</table>
+<p><b>PaaS features (slide 15):</b> auto-scaling (handles traffic spikes), CI/CD pipelines (automated build, test, deploy), managed databases (no DBA; provider handles backups), dev frameworks (pre-built runtimes), built-in networking (load balancers, SSL certificates), monitoring (built-in logging and performance tools).</p>
+<p><b>SaaS examples (slide 16):</b> email (Gmail, Outlook 365), video conferencing (Zoom, Teams, Meet), CRM (Salesforce, HubSpot), office suites (Microsoft 365, Google Workspace), media (Spotify, Netflix), security (Okta, CrowdStrike), analytics (Tableau Online, Power BI), collaboration (Slack, Notion, Asana).</p>
+<div class="box small"><b class="t">Pizza analogy (helps in explanations)</b>On-premises = make pizza at home from scratch. IaaS = buy a ready base and oven time; you add toppings and bake. PaaS = pizza delivered; you just provide the table and drinks. SaaS = eat at a restaurant; everything is done for you.</div>
+
+<h3>Beyond IaaS/PaaS/SaaS: "Everything as a Service" (slide 17)</h3>
+<table class="small">
+<tr><th>Model</th><th>Meaning</th><th>Examples</th></tr>
+<tr><td><b>FaaS</b> Function as a Service</td><td>Run individual functions on demand (serverless, section 8.3)</td><td>AWS Lambda, Azure Functions</td></tr>
+<tr><td><b>DBaaS</b> Database as a Service</td><td>Managed databases &mdash; no DBA needed</td><td>AWS RDS, Azure SQL, MongoDB Atlas</td></tr>
+<tr><td><b>STaaS</b> Storage as a Service</td><td>Scalable object/file storage</td><td>S3, Azure Blob, Google Cloud Storage</td></tr>
+<tr><td><b>AIaaS</b> AI as a Service</td><td>Pre-trained ML models via an API</td><td>AWS SageMaker, Azure AI, Google Vertex</td></tr>
+<tr><td><b>NaaS</b> Network as a Service</td><td>Virtual networking on demand, using Software-Defined Networking (SDN, Lesson 3)</td><td>SDN-based virtual networks</td></tr>
+<tr><td><b>SECaaS</b> Security as a Service</td><td>Cloud-based security: SIEM (security event monitoring), CASB (cloud access security broker), DLP (data loss prevention)</td><td>CrowdStrike, Zscaler</td></tr>
+</table>
+
+<h3>Worked example: pick the service model</h3>
+<table class="small">
+<tr><th>Scenario</th><th>Model</th><th>Why</th></tr>
+<tr><td>A company moves its existing ERP server unchanged to the cloud and needs full control of the OS</td><td>IaaS</td><td>Lift-and-shift; they manage OS and up</td></tr>
+<tr><td>A startup writes a Python web app and does not want to patch servers</td><td>PaaS</td><td>Only the code is theirs; scaling and runtime managed</td></tr>
+<tr><td>A school needs email and video meetings for staff</td><td>SaaS</td><td>Ready-made software (Microsoft 365, Zoom)</td></tr>
+<tr><td>Resize every uploaded photo once, when it arrives</td><td>FaaS</td><td>Short, event-triggered, pay per call</td></tr>
+</table>
+
+<h2>5. Cloud deployment models (slide 18)</h2>
+<p>A <b>deployment model</b> says <b>who owns the infrastructure and who can use it</b> (a different question from the service model).</p>
+<div class="fig">
+<svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="10" y="20" width="120" height="70"/><rect x="145" y="20" width="120" height="70"/><rect x="280" y="20" width="120" height="70"/><rect x="415" y="20" width="120" height="70"/><rect x="550" y="20" width="120" height="70"/></g>
+<g font-size="12" font-weight="bold" text-anchor="middle"><text x="70" y="40">Public</text><text x="205" y="40">Private</text><text x="340" y="40">Hybrid</text><text x="475" y="40">Community</text><text x="610" y="40">Multi-cloud</text></g>
+<g font-size="9" text-anchor="middle"><text x="70" y="58">3rd-party provider,</text><text x="70" y="70">shared by many</text><text x="70" y="82">over Internet</text>
+<text x="205" y="58">one organization</text><text x="205" y="70">only (on-prem or</text><text x="205" y="82">hosted)</text>
+<text x="340" y="58">private + public</text><text x="340" y="70">bound together;</text><text x="340" y="82">data/app portability</text>
+<text x="475" y="58">shared by orgs with</text><text x="475" y="70">common concerns</text><text x="475" y="82">(e.g. hospitals)</text>
+<text x="610" y="58">several public</text><text x="610" y="70">providers at once</text><text x="610" y="82">(AWS + Azure + GCP)</text></g>
+<g font-size="9" text-anchor="middle" font-style="italic"><text x="70" y="110">cheap, scalable</text><text x="205" y="110">security, control</text><text x="340" y="110">flexible, cost-optimised</text><text x="475" y="110">shared cost + compliance</text><text x="610" y="110">no vendor lock-in</text></g>
+</svg>
+<div class="cap">Figure 3 &mdash; Deployment models. Community cloud is named in Lecture 01 (slide 7); Lecture 02 adds multi-cloud.</div>
+</div>
+<table>
+<tr><th>Model</th><th>Definition</th><th>Pros</th><th>Cons</th><th>Examples</th></tr>
+<tr><td><b>Public</b></td><td>Owned and operated by a third-party provider, delivered over the Internet, shared by many customers</td><td>Low cost, high scalability, no maintenance</td><td>Less control; data on someone else's hardware; compliance concerns</td><td>AWS, Azure, Google Cloud</td></tr>
+<tr><td><b>Private</b></td><td>Cloud infrastructure operated exclusively for a single organization</td><td>High security, compliance, control</td><td>Expensive; the organization pays for and runs capacity</td><td>VMware, OpenStack (software to build one)</td></tr>
+<tr><td><b>Hybrid</b></td><td>Combination of public and private clouds, bound together by technology enabling data and application portability</td><td>Flexibility, cost-optimised (sensitive data private, peaks to public = <b>cloud bursting</b>)</td><td>More complex to integrate and secure</td><td>Sri Lankan banks (Commercial Bank, HNB) for core banking</td></tr>
+<tr><td><b>Community</b> <i>[L01]</i></td><td>Shared by several organizations with common requirements (security, policy, compliance)</td><td>Costs shared; meets sector rules</td><td>Less flexible than public</td><td>Government agencies, hospitals, universities</td></tr>
+<tr><td><b>Multi-cloud</b></td><td>Using multiple public cloud providers simultaneously</td><td>Avoid vendor lock-in, best-of-breed services</td><td>More skills and management needed</td><td>2024: used by 87% of enterprises</td></tr>
+</table>
+<p><b>Hybrid vs multi-cloud</b> (common confusion): hybrid = private + public; multi-cloud = more than one <i>public</i> provider. An organization can be both.</p>
+
+<h2>6. Enabling technologies and characteristics (slides 19&ndash;21)</h2>
+<table class="small">
+<tr><th>Enabling technology</th><th>How it makes cloud possible</th></tr>
+<tr><td>Internet &amp; Web 2.0</td><td>High-bandwidth, always-on connectivity makes remote computing feasible.</td></tr>
+<tr><td><b>Virtualization</b></td><td>Divides one physical machine into many virtual machines, maximising utilisation (the core enabler).</td></tr>
+<tr><td>Parallel &amp; distributed computing</td><td>Splitting workloads across many machines enables massive scale (Lesson 1).</td></tr>
+<tr><td>Utility computing</td><td>Pay-per-use billing that mirrors traditional utilities.</td></tr>
+<tr><td>Storage technologies</td><td>Object storage and distributed file systems (HDFS, GCS) enable petabyte-scale data (Lesson 7).</td></tr>
+<tr><td>Fault tolerance</td><td>Redundancy and replication keep services up when components fail.</td></tr>
+</table>
+<div class="two">
+<div>
+<div class="fig">
+<svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+<g stroke="currentColor"><rect x="10" y="10" width="280" height="38" style="fill:var(--bg)"/><rect x="10" y="56" width="280" height="38" style="fill:var(--soft)"/><rect x="10" y="102" width="280" height="38" style="fill:var(--soft)"/></g>
+<g font-size="11" text-anchor="middle"><text x="150" y="34">Applications / VMs</text><text x="150" y="80" font-weight="bold">Hypervisor (VMware, KVM, Hyper-V)</text><text x="150" y="126">Physical hardware (CPU, RAM, storage)</text></g>
+</svg>
+<div class="cap">Figure 4 &mdash; Virtualization stack (slide 20).</div>
+</div>
+</div>
+<div>
+<p class="small"><b>Virtualization: the core enabler.</b> A <b>hypervisor</b> is software that sits on the hardware and creates <b>virtual machines (VMs)</b>, each acting like a separate computer with its own OS. Benefits on the slide:</p>
+<ul class="small">
+<li><b>Server consolidation</b>: many lightly-used servers become VMs on fewer physical machines.</li>
+<li><b>Isolation</b> between workloads: a crash in one VM does not affect others.</li>
+<li><b>Rapid VM provisioning</b>: minutes, not weeks.</li>
+<li><b>Snapshotting &amp; migration</b>: save a VM's state; move it to another host.</li>
+</ul>
+<p class="small">Details: Lessons 5 and 8.</p>
+</div>
+</div>
+<p><b>Cloud computing characteristics (slide 21):</b> <b>massive scale</b> (global data centres, millions of servers); <b>homogeneity</b> (standardised hardware for consistent management); <b>resilient computing</b> (auto-healing recovery); <b>geographic distribution</b> (regions for low latency and compliance); <b>low-cost software</b> (open-source stacks); <b>advanced security</b> (shared responsibility model); <b>service orientation</b> (everything exposed as an API &mdash; composable, interoperable); <b>virtualization</b> (physical resources abstracted into flexible logical ones).</p>
+<p><b>Market (slides 22&ndash;23):</b> AWS 31%, Azure 25%, Google Cloud 11%, Alibaba 4% (Synergy Research, Q3 2024). Public cloud revenue grew from $242B (2019) to an estimated $679B (2024) &mdash; about 3&times; in 5 years &mdash; and is expected to exceed $1 trillion by 2027.</p>
+
+<h2>7. Modern cloud developments (2020&ndash;2025): overview (slide 24)</h2>
+<p>Six trends: containers &amp; Kubernetes &middot; serverless computing &middot; edge &amp; fog computing &middot; AI/ML as a service &middot; Zero Trust security &middot; sustainability &amp; green cloud.</p>
+
+<h3>7.1 Containers and Docker (slide 25)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 190" xmlns="http://www.w3.org/2000/svg">
+<text x="165" y="16" text-anchor="middle" font-size="12" font-weight="bold">Traditional VMs</text>
+<g stroke="currentColor"><rect x="20" y="26" width="135" height="24" style="fill:var(--bg)"/><rect x="20" y="50" width="135" height="24" style="fill:var(--soft)"/><rect x="175" y="26" width="135" height="24" style="fill:var(--bg)"/><rect x="175" y="50" width="135" height="24" style="fill:var(--soft)"/><rect x="20" y="82" width="290" height="28" style="fill:var(--soft)"/><rect x="20" y="118" width="290" height="28" style="fill:var(--soft)"/></g>
+<g font-size="10" text-anchor="middle"><text x="87" y="42">App A</text><text x="87" y="66">Guest OS</text><text x="242" y="42">App B</text><text x="242" y="66">Guest OS</text><text x="165" y="100">Hypervisor</text><text x="165" y="136">Host OS + hardware</text></g>
+<text x="510" y="16" text-anchor="middle" font-size="12" font-weight="bold">Containers (Docker)</text>
+<g stroke="currentColor"><rect x="370" y="50" width="90" height="24" style="fill:var(--bg)"/><rect x="465" y="50" width="90" height="24" style="fill:var(--bg)"/><rect x="560" y="50" width="90" height="24" style="fill:var(--bg)"/><rect x="370" y="82" width="280" height="28" style="fill:var(--soft)"/><rect x="370" y="118" width="280" height="28" style="fill:var(--soft)"/></g>
+<g font-size="10" text-anchor="middle"><text x="415" y="66">App A + libs</text><text x="510" y="66">App B + libs</text><text x="605" y="66">App C + libs</text><text x="510" y="100">Container runtime (Docker)</text><text x="510" y="136">Host OS (shared kernel) + hardware</text></g>
+<text x="340" y="172" text-anchor="middle" font-size="10">Each VM carries a full guest OS (GBs, minutes to boot). Containers share the host OS kernel (MBs, seconds to start).</text>
+</svg>
+<div class="cap">Figure 5 &mdash; VMs vs containers (slide 25). Containers are faster, lighter and more portable than VMs.</div>
+</div>
+<p>A <b>container</b> packages an application with its libraries and settings, but <b>not</b> a whole OS: all containers on a host share the host's OS <b>kernel</b> (the core of the OS that controls hardware). <b>Docker</b> is the most popular tool to build and run containers. Lesson 3 (Docker) and Lesson 5 (VM vs container) go deeper.</p>
+
+<h3>7.2 Kubernetes: container orchestration (slide 26)</h3>
+<p>With hundreds of containers on many machines, someone must decide where each runs, restart failed ones and spread traffic. <b>Kubernetes (K8s)</b> automates the <b>deployment, scaling and management of containerized applications</b>. Six features:</p>
+<table class="small">
+<tr><th>Feature</th><th>What it does</th></tr>
+<tr><td>Auto-scaling</td><td>Scales Pods (groups of containers) up/down based on CPU, memory or custom metrics</td></tr>
+<tr><td>Self-healing</td><td>Restarts failed containers; kills containers that fail health checks</td></tr>
+<tr><td>Load balancing</td><td>Distributes network traffic to Pods for a stable deployment</td></tr>
+<tr><td>Rolling updates</td><td>Deploys new versions with zero downtime; instant rollback</td></tr>
+<tr><td>Service discovery</td><td>Automatically assigns DNS names and IP addresses to containers</td></tr>
+<tr><td>Storage orchestration</td><td>Automatically mounts storage &mdash; local, cloud or network</td></tr>
+</table>
+<p>Managed Kubernetes: <b>Amazon EKS, Azure AKS, Google GKE</b>. Full detail in Lesson 6.</p>
+
+<h3>7.3 Serverless computing (FaaS) (slide 27)</h3>
+<div class="key"><b class="t">Key sentence</b>"Serverless" does <b>not</b> mean no servers &mdash; it means <b>developers don't manage servers</b>. The provider provisions, scales and manages infrastructure automatically.</div>
+<div class="fig">
+<svg viewBox="0 0 680 70" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="10" y="10" width="140" height="50"/><rect x="185" y="10" width="140" height="50"/><rect x="360" y="10" width="140" height="50"/><rect x="535" y="10" width="135" height="50"/></g>
+<g font-size="11" text-anchor="middle"><text x="80" y="31" font-weight="bold">Event trigger</text><text x="80" y="48" font-size="9">HTTP, timer, queue</text><text x="255" y="31" font-weight="bold">Function executes</text><text x="255" y="48" font-size="9">milliseconds</text><text x="430" y="31" font-weight="bold">Auto-scales</text><text x="430" y="48" font-size="9">0 to millions</text><text x="602" y="31" font-weight="bold">Pay per execution</text><text x="602" y="48" font-size="9">nothing when idle</text></g>
+<g stroke="currentColor" stroke-width="1.5"><line x1="150" y1="35" x2="183" y2="35" marker-end="url(#b2)"/><line x1="325" y1="35" x2="358" y2="35" marker-end="url(#b2)"/><line x1="500" y1="35" x2="533" y2="35" marker-end="url(#b2)"/></g>
+</svg>
+<div class="cap">Figure 6 &mdash; Serverless flow (slide 27).</div>
+</div>
+<div class="two">
+<div><b>Advantages</b><ul class="small"><li>No server management</li><li>Auto-scales, including to zero</li><li>Pay only per invocation</li><li>Fast deployment</li></ul></div>
+<div><b>Disadvantages</b><ul class="small"><li><b>Cold start latency</b>: the first call after idle is slow because the provider must start a new environment</li><li>Debugging is harder (short-lived, distributed functions)</li></ul></div>
+</div>
+<p class="small">Examples: AWS Lambda, Azure Functions, Google Cloud Functions, Cloudflare Workers. <b>Serverless vs containers</b> (knowledge check): serverless for event-driven, infrequent, short-lived functions; containers for long-running, stateful, complex apps.</p>
+
+<h3>7.4 Edge, fog and cloud computing (slides 28&ndash;29)</h3>
+<p><b>Edge computing</b> = processing data <b>close to where it is generated</b> (at the "edge" of the network) instead of in a central data centre. Reason: <b>latency</b> &mdash; sending data to a far data centre and waiting for the answer takes too long for some uses.</p>
+<div class="fig">
+<svg viewBox="0 0 680 80" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="b3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g stroke="currentColor"><rect x="10" y="12" width="140" height="44" style="fill:var(--bg)"/><rect x="185" y="12" width="140" height="44" style="fill:var(--soft)"/><rect x="360" y="12" width="140" height="44" style="fill:var(--soft)"/><rect x="535" y="12" width="135" height="44" style="fill:var(--soft)"/></g>
+<g font-size="11" text-anchor="middle"><text x="80" y="31">IoT devices</text><text x="80" y="46">&amp; sensors</text><text x="255" y="31">Edge node /</text><text x="255" y="46">gateway (&lt;10 ms)</text><text x="430" y="31">Regional edge /</text><text x="430" y="46">fog (10&ndash;50 ms)</text><text x="602" y="31">Core cloud DC</text><text x="602" y="46">(50&ndash;150 ms)</text></g>
+<g stroke="currentColor" stroke-width="1.5"><line x1="150" y1="34" x2="183" y2="34" marker-end="url(#b3)"/><line x1="325" y1="34" x2="358" y2="34" marker-end="url(#b3)"/><line x1="500" y1="34" x2="533" y2="34" marker-end="url(#b3)"/></g>
+<text x="340" y="74" text-anchor="middle" font-size="9">closer to the data = lower latency, less compute power &nbsp;|&nbsp; further = higher latency, massive compute</text>
+</svg>
+<div class="cap">Figure 7 &mdash; Edge &rarr; fog &rarr; cloud tiers (slides 28&ndash;29).</div>
+</div>
+<table class="small">
+<tr><th>Aspect</th><th>Cloud computing</th><th>Fog computing</th><th>Edge computing</th></tr>
+<tr><td>Where</td><td>Centralized data centres</td><td>Between edge and cloud; aggregates edge data</td><td>On the device or a nearby gateway; processes at the source</td></tr>
+<tr><td>Latency</td><td>High (50&ndash;150 ms)</td><td>Medium (10&ndash;50 ms)</td><td>Ultra-low (&lt;10 ms)</td></tr>
+<tr><td>Compute</td><td>Massive</td><td>Moderate</td><td>Lightweight, real-time</td></tr>
+<tr><td>Ideal for</td><td>Batch analytics, storage</td><td>Aggregation, local analytics; Cisco's term for distributed compute</td><td>Instant decisions</td></tr>
+<tr><td>Examples</td><td>AWS, Azure, GCP</td><td>OpenFog, Cisco IOx</td><td>AWS Wavelength, Azure Edge</td></tr>
+</table>
+<p class="small"><b>Edge use cases:</b> autonomous vehicles (real-time decisions cannot wait for a cloud round-trip), industrial IoT (sensors control machines locally), remote healthcare (devices process vitals for instant alerts), cloud gaming (ultra-low latency). <b>MEC</b> (in the slide title) = Multi-access Edge Computing: edge servers placed in the mobile/telecom network.</p>
+
+<h3>7.5 AI and machine learning in the cloud (slides 30&ndash;31)</h3>
+<p>Training large AI models needs thousands of GPUs, which only the cloud can supply at that scale: "the cloud is the engine of the AI revolution". Platforms: AWS SageMaker (build, train, deploy), Azure AI / OpenAI (GPT-4, DALL-E, Cognitive Services), Google Vertex AI (AutoML, model garden, Gemini); NVIDIA A100/H100 GPU instances. Generative AI cloud spending is projected to exceed $200B a year by 2028.</p>
+<p class="small">GenAI and cloud are <b>symbiotic</b> (each helps the other): foundation models (GPT-4, Claude, Gemini, LLaMA) need cloud GPUs; providers built AI chips (TPUs, Trainium, Inferentia); AI is offered through simple REST APIs; companies fine-tune models on private data; VPCs and private endpoints protect sensitive training data; new vector databases (Pinecone, Weaviate, pgvector) power AI apps.</p>
+
+<h2>8. Cloud security (slides 32&ndash;33)</h2>
+<h3>8.1 The shared responsibility model</h3>
+<div class="fig">
+<svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="660" height="50" style="fill:var(--bg)" stroke="currentColor" stroke-width="1.5"/>
+<text x="20" y="28" font-size="12" font-weight="bold">Security IN the cloud &mdash; CUSTOMER</text>
+<text x="20" y="48" font-size="11">Data encryption &#183; Access management (IAM) &#183; Network configuration &#183; Application security</text>
+<rect x="10" y="64" width="660" height="50" style="fill:var(--soft)" stroke="currentColor" stroke-width="1.5"/>
+<text x="20" y="82" font-size="12" font-weight="bold">Security OF the cloud &mdash; PROVIDER</text>
+<text x="20" y="102" font-size="11">Physical infrastructure &#183; Network hardware &#183; Hypervisor</text>
+</svg>
+<div class="cap">Figure 8 &mdash; Shared responsibility (slide 32). The provider secures the cloud itself; the customer secures what they put in it.</div>
+</div>
+<p>Example: if a company leaves an S3 bucket open to the public, that is the <b>customer's</b> fault (configuration "in" the cloud), not AWS's. <b>IAM</b> = Identity and Access Management: users, roles and permissions.</p>
+
+<h3>8.2 Zero Trust security</h3>
+<p>Traditional security trusted everything <i>inside</i> the company network (a "castle and moat" <b>perimeter</b>). In the cloud there is no clear perimeter, so this is obsolete. <b>Zero Trust: "never trust, always verify"</b> &mdash; assume a breach and verify continuously.</p>
+<table class="small">
+<tr><th>Principle</th><th>Meaning</th></tr>
+<tr><td><b>Verify explicitly</b></td><td>Authenticate and authorize using all data points: identity, location, device health, workload</td></tr>
+<tr><td><b>Least privilege</b></td><td>Give only the access needed, at the right time, for the right purpose</td></tr>
+<tr><td><b>Assume breach</b></td><td>Design as if attackers are already inside; minimise the <b>blast radius</b> (how much damage one breach can do) and segment access</td></tr>
+</table>
+<p class="small">Tools: Microsoft Entra ID, Zscaler, CrowdStrike, Palo Alto Networks SASE.</p>
+
+<h2>9. Cost, compliance, sustainability, strategy (slides 34&ndash;38)</h2>
+<h3>9.1 FinOps: cloud cost optimisation</h3>
+<p><b>FinOps</b> = bringing financial accountability to cloud spending (costs can spiral without management).</p>
+<table class="small">
+<tr><th>Technique</th><th>Meaning</th></tr>
+<tr><td>Right-sizing</td><td>Match instance size to the real workload; oversized instances waste money</td></tr>
+<tr><td>Reserved instances</td><td>Commit for 1&ndash;3 years for predictable workloads; save up to 72%</td></tr>
+<tr><td>Spot / preemptible VMs</td><td>Use spare capacity at 60&ndash;90% discount, for fault-tolerant work (the provider can take it back)</td></tr>
+<tr><td>Auto-scaling</td><td>Scale down at low demand; don't pay for idle resources overnight/weekends</td></tr>
+<tr><td>Storage tiering</td><td>Move rarely used data to cheaper tiers (Glacier, Archive)</td></tr>
+<tr><td>Cost allocation tags</td><td>Tag every resource to track spending by team, project or environment</td></tr>
+</table>
+<p class="small"><b>Worked example:</b> a VM costs $100/month on demand. Reserved (up to 72% off) &asymp; $28/month; spot (60&ndash;90% off) &asymp; $10&ndash;40/month but can be interrupted. A web server that must always run &rarr; reserved; a batch video-rendering job that can restart &rarr; spot.</p>
+
+<h3>9.2 Compliance, governance and data sovereignty</h3>
+<p><b>Data sovereignty</b> = data is subject to the laws of the country where it is stored, so some data must stay in-country.</p>
+<table class="small">
+<tr><th>Standard</th><th>Scope</th></tr>
+<tr><td>GDPR</td><td>EU General Data Protection Regulation: strict personal-data rules, right to erasure, data residency</td></tr>
+<tr><td>HIPAA</td><td>US health data: must be encrypted and access-logged</td></tr>
+<tr><td>PCI-DSS</td><td>Payment Card Industry standard for systems processing card data</td></tr>
+<tr><td>ISO 27001</td><td>International information-security management standard</td></tr>
+<tr><td>SOC 2</td><td>Service Organization Controls; providers get Type I/II attestations</td></tr>
+<tr><td>PDPA / DPDPA</td><td>Personal Data Protection Acts in Sri Lanka, India and South-East Asia</td></tr>
+</table>
+
+<h3>9.3 Sustainability and green cloud (slide 36)</h3>
+<p>Data centres use about <b>1&ndash;2% of global electricity</b>. Google: carbon neutral since 2007, targeting 24/7 carbon-free energy by 2030. Microsoft: carbon negative and water positive by 2030, 100% renewable. AWS: 100% renewable by 2025, net-zero carbon by 2040. Shared cloud infrastructure is <b>65&ndash;80% more energy-efficient</b> than individual on-premises servers.</p>
+
+<h3>9.4 Multi-cloud and hybrid strategy (slide 37)</h3>
+<p>87% of enterprises use several providers. Five reasons: (1) <b>avoid vendor lock-in</b> (not dependent on one provider's pricing, features or outages); (2) <b>best-of-breed</b> (AWS for compute, GCP for AI/ML, Azure for Microsoft integration); (3) <b>regulatory compliance</b> (local provider for in-country data); (4) <b>cost arbitrage</b> (use the cheapest per workload); (5) <b>redundancy</b> (fail over to another provider during an outage). Tools: Terraform, Pulumi, Kubernetes (cloud-agnostic), HashiCorp Vault.</p>
+
+<h3>9.5 DevOps and cloud-native development (slide 38)</h3>
+<p><b>Cloud-native</b> apps are designed from the ground up to exploit the cloud.</p>
+<table class="small">
+<tr><th>Practice</th><th>Meaning</th></tr>
+<tr><td>Microservices</td><td>Split the app into small independent services; each scales independently</td></tr>
+<tr><td>CI/CD pipelines</td><td>Continuous Integration / Continuous Delivery: automated build, test and deploy; release many times a day safely</td></tr>
+<tr><td>Infrastructure as Code</td><td>Manage infrastructure with code files (Terraform, CloudFormation): version-controlled, repeatable</td></tr>
+<tr><td>Observability</td><td>Logs, metrics, traces to understand production behaviour (Datadog, Grafana)</td></tr>
+<tr><td>Chaos engineering</td><td>Deliberately inject failures to test resilience (Netflix Chaos Monkey)</td></tr>
+<tr><td>GitOps</td><td>Git is the single source of truth for infrastructure; the cluster auto-syncs to Git</td></tr>
+</table>
+
+<h2>10. Case studies, Sri Lanka, future, careers (slides 39&ndash;42)</h2>
+<table class="small">
+<tr><th>Case</th><th>Cloud</th><th>Fact from the slide</th></tr>
+<tr><td>Netflix</td><td>AWS</td><td>Moved from own data centres; 260M+ subscribers; 100K+ instances at peak</td></tr>
+<tr><td>Airbnb</td><td>AWS</td><td>Startup to $75B valuation; 150M+ listings; no data-centre costs</td></tr>
+<tr><td>Spotify</td><td>Google Cloud</td><td>BigQuery analytics; 600 GB/day for recommendations</td></tr>
+<tr><td>BMW</td><td>AWS + Azure</td><td>Multi-cloud; 3M+ connected cars sending real-time telemetry</td></tr>
+</table>
+<p class="small"><b>Sri Lanka &amp; South Asia:</b> ICTA cloud-first policy and Lanka Government Cloud; banks (Commercial Bank, HNB) on hybrid cloud; Dialog and SLT offer cloud to SMEs; universities on Microsoft 365/Google Workspace; AWS/Azure regions in Singapore and India give sub-10 ms latency; startups/fintech scale on AWS/GCP.</p>
+<p class="small"><b>Future trends:</b> quantum computing in the cloud (2025&ndash;30; threatens today's encryption, so quantum-resistant crypto is needed); AI-Ops / autonomous cloud (AI auto-heals, predicts scaling); <b>confidential computing</b> (data processed while still encrypted); 6G edge-to-cloud; neuromorphic (brain-inspired) chips such as Intel Loihi; space-based cloud (Starlink, Kuiper, Azure Orbital). <b>Certifications:</b> AWS Cloud Practitioner &rarr; Solutions Architect / Developer &rarr; DevOps Professional; Azure AZ-900, AZ-104, AZ-204, AZ-305; Google Cloud Digital Leader, Associate Cloud Engineer, Professional Cloud Architect / ML Engineer.</p>
+
+<h2>11. Lecture summary (slide 44)</h2>
+<ol class="small">
+<li>Data explosion drives demand: 2.5 quintillion bytes a day; the cloud stores, processes and analyses it.</li>
+<li>Cloud = IT as a utility: product &rarr; on-demand, metered service.</li>
+<li>Three service models (IaaS, PaaS, SaaS) plus FaaS, DBaaS, AIaaS and more.</li>
+<li>Deployment models: public, private, hybrid, multi-cloud &mdash; choose by cost, control and compliance.</li>
+<li>Modern developments: containers, Kubernetes, serverless, edge computing, AI/ML cloud, Zero Trust.</li>
+<li>Sustainability matters: consolidation cuts carbon; providers target net-zero.</li>
+</ol>
+
+<h2>12. Exam-style questions with model answers</h2>
+<p><b>Q1. Define cloud computing and list the five essential characteristics defined by NIST. (6 marks)</b><br>
+Cloud computing is the delivery of computing as a service rather than a product, where shared resources, software and information are provided to devices as a metered service over a network (on-demand IT on a pay-as-you-go basis). NIST characteristics: on-demand self-service (provision without human interaction), broad network access (standard devices over the network), resource pooling (multi-tenant shared resources), rapid elasticity (scale out and in quickly), measured service (usage monitored and billed).</p>
+<p><b>Q2. Compare IaaS, PaaS and SaaS in terms of what the customer manages, with one example each. (6)</b><br>
+IaaS: provider manages networking, storage, servers and virtualization; the customer manages the OS, middleware, runtime, data and applications (AWS EC2). PaaS: the provider also manages OS, middleware and runtime; the customer manages only the application and data (Google App Engine). SaaS: the provider manages the whole stack; the customer only uses the software (Gmail, Microsoft 365).</p>
+<p><b>Q3. Distinguish public, private and hybrid clouds and state one advantage of each. (6)</b><br>
+Public: owned by a third party and shared over the Internet &mdash; low cost and high scalability. Private: operated exclusively for one organization &mdash; high security, control and compliance. Hybrid: public and private bound together with data/app portability &mdash; flexibility and cost optimisation (keep sensitive data private, burst peaks to public).</p>
+<p><b>Q4. Explain the shared responsibility model with an example. (4)</b><br>
+Security is split: the provider is responsible for security OF the cloud (physical infrastructure, network hardware, hypervisor); the customer is responsible for security IN the cloud (data encryption, IAM, network configuration, application security). E.g. if a customer misconfigures an S3 bucket as public and data leaks, it is the customer's responsibility.</p>
+<p><b>Q5. "Serverless means there are no servers." Discuss. Give two advantages and two disadvantages of serverless computing. (5)</b><br>
+False: servers still exist, but the provider provisions, scales and manages them, so developers do not. Advantages: no server management; auto-scales to zero and pay only per invocation (also fast deployment). Disadvantages: cold-start latency; harder debugging.</p>
+<p><b>Q6. Differentiate between a virtual machine and a container. (4)</b><br>
+A VM virtualizes the hardware and runs a full guest OS on a hypervisor &mdash; strong isolation, but GBs in size and minutes to boot. A container packages the app and dependencies and shares the host OS kernel through a container runtime &mdash; lighter (MBs), starts in seconds, more portable, weaker isolation.</p>
+<p><b>Q7. Compare edge, fog and cloud computing. Why does an autonomous vehicle need edge computing? (6)</b><br>
+Cloud: centralized data centres, high latency (50&ndash;150 ms), massive compute, batch analytics. Fog: between edge and cloud, medium latency (10&ndash;50 ms), aggregates edge data. Edge: on device/gateway, ultra-low latency (&lt;10 ms), lightweight real-time compute at the source. A vehicle must brake within milliseconds; waiting for a round-trip to a far data centre is too slow and the connection may drop, so decisions are made at the edge.</p>
+<p><b>Q8. State three principles of Zero Trust security. (3)</b><br>
+Verify explicitly (authenticate using identity, location, device health, workload); least privilege (minimum access only when needed); assume breach (design as if attackers are inside, minimise blast radius, segment access).</p>
+<p><b>Q9. Explain why virtualization is called the core enabler of cloud computing. (4)</b><br>
+A hypervisor divides one physical server into many isolated VMs. This allows resource pooling and multi-tenancy (many customers on shared hardware), high utilisation (server consolidation), rapid provisioning (on-demand self-service, elasticity), and snapshotting/migration for resilience &mdash; all the properties the cloud depends on.</p>
+<p><b>Q10. Give four FinOps techniques for reducing cloud costs. (4)</b><br>
+Right-sizing instances; reserved instances for predictable workloads (up to 72% saving); spot/preemptible VMs for fault-tolerant work (60&ndash;90% discount); auto-scaling down when idle; storage tiering; cost-allocation tags.</p>
+<p><b>Q11. Why do 87% of enterprises use a multi-cloud strategy? (5)</b><br>
+To avoid vendor lock-in; to use best-of-breed services from each provider; for regulatory compliance (in-country providers); for cost arbitrage between providers; and for redundancy (fail over during one provider's outage).</p>
+<p><b>Q12. Explain the 5 V's of big data. (5)</b><br>
+Volume (amount: 120+ ZB in 2024), Velocity (speed of arrival, real-time streams), Variety (structured, semi-structured, unstructured), Veracity (quality and accuracy), Value (insights and business decisions).</p>
+
+<h2>13. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Mixing service models and deployment models</td><td>Service model = <b>what</b> is provided (IaaS/PaaS/SaaS). Deployment model = <b>who owns/uses</b> it (public/private/hybrid/community/multi).</td></tr>
+<tr><td>"In IaaS the provider manages the OS."</td><td>In IaaS <b>you</b> manage the OS and everything above it.</td></tr>
+<tr><td>Hybrid = multi-cloud</td><td>Hybrid = private + public. Multi-cloud = several public providers.</td></tr>
+<tr><td>"Serverless has no servers."</td><td>Servers exist; you just don't manage them.</td></tr>
+<tr><td>Listing "scalability" or "security" as a NIST characteristic</td><td>The five are on-demand self-service, broad network access, resource pooling, rapid elasticity, measured service.</td></tr>
+<tr><td>"The provider is responsible for all security in the cloud."</td><td>Shared responsibility: the customer secures data, IAM, network config, apps.</td></tr>
+<tr><td>Containers contain their own OS</td><td>They share the host OS kernel; VMs have a full guest OS.</td></tr>
+<tr><td>Edge = fog</td><td>Edge is on/near the device (&lt;10 ms); fog is a middle layer (10&ndash;50 ms) that aggregates edge data.</td></tr>
+<tr><td>Spot instances for a critical always-on server</td><td>Spot can be reclaimed at any time; use it only for fault-tolerant work.</td></tr>
+</table>
