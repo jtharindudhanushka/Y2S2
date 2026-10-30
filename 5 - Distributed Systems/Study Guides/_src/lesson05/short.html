@@ -1,0 +1,61 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Virtualization</th></tr>
+<tr><td>Definition</td><td>Software version of a resource; 1 machine acts as many; core cloud enabler</td></tr>
+<tr><td>Before</td><td>1 app/server, 10&ndash;15% CPU, costly scaling</td></tr>
+<tr><td>Hypervisor</td><td>= VMM; creates, runs, manages VMs; allocates + isolates</td></tr>
+<tr><td>CPU / Mem / I/O</td><td>Time-sliced vCPUs / partitioned mapped RAM / vNICs + virtual disks</td></tr>
+<tr><td>Types</td><td>Server, storage (pool, thin provisioning), network (vSwitch, VLAN, SDN), desktop (VDI)</td></tr>
+<tr><td>Benefits</td><td>Utilisation, cost, fast provisioning, easy DR</td></tr>
+<tr><td>Limits</td><td>Overhead, licensing, host SPOF, hyperjacking</td></tr>
+</table>
+<table>
+<tr><th></th><th>Type 1</th><th>Type 2</th></tr>
+<tr><td>On</td><td>Hardware</td><td>Host OS</td></tr>
+<tr><td>Perf.</td><td>Near-native</td><td>Lower</td></tr>
+<tr><td>Install</td><td>Replaces OS</td><td>Like an app</td></tr>
+<tr><td>Use</td><td>DCs, cloud</td><td>Laptops, testing</td></tr>
+<tr><td>Security</td><td>Small surface</td><td>Host OS risks</td></tr>
+<tr><td>e.g.</td><td>ESXi, Hyper-V, Xen, KVM</td><td>VirtualBox, Workstation, Parallels</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th></th><th>VM</th><th>Container</th></tr>
+<tr><td>Virtualizes</td><td>Hardware</td><td>OS</td></tr>
+<tr><td>Isolation</td><td>Strong</td><td>Weaker</td></tr>
+<tr><td>Size</td><td>GB</td><td>MB</td></tr>
+<tr><td>Boot</td><td>Minutes</td><td>Seconds</td></tr>
+<tr><td>Density</td><td>Lower</td><td>Higher</td></tr>
+<tr><td>Use</td><td>Isolation, mixed OS, legacy, multi-tenant</td><td>Microservices, CI/CD, fast scaling</td></tr>
+<tr><td colspan="3">Hybrid: containers inside VMs (tenant isolation + agility)</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Data centre</th></tr>
+<tr><td>Parts</td><td>Servers/racks, storage arrays, networking, power (UPS, generators) + cooling</td></tr>
+<tr><td>Region / AZ</td><td>Geographic area / isolated failure domain with own power, cooling, network</td></tr>
+<tr><td>Pooling</td><td>Compute + storage + network &rarr; shared pool &rarr; scheduler slices &rarr; tenants</td></tr>
+<tr><td>Multi-tenancy</td><td>Shared infra, software isolation, economies of scale</td></tr>
+<tr><td>Layers</td><td>Service &rarr; orchestration &rarr; virtualization &rarr; physical</td></tr>
+<tr><td>Kubernetes</td><td>Schedules containers, self-heals, scales</td></tr>
+<tr><td>Elasticity</td><td>Dynamic reassignment, auto-scaling, pay-as-you-go</td></tr>
+<tr><td>Providers</td><td>AWS Nitro (KVM) &middot; Azure Hyper-V (paired regions) &middot; GCP KVM</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Type 1 runs on top of Windows</td><td>Type 1 runs on bare hardware; Type 2 runs on a host OS.</td></tr>
+<tr><td>VirtualBox is a Type 1 hypervisor</td><td>VirtualBox, Workstation and Parallels are Type 2.</td></tr>
+<tr><td>Containers virtualize hardware</td><td>Containers virtualize the OS; VMs virtualize the hardware.</td></tr>
+<tr><td>Containers are more isolated than VMs</td><td>VMs have stronger isolation (separate kernel).</td></tr>
+<tr><td>Virtualization removes single points of failure by itself</td><td>The host/hypervisor is a SPOF for all its VMs; you still need multiple hosts/AZs.</td></tr>
+<tr><td>Region = availability zone</td><td>A region contains several AZs.</td></tr>
+<tr><td>Multi-tenancy means tenants can see each other's data</td><td>Isolation is enforced in software by the virtualization layer.</td></tr>
+<tr><td>Hyperjacking = attacking one VM</td><td>It is compromising the hypervisor, which exposes all VMs.</td></tr>
+</table>

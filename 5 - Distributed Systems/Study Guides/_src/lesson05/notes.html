@@ -1,0 +1,276 @@
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Source: Lecture 05 Cloud Infrastructure and Virtualization (41 slides).</p>
+<div class="key">
+<b class="t">Learning objectives (slide 3)</b>
+<ol>
+<li>Explain <b>virtualization</b> and the role of the <b>hypervisor</b>: how it abstracts physical hardware to run multiple operating systems on one machine.</li>
+<li>Differentiate <b>Type 1 and Type 2</b> hypervisors: architecture, examples, performance trade-offs and typical use cases.</li>
+<li>Compare <b>virtual machines and containers</b>: the architectural difference, and choose the right technology for a given workload.</li>
+<li>Describe <b>cloud data centre architecture</b>: regions, availability zones, resource pooling, multi-tenancy and orchestration.</li>
+</ol>
+</div>
+
+<h2>1. What is cloud infrastructure? (slide 4)</h2>
+<ul>
+<li><b>Definition:</b> the hardware and software components &mdash; <b>servers, storage, networking and virtualization</b> &mdash; required to support cloud computing.</li>
+<li><b>Delivered over the Internet:</b> resources are provisioned and accessed remotely, on demand, without the customer owning the physical equipment.</li>
+<li><b>The foundation for cloud services:</b> it underpins IaaS, PaaS and SaaS from AWS, Azure and Google Cloud.</li>
+</ul>
+
+<h2>2. Virtualization concepts (slides 5&ndash;8)</h2>
+<div class="key"><b class="t">Virtualization (definition, slide 6)</b>
+Creating a <b>virtual (software-based) version of a resource</b> &mdash; a server, storage device, network or operating system. It lets <b>one physical machine behave as if it were several independent machines</b>, and it is the <b>core enabling technology of the cloud</b>: nearly every cloud service sits on a virtualization layer that shares physical hardware across many customers.</div>
+<h3>Life before virtualization (slide 7)</h3>
+<ul>
+<li><b>One application per physical server</b> (1990s&ndash;early 2000s): each server ran one OS and one application, to keep apps from interfering with each other.</li>
+<li><b>Very low utilization:</b> servers ran at only <b>10&ndash;15% average CPU</b>, wasting the rest.</li>
+<li><b>Expensive to scale:</b> more capacity meant buying, racking, powering and cooling another whole machine.</li>
+</ul>
+<h3>Worked example: consolidation</h3>
+<table class="small">
+<tr><th>Before</th><th>After virtualization</th></tr>
+<tr><td>10 physical servers, each one app, each at ~12% CPU. Total useful work = 10 &times; 12% = <b>1.2 servers' worth</b>.</td><td>Run the 10 apps as 10 VMs on <b>2 hosts</b>: each host carries 5 &times; 12% = 60% (plus a little hypervisor overhead). Leaves headroom for spikes, and if one host fails its VMs can restart on the other (with reduced headroom).</td></tr>
+<tr><td colspan="2">Savings: 8 fewer machines to buy, power, cool, rack and maintain. This is <b>server consolidation</b>.</td></tr>
+</table>
+<h3>What is a hypervisor? (slide 8)</h3>
+<ul>
+<li>Also called a <b>Virtual Machine Monitor (VMM)</b>: software that <b>creates, runs and manages virtual machines</b>.</li>
+<li>It <b>sits between hardware and VMs</b>: it allocates physical CPU, memory, storage and network resources to each VM and <b>keeps them isolated</b> from each other.</li>
+<li>Two categories: <b>Type 1 (bare-metal)</b> and <b>Type 2 (hosted)</b>, depending on what they run on.</li>
+</ul>
+
+<h2>3. Type 1 vs Type 2 hypervisors (slides 9&ndash;11)</h2>
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<text x="165" y="16" text-anchor="middle" font-size="12" font-weight="bold">Type 1 (bare-metal)</text>
+<g stroke="currentColor"><rect x="20" y="30" width="140" height="44" style="fill:var(--bg)"/><rect x="170" y="30" width="140" height="44" style="fill:var(--bg)"/><rect x="20" y="82" width="290" height="40" style="fill:var(--soft)"/><rect x="20" y="130" width="290" height="40" style="fill:var(--soft)"/></g>
+<g font-size="10" text-anchor="middle"><text x="90" y="49" font-weight="bold">VM 1</text><text x="90" y="64">Guest OS + App</text><text x="240" y="49" font-weight="bold">VM 2</text><text x="240" y="64">Guest OS + App</text><text x="165" y="100" font-weight="bold">Hypervisor (bare-metal)</text><text x="165" y="114">runs directly on hardware &#8212; no host OS</text><text x="165" y="148" font-weight="bold">Physical hardware</text><text x="165" y="162">CPU &#183; memory &#183; storage &#183; network</text></g>
+<text x="165" y="190" text-anchor="middle" font-size="9">VMware ESXi &#183; Microsoft Hyper-V &#183; Xen &#183; KVM</text>
+<text x="515" y="16" text-anchor="middle" font-size="12" font-weight="bold">Type 2 (hosted)</text>
+<g stroke="currentColor"><rect x="370" y="22" width="140" height="40" style="fill:var(--bg)"/><rect x="520" y="22" width="140" height="40" style="fill:var(--bg)"/><rect x="370" y="68" width="290" height="32" style="fill:var(--soft)"/><rect x="370" y="104" width="290" height="32" style="fill:var(--soft)"/><rect x="370" y="140" width="290" height="32" style="fill:var(--soft)"/></g>
+<g font-size="10" text-anchor="middle"><text x="440" y="39" font-weight="bold">VM 1</text><text x="440" y="54">Guest OS + App</text><text x="590" y="39" font-weight="bold">VM 2</text><text x="590" y="54">Guest OS + App</text><text x="515" y="88" font-weight="bold">Hypervisor (runs as an application)</text><text x="515" y="124" font-weight="bold">Host operating system</text><text x="515" y="160" font-weight="bold">Physical hardware</text></g>
+<text x="515" y="190" text-anchor="middle" font-size="9">Oracle VirtualBox &#183; VMware Workstation &#183; Parallels Desktop</text>
+</svg>
+<div class="cap">Figure 1 &mdash; Type 1 runs on the hardware; Type 2 runs as an app on a host OS, so every hardware call passes through one more layer.</div>
+</div>
+<table>
+<tr><th style="width:15%">Aspect (slide 11)</th><th>Type 1 (bare-metal)</th><th>Type 2 (hosted)</th></tr>
+<tr><td>Runs on</td><td>Physical hardware directly</td><td>A host operating system (Windows, macOS, Linux)</td></tr>
+<tr><td>Performance</td><td>Near-native, low overhead: talks to hardware directly</td><td>Lower: extra OS layer; every hardware call passes through the host OS as well as the hypervisor</td></tr>
+<tr><td>Installation</td><td>More involved &mdash; replaces the OS</td><td>Simple &mdash; installed like any app</td></tr>
+<tr><td>Typical use</td><td>Enterprise data centres and cloud platforms</td><td>Developer laptops: testing, sandboxing, personal use</td></tr>
+<tr><td>Security</td><td>Smaller attack surface (no general-purpose host OS to secure)</td><td>Inherits host OS vulnerabilities</td></tr>
+<tr><td>Examples</td><td>VMware ESXi, Hyper-V, Xen, KVM</td><td>VirtualBox, VMware Workstation, Parallels</td></tr>
+</table>
+<p class="small">Lab 01 uses VMware <b>ESXi</b>, a Type 1 hypervisor. If you run Linux in VirtualBox on your laptop, that is Type 2.</p>
+
+<h3>How hypervisors virtualize resources (slide 12)</h3>
+<table class="small">
+<tr><th>Resource</th><th>How it is virtualized</th><th>Beginner picture</th></tr>
+<tr><td><b>CPU</b></td><td>Physical CPU cores are <b>time-sliced</b> and scheduled across virtual CPUs (vCPUs), one or more per VM</td><td>One chef cooking for several tables in turns, so fast that each table feels it has its own chef</td></tr>
+<tr><td><b>Memory</b></td><td>Physical RAM is <b>partitioned and mapped</b> so each VM has its own isolated, addressable memory space</td><td>Each VM thinks its RAM starts at address 0; the hypervisor translates to the real location</td></tr>
+<tr><td><b>I/O</b></td><td><b>Virtual NICs and virtual disks</b> stand in for physical network cards and storage, translating requests to the real hardware</td><td>A VM's "disk" is really a large file on the host's storage</td></tr>
+</table>
+
+<h2>4. Types of virtualization (slides 13&ndash;16)</h2>
+<table>
+<tr><th style="width:18%">Type</th><th>What it does</th><th>Key points</th></tr>
+<tr><td><b>Server</b></td><td>Multiple virtual servers run on one physical machine, each with its own OS</td><td>Each VM runs its own guest OS and apps, unaware of the others. <b>Consolidation</b>: many underused servers onto fewer, busier machines. <b>Isolation</b>: a crash in one VM does not directly affect others on the same host.</td></tr>
+<tr><td><b>Storage</b></td><td>Physical storage devices are <b>pooled into one logical storage resource</b></td><td>Disks and arrays from many devices form one pool. <b>Simplified management</b>: capacity managed as one resource. <b>Advanced features</b>: snapshots, replication, <b>thin provisioning</b> (give a VM a 100 GB disk but only use real space as data is written), easier backup and DR.</td></tr>
+<tr><td><b>Network</b></td><td>Network resources abstracted into <b>virtual switches, VLANs and software-defined networks</b></td><td>Virtual switches/routers/VLANs created independently of physical hardware. <b>SDN</b>: network control centralized in software, separate from forwarding devices (Lesson 3). <b>Flexible</b>: create, reconfigure or tear down networks in software, without rewiring cables.</td></tr>
+<tr><td><b>Desktop</b></td><td>Desktop OSes run centrally and are <b>delivered remotely</b> to end-user devices</td><td><b>VDI</b> = Virtual Desktop Infrastructure (Citrix, Dialog DaaS in Lesson 3).</td></tr>
+</table>
+<p class="small">A <b>VLAN</b> (virtual LAN) splits one physical switch into several separate logical networks, so traffic from different groups stays apart.</p>
+
+<h2>5. Benefits and limitations of virtualization (slides 17&ndash;18)</h2>
+<div class="two">
+<div>
+<table class="small">
+<tr><th>Benefit</th><th>Why</th></tr>
+<tr><td>Better hardware utilization</td><td>Many workloads share the same physical resources instead of sitting idle</td></tr>
+<tr><td>Cost savings</td><td>Fewer physical servers: less spending on hardware, power and cooling</td></tr>
+<tr><td>Faster provisioning</td><td>New VMs in minutes instead of ordering and racking hardware</td></tr>
+<tr><td>Easier disaster recovery</td><td>VM snapshots and images can be backed up, copied and restored quickly</td></tr>
+</table>
+</div>
+<div>
+<table class="small">
+<tr><th>Limitation</th><th>Why</th></tr>
+<tr><td>Performance overhead</td><td>The hypervisor layer adds some CPU, memory and I/O overhead vs bare hardware</td></tr>
+<tr><td>Licensing complexity</td><td>Software licences were not always designed for virtualized, movable workloads</td></tr>
+<tr><td>Single point of failure</td><td>If the physical host or hypervisor fails, <b>every VM on it</b> is affected at once</td></tr>
+<tr><td>Security risks</td><td>A compromised hypervisor can expose every VM it hosts &mdash; <b>"hyperjacking"</b></td></tr>
+</table>
+</div>
+</div>
+
+<h2>6. Virtual machines vs containers (slides 19&ndash;28)</h2>
+<h3>6.1 What is a virtual machine? (slides 20&ndash;21)</h3>
+<ul>
+<li><b>A complete virtual computer:</b> a full guest OS, virtual CPU, memory, storage and network interfaces.</li>
+<li><b>Managed by a hypervisor</b>, which allocates physical resources and keeps it isolated from other VMs.</li>
+<li><b>Strong isolation, heavier footprint:</b> independent and secure, but carries the size and boot time of a full OS (minutes to boot).</li>
+</ul>
+<p class="small">VM stack (slide 21): physical hardware &rarr; hypervisor &rarr; guest OS (full OS: kernel, drivers, libraries) &rarr; application.</p>
+<h3>6.2 What is a container? (slides 22&ndash;23)</h3>
+<ul>
+<li><b>A lightweight, portable package:</b> the application plus just the code, runtime and libraries it needs.</li>
+<li><b>Shares the host OS kernel:</b> no OS of its own; it uses the kernel of the host it runs on.</li>
+<li><b>Managed by a container engine</b> such as Docker, on top of the host OS. Seconds to start.</li>
+</ul>
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<text x="165" y="16" text-anchor="middle" font-size="12" font-weight="bold">Virtual machines</text>
+<g stroke="currentColor"><rect x="20" y="28" width="140" height="22" style="fill:var(--bg)"/><rect x="20" y="50" width="140" height="26" style="fill:var(--soft)"/><rect x="170" y="28" width="140" height="22" style="fill:var(--bg)"/><rect x="170" y="50" width="140" height="26" style="fill:var(--soft)"/><rect x="20" y="84" width="290" height="28" style="fill:var(--soft)"/><rect x="20" y="118" width="290" height="28" style="fill:var(--soft)"/><rect x="20" y="152" width="290" height="28" style="fill:var(--soft)"/></g>
+<g font-size="10" text-anchor="middle"><text x="90" y="43">App</text><text x="90" y="67">Guest OS</text><text x="240" y="43">App</text><text x="240" y="67">Guest OS</text><text x="165" y="102">Hypervisor</text><text x="165" y="136">Host operating system</text><text x="165" y="170">Physical hardware</text></g>
+<text x="515" y="16" text-anchor="middle" font-size="12" font-weight="bold">Containers</text>
+<g stroke="currentColor"><rect x="370" y="84" width="140" height="28" style="fill:var(--bg)"/><rect x="520" y="84" width="140" height="28" style="fill:var(--bg)"/><rect x="370" y="118" width="290" height="28" style="fill:var(--soft)"/><rect x="370" y="152" width="290" height="28" style="fill:var(--soft)"/></g>
+<rect x="370" y="122" width="290" height="0" fill="none"/>
+<g font-size="10" text-anchor="middle"><text x="440" y="102">App + deps</text><text x="590" y="102">App + deps</text><text x="515" y="136">Container engine on host OS (shared kernel)</text><text x="515" y="170">Physical hardware</text></g>
+<text x="515" y="60" text-anchor="middle" font-size="9" font-style="italic">no guest OS per app</text>
+</svg>
+<div class="cap">Figure 2 &mdash; Architecture compared (slide 24). Slide 24 draws the VM side with a host OS below the hypervisor (Type 2 style); with a Type 1 hypervisor that layer is absent.</div>
+</div>
+<table>
+<tr><th style="width:20%">Metric (slide 25)</th><th>Virtual machines</th><th>Containers</th></tr>
+<tr><td>Isolation</td><td><b>Strong</b> &mdash; separate kernel</td><td><b>Weaker</b> &mdash; shared kernel</td></tr>
+<tr><td>Size</td><td>Gigabytes</td><td>Megabytes</td></tr>
+<tr><td>Boot time</td><td>Minutes</td><td>Seconds</td></tr>
+<tr><td>Density per host</td><td>Lower</td><td>Higher</td></tr>
+<tr><td>Typical use</td><td>Strict isolation, mixed OS needs</td><td>Microservices, fast scaling, CI/CD</td></tr>
+</table>
+<p class="small"><b>Worked example (density):</b> a host with 64 GB RAM. Each VM needs ~2 GB for its guest OS + 1 GB for the app = 3 GB &rArr; about 21 VMs. Each container needs only the app's ~1 GB (the kernel is shared) &rArr; about 60 containers. Same hardware, roughly 3&times; the apps.</p>
+<h3>6.3 Docker and container engines (slide 26)</h3>
+<p><b>Docker</b> is the most widely used container platform: tools to build, ship and run containers. A Docker <b>image</b> is a read-only template; a <b>container</b> is a running instance created from that image. A <b>Dockerfile</b> scripts how an image is built; <b>registries</b> such as Docker Hub store and distribute images (full detail in Lesson 3).</p>
+<h3>6.4 Choosing VMs vs containers (slide 27)</h3>
+<div class="two">
+<div><b>Use virtual machines when&hellip;</b>
+<ul class="small"><li>Strong, hardware-level isolation between workloads is required.</li><li>Different guest operating systems must run on the same host (e.g. Windows and Linux).</li><li>Legacy applications depend on a specific full OS environment.</li><li>Multi-tenant security boundaries are the top priority.</li></ul></div>
+<div><b>Use containers when&hellip;</b>
+<ul class="small"><li>The workload is built as microservices.</li><li>Fast startup and high deployment density matter.</li><li>Applications are packaged and shipped through CI/CD pipelines.</li><li>Elastic, rapid horizontal scaling is required.</li></ul></div>
+</div>
+<h3>6.5 Hybrid: containers inside VMs (slide 28)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg">
+<rect x="110" y="8" width="460" height="104" style="fill:var(--bg)" stroke="currentColor" stroke-width="2"/>
+<text x="340" y="26" text-anchor="middle" font-size="11" font-weight="bold">Virtual machine &#183; tenant isolation boundary</text>
+<rect x="130" y="36" width="420" height="66" style="fill:var(--soft)" stroke="currentColor"/><text x="340" y="52" text-anchor="middle" font-size="10">Container engine</text>
+<g stroke="currentColor" style="fill:var(--bg)"><rect x="150" y="62" width="110" height="30"/><rect x="285" y="62" width="110" height="30"/><rect x="420" y="62" width="110" height="30"/></g>
+<g font-size="10" text-anchor="middle"><text x="205" y="81">App 1</text><text x="340" y="81">App 2</text><text x="475" y="81">App 3</text></g>
+</svg>
+<div class="cap">Figure 3 &mdash; Cloud providers commonly run containers inside a VM: the VM gives strong, hardware-enforced isolation between tenants; the containers inside give fast, efficient deployment.</div>
+</div>
+
+<h2>7. Cloud data centre architecture (slides 29&ndash;38)</h2>
+<h3>7.1 Data centre and its physical components (slides 30&ndash;31)</h3>
+<p>A <b>data centre</b> is a physical facility that houses the compute, storage and networking infrastructure that powers cloud services. Major providers (AWS, Azure, Google Cloud) run global networks of their own; every virtual resource a customer uses ultimately runs on hardware in one of them.</p>
+<table class="small">
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td>Servers and racks</td><td>Compute hardware organised into racks and clusters</td></tr>
+<tr><td>Storage arrays</td><td>Disk and flash storage holding customer and system data</td></tr>
+<tr><td>Networking gear</td><td>Switches, routers and cabling connecting servers to each other and the Internet</td></tr>
+<tr><td>Power and cooling</td><td><b>UPS</b> (uninterruptible power supply: batteries for short outages), generators, cooling to keep hardware running reliably</td></tr>
+</table>
+<h3>7.2 Regions and availability zones (slide 32)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="5" width="660" height="100" style="fill:var(--bg)" stroke="currentColor"/>
+<text x="20" y="22" font-size="11" font-weight="bold">Region &#183; a geographic area (e.g. "US East", "South Asia")</text>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="30" y="32" width="195" height="62"/><rect x="243" y="32" width="195" height="62"/><rect x="456" y="32" width="195" height="62"/></g>
+<g font-size="11" text-anchor="middle" font-weight="bold"><text x="127" y="50">Availability zone 1</text><text x="340" y="50">Availability zone 2</text><text x="553" y="50">Availability zone 3</text></g>
+<g font-size="9" text-anchor="middle"><text x="127" y="68">independent power, cooling,</text><text x="127" y="82">networking: isolated failure domain</text><text x="340" y="68">independent power, cooling,</text><text x="340" y="82">networking: isolated failure domain</text><text x="553" y="68">independent power, cooling,</text><text x="553" y="82">networking: isolated failure domain</text></g>
+</svg>
+<div class="cap">Figure 4 &mdash; Workloads are spread across zones so a single facility failure does not take the whole application offline.</div>
+</div>
+<p>A <b>failure domain</b> is a part of the system that fails as one unit (one power feed, one building). AZs are separate failure domains.</p>
+<h3>7.3 Resource pooling and multi-tenancy (slides 33&ndash;34)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="e1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="90" y="8" width="140" height="34"/><rect x="270" y="8" width="140" height="34"/><rect x="450" y="8" width="140" height="34"/></g>
+<g font-size="11" text-anchor="middle"><text x="160" y="24" font-weight="bold">Compute</text><text x="160" y="37" font-size="9">physical resources</text><text x="340" y="24" font-weight="bold">Storage</text><text x="340" y="37" font-size="9">physical resources</text><text x="520" y="24" font-weight="bold">Network</text><text x="520" y="37" font-size="9">physical resources</text></g>
+<g stroke="currentColor"><line x1="160" y1="42" x2="250" y2="64" marker-end="url(#e1)"/><line x1="340" y1="42" x2="340" y2="64" marker-end="url(#e1)"/><line x1="520" y1="42" x2="430" y2="64" marker-end="url(#e1)"/></g>
+<rect x="160" y="66" width="360" height="46" style="fill:var(--soft)" stroke="currentColor"/><text x="340" y="84" text-anchor="middle" font-size="11" font-weight="bold">Shared resource pool</text><text x="340" y="98" text-anchor="middle" font-size="9">abstracted by the virtualization layer &#183; scheduler allocates on-demand slices</text>
+<g style="fill:var(--bg)" stroke="currentColor"><rect x="60" y="135" width="115" height="30"/><rect x="215" y="135" width="115" height="30"/><rect x="370" y="135" width="115" height="30"/><rect x="525" y="135" width="115" height="30"/></g>
+<g font-size="10" text-anchor="middle"><text x="117" y="154">Tenant 1</text><text x="272" y="154">Tenant 2</text><text x="427" y="154">Tenant 3</text><text x="582" y="154">Tenant 4</text></g>
+<g stroke="currentColor"><line x1="250" y1="112" x2="120" y2="133" marker-end="url(#e1)"/><line x1="300" y1="112" x2="272" y2="133" marker-end="url(#e1)"/><line x1="380" y1="112" x2="427" y2="133" marker-end="url(#e1)"/><line x1="430" y1="112" x2="580" y2="133" marker-end="url(#e1)"/></g>
+</svg>
+<div class="cap">Figure 5 &mdash; Resource pooling (slide 33).</div>
+</div>
+<p><b>Multi-tenancy (slide 34):</b> (1) <b>shared infrastructure, separate customers</b>: many tenants run on the same physical infrastructure at the same time; (2) <b>isolation is enforced in software</b>: the virtualization layer keeps each tenant's compute, storage and data separate; (3) <b>economies of scale</b>: sharing across many tenants is what makes low, pay-as-you-go prices possible.</p>
+<h3>7.4 Cloud architecture layers (slide 35)</h3>
+<table class="small">
+<tr><th>Layer (top to bottom)</th><th>Role</th></tr>
+<tr><td><b>Service layer</b></td><td>IaaS, PaaS, SaaS &mdash; what customers consume</td></tr>
+<tr><td><b>Orchestration &amp; management</b></td><td>Schedulers decide placement, scaling and recovery</td></tr>
+<tr><td><b>Virtualization layer</b></td><td>Hypervisors and container engines pool and allocate resources</td></tr>
+<tr><td><b>Physical infrastructure</b></td><td>Servers, storage, networking, power, cooling</td></tr>
+</table>
+<h3>7.5 Orchestration: Kubernetes (slide 36)</h3>
+<p>An open-source platform that automates the <b>deployment, scaling and management of containerized applications</b>. <b>Scheduling:</b> decides which physical or virtual machine each container runs on, based on available resources. <b>Self-healing and scaling:</b> restarts failed containers, scales replicas up or down, and redistributes workloads after a failure (Lesson 6).</p>
+<h3>7.6 Elasticity and on-demand scaling (slide 37)</h3>
+<ul class="small"><li><b>Dynamic reassignment:</b> pooled resources are reassigned to workloads automatically as demand rises and falls.</li><li><b>Auto-scaling:</b> new VM or container instances are added under load and removed when demand drops.</li><li><b>Pay-as-you-go:</b> customers pay only for resources actually consumed, not fixed owned capacity.</li></ul>
+<h3>7.7 Real-world providers (slide 38)</h3>
+<table class="small">
+<tr><th>Provider</th><th>Underlying virtualization</th><th>Global footprint</th></tr>
+<tr><td>Amazon Web Services</td><td>Custom KVM-based <b>Nitro</b> hypervisor</td><td>Regions and availability zones worldwide</td></tr>
+<tr><td>Microsoft Azure</td><td>Microsoft <b>Hyper-V</b></td><td>Regions with <b>paired-region</b> redundancy</td></tr>
+<tr><td>Google Cloud</td><td><b>KVM</b>-based hypervisor</td><td>Regions and zones across continents</td></tr>
+</table>
+
+<h2>8. Summary (slide 39)</h2>
+<ol class="small">
+<li><b>Virtualization concepts:</b> hypervisors (Type 1 bare-metal vs Type 2 hosted) abstract hardware so multiple OSes share one machine.</li>
+<li><b>VMs vs containers:</b> VMs virtualize the <b>hardware</b> with a full guest OS; containers virtualize the <b>OS</b> and share the host kernel.</li>
+<li><b>Cloud data centre architecture:</b> providers pool physical resources across regions and AZs and allocate them on demand to many tenants.</li>
+</ol>
+
+<h2>9. Exam-style questions with model answers</h2>
+<p><b>Q1. Define virtualization and a hypervisor. Why is virtualization called the core enabling technology of the cloud? (5 marks)</b><br>
+Virtualization creates a software-based version of a resource (server, storage, network, OS) so one physical machine behaves like several independent machines. A hypervisor (virtual machine monitor) is software that creates, runs and manages VMs, sitting between hardware and VMs, allocating CPU, memory, storage and network and isolating the VMs. It is the core enabler because nearly every cloud service runs on a virtualization layer that shares physical hardware across many customers, enabling resource pooling, multi-tenancy, rapid provisioning and elasticity.</p>
+<p><b>Q2. Compare Type 1 and Type 2 hypervisors with examples. (8)</b><br>
+Type 1 (bare-metal) runs directly on the hardware with no host OS: near-native performance, smaller attack surface, more involved installation, used in data centres and clouds (ESXi, Hyper-V, Xen, KVM). Type 2 (hosted) runs as an application on a host OS: easy to install, but lower performance because calls pass through the host OS, and it inherits host OS vulnerabilities; used on developer laptops for testing and sandboxing (VirtualBox, VMware Workstation, Parallels).</p>
+<p><b>Q3. Explain how a hypervisor virtualizes CPU, memory and I/O. (6)</b><br>
+CPU: physical cores are time-sliced and scheduled across virtual CPUs given to each VM. Memory: physical RAM is partitioned and mapped so each VM has its own isolated address space. I/O: virtual NICs and virtual disks stand in for physical devices and translate VM requests to the real hardware.</p>
+<p><b>Q4. Describe four types of virtualization. (8)</b><br>
+Server: many virtual servers with their own OSes on one physical server (consolidation, isolation). Storage: physical storage pooled into one logical resource (simpler management, snapshots, replication, thin provisioning). Network: virtual switches, VLANs and SDN abstract the network so it can be changed in software. Desktop: desktop OSes run centrally and are delivered remotely (VDI).</p>
+<p><b>Q5. Give the benefits and limitations of virtualization. (6)</b><br>
+Benefits: better utilisation, cost savings (hardware, power, cooling), faster provisioning, easier disaster recovery through snapshots/images. Limitations: hypervisor performance overhead, licensing complexity, the host/hypervisor is a single point of failure for all its VMs, and a compromised hypervisor exposes all VMs (hyperjacking).</p>
+<p><b>Q6. Compare VMs and containers on isolation, size, boot time, density and use. When would you choose each? (8)</b><br>
+VMs: strong isolation (separate kernel), GBs, minutes to boot, lower density, used for strict isolation and mixed OS needs. Containers: weaker isolation (shared kernel), MBs, seconds to start, higher density, used for microservices, fast scaling and CI/CD. Choose VMs for hardware-level isolation, different guest OSes, legacy apps needing a full OS, and multi-tenant security. Choose containers for microservices, fast startup and density, CI/CD pipelines and rapid horizontal scaling.</p>
+<p><b>Q7. Why do cloud providers run containers inside VMs? (3)</b><br>
+The VM provides strong, hardware-enforced isolation between tenants, while containers inside it provide fast, efficient deployment &mdash; combining the security of VMs with the agility of containers.</p>
+<p><b>Q8. Explain regions, availability zones, resource pooling and multi-tenancy. (8)</b><br>
+A region is a geographic area containing several availability zones. Each AZ has independent power, cooling and networking and is an isolated failure domain, so workloads spread across AZs survive a facility failure. Resource pooling combines compute, storage and network into a shared pool through virtualization, from which a scheduler allocates on-demand slices. Multi-tenancy means many customers share the same infrastructure with isolation enforced in software, giving economies of scale and low pay-as-you-go prices.</p>
+<p><b>Q9. Describe the four layers of cloud architecture. (4)</b><br>
+Physical infrastructure (servers, storage, networking, power, cooling) &rarr; virtualization layer (hypervisors and container engines pool and allocate) &rarr; orchestration and management (schedulers decide placement, scaling, recovery) &rarr; service layer (IaaS, PaaS, SaaS consumed by customers).</p>
+
+<h2>10. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Type 1 runs on top of Windows</td><td>Type 1 runs on bare hardware; Type 2 runs on a host OS.</td></tr>
+<tr><td>VirtualBox is a Type 1 hypervisor</td><td>VirtualBox, Workstation and Parallels are Type 2.</td></tr>
+<tr><td>Containers virtualize hardware</td><td>Containers virtualize the OS; VMs virtualize the hardware.</td></tr>
+<tr><td>Containers are more isolated than VMs</td><td>VMs have stronger isolation (separate kernel).</td></tr>
+<tr><td>Virtualization removes single points of failure by itself</td><td>The host/hypervisor is a SPOF for all its VMs; you still need multiple hosts/AZs.</td></tr>
+<tr><td>Region = availability zone</td><td>A region contains several AZs.</td></tr>
+<tr><td>Multi-tenancy means tenants can see each other's data</td><td>Isolation is enforced in software by the virtualization layer.</td></tr>
+<tr><td>Hyperjacking = attacking one VM</td><td>It is compromising the hypervisor, which exposes all VMs.</td></tr>
+</table>
