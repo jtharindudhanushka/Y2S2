@@ -1,0 +1,37 @@
+<p class="sm" style="color:var(--muted)">Source: Lab 01 sheet (2 pages). The lab sheet prints the address as "192.1681. X/24"; it must be 192.168.8.X/24 to match the gateway 192.168.8.1.</p>
+<h2>Lab 01 &mdash; Create a VM, install LiteLinux, configure a static IP</h2>
+<p><b>Objectives:</b> connect to VMware ESXi &middot; create a VM &middot; install LiteLinux 7 &middot; configure a static IP &middot; verify connectivity. <b>Requirements:</b> VMware ESXi, vSphere Client, LiteLinux ISO, 2 vCPU, 4 GB RAM, 40 GB disk.</p>
+<table class="small">
+<tr><th>#</th><th>Lab step</th><th>What it means</th></tr>
+<tr><td>1</td><td>Log in to the ESXi web client</td><td>Open the ESXi host's address in a browser; ESXi is a Type 1 hypervisor</td></tr>
+<tr><td>2&ndash;3</td><td>Create/Register VM; name <code>LiteLinux-Lab01</code></td><td>Start the new-VM wizard</td></tr>
+<tr><td>4</td><td>Guest OS: Linux &rarr; RHEL 8 or Other Linux (64-bit)</td><td>Tells ESXi which virtual hardware and drivers suit the guest</td></tr>
+<tr><td>5</td><td>Select datastore</td><td>Where the VM's files (virtual disk, config) will live</td></tr>
+<tr><td>6</td><td>2 vCPU, 4 GB RAM, 40 GB disk, VM Network, attach the LiteLinux ISO</td><td>Allocate virtual resources (Lesson 5: CPU time-slicing, mapped RAM, virtual disk file); connect the vNIC to the "VM Network" port group; the ISO acts as a virtual DVD to install from</td></tr>
+<tr><td>7&ndash;8</td><td>Power on, install LiteLinux, create a root password and a student user</td><td>Normal OS installation inside the VM</td></tr>
+<tr><td>9</td><td><code>nmcli device status</code></td><td>NetworkManager CLI: list network devices and find the interface name (here <code>ens160</code>, the VMware virtual NIC)</td></tr>
+<tr><td>10</td><td>Configure the static IP (below)</td><td>Fix the address instead of getting one from DHCP</td></tr>
+<tr><td>11</td><td><code>sudo nmcli connection down ens160</code> then <code>up ens160</code></td><td>Restart the connection so the new settings apply</td></tr>
+<tr><td>12</td><td><code>ip addr</code>, <code>ip route</code>, <code>ping -c 4 8.8.8.8</code>, <code>ping -c 4 www.google.com</code></td><td>Verify (table below)</td></tr>
+</table>
+<pre>sudo nmcli connection modify ens160 \
+     ipv4.addresses 192.168.8.X/24 \
+     ipv4.gateway 192.168.8.1 \
+     ipv4.dns "8.8.8.8 1.1.1.1" \
+     ipv4.method manual</pre>
+<table class="small">
+<tr><th>Part</th><th>Meaning</th></tr>
+<tr><td><code>ipv4.addresses 192.168.8.X/24</code></td><td>The VM's own IP. <b>/24</b> = subnet mask 255.255.255.0: the first 24 bits (192.168.8) are the network, the last number X (1&ndash;254) is the host. Each student uses a different X. (The lab sheet prints "192.1681. X/24", a typo; it must be in the same network as the gateway 192.168.8.1.)</td></tr>
+<tr><td><code>ipv4.gateway 192.168.8.1</code></td><td>The router used to reach other networks/the Internet</td></tr>
+<tr><td><code>ipv4.dns "8.8.8.8 1.1.1.1"</code></td><td>DNS servers (Google, Cloudflare) that turn names like www.google.com into IP addresses</td></tr>
+<tr><td><code>ipv4.method manual</code></td><td>Use these static settings instead of DHCP (automatic)</td></tr>
+</table>
+<table class="small">
+<tr><th>Verification</th><th>Expected result</th><th>If it fails</th></tr>
+<tr><td><code>ip addr</code></td><td>ens160 shows <code>inet 192.168.8.X/24</code></td><td>Address not applied: re-check modify, restart connection</td></tr>
+<tr><td><code>ip route</code></td><td><code>default via 192.168.8.1 dev ens160</code></td><td>Gateway missing or wrong</td></tr>
+<tr><td><code>ping -c 4 8.8.8.8</code></td><td>4 replies (Internet reachable by IP)</td><td>Gateway/VM network/port group problem</td></tr>
+<tr><td><code>ping -c 4 www.google.com</code></td><td>Name resolves and 4 replies</td><td>If IP ping works but this fails: <b>DNS</b> problem</td></tr>
+</table>
+<p class="small"><b>Why a static IP for servers?</b> Clients and other servers must always find the server at the same address; a DHCP address could change after a reboot.</p>
+

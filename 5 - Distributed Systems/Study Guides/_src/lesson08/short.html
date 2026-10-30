@@ -1,0 +1,63 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Concepts</th></tr>
+<tr><td>Why</td><td>Resource usage, ease of management, security (untrusting users)</td></tr>
+<tr><td>Hosted</td><td>App virtualization on host OS (Type 2); App-V, Citrix Virtual Apps</td></tr>
+<tr><td>Full</td><td>Binary translation; unmodified guest; ESXi, Hyper-V</td></tr>
+<tr><td>Para</td><td>Modified guest, hypercalls; best perf; Xen, Oracle VM</td></tr>
+<tr><td>HW-assisted</td><td>VT-x / AMD-V; guest runs some instructions directly</td></tr>
+<tr><td>CPU</td><td>VT-x (Vanderpool) / AMD-V (SVM, Pacifica); DEP: XD / NX; BIOS; <b>power cycle</b></td></tr>
+<tr><td>MMU</td><td>EPT / RVI (NPT): no shadow page tables; +48% / +42%</td></tr>
+<tr><td>I/O</td><td>VT-d / AMD-Vi (IOMMU); VMDirectPath I/O</td></tr>
+<tr><td>Hypervisors</td><td>Hyper-V (Type 1+2), Xen (para), KVM (in Linux kernel), LXC (containers), ESXi, Proxmox (KVM + LXC)</td></tr>
+<tr><td>Hyper-V</td><td>Root partition + enlightened / unenlightened child partitions</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Lab 01</th></tr>
+<tr><td>VM</td><td>ESXi web client &rarr; create VM LiteLinux-Lab01, RHEL 8/Other Linux 64-bit, 2 vCPU, 4 GB, 40 GB, VM Network, ISO</td></tr>
+<tr><td>Find NIC</td><td><code>nmcli device status</code> &rarr; ens160</td></tr>
+<tr><td>Static IP</td><td><code>nmcli connection modify ens160 ipv4.addresses 192.168.8.X/24 ipv4.gateway 192.168.8.1 ipv4.dns "8.8.8.8 1.1.1.1" ipv4.method manual</code></td></tr>
+<tr><td>Apply</td><td><code>nmcli connection down/up ens160</code></td></tr>
+<tr><td>Verify</td><td><code>ip addr</code>, <code>ip route</code>, <code>ping -c 4 8.8.8.8</code>, <code>ping -c 4 www.google.com</code></td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">VMware</th></tr>
+<tr><td>Type 2</td><td>Workstation Player (1&ndash;2 VMs, free), Pro (&lt;10, perpetual)</td></tr>
+<tr><td>Type 1</td><td>vSphere Essentials Plus / Standard / Foundation (&lt;100 VMs/host, per-core subscription)</td></tr>
+<tr><td>ESXi</td><td>Single server, free, production-class</td></tr>
+<tr><td>vSphere</td><td>Resource pools, central mgmt, automation, includes ESXi</td></tr>
+<tr><td>Components</td><td>ESXi, vCenter Server, modules, vSphere Client, Web Access, databases</td></tr>
+<tr><td>vMotion</td><td>Live host migration, shared VMFS. Request &rarr; check &rarr; register ESX2 &rarr; copy state + bitmap &rarr; quiesce, copy bitmap &rarr; start ESX2 &rarr; final copy &rarr; unregister ESX1 &rarr; resume</td></tr>
+<tr><td>Storage vMotion</td><td>Same host, new datastore: dir + config &rarr; self-vMotion &rarr; snapshot &rarr; copy disks &rarr; consolidate &rarr; delete source</td></tr>
+<tr><td>vServices</td><td>P2V, Lab/Stage Manager, vMotion, DRS (balance), HA (restart), SRM (DR), Nexus 1000V, VMSafe</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Networking</th></tr>
+<tr><td>Path</td><td>VM vNIC &rarr; port group &rarr; vSwitch &rarr; vmnic uplink</td></tr>
+<tr><td>Networks</td><td>Management, VMkernel (vMotion/storage), production</td></tr>
+<tr><td>vSwitch</td><td>MAC forwarding (no learning), VLAN 802.1Q, EtherChannel; no STP; no trunks; VM-VM local</td></tr>
+<tr><td>Nexus 1000V</td><td>3rd-party distributed vSwitch; VN-Link: policy follows VM</td></tr>
+<tr><td>Newer</td><td>Cisco ACI (SDN), Nexus 9000, VMware NSX (micro-segmentation), Meraki (cloud-managed)</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Para-virtualization runs unmodified OSes</td><td>Para-virtualization needs a modified guest kernel (hypercalls); full and hardware-assisted run unmodified OSes.</td></tr>
+<tr><td>Binary translation is done by the CPU</td><td>The hypervisor (software) translates; hardware-assisted is the CPU-based approach.</td></tr>
+<tr><td>Reboot after enabling VT-x</td><td>Slide: you must POWER CYCLE, not just reboot.</td></tr>
+<tr><td>EPT is for I/O devices</td><td>EPT/RVI = MMU (memory); VT-d/AMD-Vi = I/O.</td></tr>
+<tr><td>LXC is a hypervisor</td><td>LXC is OS-level (container) virtualization.</td></tr>
+<tr><td>vMotion moves the VM's disks</td><td>vMotion moves host (state); Storage vMotion moves disks between datastores.</td></tr>
+<tr><td>vMotion needs downtime</td><td>It is a live ("hot") migration with no downtime.</td></tr>
+<tr><td>vSwitches learn MACs and run spanning tree</td><td>They know vNIC MACs already and do not run STP.</td></tr>
+<tr><td>vmnic = virtual NIC</td><td>vmnic = physical NIC (uplink); vNIC = the VM's virtual NIC.</td></tr>
+<tr><td>Using gateway 192.168.8.1 with IP 192.168.1.X/24</td><td>The IP must be in the gateway's network: 192.168.8.X/24.</td></tr>
+</table>

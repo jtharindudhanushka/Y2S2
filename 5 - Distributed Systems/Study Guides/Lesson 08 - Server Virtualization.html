@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DS Lesson 8 - Server Virtualization (VMware) and Lab 01</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+  :root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#d8dee4;--soft:#f6f8fa;--accent:#0b5cad;--ok:#1a7f37;--okbg:#e9f6ec;--bad:#cf222e;--badbg:rgba(207,34,46,.10);color-scheme:light}
+  :root[data-theme=dark]{--bg:#14171a;--fg:#e6e8ea;--muted:#9aa3ad;--line:#2d333b;--soft:#1c2128;--accent:#6cb2ff;--ok:#56d364;--okbg:#14301c;--bad:#ff7b72;--badbg:rgba(255,123,114,.14);color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+  .crumb{color:var(--muted);font-size:13px;margin:0}
+  h1{font-size:28px;margin:4px 0 6px}
+  h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted);margin-bottom:18px}
+  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+  nav.tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted)}
+  nav.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  section.panel{display:none}section.panel.on{display:block}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  td:first-child{white-space:nowrap}
+  code,pre{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:14px}
+  pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  code{background:var(--soft);padding:1px 5px;border-radius:4px}
+  pre code{background:none;padding:0}
+  .box{background:var(--soft);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  .box b:first-child{display:block;margin-bottom:2px}
+  ul,ol{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+  .q .t{font-weight:600;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer}
+  .opt:hover:not(:disabled){background:var(--soft)}
+  .opt.right{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+  .ans{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+  .q.done .ans{display:block}
+  .score{position:sticky;top:50px;background:var(--bg);padding:8px 0;color:var(--muted);font-size:14px}
+  button.link{font:inherit;font-size:14px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+  summary{cursor:pointer;font-weight:600}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .top a{color:var(--accent);text-decoration:none}.top a:hover{text-decoration:underline}
+  #theme{font:inherit;font-size:13px;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  svg.dg{width:100%;height:auto;max-width:640px;display:block;margin:12px 0;font-family:inherit}
+  svg.dg .bx{fill:var(--soft);stroke:var(--fg);stroke-width:1.2}
+  svg.dg .ar{stroke:var(--accent);stroke-width:1.8;fill:none;marker-end:url(#ah)}
+  svg.dg text{fill:var(--fg);font-size:13px}
+  svg.dg .sm{fill:var(--muted);font-size:12px}
+  svg.dg .h{font-weight:700;font-size:14px}
+  svg.dg .mono{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:13px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .warn{background:var(--badbg);border-left:3px solid var(--bad);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+  td.c{white-space:normal}
+  @media print{nav.tabs,.score{display:none}section.panel{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b5cad"/></marker></defs></svg>
+
+  <div class="top"><p class="crumb"><a href="index.html">&larr; Distributed Systems study guides</a> &middot; INTE 22253 &middot; Lesson 08</p><button id="theme" type="button"></button></div>
+  <h1>Server Virtualization (VMware) and Lab 01</h1>
+  <p class="lead">Lecture 08: why servers are virtualized, hosted vs hypervisor, full / para / hardware-assisted virtualization, Hyper-V, Xen, KVM, LXC, Proxmox, VT-x, EPT / RVI, VT-d, VMware products, ESXi vs vSphere, vCenter, vMotion and Storage vMotion step by step, DRS, HA, SRM, ESX networking, vSwitches, Nexus 1000V. Lab 01: create a VM on ESXi and set a static IP with nmcli.</p>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-p="notes">Lesson</button>
+    <button role="tab" aria-selected="false" data-p="lab">Lab 01</button>
+    <button role="tab" aria-selected="false" data-p="qs">Practice questions</button>
+    <button role="tab" aria-selected="false" data-p="short">Short note</button>
+  </nav>
+
+<section class="panel on" id="notes">
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Source: Lecture 08 Server Virtualization (45 slides). The Lab 01 walkthrough is in the Lab 01 tab.</p>
+<div class="key">
+<b class="t">Objectives (slide 3)</b>
+<ul>
+<li>Describe the need for virtualization on servers and identify the usage of server virtualization.</li>
+<li>Identify the <b>2 types of hypervisors</b> and the <b>3 types of virtualization</b> (full, para, hardware-assisted).</li>
+<li>Describe the advanced virtual machine operations used in server management (<b>vMotion, Storage vMotion</b>, DRS, HA, SRM).</li>
+<li>Understand how virtual machine <b>scalability</b> is achieved.</li>
+<li>Describe how networks in virtual servers are connected (<b>vNIC, vSwitch, uplinks</b>).</li>
+<li>Lab 01: create a VM on ESXi, install Linux and configure a static IP with <code>nmcli</code>.</li>
+</ul>
+</div>
+
+<h2>1. Why virtualize servers? (slide 4)</h2>
+<table class="small">
+<tr><th style="width:22%">Reason</th><th>Slide points</th></tr>
+<tr><td><b>Effective resource usage</b></td><td>RAM, CPU and disk can be allocated wherever needed.</td></tr>
+<tr><td><b>Ease of management</b></td><td>Unused machines can be kept switched off indefinitely until required, consuming nothing but disk space. Easier application provisioning, maintenance, high availability and disaster recovery.</td></tr>
+<tr><td><b>Security</b></td><td>Applications can be kept on separate (virtual) servers that do not pose a risk to each other &mdash; especially important when VMs are owned by <b>mutually untrusting users</b>.</td></tr>
+</table>
+
+<h2>2. Server virtualization scenarios (slides 5&ndash;6)</h2>
+<div class="fig">
+<svg viewBox="0 0 680 210" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="300" height="190" style="fill:var(--bg)" stroke="currentColor"/>
+<g font-size="10"><text x="20" y="28" font-weight="bold">Hardware-based virtualization</text><text x="20" y="46" font-weight="bold">Software-based virtualization</text><text x="35" y="64">Hosted (application virtualization)</text><text x="35" y="82">Hypervisor</text><text x="50" y="100">&#8226; Full virtualization (binary translation)</text><text x="50" y="118">&#8226; Para-virtualization (OS assisted)</text><text x="50" y="136">&#8226; Hardware-assisted virtualization</text><text x="62" y="150">(Intel VT-x / AMD-V)</text></g>
+<text x="500" y="20" text-anchor="middle" font-size="11" font-weight="bold">Hosted</text>
+<g stroke="currentColor"><rect x="350" y="28" width="65" height="22" style="fill:var(--bg)"/><rect x="425" y="28" width="65" height="22" style="fill:var(--bg)"/><rect x="350" y="50" width="65" height="22" style="fill:var(--soft)"/><rect x="425" y="50" width="65" height="22" style="fill:var(--soft)"/><rect x="350" y="76" width="140" height="20" style="fill:var(--soft)"/><rect x="350" y="98" width="140" height="20" style="fill:var(--soft)"/><rect x="350" y="120" width="140" height="20" style="fill:var(--soft)"/></g>
+<g font-size="9" text-anchor="middle"><text x="382" y="43">App</text><text x="457" y="43">App</text><text x="382" y="65">Guest OS</text><text x="457" y="65">Guest OS</text><text x="420" y="90">Virtualization software</text><text x="420" y="112">Host operating system</text><text x="420" y="134">x86 hardware</text></g>
+<text x="600" y="20" text-anchor="middle" font-size="11" font-weight="bold">Hypervisor</text>
+<g stroke="currentColor"><rect x="510" y="50" width="50" height="46" style="fill:var(--soft)"/><rect x="565" y="28" width="50" height="22" style="fill:var(--bg)"/><rect x="620" y="28" width="50" height="22" style="fill:var(--bg)"/><rect x="565" y="50" width="50" height="46" style="fill:var(--soft)"/><rect x="620" y="50" width="50" height="46" style="fill:var(--soft)"/><rect x="510" y="98" width="160" height="20" style="fill:var(--soft)"/><rect x="510" y="120" width="160" height="20" style="fill:var(--soft)"/></g>
+<g font-size="9" text-anchor="middle"><text x="535" y="70">Mgmt</text><text x="535" y="82">partition</text><text x="590" y="43">App</text><text x="645" y="43">App</text><text x="590" y="77">Guest OS</text><text x="645" y="77">Guest OS</text><text x="590" y="112">Hypervisor</text><text x="590" y="134">x86 hardware</text></g>
+<text x="510" y="170" text-anchor="middle" font-size="9">Hosted = Type 2 (on a host OS) &#183; Hypervisor = Type 1 (on hardware;</text>
+<text x="510" y="183" text-anchor="middle" font-size="9">a management partition/VM is used to administer it)</text>
+</svg>
+<div class="cap">Figure 1 &mdash; Slides 5&ndash;6: the classification and the two architectures.</div>
+</div>
+<h3>The three types of (hypervisor) virtualization</h3>
+<p><b>Background.</b> A CPU has <b>privilege levels</b>. The OS kernel normally runs in the most privileged mode so it can use <b>privileged/sensitive instructions</b> (change memory mappings, talk to devices, disable interrupts). In a VM, the hypervisor must own the hardware, so the guest OS kernel cannot be allowed to run those instructions directly. Older x86 CPUs had some sensitive instructions that did not "trap" (alert the hypervisor) when run in a less privileged mode, which made x86 hard to virtualize. The three techniques solve this differently:</p>
+<table>
+<tr><th style="width:17%">Type</th><th>How it works</th><th>Guest OS changed?</th><th>Slide notes and examples</th></tr>
+<tr><td><b>Full virtualization</b> (binary translation)</td><td>The hypervisor scans the guest kernel's code as it runs and <b>rewrites (translates)</b> problem instructions into safe sequences; ordinary user code runs directly on the CPU.</td><td><b>No</b> &mdash; any unmodified OS runs</td><td>"Better performance; simple setup and installation." VMware ESXi, Microsoft Hyper-V, Xen (with AMD-SVM or Intel VT), VirtualIron (hardware-assisted)</td></tr>
+<tr><td><b>Para-virtualization</b> (OS assisted)</td><td>The guest kernel is <b>modified</b> to know it is virtualized; instead of privileged instructions it makes <b>hypercalls</b> (direct calls to the hypervisor).</td><td><b>Yes</b> &mdash; needs a modified kernel (e.g. Linux)</td><td>"Best performance; ideal for multiple instances of host OS." Xen (with traditional hardware), Oracle VM Server</td></tr>
+<tr><td><b>Hardware-assisted</b> (Intel VT-x / AMD-V)</td><td>The CPU adds a special mode for guests; sensitive instructions automatically trap to the hypervisor, so no translation or kernel changes are needed.</td><td><b>No</b></td><td>"Same as full virtualization, however the guest VM can communicate directly with the hardware, bypassing the hypervisor for certain machine instructions." Needs explicit CPU support.</td></tr>
+</table>
+<p class="small"><b>Application virtualization</b> (slide 10, the hosted branch) "leverages operating system hardware qualification; manages hardware through the generic OS": an application is packaged to run isolated on top of a normal OS without being installed into it. Examples: Microsoft App-V, Citrix Virtual Apps. Slide 10's figure compares full virtualization (unmodified guests on hardware), para-virtualization (modified guests) and application implementation (virtualization application on a host OS).</p>
+
+<h2>3. Common hypervisors (slides 7&ndash;9)</h2>
+<table>
+<tr><th style="width:20%">Hypervisor</th><th>Slide description</th></tr>
+<tr><td><b>Microsoft Hyper-V</b> (Windows)</td><td>Native hypervisor included in Windows Server and Windows 10/11 Pro and Enterprise. Supports both Type 1 (bare-metal) and Type 2 (hosted) use. (When Hyper-V is enabled it actually runs beneath Windows, which becomes the "root partition".)</td></tr>
+<tr><td><b>Xen</b> (Linux, open source)</td><td>A Type 1 hypervisor that runs multiple OSes concurrently; supports <b>para-virtualization</b> (same hardware as host) and hardware virtualization.</td></tr>
+<tr><td><b>KVM</b> (Kernel-based Virtual Machine)</td><td>A Type 1 hypervisor <b>integrated into the Linux kernel</b>; converts the Linux kernel into a bare-metal hypervisor. Hardware-assisted, with emulated hardware for VMs.</td></tr>
+<tr><td><b>LXC</b> (Linux Containers)</td><td>Lightweight virtualization using the host's Linux kernel to run multiple isolated Linux systems (containers). <b>Not a traditional hypervisor</b>: OS-level virtualization.</td></tr>
+<tr><td><b>VMware vSphere/ESXi</b> (commercial)</td><td>Leading enterprise hypervisor for server virtualization: high availability, fault tolerance and vMotion.</td></tr>
+<tr><td><b>Proxmox VE</b></td><td>Open-source virtualization management platform combining <b>KVM</b> (full virtualization) and <b>LXC</b> (containers).</td></tr>
+</table>
+
+<h2>4. Hardware-assisted virtualization (slides 11&ndash;16)</h2>
+<p>Full virtualization on x86 has significant costs in hypervisor complexity and run-time performance. Hardware extensions address the parts of x86 that are difficult or inefficient to virtualize, giving <b>simpler virtualization code and higher performance</b>, because instructions are handled in hardware instead of in software. There are three generations:</p>
+<table>
+<tr><th style="width:13%">Area</th><th style="width:20%">Intel / AMD names</th><th>What it does</th></tr>
+<tr><td><b>CPU</b> (1st gen, 2006)</td><td>Intel <b>VT-x</b> (codename Vanderpool) / AMD <b>AMD-V</b> (also SVM, codename Pacifica)</td><td>Adds a guest mode so sensitive instructions trap to the hypervisor. Requires hardware <b>Data Execution Prevention (DEP)</b>: Intel calls it <b>Execute Disable (XD)</b>, AMD calls it <b>No Execute (NX)</b>; it stops code running from non-executable memory, blocking some buffer-overflow exploits. Must be enabled in the <b>BIOS</b>, and after enabling VT/AMD-V you must <b>POWER CYCLE</b> (switch fully off and on), <b>not just reboot</b>.</td></tr>
+<tr><td><b>MMU</b> (2nd gen)</td><td>Intel <b>EPT</b> (Extended Page Tables) / AMD <b>RVI</b> (Rapid Virtualization Indexing), also called <b>NPT</b> (Nested Page Tables)</td><td>Virtualizes the memory management unit in hardware, removing the need for <b>shadow page tables</b> and the overhead of keeping them updated. Gains: EPT up to 48% on MMU-intensive benchmarks (600% on microbenchmarks); RVI up to 42% (500%). Enable in BIOS.</td></tr>
+<tr><td><b>I/O</b> (newer)</td><td>Intel <b>VT-d</b> (Virtualization Technology for Directed I/O) / AMD <b>AMD-Vi</b> (IOMMU)</td><td>An <b>I/O memory management unit</b> remaps DMA transfers and device interrupts, so a VM can be given <b>direct access</b> to a hardware device such as a network card. VMware's <b>VMDirectPath I/O</b> uses it to let a VM use a physical NIC directly instead of an emulated or para-virtualized device: little throughput change, but lower CPU cost for network-heavy workloads.</td></tr>
+</table>
+<div class="box small"><b class="t">Shadow page tables vs EPT/RVI (why the MMU feature matters)</b>
+A guest OS keeps page tables mapping its <i>virtual</i> addresses to what it thinks are physical addresses ("guest physical"). Those are not real; the hypervisor must map guest physical &rarr; host physical. Without hardware help, the hypervisor builds <b>shadow page tables</b> (direct guest-virtual &rarr; host-physical maps) and must update them every time the guest changes its own tables: slow. With <b>EPT/RVI</b> the CPU walks both levels of tables itself (nested paging), so the hypervisor no longer maintains shadows.</div>
+<p class="small"><b>Hyper-V high-level architecture (slide 13):</b> the hypervisor runs on the hardware; a <b>root partition</b> (management OS, holds device drivers) controls it; <b>enlightened</b> Windows and Linux <b>child partitions</b> are para-virtualization aware and talk efficiently to the root; an <b>unenlightened</b> child partition runs an unmodified OS with emulated devices.</p>
+
+<h2>5. VMware products (slides 17&ndash;20)</h2>
+<table class="small">
+<tr><th></th><th>Workstation Player</th><th>Workstation Pro</th><th>vSphere Essentials Plus Kit</th><th>vSphere Standard</th><th>vSphere Foundation</th></tr>
+<tr><td>Hypervisor type</td><td>Hosted</td><td>Hosted</td><td>Bare metal</td><td>Bare metal</td><td>Bare metal</td></tr>
+<tr><td>Typical use</td><td>Test</td><td>Test &amp; dev</td><td colspan="3">Data centres and cloud infrastructure</td></tr>
+<tr><td>VMs per host</td><td>1&ndash;2</td><td>&lt; 10</td><td colspan="3">&lt; 100</td></tr>
+<tr><td>Dedicated server / central &amp; remote mgmt</td><td>No</td><td>No</td><td colspan="3">Yes</td></tr>
+<tr><td>Licensing</td><td>Free for personal use</td><td>Perpetual</td><td>Subscription, core based (kit includes 96 core licences)</td><td colspan="2">Subscription per core</td></tr>
+</table>
+<div class="two">
+<div><b>VMware vSphere Hypervisor (ESXi)</b><ul class="small"><li>Single-server partitioning</li><li>Production-class hypervisor</li><li>Advanced server resource management</li><li>Free</li></ul></div>
+<div><b>VMware vSphere</b><ul class="small"><li>Pools of computing resources across many hosts</li><li>Centralized management</li><li>Built-in automation, availability and manageability</li><li>All editions include ESXi</li></ul></div>
+</div>
+<h3>vSphere components (slides 19&ndash;20)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+<g style="fill:var(--bg)" stroke="currentColor"><rect x="20" y="15" width="140" height="34"/><rect x="20" y="60" width="140" height="34"/></g>
+<g font-size="10" text-anchor="middle"><text x="90" y="30" font-weight="bold">vSphere Client</text><text x="90" y="42" font-size="8">console + admin interface</text><text x="90" y="75" font-weight="bold">vSphere Web Access</text><text x="90" y="87" font-size="8">browser-based</text></g>
+<rect x="250" y="30" width="170" height="50" style="fill:var(--soft)" stroke="currentColor"/><text x="335" y="52" text-anchor="middle" font-size="11" font-weight="bold">vCenter Server</text><text x="335" y="68" text-anchor="middle" font-size="9">central administration point</text>
+<rect x="270" y="100" width="130" height="34" style="fill:var(--soft)" stroke="currentColor"/><text x="335" y="121" text-anchor="middle" font-size="10">Database (config data)</text>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="500" y="10" width="160" height="34"/><rect x="500" y="54" width="160" height="34"/><rect x="500" y="98" width="160" height="34"/></g>
+<g font-size="10" text-anchor="middle"><text x="580" y="31">ESXi host 1 (VMs)</text><text x="580" y="75">ESXi host 2 (VMs)</text><text x="580" y="119">ESXi host 3 (VMs)</text></g>
+<g stroke="currentColor"><line x1="160" y1="32" x2="250" y2="50"/><line x1="160" y1="77" x2="250" y2="62"/><line x1="335" y1="80" x2="335" y2="100"/><line x1="420" y1="50" x2="500" y2="27"/><line x1="420" y1="55" x2="500" y2="71"/><line x1="420" y1="62" x2="500" y2="115"/></g>
+</svg>
+<div class="cap">Figure 2 &mdash; Each vCenter Server manages many ESXi hosts; clients connect from workstations.</div>
+</div>
+<table class="small">
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td><b>VMware ESXi</b></td><td>Virtualization layer that abstracts the host's processor, memory, storage and networking into multiple VMs</td></tr>
+<tr><td><b>vCenter Server</b></td><td>Central administration point for ESX/ESXi hosts on a network; directs actions on VMs and hosts; the working core of vCenter</td></tr>
+<tr><td>vCenter add-on modules</td><td>Extra capabilities: Update Manager, Converter, Guided Consolidation</td></tr>
+<tr><td><b>vSphere Client</b></td><td>Installed on Windows; primary way to interact with vSphere: a console to operate VMs and an admin interface to vCenter and hosts</td></tr>
+<tr><td>vSphere Web Access</td><td>Browser-based interface for remote access without the client</td></tr>
+<tr><td>Databases</td><td>Organise all configuration data for the vSphere environment</td></tr>
+</table>
+
+<h2>6. vMotion and Storage vMotion (slides 21&ndash;25)</h2>
+<p><b>vMotion</b> moves an <b>entire running VM from one host to another without downtime</b> &mdash; a <b>"hot" or "live" migration</b>. The VM's whole state is encapsulated, and the shared <b>VMFS</b> file system lets both source and target hosts access the VM's files at the same time, so only the <b>memory and execution state</b> travel, over a high-speed network. The VM keeps its network identity and connections.</p>
+<div class="fig">
+<svg viewBox="0 0 680 130" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="h1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect x="30" y="20" width="200" height="70" style="fill:var(--soft)" stroke="currentColor"/><text x="130" y="38" text-anchor="middle" font-size="11" font-weight="bold">ESX1 (source)</text>
+<rect x="80" y="48" width="100" height="32" style="fill:var(--bg)" stroke="currentColor"/><text x="130" y="68" text-anchor="middle" font-size="10">VM (running)</text>
+<rect x="450" y="20" width="200" height="70" style="fill:var(--soft)" stroke="currentColor"/><text x="550" y="38" text-anchor="middle" font-size="11" font-weight="bold">ESX2 (target)</text>
+<rect x="500" y="48" width="100" height="32" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="4 3"/><text x="550" y="68" text-anchor="middle" font-size="10">VM (resumes)</text>
+<line x1="180" y1="58" x2="498" y2="58" stroke="currentColor" stroke-width="2" marker-end="url(#h1)"/><text x="340" y="52" text-anchor="middle" font-size="9">memory + CPU state + network connections (vMotion network)</text>
+<rect x="190" y="100" width="300" height="24" style="fill:var(--soft)" stroke="currentColor"/><text x="340" y="116" text-anchor="middle" font-size="10">Shared storage (VMFS): VM disk files stay put</text>
+<g stroke="currentColor"><line x1="130" y1="90" x2="250" y2="100"/><line x1="550" y1="90" x2="430" y2="100"/></g>
+</svg>
+<div class="cap">Figure 3 &mdash; vMotion moves the running state between hosts; the disks stay on shared storage.</div>
+</div>
+<h3>vMotion operations, step by step (slide 23)</h3>
+<table class="small">
+<tr><th>#</th><th>Step</th><th>Why</th></tr>
+<tr><td>1</td><td>Migration request: move the VM from ESX1 to ESX2</td><td>Admin or DRS starts it</td></tr>
+<tr><td>2</td><td>vCenter verifies the VM is in a stable state on ESX1 and that ESX2 is compatible (CPU, networking, etc.)</td><td>The VM must be able to run identically on ESX2</td></tr>
+<tr><td>3</td><td>The VM is registered on ESX2</td><td>ESX2 prepares an empty VM shell</td></tr>
+<tr><td>4</td><td>VM state (memory, registers, network connections) is copied to ESX2; changes made meanwhile are recorded in a <b>memory bitmap</b> on ESX1</td><td>The VM keeps running during the copy, so pages it changes ("dirty pages") are tracked</td></tr>
+<tr><td>5</td><td>The VM is <b>quiesced</b> (paused very briefly) on ESX1 and the memory bitmap is copied to ESX2</td><td>Freeze so the last changes can be sent</td></tr>
+<tr><td>6</td><td>The VM is started on ESX2; all requests now go to ESX2</td><td>Switch-over (users see no outage)</td></tr>
+<tr><td>7</td><td>A final copy of the VM's memory is done from ESX1 to ESX2</td><td>Any remaining pages are fetched</td></tr>
+<tr><td>8</td><td>The VM is unregistered from ESX1</td><td>Clean up the source</td></tr>
+<tr><td>9</td><td>The VM resumes operation on ESX2</td><td>Migration complete</td></tr>
+</table>
+<p><b>Storage vMotion</b> (introduced in ESX 3.5) migrates a <b>running VM's disk files</b> from one <b>datastore</b> (a storage location) to another <b>on the same ESX host</b> (local or shared). Difference: <b>vMotion moves the VM to another host but keeps its storage location; Storage vMotion keeps the host but changes the storage location.</b></p>
+<table class="small">
+<tr><th>#</th><th>Storage vMotion step (slide 25)</th></tr>
+<tr><td>1</td><td>A new VM directory is created on the target datastore; configuration files and non-disk files are copied there</td></tr>
+<tr><td>2</td><td>The ESX host does a <b>"self" vMotion</b> to the target directory</td></tr>
+<tr><td>3</td><td>A <b>snapshot</b> (without memory) is taken of the VM's disks in the source directory (new writes go to the snapshot, freezing the base disk)</td></tr>
+<tr><td>4</td><td>The VM disk files are copied to the target directory</td></tr>
+<tr><td>5</td><td>The snapshot in the source directory is <b>consolidated</b> (merged) into the disk files in the target directory</td></tr>
+<tr><td>6</td><td>Source disk files and directory are deleted</td></tr>
+</table>
+
+<h2>7. Management and scalability vServices (slides 30&ndash;37)</h2>
+<table class="small">
+<tr><th style="width:28%">vService</th><th>What it gives</th></tr>
+<tr><td>Physical-to-virtual migration</td><td>Consolidation management automates migrating physical machines into VMs (P2V)</td></tr>
+<tr><td>Workflow for new VMs</td><td>Provisioning with approval processes (Life Cycle Manager, Stage Manager); self-provisioning (Lab Manager)</td></tr>
+<tr><td><b>Scalability</b>: vMotion</td><td>Move VMs without interrupting the applications inside</td></tr>
+<tr><td><b>Automatic scalability</b>: DRS</td><td><b>Distributed Resource Scheduler</b> automatically balances workloads across hosts according to set limits and guarantees, removing the need to predict resource assignment (it uses vMotion to move VMs off busy hosts)</td></tr>
+<tr><td><b>High availability</b>: VMware HA</td><td>Protects all servers and applications against component and complete system failure (restarts VMs from a failed host on other hosts); one-click to configure</td></tr>
+<tr><td><b>Disaster recovery</b>: Site Recovery Manager (SRM)</td><td>Easy transition from a production site to a DR site; easy execution in a real disaster and easy testing ("for a good night's sleep")</td></tr>
+<tr><td>Infrastructure vServices</td><td>VMware and Cisco collaborate on virtualization-aware networks (Nexus 1000V)</td></tr>
+<tr><td><b>Security</b>: VMSafe</td><td>Lets security vendors add security solutions inside the VMware infrastructure</td></tr>
+</table>
+
+<h2>8. Virtual networking (slides 27&ndash;29, 39&ndash;43)</h2>
+<h3>8.1 ESX network components</h3>
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="480" height="180" style="fill:var(--bg)" stroke="currentColor"/><text x="20" y="27" font-size="11" font-weight="bold">ESX host (per-server configuration)</text>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="30" y="38" width="70" height="40"/><rect x="110" y="38" width="70" height="40"/><rect x="190" y="38" width="70" height="40"/><rect x="290" y="38" width="80" height="40"/><rect x="390" y="38" width="80" height="40"/></g>
+<g font-size="9" text-anchor="middle"><text x="65" y="55">VM</text><text x="65" y="70">vNIC</text><text x="145" y="55">VM</text><text x="145" y="70">vNIC</text><text x="225" y="55">VM</text><text x="225" y="70">vNIC</text><text x="330" y="55">Service</text><text x="330" y="70">console port</text><text x="430" y="55">VMkernel</text><text x="430" y="70">port</text></g>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="30" y="100" width="230" height="30"/><rect x="290" y="100" width="80" height="30"/><rect x="390" y="100" width="80" height="30"/></g>
+<g font-size="9" text-anchor="middle"><text x="145" y="113">vSwitch0</text><text x="145" y="125">VM port group "Network0"</text><text x="330" y="119">vSwitch1</text><text x="430" y="119">vSwitch2</text></g>
+<g stroke="currentColor"><line x1="65" y1="78" x2="65" y2="100"/><line x1="145" y1="78" x2="145" y2="100"/><line x1="225" y1="78" x2="225" y2="100"/><line x1="330" y1="78" x2="330" y2="100"/><line x1="430" y1="78" x2="430" y2="100"/></g>
+<g style="fill:var(--soft)" stroke="currentColor"><rect x="110" y="150" width="70" height="26"/><rect x="295" y="150" width="70" height="26"/><rect x="395" y="150" width="70" height="26"/></g>
+<g font-size="9" text-anchor="middle"><text x="145" y="167">vmnic0</text><text x="330" y="167">vmnic1</text><text x="430" y="167">vmnic2</text></g>
+<g stroke="currentColor"><line x1="145" y1="130" x2="145" y2="150"/><line x1="330" y1="130" x2="330" y2="150"/><line x1="430" y1="130" x2="430" y2="150"/></g>
+<g font-size="10"><text x="505" y="60">vNIC = virtual NIC of a VM</text><text x="505" y="80">port group = set of virtual</text><text x="517" y="93">ports with the same policy</text><text x="505" y="118">vSwitch = software switch</text><text x="505" y="163">vmnic = physical NIC</text><text x="517" y="176">("uplink")</text></g>
+<g font-size="9" text-anchor="middle"><text x="145" y="196">&#8595; Internet / trusted LAN VLAN</text><text x="330" y="196">&#8595; vMotion LAN</text></g>
+</svg>
+<div class="cap">Figure 4 &mdash; Slides 39&ndash;41: VMs connect through vNICs to virtual ports on vSwitches; physical NICs (vmnics) are the uplinks.</div>
+</div>
+<ul class="small">
+<li><b>ESX network architecture (slide 39):</b> an ESX host runs VMs (App + OS) alongside a <b>console OS</b>, on physical CPU, memory and network adapters, with three networks: <b>management network</b>, <b>VMkernel network</b> (used by the hypervisor itself, e.g. vMotion, storage traffic) and <b>production network</b> (VM traffic).</li>
+<li><b>Slide 41 layout:</b> vSwitch0 has the virtual machine port group (Network0) with 10 VMs, uplink vmnic0 to the Internet/trusted LAN VLAN; vSwitch1 has the <b>service console port</b>, uplink vmnic1 to the vMotion LAN; vSwitch2 has a <b>VMkernel port</b>, uplink vmnic2. Separating traffic types on separate vSwitches and NICs keeps them from interfering.</li>
+</ul>
+<h3>8.2 vSwitch vs a physical switch (slides 42&ndash;43)</h3>
+<p>A <b>vSwitch</b> is a software implementation of an Ethernet switch inside ESX.</p>
+<table class="small">
+<tr><th>Like a physical switch</th><th>Different from a physical switch</th></tr>
+<tr><td>Forwards frames by <b>MAC address</b>; supports <b>VLAN segmentation</b></td><td><b>No need to learn MAC addresses</b>: it already knows the MAC of every connected vNIC. <b>No participation in spanning tree</b> (STP: the protocol physical switches use to avoid loops). <b>No trunk between vSwitches</b>, so no loop is possible inside ESX unless a VM bridges two vSwitches.</td></tr>
+</table>
+<p class="small"><b>Forwarding characteristics:</b> forwarding is by MAC address with no learning; traffic that does not match a local VM's MAC is sent out to the vmnic (uplink); <b>VM-to-VM traffic on the same vSwitch stays local</b> (never touches the physical network); vSwitches <b>tag traffic with 802.1Q VLAN IDs</b> (802.1Q = the standard for adding a VLAN tag to Ethernet frames); vSwitches can create <b>EtherChannels</b> (several physical links bundled into one logical, faster, redundant link).</p>
+<h3>8.3 Cisco Nexus 1000V and successors (slides 27&ndash;29)</h3>
+<ul class="small">
+<li><b>Nexus 1000V:</b> the industry's first third-party <b>virtual distributed switch</b> (one switch spanning many ESX hosts, managed like a Cisco switch), giving enhanced VM switching for VMware ESX. Features <b>VN-Link</b>: policy-based VM connectivity; <b>mobility of network and security properties</b> (the VM's port settings move with it); non-disruptive operational model; visibility and continued connectivity during vMotion.</li>
+<li><b>VN-Link problems it solves:</b> vMotion may move VMs across physical ports, so network policy must follow; it was impossible to view or apply policy to locally switched (VM-to-VM) traffic; traffic from many VMs on one physical link could not be told apart. VN-Link extends the network to the VM, giving consistent services and coordinated, coherent management.</li>
+<li><b>Newer options (slide 28):</b> <b>Cisco ACI</b> (Application Centric Infrastructure: an SDN solution with centralized, policy-driven automation and cloud integration); <b>Cisco Nexus 9000</b> (traditional and programmable switches, supports ACI); <b>VMware NSX</b> (network virtualization platform that builds entire networks in software, with <b>micro-segmentation</b>: firewall rules per VM); <b>Cisco Meraki</b> (cloud-managed networking).</li>
+</ul>
+
+<h2>9. Lab 01</h2>
+<p>The full Lab 01 walkthrough (ESXi VM, LiteLinux install, static IP with nmcli, verification) is in the <b>Lab 01</b> tab.</p>
+<h2>10. Summary (slide 44)</h2>
+<p class="small">Roles of server virtualization in an enterprise &middot; role of the hypervisor &middot; types of hypervisors (Type 1/2) &middot; types of virtualization (full, para, hardware-assisted) &middot; management techniques for virtual servers (vCenter, vMotion, Storage vMotion, DRS, HA, SRM) &middot; achieving scalability (vMotion, DRS) &middot; networking for virtual servers (vNIC, vSwitch, port groups, uplinks, Nexus 1000V).</p>
+
+<h2>11. Exam-style questions with model answers</h2>
+<p><b>Q1. Give three reasons for virtualizing servers. (3 marks)</b><br>
+Effective resource usage (CPU, RAM, disk allocated where needed); ease of management (unused VMs kept off, easier provisioning, maintenance, HA and DR); security (applications isolated on separate VMs that do not risk each other, even for mutually untrusting users).</p>
+<p><b>Q2. Compare full virtualization, para-virtualization and hardware-assisted virtualization. (9)</b><br>
+Full virtualization uses binary translation: the hypervisor rewrites sensitive guest kernel instructions on the fly, so unmodified OSes run (VMware ESXi, Hyper-V); simple setup but translation costs performance. Para-virtualization modifies the guest kernel to call the hypervisor through hypercalls instead of privileged instructions; best performance but needs a modified OS (Xen on traditional hardware, Oracle VM Server). Hardware-assisted virtualization uses CPU extensions (Intel VT-x, AMD-V) so sensitive instructions trap to the hypervisor in hardware and the guest can execute certain instructions directly; unmodified guests, simpler hypervisor code and higher performance, but needs CPU support enabled in the BIOS.</p>
+<p><b>Q3. Explain the three generations of hardware-assisted virtualization. (6)</b><br>
+CPU: Intel VT-x / AMD-V (2006) add a guest mode; need DEP (Intel XD, AMD NX) enabled in BIOS and a power cycle. MMU: Intel EPT / AMD RVI (NPT) do two-level address translation in hardware, removing shadow page tables (up to 48%/42% gains on MMU-heavy benchmarks). I/O: Intel VT-d / AMD-Vi IOMMU remaps DMA and interrupts so VMs can access devices such as NICs directly (VMware VMDirectPath I/O), lowering CPU cost.</p>
+<p><b>Q4. Distinguish Xen, KVM and LXC. (6)</b><br>
+Xen: Type 1 hypervisor running multiple OSes, supporting para-virtualization and hardware virtualization. KVM: Type 1 hypervisor built into the Linux kernel, turning Linux into a bare-metal hypervisor using hardware assistance. LXC: not a hypervisor but OS-level virtualization, running isolated Linux containers that share the host kernel.</p>
+<p><b>Q5. Compare ESXi with vSphere and describe vCenter Server. (5)</b><br>
+ESXi is the free, production-class bare-metal hypervisor for partitioning a single server with advanced resource management. vSphere is the suite that pools many ESXi hosts into resources with centralized management, automation and availability; all editions include ESXi. vCenter Server is the central administration point that manages multiple ESXi hosts and directs actions on VMs and hosts, with a database for configuration and the vSphere Client/Web Access as interfaces.</p>
+<p><b>Q6. What is vMotion? Describe its steps. (9)</b><br>
+vMotion is live migration of a running VM between hosts without downtime; shared VMFS storage lets both hosts access the VM's files, so memory and execution state are sent over a fast network and the VM keeps its network identity. Steps: request ESX1 &rarr; ESX2; vCenter checks the VM is stable and ESX2 is compatible; VM registered on ESX2; memory, registers and network state copied while changes are tracked in a memory bitmap on ESX1; VM quiesced on ESX1 and the bitmap copied; VM started on ESX2 and requests redirected; final memory copy; VM unregistered from ESX1; VM resumes on ESX2.</p>
+<p><b>Q7. Distinguish vMotion and Storage vMotion. Outline Storage vMotion. (6)</b><br>
+vMotion moves a running VM to another host while its storage stays put; Storage vMotion keeps the VM on the same host but moves its disk files to another datastore. Storage vMotion: create the target directory and copy config files; self-vMotion to the target directory; snapshot the source disks; copy the disks; consolidate the snapshot into the target disks; delete the source files.</p>
+<p><b>Q8. Explain DRS, VMware HA and Site Recovery Manager. (6)</b><br>
+DRS (Distributed Resource Scheduler) automatically balances workloads across hosts within set limits and guarantees, using vMotion, so resource assignment need not be predicted. VMware HA protects servers and applications against component and whole-host failure by restarting affected VMs on other hosts. SRM automates failover from the production site to a disaster-recovery site and allows non-disruptive DR testing.</p>
+<p><b>Q9. How does a vSwitch differ from a physical switch? (6)</b><br>
+Like a physical switch, it forwards by MAC address and supports VLANs (802.1Q tagging) and EtherChannels. Unlike one, it does not need to learn MAC addresses (it knows each connected vNIC's MAC), does not take part in spanning tree, and has no trunks between vSwitches, so loops are impossible without a bridging VM. VM-to-VM traffic on the same vSwitch stays local; unknown destinations go out through the vmnic uplink.</p>
+<p><b>Q10. What problems does Cisco Nexus 1000V/VN-Link solve? (4)</b><br>
+When vMotion moves VMs across physical ports, network and security policy must follow the VM; locally switched VM-to-VM traffic could not be seen or policed; traffic from many VMs on one link could not be distinguished. Nexus 1000V is a distributed virtual switch whose VN-Link extends the network to each VM, with policy-based connectivity that moves with the VM and visibility during vMotion.</p>
+<p><b>Q11. In Lab 01, explain each part of the nmcli command that sets a static IP and how you verify it. (6)</b><br>
+<code>nmcli connection modify ens160</code> edits the ens160 connection; <code>ipv4.addresses 192.168.8.X/24</code> sets the host address with a 255.255.255.0 mask; <code>ipv4.gateway 192.168.8.1</code> sets the default router; <code>ipv4.dns "8.8.8.8 1.1.1.1"</code> sets DNS servers; <code>ipv4.method manual</code> switches from DHCP to static. Restart with <code>nmcli connection down/up ens160</code>. Verify with <code>ip addr</code> (address), <code>ip route</code> (default via 192.168.8.1), <code>ping 8.8.8.8</code> (Internet by IP) and <code>ping www.google.com</code> (DNS working).</p>
+
+<h2>12. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Para-virtualization runs unmodified OSes</td><td>Para-virtualization needs a modified guest kernel (hypercalls); full and hardware-assisted run unmodified OSes.</td></tr>
+<tr><td>Binary translation is done by the CPU</td><td>The hypervisor (software) translates; hardware-assisted is the CPU-based approach.</td></tr>
+<tr><td>Reboot after enabling VT-x</td><td>Slide: you must POWER CYCLE, not just reboot.</td></tr>
+<tr><td>EPT is for I/O devices</td><td>EPT/RVI = MMU (memory); VT-d/AMD-Vi = I/O.</td></tr>
+<tr><td>LXC is a hypervisor</td><td>LXC is OS-level (container) virtualization.</td></tr>
+<tr><td>vMotion moves the VM's disks</td><td>vMotion moves host (state); Storage vMotion moves disks between datastores.</td></tr>
+<tr><td>vMotion needs downtime</td><td>It is a live ("hot") migration with no downtime.</td></tr>
+<tr><td>vSwitches learn MACs and run spanning tree</td><td>They know vNIC MACs already and do not run STP.</td></tr>
+<tr><td>vmnic = virtual NIC</td><td>vmnic = physical NIC (uplink); vNIC = the VM's virtual NIC.</td></tr>
+<tr><td>Using gateway 192.168.8.1 with IP 192.168.1.X/24</td><td>The IP must be in the gateway's network: 192.168.8.X/24.</td></tr>
+</table>
+
+</section>
+
+<section class="panel" id="lab">
+<p class="sm" style="color:var(--muted)">Source: Lab 01 sheet (2 pages). The lab sheet prints the address as "192.1681. X/24"; it must be 192.168.8.X/24 to match the gateway 192.168.8.1.</p>
+<h2>Lab 01 &mdash; Create a VM, install LiteLinux, configure a static IP</h2>
+<p><b>Objectives:</b> connect to VMware ESXi &middot; create a VM &middot; install LiteLinux 7 &middot; configure a static IP &middot; verify connectivity. <b>Requirements:</b> VMware ESXi, vSphere Client, LiteLinux ISO, 2 vCPU, 4 GB RAM, 40 GB disk.</p>
+<table class="small">
+<tr><th>#</th><th>Lab step</th><th>What it means</th></tr>
+<tr><td>1</td><td>Log in to the ESXi web client</td><td>Open the ESXi host's address in a browser; ESXi is a Type 1 hypervisor</td></tr>
+<tr><td>2&ndash;3</td><td>Create/Register VM; name <code>LiteLinux-Lab01</code></td><td>Start the new-VM wizard</td></tr>
+<tr><td>4</td><td>Guest OS: Linux &rarr; RHEL 8 or Other Linux (64-bit)</td><td>Tells ESXi which virtual hardware and drivers suit the guest</td></tr>
+<tr><td>5</td><td>Select datastore</td><td>Where the VM's files (virtual disk, config) will live</td></tr>
+<tr><td>6</td><td>2 vCPU, 4 GB RAM, 40 GB disk, VM Network, attach the LiteLinux ISO</td><td>Allocate virtual resources (Lesson 5: CPU time-slicing, mapped RAM, virtual disk file); connect the vNIC to the "VM Network" port group; the ISO acts as a virtual DVD to install from</td></tr>
+<tr><td>7&ndash;8</td><td>Power on, install LiteLinux, create a root password and a student user</td><td>Normal OS installation inside the VM</td></tr>
+<tr><td>9</td><td><code>nmcli device status</code></td><td>NetworkManager CLI: list network devices and find the interface name (here <code>ens160</code>, the VMware virtual NIC)</td></tr>
+<tr><td>10</td><td>Configure the static IP (below)</td><td>Fix the address instead of getting one from DHCP</td></tr>
+<tr><td>11</td><td><code>sudo nmcli connection down ens160</code> then <code>up ens160</code></td><td>Restart the connection so the new settings apply</td></tr>
+<tr><td>12</td><td><code>ip addr</code>, <code>ip route</code>, <code>ping -c 4 8.8.8.8</code>, <code>ping -c 4 www.google.com</code></td><td>Verify (table below)</td></tr>
+</table>
+<pre>sudo nmcli connection modify ens160 \
+     ipv4.addresses 192.168.8.X/24 \
+     ipv4.gateway 192.168.8.1 \
+     ipv4.dns "8.8.8.8 1.1.1.1" \
+     ipv4.method manual</pre>
+<table class="small">
+<tr><th>Part</th><th>Meaning</th></tr>
+<tr><td><code>ipv4.addresses 192.168.8.X/24</code></td><td>The VM's own IP. <b>/24</b> = subnet mask 255.255.255.0: the first 24 bits (192.168.8) are the network, the last number X (1&ndash;254) is the host. Each student uses a different X. (The lab sheet prints "192.1681. X/24", a typo; it must be in the same network as the gateway 192.168.8.1.)</td></tr>
+<tr><td><code>ipv4.gateway 192.168.8.1</code></td><td>The router used to reach other networks/the Internet</td></tr>
+<tr><td><code>ipv4.dns "8.8.8.8 1.1.1.1"</code></td><td>DNS servers (Google, Cloudflare) that turn names like www.google.com into IP addresses</td></tr>
+<tr><td><code>ipv4.method manual</code></td><td>Use these static settings instead of DHCP (automatic)</td></tr>
+</table>
+<table class="small">
+<tr><th>Verification</th><th>Expected result</th><th>If it fails</th></tr>
+<tr><td><code>ip addr</code></td><td>ens160 shows <code>inet 192.168.8.X/24</code></td><td>Address not applied: re-check modify, restart connection</td></tr>
+<tr><td><code>ip route</code></td><td><code>default via 192.168.8.1 dev ens160</code></td><td>Gateway missing or wrong</td></tr>
+<tr><td><code>ping -c 4 8.8.8.8</code></td><td>4 replies (Internet reachable by IP)</td><td>Gateway/VM network/port group problem</td></tr>
+<tr><td><code>ping -c 4 www.google.com</code></td><td>Name resolves and 4 replies</td><td>If IP ping works but this fails: <b>DNS</b> problem</td></tr>
+</table>
+<p class="small"><b>Why a static IP for servers?</b> Clients and other servers must always find the server at the same address; a DHCP address could change after a reboot.</p>
+
+
+</section>
+
+<section class="panel" id="qs">
+<div class="score">Score: <span id="sc">0</span> / <span id="tot">0</span> &middot; <button class="link" id="reset">Reset</button></div>
+<div id="mcq"></div>
+<h2>Written questions</h2>
+<details>
+<summary>W1. Give three reasons for virtualizing servers. (3 marks)</summary>
+<p>Effective resource usage (CPU, RAM, disk allocated where needed); ease of management (unused VMs kept off, easier provisioning, maintenance, HA and DR); security (applications isolated on separate VMs that do not risk each other, even for mutually untrusting users).</p>
+</details>
+<details>
+<summary>W2. Compare full virtualization, para-virtualization and hardware-assisted virtualization. (9)</summary>
+<p>Full virtualization uses binary translation: the hypervisor rewrites sensitive guest kernel instructions on the fly, so unmodified OSes run (VMware ESXi, Hyper-V); simple setup but translation costs performance. Para-virtualization modifies the guest kernel to call the hypervisor through hypercalls instead of privileged instructions; best performance but needs a modified OS (Xen on traditional hardware, Oracle VM Server). Hardware-assisted virtualization uses CPU extensions (Intel VT-x, AMD-V) so sensitive instructions trap to the hypervisor in hardware and the guest can execute certain instructions directly; unmodified guests, simpler hypervisor code and higher performance, but needs CPU support enabled in the BIOS.</p>
+</details>
+<details>
+<summary>W3. Explain the three generations of hardware-assisted virtualization. (6)</summary>
+<p>CPU: Intel VT-x / AMD-V (2006) add a guest mode; need DEP (Intel XD, AMD NX) enabled in BIOS and a power cycle. MMU: Intel EPT / AMD RVI (NPT) do two-level address translation in hardware, removing shadow page tables (up to 48%/42% gains on MMU-heavy benchmarks). I/O: Intel VT-d / AMD-Vi IOMMU remaps DMA and interrupts so VMs can access devices such as NICs directly (VMware VMDirectPath I/O), lowering CPU cost.</p>
+</details>
+<details>
+<summary>W4. Distinguish Xen, KVM and LXC. (6)</summary>
+<p>Xen: Type 1 hypervisor running multiple OSes, supporting para-virtualization and hardware virtualization. KVM: Type 1 hypervisor built into the Linux kernel, turning Linux into a bare-metal hypervisor using hardware assistance. LXC: not a hypervisor but OS-level virtualization, running isolated Linux containers that share the host kernel.</p>
+</details>
+<details>
+<summary>W5. Compare ESXi with vSphere and describe vCenter Server. (5)</summary>
+<p>ESXi is the free, production-class bare-metal hypervisor for partitioning a single server with advanced resource management. vSphere is the suite that pools many ESXi hosts into resources with centralized management, automation and availability; all editions include ESXi. vCenter Server is the central administration point that manages multiple ESXi hosts and directs actions on VMs and hosts, with a database for configuration and the vSphere Client/Web Access as interfaces.</p>
+</details>
+<details>
+<summary>W6. What is vMotion? Describe its steps. (9)</summary>
+<p>vMotion is live migration of a running VM between hosts without downtime; shared VMFS storage lets both hosts access the VM's files, so memory and execution state are sent over a fast network and the VM keeps its network identity. Steps: request ESX1 &rarr; ESX2; vCenter checks the VM is stable and ESX2 is compatible; VM registered on ESX2; memory, registers and network state copied while changes are tracked in a memory bitmap on ESX1; VM quiesced on ESX1 and the bitmap copied; VM started on ESX2 and requests redirected; final memory copy; VM unregistered from ESX1; VM resumes on ESX2.</p>
+</details>
+<details>
+<summary>W7. Distinguish vMotion and Storage vMotion. Outline Storage vMotion. (6)</summary>
+<p>vMotion moves a running VM to another host while its storage stays put; Storage vMotion keeps the VM on the same host but moves its disk files to another datastore. Storage vMotion: create the target directory and copy config files; self-vMotion to the target directory; snapshot the source disks; copy the disks; consolidate the snapshot into the target disks; delete the source files.</p>
+</details>
+<details>
+<summary>W8. Explain DRS, VMware HA and Site Recovery Manager. (6)</summary>
+<p>DRS (Distributed Resource Scheduler) automatically balances workloads across hosts within set limits and guarantees, using vMotion, so resource assignment need not be predicted. VMware HA protects servers and applications against component and whole-host failure by restarting affected VMs on other hosts. SRM automates failover from the production site to a disaster-recovery site and allows non-disruptive DR testing.</p>
+</details>
+<details>
+<summary>W9. How does a vSwitch differ from a physical switch? (6)</summary>
+<p>Like a physical switch, it forwards by MAC address and supports VLANs (802.1Q tagging) and EtherChannels. Unlike one, it does not need to learn MAC addresses (it knows each connected vNIC's MAC), does not take part in spanning tree, and has no trunks between vSwitches, so loops are impossible without a bridging VM. VM-to-VM traffic on the same vSwitch stays local; unknown destinations go out through the vmnic uplink.</p>
+</details>
+<details>
+<summary>W10. What problems does Cisco Nexus 1000V/VN-Link solve? (4)</summary>
+<p>When vMotion moves VMs across physical ports, network and security policy must follow the VM; locally switched VM-to-VM traffic could not be seen or policed; traffic from many VMs on one link could not be distinguished. Nexus 1000V is a distributed virtual switch whose VN-Link extends the network to each VM, with policy-based connectivity that moves with the VM and visibility during vMotion.</p>
+</details>
+<details>
+<summary>W11. In Lab 01, explain each part of the nmcli command that sets a static IP and how you verify it. (6)</summary>
+<p><code>nmcli connection modify ens160</code> edits the ens160 connection; <code>ipv4.addresses 192.168.8.X/24</code> sets the host address with a 255.255.255.0 mask; <code>ipv4.gateway 192.168.8.1</code> sets the default router; <code>ipv4.dns "8.8.8.8 1.1.1.1"</code> sets DNS servers; <code>ipv4.method manual</code> switches from DHCP to static. Restart with <code>nmcli connection down/up ens160</code>. Verify with <code>ip addr</code> (address), <code>ip route</code> (default via 192.168.8.1), <code>ping 8.8.8.8</code> (Internet by IP) and <code>ping www.google.com</code> (DNS working).</p>
+</details>
+</section>
+
+<section class="panel" id="short">
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Concepts</th></tr>
+<tr><td>Why</td><td>Resource usage, ease of management, security (untrusting users)</td></tr>
+<tr><td>Hosted</td><td>App virtualization on host OS (Type 2); App-V, Citrix Virtual Apps</td></tr>
+<tr><td>Full</td><td>Binary translation; unmodified guest; ESXi, Hyper-V</td></tr>
+<tr><td>Para</td><td>Modified guest, hypercalls; best perf; Xen, Oracle VM</td></tr>
+<tr><td>HW-assisted</td><td>VT-x / AMD-V; guest runs some instructions directly</td></tr>
+<tr><td>CPU</td><td>VT-x (Vanderpool) / AMD-V (SVM, Pacifica); DEP: XD / NX; BIOS; <b>power cycle</b></td></tr>
+<tr><td>MMU</td><td>EPT / RVI (NPT): no shadow page tables; +48% / +42%</td></tr>
+<tr><td>I/O</td><td>VT-d / AMD-Vi (IOMMU); VMDirectPath I/O</td></tr>
+<tr><td>Hypervisors</td><td>Hyper-V (Type 1+2), Xen (para), KVM (in Linux kernel), LXC (containers), ESXi, Proxmox (KVM + LXC)</td></tr>
+<tr><td>Hyper-V</td><td>Root partition + enlightened / unenlightened child partitions</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Lab 01</th></tr>
+<tr><td>VM</td><td>ESXi web client &rarr; create VM LiteLinux-Lab01, RHEL 8/Other Linux 64-bit, 2 vCPU, 4 GB, 40 GB, VM Network, ISO</td></tr>
+<tr><td>Find NIC</td><td><code>nmcli device status</code> &rarr; ens160</td></tr>
+<tr><td>Static IP</td><td><code>nmcli connection modify ens160 ipv4.addresses 192.168.8.X/24 ipv4.gateway 192.168.8.1 ipv4.dns "8.8.8.8 1.1.1.1" ipv4.method manual</code></td></tr>
+<tr><td>Apply</td><td><code>nmcli connection down/up ens160</code></td></tr>
+<tr><td>Verify</td><td><code>ip addr</code>, <code>ip route</code>, <code>ping -c 4 8.8.8.8</code>, <code>ping -c 4 www.google.com</code></td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">VMware</th></tr>
+<tr><td>Type 2</td><td>Workstation Player (1&ndash;2 VMs, free), Pro (&lt;10, perpetual)</td></tr>
+<tr><td>Type 1</td><td>vSphere Essentials Plus / Standard / Foundation (&lt;100 VMs/host, per-core subscription)</td></tr>
+<tr><td>ESXi</td><td>Single server, free, production-class</td></tr>
+<tr><td>vSphere</td><td>Resource pools, central mgmt, automation, includes ESXi</td></tr>
+<tr><td>Components</td><td>ESXi, vCenter Server, modules, vSphere Client, Web Access, databases</td></tr>
+<tr><td>vMotion</td><td>Live host migration, shared VMFS. Request &rarr; check &rarr; register ESX2 &rarr; copy state + bitmap &rarr; quiesce, copy bitmap &rarr; start ESX2 &rarr; final copy &rarr; unregister ESX1 &rarr; resume</td></tr>
+<tr><td>Storage vMotion</td><td>Same host, new datastore: dir + config &rarr; self-vMotion &rarr; snapshot &rarr; copy disks &rarr; consolidate &rarr; delete source</td></tr>
+<tr><td>vServices</td><td>P2V, Lab/Stage Manager, vMotion, DRS (balance), HA (restart), SRM (DR), Nexus 1000V, VMSafe</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Networking</th></tr>
+<tr><td>Path</td><td>VM vNIC &rarr; port group &rarr; vSwitch &rarr; vmnic uplink</td></tr>
+<tr><td>Networks</td><td>Management, VMkernel (vMotion/storage), production</td></tr>
+<tr><td>vSwitch</td><td>MAC forwarding (no learning), VLAN 802.1Q, EtherChannel; no STP; no trunks; VM-VM local</td></tr>
+<tr><td>Nexus 1000V</td><td>3rd-party distributed vSwitch; VN-Link: policy follows VM</td></tr>
+<tr><td>Newer</td><td>Cisco ACI (SDN), Nexus 9000, VMware NSX (micro-segmentation), Meraki (cloud-managed)</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Para-virtualization runs unmodified OSes</td><td>Para-virtualization needs a modified guest kernel (hypercalls); full and hardware-assisted run unmodified OSes.</td></tr>
+<tr><td>Binary translation is done by the CPU</td><td>The hypervisor (software) translates; hardware-assisted is the CPU-based approach.</td></tr>
+<tr><td>Reboot after enabling VT-x</td><td>Slide: you must POWER CYCLE, not just reboot.</td></tr>
+<tr><td>EPT is for I/O devices</td><td>EPT/RVI = MMU (memory); VT-d/AMD-Vi = I/O.</td></tr>
+<tr><td>LXC is a hypervisor</td><td>LXC is OS-level (container) virtualization.</td></tr>
+<tr><td>vMotion moves the VM's disks</td><td>vMotion moves host (state); Storage vMotion moves disks between datastores.</td></tr>
+<tr><td>vMotion needs downtime</td><td>It is a live ("hot") migration with no downtime.</td></tr>
+<tr><td>vSwitches learn MACs and run spanning tree</td><td>They know vNIC MACs already and do not run STP.</td></tr>
+<tr><td>vmnic = virtual NIC</td><td>vmnic = physical NIC (uplink); vNIC = the VM's virtual NIC.</td></tr>
+<tr><td>Using gateway 192.168.8.1 with IP 192.168.1.X/24</td><td>The IP must be in the gateway's network: 192.168.8.X/24.</td></tr>
+</table>
+</section>
+
+</div>
+
+<script>
+const Q=[{"q": "Which is a reason for server virtualization given on the slides?", "o": ["More physical servers", "Security: separate VMs do not pose a risk to each other", "Higher power use", "Removing all networking"], "a": 1, "e": "Also effective resource usage and ease of management."}, {"q": "Full virtualization on x86 traditionally uses:", "o": ["Hypercalls", "Binary translation", "Containers", "DNS"], "a": 1, "e": "The hypervisor rewrites sensitive instructions."}, {"q": "Para-virtualization requires:", "o": ["A modified guest OS", "No hypervisor", "Intel VT-d", "A Type 2 hypervisor"], "a": 0, "e": "The guest makes hypercalls to the hypervisor."}, {"q": "Which gives 'best performance; ideal for multiple instances of host OS' per the slides?", "o": ["Full virtualization", "Para-virtualization", "Application virtualization", "Emulation"], "a": 1, "e": "Examples: Xen on traditional hardware, Oracle VM Server."}, {"q": "Intel VT-x and AMD-V are:", "o": ["MMU virtualization", "CPU hardware-assisted virtualization", "I/O virtualization", "Storage protocols"], "a": 1, "e": "First generation (2006)."}, {"q": "After enabling VT-x/AMD-V in the BIOS you must:", "o": ["Just reboot", "Power cycle the system", "Reinstall the OS", "Do nothing"], "a": 1, "e": "The slide stresses POWER CYCLE, not reboot."}, {"q": "Intel calls its DEP feature:", "o": ["No Execute (NX)", "Execute Disable (XD)", "EPT", "VT-d"], "a": 1, "e": "AMD calls it No Execute (NX)."}, {"q": "Intel EPT and AMD RVI remove the need for:", "o": ["Hypervisors", "Shadow page tables", "Physical RAM", "vSwitches"], "a": 1, "e": "Hardware MMU virtualization (nested paging)."}, {"q": "Intel VT-d / AMD-Vi enable:", "o": ["CPU time-slicing", "Direct VM access to I/O devices via an IOMMU", "Container isolation", "Live migration"], "a": 1, "e": "Used by VMware VMDirectPath I/O."}, {"q": "KVM is:", "o": ["A Type 2 hypervisor for Windows", "A Type 1 hypervisor integrated into the Linux kernel", "A container runtime", "A VMware product"], "a": 1, "e": "It turns Linux into a bare-metal hypervisor."}, {"q": "LXC is:", "o": ["A Type 1 hypervisor", "OS-level virtualization (containers), not a traditional hypervisor", "A storage system", "A vSwitch"], "a": 1, "e": "Shares the host Linux kernel."}, {"q": "Proxmox VE combines:", "o": ["Xen and Docker", "KVM and LXC", "Hyper-V and ESXi", "VirtualBox and Docker"], "a": 1, "e": "Full virtualization + containers."}, {"q": "VMware Workstation Player is a:", "o": ["Bare-metal hypervisor", "Hosted hypervisor for testing", "Network switch", "Storage array"], "a": 1, "e": "1-2 VMs per host, free for personal use."}, {"q": "The central administration point for many ESXi hosts is:", "o": ["vSphere Client", "vCenter Server", "vmnic", "VMFS"], "a": 1, "e": "The working core of vCenter."}, {"q": "vMotion is:", "o": ["Moving a VM's disks between datastores", "Live migration of a running VM between hosts without downtime", "A backup tool", "A VLAN"], "a": 1, "e": "Storage vMotion moves the disks."}, {"q": "During vMotion, memory pages changed during the copy are tracked in a:", "o": ["Snapshot", "Memory bitmap on the source host", "DNS record", "Log file on the client"], "a": 1, "e": "The bitmap is copied after the VM is quiesced."}, {"q": "Why can vMotion avoid copying the VM's disks?", "o": ["Disks are deleted", "Shared VMFS storage is accessible by both hosts", "Disks are in RAM", "It copies them later"], "a": 1, "e": "Only memory and execution state move."}, {"q": "Storage vMotion moves a running VM's disk files:", "o": ["To another host", "To another datastore on the same host", "To the cloud only", "To a container"], "a": 1, "e": "vMotion changes host; Storage vMotion changes storage."}, {"q": "Which VMware feature automatically balances workloads across hosts?", "o": ["SRM", "DRS", "VMSafe", "HA"], "a": 1, "e": "Distributed Resource Scheduler."}, {"q": "VMware Site Recovery Manager provides:", "o": ["Load balancing", "Transition from production to a DR site", "Antivirus", "Live migration"], "a": 1, "e": "Easy execution and testing of DR."}, {"q": "In ESX networking, a vmnic is:", "o": ["A VM's virtual NIC", "A physical NIC used as an uplink", "A port group", "A VLAN"], "a": 1, "e": "vNIC = virtual NIC of a VM."}, {"q": "How does a vSwitch differ from a physical switch?", "o": ["It learns MAC addresses", "It does not participate in spanning tree", "It cannot do VLANs", "It requires trunks between vSwitches"], "a": 1, "e": "It already knows vNIC MACs and has no inter-vSwitch trunks."}, {"q": "Traffic between two VMs on the same vSwitch:", "o": ["Goes out to the physical switch", "Stays local", "Is dropped", "Goes through vCenter"], "a": 1, "e": "Unknown MACs go out to the vmnic."}, {"q": "Cisco Nexus 1000V is:", "o": ["A hypervisor", "A third-party distributed virtual switch with VN-Link", "A storage array", "A container engine"], "a": 1, "e": "Network policy follows the VM during vMotion."}, {"q": "In Lab 01, which command lists network devices to find the interface name?", "o": ["ip route", "nmcli device status", "ping", "docker ps"], "a": 1, "e": "The interface was ens160."}, {"q": "In 192.168.8.X/24, '/24' means:", "o": ["24 hosts", "Subnet mask 255.255.255.0", "Port 24", "24 DNS servers"], "a": 1, "e": "First 24 bits are the network part."}, {"q": "If ping 8.8.8.8 works but ping www.google.com fails, the problem is most likely:", "o": ["The CPU", "DNS", "The disk", "The hypervisor type"], "a": 1, "e": "Name resolution is failing."}, {"q": "ipv4.method manual means:", "o": ["Use DHCP", "Use the static settings given", "Disable IPv4", "Use IPv6 only"], "a": 1, "e": "Static IP instead of automatic DHCP."}];
+const mcq=document.getElementById('mcq'),sc=document.getElementById('sc'),tot=document.getElementById('tot');
+let score=0;
+function build(){
+  mcq.innerHTML='';score=0;sc.textContent=0;tot.textContent=Q.length;
+  Q.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='q';
+    const p=document.createElement('p');p.className='t';p.textContent=(i+1)+'. '+x.q;d.appendChild(p);
+    x.o.forEach((t,j)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+j)+'. '+t;
+      b.onclick=()=>{
+        if(d.classList.contains('done'))return;
+        d.classList.add('done');
+        d.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(k===x.a)o.classList.add('right')});
+        if(j===x.a){score++;sc.textContent=score}else b.classList.add('wrong');
+      };
+      d.appendChild(b);
+    });
+    const a=document.createElement('div');a.className='ans';a.textContent='Answer: '+String.fromCharCode(65+x.a)+'. '+x.e;d.appendChild(a);
+    mcq.appendChild(d);
+  });
+}
+build();
+document.getElementById('reset').onclick=build;
+const tb=document.getElementById('theme');
+function paint(){tb.textContent=document.documentElement.dataset.theme==='dark'?'Light mode':'Dark mode'}
+tb.onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paint()};
+paint();
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
