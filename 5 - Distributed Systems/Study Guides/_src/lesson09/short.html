@@ -1,0 +1,66 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Commit &amp; consensus</th></tr>
+<tr><td>2PC flaws</td><td>Blocking, coordinator SPOF, locks held, latency; 3PC fixes blocking (crash-only, no partitions)</td></tr>
+<tr><td>Consensus</td><td>Agreement, validity, termination; majority quorum; f failures of 2f + 1</td></tr>
+<tr><td>Harder because</td><td>Async: crash vs slow indistinguishable; FLP; must not block on minority</td></tr>
+<tr><td>Paxos</td><td>PREPARE(n) &rarr; PROMISE &rarr; ACCEPT(n, v) &rarr; ACCEPTED by majority</td></tr>
+<tr><td>Raft</td><td>Follower / candidate / leader; terms; random timeouts; majority vote; heartbeats; log entry committed on majority</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Multi-agent systems</th></tr>
+<tr><td>Traits</td><td>Autonomy, reactivity, pro-activeness, social ability; local view, no global control</td></tr>
+<tr><td>Types</td><td>Reactive, deliberative (BDI), hybrid</td></tr>
+<tr><td>Talk</td><td>FIPA-ACL performatives: inform, request, propose, cfp</td></tr>
+<tr><td>Coordinate</td><td>Contract Net, auctions, negotiation, roles, blackboard, consensus</td></tr>
+<tr><td>Conflicts</td><td>Locks/tokens, priorities, auctions, optimistic/pessimistic, conventions</td></tr>
+</table>
+<table>
+<tr><th colspan="2">ACID vs BASE</th></tr>
+<tr><td>ACID</td><td>Atomic, Consistent, Isolated, Durable (CP)</td></tr>
+<tr><td>BASE</td><td>Basically Available, Soft state, Eventually consistent (AP)</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Distributed search</th></tr>
+<tr><td>Pipeline</td><td>Crawl &rarr; parse &rarr; inverted index &rarr; shard + replicate &rarr; query + rank</td></tr>
+<tr><td>Inverted index</td><td>Term &rarr; posting list; AND = intersect</td></tr>
+<tr><td>Sharding</td><td>By document (query all shards) or by term (query term shards)</td></tr>
+<tr><td>PageRank</td><td>PR = (1 &minus; d)/N + d &Sigma; PR(q)/out(q), d = 0.85</td></tr>
+<tr><td>Challenges</td><td>Freshness, coverage</td></tr>
+</table>
+<table>
+<tr><th></th><th>Unstructured</th><th>Structured DHT</th></tr>
+<tr><td>Example</td><td>Gnutella</td><td>Chord, Kademlia</td></tr>
+<tr><td>Lookup</td><td>Flood, TTL; not guaranteed</td><td>O(log N), guaranteed</td></tr>
+<tr><td>Churn</td><td>Tolerant</td><td>Needs repair</td></tr>
+<tr><td>Complexity</td><td>Simple</td><td>Complex</td></tr>
+<tr><td>Search</td><td>Keyword</td><td>Exact key</td></tr>
+<tr><td colspan="3">Chord: key at successor; finger i = succ(n + 2<sup>i&minus;1</sup>). Kademlia: XOR distance. BitTorrent: pieces, swarm, tit-for-tat</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Programming models</th></tr>
+<tr><td>MapReduce</td><td>Map &rarr; shuffle/sort &rarr; reduce; data locality; re-run failed tasks; batch</td></tr>
+<tr><td>FaaS</td><td>Event-driven stateless functions; scale to 0; pay per call</td></tr>
+<tr><td>Actor</td><td>Private state + async messages; concurrent, stateful</td></tr>
+<tr><td>Blockchain</td><td>Replicated ledger; PoW, PoS, PBFT (3f + 1)</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Consensus needs every node to agree before deciding</td><td>Paxos/Raft need only a majority; 2PC needs everyone.</td></tr>
+<tr><td>Raft can have two leaders in the same term</td><td>At most one leader per term (one vote per server per term, majority needed).</td></tr>
+<tr><td>Chord stores key k at the node before k</td><td>At its successor: the first node with ID &ge; k.</td></tr>
+<tr><td>Flooding always finds the file</td><td>Only within the TTL; rare items may be missed.</td></tr>
+<tr><td>DHTs support keyword search natively</td><td>They support exact-key lookup; keyword search needs extra indexing.</td></tr>
+<tr><td>An inverted index maps documents to words</td><td>It maps words (terms) to documents (posting lists).</td></tr>
+<tr><td>MapReduce is good for low-latency queries</td><td>It is a high-throughput batch model.</td></tr>
+<tr><td>Reactive agents plan ahead</td><td>Reactive = condition&ndash;action rules; deliberative agents plan (BDI); hybrid combines them.</td></tr>
+</table>

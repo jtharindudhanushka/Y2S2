@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 9 - Assignment Topics</title>
+<link rel="stylesheet" href="print.css">
+<style>
+@page { size: A4; margin: 14mm 14mm 16mm 14mm;
+  @bottom-center { content: "DS Lesson 9 - Assignment Topics (not in lecture slides)   |   page " counter(page); font: 8.5pt Arial; color: #444; } }
+svg text { font-family: Arial, Helvetica, sans-serif; }
+</style>
+</head>
+<body>
+
+<h1>Lesson 9 &mdash; Assignment Topics: Consensus, Multi-Agent Systems, Distributed Search, P2P, MapReduce</h1>
+<p class="small"><b>INTE 22253 &nbsp;|&nbsp; Source: Assignment 01 Part A and Part C, plus the module outline in Lecture 01 (slides 10&ndash;11). These topics have NO lecture slides of their own, so this lesson is written from standard textbooks (Coulouris; Tanenbaum &amp; van Steen; the Raft, Chord and MapReduce papers).</b></p>
+
+<div class="box">
+<b class="t">How to use this lesson</b>
+The final exam is most likely to follow the lectures (Lessons 1&ndash;8). Study this lesson <b>after</b> those, so you can answer questions that touch the assignment themes (your viva and report also needed them). Everything here is standard theory and does not contradict the slides: 2PC/3PC come from Lecture 04; MapReduce, GFS/HDFS/S3 from Lectures 01 and 07.
+</div>
+
+<div class="key">
+<b class="t">What the assignment asked (Part A, 20 marks; Part C, 30 marks)</b>
+<ol class="small">
+<li><b>Distributed transactions:</b> explain 2PC, its weaknesses and how 3PC addresses them; how consensus protocols (Paxos/Raft) support coordination; why consensus is harder than transaction commitment.</li>
+<li><b>Multi-agent systems:</b> key characteristics; how agents coordinate, communicate and resolve conflicts over shared resources.</li>
+<li><b>Distributed search engines:</b> indexing and retrieval across nodes (inverted index, sharding); centralized vs distributed/P2P search (scalability, fault tolerance, latency).</li>
+<li><b>P2P systems:</b> structured (Chord, Kademlia, DHTs) vs unstructured (Gnutella flooding): lookup efficiency, churn tolerance, complexity.</li>
+<li><b>Part C:</b> design a DFS for 1&ndash;10 GB log files (Lesson 7) <i>or</i> implement MapReduce word count / an S3 client and explain the cloud programming model (MapReduce, serverless/FaaS, actor model).</li>
+</ol>
+</div>
+
+<h2>1. From commit to consensus</h2>
+<h3>1.1 Recap: 2PC and 3PC (Lesson 4)</h3>
+<p>2PC: coordinator sends VOTE-REQUEST; all YES &rArr; COMMIT, any NO &rArr; ABORT. <b>Weaknesses:</b> (1) <b>blocking</b> if the coordinator crashes after YES votes; (2) the coordinator is a <b>single point of failure</b>; (3) participants <b>hold locks</b> while waiting, hurting throughput; (4) many messages and log writes (latency). 3PC adds PREPARE-TO-COMMIT so survivors can decide after a coordinator crash, but it assumes no network partitions and costs an extra round.</p>
+<h3>1.2 What is consensus?</h3>
+<p><b>Consensus</b> = a group of processes must <b>agree on one value</b> (e.g. "who is the leader", "what is the next log entry") even though some may crash and messages may be delayed. A correct algorithm guarantees:</p>
+<ul class="small">
+<li><b>Agreement</b>: all correct processes decide the same value.</li>
+<li><b>Validity</b>: the decided value was proposed by some process.</li>
+<li><b>Termination</b>: every correct process eventually decides.</li>
+</ul>
+<table class="small">
+<tr><th>Atomic commit (2PC)</th><th>Consensus (Paxos/Raft)</th></tr>
+<tr><td>Needs <b>every</b> participant to vote YES; one NO or one silent node forces ABORT</td><td>Needs only a <b>majority (quorum)</b>; tolerates f crashed nodes out of 2f + 1</td></tr>
+<tr><td>Blocks if the coordinator fails at the wrong time</td><td>Keeps making progress while a majority is up and can talk</td></tr>
+<tr><td>Decides commit/abort for one transaction</td><td>Agrees on any value, repeatedly (a replicated log)</td></tr>
+</table>
+<p><b>Why consensus is harder:</b> in an <b>asynchronous</b> system (no bound on message delay, Lesson 1) you cannot tell a crashed node from a slow one. The famous <b>FLP result</b> (Fischer, Lynch, Paterson, 1985) proves that no deterministic algorithm can <i>guarantee</i> consensus in a fully asynchronous system if even one process may crash. Practical algorithms (Paxos, Raft) therefore always keep <b>safety</b> (never two different decisions) and achieve <b>liveness</b> (actually deciding) using timeouts and leader election when the network behaves well enough. Commit is "easier" because it is allowed to give up (abort) or to block; consensus must make all correct nodes agree on a value without blocking on minority failures.</p>
+
+<h3>1.3 Paxos (in brief)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="k1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g font-size="11" font-weight="bold"><text x="10" y="34">Proposer</text><text x="10" y="84">Acceptor 1</text><text x="10" y="114">Acceptor 2</text><text x="10" y="144">Acceptor 3</text></g>
+<g stroke="#000"><line x1="90" y1="30" x2="670" y2="30"/><line x1="90" y1="80" x2="670" y2="80"/><line x1="90" y1="110" x2="670" y2="110"/><line x1="90" y1="140" x2="670" y2="140"/></g>
+<g stroke="#000"><line x1="110" y1="30" x2="150" y2="78" marker-end="url(#k1)"/><line x1="110" y1="30" x2="160" y2="108" marker-end="url(#k1)"/><line x1="110" y1="30" x2="170" y2="138" marker-end="url(#k1)"/></g>
+<text x="120" y="20" font-size="9">1a PREPARE(n)</text>
+<g stroke="#000" stroke-dasharray="4 2"><line x1="200" y1="80" x2="250" y2="32" marker-end="url(#k1)"/><line x1="210" y1="110" x2="260" y2="32" marker-end="url(#k1)"/></g>
+<text x="220" y="20" font-size="9">1b PROMISE(n)</text>
+<g stroke="#000" stroke-width="1.5"><line x1="330" y1="30" x2="370" y2="78" marker-end="url(#k1)"/><line x1="330" y1="30" x2="380" y2="108" marker-end="url(#k1)"/><line x1="330" y1="30" x2="390" y2="138" marker-end="url(#k1)"/></g>
+<text x="340" y="20" font-size="9">2a ACCEPT(n, v)</text>
+<g stroke="#000" stroke-dasharray="4 2"><line x1="430" y1="80" x2="480" y2="32" marker-end="url(#k1)"/><line x1="440" y1="110" x2="490" y2="32" marker-end="url(#k1)"/><line x1="450" y1="140" x2="500" y2="32" marker-end="url(#k1)"/></g>
+<text x="450" y="20" font-size="9">2b ACCEPTED</text>
+<rect x="540" y="38" width="125" height="28" fill="#bbb" stroke="#000"/><text x="602" y="56" text-anchor="middle" font-size="10">majority &#8658; v chosen</text>
+</svg>
+<div class="cap">Figure 1 &mdash; Basic Paxos: two phases, each needs replies from a majority (here 2 of 3 is enough).</div>
+</div>
+<ol class="small">
+<li><b>Prepare:</b> a proposer picks a unique, increasing proposal number n and sends PREPARE(n). An acceptor <b>promises</b> not to accept any proposal numbered below n and reports any value it already accepted.</li>
+<li><b>Accept:</b> with promises from a majority, the proposer sends ACCEPT(n, v), where v is the value of the highest-numbered proposal already accepted (or its own value if none). Acceptors accept unless they promised a higher n. When a majority accepts, v is <b>chosen</b>.</li>
+</ol>
+<p class="small">Because any two majorities overlap in at least one acceptor, a later proposer always learns an already-chosen value and re-proposes it, so two different values can never be chosen. Paxos is correct but famously hard to understand and implement.</p>
+
+<h3>1.4 Raft</h3>
+<p><b>Raft</b> (2014) solves the same problem but was designed to be understandable. It splits consensus into <b>leader election</b>, <b>log replication</b> and <b>safety</b>. Each node is a <b>follower</b>, <b>candidate</b> or <b>leader</b>. Time is divided into numbered <b>terms</b>; each term has at most one leader.</p>
+<div class="fig">
+<svg viewBox="0 0 680 100" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="k2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g stroke="#000"><rect x="30" y="30" width="130" height="40" fill="#fff"/><rect x="275" y="30" width="130" height="40" fill="#ddd"/><rect x="520" y="30" width="130" height="40" fill="#bbb"/></g>
+<g font-size="12" text-anchor="middle" font-weight="bold"><text x="95" y="55">Follower</text><text x="340" y="55">Candidate</text><text x="585" y="55">Leader</text></g>
+<g stroke="#000" stroke-width="1.4"><line x1="160" y1="42" x2="273" y2="42" marker-end="url(#k2)"/><line x1="405" y1="42" x2="518" y2="42" marker-end="url(#k2)"/><line x1="273" y1="62" x2="162" y2="62" marker-end="url(#k2)"/><line x1="518" y1="62" x2="162" y2="66" marker-end="url(#k2)"/></g>
+<g font-size="9" text-anchor="middle"><text x="217" y="36">election timeout</text><text x="462" y="36">votes from majority</text><text x="217" y="78">sees current leader /</text><text x="217" y="89">higher term</text><text x="400" y="92">sees higher term</text></g>
+</svg>
+<div class="cap">Figure 2 &mdash; Raft server states.</div>
+</div>
+<table class="small">
+<tr><th>Step (worked example: 5 servers S1&ndash;S5, leader S1 in term 1)</th><th>What happens</th></tr>
+<tr><td>1. Normal operation</td><td>S1 sends periodic <b>heartbeats</b> (empty AppendEntries) to all followers.</td></tr>
+<tr><td>2. S1 crashes</td><td>Followers stop receiving heartbeats. Each has a <b>random election timeout</b> (e.g. 150&ndash;300 ms) so they rarely time out together.</td></tr>
+<tr><td>3. S3 times out first</td><td>S3 becomes candidate, increments term to <b>2</b>, votes for itself, sends RequestVote to S2, S4, S5.</td></tr>
+<tr><td>4. Voting</td><td>Each server votes for at most one candidate per term, and only if the candidate's log is at least as up to date as its own. S2 and S4 vote for S3.</td></tr>
+<tr><td>5. Majority</td><td>S3 has 3 of 5 votes (itself + S2 + S4) &ge; majority (3) &rArr; <b>leader for term 2</b>; it starts sending heartbeats. S5 sees term 2 and stays follower.</td></tr>
+<tr><td>6. Log replication</td><td>A client sends a command to S3; S3 appends it to its log, sends AppendEntries; once a <b>majority</b> stores it, the entry is <b>committed</b> and applied to every state machine in the same order.</td></tr>
+<tr><td>7. S1 recovers</td><td>S1 still thinks it is leader of term 1, sees term 2 &gt; 1, steps down to follower and its log is brought in line with S3's.</td></tr>
+</table>
+<p class="small">With 5 servers Raft tolerates 2 failures (needs 3 alive). If two candidates split the votes, nobody wins, the term times out, and a new election with fresh random timeouts follows. <b>Used in:</b> etcd (the Kubernetes cluster database, Lesson 6), Consul; ZooKeeper uses the similar Zab protocol; Paxos variants are used in Google Chubby/Spanner. Distributed metadata (Ceph, HDFS Federation) needs such consensus (Lecture 07 slide 27).</p>
+<p><b>How consensus supports coordination in multi-agent systems:</b> agents use it to agree on a leader/coordinator, on the order of actions on a shared resource (a replicated log of "who holds the lock"), or on a shared plan, so that all agents act on the same decision even when some agents fail.</p>
+
+<h2>2. Multi-agent systems (MAS)</h2>
+<p>An <b>agent</b> is an autonomous software (or robotic) entity that <b>perceives</b> its environment through sensors and <b>acts</b> on it to achieve goals. A <b>multi-agent system</b> is a set of interacting agents, often on different machines &mdash; a distributed system where the components make their own decisions.</p>
+<table class="small">
+<tr><th>Characteristic</th><th>Meaning</th></tr>
+<tr><td><b>Autonomy</b></td><td>Acts without direct human or central control; has its own state and goals</td></tr>
+<tr><td><b>Reactivity</b></td><td>Perceives and responds in time to changes in the environment</td></tr>
+<tr><td><b>Pro-activeness</b></td><td>Takes initiative to pursue goals, not only reacting</td></tr>
+<tr><td><b>Social ability</b></td><td>Communicates, cooperates and negotiates with other agents</td></tr>
+<tr><td>In a MAS</td><td>Each agent has only a <b>local, partial view</b>; there is <b>no global control</b>; data is decentralized; computation is asynchronous &mdash; the same challenges as any distributed system (Lesson 1)</td></tr>
+</table>
+<p><b>Agent types</b> (Lecture 01 outline): <b>reactive</b> (simple condition&ndash;action rules, fast, no internal model, e.g. a thermostat or obstacle-avoiding robot); <b>deliberative</b> (keeps a symbolic model of the world and plans, e.g. the <b>BDI</b> model: Beliefs, Desires, Intentions); <b>hybrid</b> (a fast reactive layer for emergencies plus a deliberative layer for planning, e.g. an autonomous car).</p>
+<h3>2.1 Communication</h3>
+<p>Agents exchange messages in an <b>Agent Communication Language (ACL)</b>. The <b>FIPA</b> standard (Foundation for Intelligent Physical Agents) defines FIPA-ACL: each message has a <b>performative</b> (the type of speech act: <code>inform</code>, <code>request</code>, <code>propose</code>, <code>accept-proposal</code>, <code>reject-proposal</code>, <code>cfp</code> = call for proposals), plus sender, receiver, content, a content language and an ontology (shared vocabulary). FIPA also defines platform services: an Agent Management System and a Directory Facilitator ("yellow pages"). JADE is a common FIPA-compliant platform.</p>
+<h3>2.2 Coordination and negotiation</h3>
+<ul class="small">
+<li><b>Contract Net Protocol</b>: a manager broadcasts a <b>call for proposals</b> for a task; contractors reply with <b>bids</b>; the manager <b>awards</b> the task to the best bid; the winner reports results. (Like a tender.)</li>
+<li><b>Auctions</b> (English, Dutch, sealed-bid) to allocate scarce resources.</li>
+<li><b>Negotiation and argumentation</b>: exchange offers/counter-offers until agreement.</li>
+<li><b>Organisational structures</b>: hierarchies, teams, roles; <b>blackboard</b> systems where agents share a common workspace.</li>
+<li><b>Consensus / voting</b> (section 1) for agreeing on a leader or shared decision.</li>
+</ul>
+<h3>2.3 Resolving conflicts over shared resources</h3>
+<table class="small">
+<tr><th>Technique</th><th>Example</th></tr>
+<tr><td><b>Mutual exclusion / locking</b> (central lock manager, token passing, or a consensus-backed lock)</td><td>Only the agent holding the token may use the charging station</td></tr>
+<tr><td><b>Priorities and timestamps</b> (older/higher-priority request wins)</td><td>Ambulance agent overrides normal traffic agents</td></tr>
+<tr><td><b>Negotiation / auctions</b></td><td>Delivery drones bid for a landing slot</td></tr>
+<tr><td><b>Optimistic vs pessimistic concurrency</b></td><td>Pessimistic: lock before use. Optimistic: act, then check for conflict and retry (better when conflicts are rare)</td></tr>
+<tr><td><b>Social laws / conventions</b></td><td>"Keep left" rule avoids collisions without messages</td></tr>
+</table>
+<p class="small">Applications: autonomous vehicles, IoT and smart grids, robot warehouses, supply chains, traffic control.</p>
+
+<h2>3. Distributed search engines</h2>
+<h3>3.1 Pipeline</h3>
+<div class="fig">
+<svg viewBox="0 0 680 50" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="k3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g stroke="#000" fill="#f3f3f3"><rect x="5" y="10" width="120" height="30"/><rect x="150" y="10" width="120" height="30"/><rect x="295" y="10" width="120" height="30"/><rect x="440" y="10" width="110" height="30"/><rect x="575" y="10" width="100" height="30"/></g>
+<g font-size="10" text-anchor="middle"><text x="65" y="29">Crawl web pages</text><text x="210" y="29">Parse + tokenise</text><text x="355" y="29">Build inverted index</text><text x="495" y="29">Shard + replicate</text><text x="625" y="29">Query + rank</text></g>
+<g stroke="#000"><line x1="125" y1="25" x2="148" y2="25" marker-end="url(#k3)"/><line x1="270" y1="25" x2="293" y2="25" marker-end="url(#k3)"/><line x1="415" y1="25" x2="438" y2="25" marker-end="url(#k3)"/><line x1="550" y1="25" x2="573" y2="25" marker-end="url(#k3)"/></g>
+</svg>
+<div class="cap">Figure 3 &mdash; Search engine pipeline; crawling and index building are big batch jobs (MapReduce, section 5).</div>
+</div>
+<p><b>Crawling</b>: many crawler machines download pages, follow links, and revisit pages to keep the index fresh. <b>Challenges</b> (Lecture 01 outline): <b>freshness</b> (pages change constantly) and <b>coverage</b> (the web is huge; you cannot crawl it all).</p>
+<h3>3.2 Inverted index (worked example)</h3>
+<p>An <b>inverted index</b> maps each <b>term</b> (word) to a <b>posting list</b>: the documents containing it (plus positions/frequencies). It is "inverted" because instead of document &rarr; words, it stores word &rarr; documents, so a query only reads the lists of its words.</p>
+<table class="small">
+<tr><th>Documents</th><th>Inverted index</th></tr>
+<tr><td>D1: "cloud storage systems"<br>D2: "distributed storage"<br>D3: "cloud computing"</td><td>cloud &rarr; D1, D3<br>storage &rarr; D1, D2<br>systems &rarr; D1<br>distributed &rarr; D2<br>computing &rarr; D3</td></tr>
+<tr><td colspan="2">Query "cloud AND storage": intersect {D1, D3} &cap; {D1, D2} = <b>{D1}</b>. Query "cloud OR storage" = {D1, D2, D3}.</td></tr>
+</table>
+<h3>3.3 Sharding and query processing</h3>
+<p>The index is far too big for one machine, so it is split into <b>shards</b> (partitions), each replicated for fault tolerance and throughput.</p>
+<table class="small">
+<tr><th></th><th>Document-partitioned (local index)</th><th>Term-partitioned (global index)</th></tr>
+<tr><td>Split</td><td>Each shard holds a full index for a subset of documents</td><td>Each shard holds the complete posting lists for a subset of terms</td></tr>
+<tr><td>Query</td><td>Sent to <b>all</b> shards in parallel; each returns its top results; merged</td><td>Sent only to the shards holding the query's terms; lists are combined</td></tr>
+<tr><td>Pros/cons</td><td>Simple, balanced, easy to add documents; every query touches every shard</td><td>Fewer shards per query; hot terms create hot spots; big lists move across the network</td></tr>
+</table>
+<div class="fig">
+<svg viewBox="0 0 680 140" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="k4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect x="20" y="50" width="90" height="36" fill="#fff" stroke="#000"/><text x="65" y="72" text-anchor="middle" font-size="10">User query</text>
+<rect x="160" y="45" width="140" height="46" fill="#bbb" stroke="#000"/><text x="230" y="64" text-anchor="middle" font-size="10" font-weight="bold">Front-end /</text><text x="230" y="78" text-anchor="middle" font-size="10" font-weight="bold">aggregator</text>
+<g fill="#f3f3f3" stroke="#000"><rect x="380" y="8" width="150" height="30"/><rect x="380" y="53" width="150" height="30"/><rect x="380" y="98" width="150" height="30"/></g>
+<g font-size="10" text-anchor="middle"><text x="455" y="27">Shard 1 (+ replicas)</text><text x="455" y="72">Shard 2 (+ replicas)</text><text x="455" y="117">Shard 3 (+ replicas)</text></g>
+<g stroke="#000"><line x1="110" y1="68" x2="158" y2="68" marker-end="url(#k4)"/><line x1="300" y1="60" x2="378" y2="23" marker-end="url(#k4)"/><line x1="300" y1="68" x2="378" y2="68" marker-end="url(#k4)"/><line x1="300" y1="76" x2="378" y2="113" marker-end="url(#k4)"/></g>
+<text x="600" y="60" font-size="9" text-anchor="middle">each returns</text><text x="600" y="72" font-size="9" text-anchor="middle">its top-k;</text><text x="600" y="84" font-size="9" text-anchor="middle">merge + rank</text>
+</svg>
+<div class="cap">Figure 4 &mdash; Scatter-gather query over a document-partitioned index.</div>
+</div>
+<h3>3.4 Ranking: PageRank (worked example)</h3>
+<p>PageRank scores a page by how many important pages link to it. With damping factor d = 0.85 and N pages: <b>PR(p) = (1 &minus; d)/N + d &times; &Sigma; PR(q)/out(q)</b> over pages q linking to p (out(q) = number of links leaving q).</p>
+<p class="small">Links: A &rarr; B, A &rarr; C, B &rarr; C, C &rarr; A. N = 3, start all at 1/3, (1 &minus; d)/N = 0.05.</p>
+<table class="small">
+<tr><th>Page</th><th>Iteration 1</th><th>Converged (after many iterations)</th></tr>
+<tr><td>A</td><td>0.05 + 0.85 &times; (C/1) = 0.05 + 0.85 &times; 0.333 = 0.333</td><td>&asymp; 0.388</td></tr>
+<tr><td>B</td><td>0.05 + 0.85 &times; (A/2) = 0.05 + 0.85 &times; 0.167 = 0.192</td><td>&asymp; 0.215</td></tr>
+<tr><td>C</td><td>0.05 + 0.85 &times; (A/2 + B/1) = 0.05 + 0.85 &times; 0.5 = 0.475</td><td>&asymp; 0.397</td></tr>
+</table>
+<p class="small">C ranks highest (two incoming links); scores sum to 1. On the web this is computed over billions of pages as repeated MapReduce jobs.</p>
+<h3>3.5 Centralized vs distributed/P2P search</h3>
+<table class="small">
+<tr><th></th><th>Centralized index</th><th>Distributed (sharded cluster, e.g. Google, Elasticsearch)</th><th>P2P search (e.g. Gnutella, DHT-based)</th></tr>
+<tr><td>Scalability</td><td>Limited by one machine</td><td>High: add shards/replicas</td><td>Grows with peers, but flooding/lookup cost grows too</td></tr>
+<tr><td>Fault tolerance</td><td>Single point of failure</td><td>Replicas take over; partial results if a shard is down</td><td>No central SPOF, but peers churn; results incomplete</td></tr>
+<tr><td>Query latency</td><td>Low at small scale</td><td>Low: parallel scatter-gather in one data centre</td><td>Higher and variable (many hops over the Internet)</td></tr>
+<tr><td>Control/freshness</td><td>Easy</td><td>Managed by one operator</td><td>Hard: no one controls the whole index</td></tr>
+</table>
+
+<h2>4. Peer-to-peer systems</h2>
+<h3>4.1 Unstructured P2P (Gnutella-style flooding)</h3>
+<p>Peers connect to random neighbours; there is no rule about where data is stored. To search, a peer sends the query to all neighbours, who forward it to theirs, up to a <b>TTL</b> (time-to-live, a hop limit).</p>
+<p class="small"><b>Worked example:</b> each peer has 3 new neighbours and TTL = 3: messages = 3 + 9 + 27 = <b>39</b> for one search, reaching at most 39 peers. TTL = 5 gives 3 + 9 + 27 + 81 + 243 = 363. Traffic grows exponentially, yet a rare file beyond the TTL is <b>not found</b> even if it exists.</p>
+<h3>4.2 Structured P2P: Distributed Hash Tables (DHT)</h3>
+<p>A <b>DHT</b> gives every node and every key an ID from the same space (by hashing, e.g. SHA-1) and has a rule for which node stores which key, so a lookup can be routed to exactly the right node in about <b>O(log N)</b> hops.</p>
+<p><b>Chord</b>: IDs on a ring of size 2<sup>m</sup>. Key k is stored at its <b>successor</b>: the first node whose ID &ge; k (clockwise). Each node keeps a <b>finger table</b> of m entries: finger i = successor(n + 2<sup>i&minus;1</sup>). Lookups jump about half the remaining distance each hop.</p>
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="k5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<circle cx="150" cy="100" r="80" fill="none" stroke="#000"/>
+<g fill="#bbb" stroke="#000"><circle cx="169" cy="22" r="12"/><circle cx="230" cy="100" r="12"/><circle cx="119" cy="174" r="12"/><circle cx="74" cy="131" r="12"/><circle cx="119" cy="26" r="12"/></g>
+<g font-size="10" text-anchor="middle" font-weight="bold"><text x="169" y="26">1</text><text x="230" y="104">4</text><text x="119" y="178">9</text><text x="74" y="135">11</text><text x="119" y="30">14</text></g>
+<text x="250" y="190" text-anchor="middle" font-size="9">ring 0..15 (m = 4)</text>
+<g stroke="#000" stroke-width="1.5"><line x1="165" y1="34" x2="123" y2="160" marker-end="url(#k5)"/><line x1="108" y1="168" x2="84" y2="142" marker-end="url(#k5)"/><line x1="78" y1="119" x2="113" y2="38" marker-end="url(#k5)"/></g>
+<text x="420" y="25" font-size="11" font-weight="bold">Finger table of node 1</text>
+<g font-size="10"><text x="330" y="45">i = 1: succ(1 + 1 = 2) = 4</text><text x="330" y="61">i = 2: succ(1 + 2 = 3) = 4</text><text x="330" y="77">i = 3: succ(1 + 4 = 5) = 9</text><text x="330" y="93">i = 4: succ(1 + 8 = 9) = 9</text>
+<text x="330" y="120" font-weight="bold">Lookup key 12 from node 1:</text><text x="330" y="136">node 1: closest finger before 12 = 9 &#8594; go to 9</text><text x="330" y="152">node 9: fingers 11, 11, 14, 1 &#8594; closest before 12 = 11</text><text x="330" y="168">node 11: successor 14 and 12 &#8712; (11, 14]</text><text x="330" y="184" font-weight="bold">&#8658; key 12 is stored at node 14 (path 1 &#8594; 9 &#8594; 11 &#8594; 14)</text></g>
+</svg>
+<div class="cap">Figure 5 &mdash; Chord worked example: nodes 1, 4, 9, 11, 14 on a 16-ID ring.</div>
+</div>
+<p><b>Kademlia</b>: the distance between two IDs is their bitwise <b>XOR</b>; each node keeps "k-buckets" of contacts at distances 2<sup>i</sup>, and queries several of the closest nodes in parallel. XOR is symmetric, so normal traffic keeps routing tables fresh; it handles churn well. Used by BitTorrent's DHT and IPFS.</p>
+<p class="small"><b>BitTorrent</b> (content distribution): a file is split into pieces; a tracker or the DHT finds peers in the "swarm"; peers download different pieces from many peers at once and upload pieces they have ("tit-for-tat" rewards uploaders); rarest pieces are fetched first. The more popular the file, the faster it spreads.</p>
+<h3>4.3 Structured vs unstructured</h3>
+<table class="small">
+<tr><th>Trade-off</th><th>Unstructured (Gnutella flooding)</th><th>Structured (Chord, Kademlia DHT)</th></tr>
+<tr><td>Lookup efficiency</td><td>Poor: flooding costs many messages; not guaranteed (TTL); good for keyword/partial searches and popular items</td><td>Efficient and guaranteed: O(log N) hops for an exact key; no keyword search by itself</td></tr>
+<tr><td>Churn tolerance (peers joining/leaving)</td><td>High: no structure to repair; a leaving peer just disappears</td><td>Lower: finger tables and key ownership must be repaired on joins/leaves (stabilisation); Kademlia copes better than Chord</td></tr>
+<tr><td>Implementation complexity</td><td>Simple</td><td>More complex (hashing, routing tables, stabilisation, replication of keys)</td></tr>
+<tr><td>Load / placement</td><td>Data anywhere</td><td>Data placed by hash: balanced, but no control over where data lives</td></tr>
+</table>
+<p class="small"><b>Other outline topics (Lecture 01 slide 11):</b> <b>reputation and trust management</b> (rating peers to avoid free-riders and malicious peers), legal and ethical issues (copyright), and <b>blockchain</b>: a distributed ledger replicated across peers, agreed by consensus &mdash; <b>Proof of Work</b> (miners solve a costly puzzle), <b>Proof of Stake</b> (validators chosen by the stake they lock), <b>PBFT</b> (Practical Byzantine Fault Tolerance: votes among known nodes, tolerates f Byzantine of 3f + 1; used in permissioned chains such as Hyperledger); smart contracts (Ethereum) run code on the ledger.</p>
+
+<h2>5. MapReduce and cloud programming models</h2>
+<h3>5.1 MapReduce</h3>
+<p>A programming model (Google, 2004) for processing huge datasets on clusters of commodity machines. The programmer writes only two functions; the framework handles distribution, scheduling and failures.</p>
+<ul class="small">
+<li><b>map(key, value) &rarr; list of (k2, v2)</b>: run in parallel on each input split (e.g. each 64/128 MB block of a GFS/HDFS file, processed on the machine that stores it: <b>data locality</b>).</li>
+<li><b>Shuffle &amp; sort</b>: the framework groups all values with the same k2 and sends them to one reducer.</li>
+<li><b>reduce(k2, list of v2) &rarr; output</b>: combines each group.</li>
+<li><b>Fault tolerance</b>: a master pings workers; tasks of a failed worker are re-executed elsewhere; slow "stragglers" get backup copies.</li>
+</ul>
+<div class="fig">
+<svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="k6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g fill="#fff" stroke="#000"><rect x="10" y="15" width="120" height="50"/><rect x="10" y="85" width="120" height="50"/></g>
+<g font-size="9"><text x="16" y="30">log split 1:</text><text x="16" y="44">ERROR db</text><text x="16" y="56">INFO web ERROR web</text><text x="16" y="100">log split 2:</text><text x="16" y="114">ERROR db INFO db</text></g>
+<g fill="#f3f3f3" stroke="#000"><rect x="170" y="15" width="150" height="50"/><rect x="170" y="85" width="150" height="50"/></g>
+<g font-size="9"><text x="176" y="30" font-weight="bold">Map 1</text><text x="176" y="44">(ERROR,1) (INFO,1)</text><text x="176" y="56">(ERROR,1)</text><text x="176" y="100" font-weight="bold">Map 2</text><text x="176" y="114">(ERROR,1) (INFO,1)</text></g>
+<rect x="360" y="40" width="130" height="70" fill="#ddd" stroke="#000"/><text x="425" y="58" text-anchor="middle" font-size="10" font-weight="bold">Shuffle &amp; sort</text><text x="425" y="76" text-anchor="middle" font-size="9">ERROR &#8594; [1,1,1]</text><text x="425" y="90" text-anchor="middle" font-size="9">INFO &#8594; [1,1]</text>
+<g fill="#bbb" stroke="#000"><rect x="530" y="25" width="140" height="40"/><rect x="530" y="85" width="140" height="40"/></g>
+<g font-size="10" text-anchor="middle"><text x="600" y="49">Reduce: ERROR = 3</text><text x="600" y="109">Reduce: INFO = 2</text></g>
+<g stroke="#000"><line x1="130" y1="40" x2="168" y2="40" marker-end="url(#k6)"/><line x1="130" y1="110" x2="168" y2="110" marker-end="url(#k6)"/><line x1="320" y1="40" x2="358" y2="62" marker-end="url(#k6)"/><line x1="320" y1="110" x2="358" y2="90" marker-end="url(#k6)"/><line x1="490" y1="65" x2="528" y2="45" marker-end="url(#k6)"/><line x1="490" y1="85" x2="528" y2="105" marker-end="url(#k6)"/></g>
+</svg>
+<div class="cap">Figure 6 &mdash; MapReduce log analysis: count log lines per level (map emits (level, 1) per line).</div>
+</div>
+<pre># Part C-style word count (Python, simulated workers)
+from collections import defaultdict
+from multiprocessing import Pool
+
+def map_fn(text):                       # one split -&gt; list of (word, 1)
+    return [(w.lower(), 1) for w in text.split()]
+
+def reduce_fn(item):                    # (word, [1,1,..]) -&gt; (word, count)
+    word, ones = item
+    return word, sum(ones)
+
+if __name__ == "__main__":
+    splits = ["cloud data cloud", "data node"]
+    with Pool(2) as p:
+        mapped = p.map(map_fn, splits)  # map phase in parallel processes
+    groups = defaultdict(list)          # shuffle: group by key
+    for pairs in mapped:
+        for w, one in pairs:
+            groups[w].append(one)
+    with Pool(2) as p:
+        print(dict(p.map(reduce_fn, groups.items())))   # {'cloud': 2, 'data': 2, 'node': 1}</pre>
+<p class="small"><b>How it would scale for real:</b> input in HDFS/S3 split into blocks; thousands of map tasks run where the blocks are; shuffle over the network; results written back to the DFS. <b>Limits of a local simulation:</b> one machine's CPU, RAM and disk; no real network shuffle cost; no machine failures, stragglers or data locality to handle.</p>
+<h3>5.2 Cloud programming models compared</h3>
+<table class="small">
+<tr><th>Model</th><th>Idea</th><th>Suits</th><th>Examples</th></tr>
+<tr><td><b>MapReduce / batch dataflow</b></td><td>map &rarr; shuffle &rarr; reduce over huge static datasets</td><td>Log analysis, indexing, ETL; high throughput, not low latency</td><td>Hadoop MapReduce, Spark</td></tr>
+<tr><td><b>Serverless / FaaS</b></td><td>Small stateless functions triggered by events; scale 0 &rarr; many; pay per call (Lesson 2)</td><td>Event-driven, bursty, short tasks (resize an uploaded image)</td><td>AWS Lambda, Azure Functions</td></tr>
+<tr><td><b>Actor model</b></td><td>Independent "actors" with private state communicate only by asynchronous messages; each handles one message at a time</td><td>Highly concurrent, stateful, interactive systems (chat, games, IoT)</td><td>Akka, Erlang/Elixir, Orleans</td></tr>
+<tr><td>Stream processing</td><td>Continuous computation on unbounded event streams</td><td>Real-time analytics, fraud detection</td><td>Kafka Streams, Flink</td></tr>
+</table>
+
+<h2>6. Related outline topics: ACID vs BASE, concurrency control</h2>
+<table class="small">
+<tr><th>ACID (classic transactions)</th><th>BASE (many NoSQL / AP systems)</th></tr>
+<tr><td><b>A</b>tomicity (all or nothing), <b>C</b>onsistency (rules kept), <b>I</b>solation (concurrent transactions don't interfere), <b>D</b>urability (committed data survives crashes)</td><td><b>B</b>asically <b>A</b>vailable, <b>S</b>oft state (state may change without input as replicas converge), <b>E</b>ventually consistent</td></tr>
+<tr><td>Fits CP choices: banking (Lesson 1)</td><td>Fits AP choices: social feeds, shopping carts</td></tr>
+</table>
+<p class="small"><b>Pessimistic concurrency</b>: lock data before using it (two-phase locking); safe under heavy contention but can block and cause <b>distributed deadlock</b> (T1 waits for a lock held by T2 on another server, and T2 waits for T1: detected by building a global wait-for graph and finding a cycle, or avoided with timeouts). <b>Optimistic concurrency</b>: work without locks, then validate at commit time and abort/retry if someone else changed the data; best when conflicts are rare.</p>
+
+<h2>7. Exam-style questions with model answers</h2>
+<p><b>Q1. Explain why consensus is harder than transaction commitment. (5 marks)</b><br>
+Atomic commit only needs a unanimous yes/no on one transaction and may abort or block when something fails; any NO or silent node aborts it. Consensus must make all correct processes agree on a value while tolerating crashed processes, needing only a majority, and must keep making progress. In an asynchronous system a crashed process cannot be distinguished from a slow one, and the FLP result shows no deterministic algorithm can guarantee consensus there with even one crash; practical protocols (Paxos, Raft) guarantee safety always and liveness using timeouts and leader election.</p>
+<p><b>Q2. Describe Raft leader election with an example. (6)</b><br>
+Servers are followers, candidates or leaders; time is divided into terms. The leader sends heartbeats. If a follower's randomised election timeout expires without a heartbeat, it becomes a candidate, increments the term, votes for itself and requests votes; each server grants one vote per term to a candidate whose log is at least as up to date. A candidate with a majority (e.g. 3 of 5) becomes leader and sends heartbeats; a server that sees a higher term steps down. Split votes cause a new election after another random timeout.</p>
+<p><b>Q3. What are the key characteristics of a multi-agent system? How do agents coordinate and resolve conflicts over shared resources? (8)</b><br>
+Agents are autonomous, reactive, proactive and social; in a MAS each has a partial local view, there is no global control, and data and computation are decentralized and asynchronous. They communicate with an agent communication language such as FIPA-ACL (performatives like inform, request, propose). They coordinate through protocols like the Contract Net (call for proposals, bids, award), auctions, negotiation, organisational roles or consensus. Conflicts over shared resources are resolved with mutual exclusion/locking or token passing, priorities and timestamps, negotiation or auctions, optimistic or pessimistic concurrency control, and social conventions.</p>
+<p><b>Q4. Explain how a distributed search engine indexes and retrieves data using inverted indexes and sharding. (8)</b><br>
+Crawlers fetch pages; pages are tokenised and an inverted index maps each term to a posting list of documents. The index is split into shards (by document or by term) spread over many nodes and replicated. A query goes to a front-end that scatters it to the relevant shards in parallel (all shards for a document-partitioned index); each shard looks up the posting lists, intersects/scores them and returns its top results; the front-end merges and ranks them (e.g. with PageRank and relevance) and returns the answer. Replicas give fault tolerance and throughput.</p>
+<p><b>Q5. Compare centralized and distributed/P2P search architectures. (6)</b><br>
+Centralized: simple and fast at small scale but limited by one machine and a single point of failure. Distributed cluster: scales by adding shards and replicas, tolerates node failures, and keeps latency low with parallel scatter-gather. P2P: no central server and scales with peers, but lookups take many hops or floods, latency is higher and variable, results may be incomplete, and churn and lack of control make freshness and quality hard.</p>
+<p><b>Q6. Compare structured and unstructured P2P systems. (8)</b><br>
+Unstructured (Gnutella): peers link randomly and search by flooding with a TTL; simple and very tolerant of churn, supports keyword search, but lookups are expensive (messages grow exponentially) and not guaranteed to find rare items. Structured (Chord, Kademlia): a DHT hashes nodes and keys into one ID space and assigns each key to a specific node; lookups route in O(log N) hops and always find an existing key, but the routing structures must be maintained when peers join and leave, which is more complex and less tolerant of heavy churn; only exact-key lookup is supported directly.</p>
+<p><b>Q7. In a Chord ring with m = 4 and nodes 1, 4, 9, 11, 14, which node stores key 12, and what is node 1's finger table? (5)</b><br>
+Key 12 is stored at its successor, node 14. Node 1's fingers are successor(2) = 4, successor(3) = 4, successor(5) = 9, successor(9) = 9. Lookup path 1 &rarr; 9 &rarr; 11 &rarr; 14.</p>
+<p><b>Q8. Explain MapReduce with a word-count example. How does it tolerate failures? (6)</b><br>
+Input is split into blocks; map tasks run in parallel and emit (word, 1) for each word; the framework shuffles and groups pairs by word; reduce tasks sum each list (cloud = 2, data = 2, node = 1). The master monitors workers and re-executes tasks of failed workers on other machines, and starts backup copies of slow tasks; map tasks run near their data to reduce network use.</p>
+<p><b>Q9. Compare MapReduce, serverless/FaaS and the actor model. (6)</b><br>
+MapReduce: batch processing of huge static datasets through map, shuffle and reduce; high throughput, high latency. Serverless: stateless functions triggered by events, auto-scaling to zero, pay per invocation; good for bursty short tasks; cold starts and no long-running state. Actor model: actors with private state exchanging asynchronous messages; good for highly concurrent, stateful, interactive systems.</p>
+<p><b>Q10. Distinguish ACID and BASE. (4)</b><br>
+ACID: atomicity, consistency, isolation, durability; strong guarantees, suits banking (CP). BASE: basically available, soft state, eventually consistent; favours availability and scale, suits feeds and carts (AP).</p>
+
+<h2>8. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>Consensus needs every node to agree before deciding</td><td>Paxos/Raft need only a majority; 2PC needs everyone.</td></tr>
+<tr><td>Raft can have two leaders in the same term</td><td>At most one leader per term (one vote per server per term, majority needed).</td></tr>
+<tr><td>Chord stores key k at the node before k</td><td>At its successor: the first node with ID &ge; k.</td></tr>
+<tr><td>Flooding always finds the file</td><td>Only within the TTL; rare items may be missed.</td></tr>
+<tr><td>DHTs support keyword search natively</td><td>They support exact-key lookup; keyword search needs extra indexing.</td></tr>
+<tr><td>An inverted index maps documents to words</td><td>It maps words (terms) to documents (posting lists).</td></tr>
+<tr><td>MapReduce is good for low-latency queries</td><td>It is a high-throughput batch model.</td></tr>
+<tr><td>Reactive agents plan ahead</td><td>Reactive = condition&ndash;action rules; deliberative agents plan (BDI); hybrid combines them.</td></tr>
+</table>
+
+<h2 class="pb">Cheat sheet</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Commit &amp; consensus</th></tr>
+<tr><td>2PC flaws</td><td>Blocking, coordinator SPOF, locks held, latency; 3PC fixes blocking (crash-only, no partitions)</td></tr>
+<tr><td>Consensus</td><td>Agreement, validity, termination; majority quorum; f failures of 2f + 1</td></tr>
+<tr><td>Harder because</td><td>Async: crash vs slow indistinguishable; FLP; must not block on minority</td></tr>
+<tr><td>Paxos</td><td>PREPARE(n) &rarr; PROMISE &rarr; ACCEPT(n, v) &rarr; ACCEPTED by majority</td></tr>
+<tr><td>Raft</td><td>Follower / candidate / leader; terms; random timeouts; majority vote; heartbeats; log entry committed on majority</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Multi-agent systems</th></tr>
+<tr><td>Traits</td><td>Autonomy, reactivity, pro-activeness, social ability; local view, no global control</td></tr>
+<tr><td>Types</td><td>Reactive, deliberative (BDI), hybrid</td></tr>
+<tr><td>Talk</td><td>FIPA-ACL performatives: inform, request, propose, cfp</td></tr>
+<tr><td>Coordinate</td><td>Contract Net, auctions, negotiation, roles, blackboard, consensus</td></tr>
+<tr><td>Conflicts</td><td>Locks/tokens, priorities, auctions, optimistic/pessimistic, conventions</td></tr>
+</table>
+<table>
+<tr><th colspan="2">ACID vs BASE</th></tr>
+<tr><td>ACID</td><td>Atomic, Consistent, Isolated, Durable (CP)</td></tr>
+<tr><td>BASE</td><td>Basically Available, Soft state, Eventually consistent (AP)</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Distributed search</th></tr>
+<tr><td>Pipeline</td><td>Crawl &rarr; parse &rarr; inverted index &rarr; shard + replicate &rarr; query + rank</td></tr>
+<tr><td>Inverted index</td><td>Term &rarr; posting list; AND = intersect</td></tr>
+<tr><td>Sharding</td><td>By document (query all shards) or by term (query term shards)</td></tr>
+<tr><td>PageRank</td><td>PR = (1 &minus; d)/N + d &Sigma; PR(q)/out(q), d = 0.85</td></tr>
+<tr><td>Challenges</td><td>Freshness, coverage</td></tr>
+</table>
+<table>
+<tr><th></th><th>Unstructured</th><th>Structured DHT</th></tr>
+<tr><td>Example</td><td>Gnutella</td><td>Chord, Kademlia</td></tr>
+<tr><td>Lookup</td><td>Flood, TTL; not guaranteed</td><td>O(log N), guaranteed</td></tr>
+<tr><td>Churn</td><td>Tolerant</td><td>Needs repair</td></tr>
+<tr><td>Complexity</td><td>Simple</td><td>Complex</td></tr>
+<tr><td>Search</td><td>Keyword</td><td>Exact key</td></tr>
+<tr><td colspan="3">Chord: key at successor; finger i = succ(n + 2<sup>i&minus;1</sup>). Kademlia: XOR distance. BitTorrent: pieces, swarm, tit-for-tat</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Programming models</th></tr>
+<tr><td>MapReduce</td><td>Map &rarr; shuffle/sort &rarr; reduce; data locality; re-run failed tasks; batch</td></tr>
+<tr><td>FaaS</td><td>Event-driven stateless functions; scale to 0; pay per call</td></tr>
+<tr><td>Actor</td><td>Private state + async messages; concurrent, stateful</td></tr>
+<tr><td>Blockchain</td><td>Replicated ledger; PoW, PoS, PBFT (3f + 1)</td></tr>
+</table>
+</div>
+</div>
+
+</body>
+</html>
