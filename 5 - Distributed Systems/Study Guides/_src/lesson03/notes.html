@@ -1,0 +1,378 @@
+<style>
+.fig{margin:14px 0;text-align:center}.fig svg{width:100%;height:auto;max-width:680px;color:var(--fg)}.fig svg text{fill:currentColor}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+.two>div{min-width:0}
+.key{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+b.t{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--accent)}
+.small{font-size:14px}.note{font-size:14px}
+.bitgrp{border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:10px 0}.bitgrp .title{font-weight:600;margin-bottom:4px}
+.bits{display:flex;align-items:center;flex-wrap:wrap;margin:3px 0;font-family:ui-monospace,Consolas,monospace}
+.bits .lbl{width:190px;font-family:system-ui,sans-serif;font-size:14px}
+.bits span.b{width:26px;height:24px;border:1px solid var(--fg);text-align:center;line-height:24px;margin-right:-1px}
+.bits span.h{background:var(--soft);font-weight:700;color:var(--accent)}
+.bits .note{margin-left:10px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.pos .bits span.b{border:none;height:18px;line-height:18px;font-size:12px;color:var(--muted)}
+table.code td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:pre;background:var(--soft)}
+.led{display:inline-block;width:14px;height:14px;border:1px solid var(--fg);border-radius:50%;margin:0 2px;vertical-align:middle}.led.on{background:var(--fg)}
+</style>
+<p class="sm" style="color:var(--muted)">Source: Lecture 03 (67 slides, mostly images, all read as rendered slides).</p>
+<div class="key">
+<b class="t">What you will be able to do after this lesson</b>
+<ul>
+<li>Explain <b>Network Functions Virtualization (NFV)</b>, its advantages, and how it differs from a virtualized network and from <b>SDN</b>.</li>
+<li>Explain why <b>containers</b> exist, the <b>Docker</b> architecture (client, daemon, images, containers, registries), Dockerfile layers, the container lifecycle and volumes.</li>
+<li>Describe AWS global infrastructure (<b>regions, availability zones</b>) and draw a <b>highly available 3-tier architecture</b> with a load balancer, auto scaling groups and a replicated database.</li>
+<li>Explain capacity planning, horizontal vs vertical scaling, launch templates and the three <b>auto scaling policies</b>.</li>
+<li>Define <b>RTO and RPO</b> and compare the four disaster-recovery strategies: backup &amp; restore, pilot light, warm standby, multi-site active/active.</li>
+</ul>
+</div>
+
+<h2>1. Network Functions Virtualization (slides 1&ndash;8)</h2>
+<p>A <b>network function</b> is a job a network device does to traffic: a <b>firewall</b> (blocks unwanted traffic), a <b>router</b> (forwards packets between networks), a <b>load balancer</b>, <b>NAT</b> (translates private to public addresses), <b>encryption/VPN</b>, intrusion detection. Traditionally each function was a separate, expensive <b>hardware appliance</b> (a dedicated box).</p>
+<div class="key">
+<b class="t">Definition (slide 2)</b>
+NFV is a way to <b>reduce cost and accelerate service deployment</b> for network operators by <b>decoupling functions like a firewall or encryption from dedicated hardware</b> and moving them to <b>virtual servers</b>.
+</div>
+<ul>
+<li>If a customer wants a new network function, the provider simply <b>spins up a new virtual machine</b> to perform it &mdash; no new box to buy and install.</li>
+<li>It reduces dependency on dedicated hardware appliances and improves <b>scalability and customization</b> across the network.</li>
+<li><b>Different from a virtualized network:</b> NFV offloads <b>network functions only</b>, not the entire network.</li>
+</ul>
+<div class="fig">
+<svg viewBox="0 0 680 190" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="c1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<text x="160" y="16" text-anchor="middle" font-size="12" font-weight="bold">Classic network appliance approach</text>
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="20" y="30" width="90" height="30"/><rect x="120" y="30" width="90" height="30"/><rect x="220" y="30" width="90" height="30"/><rect x="20" y="70" width="90" height="30"/><rect x="120" y="70" width="90" height="30"/><rect x="220" y="70" width="90" height="30"/></g>
+<g font-size="10" text-anchor="middle"><text x="65" y="49">Firewall box</text><text x="165" y="49">Router box</text><text x="265" y="49">Load balancer</text><text x="65" y="89">NAT box</text><text x="165" y="89">VPN/crypto box</text><text x="265" y="89">Intrusion det.</text></g>
+<text x="165" y="125" text-anchor="middle" font-size="10">fragmented, non-standard, proprietary hardware:</text>
+<text x="165" y="139" text-anchor="middle" font-size="10">one box per function, bought and installed by hand</text>
+<line x1="325" y1="80" x2="370" y2="80" stroke="currentColor" stroke-width="2" marker-end="url(#c1)"/>
+<text x="520" y="16" text-anchor="middle" font-size="12" font-weight="bold">NFV approach</text>
+<g stroke="currentColor" style="fill:var(--bg)"><rect x="385" y="30" width="85" height="28"/><rect x="478" y="30" width="85" height="28"/><rect x="571" y="30" width="85" height="28"/></g>
+<g font-size="10" text-anchor="middle"><text x="427" y="48">vFirewall (VM)</text><text x="520" y="48">vRouter (VM)</text><text x="613" y="48">vLB (VM)</text></g>
+<rect x="385" y="64" width="271" height="24" style="fill:var(--soft)" stroke="currentColor"/><text x="520" y="80" text-anchor="middle" font-size="10">virtualization layer (hypervisor)</text>
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="385" y="94" width="85" height="26"/><rect x="478" y="94" width="85" height="26"/><rect x="571" y="94" width="85" height="26"/></g>
+<g font-size="9" text-anchor="middle"><text x="427" y="111">std. server</text><text x="520" y="111">std. storage</text><text x="613" y="111">std. switch</text></g>
+<text x="520" y="139" text-anchor="middle" font-size="10">high-volume standard (commodity) hardware</text>
+<text x="340" y="175" text-anchor="middle" font-size="10">NFV runs virtualized network functions on an open hardware platform: lower CapEx and OpEx, faster innovation.</text>
+</svg>
+<div class="cap">Figure 1 &mdash; Slide 3: classic appliances vs NFV.</div>
+</div>
+<h3>Advantages of NFV (slide 5)</h3>
+<p>NFV reduces the need for dedicated hardware to deploy and manage networks, and the functions can be <b>managed from anywhere</b> within the operator's network.</p>
+<div class="two"><div><ul class="small">
+<li>Reduced space needed for network hardware</li>
+<li>Reduced network power consumption</li>
+<li>Reduced network maintenance costs</li></ul></div><div><ul class="small">
+<li>Easier network upgrades (update software, not boxes)</li>
+<li>Longer life cycles for network hardware</li>
+<li>Reduced maintenance and hardware costs</li></ul></div></div>
+<p><b>NFV in the world (slides 6&ndash;8):</b> operators manage and expand capabilities <b>on demand</b> using software where physical boxes once stood. It becomes easier to <b>load-balance, scale up and down, and move functions</b> across distributed hardware, and continual software updates keep the network current without interrupting customers. Slide 6 shows <b>Ericsson's NFV stack</b>: <b>NFV MANO</b> (Management and Orchestration: an orchestrator that manages the virtual network functions' life cycle), <b>VNFs</b> (Virtual Network Functions, e.g. virtual packet core), and <b>NFVI</b> (NFV Infrastructure: data-centre hardware, networking, storage, with SDN and a VIM, the Virtualized Infrastructure Manager). Slide 8 shows <b>Oracle SDN</b> virtual network services connecting web, app and DB tiers, each in its own subnet.</p>
+
+<h2>2. Software-Defined Networking (slides 9&ndash;11, 22)</h2>
+<p>The slides show SDN industry diagrams and a "Why SDN?" list. Here is the idea behind them.</p>
+<p>Every network device has two jobs: the <b>control plane</b> decides <i>where</i> traffic should go (builds routing tables, applies policies); the <b>data plane</b> (forwarding plane) actually <i>moves</i> the packets. In traditional networking both live inside every switch and router, and each box is configured one by one. <b>SDN separates them</b>: a central software <b>SDN controller</b> holds the control plane for the whole network and programs simple forwarding devices.</p>
+<div class="fig">
+<svg viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
+<text x="160" y="16" text-anchor="middle" font-size="12" font-weight="bold">Traditional</text>
+<g stroke="currentColor"><rect x="20" y="30" width="80" height="60" style="fill:var(--soft)"/><rect x="120" y="30" width="80" height="60" style="fill:var(--soft)"/><rect x="220" y="30" width="80" height="60" style="fill:var(--soft)"/>
+<line x1="20" y1="60" x2="100" y2="60"/><line x1="120" y1="60" x2="200" y2="60"/><line x1="220" y1="60" x2="300" y2="60"/></g>
+<g font-size="9" text-anchor="middle"><text x="60" y="49">control</text><text x="60" y="79">data</text><text x="160" y="49">control</text><text x="160" y="79">data</text><text x="260" y="49">control</text><text x="260" y="79">data</text></g>
+<text x="160" y="112" text-anchor="middle" font-size="10">each switch decides for itself;</text><text x="160" y="126" text-anchor="middle" font-size="10">configured box by box</text>
+<line x1="340" y1="10" x2="340" y2="165" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="510" y="16" text-anchor="middle" font-size="12" font-weight="bold">SDN</text>
+<rect x="400" y="26" width="220" height="34" style="fill:var(--soft)" stroke="currentColor"/><text x="510" y="42" text-anchor="middle" font-size="11" font-weight="bold">SDN controller (software)</text><text x="510" y="55" text-anchor="middle" font-size="9">central control plane, network-wide view</text>
+<g stroke="currentColor" style="fill:var(--bg)"><rect x="390" y="105" width="70" height="34"/><rect x="475" y="105" width="70" height="34"/><rect x="560" y="105" width="70" height="34"/></g>
+<g font-size="9" text-anchor="middle"><text x="425" y="126">data plane</text><text x="510" y="126">data plane</text><text x="595" y="126">data plane</text></g>
+<g stroke="currentColor" stroke-dasharray="4 3"><line x1="450" y1="60" x2="425" y2="105"/><line x1="510" y1="60" x2="510" y2="105"/><line x1="570" y1="60" x2="595" y2="105"/></g>
+<text x="510" y="82" text-anchor="middle" font-size="9">programs forwarding rules</text>
+<text x="510" y="158" text-anchor="middle" font-size="10">apps/admins talk to the controller via APIs</text>
+</svg>
+<div class="cap">Figure 2 &mdash; SDN moves the control plane out of each device into a central controller.</div>
+</div>
+<table class="small">
+<tr><th>Aspect</th><th>NFV</th><th>SDN</th></tr>
+<tr><td>What is virtualized / changed</td><td>Network <b>functions</b> (firewall, router, LB) become software on VMs</td><td>Network <b>control</b> is separated from forwarding and centralized</td></tr>
+<tr><td>Main goal</td><td>Replace proprietary appliances with commodity servers</td><td>Programmable, centrally managed networks</td></tr>
+<tr><td>Relationship</td><td colspan="2">Complementary: SDN often connects and steers traffic between NFV functions (slide 6 shows SDN inside the NFV stack). NaaS (Lesson 2) is built on SDN.</td></tr>
+</table>
+<p><b>Why SDN? (slide 22)</b> &mdash; seven reasons:</p>
+<ol class="small">
+<li>Manage the costs of WAN links (wide-area links between sites).</li>
+<li>Improve control of hybrid WAN and multi-cloud environments.</li>
+<li>Assure service and prioritise business-critical traffic.</li>
+<li>Introduce new sites and capabilities (quickly, from software).</li>
+<li>Prevent attacks and mitigate security risks.</li>
+<li>Manage different network domains and services across the whole enterprise.</li>
+<li>Future-proof the enterprise's advancing requirements while reducing complexity.</li>
+</ol>
+<p class="small">Slides 10&ndash;11 show an SDN deployment where each host runs web, app and DB tier VMs connected through software bridges and bonds, plus tenant routers &mdash; the network topology is defined in software, not cables. Slide 18 shows an <b>SD-WAN</b>: headquarters, a sales office and a home office connected over the Internet to the data centre through managed gateways, controlled from one cloud console.</p>
+
+<h2>3. Industry examples (slides 12&ndash;21)</h2>
+<table class="small">
+<tr><th>Example</th><th>What the slides show</th></tr>
+<tr><td><b>Citrix DaaS</b></td><td>Desktop as a Service: Citrix Virtual Apps and Desktops run in the data centre/cloud and are delivered to users. Reduces the lengthy hardware procurement cycle; provides advanced monitoring and cloud-native management to scale fast for a flexible workforce.</td></tr>
+<tr><td><b>Akasa Cloud</b></td><td>A local cloud stack: applications &rarr; virtual machines &rarr; hypervisor &rarr; computing and memory &rarr; storage, managed by an SLT management portal. Customers choose firewall rules, networks/IPs, OS types, computing power/RAM and storage size for each VPS (virtual private server).</td></tr>
+<tr><td><b>Dialog Cloud</b></td><td>Desktop as a Service (DaaS: virtual desktops hosted in the cloud), Cloud Backup as a Service (BaaS), Co-location (rent space in Dialog's data centre for your own servers), Disaster Recovery as a Service (DRaaS), Dialog Enterprise Cloud.</td></tr>
+<tr><td><b>Wired media</b></td><td>Structured cabling systems (organised patch panels and racks) in a data centre (slides 20&ndash;21).</td></tr>
+</table>
+
+<h2>4. Containers and Docker (slides 23&ndash;34)</h2>
+<h3>4.1 Why containers? (slide 26)</h3>
+<table class="small">
+<tr><th>Point</th><th>Explanation</th></tr>
+<tr><td><b>Challenges of traditional deployment</b></td><td><b>Dependency conflicts</b> (app A needs library v1, app B needs v2 on the same server) and <b>inconsistent environments</b> cause the "<b>works on my machine</b>" problem: code runs on the developer's laptop but fails on the server.</td></tr>
+<tr><td><b>Container packaging benefits</b></td><td>A container bundles the application with <b>all its dependencies</b>, so it behaves the same in development, testing and production.</td></tr>
+<tr><td><b>Support for microservices</b></td><td>Many small independent services can be deployed and scaled efficiently on shared hosts.</td></tr>
+<tr><td><b>Improved software delivery</b></td><td>Fewer environment-related errors; faster development and deployment cycles.</td></tr>
+</table>
+<h3>4.2 VMs vs containers (slide 28)</h3>
+<p><b>VMs</b> run full guest operating systems on a hypervisor: strong isolation but resource overhead. <b>Containers</b> share the host OS kernel using <b>namespaces</b> and <b>cgroups</b>: lightweight and fast to start. Containers give <b>higher density</b> (more apps per server); VMs suit <b>strict isolation and diverse OS needs</b>.</p>
+<ul class="small">
+<li><b>Namespaces</b> (Linux kernel feature): give each container its own <i>view</i> of the system &mdash; its own process list, network interfaces, file system mount points, hostname. A container cannot see other containers' processes.</li>
+<li><b>cgroups</b> (control groups): <i>limit</i> how much CPU, memory and I/O a container may use, so one container cannot starve the others.</li>
+</ul>
+
+<h3>4.3 Docker architecture and core components (slide 30)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="c2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect x="10" y="40" width="150" height="120" style="fill:var(--soft)" stroke="currentColor"/><text x="85" y="60" text-anchor="middle" font-size="12" font-weight="bold">Client</text>
+<g font-size="10" font-family="Consolas, monospace"><text x="22" y="85">docker build</text><text x="22" y="105">docker pull</text><text x="22" y="125">docker run</text><text x="22" y="145">docker ps</text></g>
+<rect x="210" y="25" width="290" height="160" style="fill:var(--bg)" stroke="currentColor"/><text x="355" y="43" text-anchor="middle" font-size="12" font-weight="bold">Docker host</text>
+<rect x="225" y="52" width="260" height="28" style="fill:var(--soft)" stroke="currentColor"/><text x="355" y="70" text-anchor="middle" font-size="11">Docker daemon (dockerd)</text>
+<text x="290" y="98" text-anchor="middle" font-size="10" font-weight="bold">Images (read-only)</text>
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="235" y="105" width="110" height="20"/><rect x="235" y="130" width="110" height="20"/></g>
+<g font-size="9" text-anchor="middle"><text x="290" y="119">nginx:latest</text><text x="290" y="144">my-app:v1</text></g>
+<text x="425" y="98" text-anchor="middle" font-size="10" font-weight="bold">Containers (running)</text>
+<g stroke="currentColor" style="fill:var(--bg)"><rect x="370" y="105" width="110" height="20"/><rect x="370" y="130" width="110" height="20"/><rect x="370" y="155" width="110" height="20"/></g>
+<g font-size="9" text-anchor="middle"><text x="425" y="119">web-1 (from nginx)</text><text x="425" y="144">web-2 (from nginx)</text><text x="425" y="169">app-1 (from my-app)</text></g>
+<line x1="345" y1="115" x2="368" y2="115" stroke="currentColor" marker-end="url(#c2)"/><line x1="345" y1="140" x2="368" y2="165" stroke="currentColor" marker-end="url(#c2)"/>
+<rect x="545" y="40" width="125" height="120" style="fill:var(--soft)" stroke="currentColor"/><text x="607" y="60" text-anchor="middle" font-size="12" font-weight="bold">Registry</text><text x="607" y="80" text-anchor="middle" font-size="10">Docker Hub (public)</text><text x="607" y="96" text-anchor="middle" font-size="10">or private registry</text>
+<g stroke="currentColor" style="fill:var(--soft)"><rect x="565" y="108" width="85" height="18"/><rect x="565" y="130" width="85" height="18"/></g><g font-size="9" text-anchor="middle"><text x="607" y="121">nginx</text><text x="607" y="143">ubuntu</text></g>
+<line x1="160" y1="90" x2="223" y2="66" stroke="currentColor" stroke-width="1.5" marker-end="url(#c2)"/><text x="190" y="88" font-size="9" text-anchor="middle">commands</text>
+<line x1="543" y1="70" x2="487" y2="66" stroke="currentColor" stroke-width="1.5" marker-end="url(#c2)"/><text x="515" y="58" font-size="9" text-anchor="middle">pull / push</text>
+</svg>
+<div class="cap">Figure 3 &mdash; Docker client-server architecture. An image is a template; containers are running instances of it.</div>
+</div>
+<table class="small">
+<tr><th>Component</th><th>Role (slide 30)</th></tr>
+<tr><td><b>Client-server architecture</b></td><td>The Docker <b>client</b> (the <code>docker</code> command) sends commands to the Docker <b>daemon</b>, which manages containers.</td></tr>
+<tr><td><b>Docker daemon</b></td><td>Builds images, runs containers, manages networks and volumes, and communicates with registries.</td></tr>
+<tr><td><b>Images and containers</b></td><td>An <b>image</b> is a <b>read-only template</b> (app + dependencies + settings). A <b>container</b> is a <b>running instance</b> created from an image. Analogy: image = class, container = object; or image = recipe, container = the cooked dish. Many containers can come from one image.</td></tr>
+<tr><td><b>Image registries</b></td><td>Centralized storage and sharing of images, public (Docker Hub) or private.</td></tr>
+</table>
+
+<h3>4.4 Dockerfiles, layers, lifecycle, volumes (slide 32)</h3>
+<p>Images are built from a <b>Dockerfile</b>: a text file with step-by-step instructions that specify the image's configuration and contents. <b>Each instruction creates a new image layer</b>; layers are <b>cached</b>, so a rebuild only redoes the layers that changed (efficient incremental builds).</p>
+<table class="code">
+<tr><th>Dockerfile (example)</th><th>What each line does</th></tr>
+<tr><td>FROM python:3.12-slim</td><td>Start from a base image (layer 1): a minimal Linux with Python</td></tr>
+<tr><td>WORKDIR /app</td><td>Set the working folder inside the image</td></tr>
+<tr><td>COPY requirements.txt .</td><td>Copy the dependency list (new layer)</td></tr>
+<tr><td>RUN pip install -r requirements.txt</td><td>Install libraries (new layer, cached until requirements.txt changes)</td></tr>
+<tr><td>COPY . .</td><td>Copy the source code (new layer; changes often, so it is last)</td></tr>
+<tr><td>CMD ["python", "app.py"]</td><td>Command run when a container starts</td></tr>
+</table>
+<pre>docker build -t my-app:v1 .          # build image from the Dockerfile in this folder
+docker run -d -p 8080:80 my-app:v1  # create + start a container, map host port 8080 to container port 80
+docker ps                           # list running containers
+docker stop &lt;id&gt; ; docker rm &lt;id&gt;  # stop, then remove the container
+docker push myrepo/my-app:v1        # upload the image to a registry</pre>
+<p><b>Container lifecycle:</b> created &rarr; started (running) &rarr; stopped &rarr; restarted &rarr; removed. Containers are designed to be <b>ephemeral</b> (short-lived and disposable): you replace them rather than repair them.</p>
+<p><b>Persistent data:</b> anything written inside a container is lost when it is removed. Data that must survive is stored <b>outside</b> the container in a <b>volume</b> (e.g. <code>docker run -v dbdata:/var/lib/mysql mysql</code>).</p>
+
+<h3>4.5 Use cases, benefits and limitations (slide 34)</h3>
+<ul class="small">
+<li><b>Application packaging</b>: apps bundled with dependencies give consistent dev/test environments.</li>
+<li><b>Production deployment</b>: faster, reliable deployments with rolling updates and horizontal scaling of services.</li>
+<li><b>Security limitation</b>: containers share the host OS kernel, so a kernel exploit could affect all containers; careful security practice is needed compared with VMs.</li>
+<li><b>Efficiency and portability</b>: faster release cycles across environments.</li>
+</ul>
+
+<h2>5. AWS global infrastructure (slides 35&ndash;37)</h2>
+<p>Lecture overview: AWS global infrastructure, disaster recovery strategies, recovery point objectives, maintaining business continuity, Route 53 routing policies, AWS migration services.</p>
+<ul>
+<li><b>Regions</b>: located all around the world; servers and services are based in regions; <b>choose a region based on user locations</b> (and law/compliance).</li>
+<li><b>Availability Zones (AZs)</b>: a cluster of data centres with <b>independent power and cooling</b> and <b>multiple redundant network connections</b>. <b>All regions have at least 2 AZs.</b> If you deploy in one data centre only, you get the "single data centre experience": one failure takes you down.</li>
+</ul>
+<p><b>Eliminating single points of failure (slide 37):</b> a basic app is a chain <b>front-end web server &rarr; application server &rarr; database server</b>. If any one box fails, the whole app fails, so each one is a <b>single point of failure (SPOF)</b>. The fix is redundancy at every tier, in more than one AZ.</p>
+
+<h2>6. Highly available solution architecture (slides 38&ndash;41, 48, 51)</h2>
+<p>The lecture builds the design in four steps:</p>
+<ol class="small">
+<li>Put web front-end, app server and an <b>RDS primary</b> database in a <b>private subnet</b> in AZ 1, and copies plus an <b>RDS secondary</b> in AZ 2; the database <b>replicates</b> primary &rarr; secondary.</li>
+<li>Add <b>public subnets</b> with a <b>NAT gateway</b> in each AZ (lets private servers reach the Internet for updates without being reachable from it).</li>
+<li>Add an <b>Application Load Balancer (ALB)</b> spanning both AZs to receive user traffic.</li>
+<li>Put the web and app tiers into <b>Auto Scaling groups</b> that span both AZs.</li>
+</ol>
+<div class="fig">
+<svg viewBox="0 0 680 290" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="c3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect x="5" y="5" width="670" height="280" style="fill:var(--bg)" stroke="currentColor"/><text x="15" y="22" font-size="11" font-weight="bold">AWS Cloud &#183; VPC (your private network in AWS)</text>
+<rect x="20" y="30" width="250" height="248" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="5 3"/><text x="145" y="45" text-anchor="middle" font-size="11" font-weight="bold">Availability Zone 1</text>
+<rect x="410" y="30" width="250" height="248" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="5 3"/><text x="535" y="45" text-anchor="middle" font-size="11" font-weight="bold">Availability Zone 2</text>
+<g stroke="currentColor"><rect x="35" y="52" width="220" height="32" style="fill:var(--soft)"/><rect x="425" y="52" width="220" height="32" style="fill:var(--soft)"/></g>
+<g font-size="10" text-anchor="middle"><text x="145" y="72">Public subnet: NAT gateway</text><text x="535" y="72">Public subnet: NAT gateway</text></g>
+<g stroke="currentColor"><rect x="35" y="92" width="220" height="180" style="fill:var(--soft)"/><rect x="425" y="92" width="220" height="180" style="fill:var(--soft)"/></g>
+<g font-size="9" text-anchor="middle"><text x="145" y="105">Private subnet</text><text x="535" y="105">Private subnet</text></g>
+<g stroke="currentColor" style="fill:var(--bg)"><rect x="85" y="112" width="120" height="30"/><rect x="85" y="162" width="120" height="30"/><rect x="85" y="222" width="120" height="34"/><rect x="475" y="112" width="120" height="30"/><rect x="475" y="162" width="120" height="30"/><rect x="475" y="222" width="120" height="34"/></g>
+<g font-size="10" text-anchor="middle"><text x="145" y="131">Web front-end</text><text x="145" y="181">App server</text><text x="145" y="237" font-weight="bold">RDS primary</text><text x="145" y="250" font-size="8">read + write</text>
+<text x="535" y="131">Web front-end</text><text x="535" y="181">App server</text><text x="535" y="237" font-weight="bold">RDS secondary</text><text x="535" y="250" font-size="8">standby copy</text></g>
+<rect x="290" y="52" width="100" height="40" style="fill:var(--soft)" stroke="currentColor"/><text x="340" y="69" text-anchor="middle" font-size="10" font-weight="bold">Application</text><text x="340" y="83" text-anchor="middle" font-size="10" font-weight="bold">Load Balancer</text>
+<line x1="300" y1="92" x2="207" y2="122" stroke="currentColor" marker-end="url(#c3)"/><line x1="380" y1="92" x2="473" y2="122" stroke="currentColor" marker-end="url(#c3)"/>
+<rect x="282" y="118" width="116" height="30" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="3 2"/><text x="340" y="131" text-anchor="middle" font-size="9">Auto Scaling group</text><text x="340" y="143" text-anchor="middle" font-size="9">(web tier, both AZs)</text>
+<rect x="282" y="164" width="116" height="30" style="fill:var(--bg)" stroke="currentColor" stroke-dasharray="3 2"/><text x="340" y="177" text-anchor="middle" font-size="9">Auto Scaling group</text><text x="340" y="189" text-anchor="middle" font-size="9">(app tier, both AZs)</text>
+<line x1="207" y1="240" x2="471" y2="240" stroke="currentColor" stroke-width="1.5" marker-end="url(#c3)"/><text x="340" y="234" text-anchor="middle" font-size="10">replication</text>
+<text x="340" y="22" text-anchor="middle" font-size="10">users &#8595;</text>
+</svg>
+<div class="cap">Figure 4 &mdash; Highly available 3-tier architecture across two AZs (slides 41/48). If AZ 1 fails, the ALB sends all traffic to AZ 2, the Auto Scaling group adds instances there, and RDS fails over to the secondary.</div>
+</div>
+<table class="small">
+<tr><th>Building block</th><th>Meaning</th><th>HA role</th></tr>
+<tr><td>VPC</td><td>Virtual Private Cloud: your isolated private network inside AWS</td><td>Holds all resources</td></tr>
+<tr><td>Public / private subnet</td><td>Public subnet has a route to the Internet; private subnet does not</td><td>Servers and DB hidden from the Internet</td></tr>
+<tr><td>NAT gateway</td><td>Lets private instances make outbound connections only</td><td>One per AZ so losing an AZ does not cut the other off</td></tr>
+<tr><td>Application Load Balancer</td><td>Spreads requests over healthy instances in several AZs</td><td>Removes the web server SPOF</td></tr>
+<tr><td>Auto Scaling group</td><td>Logical collection of instances kept at a target size</td><td>Replaces failed instances, adds capacity under load</td></tr>
+<tr><td>RDS primary + secondary</td><td>Managed database with a synchronously replicated standby in another AZ (Multi-AZ)</td><td>Removes the database SPOF</td></tr>
+</table>
+<p><b>3-tier architecture (slide 51):</b> presentation tier (front-end web server) &rarr; logic tier (application server) &rarr; data tier (database server). Each tier can be scaled and protected separately.</p>
+
+<h2>7. Capacity planning and scaling (slides 42&ndash;50)</h2>
+<h3>7.1 Capacity planning (slide 42)</h3>
+<p>Capacity planning = deciding how much compute to provide for the expected demand. The slide's four charts (bars = demand, shading = available capacity):</p>
+<table class="small">
+<tr><th>Case</th><th>What happens</th></tr>
+<tr><td>Expectation</td><td>Demand is mostly low with occasional tall spikes</td></tr>
+<tr><td><b>Too much capacity</b></td><td>Capacity sized for the peak: the spike is served, but most of the time you pay for idle servers (waste)</td></tr>
+<tr><td><b>Not enough capacity</b></td><td>Capacity sized for normal load: the spike exceeds it, users get slow responses or errors (lost business)</td></tr>
+<tr><td><b>Auto scaling</b></td><td>Capacity follows demand: grows for the spike, shrinks afterwards &mdash; no waste, no shortage</td></tr>
+</table>
+<h3>7.2 Horizontal and vertical scaling (slides 43&ndash;44)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg">
+<g stroke="currentColor"><rect x="20" y="20" width="40" height="40" style="fill:var(--soft)"/><rect x="62" y="20" width="40" height="40" style="fill:var(--soft)"/><rect x="104" y="20" width="40" height="40" style="fill:var(--soft)"/><rect x="146" y="20" width="40" height="40" style="fill:var(--soft)"/></g>
+<text x="103" y="80" text-anchor="middle" font-size="11" font-weight="bold">Horizontal: "scaling out"</text><text x="103" y="95" text-anchor="middle" font-size="9">add instances (2 &#8594; 4)</text>
+<g stroke="currentColor"><rect x="230" y="20" width="40" height="40" style="fill:var(--soft)"/><rect x="272" y="20" width="40" height="40" style="fill:var(--bg)" stroke-dasharray="3 2"/><rect x="314" y="20" width="40" height="40" style="fill:var(--bg)" stroke-dasharray="3 2"/></g>
+<text x="292" y="80" text-anchor="middle" font-size="11" font-weight="bold">Horizontal: "scaling in"</text><text x="292" y="95" text-anchor="middle" font-size="9">remove instances when demand drops</text>
+<g stroke="currentColor"><rect x="440" y="35" width="25" height="25" style="fill:var(--soft)"/><rect x="520" y="10" width="55" height="50" style="fill:var(--soft)" stroke-width="2"/></g>
+<text x="490" y="52" font-size="16">&#8594;</text><g font-size="9" text-anchor="middle"><text x="452" y="70">c3.large</text><text x="547" y="70">c4.8xlarge</text></g>
+<text x="508" y="88" text-anchor="middle" font-size="11" font-weight="bold">Vertical: "scaling up"</text><text x="508" y="102" text-anchor="middle" font-size="9">bigger instance type (more CPU/RAM)</text>
+</svg>
+<div class="cap">Figure 5 &mdash; Scaling out / in (horizontal) and up (vertical) (slides 43&ndash;44).</div>
+</div>
+<p>Vertical scaling usually needs a <b>restart</b> onto a bigger instance and has an upper limit; horizontal scaling adds availability because there are more copies. Cloud designs prefer horizontal scaling.</p>
+<h3>7.3 Launch templates (slides 45&ndash;46)</h3>
+<p>A <b>launch template</b> stores everything needed to start an instance: machine image (AMI), instance type, network, security groups, and <b>user data</b> (a startup script, e.g. install and start a web server). Auto Scaling uses it to create identical instances. Slide points: <b>recommended by AWS over launch configurations</b>; <b>can be changed and have multiple versions</b>; <b>allow more advanced configuration options</b>. Slide 46 shows user data that starts <code>httpd</code> and writes the instance's availability zone into <code>index.html</code>.</p>
+<h3>7.4 Auto Scaling (slides 47&ndash;50)</h3>
+<p>Auto Scaling: <b>right-sizes capacity needs</b>; an Auto Scaling group is a <b>logical collection of instances</b>; instances are <b>spread across Availability Zones</b>; it <b>performs health checks</b> on instances and replaces unhealthy ones. You set <b>minimum, maximum and desired capacity</b> &mdash; manually, or automatically from metric values.</p>
+<table class="small">
+<tr><th>Policy</th><th>How it works</th><th>Example</th></tr>
+<tr><td><b>Target tracking</b></td><td>Auto Scaling keeps a metric at a <b>target value</b> (like a thermostat)</td><td>"Keep average CPU at 50%": at 80% it adds instances, at 20% it removes some</td></tr>
+<tr><td><b>Simple scaling</b></td><td>Acts on a <b>CloudWatch alarm</b> (AWS monitoring): one fixed action, then waits a cooldown</td><td>"If CPU &gt; 70% for 5 min, add 1 instance"</td></tr>
+<tr><td><b>Step scaling</b></td><td>Acts on <b>banded value ranges</b>: bigger breach &rArr; bigger step</td><td>CPU 70&ndash;85% add 1; 85&ndash;95% add 2; &gt;95% add 4</td></tr>
+</table>
+<p class="small"><b>Worked example (step scaling):</b> min 2, max 10, currently 3 instances. CPU rises to 90% &rArr; band 85&ndash;95% &rArr; add 2 &rArr; 5 instances. CPU then 97% &rArr; add 4 &rArr; 9. Next band would give 13, but max is 10 &rArr; capped at <b>10</b>. When CPU falls, a scale-in rule removes instances, never going below 2.</p>
+
+<h3>7.5 RDS vs running a database on EC2 (slides 52&ndash;53)</h3>
+<table class="small">
+<tr><th>Amazon RDS (managed)</th><th>Database on EC2 (self-managed)</th></tr>
+<tr><td>Fully managed; AWS handles patching and maintenance; automated backups for <b>point-in-time recovery</b>; user-initiated snapshots; <b>Multi-AZ deployments</b>; leverages EC2 instances and EBS volumes underneath</td><td>You get shell access to the server file system and other server-side dependencies; you must be willing to spend DBA (database administrator) labour in exchange for lower usage costs; additional work to support maintenance and failover scenarios</td></tr>
+</table>
+
+<h2>8. Business continuity and disaster recovery (slides 54&ndash;61, 65)</h2>
+<p><b>Business continuity</b> = keeping the business running during and after a disruption. <b>Disaster recovery (DR)</b> = the IT plan to restore systems and data after a disaster (region outage, flood, ransomware). Two numbers drive the choice:</p>
+<div class="key">
+<b class="t">RPO and RTO (learn both)</b>
+<b>RPO &mdash; Recovery Point Objective</b>: the maximum amount of <b>data loss</b> you can accept, measured in time. "How far back in time is the last good copy?" Backups every 24 h &rArr; RPO up to 24 h.<br>
+<b>RTO &mdash; Recovery Time Objective</b>: the maximum <b>downtime</b> you can accept. "How long until we are running again?"
+</div>
+<div class="fig">
+<svg viewBox="0 0 680 95" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="c4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<line x1="20" y1="50" x2="660" y2="50" stroke="currentColor" stroke-width="1.5" marker-end="url(#c4)"/>
+<line x1="150" y1="35" x2="150" y2="65" stroke="currentColor" stroke-width="2"/><text x="150" y="28" text-anchor="middle" font-size="10">last backup</text>
+<line x1="340" y1="25" x2="340" y2="75" stroke="currentColor" stroke-width="3"/><text x="340" y="18" text-anchor="middle" font-size="11" font-weight="bold">DISASTER</text>
+<line x1="560" y1="35" x2="560" y2="65" stroke="currentColor" stroke-width="2"/><text x="560" y="28" text-anchor="middle" font-size="10">service restored</text>
+<text x="245" y="88" text-anchor="middle" font-size="10">&#8592; RPO: data lost in this window &#8594;</text>
+<text x="450" y="88" text-anchor="middle" font-size="10">&#8592; RTO: downtime &#8594;</text>
+</svg>
+<div class="cap">Figure 6 &mdash; RPO looks back from the disaster (data loss); RTO looks forward (downtime).</div>
+</div>
+<h3>The four DR strategies (slides 55&ndash;61)</h3>
+<table>
+<tr><th style="width:15%">Strategy</th><th>What is running in the DR region before the disaster</th><th>What you do after</th><th style="width:13%">RPO / RTO</th><th style="width:7%">Cost</th></tr>
+<tr><td><b>Backup &amp; restore</b></td><td>Nothing &mdash; only regularly scheduled backups, copied across regions on a schedule. No standby infrastructure.</td><td>Manually spin up new infrastructure and restore the backups</td><td>Hours</td><td>$</td></tr>
+<tr><td><b>Pilot light</b></td><td>Only the core: the <b>data is live</b> (DB read replica receiving replication); app/web servers <b>idle or off</b></td><td>Provision/switch on the app tier, scale it, promote the replica, point DNS (Route 53) to it</td><td>10s of minutes</td><td>$$</td></tr>
+<tr><td><b>Warm standby</b></td><td>A <b>scaled-down but fully working</b> copy always running (small ALB, web, app, read replica)</td><td>Scale it up to full production size and fail over</td><td>Minutes</td><td>$$$</td></tr>
+<tr><td><b>Multi-site (active/active)</b></td><td>Full production in <b>both</b> regions, both serving users; Route 53 splits traffic</td><td>Nothing to start &mdash; traffic just goes to the surviving site</td><td>Real time (near-zero data loss, zero downtime)</td><td>$$$$</td></tr>
+</table>
+<div class="fig">
+<svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="c5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<line x1="20" y1="55" x2="660" y2="55" stroke="currentColor" stroke-width="2" marker-end="url(#c5)"/>
+<g fill="currentColor"><circle cx="90" cy="55" r="5"/><circle cx="260" cy="55" r="5"/><circle cx="430" cy="55" r="5"/><circle cx="600" cy="55" r="5"/></g>
+<g font-size="11" text-anchor="middle" font-weight="bold"><text x="90" y="40">Backup &amp; restore</text><text x="260" y="40">Pilot light</text><text x="430" y="40">Warm standby</text><text x="600" y="40">Multi-site</text></g>
+<g font-size="9" text-anchor="middle"><text x="90" y="75">hours</text><text x="260" y="75">10s of minutes</text><text x="430" y="75">minutes</text><text x="600" y="75">real time</text></g>
+<text x="20" y="100" font-size="9">longest RTO, most downtime, lowest cost</text><text x="660" y="100" font-size="9" text-anchor="end">shortest RTO, least downtime, highest cost</text>
+<text x="260" y="18" text-anchor="middle" font-size="9">&#8592; active/passive (first three) &#8594;</text>
+</svg>
+<div class="cap">Figure 7 &mdash; Slides 55 and 61: DR options from cheapest/slowest to most expensive/fastest. The first three are active/passive; multi-site is active/active.</div>
+</div>
+<p><b>Cost trade-off (slide 65):</b> two curves against the length of service interruption. The <b>cost of business impact</b> rises the longer you are down; the <b>recovery cost</b> (cost and complexity of the DR solution) falls as you accept longer recovery. The <b>RTO</b> you choose is where an acceptable recovery cost meets an acceptable business impact. Multi-site is at the expensive end, backup &amp; restore at the cheap end.</p>
+<p class="small"><b>Route 53</b> is AWS's DNS service; in the DR diagrams it points the domain name (e.g. carvedrockfitness.com) at the active region and switches it during failover (failover routing). The lecture overview also lists AWS migration services, without detail.</p>
+<h3>Worked example: choose a DR strategy</h3>
+<table class="small">
+<tr><th>Requirement</th><th>Choice</th><th>Reason</th></tr>
+<tr><td>Internal HR wiki; can be down a day; tiny budget</td><td>Backup &amp; restore</td><td>RTO/RPO of hours is acceptable; cheapest</td></tr>
+<tr><td>Online shop; down at most ~30 min; data must be nearly current</td><td>Pilot light</td><td>Live replicated data; app servers started on failover</td></tr>
+<tr><td>Bank internet banking; down only a few minutes</td><td>Warm standby</td><td>A small working copy only needs scaling up</td></tr>
+<tr><td>Card payment network; no downtime allowed</td><td>Multi-site active/active</td><td>Both sites serve traffic all the time</td></tr>
+</table>
+
+<h2>9. Hardware infrastructure for high availability (slides 62&ndash;64)</h2>
+<ul class="small">
+<li><b>High-availability storage</b>: storage HA is key to infrastructure HA. Use <b>redundant I/O paths</b> from servers to the storage array: server &harr; <b>HBAs</b> (host bus adapters: the server's storage network cards) &harr; Fibre Channel switches &harr; storage controllers &harr; disk enclosures. Two of everything, cross-connected, so one failed cable, card, switch or controller does not stop access.</li>
+<li><b>Network HA</b>: fully redundant interconnects for clusters; <b>network bonding/teaming</b> (two NICs act as one link; if one fails the other carries traffic) vs Oracle <b>HAIP</b> (Highly Available Virtual IP); dedicated switches for private interconnects; link aggregation groups.</li>
+<li><b>Oracle HA example (slide 64)</b>: clients &rarr; WAN traffic manager &rarr; application servers at a primary and a secondary site; RAC databases (Real Application Clusters: several servers running one database) at the primary; <b>Oracle Data Guard</b> ships changes over a dedicated network to physical and logical standby databases at the secondary site.</li>
+</ul>
+
+<h2>10. Exam-style questions with model answers</h2>
+<p><b>Q1. What is Network Functions Virtualization? State four advantages. (6 marks)</b><br>
+NFV decouples network functions such as firewalls, routers and encryption from dedicated proprietary hardware and runs them as software on virtual machines on standard commodity servers, reducing cost and accelerating service deployment; a new function is added by spinning up a VM. Advantages: reduced space for network hardware, reduced power consumption, reduced maintenance and hardware costs, easier upgrades, longer hardware life cycles, management from anywhere in the operator's network.</p>
+<p><b>Q2. Distinguish NFV from SDN. (4)</b><br>
+NFV virtualizes individual network functions (they become software on VMs instead of appliances). SDN separates the control plane from the data plane and centralizes control in a software controller that programs the forwarding devices. They are complementary: SDN can steer traffic between virtualized functions.</p>
+<p><b>Q3. Explain the "works on my machine" problem and how containers solve it. (4)</b><br>
+Software works on the developer's machine but fails elsewhere because of different library versions, configurations or OS settings (dependency conflicts, inconsistent environments). A container packages the application with all its dependencies into an image, so the same image runs identically in development, testing and production.</p>
+<p><b>Q4. Describe the Docker architecture. Distinguish an image from a container. (6)</b><br>
+Docker uses a client-server model: the client sends commands (build, run, pull) to the Docker daemon, which builds images, runs containers, and manages networks, volumes and communication with registries. Registries (e.g. Docker Hub) store and share images. An image is a read-only template built from a Dockerfile in layers; a container is a running instance created from an image, and many containers can be created from one image.</p>
+<p><b>Q5. Why is data stored in volumes rather than inside containers? (2)</b><br>
+Containers are ephemeral; when one is removed its internal file system is lost. Volumes store data outside the container so it persists across container removal and replacement.</p>
+<p><b>Q6. Draw and explain a highly available web architecture on AWS. (8)</b><br>
+(Draw Figure 4.) A VPC spans two AZs. Each AZ has a public subnet with a NAT gateway and a private subnet with web front-end and app servers. An Application Load Balancer distributes requests across both AZs. The web and app tiers are in Auto Scaling groups spanning both AZs, which replace unhealthy instances and scale with demand. RDS runs a primary in AZ1 replicated to a secondary in AZ2. No tier has a single point of failure; losing an entire AZ still leaves a working copy.</p>
+<p><b>Q7. Compare target tracking, simple and step scaling policies. (6)</b><br>
+Target tracking keeps a metric at a target value (e.g. CPU 50%), adding or removing instances automatically. Simple scaling performs one fixed action when a CloudWatch alarm fires (e.g. +1 instance at CPU &gt; 70%). Step scaling uses banded ranges: the larger the breach, the larger the adjustment.</p>
+<p><b>Q8. Define RTO and RPO. (4)</b><br>
+RTO (recovery time objective) is the maximum acceptable downtime before service is restored. RPO (recovery point objective) is the maximum acceptable data loss, measured as the time between the last recoverable copy and the disaster.</p>
+<p><b>Q9. Compare the four disaster-recovery strategies. (8)</b><br>
+Backup &amp; restore: only scheduled backups copied across regions, no standby; infrastructure built after the event; RPO/RTO hours; lowest cost. Pilot light: data replicated live, app tier idle; servers provisioned after the event; tens of minutes; low-medium cost. Warm standby: a scaled-down fully working copy always running; scaled up after the event; minutes; higher cost. Multi-site active/active: full production in both sites serving traffic; real-time recovery with near-zero data loss; highest cost.</p>
+<p><b>Q10. Compare horizontal and vertical scaling with examples. (4)</b><br>
+Horizontal scaling adds or removes instances (scale out: 2 &rarr; 6 servers; scale in when demand drops); it improves availability. Vertical scaling makes one instance more powerful (c3.large &rarr; c4.8xlarge, scale up); it has an upper limit and usually needs a restart.</p>
+<p><b>Q11. Give two advantages of RDS over running a database on EC2, and one reason to choose EC2. (3)</b><br>
+RDS: AWS handles patching and maintenance; automated backups with point-in-time recovery and Multi-AZ failover. EC2: full shell access to the server and its dependencies, and lower usage cost if you accept the DBA work.</p>
+
+<h2>11. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>NFV = virtualizing the whole network</td><td>NFV virtualizes network <b>functions</b> only (the slide stresses this).</td></tr>
+<tr><td>NFV and SDN are the same thing</td><td>NFV = functions as software; SDN = control plane separated and centralized.</td></tr>
+<tr><td>Image and container used as synonyms</td><td>Image = read-only template; container = running instance of it.</td></tr>
+<tr><td>Storing database files inside a container</td><td>Containers are ephemeral; use volumes for persistent data.</td></tr>
+<tr><td>Swapping RTO and RPO</td><td>RTO = time to recover (downtime). RPO = point in time recovered to (data loss).</td></tr>
+<tr><td>Pilot light = warm standby</td><td>Pilot light: only data live, servers off. Warm standby: small but fully working copy running.</td></tr>
+<tr><td>"One AZ is enough if the server is big."</td><td>One AZ is a single point of failure; use at least two.</td></tr>
+<tr><td>Vertical scaling = adding servers</td><td>Vertical = bigger instance; horizontal = more instances.</td></tr>
+<tr><td>Putting databases in a public subnet</td><td>Keep app servers and databases in private subnets; only the load balancer faces the Internet.</td></tr>
+</table>

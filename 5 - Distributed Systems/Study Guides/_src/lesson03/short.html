@@ -1,0 +1,60 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">NFV &amp; SDN</th></tr>
+<tr><td>NFV</td><td>Decouple network functions (firewall, encryption, router) from dedicated HW; run on VMs on commodity servers. Functions only, not whole network</td></tr>
+<tr><td>Pros</td><td>Less space, power, maintenance &amp; HW cost; easier upgrades; longer HW life; manage from anywhere</td></tr>
+<tr><td>Stack</td><td>MANO (orchestration) &middot; VNFs &middot; NFVI (+ SDN, VIM)</td></tr>
+<tr><td>SDN</td><td>Control plane separated from data plane; central software controller</td></tr>
+<tr><td>Why SDN</td><td>WAN cost, hybrid/multi-cloud control, prioritise critical traffic, new sites fast, security, multi-domain, future-proof</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Docker</th></tr>
+<tr><td>Why</td><td>"Works on my machine", dependency conflicts &rarr; bundle app + deps; microservices; faster delivery</td></tr>
+<tr><td>Isolation</td><td>Namespaces (own view) + cgroups (resource limits); shared host kernel</td></tr>
+<tr><td>Parts</td><td>Client &rarr; daemon (build, run, networks, volumes) &harr; registry</td></tr>
+<tr><td>Image</td><td>Read-only template; Dockerfile; 1 instruction = 1 cached layer</td></tr>
+<tr><td>Container</td><td>Running instance; create, start, stop, restart, remove; ephemeral</td></tr>
+<tr><td>Data</td><td>Volumes outside the container</td></tr>
+<tr><td>Limit</td><td>Shared kernel &rArr; weaker isolation than VMs</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">AWS high availability</th></tr>
+<tr><td>Region</td><td>Geographic area, &ge; 2 AZs; pick near users</td></tr>
+<tr><td>AZ</td><td>Cluster of DCs, own power/cooling, redundant network</td></tr>
+<tr><td>HA design</td><td>VPC, 2 AZs, public subnet + NAT GW, private subnet web/app, ALB, Auto Scaling groups, RDS primary &rarr; secondary</td></tr>
+<tr><td>3-tier</td><td>Web &rarr; app &rarr; database</td></tr>
+<tr><td>Scaling</td><td>Out/in = horizontal; up = vertical</td></tr>
+<tr><td>Launch template</td><td>Recommended over launch configs; versioned; advanced options</td></tr>
+<tr><td>ASG</td><td>Right-size, logical group, spread over AZs, health checks; min/max/desired</td></tr>
+<tr><td>Policies</td><td>Target tracking (keep target), Simple (CloudWatch alarm), Step (bands)</td></tr>
+<tr><td>RDS</td><td>Managed, patching, PITR backups, snapshots, Multi-AZ</td></tr>
+</table>
+<table>
+<tr><th>DR</th><th>Standby</th><th>RTO</th><th>$</th></tr>
+<tr><td>Backup &amp; restore</td><td>none</td><td>hours</td><td>$</td></tr>
+<tr><td>Pilot light</td><td>data live, servers off</td><td>10s min</td><td>$$</td></tr>
+<tr><td>Warm standby</td><td>small full copy</td><td>minutes</td><td>$$$</td></tr>
+<tr><td>Multi-site</td><td>full, active/active</td><td>real time</td><td>$$$$</td></tr>
+<tr><td colspan="4"><b>RPO</b> = max data loss (time). <b>RTO</b> = max downtime.</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>NFV = virtualizing the whole network</td><td>NFV virtualizes network <b>functions</b> only (the slide stresses this).</td></tr>
+<tr><td>NFV and SDN are the same thing</td><td>NFV = functions as software; SDN = control plane separated and centralized.</td></tr>
+<tr><td>Image and container used as synonyms</td><td>Image = read-only template; container = running instance of it.</td></tr>
+<tr><td>Storing database files inside a container</td><td>Containers are ephemeral; use volumes for persistent data.</td></tr>
+<tr><td>Swapping RTO and RPO</td><td>RTO = time to recover (downtime). RPO = point in time recovered to (data loss).</td></tr>
+<tr><td>Pilot light = warm standby</td><td>Pilot light: only data live, servers off. Warm standby: small but fully working copy running.</td></tr>
+<tr><td>"One AZ is enough if the server is big."</td><td>One AZ is a single point of failure; use at least two.</td></tr>
+<tr><td>Vertical scaling = adding servers</td><td>Vertical = bigger instance; horizontal = more instances.</td></tr>
+<tr><td>Putting databases in a public subnet</td><td>Keep app servers and databases in private subnets; only the load balancer faces the Internet.</td></tr>
+</table>
