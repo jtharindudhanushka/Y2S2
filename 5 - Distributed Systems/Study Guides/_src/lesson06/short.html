@@ -1,0 +1,55 @@
+<style>.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.two{grid-template-columns:1fr}}.two>div{min-width:0}td:first-child{white-space:normal}</style>
+<h2>Short note: revision sheet</h2>
+</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Management &amp; deployment</th></tr>
+<tr><td>Cloud mgmt</td><td>Control + monitor compute, storage, networks, apps, security policies, users/access</td></tr>
+<tr><td>Deployment</td><td>Develop &rarr; test &rarr; package &rarr; deploy &rarr; monitor &rarr; update/scale</td></tr>
+<tr><td>CaaS</td><td>Containers as a Service (Amazon ECS)</td></tr>
+<tr><td>Provisioning</td><td>Allocate VMs, containers, DBs, storage, network, security groups; cloud = automated, templates</td></tr>
+<tr><td>IaC</td><td>Write &rarr; review &rarr; deploy &rarr; monitor. Terraform, CloudFormation, ARM, Ansible. Repeatable, fewer errors, faster, versioned, collaborative</td></tr>
+<tr><td>LB types</td><td>Application (L7: URL, host, headers) &middot; Network (L4: TCP/UDP, fast) &middot; Global (regions)</td></tr>
+<tr><td>Auto-scaling</td><td>Metrics: CPU, memory, requests, queue length, response time, schedule. 2 &rarr; 8 &rarr; 2</td></tr>
+<tr><td>Scaling</td><td>Horizontal (instances) &middot; vertical (power) &middot; automatic (rules)</td></tr>
+<tr><td>Design</td><td>Resilience (expect failure) &middot; flexibility (modular, portable, no lock-in) &middot; cost (best value)</td></tr>
+<tr><td>Observability</td><td>Metrics, logs, traces, alerts, dashboards</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Kubernetes</th></tr>
+<tr><td>What</td><td>Container orchestrator; declarative desired state</td></tr>
+<tr><td>Control plane</td><td>API server, scheduler, controller manager, cluster DB (etcd)</td></tr>
+<tr><td>Worker</td><td>kubelet, container runtime, kube-proxy, Pods</td></tr>
+<tr><td>Objects</td><td>Pod, Deployment, Service, Ingress, ConfigMap/Secret, Namespace</td></tr>
+<tr><td>Deploy</td><td>Code &rarr; image &rarr; registry &rarr; YAML &rarr; kubectl apply &rarr; Pods &rarr; Service &rarr; monitor</td></tr>
+<tr><td>Self-heal</td><td>Restart, replace, reschedule, keep replicas; rolling updates, rollbacks, health checks</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Pods</th></tr>
+<tr><td>Pod</td><td>Smallest unit; shared context; co-scheduled; one IP (localhost); ephemeral</td></tr>
+<tr><td>Inside</td><td>Pause container, init, app, sidecar, shared volumes</td></tr>
+<tr><td>YAML</td><td>apiVersion, kind, metadata, spec</td></tr>
+<tr><td>kubectl</td><td>apply -f &middot; get pods &middot; describe pod &middot; --watch</td></tr>
+<tr><td>emptyDir</td><td>New at Pod start; survives container restart; deleted with Pod</td></tr>
+<tr><td>Phases</td><td>Pending &rarr; Running &rarr; Succeeded / Failed; Unknown</td></tr>
+<tr><td>Restart</td><td>Always (default, web) &middot; OnFailure (batch) &middot; Never (one-shot); CrashLoopBackOff</td></tr>
+<tr><td>Durability</td><td>Deployment recreates lost Pods</td></tr>
+</table>
+</div>
+</div>
+<h2>Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>A Pod is a container</td><td>A Pod wraps one or more containers that share an IP and volumes.</td></tr>
+<tr><td>Containers in a Pod talk through a Service</td><td>They use localhost; Services are for reaching Pods from elsewhere.</td></tr>
+<tr><td>Restart policy brings back a deleted Pod</td><td>It only restarts containers in place; a Deployment recreates Pods.</td></tr>
+<tr><td>emptyDir data survives Pod deletion</td><td>It survives container restarts but is deleted with the Pod.</td></tr>
+<tr><td>Scheduler runs containers on nodes</td><td>The scheduler chooses the node; the kubelet and container runtime run them.</td></tr>
+<tr><td>Network LB routes by URL</td><td>Application LB (layer 7) routes by URL/headers; network LB (layer 4) by IP/port.</td></tr>
+<tr><td>Vertical scaling is preferred in the cloud</td><td>Horizontal is preferred: availability and distribution.</td></tr>
+<tr><td>IaC = writing application code</td><td>IaC = infrastructure defined in code files (Terraform, CloudFormation).</td></tr>
+<tr><td>Cost-efficiency = lowest possible cost</td><td>Best value for the required performance and reliability.</td></tr>
+</table>

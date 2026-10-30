@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 6 - Cloud Management, Kubernetes and Pods</title>
+<link rel="stylesheet" href="print.css">
+<style>
+@page { size: A4; margin: 14mm 14mm 16mm 14mm;
+  @bottom-center { content: "DS Lesson 6 - Cloud Management, Kubernetes and Pods   |   page " counter(page); font: 8.5pt Arial; color: #444; } }
+svg text { font-family: Arial, Helvetica, sans-serif; }
+</style>
+</head>
+<body>
+
+<h1>Lesson 6 &mdash; Cloud Management, Software Deployment, Kubernetes and Pods</h1>
+<p class="small"><b>INTE 22253 &nbsp;|&nbsp; Source: Lecture 06 Part I "Cloud Management &amp; Software Deployment" (29 slides) and Lecture 06 Part II "Kubernetes Pods, From Scratch" (15 slides) &nbsp;|&nbsp; Builds on Lessons 2, 3 and 5</b></p>
+
+<div class="key">
+<b class="t">Learning objectives (slide 2)</b>
+<ul>
+<li>Explain the meaning of <b>cloud management</b> and <b>software deployment</b>.</li>
+<li>Describe how cloud resources are <b>provisioned</b> (including Infrastructure as Code).</li>
+<li>Understand the purpose and types of <b>load balancing</b>.</li>
+<li>Explain how <b>auto-scaling</b> improves application performance; horizontal vs vertical scaling.</li>
+<li>Identify the role of <b>Kubernetes</b>: architecture, objects, deployment, self-healing; and explain <b>Pods</b> with YAML and kubectl (Part II).</li>
+<li>Discuss ways to design cloud systems for <b>resilience, flexibility and cost-efficiency</b>.</li>
+</ul>
+</div>
+
+<h2>1. Cloud management and software deployment (slides 3&ndash;5)</h2>
+<p><b>Cloud management</b> is the process of <b>controlling and monitoring</b> cloud-based computing resources, storage, networks, applications, security policies, and users &amp; access permissions. It ensures resources are <b>available, secure, efficiently used, properly monitored and cost-effective</b>.</p>
+<p><b>Software deployment</b> is the process of <b>making an application available for users</b>. Lifecycle:</p>
+<div class="fig">
+<svg viewBox="0 0 680 50" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="f1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g stroke="#000" fill="#f3f3f3"><rect x="5" y="10" width="90" height="30"/><rect x="118" y="10" width="90" height="30"/><rect x="231" y="10" width="90" height="30"/><rect x="344" y="10" width="90" height="30"/><rect x="457" y="10" width="90" height="30"/><rect x="570" y="10" width="105" height="30"/></g>
+<g font-size="11" text-anchor="middle"><text x="50" y="30">1 Develop</text><text x="163" y="30">2 Test</text><text x="276" y="30">3 Package</text><text x="389" y="30">4 Deploy</text><text x="502" y="30">5 Monitor</text><text x="622" y="30">6 Update/Scale</text></g>
+<g stroke="#000"><line x1="95" y1="25" x2="116" y2="25" marker-end="url(#f1)"/><line x1="208" y1="25" x2="229" y2="25" marker-end="url(#f1)"/><line x1="321" y1="25" x2="342" y2="25" marker-end="url(#f1)"/><line x1="434" y1="25" x2="455" y2="25" marker-end="url(#f1)"/><line x1="547" y1="25" x2="568" y2="25" marker-end="url(#f1)"/></g>
+</svg>
+<div class="cap">Figure 1 &mdash; Deployment lifecycle (slide 4). Cloud platforms simplify it with on-demand infrastructure and automated tools.</div>
+</div>
+<table class="small">
+<tr><th>Service model (slide 5)</th><th>Description</th><th>Example</th></tr>
+<tr><td>IaaS</td><td>Provides virtual machines, networks and storage</td><td>Amazon EC2</td></tr>
+<tr><td>PaaS</td><td>Provides a platform for developing and deploying applications</td><td>Google App Engine</td></tr>
+<tr><td>SaaS</td><td>Provides ready-to-use software over the Internet</td><td>Microsoft 365</td></tr>
+<tr><td><b>CaaS</b> Containers as a Service</td><td>Provides tools for running and managing containers</td><td>Amazon ECS</td></tr>
+</table>
+<p class="small">Cloud management applies across all of these models.</p>
+
+<h2>2. Resource provisioning and Infrastructure as Code (slides 6&ndash;7)</h2>
+<p><b>Resource provisioning</b> = allocating computing resources to an application: virtual machines, containers, databases, storage, network connections and <b>security groups</b> (virtual firewalls that say which traffic may reach a resource).</p>
+<table class="small">
+<tr><th>Traditional provisioning</th><th>Cloud provisioning</th></tr>
+<tr><td>Often manual &middot; can be slow &middot; may result in <b>over-provisioning</b> (buying more than needed) &middot; difficult to reproduce consistently</td><td>Can be automated &middot; uses templates and scripts &middot; supports rapid deployment &middot; can respond to changing demand</td></tr>
+</table>
+<div class="key"><b class="t">Infrastructure as Code (IaC)</b>Managing infrastructure <b>through code instead of manual configuration</b>. Steps: <b>write configuration &rarr; review code &rarr; deploy infrastructure &rarr; monitor resources</b>.</div>
+<p><b>Tools:</b> Terraform, AWS CloudFormation, Azure Resource Manager, Ansible. <b>Benefits:</b> repeatable deployments, fewer configuration errors, faster infrastructure creation, easier version control, improved team collaboration.</p>
+<table class="code">
+<tr><th>Terraform example</th><th>Meaning</th></tr>
+<tr><td>resource "aws_instance" "web" {</td><td>Declare an EC2 virtual machine named "web"</td></tr>
+<tr><td>  ami           = "ami-0abc123"</td><td>Which machine image (OS template) to use</td></tr>
+<tr><td>  instance_type = "t3.micro"</td><td>Size of the VM (vCPU/RAM)</td></tr>
+<tr><td>  count         = 2</td><td>Create two identical instances</td></tr>
+<tr><td>}</td><td>Run <code>terraform apply</code>: the tool creates exactly this; run it again and nothing changes (repeatable)</td></tr>
+</table>
+<p class="small">Because the file is in Git, every change is reviewed, versioned and can be rolled back &mdash; the same reasons code is kept in version control.</p>
+
+<h2>3. Load balancing (slides 8&ndash;9)</h2>
+<p>A <b>load balancer</b> distributes incoming network traffic among multiple servers or application instances.</p>
+<div class="fig">
+<svg viewBox="0 0 680 140" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="f2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<text x="150" y="16" text-anchor="middle" font-size="12" font-weight="bold">Without a load balancer</text>
+<rect x="20" y="50" width="80" height="36" fill="#fff" stroke="#000"/><text x="60" y="73" text-anchor="middle" font-size="11">Users</text>
+<rect x="180" y="50" width="100" height="36" fill="#bbb" stroke="#000"/><text x="230" y="73" text-anchor="middle" font-size="11">One server</text>
+<line x1="100" y1="68" x2="178" y2="68" stroke="#000" stroke-width="3" marker-end="url(#f2)"/>
+<text x="150" y="115" text-anchor="middle" font-size="9">overloaded &#8658; slow or unavailable</text><text x="150" y="128" text-anchor="middle" font-size="9">single point of failure</text>
+<line x1="320" y1="10" x2="320" y2="135" stroke="#888"/>
+<text x="500" y="16" text-anchor="middle" font-size="12" font-weight="bold">With a load balancer</text>
+<rect x="340" y="50" width="70" height="36" fill="#fff" stroke="#000"/><text x="375" y="73" text-anchor="middle" font-size="11">Users</text>
+<rect x="440" y="45" width="85" height="46" fill="#bbb" stroke="#000"/><text x="482" y="66" text-anchor="middle" font-size="11">Load</text><text x="482" y="80" text-anchor="middle" font-size="11">balancer</text>
+<g fill="#f3f3f3" stroke="#000"><rect x="570" y="25" width="95" height="26"/><rect x="570" y="55" width="95" height="26"/><rect x="570" y="85" width="95" height="26"/></g>
+<g font-size="10" text-anchor="middle"><text x="617" y="42">Server 1</text><text x="617" y="72">Server 2</text><text x="617" y="102">Server 3</text></g>
+<g stroke="#000"><line x1="410" y1="68" x2="438" y2="68" marker-end="url(#f2)"/><line x1="525" y1="60" x2="568" y2="38" marker-end="url(#f2)"/><line x1="525" y1="68" x2="568" y2="68" marker-end="url(#f2)"/><line x1="525" y1="76" x2="568" y2="98" marker-end="url(#f2)"/></g>
+<text x="500" y="128" text-anchor="middle" font-size="9">unhealthy server removed from rotation</text>
+</svg>
+<div class="cap">Figure 2 &mdash; Slide 8: without vs with a load balancer.</div>
+</div>
+<p><b>Benefits:</b> improved performance &middot; higher availability &middot; better use of resources &middot; reduced risk of failure &middot; supports horizontal scaling. The LB also runs <b>health checks</b> and stops sending traffic to a failed server.</p>
+<table class="small">
+<tr><th>Type (slide 9)</th><th>Works at</th><th>Routes by / used for</th></tr>
+<tr><td><b>Application</b> load balancing</td><td>Application layer (Layer 7, HTTP)</td><td>URL paths, hostnames, HTTP headers, application content. E.g. <code>/images/*</code> to image servers, <code>/api/*</code> to API servers</td></tr>
+<tr><td><b>Network</b> load balancing</td><td>Network/transport layer (Layer 4, TCP/UDP)</td><td>IP address and port only; very fast. High-performance apps, TCP/UDP traffic, low latency</td></tr>
+<tr><td><b>Global</b> load balancing</td><td>Across regions (often via DNS)</td><td>Sends users to the nearest/healthy region: lower latency, survives regional failure, less pressure on one data centre</td></tr>
+</table>
+<p class="small"><b>How it picks a server (standard algorithms):</b> <b>round robin</b> (1, 2, 3, 1, 2, 3&hellip;), <b>least connections</b> (the server with fewest active connections), <b>weighted</b> (bigger servers get more). Example: 6 requests, round robin over 3 servers &rArr; S1 gets requests 1 and 4, S2 gets 2 and 5, S3 gets 3 and 6.</p>
+
+<h2>4. Auto-scaling (slides 10&ndash;12)</h2>
+<p><b>Auto-scaling</b> automatically increases or decreases cloud resources according to demand. Slide 10: normal traffic &rArr; 2 instances; high traffic &rArr; 8; low traffic &rArr; back to 2.</p>
+<p><b>Common scaling metrics:</b> CPU utilization &middot; memory usage &middot; number of requests &middot; queue length &middot; response time &middot; schedule / time of day.</p>
+<table class="small">
+<tr><th>Scaling type (slide 11)</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><b>Horizontal</b></td><td>Adding or removing instances</td><td>Servers 2 &rarr; 6</td></tr>
+<tr><td><b>Vertical</b></td><td>Increasing the power of an existing server</td><td>More CPU or memory</td></tr>
+<tr><td><b>Automatic</b></td><td>Resources change automatically based on rules</td><td>Add servers when CPU &gt; 70%</td></tr>
+</table>
+<p class="small">Horizontal scaling is often preferred in the cloud because it improves availability and supports distributed applications.</p>
+<h3>Worked example: how many instances?</h3>
+<p class="small">Each instance handles about 200 requests/s at 70% CPU. Rule: keep CPU near 70%; min 2, max 10. Traffic: 300 req/s at night, 1,500 req/s in a sale.</p>
+<table class="small">
+<tr><th>Traffic</th><th>Calculation</th><th>Instances</th></tr>
+<tr><td>300 req/s</td><td>300 / 200 = 1.5 &rarr; round up = 2 (also the minimum)</td><td>2</td></tr>
+<tr><td>1,500 req/s</td><td>1,500 / 200 = 7.5 &rarr; round up</td><td>8</td></tr>
+<tr><td>3,000 req/s</td><td>3,000 / 200 = 15, but max is 10</td><td>10 (each runs hotter; raise the max or optimise)</td></tr>
+</table>
+<div class="two">
+<div><b>Benefits (slide 12)</b><ul class="small"><li>Handles unexpected traffic</li><li>Improves application availability</li><li>Reduces manual work</li><li>Avoids paying for unnecessary resources</li><li>Supports business growth</li></ul></div>
+<div><b>Challenges</b><ul class="small"><li>Poorly configured rules may cause instability (scaling up and down repeatedly, "flapping")</li><li>Scaling may take time (new instances need minutes to boot)</li><li>Some applications are difficult to scale (they keep state on one server)</li><li>Databases may become bottlenecks</li><li>Sudden traffic increases can raise costs</li></ul></div>
+</div>
+<p class="small">Auto-scaling should be combined with monitoring, testing and cost controls.</p>
+
+<h2>5. Kubernetes (Lecture 06 slides 13&ndash;18; Part II slide 2)</h2>
+<h3>5.1 The problem and the answer</h3>
+<p><b>The problem:</b> your app is packaged into containers, and now there are dozens or thousands running across many machines. Who decides which machine runs which container? What happens when a machine dies? How do containers find each other?</p>
+<p><b>The answer:</b> Kubernetes is a <b>container orchestrator</b>, an open-source platform for <b>deploying, managing and scaling containerized applications</b>. You describe what you want ("run 3 copies of this app") and Kubernetes <b>places, monitors, restarts and scales</b> your containers across a <b>cluster</b> of machines automatically. It helps organisations: run containers across multiple machines &middot; automatically restart failed containers &middot; scale applications &middot; perform software updates &middot; manage networking and service discovery &middot; <b>maintain the desired application state</b>.</p>
+<p class="small"><b>Why containers? (slide 14)</b> A container packages the application, its libraries and configuration. Advantages: consistent behaviour across environments, faster startup than VMs, efficient use of resources, easier deployment, simplified dependency management.</p>
+<div class="key"><b class="t">Key idea: desired state</b>Kubernetes is <b>declarative</b>: you declare the <b>desired state</b> (e.g. 3 replicas of web:v2). Controllers constantly compare it with the <b>actual state</b> and act to close the gap (start, stop or move Pods). This loop is why it "self-heals".</div>
+
+<h3>5.2 Kubernetes architecture (slide 15)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="200" height="180" fill="#bbb" stroke="#000"/><text x="110" y="28" text-anchor="middle" font-size="12" font-weight="bold">CONTROL PLANE</text><text x="110" y="42" text-anchor="middle" font-size="9">manages the cluster</text>
+<g fill="#fff" stroke="#000"><rect x="25" y="52" width="170" height="28"/><rect x="25" y="86" width="170" height="28"/><rect x="25" y="120" width="170" height="28"/><rect x="25" y="154" width="170" height="28"/></g>
+<g font-size="10" text-anchor="middle"><text x="110" y="70">API server</text><text x="110" y="104">Scheduler</text><text x="110" y="138">Controller manager</text><text x="110" y="172">Cluster database (etcd)</text></g>
+<g><rect x="250" y="10" width="420" height="85" fill="#f3f3f3" stroke="#000"/><text x="262" y="26" font-size="11" font-weight="bold">WORKER NODE 1</text>
+<g fill="#fff" stroke="#000"><rect x="262" y="34" width="120" height="22"/><rect x="392" y="34" width="135" height="22"/><rect x="537" y="34" width="120" height="22"/></g>
+<g font-size="10" text-anchor="middle"><text x="322" y="49">kubelet</text><text x="459" y="49">container runtime</text><text x="597" y="49">kube-proxy</text></g>
+<g fill="#ddd" stroke="#000"><rect x="262" y="63" width="70" height="24" rx="10"/><rect x="342" y="63" width="70" height="24" rx="10"/><rect x="422" y="63" width="70" height="24" rx="10"/></g><g font-size="10" text-anchor="middle"><text x="297" y="79">Pod</text><text x="377" y="79">Pod</text><text x="457" y="79">Pod</text></g></g>
+<g><rect x="250" y="105" width="420" height="85" fill="#f3f3f3" stroke="#000"/><text x="262" y="121" font-size="11" font-weight="bold">WORKER NODE 2</text>
+<g fill="#fff" stroke="#000"><rect x="262" y="129" width="120" height="22"/><rect x="392" y="129" width="135" height="22"/><rect x="537" y="129" width="120" height="22"/></g>
+<g font-size="10" text-anchor="middle"><text x="322" y="144">kubelet</text><text x="459" y="144">container runtime</text><text x="597" y="144">kube-proxy</text></g>
+<g fill="#ddd" stroke="#000"><rect x="262" y="158" width="70" height="24" rx="10"/><rect x="342" y="158" width="70" height="24" rx="10"/></g><g font-size="10" text-anchor="middle"><text x="297" y="174">Pod</text><text x="377" y="174">Pod</text></g></g>
+<g stroke="#000" stroke-dasharray="4 3"><line x1="210" y1="66" x2="250" y2="45"/><line x1="210" y1="66" x2="250" y2="140"/></g>
+</svg>
+<div class="cap">Figure 3 &mdash; A cluster = a control plane + one or more worker nodes (slide 15).</div>
+</div>
+<table class="small">
+<tr><th>Component</th><th>Where</th><th>Job</th></tr>
+<tr><td><b>API server</b></td><td>Control plane</td><td>Front door of the cluster: every command (kubectl, other components) goes through it</td></tr>
+<tr><td><b>Scheduler</b></td><td>Control plane</td><td>Chooses which worker node each new Pod runs on, based on free resources</td></tr>
+<tr><td><b>Controller manager</b></td><td>Control plane</td><td>Runs the controllers that keep actual state = desired state (e.g. "3 replicas")</td></tr>
+<tr><td><b>Cluster database</b></td><td>Control plane</td><td>Stores the whole cluster state (in practice <b>etcd</b>, a key-value store)</td></tr>
+<tr><td><b>kubelet</b></td><td>Each worker</td><td>Agent that starts/stops the node's Pods as told and reports their health</td></tr>
+<tr><td><b>Container runtime</b></td><td>Each worker</td><td>Actually runs the containers (e.g. containerd, Docker)</td></tr>
+<tr><td><b>kube-proxy</b></td><td>Each worker</td><td>Network rules so Services route traffic to the right Pods</td></tr>
+</table>
+
+<h3>5.3 Important Kubernetes objects (slide 16)</h3>
+<table class="small">
+<tr><th>Object</th><th>Meaning</th></tr>
+<tr><td><b>Pod</b></td><td>The <b>smallest deployable unit</b>; contains one or more containers</td></tr>
+<tr><td><b>Deployment</b></td><td>Describes the <b>desired number and version</b> of application instances; recreates lost Pods, does rolling updates</td></tr>
+<tr><td><b>Service</b></td><td>Provides <b>stable network access</b> to a group of Pods (Pods come and go and change IPs; the Service name/IP stays the same)</td></tr>
+<tr><td><b>Ingress</b></td><td>Controls <b>external HTTP and HTTPS access</b> to applications (e.g. routes shop.com/api to the API Service)</td></tr>
+<tr><td><b>ConfigMap &amp; Secret</b></td><td>Store <b>configuration values</b> and <b>sensitive information</b> (passwords, keys) outside the image</td></tr>
+<tr><td><b>Namespace</b></td><td><b>Separates resources</b> within a cluster (e.g. dev, test, prod; or per team)</td></tr>
+</table>
+
+<h3>5.4 Deployment process (slide 17)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 50" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="f3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g stroke="#000" fill="#f3f3f3"><rect x="5" y="10" width="105" height="30"/><rect x="140" y="10" width="125" height="30"/><rect x="295" y="10" width="105" height="30"/><rect x="430" y="10" width="135" height="30"/><rect x="595" y="10" width="80" height="30"/></g>
+<g font-size="11" text-anchor="middle"><text x="57" y="30">1 Code</text><text x="202" y="30">2 Container image</text><text x="347" y="30">3 Registry</text><text x="497" y="30">4 Kubernetes cluster</text><text x="635" y="30">5 Users</text></g>
+<g stroke="#000"><line x1="110" y1="25" x2="138" y2="25" marker-end="url(#f3)"/><line x1="265" y1="25" x2="293" y2="25" marker-end="url(#f3)"/><line x1="400" y1="25" x2="428" y2="25" marker-end="url(#f3)"/><line x1="565" y1="25" x2="593" y2="25" marker-end="url(#f3)"/></g>
+</svg>
+<div class="cap">Figure 4 &mdash; From code to users (slide 17).</div>
+</div>
+<ol class="small">
+<li>Build the application.</li><li>Create a container image.</li><li>Store the image in a container registry.</li><li>Write a Kubernetes deployment file (YAML).</li><li>Apply the configuration to the cluster (<code>kubectl apply</code>).</li><li>Kubernetes creates the required Pods.</li><li>A Service exposes the application.</li><li>Monitoring tools track performance and health.</li>
+</ol>
+<table class="code">
+<tr><th>deployment.yaml (worked example)</th><th>Meaning</th></tr>
+<tr><td>apiVersion: apps/v1
+kind: Deployment</td><td>This document describes a Deployment</td></tr>
+<tr><td>metadata:
+  name: web</td><td>Its name is "web"</td></tr>
+<tr><td>spec:
+  replicas: 3</td><td><b>Desired state: 3 Pods</b></td></tr>
+<tr><td>  selector:
+    matchLabels: {app: web}</td><td>Manage the Pods labelled app=web</td></tr>
+<tr><td>  template:
+    metadata:
+      labels: {app: web}</td><td>The Pod template: every Pod gets label app=web</td></tr>
+<tr><td>    spec:
+      containers:
+      - name: web
+        image: myrepo/web:v2</td><td>Each Pod runs one container from image web:v2 (pulled from the registry)</td></tr>
+</table>
+<p class="small">If a node dies and one Pod is lost, the Deployment controller sees 2 &ne; 3 and the scheduler starts a new Pod on another node. Changing <code>image</code> to v3 triggers a rolling update.</p>
+
+<h3>5.5 Self-healing and updates (slide 18)</h3>
+<div class="two">
+<div><b>Self-healing</b><ul class="small"><li>Restarting failed containers</li><li>Replacing unhealthy Pods</li><li>Rescheduling workloads on available nodes</li><li>Maintaining the desired number of replicas</li></ul></div>
+<div><b>Also supports</b><ul class="small"><li><b>Rolling updates</b>: replace Pods a few at a time with the new version, so the app never goes fully down</li><li><b>Rollbacks</b>: return to the previous version</li><li><b>Health checks</b> (probes): test whether a container is alive/ready</li><li>Automated <b>service discovery</b></li></ul></div>
+</div>
+<p class="small"><b>Rolling update trace (3 replicas, v1 &rarr; v2):</b> start v1 v1 v1 &rarr; add one v2 &rarr; when healthy remove one v1 (v1 v1 v2) &rarr; v1 v2 v2 &rarr; v2 v2 v2. At every step some Pods serve users: zero downtime. If v2 fails its health checks, <code>kubectl rollout undo</code> returns to v1.</p>
+
+<h2>6. Pods from scratch (Lecture 06 Part II)</h2>
+<h3>6.1 The apartment analogy (slide 3)</h3>
+<table class="small">
+<tr><th>Apartment</th><th>Kubernetes Pod</th></tr>
+<tr><td>Roommates share one street address and one set of utilities (water, electricity); they walk between rooms freely; if the building is demolished all roommates are displaced together.</td><td>Containers in a Pod share one network address (IP) and, optionally, storage volumes; they are always scheduled onto the same node; if the Pod is removed every container in it goes with it.</td></tr>
+<tr><td colspan="2"><b>apartment = Pod &middot; address = Pod IP &middot; utilities = shared volumes &middot; roommates = containers.</b> A Pod is <b>not</b> a container: it is a thin wrapper that holds one or more containers plus the resources they share.</td></tr>
+</table>
+<h3>6.2 What is a Pod, formally? (slides 4&ndash;5)</h3>
+<p>The <b>smallest deployable unit</b> in Kubernetes. Kubernetes never schedules a bare container; it always schedules a Pod.</p>
+<ol class="small">
+<li><b>Shared context</b>: containers share the same network namespace and, optionally, storage volumes.</li>
+<li><b>Co-scheduled</b>: all containers in a Pod are always placed on the same node and scheduled together.</li>
+<li><b>Single IP address</b>: the Pod gets one cluster IP; containers inside talk to each other over <b>localhost</b>.</li>
+<li><b>Ephemeral by design</b>: Pods are disposable &mdash; Kubernetes <b>replaces</b> failed Pods rather than repairing them in place.</li>
+</ol>
+<table class="small">
+<tr><th>Without Pods</th><th>With Pods</th></tr>
+<tr><td>No natural way to say "these two containers must always run together"</td><td>The Pod spec explicitly groups containers that belong together</td></tr>
+<tr><td>No shared network identity for tightly-coupled helpers (logging, proxying)</td><td>Every container shares one IP and talks over localhost</td></tr>
+<tr><td>No shared storage between cooperating containers without extra plumbing</td><td>A volume declared once in the Pod spec is available to every container</td></tr>
+</table>
+<h3>6.3 Anatomy of a Pod (slide 6)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 185" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="5" width="660" height="175" fill="#fff" stroke="#000" stroke-width="2"/>
+<text x="340" y="22" text-anchor="middle" font-size="12" font-weight="bold">POD &#8212; IP 10.244.1.7</text>
+<rect x="25" y="30" width="630" height="24" fill="#ddd" stroke="#000"/><text x="340" y="46" text-anchor="middle" font-size="10">Infrastructure ("pause") container &#8212; holds the network namespace open</text>
+<g stroke="#000" fill="#f3f3f3"><rect x="25" y="62" width="200" height="52"/><rect x="240" y="62" width="200" height="52"/><rect x="455" y="62" width="200" height="52"/></g>
+<g text-anchor="middle"><text x="125" y="82" font-size="11" font-weight="bold">Init container</text><text x="125" y="100" font-size="9">runs to completion before app starts</text><text x="340" y="82" font-size="11" font-weight="bold">App container</text><text x="340" y="100" font-size="9">main process, e.g. web server</text><text x="555" y="82" font-size="11" font-weight="bold">Sidecar container</text><text x="555" y="100" font-size="9">logging, proxy or metrics helper</text></g>
+<rect x="25" y="122" width="630" height="24" fill="#bbb" stroke="#000"/><text x="340" y="138" text-anchor="middle" font-size="10">Shared volume(s) &#8212; mounted read/write by any container in the Pod</text>
+<text x="340" y="168" text-anchor="middle" font-size="10">localhost + shared ports: containers reach each other without service discovery</text>
+</svg>
+<div class="cap">Figure 5 &mdash; Every Pod is one network and storage boundary, however many containers it holds (slide 6).</div>
+</div>
+<p class="small"><b>Key facts:</b> one IP per Pod, shared by all containers &middot; containers communicate via localhost &middot; volumes outlive container restarts &middot; init containers run in order, then exit &middot; defined in a single YAML manifest.</p>
+
+<h3>6.4 Your first Pod: YAML and kubectl (slides 7&ndash;8)</h3>
+<div class="two">
+<div>
+<pre>apiVersion: v1
+kind: Pod
+metadata:
+  name: my-first-pod
+spec:
+  containers:
+  - name: web
+    image: nginx:latest
+    ports:
+    - containerPort: 80</pre>
+</div>
+<div>
+<table class="small">
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td>apiVersion / kind</td><td>This document describes a Pod</td></tr>
+<tr><td>metadata.name</td><td>The Pod's name: how you refer to it later</td></tr>
+<tr><td>spec.containers</td><td>The list of containers to run in this Pod</td></tr>
+<tr><td>image</td><td>Which container image to pull and run</td></tr>
+<tr><td>containerPort</td><td>The port the container listens on</td></tr>
+</table>
+</div>
+</div>
+<p class="small">YAML is declarative: you describe the desired state; Kubernetes makes it real.</p>
+<pre>$ kubectl apply -f pod.yaml           # send the YAML; Kubernetes creates the Pod to match
+pod/my-first-pod created
+$ kubectl get pods                    # list Pods and their status at a glance
+NAME           READY   STATUS    RESTARTS   AGE
+my-first-pod   1/1     Running   0          8s
+$ kubectl describe pod my-first-pod   # full detail: events, container status, IP, node</pre>
+<p class="small"><b>Reading the output:</b> READY 1/1 = 1 of 1 containers ready; STATUS Running = phase; RESTARTS 0 = never restarted; AGE 8s.</p>
+
+<h3>6.5 Examples: localhost, shared volume, sidecar, init container (slides 9&ndash;12)</h3>
+<table class="small">
+<tr><th>Pattern</th><th>What the slide's YAML does</th><th>Why</th></tr>
+<tr><td><b>Talking over localhost</b> (slide 9)</td><td>Containers <code>app</code> (port 8080) and <code>metrics-sidecar</code> in one Pod; the sidecar calls <code>curl localhost:8080/metrics</code></td><td>Same Pod &rArr; same localhost; no networking setup required</td></tr>
+<tr><td><b>Sharing files</b> (slide 10)</td><td>Containers <code>writer</code> and <code>reader</code> both mount volume <code>shared-data</code> (type <b>emptyDir</b>) at <code>/data</code></td><td>emptyDir is created fresh when the Pod starts; a file the writer creates the reader sees immediately; survives a <b>container</b> restart, deleted when the <b>Pod</b> is removed</td></tr>
+<tr><td><b>Sidecar pattern</b> (slide 11)</td><td><code>app</code> writes logs to <code>/var/log/app</code>; <code>log-shipper</code> (fluentd) reads the same <code>logs</code> volume and ships them</td><td>App team keeps simple code ("write logs to a file"); platform team owns and upgrades the shipper without touching the app; both still restart, scale and schedule together</td></tr>
+<tr><td><b>Init container</b> (slide 12)</td><td><code>wait-for-db</code> runs <code>until nc -z db 5432; do sleep 2; done</code> before <code>app</code></td><td>Retries the DB connection every 2 s; <code>app</code> does not start until it exits successfully. Multiple init containers run one at a time, in order</td></tr>
+</table>
+<pre>spec:
+  initContainers:
+  - name: wait-for-db
+    image: busybox
+    # nc -z = only test whether port 5432 on host "db" is open
+    command: ["sh", "-c", "until nc -z db 5432; do sleep 2; done"]
+  containers:
+  - name: app
+    image: my-app:v1</pre>
+
+<h3>6.6 Pod lifecycle (slide 13)</h3>
+<div class="fig">
+<svg viewBox="0 0 680 90" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="f4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<g stroke="#000"><rect x="10" y="10" width="130" height="44" fill="#fff"/><rect x="190" y="10" width="130" height="44" fill="#ddd"/><rect x="380" y="0" width="130" height="34" fill="#f3f3f3"/><rect x="380" y="42" width="130" height="34" fill="#bbb"/><rect x="545" y="20" width="125" height="34" fill="#fff" stroke-dasharray="4 3"/></g>
+<g text-anchor="middle"><text x="75" y="30" font-size="12" font-weight="bold">Pending</text><text x="75" y="45" font-size="8">accepted; scheduling, pulling images</text>
+<text x="255" y="30" font-size="12" font-weight="bold">Running</text><text x="255" y="45" font-size="8">bound to node; &#8805;1 container running</text>
+<text x="445" y="16" font-size="11" font-weight="bold">Succeeded</text><text x="445" y="28" font-size="8">all exited OK, no restart</text>
+<text x="445" y="58" font-size="11" font-weight="bold">Failed</text><text x="445" y="70" font-size="8">all exited, &#8805;1 with error</text>
+<text x="607" y="36" font-size="11" font-weight="bold">Unknown</text><text x="607" y="48" font-size="8">lost contact with node</text></g>
+<g stroke="#000" stroke-width="1.5"><line x1="140" y1="32" x2="188" y2="32" marker-end="url(#f4)"/><line x1="320" y1="28" x2="378" y2="17" marker-end="url(#f4)"/><line x1="320" y1="38" x2="378" y2="58" marker-end="url(#f4)"/></g>
+</svg>
+<div class="cap">Figure 6 &mdash; Pod phases (slide 13).</div>
+</div>
+<pre>$ kubectl get pod my-first-pod --watch
+NAME           READY   STATUS              RESTARTS   AGE
+my-first-pod   0/1     Pending             0          1s
+my-first-pod   0/1     ContainerCreating   0          2s
+my-first-pod   1/1     Running             0          4s</pre>
+
+<h3>6.7 Restart policy and self-healing (slide 14)</h3>
+<table class="small">
+<tr><th>restartPolicy</th><th>Behaviour</th><th>Used for</th></tr>
+<tr><td><b>Always</b> (default)</td><td>Restart no matter how the container exits</td><td>Web servers, APIs</td></tr>
+<tr><td><b>OnFailure</b></td><td>Restart only on a non-zero exit code (an error)</td><td>Batch jobs</td></tr>
+<tr><td><b>Never</b></td><td>Never restart, success or failure</td><td>One-shot tasks</td></tr>
+</table>
+<p><b>What "self-healing" actually means:</b> a crashed container restarts <b>in place, in the same Pod</b>, following the policy, with a growing <b>backoff</b> delay between attempts (status <b>CrashLoopBackOff</b>: it keeps crashing, so Kubernetes waits longer each time: about 10 s, 20 s, 40 s&hellip; up to 5 min). But if the <b>Pod itself is deleted or its node fails, nothing recreates it</b> &mdash; that is the job of a <b>controller such as a Deployment</b>. Durability lives one layer up.</p>
+<p class="small"><b>Worked example:</b> a batch Pod with <code>restartPolicy: OnFailure</code> exits with code 1 &rArr; restarted. Next run exits with code 0 &rArr; not restarted; phase <b>Succeeded</b>. With <code>Never</code>, the first exit code 1 &rArr; phase <b>Failed</b>. With <code>Always</code> a web server that exits even with 0 is restarted.</p>
+<p class="small"><b>Key takeaways (Part II slide 15):</b> <b>What</b> &mdash; a Pod bundles containers behind one IP and optional shared volumes. <b>Why</b> &mdash; "these containers belong together, always". <b>How</b> &mdash; YAML (apiVersion, kind, metadata, spec) + kubectl. <b>Behaviour</b> &mdash; Pending &rarr; Running &rarr; Succeeded/Failed; containers restart per policy. <b>Beyond Pods</b> &mdash; Deployments recreate lost Pods.</p>
+
+<h2>7. Designing for resilience, flexibility and cost-efficiency (slides 19&ndash;21)</h2>
+<table class="small">
+<tr><th style="width:33%">Resilience (slide 19)</th><th style="width:33%">Flexibility (slide 20)</th><th>Cost-efficiency (slide 21)</th></tr>
+<tr><td><i>Ability to keep operating when failures occur.</i>
+<ul><li>Use multiple servers or AZs</li><li>Avoid single points of failure</li><li>Use load balancers</li><li>Replicate important data</li><li>Automate recovery</li><li>Use health checks</li><li>Back up data regularly</li><li>Test DR plans</li></ul>"A resilient system expects that failures will occur &mdash; and prepares for them."</td>
+<td><i>Adapts to changing business and technical requirements.</i>
+<ul><li>Modular application components</li><li>Separate services where appropriate</li><li>Containers for portability</li><li>Automate infrastructure and deployments</li><li>Avoid unnecessary dependence on one provider</li><li>APIs and standard interfaces</li><li>Support multiple environments (dev, test, prod)</li></ul></td>
+<td><i>Cloud costs can increase quickly without management.</i>
+<ul><li>Auto-scaling; shut down unused resources</li><li>Correct instance size</li><li>Reserved/discounted pricing where suitable</li><li>Monitor usage; set budgets and alerts</li><li>Appropriate storage tiers</li><li>Remove unused disks, IPs, snapshots</li><li>Serverless for suitable workloads</li></ul>Goal: best <b>value</b> for the required performance and reliability, not simply the lowest cost.</td></tr>
+</table>
+
+<h2>8. Monitoring, security, example, best practices (slides 22&ndash;29)</h2>
+<p><b>Monitoring and observability (slide 22).</b> Important areas: CPU and memory, response time, error rates, network traffic, active users, deployment success/failure, cloud spending. Observability uses <b>metrics</b> (numbers over time), <b>logs</b> (event records), <b>traces</b> (the path of one request through many services), <b>alerts</b> and <b>dashboards</b>. Goal: find problems before users are seriously affected.</p>
+<p><b>Security in cloud deployment (slide 23):</b> strong IAM &middot; principle of <b>least privilege</b> &middot; encrypt data in transit and at rest &middot; secure container images &middot; update software regularly &middot; store secrets securely &middot; network segmentation &middot; monitor suspicious activity &middot; vulnerability scanning. Security is a <b>shared responsibility</b> between provider and customer.</p>
+<p><b>Example: online shopping application (slide 24)</b> uses containers for app services, Kubernetes to manage them, a load balancer for customer requests, auto-scaling during sales, a managed database for orders, and object storage for product images. During a major sale: more customers &rarr; more application Pods &rarr; load balancer distributes traffic &rarr; application remains available.</p>
+<div class="two">
+<div><b>Advantages of cloud deployment (slide 25)</b><ul class="small"><li>Faster time to market</li><li>Flexible resource usage</li><li>Global availability</li><li>Automated scaling</li><li>Easier disaster recovery</li><li>Reduced physical infrastructure</li><li>Support for CI/CD</li></ul></div>
+<div><b>Challenges of cloud management (slide 26)</b><ul class="small"><li>Unexpected costs; security misconfigurations</li><li>Vendor dependence; complex Kubernetes management</li><li>Network failures; data privacy concerns</li><li>Difficult troubleshooting; lack of skilled personnel</li><li>Poorly designed applications</li></ul></div>
+</div>
+<p class="small"><b>Best practices (slide 27):</b> automate infrastructure and deployment &middot; load balance critical apps &middot; configure auto-scaling carefully &middot; deploy across multiple failure zones &middot; monitor performance and cost &middot; secure identities, networks and data &middot; test backup and recovery &middot; use containers consistently &middot; keep configurations under version control &middot; review architecture regularly. Cloud technology "does not automatically guarantee a reliable or efficient system".</p>
+
+<h2>9. Exam-style questions with model answers</h2>
+<p><b>Q1. Define cloud management and software deployment. (4 marks)</b><br>
+Cloud management is the process of controlling and monitoring cloud computing resources, storage, networks, applications, security policies and user access so that they are available, secure, efficiently used, monitored and cost-effective. Software deployment is the process of making an application available to users: develop, test, package, deploy, monitor, update/scale.</p>
+<p><b>Q2. What is Infrastructure as Code? Give two tools and four benefits. (6)</b><br>
+IaC manages infrastructure through code files instead of manual configuration (write, review, deploy, monitor). Tools: Terraform, AWS CloudFormation, Azure Resource Manager, Ansible. Benefits: repeatable deployments, fewer configuration errors, faster creation, version control, better team collaboration.</p>
+<p><b>Q3. What might happen if an application has no load balancer? Describe three types of load balancing. (7)</b><br>
+All traffic hits one server; under load it becomes slow or unavailable, and it is a single point of failure; horizontal scaling is impossible. Application LB: layer 7, routes by URL path, hostname, headers, content. Network LB: layer 4, routes TCP/UDP traffic by IP and port, high performance, low latency. Global LB: distributes users across geographic regions to cut latency and survive regional failures.</p>
+<p><b>Q4. Why is auto-scaling useful during unexpected traffic increases? State two challenges. (5)</b><br>
+It adds instances automatically when metrics such as CPU, requests or queue length rise, so the application stays available and responsive without manual action, and removes them afterwards so you do not pay for idle capacity. Challenges: badly configured rules cause instability; scaling takes time; some apps or databases are hard to scale; sudden spikes raise costs.</p>
+<p><b>Q5. Distinguish horizontal and vertical scaling. (3)</b><br>
+Horizontal: add or remove instances (2 &rarr; 6 servers); improves availability, preferred in the cloud. Vertical: make one server more powerful (more CPU/RAM); limited by machine size.</p>
+<p><b>Q6. What problem does Kubernetes solve? Describe its architecture. (8)</b><br>
+With many containers across many machines, someone must decide placement, restart failures, scale, update and connect them. Kubernetes is a container orchestrator that does this automatically to maintain a declared desired state. A cluster has a control plane (API server: entry point; scheduler: places Pods on nodes; controller manager: keeps actual state equal to desired; cluster database: stores state) and worker nodes (kubelet: runs and reports Pods; container runtime: runs containers; kube-proxy: networking for Services) that host Pods.</p>
+<p><b>Q7. Explain Pod, Deployment, Service, Ingress, ConfigMap/Secret and Namespace. (6)</b><br>
+Pod: smallest deployable unit with one or more containers. Deployment: desired number and version of instances. Service: stable network access to a group of Pods. Ingress: external HTTP/HTTPS access. ConfigMap/Secret: configuration values and sensitive data. Namespace: separates resources within a cluster.</p>
+<p><b>Q8. What is a Pod? Why does Kubernetes schedule Pods rather than containers? (6)</b><br>
+A Pod is a thin wrapper around one or more containers that share one network namespace (one IP, talk over localhost) and optional storage volumes, are always co-scheduled on the same node, and are ephemeral. Kubernetes uses Pods because they explicitly group containers that must run together, give tightly coupled helpers a shared network identity, and let cooperating containers share volumes without extra plumbing.</p>
+<p><b>Q9. Explain the sidecar pattern and the init container with examples. (6)</b><br>
+Sidecar: a helper container in the same Pod as the app, e.g. the app writes logs to a shared emptyDir volume and a fluentd log-shipper reads and forwards them; teams can change each independently while they still scale and schedule together. Init container: runs to completion before app containers start, e.g. wait-for-db loops <code>nc -z db 5432</code> every 2 s and the app starts only after the database is reachable; multiple init containers run in order.</p>
+<p><b>Q10. Describe the Pod lifecycle phases and the three restart policies. Does restarting a container recreate a deleted Pod? (8)</b><br>
+Pending (accepted, waiting for scheduling/images), Running (bound to a node, at least one container running), Succeeded (all exited successfully, no restart), Failed (all exited, at least one with error), Unknown (state cannot be confirmed, lost contact with node). Policies: Always (default, web servers), OnFailure (restart on non-zero exit, batch jobs), Never (one-shot). Restarts happen in place with growing backoff (CrashLoopBackOff). No: if the Pod is deleted or its node fails nothing recreates it; a controller such as a Deployment must do that.</p>
+<p><b>Q11. How can an organisation reduce unnecessary cloud costs? Why design for failure? (6)</b><br>
+Auto-scaling, shutting down unused resources, right-sizing instances, reserved/discounted pricing, monitoring usage with budgets and alerts, storage tiers, removing unused disks/IPs/snapshots, serverless for suitable workloads. Design for failure because in large systems failures will occur; using multiple AZs, no SPOFs, load balancers, replication, automated recovery, health checks, backups and tested DR plans keeps the service running.</p>
+
+<h2>10. Common mistakes</h2>
+<table>
+<tr><th style="width:42%">Mistake</th><th>Correct idea</th></tr>
+<tr><td>A Pod is a container</td><td>A Pod wraps one or more containers that share an IP and volumes.</td></tr>
+<tr><td>Containers in a Pod talk through a Service</td><td>They use localhost; Services are for reaching Pods from elsewhere.</td></tr>
+<tr><td>Restart policy brings back a deleted Pod</td><td>It only restarts containers in place; a Deployment recreates Pods.</td></tr>
+<tr><td>emptyDir data survives Pod deletion</td><td>It survives container restarts but is deleted with the Pod.</td></tr>
+<tr><td>Scheduler runs containers on nodes</td><td>The scheduler chooses the node; the kubelet and container runtime run them.</td></tr>
+<tr><td>Network LB routes by URL</td><td>Application LB (layer 7) routes by URL/headers; network LB (layer 4) by IP/port.</td></tr>
+<tr><td>Vertical scaling is preferred in the cloud</td><td>Horizontal is preferred: availability and distribution.</td></tr>
+<tr><td>IaC = writing application code</td><td>IaC = infrastructure defined in code files (Terraform, CloudFormation).</td></tr>
+<tr><td>Cost-efficiency = lowest possible cost</td><td>Best value for the required performance and reliability.</td></tr>
+</table>
+
+<h2 class="pb">Cheat sheet</h2>
+<div class="two">
+<div>
+<table>
+<tr><th colspan="2">Management &amp; deployment</th></tr>
+<tr><td>Cloud mgmt</td><td>Control + monitor compute, storage, networks, apps, security policies, users/access</td></tr>
+<tr><td>Deployment</td><td>Develop &rarr; test &rarr; package &rarr; deploy &rarr; monitor &rarr; update/scale</td></tr>
+<tr><td>CaaS</td><td>Containers as a Service (Amazon ECS)</td></tr>
+<tr><td>Provisioning</td><td>Allocate VMs, containers, DBs, storage, network, security groups; cloud = automated, templates</td></tr>
+<tr><td>IaC</td><td>Write &rarr; review &rarr; deploy &rarr; monitor. Terraform, CloudFormation, ARM, Ansible. Repeatable, fewer errors, faster, versioned, collaborative</td></tr>
+<tr><td>LB types</td><td>Application (L7: URL, host, headers) &middot; Network (L4: TCP/UDP, fast) &middot; Global (regions)</td></tr>
+<tr><td>Auto-scaling</td><td>Metrics: CPU, memory, requests, queue length, response time, schedule. 2 &rarr; 8 &rarr; 2</td></tr>
+<tr><td>Scaling</td><td>Horizontal (instances) &middot; vertical (power) &middot; automatic (rules)</td></tr>
+<tr><td>Design</td><td>Resilience (expect failure) &middot; flexibility (modular, portable, no lock-in) &middot; cost (best value)</td></tr>
+<tr><td>Observability</td><td>Metrics, logs, traces, alerts, dashboards</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th colspan="2">Kubernetes</th></tr>
+<tr><td>What</td><td>Container orchestrator; declarative desired state</td></tr>
+<tr><td>Control plane</td><td>API server, scheduler, controller manager, cluster DB (etcd)</td></tr>
+<tr><td>Worker</td><td>kubelet, container runtime, kube-proxy, Pods</td></tr>
+<tr><td>Objects</td><td>Pod, Deployment, Service, Ingress, ConfigMap/Secret, Namespace</td></tr>
+<tr><td>Deploy</td><td>Code &rarr; image &rarr; registry &rarr; YAML &rarr; kubectl apply &rarr; Pods &rarr; Service &rarr; monitor</td></tr>
+<tr><td>Self-heal</td><td>Restart, replace, reschedule, keep replicas; rolling updates, rollbacks, health checks</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Pods</th></tr>
+<tr><td>Pod</td><td>Smallest unit; shared context; co-scheduled; one IP (localhost); ephemeral</td></tr>
+<tr><td>Inside</td><td>Pause container, init, app, sidecar, shared volumes</td></tr>
+<tr><td>YAML</td><td>apiVersion, kind, metadata, spec</td></tr>
+<tr><td>kubectl</td><td>apply -f &middot; get pods &middot; describe pod &middot; --watch</td></tr>
+<tr><td>emptyDir</td><td>New at Pod start; survives container restart; deleted with Pod</td></tr>
+<tr><td>Phases</td><td>Pending &rarr; Running &rarr; Succeeded / Failed; Unknown</td></tr>
+<tr><td>Restart</td><td>Always (default, web) &middot; OnFailure (batch) &middot; Never (one-shot); CrashLoopBackOff</td></tr>
+<tr><td>Durability</td><td>Deployment recreates lost Pods</td></tr>
+</table>
+</div>
+</div>
+
+</body>
+</html>
