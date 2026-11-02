@@ -74,7 +74,7 @@ TV tv = new TV(); tv.pressOnButton(); tv.pressMuteButton(); tv.pressOffButton();
 <p class="small"><b>Rule of thumb:</b> long chains of <code>if (state == ...)</code> &rArr; State pattern. <b>State vs CoR:</b> State = context delegates to <i>its current state</i>, states change the context&rsquo;s state (&ldquo;how should I behave now?&rdquo;); CoR = request moves through a <i>sequence of handlers</i> (&ldquo;who will handle this?&rdquo;). <b>State vs Strategy:</b> same structure, but strategies are chosen by the client and don&rsquo;t switch themselves; states switch automatically.</p>
 
 <h2>Questions &amp; model answers</h2>
-<div class="q">Smart parking: session moves Available &rarr; Reserved &rarr; Occupied &rarr; Payment Due &rarr; Closed; behaviour depends on state. Why State (4)? State diagram (4). UML (6). Java for the context class (3). <i>Quiz 1</i></div>
+<div class="q" data-p="STATE" data-t="Smart parking">Smart parking: session moves Available &rarr; Reserved &rarr; Occupied &rarr; Payment Due &rarr; Closed; behaviour depends on state. Why State (4)? State diagram (4). UML (6). Java for the context class (3). <i>Quiz 1</i></div>
 <div class="a"><b>Why State:</b> a parking session has a fixed set of well-defined states and the <b>same action behaves differently</b> in each (e.g. <code>enter()</code> is allowed when Reserved, rejected when Closed; <code>pay()</code> only valid in Payment Due). Without the pattern every method needs a big if/switch on the status that grows with each new state. With State, each state&rsquo;s rules live in one class, transitions are explicit and controlled, invalid actions are rejected cleanly, and new states (e.g. <i>Overstay</i>) are added as new classes (OCP).</div>
 {{uml:park_sm}}
 {{uml:park_uml}}
@@ -116,7 +116,7 @@ public class PaymentDueState implements ParkingState {
 // AvailableState: reserve -&gt; Reserved, enter -&gt; recordEntry + Occupied. ReservedState: enter -&gt; Occupied.
 // ClosedState: every action rejected ("Session closed").</pre>
 
-<div class="q">Document workflow: Draft (editable &rarr; Moderation), Moderation (approve &rarr; Published, reject &rarr; Draft), Published (no edits &rarr; Archived only), Archived (final). State diagram (5); best pattern &amp; reasons (5); class diagram (10); use of interfaces (5). <i>2024 Q3 (25)</i></div>
+<div class="q" data-p="STATE" data-t="Document workflow">Document workflow: Draft (editable &rarr; Moderation), Moderation (approve &rarr; Published, reject &rarr; Draft), Published (no edits &rarr; Archived only), Archived (final). State diagram (5); best pattern &amp; reasons (5); class diagram (10); use of interfaces (5). <i>2024 Q3 (25)</i></div>
 {{uml:doc_sm}}
 <p class="small">Archived is the final state (no outgoing transitions; draw &#9673; after it). Invalid events (edit when Published, approve when Draft) do nothing / show an error.</p>
 {{uml:doc_uml}}
@@ -130,7 +130,7 @@ public class PaymentDueState implements ParkingState {
 }
 // ModerationState: approve -&gt; Published, reject -&gt; Draft; DraftState: edit allowed, submit -&gt; Moderation</pre>
 
-<div class="q">Self-checkout kiosk states Idle &rarr; Scanning &rarr; Payment &rarr; Completed: incorporate using a pattern and give an example transition. <i>2025 Q1.1(a), 1.4 (5)</i></div>
+<div class="q" data-p="STATE" data-t="Kiosk states">Self-checkout kiosk states Idle &rarr; Scanning &rarr; Payment &rarr; Completed: incorporate using a pattern and give an example transition. <i>2025 Q1.1(a), 1.4 (5)</i></div>
 {{uml:kiosk_sm}}
 <div class="a"><b>State</b>: <code>Kiosk</code> (context) holds <code>KioskState</code>; <code>IdleState</code>, <code>ScanningState</code>, <code>PaymentState</code>, <code>CompletedState</code> implement <code>scanItem()</code>, <code>checkout()</code>, <code>pay()</code>, <code>cancel()</code>. <b>Example transition:</b> in <code>ScanningState</code>, the customer presses Checkout &rarr; <code>checkout(kiosk)</code> computes the subtotal (decorated items&rsquo; <code>getCost()</code>), adds tax via <code>TaxCalculator.getInstance()</code> (Singleton) and calls <code>kiosk.setState(new PaymentState())</code>. In <code>IdleState</code>, <code>pay()</code> is rejected (&ldquo;scan items first&rdquo;).</div>
 <pre>public class ScanningState implements KioskState {

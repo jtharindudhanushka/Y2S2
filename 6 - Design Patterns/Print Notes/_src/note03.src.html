@@ -83,7 +83,7 @@ bank.transferMoney("John", "Alice", 1000);</pre></div>
 </table>
 
 <h2>Questions &amp; model answers</h2>
-<div class="q">Approach to provide one simple interface for borrowing books by internally calling inventory, payment, notification and login services. <i>Quiz 3 Q5</i></div>
+<div class="q" data-p="FACADE" data-t="Library borrowing">Approach to provide one simple interface for borrowing books by internally calling inventory, payment, notification and login services. <i>Quiz 3 Q5</i></div>
 <div class="a"><b>Facade.</b> Create <code>LibraryFacade.borrowBook(userId, bookId)</code> which, in order, calls <code>LoginService.verify()</code> &rarr; <code>InventoryService.checkAvailable()/reserve()</code> &rarr; <code>PaymentService.chargeFee()</code> &rarr; <code>NotificationService.sendConfirmation()</code>. The librarian UI calls only the facade, so it is decoupled from four services; a change in any service is handled inside the facade.</div>
 <pre>public class LibraryFacade {
     private LoginService login = new LoginService();      private InventoryService inv = new InventoryService();
@@ -94,12 +94,12 @@ bank.transferMoney("John", "Alice", 1000);</pre></div>
         return true;
     }
 }</pre>
-<div class="q">Travel website: user books air ticket, hotel and taxi; collect data from different web services. Draw a diagram; which pattern for the sub-system that combines them and why? Challenges and mechanism? <i>2022 Q1.1&ndash;1.2 (15)</i></div>
+<div class="q" data-p="FACADE + ADAPTER" data-t="Travel booking">Travel website: user books air ticket, hotel and taxi; collect data from different web services. Draw a diagram; which pattern for the sub-system that combines them and why? Challenges and mechanism? <i>2022 Q1.1&ndash;1.2 (15)</i></div>
 {{uml:travel}}
 <div class="a"><b>Facade</b> for combining: <code>TravelBookingFacade.bookTrip()</code> calls Air, Hotel and Taxi services and returns one itinerary &mdash; user does one action, subsystem complexity hidden, low coupling. <b>Challenges:</b> (1) facade grows into a God class as services are added; (2) a failure in one service (taxi down) affects the whole booking / single point of failure; (3) partial booking consistency (air booked, hotel failed). <b>Mechanisms:</b> split into smaller facades; delegate only; timeouts + retries + fallback and run facade as stateless replicas; compensating actions (cancel air if hotel fails). For connecting each sub-service to different third-party web services &rarr; <b>Adapter</b> (Note 04).</div>
-<div class="q">Can you access each subsystem directly? Should there be only one facade? <i>slide Q&amp;A</i></div>
+<div class="q" data-p="FACADE" data-t="Theory">Can you access each subsystem directly? Should there be only one facade? <i>slide Q&amp;A</i></div>
 <div class="a">Yes &mdash; the facade is a convenience, not a lock; advanced clients may use subsystems directly. No &mdash; a complex system can have several facades (one per use-case area) to avoid a God class.</div>
-<div class="q">How is Facade different from Adapter?</div>
+<div class="q" data-p="COMPARE" data-t="Facade vs Adapter">How is Facade different from Adapter?</div>
 <div class="a">Adapter <b>converts</b> one interface into another the client expects (usually wraps <b>one</b> object, makes it compatible). Facade <b>simplifies</b>: a new, higher-level interface over <b>many</b> objects. Adapter = translator, Facade = simplifier.</div>
 
 <h2>Mistakes</h2>

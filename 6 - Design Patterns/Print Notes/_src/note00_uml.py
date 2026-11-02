@@ -7,7 +7,8 @@ def box(d, x, y, w, h, lines, bold0=True, fill='#fff', r=0):
     for i, t in enumerate(lines):
         yy = y + h / 2 + (i - (n - 1) / 2) * 12 + 4
         b = ' font-weight="bold"' if (i == 0 and bold0) else ''
-        d.raw(f'<text x="{x + w / 2}" y="{yy:.1f}" font-size="10" text-anchor="middle"{b}>{esc(t)}</text>')
+        fs = 11.5 if (i == 0 and bold0) else 9.5
+        d.raw(f'<text x="{x + w / 2}" y="{yy:.1f}" font-size="{fs}" text-anchor="middle"{b}>{esc(t)}</text>')
     return (x, y, w, h)
 
 
@@ -18,23 +19,23 @@ def decision():
          ('Is it about BEHAVIOUR / workflow / who handles what?', 225)]
     # creational
     box(d, 5, 10, 150, 90, ['CREATIONAL', 'object creation'], fill='#e6e6e6')
-    box(d, 165, 10, 270, 40, ['Only ONE (or exactly N) instance', 'shared by everyone? -> SINGLETON (Multiton)'], bold0=False)
-    box(d, 445, 10, 270, 40, ['Create one of several TYPES chosen at', 'runtime, hide "new"? -> FACTORY METHOD'], bold0=False)
+    box(d, 165, 10, 270, 40, ['SINGLETON  (N = Multiton)', 'only ONE instance shared by everyone'])
+    box(d, 445, 10, 270, 40, ['FACTORY METHOD', 'create one of several TYPES at runtime'])
     box(d, 165, 58, 550, 40, ['Signals: "only one", "single global", "same file", "unique ID"  |  "different types of X',
                               'depending on user request", "too many if-else for creation"'], bold0=False, fill='#f6f6f6')
     # structural
     box(d, 5, 112, 150, 100, ['STRUCTURAL', 'composition /', 'wrapping'], fill='#e6e6e6')
-    box(d, 165, 112, 135, 48, ['Interface INCOMPATIBLE', '(legacy / vendor)', '-> ADAPTER'], bold0=False)
-    box(d, 305, 112, 135, 48, ['Many subsystems,', 'want ONE simple entry', '-> FACADE'], bold0=False)
-    box(d, 445, 112, 135, 48, ['SAME interface, CONTROL', 'access / lazy / cache', '-> PROXY'], bold0=False)
-    box(d, 585, 112, 130, 48, ['SAME interface, ADD', 'optional features', '-> DECORATOR'], bold0=False)
+    box(d, 165, 112, 135, 48, ['ADAPTER', 'interface INCOMPATIBLE', '(legacy / vendor)'])
+    box(d, 305, 112, 135, 48, ['FACADE', 'many subsystems,', 'ONE simple entry'])
+    box(d, 445, 112, 135, 48, ['PROXY', 'same interface, CONTROL', 'access / lazy / cache'])
+    box(d, 585, 112, 130, 48, ['DECORATOR', 'same interface, ADD', 'optional features'])
     box(d, 165, 166, 550, 46, ['Signals: "cannot modify", "different method signatures"  |  "one interface for inventory, payment..."  |',
                                '"restricted / load only a few pages / permissions"  |  "add-ons without subclasses for every combination"'], bold0=False, fill='#f6f6f6')
     # behavioural
     box(d, 5, 224, 150, 100, ['BEHAVIOURAL', 'responsibility /', 'communication'], fill='#e6e6e6')
-    box(d, 165, 224, 180, 48, ['SAME steps in fixed order,', 'some steps differ per type', '-> TEMPLATE METHOD'], bold0=False)
-    box(d, 350, 224, 180, 48, ['Request passes LEVELS / checks', 'until one handles (or all pass)', '-> CHAIN OF RESPONSIBILITY'], bold0=False)
-    box(d, 535, 224, 180, 48, ['Object moves through STATES;', 'same action behaves differently', '-> STATE'], bold0=False)
+    box(d, 165, 224, 180, 48, ['TEMPLATE METHOD', 'same steps, fixed order;', 'some steps differ per type'])
+    box(d, 350, 224, 180, 48, ['CHAIN OF RESPONSIBILITY', 'request passes LEVELS / checks', 'until one handles (or all pass)'])
+    box(d, 535, 224, 180, 48, ['STATE', 'object moves through STATES;', 'same action behaves differently'])
     box(d, 165, 278, 550, 46, ['Signals: "follow the same overall process", "however X is different"  |  "levels of support / approval limits /',
                                'sequence of checks, easy to extend"  |  "can be in states", "transitions to", "draw a state diagram"'], bold0=False, fill='#f6f6f6')
     return d.svg()

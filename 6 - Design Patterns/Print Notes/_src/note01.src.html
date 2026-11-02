@@ -112,13 +112,13 @@ public static Singleton getInstance() {
 </table>
 
 <h2>Questions &amp; model answers</h2>
-<div class="q">Explain two problems that could occur because multiple PrinterManager objects are created. (2)</div>
+<div class="q" data-p="SINGLETON" data-t="Smart printing">Explain two problems that could occur because multiple PrinterManager objects are created. (2)</div>
 <div class="a">(1) <b>Inconsistent state:</b> each object holds its own queue/status, so departments see different printer statuses and no object knows the global order &rArr; jobs print in the wrong order. (2) <b>Resource conflict:</b> uncoordinated objects send jobs to the one printer simultaneously &rArr; duplicated jobs and the printer becomes unresponsive. (Also memory waste.)</div>
-<div class="q">Recommend a design approach and explain why it is suitable. (3)</div>
+<div class="q" data-p="SINGLETON" data-t="Smart printing">Recommend a design approach and explain why it is suitable. (3)</div>
 <div class="a"><b>Singleton.</b> Private constructor + private static instance + public static <code>getInstance()</code>; every department calls <code>PrinterManager.getInstance()</code> and gets the <b>same object</b> &rArr; one queue (FIFO order, no duplicates), one status for all, no wasted objects. Use double-checked locking because departments submit concurrently.</div>
-<div class="q">How do you ensure only one DB connection is active at a given time?</div>
+<div class="q" data-p="SINGLETON" data-t="One DB connection">How do you ensure only one DB connection is active at a given time?</div>
 <div class="a">Make <code>DatabaseConnectionManager</code> a Singleton: private ctor, static <code>connection</code>; <code>getConnection()</code> opens it only if <code>null</code>, otherwise returns the existing one (synchronized). The Factory creates the right <code>Database</code> type once; everyone reuses that one connection.</div>
-<div class="q">Payroll: salary calculation must run by only one user; all other connections/processes stopped. Pattern and why? (4)</div>
+<div class="q" data-p="SINGLETON" data-t="Payroll - one user">Payroll: salary calculation must run by only one user; all other connections/processes stopped. Pattern and why? (4)</div>
 <div class="a"><b>Singleton</b> <code>SalaryCalculationManager</code> &rArr; only one calculation engine exists. Its <code>runPayroll()</code> is <code>synchronized</code> and sets a <code>running</code> flag; while set, other logins/processes are rejected or queued. Singleton = one controller; lock = one execution at a time.</div>
 <pre>public final class SalaryCalculationManager {
     private static volatile SalaryCalculationManager instance;
@@ -130,9 +130,9 @@ public static Singleton getInstance() {
         running = true;  /* block other sessions, calculate */  running = false;
     }
 }</pre>
-<div class="q">Logger must write all logs to the same file; multiple instances cause duplicate/inconsistent output. Propose a pattern. (5)</div>
+<div class="q" data-p="SINGLETON" data-t="Logger">Logger must write all logs to the same file; multiple instances cause duplicate/inconsistent output. Propose a pattern. (5)</div>
 <div class="a"><b>Singleton Logger</b>: one instance owns the single <code>FileWriter</code>; all classes call <code>Logger.getInstance().log(msg)</code>. One file handle (no corrupt/duplicate lines), one format and order, saves memory, global access. <code>log()</code> is <code>synchronized</code> so lines from threads don&rsquo;t interleave.</div>
-<div class="q">Fantasy cricket: max 5 batsmen, max 5 bowlers, 1 wicketkeeper, 1 captain &mdash; use an extended Singleton. (5)</div>
+<div class="q" data-p="MULTITON" data-t="Fantasy cricket">Fantasy cricket: max 5 batsmen, max 5 bowlers, 1 wicketkeeper, 1 captain &mdash; use an extended Singleton. (5)</div>
 <div class="two"><div class="w45">{{uml:cricket}}</div>
 <div><pre>public final class Player {
   private static final Map&lt;String,Integer&gt; LIMIT =
@@ -147,9 +147,9 @@ public static Singleton getInstance() {
     Player p = new Player(role, name); team.get(role).add(p); return p;
   }
 }  // Captain = plain Singleton (exactly one)</pre></div></div>
-<div class="q">Single global tax calculator across all checkout counters &mdash; how is it integrated into the pricing flow? (4)</div>
+<div class="q" data-p="SINGLETON" data-t="Kiosk tax calculator">Single global tax calculator across all checkout counters &mdash; how is it integrated into the pricing flow? (4)</div>
 <div class="a">Decorated items give <code>item.getCost()</code>; in the <b>Payment</b> state the kiosk sums them and calls <code>TaxCalculator.getInstance().calculateTax(subtotal)</code>. Every counter gets the same instance &rArr; one rate, one rule set, consistent tax; change the rate once &rArr; changes everywhere.</div>
-<div class="q">Design a global OrderID generator and integrate it with payment processing. (5)</div>
+<div class="q" data-p="SINGLETON" data-t="OrderID generator">Design a global OrderID generator and integrate it with payment processing. (5)</div>
 <div class="two"><div><pre>public final class OrderIdGenerator {
   private static final OrderIdGenerator INSTANCE = new OrderIdGenerator();
   private final AtomicLong counter = new AtomicLong(1000);

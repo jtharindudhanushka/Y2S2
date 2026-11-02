@@ -56,7 +56,7 @@ p.print("Report.pdf");      // Output: Printing PDF : Report.pdf</pre></div>
 <p class="small"><b>&ldquo;Adapter needs more code. Agree?&rdquo;</b> Yes, extra classes &mdash; but the payoff is large for legacy systems that can&rsquo;t change but are stable. <b>Why not change the interfaces / the client?</b> Adaptee is third-party/vendor/compiled (no source), changing tested code risks bugs, many clients depend on the old interface, licence/contract forbids it.</p>
 
 <h2>Questions &amp; model answers</h2>
-<div class="q">Library: system calls <code>scanBook()</code> hundreds of times; new scanner provides <code>readBarcode()</code>. Reason not to modify existing code? Pattern and why? Identify participants. Draw UML. <i>Quiz 3 Q1&ndash;Q4</i></div>
+<div class="q" data-p="ADAPTER" data-t="Library barcode scanner">Library: system calls <code>scanBook()</code> hundreds of times; new scanner provides <code>readBarcode()</code>. Reason not to modify existing code? Pattern and why? Identify participants. Draw UML. <i>Quiz 3 Q1&ndash;Q4</i></div>
 <div class="a"><b>Not modifying:</b> hundreds of call sites &rArr; huge change, high risk of new bugs, full re-testing, downtime; tested working code should stay closed for modification (OCP); the scanner class comes from a vendor so it can&rsquo;t be changed either. <b>Pattern: Adapter</b> &mdash; the two interfaces are incompatible but do the same job; a <code>ScannerAdapter</code> implements the old <code>scanBook()</code> and internally calls <code>readBarcode()</code>, so the library code is untouched and the new scanner is reused. <b>Participants:</b> Client = <code>LibrarySystem</code>; Target = <code>BarcodeScanner</code> (<code>scanBook()</code>); Adapter = <code>ScannerAdapter</code>; Adaptee = <code>NewBarcodeScanner</code> (<code>readBarcode()</code>).</div>
 {{uml:scanner}}
 <pre>public interface BarcodeScanner { String scanBook(); }                 // Target (old)
@@ -68,7 +68,7 @@ public class ScannerAdapter implements BarcodeScanner {                 // Adapt
 }
 BarcodeScanner sc = new ScannerAdapter(new NewBarcodeScanner());   // only this line changes
 String isbn = sc.scanBook();                                         // all old calls unchanged</pre>
-<div class="q">Parking: integrate a legacy payment machine supplied by an external vendor; can&rsquo;t modify it. <i>Quiz 1 Q5</i></div>
+<div class="q" data-p="ADAPTER" data-t="Parking legacy payment">Parking: integrate a legacy payment machine supplied by an external vendor; can&rsquo;t modify it. <i>Quiz 1 Q5</i></div>
 <div class="a"><b>Adapter.</b> Define the interface the parking system expects (<code>PaymentProcessor.pay(amount)</code>); write <code>LegacyPaymentAdapter</code> that implements it, holds the vendor&rsquo;s <code>LegacyPaymentMachine</code> and converts the call (e.g. rupees &rarr; cents, result code &rarr; boolean). <code>PaymentDueState</code> calls <code>processor.pay()</code> and never sees the legacy class.</div>
 {{uml:parking}}
 <pre>public class LegacyPaymentAdapter implements PaymentProcessor {
@@ -78,12 +78,12 @@ String isbn = sc.scanBook();                                         // all old 
         return code == 0;                                                     // convert result
     }
 }</pre>
-<div class="q">Travel booking: which pattern to connect each sub-system with different third-party web services? Challenges and mechanism. <i>2022 Q1.3 (10)</i></div>
+<div class="q" data-p="ADAPTER" data-t="Travel third-party APIs">Travel booking: which pattern to connect each sub-system with different third-party web services? Challenges and mechanism. <i>2022 Q1.3 (10)</i></div>
 {{uml:multi}}
 <div class="a"><b>Adapter</b> (one per provider): HotelService talks to a common <code>HotelProvider</code> interface; <code>HiltonAdapter</code>, <code>ShangriLaAdapter</code>&hellip; translate to each provider&rsquo;s SOAP/REST/SDK signatures. Same for airlines and taxis. <b>Challenges:</b> many adapters to write/maintain; different data formats and error codes; provider API version changes; slow/unavailable services. <b>Mechanisms:</b> AdapterFactory/registry to pick adapters by config; a common DTO + mapper in each adapter; isolate version changes to one adapter; timeouts, retries, caching and fallback to another provider.</div>
-<div class="q">Restaurant must show events from websites built by different vendors with different technologies &mdash; how to integrate? <i>2023 Q3.3 (5)</i></div>
+<div class="q" data-p="ADAPTER" data-t="Restaurant event sites">Restaurant must show events from websites built by different vendors with different technologies &mdash; how to integrate? <i>2023 Q3.3 (5)</i></div>
 <div class="a">Same idea: <code>EventSource</code> target interface (<code>getEvents()</code>); one adapter per website (<code>RssEventAdapter</code>, <code>JsonApiEventAdapter</code>, <code>HtmlScraperAdapter</code>) converting each source into a common <code>Event</code> object. The restaurant site iterates a list of <code>EventSource</code>; a new vendor = a new adapter. (A Facade can then combine all sources into one <code>EventFeed</code>.)</div>
-<div class="q">Adapter vs Facade vs Proxy</div>
+<div class="q" data-p="COMPARE" data-t="Adapter / Facade / Proxy">Adapter vs Facade vs Proxy</div>
 <table>
 <tr><th></th><th>Adapter</th><th>Facade</th><th>Proxy</th></tr>
 <tr><td>Goal</td><td><b>Convert</b> interface</td><td><b>Simplify</b> a subsystem</td><td><b>Control access</b></td></tr>

@@ -91,13 +91,13 @@ c.pay(1500.00);</pre>
 <p class="small"><b>Why is <code>new</code> in client code bad?</b> It hard-codes the concrete class &rArr; client must change for every new type (violates OCP, DIP). <b>SOLID:</b> OCP (extend with new products), DIP (depend on <code>Database</code> abstraction), SRP (creation separated from use).</p>
 
 <h2>Questions &amp; model answers</h2>
-<div class="q">What is the role of the Factory pattern in the database scenario? <i>Quiz 2 Q1</i></div>
+<div class="q" data-p="FACTORY" data-t="Database objects">What is the role of the Factory pattern in the database scenario? <i>Quiz 2 Q1</i></div>
 <div class="a">It <b>takes object creation out of the client</b>: the client asks <code>DatabaseFactory.getDatabase("MYSQL")</code> and receives a <code>Database</code>; the factory decides and instantiates <code>MySQLDatabase</code>/<code>PostgreSQLDatabase</code>/<code>MongoDatabase</code>. Client code works only through the <code>Database</code> interface.</div>
-<div class="q">State two advantages of the Factory pattern in this scenario. <i>Quiz 2 Q2</i></div>
+<div class="q" data-p="FACTORY" data-t="Database objects">State two advantages of the Factory pattern in this scenario. <i>Quiz 2 Q2</i></div>
 <div class="a">(1) <b>Loose coupling</b> &mdash; switching DB (MySQL &rarr; PostgreSQL) needs no change in business code, only the parameter/config. (2) <b>Extensibility / centralized creation</b> &mdash; adding Oracle = one new class + one factory case; creation logic lives in one place, not repeated everywhere.</div>
-<div class="q">Why doesn&rsquo;t the developer need to know whether the DB is MySQL or PostgreSQL? <i>Quiz 2 Q3</i></div>
+<div class="q" data-p="FACTORY" data-t="Database objects">Why doesn&rsquo;t the developer need to know whether the DB is MySQL or PostgreSQL? <i>Quiz 2 Q3</i></div>
 <div class="a">Because of <b>abstraction + polymorphism</b>: the variable type is the <code>Database</code> interface and every concrete DB implements <code>connect()</code>/<code>create()</code>. The factory returns the correct object at runtime; the call <code>db.create(product)</code> runs the right implementation automatically.</div>
-<div class="q">Library: create Fiction, Research or Magazine books depending on user request. Book interface + BookFactory outline. <i>2025 Q3.2&ndash;3.3 (7)</i></div>
+<div class="q" data-p="FACTORY" data-t="Library book types">Library: create Fiction, Research or Magazine books depending on user request. Book interface + BookFactory outline. <i>2025 Q3.2&ndash;3.3 (7)</i></div>
 <div class="two"><div class="w45">{{uml:book}}</div>
 <div><pre>public interface Book { String getTitle(); String getCategory(); }
 public class FictionBook implements Book {
@@ -117,13 +117,13 @@ public class BookFactory {
   }
 }
 Book b = BookFactory.createBook("RESEARCH", "AI Ethics");</pre></div></div>
-<div class="q">Banking system with Current, Saving and Children accounts. <i>2023 Q4.2 (5)</i></div>
+<div class="q" data-p="FACTORY" data-t="Bank accounts">Banking system with Current, Saving and Children accounts. <i>2023 Q4.2 (5)</i></div>
 <div class="a"><b>Factory Method.</b> <code>Account</code> interface/abstract class (<code>deposit</code>, <code>withdraw</code>, <code>calculateInterest</code>); <code>CurrentAccount</code>, <code>SavingAccount</code>, <code>ChildrenAccount</code> implement it with their own rules (overdraft, interest, withdrawal limit). <code>AccountFactory.createAccount(type)</code> returns the right one; the bank code works with <code>Account</code> only, so a new FixedDeposit type is added without touching it.</div>
-<div class="q">Payment: creating different payment objects (Credit Card, PayPal, COD). <i>2025 Q4.1(d)</i></div>
+<div class="q" data-p="FACTORY" data-t="Payment objects">Payment: creating different payment objects (Credit Card, PayPal, COD). <i>2025 Q4.1(d)</i></div>
 <div class="a"><b>Factory Method</b> &mdash; <code>PaymentFactory.create(method)</code> returns the right <code>PaymentProcessor</code> subclass; it combines with Template Method (each processor follows <code>handlePayment()</code>). Reason: client selects by user choice at runtime without <code>new</code>/if-else.</div>
-<div class="q">LMS needs different modules created depending on the user&rsquo;s needs. / Scalable, extensible product-based framework. <i>2022 Q4.5, Q4.2</i></div>
+<div class="q" data-p="FACTORY" data-t="LMS modules / framework">LMS needs different modules created depending on the user&rsquo;s needs. / Scalable, extensible product-based framework. <i>2022 Q4.5, Q4.2</i></div>
 <div class="a"><b>Factory Method.</b> <code>Module</code> interface (Quiz, Forum, Assignment, VideoLecture); <code>ModuleFactory.create(userNeed)</code>. New modules/products = new classes registered with the factory, so the framework grows without changing existing code (Open/Closed) &mdash; exactly what a &ldquo;product-based, extensible framework&rdquo; needs.</div>
-<div class="q">&ldquo;Code duplication can be avoided with this pattern.&rdquo; Agree?</div>
+<div class="q" data-p="FACTORY" data-t="Theory">&ldquo;Code duplication can be avoided with this pattern.&rdquo; Agree?</div>
 <div class="a">Yes &mdash; creation logic (if-else + <code>new</code>) is written once in the factory instead of being repeated in every client; shared behaviour can sit in the abstract Creator. But concrete creators/products still add classes; keep the factory parameterized to avoid duplicating near-identical creators.</div>
 
 <h2>Comparisons &amp; mistakes</h2>

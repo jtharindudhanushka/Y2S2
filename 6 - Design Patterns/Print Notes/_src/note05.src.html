@@ -105,7 +105,7 @@ public class AccountProxy implements Account {         // proxy
 </table>
 
 <h2>Questions &amp; model answers</h2>
-<div class="q">LMS: when users read large content, load only a couple of pages rather than the entire document. <i>2022 Q4.4, 2023 Q4.4 (5)</i></div>
+<div class="q" data-p="VIRTUAL PROXY" data-t="LMS large documents">LMS: when users read large content, load only a couple of pages rather than the entire document. <i>2022 Q4.4, 2023 Q4.4 (5)</i></div>
 {{uml:document}}
 <div class="a"><b>Virtual Proxy.</b> <code>DocumentProxy</code> implements <code>Document</code> like <code>LargeDocument</code>; the reader holds the proxy. <code>getPage(n)</code> loads only the requested page (and maybe the next one) from storage and caches it; the full document is never loaded unless needed &rArr; fast opening, low memory/bandwidth. The reader code doesn&rsquo;t change.</div>
 <pre>public class DocumentProxy implements Document {
@@ -115,7 +115,7 @@ public class AccountProxy implements Account {         // proxy
         return cache.computeIfAbsent(n, k -&gt; PageLoader.load(path, k));   // load one page on demand
     }
 }</pre>
-<div class="q">Rare books in a restricted archive; users must not access them directly; access controlled through permission checks. Explain and give an example. <i>2025 Q3.1(c), 3.5 (5)</i></div>
+<div class="q" data-p="PROTECTION PROXY" data-t="Library rare books">Rare books in a restricted archive; users must not access them directly; access controlled through permission checks. Explain and give an example. <i>2025 Q3.1(c), 3.5 (5)</i></div>
 {{uml:rare}}
 <div class="a"><b>Protection Proxy.</b> <code>ArchiveAccessProxy</code> and <code>RestrictedArchive</code> implement <code>BookArchive</code>. The proxy&rsquo;s <code>getBook(id)</code> first checks the user&rsquo;s role/permission (e.g. researcher with approved request, membership valid), logs the access, then forwards to the real archive; otherwise throws <code>AccessDeniedException</code>. Example: a student requests a 1820 manuscript &rarr; denied; a librarian-approved researcher &rarr; allowed and logged.</div>
 <pre>public RareBook getBook(String id) {
@@ -123,11 +123,11 @@ public class AccountProxy implements Account {         // proxy
     AuditLog.record(user, id);            // logging proxy duty
     return archive.getBook(id);           // forward to real subject
 }</pre>
-<div class="q">Website with different authorization options depending on the user&rsquo;s need. <i>2023 Q4.5 (5)</i></div>
+<div class="q" data-p="PROXY" data-t="Website authorization">Website with different authorization options depending on the user&rsquo;s need. <i>2023 Q4.5 (5)</i></div>
 <div class="a"><b>Protection Proxy</b> in front of each protected service (<code>AdminServiceProxy</code>, <code>ReportServiceProxy</code>) checks role/permissions before forwarding. If authorization is a <i>sequence</i> of checks (login &rarr; role &rarr; permission &rarr; 2FA), combine with Chain of Responsibility. If features are optional add-ons per user, Decorator.</div>
-<div class="q">Implementing a logging mechanism &mdash; which pattern? <i>2023 Q3.4 (5)</i></div>
+<div class="q" data-p="SINGLETON / PROXY" data-t="Logging">Implementing a logging mechanism &mdash; which pattern? <i>2023 Q3.4 (5)</i></div>
 <div class="a">Two valid views: <b>Singleton</b> for the logger itself (one shared logger writing to one file &mdash; see Note 01). To <b>add logging around existing services without changing them</b>, a <b>Proxy</b> (logging proxy) intercepts each call, logs before/after, and forwards. State which you mean and why.</div>
-<div class="q">Proxy vs Decorator vs Adapter</div>
+<div class="q" data-p="COMPARE" data-t="Proxy / Decorator / Adapter">Proxy vs Decorator vs Adapter</div>
 <div class="a">Proxy = <b>same interface, controls access</b> (usually one layer, may create the real object itself). Decorator = same interface, <b>adds responsibilities</b>, stacked many times, wrapped object given by client. Adapter = <b>different interface</b>, converts. &ldquo;A protection proxy might be implemented like a decorator, but remember the intent.&rdquo;</div>
 <p class="small"><b>Use proxy?</b> Hospital login (yes, protection) &middot; image editor high-res (yes, virtual) &middot; online exam authentication (yes, protection) &middot; CDN cache (yes, cache) &middot; Netflix streaming (protection + cache) &middot; Google Drive thumbnails (virtual + remote) &middot; calculator / static restaurant menu (<b>no</b> &mdash; no access control or expensive load). <b>Mistakes:</b> proxy with a different interface (that&rsquo;s Adapter) &middot; arrow from RealSubject to Proxy &middot; client creating RealSubject directly.</p>
 </body></html>
