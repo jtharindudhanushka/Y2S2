@@ -30,7 +30,15 @@ SUBJECTS = [
 ]
 
 
+def tracked():
+    """Files committed to git: only these exist on GitHub / Pages."""
+    import subprocess
+    r = subprocess.run(["git", "-c", "core.quotepath=off", "ls-files", "-z"], cwd=ROOT, capture_output=True)
+    return set(r.stdout.decode("utf-8").split("\0")) if r.returncode == 0 else None
+
+
 def manifest():
+    keep = tracked()
     out = []
     for dp, dn, fn in os.walk(ROOT):
         dn[:] = sorted(d for d in dn if d not in SKIP_DIRS)
@@ -38,6 +46,8 @@ def manifest():
             full = os.path.join(dp, f)
             rel = os.path.relpath(full, ROOT).replace(os.sep, "/")
             if rel in ("index.html", ".gitignore") or rel.startswith("."):
+                continue
+            if keep is not None and rel not in keep:
                 continue
             size = os.path.getsize(full)
             big = f.lower().endswith(".mp4") or size > BIG_MB * 1024 * 1024
@@ -102,6 +112,7 @@ SUBJECT_PAGE = """<!DOCTYPE html>
   <h1>{{NAME}}</h1>
   <p class="lead">Study notes for this subject are not written yet. The table lists the lectures with their slides so you can open or download them now. Exam: {{EXAM}}.</p>
   <p><a class="btn pri" href="../../index.html#{{HASH}}">Browse and download all files</a></p>
+  {{PRINT}}
   <input type="search" id="q" placeholder="Filter lessons..." style="margin-top:14px">
   <table style="margin-top:10px">
     <thead><tr><th>#</th><th>Lesson</th><th>Slides and files</th><th>Notes</th></tr></thead>
@@ -178,6 +189,21 @@ def exam_text(exams):
     return "; ".join(nice)
 
 
+def print_notes(folder, files):
+    pre = folder + "/Print Notes/"
+    return sorted(f["p"] for f in files if f["p"].startswith(pre) and "/" not in f["p"][len(pre):] and f["p"].endswith(".pdf"))
+
+
+def print_notes_html(folder, files):
+    pn = print_notes(folder, files)
+    if not pn:
+        return ""
+    items = "".join('<li><a href="../../%s" target="_blank" rel="noopener">%s</a></li>' % (
+        "/".join(x.replace(" ", "%20") for x in p.split("/")), html.escape(os.path.splitext(p.split("/")[-1])[0])) for p in pn)
+    return ('<h2>Print notes (A4 PDF)</h2><p class="sm">Black-and-white exam notes. Print in this order.</p>'
+            '<ol style="padding-left:22px">%s</ol><h2>Lectures and slides</h2>' % items)
+
+
 def build_subject_pages(files):
     made = []
     for folder, code, name, exams, notes in SUBJECTS:
@@ -194,6 +220,7 @@ def build_subject_pages(files):
         s = s.replace("{{EXAM}}", exam_text(exams)).replace("{{HASH}}", folder.replace(" ", "%20") + "/Lecture%20Materials")
         s = s.replace("{{SUBJ}}", json.dumps({"code": code, "name": name, "folder": folder}))
         s = s.replace("{{LESSONS}}", json.dumps(ls, ensure_ascii=False)).replace("{{REPO}}", REPO)
+        s = s.replace("{{PRINT}}", print_notes_html(folder, files))
         open(idx, "w", encoding="utf-8").write(s)
         made.append(folder)
     return made
@@ -275,10 +302,10 @@ SUBJECTS.forEach(s=>{
   c.querySelector('h3').textContent=s.name;c.querySelector('.code').textContent=s.code;
   const acts=document.createElement('div');acts.className='acts';
   const n=document.createElement('a');n.className='btn pri';n.href=enc(s.folder)+'/Study%20Guides/index.html';
-  n.textContent=s.notes?'Study notes ('+s.notes+' lessons)':'Lessons and slides';acts.appendChild(n);
+  n.textContent=s.notes?'Study notes ('+s.notes+' lessons)':(s.pn?'Print notes ('+s.pn+') and slides':'Lessons and slides');acts.appendChild(n);
   const b=document.createElement('a');b.className='btn';b.href='#'+enc(s.folder);b.textContent='Browse files';
   b.onclick=()=>{setTimeout(()=>document.getElementById('path').scrollIntoView({behavior:'smooth'}),30)};acts.appendChild(b);
-  if(!s.notes){const t=document.createElement('span');t.className='tag';t.textContent='notes coming soon';acts.appendChild(t)}
+  if(!s.notes&&!s.pn){const t=document.createElement('span');t.className='tag';t.textContent='notes coming soon';acts.appendChild(t)}
   c.appendChild(acts);cards.appendChild(c);
 });
 
@@ -336,7 +363,7 @@ q.oninput=draw;draw();
 
 
 def build_hub(files):
-    subj = [{"folder": f, "code": c, "name": n, "exams": e, "notes": k} for f, c, n, e, k in SUBJECTS]
+    subj = [{"folder": f, "code": c, "name": n, "exams": e, "notes": k, "pn": len(print_notes(f, files))} for f, c, n, e, k in SUBJECTS]
     s = HUB.replace("{{REPO}}", REPO).replace("{{BIG}}", str(BIG_MB))
     s = s.replace("{{SUBJECTS}}", json.dumps(subj, ensure_ascii=False))
     s = s.replace("{{FILES}}", json.dumps(files, ensure_ascii=False, separators=(",", ":")))
