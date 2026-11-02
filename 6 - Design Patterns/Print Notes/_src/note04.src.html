@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 04 - Adapter Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "04 Adapter  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>04 &nbsp;Adapter <small>Structural &middot; &ldquo;wrapper&rdquo;</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td><b>Convert the interface of a class into another interface clients expect.</b> Adapter lets classes work together that couldn&rsquo;t otherwise because of incompatible interfaces.</td></tr>
+<tr><td class="k">Use when</td><td>An <b>existing / legacy / third-party / vendor class</b> has the functionality you need but the <b>wrong method names or formats</b>, and you <b>cannot or should not change</b> either side. Real life: USB-C&rarr;HDMI, travel plug, card reader.</td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;incompatible interface&rdquo;, &ldquo;legacy&rdquo;, &ldquo;supplied by an external vendor, can&rsquo;t modify&rdquo;, &ldquo;new device/gateway provides a different method&rdquo;, &ldquo;hundreds of calls to the old method&rdquo;, &ldquo;third-party web services with different method signatures&rdquo;, &ldquo;developed by different vendors / technologies&rdquo;.</td></tr>
+<tr><td class="k">Participants</td><td><b>Target</b> (interface the client expects) &middot; <b>Adapter</b> (implements Target, holds Adaptee, translates) &middot; <b>Adaptee</b> (existing incompatible class) &middot; <b>Client</b> (uses Target only).</td></tr>
+<tr><td class="k">Characteristics</td><td>Client and adaptee interfaces are incompatible &middot; adapter <b>wraps</b> the adaptee, hiding it &middot; client calls the adapter via the target interface &middot; adapter <b>translates</b> the request into what the adaptee expects. Only the adapter knows the adaptee.</td></tr>
+</table></div>
+
+<h2>UML &mdash; generic (object adapter)</h2>
+{{uml:generic}}
+
+<h2>UML + Java &mdash; Printer (lecture): old app calls <code>print()</code>, new printer has <code>printPDF()</code></h2>
+{{uml:printer}}
+<div class="two">
+<div><pre>// 1. TARGET - what the application expects
+public interface Printer {
+    void print(String text);
+}
+// 2. ADAPTEE - existing class, cannot change
+public class ModernPrinter {
+    public void printPDF(String file) {
+        System.out.println("Printing PDF : " + file);
+    }
+}</pre></div>
+<div><pre>// 3. ADAPTER - implements Target, wraps Adaptee
+public class PrinterAdapter implements Printer {
+    private ModernPrinter printer;                  // has-a
+    public PrinterAdapter(ModernPrinter printer) { this.printer = printer; }
+    @Override
+    public void print(String text) {
+        printer.printPDF(text);                     // translate call
+    }
+}
+// 4. CLIENT - unchanged, knows only Printer
+Printer p = new PrinterAdapter(new ModernPrinter());
+p.print("Report.pdf");      // Output: Printing PDF : Report.pdf</pre></div>
+</div>
+<p class="small"><b>Flow:</b> client calls <code>print()</code> on Printer &rarr; goes to PrinterAdapter &rarr; adapter calls <code>ModernPrinter.printPDF()</code> &rarr; adaptee does the work. Without the adapter: compile error &ldquo;cannot find symbol printDocument()&rdquo;. Payment example: <code>StripeAdapter implements Payment { pay(amt) &rarr; stripe.makePayment(amt) }</code>. Java library adapters: <code>InputStreamReader</code> (InputStream&rarr;Reader), <code>Arrays.asList()</code> (array&rarr;List), <code>Collections.enumeration()</code>.</p>
+
+<h2>Advantages / disadvantages / challenge &rarr; mechanism</h2>
+<table>
+<tr><th style="width:28%">Advantages</th><th style="width:27%">Disadvantages</th><th>Challenge &rarr; mechanism</th></tr>
+<tr><td><b>Reuse legacy</b> / third-party code without modification</td><td>More classes (one adapter per adaptee)</td><td>Many vendors &rarr; one adapter per vendor behind a common Target; create them with a <b>Factory</b></td></tr>
+<tr><td><b>Loose coupling</b>: client depends on Target only</td><td>Extra layer of indirection</td><td>Data/format translation (XML/JSON, units, cents) &rarr; mapping/converter inside the adapter; unit-test each adapter</td></tr>
+<tr><td><b>Open/Closed</b>: new adapters without changing client</td><td>Confusing if overused</td><td>Vendor API changes &rarr; only that adapter changes; version the adapters</td></tr>
+<tr><td>Easy integration &amp; testing (mock the adaptee)</td><td>Small performance overhead</td><td>Features missing in adaptee &rarr; adapter implements default/emulated behaviour or throws a clear exception</td></tr>
+</table>
+<p class="small"><b>&ldquo;Adapter needs more code. Agree?&rdquo;</b> Yes, extra classes &mdash; but the payoff is large for legacy systems that can&rsquo;t change but are stable. <b>Why not change the interfaces / the client?</b> Adaptee is third-party/vendor/compiled (no source), changing tested code risks bugs, many clients depend on the old interface, licence/contract forbids it.</p>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">Library: system calls <code>scanBook()</code> hundreds of times; new scanner provides <code>readBarcode()</code>. Reason not to modify existing code? Pattern and why? Identify participants. Draw UML. <i>Quiz 3 Q1&ndash;Q4</i></div>
+<div class="a"><b>Not modifying:</b> hundreds of call sites &rArr; huge change, high risk of new bugs, full re-testing, downtime; tested working code should stay closed for modification (OCP); the scanner class comes from a vendor so it can&rsquo;t be changed either. <b>Pattern: Adapter</b> &mdash; the two interfaces are incompatible but do the same job; a <code>ScannerAdapter</code> implements the old <code>scanBook()</code> and internally calls <code>readBarcode()</code>, so the library code is untouched and the new scanner is reused. <b>Participants:</b> Client = <code>LibrarySystem</code>; Target = <code>BarcodeScanner</code> (<code>scanBook()</code>); Adapter = <code>ScannerAdapter</code>; Adaptee = <code>NewBarcodeScanner</code> (<code>readBarcode()</code>).</div>
+{{uml:scanner}}
+<pre>public interface BarcodeScanner { String scanBook(); }                 // Target (old)
+public class NewBarcodeScanner { public String readBarcode() { return "978-0134685991"; } }  // Adaptee
+public class ScannerAdapter implements BarcodeScanner {                 // Adapter
+    private final NewBarcodeScanner scanner;
+    public ScannerAdapter(NewBarcodeScanner s) { this.scanner = s; }
+    public String scanBook() { return scanner.readBarcode(); }
+}
+BarcodeScanner sc = new ScannerAdapter(new NewBarcodeScanner());   // only this line changes
+String isbn = sc.scanBook();                                         // all old calls unchanged</pre>
+<div class="q">Parking: integrate a legacy payment machine supplied by an external vendor; can&rsquo;t modify it. <i>Quiz 1 Q5</i></div>
+<div class="a"><b>Adapter.</b> Define the interface the parking system expects (<code>PaymentProcessor.pay(amount)</code>); write <code>LegacyPaymentAdapter</code> that implements it, holds the vendor&rsquo;s <code>LegacyPaymentMachine</code> and converts the call (e.g. rupees &rarr; cents, result code &rarr; boolean). <code>PaymentDueState</code> calls <code>processor.pay()</code> and never sees the legacy class.</div>
+{{uml:parking}}
+<pre>public class LegacyPaymentAdapter implements PaymentProcessor {
+    private final LegacyPaymentMachine machine = new LegacyPaymentMachine();
+    public boolean pay(double amount) {
+        int code = machine.makeTransaction((int) Math.round(amount * 100));   // convert units
+        return code == 0;                                                     // convert result
+    }
+}</pre>
+<div class="q">Travel booking: which pattern to connect each sub-system with different third-party web services? Challenges and mechanism. <i>2022 Q1.3 (10)</i></div>
+{{uml:multi}}
+<div class="a"><b>Adapter</b> (one per provider): HotelService talks to a common <code>HotelProvider</code> interface; <code>HiltonAdapter</code>, <code>ShangriLaAdapter</code>&hellip; translate to each provider&rsquo;s SOAP/REST/SDK signatures. Same for airlines and taxis. <b>Challenges:</b> many adapters to write/maintain; different data formats and error codes; provider API version changes; slow/unavailable services. <b>Mechanisms:</b> AdapterFactory/registry to pick adapters by config; a common DTO + mapper in each adapter; isolate version changes to one adapter; timeouts, retries, caching and fallback to another provider.</div>
+<div class="q">Restaurant must show events from websites built by different vendors with different technologies &mdash; how to integrate? <i>2023 Q3.3 (5)</i></div>
+<div class="a">Same idea: <code>EventSource</code> target interface (<code>getEvents()</code>); one adapter per website (<code>RssEventAdapter</code>, <code>JsonApiEventAdapter</code>, <code>HtmlScraperAdapter</code>) converting each source into a common <code>Event</code> object. The restaurant site iterates a list of <code>EventSource</code>; a new vendor = a new adapter. (A Facade can then combine all sources into one <code>EventFeed</code>.)</div>
+<div class="q">Adapter vs Facade vs Proxy</div>
+<table>
+<tr><th></th><th>Adapter</th><th>Facade</th><th>Proxy</th></tr>
+<tr><td>Goal</td><td><b>Convert</b> interface</td><td><b>Simplify</b> a subsystem</td><td><b>Control access</b></td></tr>
+<tr><td>Interface</td><td>different from adaptee&rsquo;s</td><td>new, higher-level</td><td><b>same</b> as real subject</td></tr>
+<tr><td>Wraps</td><td>usually one object</td><td>many objects</td><td>one object</td></tr>
+<tr><td>Memory tip</td><td>plug adapter</td><td>building front / waiter</td><td>security guard</td></tr>
+</table>
+<p class="small"><b>Mistakes:</b> Adapter <i>extends</i> Target interface wrongly or client calls the adaptee directly &middot; drawing association from adaptee to adapter (arrow goes adapter &rarr; adaptee) &middot; modifying the adaptee &middot; confusing with Facade.</p>
+</body></html>

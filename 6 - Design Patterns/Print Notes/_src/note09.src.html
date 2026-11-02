@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 09 - State Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "09 State  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>09 &nbsp;State <small>Behavioral</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td>Allow an object to <b>alter its behaviour when its internal state changes</b>. The object will appear to change its class.</td></tr>
+<tr><td class="k">Use when</td><td>An object has a <b>finite set of well-defined states</b>; the <b>same action gives different results depending on the current state</b>; code is full of <code>if (state == ...)</code>/switch blocks repeated in many methods; transitions follow rules.</td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;can move through the following states&rdquo;, &ldquo;transitions to&rdquo;, &ldquo;behaviour depends on its current state&rdquo;, &ldquo;operates in different states: Idle, Scanning, Payment, Completed&rdquo;, &ldquo;draw a state diagram&rdquo;, order NEW &rarr; PAID &rarr; SHIPPED &rarr; DELIVERED, &ldquo;behaviour changes via flags/conditions&rdquo;.</td></tr>
+<tr><td class="k">Participants</td><td><b>Context</b> (holds <code>currentState</code>, delegates requests, has <code>setState()</code>) &middot; <b>State</b> interface (operations all states support) &middot; <b>ConcreteStates</b> (state-specific behaviour, trigger transitions by calling <code>context.setState(next)</code>) &middot; <b>Client</b> (creates/configures the context).</td></tr>
+<tr><td class="k">Design steps</td><td>(1) <b>Draw the state machine first</b> (states + events) &rarr; (2) state table: <b>State + Event &rarr; Behaviour + Next State</b> &rarr; (3) State interface = one method per event &rarr; (4) one class per state &rarr; (5) Context delegates: <code>currentState.pressButton(this)</code>.</td></tr>
+</table></div>
+
+<h2>TV remote (lecture) &mdash; state diagram, state table, UML</h2>
+{{uml:tv_sm}}
+<div class="two">
+<div class="w60"><table>
+<tr><th>State</th><th>Event</th><th>Behaviour</th><th>Next</th></tr>
+<tr><td>OFF</td><td>ON</td><td>turn TV on</td><td>ON</td></tr>
+<tr><td>OFF</td><td>OFF / MUTE</td><td>no state change</td><td>OFF</td></tr>
+<tr><td>ON</td><td>ON</td><td>no state change</td><td>ON</td></tr>
+<tr><td>ON</td><td>MUTE</td><td>sound off</td><td>MUTE</td></tr>
+<tr><td>ON</td><td>OFF</td><td>turn TV off</td><td>OFF</td></tr>
+<tr><td>MUTE</td><td>ON</td><td>sound back on</td><td>ON</td></tr>
+<tr><td>MUTE</td><td>OFF</td><td>turn TV off</td><td>OFF</td></tr>
+</table>
+<p class="small">Same button &ne; same behaviour: result depends on the <b>current state</b>. A state is more than a value: it decides what the object can do, how it responds, and where it can go next.</p></div>
+</div>
+{{uml:tv_uml}}
+<div class="two">
+<div><pre>public interface State {
+    void pressOnButton(TV tv);
+    void pressOffButton(TV tv);
+    void pressMuteButton(TV tv);
+}
+public class TV {                                   // CONTEXT
+    private State currentState = new OffState();    // initial
+    public void setState(State s) { currentState = s; }
+    public void pressOnButton()   { currentState.pressOnButton(this); }
+    public void pressOffButton()  { currentState.pressOffButton(this); }
+    public void pressMuteButton() { currentState.pressMuteButton(this); }
+}
+// BEFORE (bad): if (state==OFF) {...} else if (state==ON) {...} ... in every method</pre></div>
+<div><pre>public class OffState implements State {
+    public void pressOnButton(TV tv)  { System.out.println("TV on"); tv.setState(new OnState()); }
+    public void pressOffButton(TV tv) { System.out.println("Already off"); }
+    public void pressMuteButton(TV tv){ System.out.println("TV is off"); }
+}
+public class OnState implements State {
+    public void pressOnButton(TV tv)  { System.out.println("Already on"); }
+    public void pressOffButton(TV tv) { System.out.println("TV off"); tv.setState(new OffState()); }
+    public void pressMuteButton(TV tv){ System.out.println("Muted"); tv.setState(new MuteState()); }
+}
+public class MuteState implements State {
+    public void pressOnButton(TV tv)  { System.out.println("Unmuted"); tv.setState(new OnState()); }
+    public void pressOffButton(TV tv) { System.out.println("TV off"); tv.setState(new OffState()); }
+    public void pressMuteButton(TV tv){ System.out.println("Already muted"); }
+}
+TV tv = new TV(); tv.pressOnButton(); tv.pressMuteButton(); tv.pressOffButton();</pre></div>
+</div>
+<p class="small"><b>Delegation replaces conditional logic:</b> the context no longer asks &ldquo;which state am I?&rdquo;, it says &ldquo;current state, please handle this&rdquo;. Other lecture examples: <b>vending machine</b> (IdleState, HasOneDollarState, OutOfStockState; <code>insertDollar/ejectMoney/dispense</code>; states can be shared <b>Singletons</b>), <b>Person health</b> (Healthy, Sick, Critical; <code>work/rest/exercise</code>; transitions inside state classes).</p>
+
+<h2>Advantages / disadvantages / challenge &rarr; mechanism</h2>
+<table>
+<tr><th style="width:31%">Advantages</th><th style="width:27%">Disadvantages</th><th>Challenge &rarr; mechanism</th></tr>
+<tr><td>Removes long <code>if/switch</code> on state; cleaner code</td><td><b>More classes</b> (one per state)</td><td>State-class explosion &rarr; use only when states are finite and behaviour differs a lot; few simple states &rArr; plain if is fine</td></tr>
+<tr><td>Each state&rsquo;s behaviour <b>encapsulated</b> in one class (SRP)</td><td>Transitions spread across classes; harder to see the whole machine</td><td>Keep a state diagram + state table as documentation; centralize allowed transitions or validate in <code>setState()</code></td></tr>
+<tr><td><b>Open/Closed</b>: add a new state = new class</td><td>Adding an <i>event</i> changes every state class</td><td>Use an abstract base state with default &ldquo;invalid action&rdquo; methods; states override only valid ones</td></tr>
+<tr><td>Explicit, valid transitions; easier testing per state</td><td>Overkill for 2&ndash;3 trivial states</td><td>Many state objects &rarr; stateless states as Singletons / shared instances</td></tr>
+</table>
+<p class="small"><b>Rule of thumb:</b> long chains of <code>if (state == ...)</code> &rArr; State pattern. <b>State vs CoR:</b> State = context delegates to <i>its current state</i>, states change the context&rsquo;s state (&ldquo;how should I behave now?&rdquo;); CoR = request moves through a <i>sequence of handlers</i> (&ldquo;who will handle this?&rdquo;). <b>State vs Strategy:</b> same structure, but strategies are chosen by the client and don&rsquo;t switch themselves; states switch automatically.</p>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">Smart parking: session moves Available &rarr; Reserved &rarr; Occupied &rarr; Payment Due &rarr; Closed; behaviour depends on state. Why State (4)? State diagram (4). UML (6). Java for the context class (3). <i>Quiz 1</i></div>
+<div class="a"><b>Why State:</b> a parking session has a fixed set of well-defined states and the <b>same action behaves differently</b> in each (e.g. <code>enter()</code> is allowed when Reserved, rejected when Closed; <code>pay()</code> only valid in Payment Due). Without the pattern every method needs a big if/switch on the status that grows with each new state. With State, each state&rsquo;s rules live in one class, transitions are explicit and controlled, invalid actions are rejected cleanly, and new states (e.g. <i>Overstay</i>) are added as new classes (OCP).</div>
+{{uml:park_sm}}
+{{uml:park_uml}}
+<pre class="split">public interface ParkingState {
+    void reserve(ParkingSession s);   void enter(ParkingSession s);
+    void exit(ParkingSession s);      void pay(ParkingSession s, double amount);
+}
+public class ParkingSession {                                  // CONTEXT
+    private ParkingState state = new AvailableState();
+    private String vehicleNo; private LocalDateTime entryTime, exitTime; private double fee;
+
+    public void setState(ParkingState s) { this.state = s; System.out.println("-&gt; " + s.getClass().getSimpleName()); }
+    public void reserve()          { state.reserve(this); }   // delegate every request
+    public void enter()            { state.enter(this); }
+    public void exit()             { state.exit(this); }
+    public void pay(double amount) { state.pay(this, amount); }
+
+    void recordEntry() { entryTime = LocalDateTime.now(); }
+    void recordExit()  { exitTime = LocalDateTime.now();
+                         fee = Duration.between(entryTime, exitTime).toHours() * 100; }
+    double getFee() { return fee; }
+}
+public class OccupiedState implements ParkingState {
+    public void reserve(ParkingSession s) { System.out.println("Slot occupied"); }
+    public void enter(ParkingSession s)   { System.out.println("Already parked"); }
+    public void exit(ParkingSession s)    { s.recordExit(); s.setState(new PaymentDueState()); }
+    public void pay(ParkingSession s, double a) { System.out.println("Exit first"); }
+}
+public class PaymentDueState implements ParkingState {
+    private final PaymentProcessor processor = new LegacyPaymentAdapter();   // Adapter (Quiz 1 Q5)
+    public void pay(ParkingSession s, double a) {
+        if (a &gt;= s.getFee() &amp;&amp; processor.pay(a)) s.setState(new ClosedState());
+        else System.out.println("Payment failed");
+    }
+    public void reserve(ParkingSession s) { System.out.println("Pay first"); }
+    public void enter(ParkingSession s)   { System.out.println("Pay first"); }
+    public void exit(ParkingSession s)    { System.out.println("Pay first"); }
+}
+// AvailableState: reserve -&gt; Reserved, enter -&gt; recordEntry + Occupied. ReservedState: enter -&gt; Occupied.
+// ClosedState: every action rejected ("Session closed").</pre>
+
+<div class="q">Document workflow: Draft (editable &rarr; Moderation), Moderation (approve &rarr; Published, reject &rarr; Draft), Published (no edits &rarr; Archived only), Archived (final). State diagram (5); best pattern &amp; reasons (5); class diagram (10); use of interfaces (5). <i>2024 Q3 (25)</i></div>
+{{uml:doc_sm}}
+<p class="small">Archived is the final state (no outgoing transitions; draw &#9673; after it). Invalid events (edit when Published, approve when Draft) do nothing / show an error.</p>
+{{uml:doc_uml}}
+<div class="a"><b>State pattern</b>: four finite states, each allows different actions and fixed transitions; avoids if/else on a status field in every method; each state class enforces its own rules (Published.edit() refuses). <b>Interface use:</b> <code>DocumentState</code> is the <b>contract</b> &mdash; every state must implement all events, so the <code>Document</code> can call <code>state.submit(this)</code> without knowing the concrete state (<b>polymorphism</b>, programming to an interface); new states plug in without changing <code>Document</code> (OCP, DIP); states are interchangeable at runtime; easy to mock for testing.</div>
+<pre>public class PublishedState implements DocumentState {
+    public void edit(Document d, String t) { System.out.println("Published documents cannot be edited"); }
+    public void submit(Document d)  { System.out.println("Already published"); }
+    public void approve(Document d) { System.out.println("Already published"); }
+    public void reject(Document d)  { System.out.println("Cannot reject a published document"); }
+    public void archive(Document d) { d.setState(new ArchivedState()); }
+}
+// ModerationState: approve -&gt; Published, reject -&gt; Draft; DraftState: edit allowed, submit -&gt; Moderation</pre>
+
+<div class="q">Self-checkout kiosk states Idle &rarr; Scanning &rarr; Payment &rarr; Completed: incorporate using a pattern and give an example transition. <i>2025 Q1.1(a), 1.4 (5)</i></div>
+{{uml:kiosk_sm}}
+<div class="a"><b>State</b>: <code>Kiosk</code> (context) holds <code>KioskState</code>; <code>IdleState</code>, <code>ScanningState</code>, <code>PaymentState</code>, <code>CompletedState</code> implement <code>scanItem()</code>, <code>checkout()</code>, <code>pay()</code>, <code>cancel()</code>. <b>Example transition:</b> in <code>ScanningState</code>, the customer presses Checkout &rarr; <code>checkout(kiosk)</code> computes the subtotal (decorated items&rsquo; <code>getCost()</code>), adds tax via <code>TaxCalculator.getInstance()</code> (Singleton) and calls <code>kiosk.setState(new PaymentState())</code>. In <code>IdleState</code>, <code>pay()</code> is rejected (&ldquo;scan items first&rdquo;).</div>
+<pre>public class ScanningState implements KioskState {
+    public void scanItem(Kiosk k, CheckoutItem i) { k.addItem(i); }                 // stays Scanning
+    public void checkout(Kiosk k) {
+        double total = TaxCalculator.getInstance().applyTax(k.subtotal());
+        k.setTotal(total);
+        k.setState(new PaymentState());                                              // transition
+    }
+    public void pay(Kiosk k, double amt) { System.out.println("Press checkout first"); }
+}</pre>
+<p class="small"><b>Mistakes:</b> context still containing <code>if (state == ...)</code> &middot; state diagram without initial state / event labels &middot; forgetting <code>setState()</code> in the context &middot; drawing association from states to the interface instead of realization &middot; confusing with CoR or Strategy &middot; transitions to states not in the scenario.</p>
+</body></html>

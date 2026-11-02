@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 07 - Template Method Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "07 Template Method  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>07 &nbsp;Template Method <small>Behavioral</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td>Define the <b>skeleton of an algorithm</b> in an operation (superclass), <b>deferring some steps to subclasses</b>. Subclasses redefine certain steps <b>without changing the algorithm&rsquo;s structure</b>.</td></tr>
+<tr><td class="k">Use when</td><td>Several classes follow the <b>same sequence of steps</b>; some steps are common, some differ per type; the <b>order must be controlled centrally</b>; you want to avoid duplicating the whole algorithm. <b>Same process + different steps = Template Method.</b></td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;follow the same overall process / common workflow&rdquo;, &ldquo;standard steps&rdquo;, &ldquo;however X and Y are different for each type&rdquo;, &ldquo;standardize the workflow while allowing custom behaviour&rdquo;, &ldquo;every level must follow the same procedure&rdquo;, &ldquo;enforce the procedure&rdquo;, &ldquo;same salary components with deviations&rdquo;.</td></tr>
+<tr><td class="k">Participants</td><td><b>AbstractClass</b>: <code>final</code> template method (fixed order), common (invariant) steps, <code>abstract</code> primitive (variant) steps, optional <b>hooks</b> &middot; <b>ConcreteClass</b>: implements the variant steps only.</td></tr>
+<tr><td class="k">OOP used</td><td>Inheritance &middot; abstract class/method &middot; overriding &middot; <code>final</code> (can&rsquo;t override the order) &middot; access modifiers (<code>protected</code> steps, <code>private</code> common steps) &middot; polymorphism (&ldquo;Hollywood principle&rdquo;: parent calls the child).</td></tr>
+</table></div>
+
+<h2>UML &mdash; generic</h2>
+{{uml:generic}}
+<div class="two">
+<div><pre>public abstract class DataProcessor {            // lecture example
+    public final void processData() {             // TEMPLATE METHOD
+        loadData();      // common
+        cleanData();     // varies
+        analyzeData();   // varies
+        generateReport();// common
+    }
+    private void loadData()      { System.out.println("Loading data"); }
+    protected abstract void cleanData();
+    protected abstract void analyzeData();
+    private void generateReport(){ System.out.println("Generating report"); }
+}
+public class CSVDataProcessor extends DataProcessor {
+    protected void cleanData()   { System.out.println("Cleaning CSV data"); }
+    protected void analyzeData() { System.out.println("Analyzing CSV data"); }
+}
+DataProcessor p = new CSVDataProcessor();
+p.processData();  // Loading, Cleaning CSV, Analyzing CSV, Generating report</pre></div>
+<div><table>
+<tr><th>Method kind</th><th>Modifier</th><th>Role</th></tr>
+<tr><td>Template method</td><td><code>public final</code></td><td>fixes the order; subclasses can&rsquo;t change it</td></tr>
+<tr><td>Common step</td><td><code>private</code>/concrete</td><td>written once, shared</td></tr>
+<tr><td>Primitive step</td><td><code>protected abstract</code></td><td>subclass <b>must</b> implement</td></tr>
+<tr><td>Hook</td><td><code>protected</code> with default body</td><td>subclass <b>may</b> override (e.g. <code>wantsEmail()</code> returns true)</td></tr>
+</table>
+<p class="small"><b>Why is <code>processData()</code> final?</b> To prevent subclasses from changing the sequence; they can customize <code>cleanData()</code>/<code>analyzeData()</code> but not rearrange the algorithm. <b>Which method controls the flow?</b> The template method. <b>Why only one abstract method in BasicEngineering (lecture)?</b> Only <code>SpecialPaper()</code> differs per course; the other steps are common, so subclasses override only that one.</p></div>
+</div>
+
+<h2>Advantages / challenges &rarr; mechanism</h2>
+<table>
+<tr><th style="width:30%">Advantages</th><th style="width:27%">Challenges (slides)</th><th>Mechanism to overcome</th></tr>
+<tr><td>Controls the flow; clients can&rsquo;t change it</td><td>Client cannot direct the sequence of steps</td><td>If order must vary per request &rarr; use <b>Builder</b> (or Strategy) instead; use hooks for optional steps</td></tr>
+<tr><td>Common code centralized &rArr; <b>no duplication</b>, reuse</td><td>A subclass may override (hide) a parent method</td><td>Make template <code>final</code>, common steps <code>private</code>/<code>final</code>; only primitives <code>protected abstract</code></td></tr>
+<tr><td>Consistency across subclasses; easy to add a new type (OCP)</td><td>More subclasses &rArr; scattered code, harder to maintain</td><td>Keep steps small; move shared variant code into an intermediate abstract class; document each step</td></tr>
+<tr><td>Popular in frameworks (JUnit, Spring)</td><td>Rigid: changing the skeleton affects every subclass</td><td>Design the skeleton carefully; add new optional steps as hooks with default bodies</td></tr>
+</table>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">Online course completion: validate registration &rarr; deliver course-specific final assessment &rarr; evaluate performance &rarr; generate certificate. Programming = coding challenge + automated tests; Design = portfolio + instructor rubric. Pattern &amp; why (2); UML (8); abstract class code (3); concrete classes (4). <i>Quiz 6</i></div>
+<div class="a"><b>Template Method</b>: every course follows the same completion sequence (must be enforced), but two steps vary per course type. The abstract class fixes the order in a <code>final completeCourse()</code>, implements the common steps once, and leaves <code>deliverFinalAssessment()</code> and <code>evaluatePerformance()</code> abstract.</div>
+{{uml:course}}
+<pre class="split">public abstract class OnlineCourse {
+    protected String studentId, courseId;
+    public OnlineCourse(String s, String c) { studentId = s; courseId = c; }
+
+    public final void completeCourse() {                 // TEMPLATE METHOD
+        if (!validateRegistration()) { System.out.println("Not registered"); return; }
+        deliverFinalAssessment();
+        double score = evaluatePerformance();
+        generateCertificate(score);
+    }
+    private boolean validateRegistration() {             // common
+        System.out.println("Validating registration of " + studentId); return true;
+    }
+    protected abstract void deliverFinalAssessment();     // varies
+    protected abstract double evaluatePerformance();      // varies
+    private void generateCertificate(double score) {      // common
+        if (score &gt;= 50) System.out.println("Certificate issued for " + courseId + " (" + score + ")");
+        else System.out.println("Not passed");
+    }
+}
+public class ProgrammingCourse extends OnlineCourse {
+    public ProgrammingCourse(String s, String c) { super(s, c); }
+    protected void deliverFinalAssessment() { System.out.println("Coding challenge assigned"); }
+    protected double evaluatePerformance() {
+        int passed = AutoTestRunner.run(studentId), total = 20;     // automated tests
+        return passed * 100.0 / total;
+    }
+}
+public class DesignCourse extends OnlineCourse {
+    public DesignCourse(String s, String c) { super(s, c); }
+    protected void deliverFinalAssessment() { System.out.println("Submit design portfolio"); }
+    protected double evaluatePerformance() {
+        return Instructor.gradeWithRubric(studentId);                // instructor rubric
+    }
+}
+OnlineCourse c = new ProgrammingCourse("S001", "Java101");  c.completeCourse();</pre>
+
+<div class="q">E-commerce payments (Credit Card, PayPal, COD): validate &rarr; process (varies) &rarr; send receipt. Define abstract <code>PaymentProcessor</code> with <code>validate()</code>, <code>processPayment()</code>, <code>sendReceipt()</code>, <code>handlePayment()</code>; implement <code>CreditCardPaymentProcessor</code>. <i>2025 Q4.1(a), 4.2&ndash;3.3 (7)</i></div>
+{{uml:payment}}
+<pre>public abstract class PaymentProcessor {
+    public final void handlePayment(Order o) {                    // template method
+        o.setId(OrderIdGenerator.getInstance().nextId());          // Singleton (Note 01)
+        if (!validate(o)) { System.out.println("Invalid payment details"); return; }
+        processPayment(o);
+        sendReceipt(o);
+    }
+    protected boolean validate(Order o) { return o.getAmount() &gt; 0 &amp;&amp; o.getCustomer() != null; }
+    protected abstract void processPayment(Order o);
+    protected void sendReceipt(Order o) { System.out.println("Receipt sent for " + o.getId()); }
+}
+public class CreditCardPaymentProcessor extends PaymentProcessor {
+    protected boolean validate(Order o) { return super.validate(o) &amp;&amp; CardValidator.luhnCheck(o.getCardNo()); }
+    protected void processPayment(Order o) {
+        System.out.println("Charging card " + o.getMaskedCard() + " LKR " + o.getAmount());
+        BankGateway.authorizeAndCapture(o.getCardNo(), o.getAmount());
+    }
+}</pre>
+
+<div class="q">Supermarket pay: executives (basic + bonus + allowances), daily workers (8h/day, overtime, &gt;200h attendance allowance), temporary staff (daily allowance); all pay 8% EPF. Pattern; class diagram; challenges; &ldquo;code duplication can be achieved&rdquo; &mdash; agree? <i>2022 Q2; 2023 Q1 (salary components)</i></div>
+{{uml:salary}}
+<div class="a"><b>Template Method</b>: one fixed calculation sequence (gross &rarr; EPF 8% &rarr; deductions &rarr; net) in <code>final calculateNetSalary()</code>; EPF, tax, gross and net formulas are common; components that differ (overtime, allowances, no-pay) are primitive/hook methods. Executive overrides <code>overtime()</code> and <code>noPay()</code> to return 0 (2023 deviation). <b>Challenges:</b> rigid order; many subclasses; parameter (rate) changes. <b>Mechanisms:</b> hooks with defaults; keep rates (EPF 8%, 12%, ETF 3%, tax threshold 100,000) in a <b>Singleton configuration</b> loaded from DB/properties so they change without code changes; intermediate abstract classes for shared variants. <b>Code duplication:</b> the statement is wrong as worded &mdash; Template Method <b>avoids</b> duplication: common formulas exist once in the superclass, subclasses contain only differences. Some small duplication may remain if two subclasses override a step the same way &rarr; move it to the parent or a shared intermediate class.</div>
+<pre>public final double calculateNetSalary() {
+    double gross = basic + attendanceAllowance() + overtime();         // OT = basic*hrs/(30*8)
+    double epfEmp = gross * Config.get().epfEmployee();                 // 0.08
+    double tax = Math.max(0, (gross - 100000) * 0.06);
+    return gross - (epfEmp + noPay() + tax);                            // noPay = basic*days/30
+}</pre>
+
+<div class="q">E-commerce checkout: validate cart &rarr; process payment (methods vary) &rarr; arrange delivery (domestic/international) &rarr; send confirmation. Best pattern; how abstract classes are used. <i>2024 Q4.2, 4.4 (10)</i></div>
+{{uml:checkout}}
+<div class="a"><b>Template Method.</b> <code>CheckoutProcess</code> is an <b>abstract class</b> because it must hold <i>implemented</i> common steps (validateCart, sendConfirmation) <i>and</i> declare abstract steps &mdash; an interface couldn&rsquo;t enforce the order or share code. It can&rsquo;t be instantiated; the <code>final checkout()</code> fixes the sequence. Concrete subclasses supply payment and delivery. Payment method itself could be a separate Strategy/Factory object passed in to avoid a subclass for every payment &times; delivery combination. Exceptions (4.3) &rarr; Chain of Responsibility (Note 08). Authorization levels (4.5) &rarr; Proxy/CoR.</div>
+<div class="q">Every support level must log request &rarr; attempt to solve &rarr; log resolution, each with its own solving logic. Enforce the procedure. <i>Quiz 7 Q4 (4)</i></div>
+<div class="a">Combine <b>Template Method with the CoR handler</b>: the abstract <code>SupportHandler</code> gets <code>public final void handle(req)</code> = <code>logRequest()</code> &rarr; <code>boolean solved = attemptToSolve(req)</code> (abstract) &rarr; <code>logResolution()</code> &rarr; if not solved, pass to <code>next</code>. L1/L2/L3/Specialist only implement <code>attemptToSolve()</code>, so no level can skip logging. (Code in Note 08.)</div>
+<div class="q">University exams (theory, programming, practical): register &rarr; prepare &rarr; conduct &rarr; evaluate &rarr; publish. <i>Lecture case 1</i> &middot; Order types (standard/premium/international) differ only in shipment preparation. <i>Lecture case 2</i></div>
+<div class="a">Both Template Method: <code>ExaminationProcess.conductExamination()</code> final; register &amp; publish common; prepare/conduct/evaluate abstract. <code>OrderProcessor.processOrder()</code> final; validate, price, payment, notify common; <code>prepareShipment()</code> abstract.</div>
+<p class="small"><b>vs Strategy:</b> Template = inheritance, varies <i>steps</i> inside a fixed algorithm (compile time). Strategy = composition, swaps the <i>whole algorithm</i> at runtime. <b>vs Factory Method:</b> a factory method is often one step of a template method. <b>Mistakes:</b> template method not <code>final</code> &middot; making every step abstract (no reuse) &middot; using an interface for the base &middot; client calling steps individually &middot; drawing dashed (implements) instead of solid (extends) arrows.</p>
+</body></html>

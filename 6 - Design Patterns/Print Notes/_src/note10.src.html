@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 10 - SOLID Design Principles</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "10 SOLID  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>10 &nbsp;SOLID Design Principles <small>Lecture 12</small></h1>
+<div class="id"><table>
+<tr><th style="width:17%">Principle</th><th style="width:27%">Definition</th><th style="width:22%">Ask yourself</th><th>Patterns that support it</th></tr>
+<tr><td><b>S</b> &mdash; Single Responsibility</td><td>A class should have <b>only one reason to change</b>.</td><td>Can I describe the class without &ldquo;and&rdquo;?</td><td>Facade (coordinates; work in separate classes), Decorator (one responsibility per wrapper), State (one class per state), CoR (one check per handler)</td></tr>
+<tr><td><b>O</b> &mdash; Open/Closed</td><td>Open for <b>extension</b>, closed for <b>modification</b>.</td><td>Can I add behaviour without editing tested code?</td><td>Strategy, Decorator, Factory, Template Method, State, CoR, Adapter (new classes, no edits)</td></tr>
+<tr><td><b>L</b> &mdash; Liskov Substitution</td><td>Objects of a superclass must be <b>replaceable by subclass objects</b> without breaking correctness.</td><td>Can I safely replace the parent with the child?</td><td>Template Method, State, Proxy, Decorator all rely on substitutable subtypes</td></tr>
+<tr><td><b>I</b> &mdash; Interface Segregation</td><td>Clients should <b>not be forced to depend on methods they don&rsquo;t use</b>. Prefer small focused interfaces.</td><td>Am I forcing a class to implement methods it doesn&rsquo;t need?</td><td>Adapter (narrow Target), role interfaces (<code>Workable</code>, <code>Eatable</code>)</td></tr>
+<tr><td><b>D</b> &mdash; Dependency Inversion</td><td>High-level modules should not depend on low-level modules; <b>both depend on abstractions</b>. Details depend on abstractions.</td><td>Does business logic depend on a concrete class?</td><td>Factory (returns abstractions), Facade/Adapter/Proxy behind interfaces; Dependency Injection (Spring)</td></tr>
+</table></div>
+
+<h2>S &mdash; Single Responsibility</h2>
+<div class="two">
+<div><pre>// BAD: Order changes for 4 reasons
+public class Order {
+    public double calculateTotal() { ... }   // business rules
+    public void saveToDatabase()   { ... }   // persistence
+    public void printInvoice()     { ... }   // presentation
+    public void sendEmail()        { ... }   // communication
+}</pre></div>
+<div><pre>// GOOD: one responsibility each
+public class Order          { double calculateTotal() {...} }
+public class OrderRepository{ void save(Order o) {...} }
+public class InvoicePrinter { void print(Order o) {...} }
+public class EmailService   { void sendConfirmation(Order o) {...} }
+// OrderService (facade) coordinates them</pre></div>
+</div>
+<p class="small">&ldquo;If the database technology changes, should <code>Order</code> change?&rdquo; No &rArr; responsibilities separated. &ldquo;This class calculates orders <i>and</i> saves orders <i>and</i> sends emails&rdquo; &rArr; warning sign.</p>
+
+<h2>O &mdash; Open/Closed</h2>
+<div class="two">
+<div><pre>// BAD: edit this method for every new customer type
+public double calculateDiscount(String type, double amt) {
+    if (type.equals("REGULAR")) return amt * 0.05;
+    if (type.equals("PREMIUM")) return amt * 0.10;
+    if (type.equals("VIP"))     return amt * 0.20;
+    return 0;                 // + STUDENT? edit again
+}</pre></div>
+<div><pre>// GOOD: polymorphism (Strategy)
+public interface DiscountStrategy { double calculate(double amt); }
+public class VipDiscount implements DiscountStrategy {
+    public double calculate(double a) { return a * 0.20; } }
+public class StudentDiscount implements DiscountStrategy {   // NEW
+    public double calculate(double a) { return a * 0.15; } }
+public class DiscountCalculator {
+    public double calculate(DiscountStrategy s, double a) { return s.calculate(a); }
+}</pre></div>
+</div>
+<p class="small">Same for payments: <code>PaymentMethod</code> interface; CryptoPayment added as a new class, <code>PaymentProcessor</code> unchanged.</p>
+
+<h2>L &mdash; Liskov Substitution</h2>
+<div class="two">
+<div><pre>// VIOLATION 1: Square extends Rectangle
+Rectangle r = new Square();
+r.setWidth(5); r.setHeight(10);
+r.getArea();          // expected 50, got 100
+
+// VIOLATION 2: Penguin extends Bird
+class Bird { void fly() {...} }
+class Penguin extends Bird {
+    void fly() { throw new UnsupportedOperationException(); }
+}
+makeItFly(new Penguin());   // crashes at runtime</pre></div>
+<div><pre>// FIX: model the right abstraction
+interface Shape { double getArea(); }
+class Rectangle implements Shape { ... }
+class Square    implements Shape { ... }
+
+abstract class Bird { abstract void eat(); }
+interface Flyable { void fly(); }
+class Sparrow extends Bird implements Flyable { ... }
+class Penguin extends Bird { ... }   // never asked to fly</pre></div>
+</div>
+<p class="small">A subtype must honour the parent&rsquo;s contract: same expectations, no stronger preconditions, no weaker postconditions, no surprising exceptions. Ask not only &ldquo;is-a?&rdquo; but &ldquo;can the child fulfil the <b>behavioural contract</b> of the parent?&rdquo;</p>
+
+<h2>I &mdash; Interface Segregation</h2>
+<div class="two">
+<div><pre>// BAD: fat interface
+interface Worker { void work(); void eat(); void sleep(); }
+class Robot implements Worker {
+    public void work() { ... }
+    public void eat()   { throw new UnsupportedOperationException(); }
+    public void sleep() { throw new UnsupportedOperationException(); }
+}</pre></div>
+<div><pre>// GOOD: small role interfaces (capabilities)
+interface Workable  { void work(); }
+interface Eatable   { void eat(); }
+interface Sleepable { void sleep(); }
+class Human implements Workable, Eatable, Sleepable { ... }
+class Robot implements Workable { ... }</pre></div>
+</div>
+<p class="small">Java examples of capability interfaces: <code>Comparable</code>, <code>Runnable</code>, <code>Iterable</code>, <code>AutoCloseable</code>. Framework design: split <code>ApplicationComponent</code> into <code>Startable</code>, <code>Loggable</code>, <code>Cacheable</code>&hellip;</p>
+
+<h2>D &mdash; Dependency Inversion (+ Dependency Injection)</h2>
+<div class="two">
+<div><pre>// BAD: high-level depends on low-level concrete class
+public class UserService {
+    private MySQLDatabase database = new MySQLDatabase();
+    public void saveUser(String u) { database.save(u); }
+}   // change DB -&gt; change UserService; can't mock</pre></div>
+<div><pre>// GOOD: depend on abstraction; inject via constructor
+public interface UserRepository { void save(String user); }
+public class MySQLUserRepository implements UserRepository { ... }
+public class PostgreSQLUserRepository implements UserRepository { ... }
+public class UserService {
+    private final UserRepository repository;
+    public UserService(UserRepository repository) { this.repository = repository; }
+    public void saveUser(String u) { repository.save(u); }
+}
+new UserService(new PostgreSQLUserRepository());   // or a FakeRepository in tests</pre></div>
+</div>
+<p class="small"><b>Dependency Inversion</b> = the principle (depend on abstractions). <b>Dependency Injection</b> = the technique (dependencies are provided from outside, e.g. constructor injection; Spring container wires them). Benefits: loose coupling, easy to switch implementations, testable with fakes/mocks.</p>
+
+<h2>Exam use &amp; key points</h2>
+<table>
+<tr><td class="k">SOLID vs patterns</td><td>SOLID = principles (&ldquo;how should I design classes?&rdquo;); patterns = proven solutions to recurring problems; frameworks = reusable infrastructure (Spring applies DIP/DI). A pattern does not automatically guarantee SOLID &mdash; it depends on how you apply it.</td></tr>
+<tr><td class="k">Not &ldquo;more classes&rdquo;</td><td>SOLID is about managing <b>change</b>, not creating interfaces for everything (over-engineering a 2-line calculator violates YAGNI). Add abstraction when change is likely.</td></tr>
+<tr><td class="k">Benefits</td><td>Smaller ripple effect of change &middot; easier testing (DIP + mocks) &middot; maintainability &middot; extensibility &middot; supports clean architecture (dependencies point inward to business logic).</td></tr>
+<tr><td class="k">Linking in answers</td><td>When justifying a pattern, add one SOLID line: Decorator/Strategy/Factory &rArr; OCP; Facade/CoR handlers &rArr; SRP; State/Proxy/Template subclasses &rArr; LSP; Adapter Target &rArr; ISP; Factory/DI/Singleton-behind-interface &rArr; DIP. &ldquo;Explain the use of interfaces&rdquo; &rArr; contract + polymorphism + DIP + OCP + testability.</td></tr>
+</table>
+</body></html>

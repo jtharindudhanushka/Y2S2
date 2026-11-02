@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 05 - Proxy Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "05 Proxy  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>05 &nbsp;Proxy <small>Structural &middot; &ldquo;same interface, controlled access&rdquo;</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td>Provide a <b>surrogate or placeholder for another object to control access to it</b>. The proxy can do something <b>before or after</b> the request reaches the real object.</td></tr>
+<tr><td class="k">Use when</td><td>The client must not reach the real object directly: needs <b>permission checks</b>, the object is <b>expensive to create/load</b> (load only when needed), is <b>remote</b>, or calls must be <b>cached / logged / counted / rate-limited</b>.</td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;load only a couple of pages rather than the entire document&rdquo;, &ldquo;lazy loading&rdquo;, &ldquo;should not directly access; access controlled through verifies permissions&rdquo;, &ldquo;restricted archive&rdquo;, &ldquo;authorization options / roles&rdquo;, &ldquo;cache&rdquo;, &ldquo;remote service&rdquo;, &ldquo;log every access&rdquo;.</td></tr>
+<tr><td class="k">Participants</td><td><b>Subject</b> (common interface) &middot; <b>RealSubject</b> (does the real work) &middot; <b>Proxy</b> (same interface, holds a reference to RealSubject, controls access, forwards) &middot; <b>Client</b> (uses Subject; cannot tell proxy from real).</td></tr>
+<tr><td class="k">Types</td><td><b>Virtual</b> (lazy loading of heavy objects) &middot; <b>Protection</b> (authorization by role) &middot; <b>Remote</b> (local representative of a remote object: RMI, gRPC, API gateway) &middot; <b>Cache/Smart</b> (cache results, reference counting) &middot; <b>Logging</b> (audit) &middot; Security/firewall.</td></tr>
+</table></div>
+
+<h2>UML &mdash; generic</h2>
+{{uml:generic}}
+<div class="two">
+<div><table>
+<tr><th>Slide quiz statement</th><th>True?</th></tr>
+<tr><td>Proxy and RealSubject are subtypes of Subject</td><td><b>Yes</b> (both implement it)</td></tr>
+<tr><td>Polymorphism through implementing the Subject interface</td><td><b>Yes</b></td></tr>
+<tr><td>RealSubject has a reference to the Proxy</td><td><b>No</b> &mdash; Proxy refers to RealSubject</td></tr>
+<tr><td>Can&rsquo;t achieve polymorphism because both implement Subject</td><td><b>No</b></td></tr>
+</table></div>
+<div><table>
+<tr><th>Request flow (sequence)</th></tr>
+<tr><td>1. Client calls <code>request()</code> on Subject (actually the Proxy)</td></tr>
+<tr><td>2. Proxy pre-processing: check access, validate, cache lookup, log</td></tr>
+<tr><td>3. If allowed: create RealSubject if needed, forward <code>request()</code></td></tr>
+<tr><td>4. RealSubject does the real work, returns</td></tr>
+<tr><td>5. Proxy post-processing (cache result, log), returns to client</td></tr>
+</table></div>
+</div>
+<p class="small"><b>Why must Proxy and RealSubject share one interface?</b> So the client can use either one without changing code (transparent substitution); the client &ldquo;should never know which one it receives&rdquo;.</p>
+
+<h2>Virtual proxy (lazy loading) &mdash; Image viewer (lecture)</h2>
+{{uml:image}}
+<div class="two">
+<div><pre>public interface Image { void display(); }
+
+public class RealImage implements Image {
+    private String fileName;
+    public RealImage(String fileName) {
+        this.fileName = fileName;
+        loadFromDisk();                       // EXPENSIVE
+    }
+    private void loadFromDisk() { System.out.println("Loading " + fileName); }
+    public void display() { System.out.println("Displaying " + fileName); }
+}</pre></div>
+<div><pre>public class ProxyImage implements Image {
+    private String fileName;
+    private RealImage realImage;              // null until needed
+    public ProxyImage(String fileName) { this.fileName = fileName; }
+    public void display() {
+        if (realImage == null)
+            realImage = new RealImage(fileName);   // load on first use
+        realImage.display();                       // forward
+    }
+}
+Image img = new ProxyImage("photo.jpg");   // nothing loaded yet
+img.display();   // Loading photo.jpg, Displaying photo.jpg
+img.display();   // Displaying photo.jpg (already loaded)</pre></div>
+</div>
+
+<h2>Protection proxy &mdash; Bank withdrawal / hospital roles (lecture)</h2>
+<div class="two">
+<div><pre>public interface Account { void withdraw(double amount); }
+
+public class BankAccount implements Account {          // real
+    private double balance = 50000;
+    public void withdraw(double amt) { balance -= amt;
+        System.out.println("Withdrawn " + amt); }
+}
+public class AccountProxy implements Account {         // proxy
+    private BankAccount real = new BankAccount();
+    private String pin; private boolean active;
+    private double dailyLimit = 20000;
+    public AccountProxy(String pin, boolean active) { this.pin = pin; this.active = active; }
+    public void withdraw(double amt) {
+        if (!"1234".equals(pin))   { System.out.println("Invalid PIN"); return; }
+        if (!active)               { System.out.println("Account blocked"); return; }
+        if (amt &gt; dailyLimit)      { System.out.println("Over limit"); return; }
+        System.out.println("[LOG] withdraw " + amt);  // logging
+        real.withdraw(amt);                             // forward
+    }
+}</pre></div>
+<div><table>
+<tr><th>Role</th><th><code>viewPatient()</code></th></tr>
+<tr><td>Doctor</td><td>allowed &rarr; forwarded to PatientService</td></tr>
+<tr><td>Receptionist</td><td>denied by proxy</td></tr>
+<tr><td>Administrator</td><td>allowed</td></tr>
+</table>
+<p class="small">All users call the same method; the <b>proxy decides</b> using the role-access matrix. The real <code>PatientService</code> only handles allowed requests.<br><b>Remote proxy:</b> mobile banking app calls <code>getBalance()</code> on a local proxy that sends HTTP/JSON to the bank server and returns the result &mdash; the app &ldquo;feels like calling a local object&rdquo;. <b>API Gateway</b> = proxy in microservices (auth, rate limiting, routing, caching).<br><b>Warehouse example:</b> proxy checks stock and routes orders only to warehouses that can fulfil them.</p></div>
+</div>
+
+<h2>Advantages / disadvantages / challenge &rarr; mechanism</h2>
+<table>
+<tr><th style="width:30%">Advantages</th><th style="width:28%">Disadvantages</th><th>Challenge &rarr; mechanism</th></tr>
+<tr><td><b>Security</b>: controlled access to the real object</td><td>Extra layer &rArr; response delay</td><td>Overhead for cheap/public objects &rarr; don&rsquo;t use a proxy there (calculator, static menu)</td></tr>
+<tr><td><b>Performance</b>: lazy loading, caching</td><td>More classes, more complexity</td><td>Stale cache &rarr; expiry time / invalidate on update</td></tr>
+<tr><td>Client code unchanged (same interface, OCP)</td><td>Proxy and real must be kept in sync when interface changes</td><td>Thread-safe lazy creation &rarr; synchronize the creation check</td></tr>
+<tr><td>Logging/auditing, remote access transparency</td><td>Debugging through layers is harder</td><td>Proxy becomes a bottleneck / single point of failure &rarr; replicate proxies (HA), keep them stateless</td></tr>
+</table>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">LMS: when users read large content, load only a couple of pages rather than the entire document. <i>2022 Q4.4, 2023 Q4.4 (5)</i></div>
+{{uml:document}}
+<div class="a"><b>Virtual Proxy.</b> <code>DocumentProxy</code> implements <code>Document</code> like <code>LargeDocument</code>; the reader holds the proxy. <code>getPage(n)</code> loads only the requested page (and maybe the next one) from storage and caches it; the full document is never loaded unless needed &rArr; fast opening, low memory/bandwidth. The reader code doesn&rsquo;t change.</div>
+<pre>public class DocumentProxy implements Document {
+    private final String path; private final Map&lt;Integer, Page&gt; cache = new HashMap&lt;&gt;();
+    public DocumentProxy(String path) { this.path = path; }
+    public Page getPage(int n) {
+        return cache.computeIfAbsent(n, k -&gt; PageLoader.load(path, k));   // load one page on demand
+    }
+}</pre>
+<div class="q">Rare books in a restricted archive; users must not access them directly; access controlled through permission checks. Explain and give an example. <i>2025 Q3.1(c), 3.5 (5)</i></div>
+{{uml:rare}}
+<div class="a"><b>Protection Proxy.</b> <code>ArchiveAccessProxy</code> and <code>RestrictedArchive</code> implement <code>BookArchive</code>. The proxy&rsquo;s <code>getBook(id)</code> first checks the user&rsquo;s role/permission (e.g. researcher with approved request, membership valid), logs the access, then forwards to the real archive; otherwise throws <code>AccessDeniedException</code>. Example: a student requests a 1820 manuscript &rarr; denied; a librarian-approved researcher &rarr; allowed and logged.</div>
+<pre>public RareBook getBook(String id) {
+    if (!user.hasRole("RESEARCHER") || !user.isApproved(id)) throw new AccessDeniedException("No permission");
+    AuditLog.record(user, id);            // logging proxy duty
+    return archive.getBook(id);           // forward to real subject
+}</pre>
+<div class="q">Website with different authorization options depending on the user&rsquo;s need. <i>2023 Q4.5 (5)</i></div>
+<div class="a"><b>Protection Proxy</b> in front of each protected service (<code>AdminServiceProxy</code>, <code>ReportServiceProxy</code>) checks role/permissions before forwarding. If authorization is a <i>sequence</i> of checks (login &rarr; role &rarr; permission &rarr; 2FA), combine with Chain of Responsibility. If features are optional add-ons per user, Decorator.</div>
+<div class="q">Implementing a logging mechanism &mdash; which pattern? <i>2023 Q3.4 (5)</i></div>
+<div class="a">Two valid views: <b>Singleton</b> for the logger itself (one shared logger writing to one file &mdash; see Note 01). To <b>add logging around existing services without changing them</b>, a <b>Proxy</b> (logging proxy) intercepts each call, logs before/after, and forwards. State which you mean and why.</div>
+<div class="q">Proxy vs Decorator vs Adapter</div>
+<div class="a">Proxy = <b>same interface, controls access</b> (usually one layer, may create the real object itself). Decorator = same interface, <b>adds responsibilities</b>, stacked many times, wrapped object given by client. Adapter = <b>different interface</b>, converts. &ldquo;A protection proxy might be implemented like a decorator, but remember the intent.&rdquo;</div>
+<p class="small"><b>Use proxy?</b> Hospital login (yes, protection) &middot; image editor high-res (yes, virtual) &middot; online exam authentication (yes, protection) &middot; CDN cache (yes, cache) &middot; Netflix streaming (protection + cache) &middot; Google Drive thumbnails (virtual + remote) &middot; calculator / static restaurant menu (<b>no</b> &mdash; no access control or expensive load). <b>Mistakes:</b> proxy with a different interface (that&rsquo;s Adapter) &middot; arrow from RealSubject to Proxy &middot; client creating RealSubject directly.</p>
+</body></html>

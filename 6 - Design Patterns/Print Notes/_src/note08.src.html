@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 08 - Chain of Responsibility Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "08 Chain of Responsibility  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>08 &nbsp;Chain of Responsibility (CoR) <small>Behavioral</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td><b>Avoid coupling the sender of a request to its receiver</b> by giving more than one object a chance to handle the request. <b>Chain the receiving objects and pass the request along the chain until an object handles it.</b></td></tr>
+<tr><td class="k">Use when</td><td>Several handlers could process a request and the <b>sender shouldn&rsquo;t decide which</b>; requests go through <b>levels / escalation / sequential checks</b>; handlers should be added, removed or reordered easily. Analogy: patient &rarr; doctor &rarr; specialist; try/catch.</td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;several levels of support / escalation&rdquo;, &ldquo;approval limits (team leader, manager, director, CEO)&rdquo;, &ldquo;sequence of checks that must occur in order and be easy to extend&rdquo;, &ldquo;multiple sub-filters&rdquo;, &ldquo;different priorities&rdquo;, &ldquo;exception handling&rdquo;, &ldquo;multiple handlers hard-coded in sequence&rdquo;.</td></tr>
+<tr><td class="k">Participants</td><td><b>Handler</b> (abstract; <code>next</code> reference + <code>setNext()</code> + <code>handleRequest()</code>) &middot; <b>ConcreteHandlers</b> (handle if they can, else forward) &middot; <b>Request</b> (data: level/type/amount) &middot; <b>Client</b> (builds the chain, sends to the first handler only).</td></tr>
+<tr><td class="k">Chain ends when</td><td>(1) a handler processes the request completely, or (2) the end of the chain is reached (request unhandled &rArr; add a fallback/default handler). Variant: <b>every</b> handler processes (validation/filter pipeline) and a failure stops the chain.</td></tr>
+</table></div>
+
+<h2>UML &mdash; generic</h2>
+{{uml:generic}}
+<p class="small">Self-association <code>next</code> on Handler = the chain link (aggregation to itself). Each concrete handler knows only its <b>next</b> handler. <b>Traditional approach</b> (<code>if type == PASSWORD &rarr; level1 &hellip; else if &hellip;</code>) makes the client know every handler, tightly coupled; adding a level changes the client.</p>
+
+<h2>Java &mdash; IT support escalation (lecture)</h2>
+<div class="two">
+<div><pre>public class SupportRequest {
+    private int level; private String description;
+    public SupportRequest(int level, String d) { this.level = level; description = d; }
+    public int getLevel() { return level; }
+    public String getDescription() { return description; }
+}
+public abstract class SupportHandler {
+    protected SupportHandler nextHandler;
+    public void setNextHandler(SupportHandler n) { this.nextHandler = n; }
+    public abstract void handleRequest(SupportRequest r);
+}
+public class Level1Support extends SupportHandler {
+    public void handleRequest(SupportRequest r) {
+        if (r.getLevel() == 1)
+            System.out.println("Level 1 handled: " + r.getDescription());
+        else if (nextHandler != null)
+            nextHandler.handleRequest(r);       // pass along
+    }
+}
+// Level2Support (level==2), Level3Support (level==3): same shape
+public class Administrator extends SupportHandler {   // fallback
+    public void handleRequest(SupportRequest r) {
+        System.out.println("Admin handled: " + r.getDescription());
+    }
+}</pre></div>
+<div><pre>// CLIENT - build chain, send to FIRST only
+SupportHandler l1 = new Level1Support();
+SupportHandler l2 = new Level2Support();
+SupportHandler l3 = new Level3Support();
+SupportHandler admin = new Administrator();
+l1.setNextHandler(l2);
+l2.setNextHandler(l3);
+l3.setNextHandler(admin);
+
+l1.handleRequest(new SupportRequest(3, "Network is unavailable"));
+// L1: level 3? no -> L2: no -> L3: yes
+// Output: Level 3 handled: Network is unavailable</pre>
+<table>
+<tr><th>Trace: request level 2</th><th>Result</th></tr>
+<tr><td>Level1 (level==1?)</td><td>no &rarr; forward</td></tr>
+<tr><td>Level2 (level==2?)</td><td><b>yes &rarr; handled, stop</b></td></tr>
+<tr><td>Level3, Admin</td><td>not reached</td></tr>
+</table>
+<table>
+<tr><th>Expense approval (in-class)</th><th>Limit</th></tr>
+<tr><td>TeamLeaderApprover</td><td>&le; $1,000</td></tr>
+<tr><td>ManagerApprover</td><td>$1,001 &ndash; $5,000</td></tr>
+<tr><td>DirectorApprover</td><td>$5,001 &ndash; $20,000</td></tr>
+<tr><td>CEOApprover</td><td>&gt; $20,000 (any)</td></tr>
+</table>
+<p class="small">$750 &rarr; TL; $3,500 &rarr; Manager; $12,000 &rarr; Director; $50,000 &rarr; CEO.</p></div>
+</div>
+
+<h2>Advantages / challenges &rarr; mechanism</h2>
+<table>
+<tr><th style="width:30%">Advantages (slides)</th><th style="width:27%">Challenges (slides)</th><th>Mechanism to overcome</th></tr>
+<tr><td>More than one object can handle a request</td><td><b>No guarantee</b> the request is handled (end of chain)</td><td>Add a <b>default/fallback handler</b> at the end (Administrator, Specialist, &ldquo;manual review&rdquo;)</td></tr>
+<tr><td>Nodes added/removed dynamically; order can be shuffled</td><td><b>Debugging is tricky</b></td><td>Log at every handler (who received, who handled); unit-test each handler</td></tr>
+<tr><td>A handler doesn&rsquo;t need to know how the next works (SRP)</td><td><b>Unnecessary handlers &rArr; inefficiency</b> / long chains</td><td><b>Set priorities</b> (performance, accuracy, less complex first); <b>bypass</b> handlers based on request info; keep chain short</td></tr>
+<tr><td><b>Decouples sender and receivers</b>; can improve HA/DR (backup handlers)</td><td>Order sensitive; cycles if mis-linked</td><td>Build the chain in one place (builder/config); validate no cycles</td></tr>
+</table>
+<p class="small"><b>Priorities / ordering criteria (slides):</b> performance (fast handlers first), accuracy, complexity (simple first), cost, availability, severity (high-priority checks first), business priority. &ldquo;Should the fastest handler always be first?&rdquo; &mdash; usually cheap, high-rejection checks first so expensive ones run less; but severity or accuracy may override. <b>CoR vs State:</b> CoR = &ldquo;<i>who</i> will handle this request?&rdquo; (request moves along handlers); State = &ldquo;<i>how</i> should I behave now?&rdquo; (context delegates to its current state).</p>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">Technical support: L1 (password reset, blocked accounts), L2 (installation errors), L3 (DB connectivity, performance), Specialist (rare problems). Explain CoR (identify request, handler, concrete handlers) (4); UML (6); Java for a DB-connectivity request (6); enforce log &rarr; attempt &rarr; log for every level (4). <i>Quiz 7</i></div>
+<div class="a"><b>Request</b> = <code>SupportRequest</code> (issue type + description). <b>Handler</b> = abstract <code>SupportHandler</code> holding <code>next</code>. <b>Concrete handlers</b> = <code>L1Support</code>, <code>L2Support</code>, <code>L3Support</code>, <code>SpecialistSupport</code> (end of chain, handles everything left). <b>Client</b> = support desk; it sends every request to L1 and never decides who solves it. Each level solves what it can and escalates the rest; levels can be added/reordered without touching the client. The fixed procedure is enforced by a <b>Template Method</b> inside the handler (<code>final handle()</code>).</div>
+{{uml:support}}
+<pre class="split">public enum IssueType { PASSWORD_RESET, ACCOUNT_BLOCKED, INSTALLATION_ERROR, DB_CONNECTIVITY, PERFORMANCE, OTHER }
+public class SupportRequest {
+    private final IssueType type; private final String description;
+    public SupportRequest(IssueType t, String d) { type = t; description = d; }
+    public IssueType getType() { return type; }  public String getDescription() { return description; }
+}
+public abstract class SupportHandler {
+    protected SupportHandler next;
+    public SupportHandler setNext(SupportHandler n) { this.next = n; return n; }   // returns n to allow chaining
+
+    public final void handle(SupportRequest r) {              // TEMPLATE METHOD (Q4)
+        logRequest(r);
+        boolean solved = attemptToSolve(r);                    // level-specific logic
+        logResolution(r, solved);
+        if (!solved &amp;&amp; next != null) next.handle(r);           // CoR: escalate
+    }
+    private void logRequest(SupportRequest r) { System.out.println(getClass().getSimpleName() + " received " + r.getType()); }
+    private void logResolution(SupportRequest r, boolean ok) { System.out.println(getClass().getSimpleName() + (ok ? " RESOLVED" : " escalated")); }
+    protected abstract boolean attemptToSolve(SupportRequest r);
+}
+public class L1Support extends SupportHandler {
+    protected boolean attemptToSolve(SupportRequest r) {
+        return r.getType() == IssueType.PASSWORD_RESET || r.getType() == IssueType.ACCOUNT_BLOCKED;
+    }
+}
+public class L2Support extends SupportHandler {
+    protected boolean attemptToSolve(SupportRequest r) { return r.getType() == IssueType.INSTALLATION_ERROR; }
+}
+public class L3Support extends SupportHandler {
+    protected boolean attemptToSolve(SupportRequest r) {
+        if (r.getType() == IssueType.DB_CONNECTIVITY || r.getType() == IssueType.PERFORMANCE) {
+            System.out.println("L3: checking DB server, connection pool, restarting service"); return true;
+        }
+        return false;
+    }
+}
+public class SpecialistSupport extends SupportHandler {
+    protected boolean attemptToSolve(SupportRequest r) { System.out.println("Specialist investigating"); return true; }
+}
+// CLIENT
+SupportHandler chain = new L1Support();
+chain.setNext(new L2Support()).setNext(new L3Support()).setNext(new SpecialistSupport());
+chain.handle(new SupportRequest(IssueType.DB_CONNECTIVITY, "App cannot connect to MySQL"));
+/* L1Support received DB_CONNECTIVITY / L1Support escalated
+   L2Support received DB_CONNECTIVITY / L2Support escalated
+   L3Support received DB_CONNECTIVITY / L3: checking DB ... / L3Support RESOLVED   (Specialist not reached) */</pre>
+
+<div class="q">Email spam filter with sub-filters (sender, sent time, content, attachment): diagram, pattern &amp; reasons, prioritisation criteria, adding sub-components, HA &amp; DR. <i>2022 Q3 (25)</i></div>
+{{uml:spam}}
+<div class="a"><b>CoR</b>: each sub-filter is a handler; the email passes Sender &rarr; Time &rarr; Content &rarr; Attachment; any filter can mark SPAM and stop, otherwise forward; end of chain = deliver to inbox. Reasons: decoupled, each filter one responsibility, filters added/reordered without changing the mail server. <b>Prioritise</b> by: cost/performance (cheap sender blacklist and time checks first, expensive content NLP and attachment virus scan last), rejection rate (filters that catch most spam early), accuracy/false positives, severity (malware attachment may go first for security). <b>Adding sub-components:</b> new class extending <code>SpamFilter</code> (e.g. <code>LinkReputationFilter</code>), insert with <code>setNext</code> or from a config list &mdash; no change to existing filters (OCP). <b>HA &amp; DR:</b> stateless filter chain replicated on several servers behind a load balancer; a backup handler/replica if one filter service fails (skip-on-timeout or fallback filter); message queue so mails aren&rsquo;t lost; rules and blacklists replicated to a second region with backups; failover to DR site.</div>
+
+<div class="q">Order checks: inventory &rarr; fraud &rarr; delivery-area; maintainable &amp; extendable. / Library: membership &rarr; availability &rarr; fines, in order, easy to extend. <i>2025 Q4.1(b), 3.4; Q3.1(a), 3.4 (10)</i></div>
+{{uml:validation}}
+<pre>public abstract class Validator {
+    private Validator next;
+    public Validator linkWith(Validator n) { this.next = n; return n; }
+    public boolean validate(Order o) {
+        if (!check(o)) return false;                 // fail -&gt; stop chain
+        return next == null || next.validate(o);     // pass -&gt; next check
+    }
+    protected abstract boolean check(Order o);
+}
+public class InventoryCheck extends Validator { protected boolean check(Order o) { return Stock.has(o.getItems()); } }
+public class FraudCheck extends Validator { protected boolean check(Order o) { return FraudService.score(o) &lt; 0.7; } }
+public class DeliveryAreaCheck extends Validator { protected boolean check(Order o) { return Zones.covers(o.getAddress()); } }
+
+Validator v = new InventoryCheck();  v.linkWith(new FraudCheck()).linkWith(new DeliveryAreaCheck());
+if (v.validate(order)) paymentProcessor.handlePayment(order);</pre>
+<div class="a">Library: <code>MembershipCheck</code> &rarr; <code>AvailabilityCheck</code> &rarr; <code>FineCheck</code> in the same way; a failed check stops and returns the reason (&ldquo;membership expired&rdquo;). New check (e.g. <code>BorrowLimitCheck</code>) = new class + one link.</div>
+<div class="q">Exception-handling system that handles different priorities. / Include exception handling for different types. / Different levels of authorization. <i>2023 Q4.3; 2024 Q4.3, 4.5</i></div>
+<div class="a"><b>CoR</b>: <code>ExceptionHandler</code> chain ordered by priority/severity &mdash; <code>ValidationErrorHandler</code> (low: show message) &rarr; <code>PaymentErrorHandler</code> (retry / alternate method) &rarr; <code>SystemErrorHandler</code> (log, alert admin) &rarr; <code>DefaultHandler</code> (generic error page). Like try/catch blocks: if one can&rsquo;t handle, control passes on. Authorization levels: <code>Authenticated</code> &rarr; <code>RoleCheck</code> &rarr; <code>PermissionCheck</code> &rarr; <code>ApprovalLimit</code> handlers, each higher level handling what lower ones can&rsquo;t (same as expense approval).</div>
+<p class="small"><b>Mistakes:</b> client calling every handler itself (that&rsquo;s the if-else approach) &middot; forgetting <code>next != null</code> check &middot; no fallback handler &middot; drawing association from concrete handlers to each other instead of the <code>next</code> self-association on Handler &middot; confusing with State.</p>
+</body></html>

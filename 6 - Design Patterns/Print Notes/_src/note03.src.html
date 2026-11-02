@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 03 - Facade Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "03 Facade  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>03 &nbsp;Facade <small>Structural</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td>Provide a <b>unified interface to a set of interfaces in a subsystem</b>. Facade defines a <b>higher-level interface</b> that makes the subsystem easier to use.</td></tr>
+<tr><td class="k">Use when</td><td>Client must call <b>many subsystem classes in the right order</b> to do one job; you want one simple entry point (&ldquo;one door, many rooms&rdquo;). Wedding planner, restaurant waiter, Netflix &ldquo;Play&rdquo;, BankService.</td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;one simple interface&rdquo;, &ldquo;single entry point&rdquo;, &ldquo;hide the complexity of&rdquo;, &ldquo;by internally calling inventory, payment, notification and login services&rdquo;, &ldquo;combine air tickets, hotels and taxis&rdquo;, &ldquo;complex subsystem calls scattered everywhere&rdquo;.</td></tr>
+<tr><td class="k">Participants</td><td><b>Facade</b> (knows which subsystem does what, delegates) &middot; <b>Subsystem classes</b> (do the real work, don&rsquo;t know the facade) &middot; <b>Client</b> (talks only to the facade).</td></tr>
+<tr><td class="k">Key rules (slides)</td><td>Facade <b>does NOT add functionality</b> &middot; it is a <b>wrapper / point of entry</b> &middot; client <b>can still access subsystems directly</b> if needed &middot; there can be <b>more than one facade</b> for a big system.</td></tr>
+</table></div>
+
+<h2>UML &mdash; generic</h2>
+{{uml:generic}}
+<div class="two">
+<div><table><tr><th>Without Facade</th><th>With Facade</th></tr>
+<tr><td>Client talks to Auth, Payment, Inventory, Shipping, Email&hellip;</td><td>Client talks to <b>one</b> class</td></tr>
+<tr><td>High coupling, many dependencies</td><td>Low coupling</td></tr>
+<tr><td>Subsystem change breaks client</td><td>Change absorbed inside facade</td></tr>
+<tr><td>Hard to test / use, duplicated call sequences</td><td>Easy to use, test (mock facade), reuse</td></tr>
+</table></div>
+<div><table><tr><th>Facade vs Factory Method</th><th></th></tr>
+<tr><td>Factory</td><td>Creational &middot; <b>creates</b> objects &middot; &ldquo;which object to create?&rdquo; &middot; <code>createPayment()</code></td></tr>
+<tr><td>Facade</td><td>Structural &middot; <b>coordinates</b> existing objects &middot; &ldquo;what to do with many objects?&rdquo; &middot; <code>transferMoney()</code></td></tr>
+</table></div>
+</div>
+
+<h2>UML &mdash; Banking example (lecture)</h2>
+{{uml:bank}}
+<p class="small">Filled diamond = composition (facade owns the subsystem objects). Dashed + triangle = implements <code>IAccount</code>.</p>
+
+<h2>Java</h2>
+<div class="two">
+<div><pre>public interface IAccount {
+    void deposit(double amt);
+    void withdraw(double amt);
+    double getBalance();
+}
+public class SavingAccount implements IAccount {
+    private double balance;
+    public void deposit(double a)  { balance += a; }
+    public void withdraw(double a) {
+        if (a &gt; balance) throw new IllegalStateException("Insufficient");
+        balance -= a;
+    }
+    public double getBalance() { return balance; }
+}
+// CurrentAccount, InvestmentAccount: same shape, own rules</pre></div>
+<div><pre>public class BankService {                 // FACADE
+    private Map&lt;String, IAccount&gt; accounts = new HashMap&lt;&gt;();
+
+    public void createAccount(String no, String type) {
+        accounts.put(no, type.equals("SAVING") ? new SavingAccount()
+                       : type.equals("CURRENT") ? new CurrentAccount()
+                       : new InvestmentAccount());
+    }
+    public void deposit(String no, double a)  { accounts.get(no).deposit(a); }
+    public void withdraw(String no, double a) { accounts.get(no).withdraw(a); }
+    public void transferMoney(String from, String to, double a) {
+        accounts.get(from).withdraw(a);    // coordinates a sequence
+        accounts.get(to).deposit(a);
+    }
+    public double getBalance(String no) { return accounts.get(no).getBalance(); }
+}
+// CLIENT: one object, one entry point
+BankService bank = new BankService();
+bank.createAccount("John", "SAVING"); bank.createAccount("Alice", "CURRENT");
+bank.deposit("John", 5000);
+bank.transferMoney("John", "Alice", 1000);</pre></div>
+</div>
+
+<h2>Advantages / limitations / challenge &rarr; mechanism</h2>
+<table>
+<tr><th style="width:30%">Advantages</th><th style="width:28%">Limitations</th><th>Challenge &rarr; mechanism</th></tr>
+<tr><td>Less coupling: client depends on one class</td><td>May become a <b>God class</b> (too big)</td><td>God class &rarr; split into several smaller facades per area (BookingFacade, PaymentFacade); keep it delegating only (SRP)</td></tr>
+<tr><td>Easier to learn and use; cleaner code</td><td>Extra layer / abstraction</td><td>Single point of failure / bottleneck &rarr; stateless facade, run several instances behind a load balancer (HA); or a Singleton if one is enough</td></tr>
+<tr><td>Easier maintenance: subsystem changes don&rsquo;t reach client</td><td>Not worth it for very small systems</td><td>Hides useful features &rarr; still allow direct subsystem access for advanced clients</td></tr>
+<tr><td>Reusable; easy to test (mock facade)</td><td>Can hide useful subsystem functionality</td><td>Subsystems have incompatible interfaces (third-party) &rarr; put <b>Adapters</b> under the facade</td></tr>
+</table>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">Approach to provide one simple interface for borrowing books by internally calling inventory, payment, notification and login services. <i>Quiz 3 Q5</i></div>
+<div class="a"><b>Facade.</b> Create <code>LibraryFacade.borrowBook(userId, bookId)</code> which, in order, calls <code>LoginService.verify()</code> &rarr; <code>InventoryService.checkAvailable()/reserve()</code> &rarr; <code>PaymentService.chargeFee()</code> &rarr; <code>NotificationService.sendConfirmation()</code>. The librarian UI calls only the facade, so it is decoupled from four services; a change in any service is handled inside the facade.</div>
+<pre>public class LibraryFacade {
+    private LoginService login = new LoginService();      private InventoryService inv = new InventoryService();
+    private PaymentService pay = new PaymentService();    private NotificationService note = new NotificationService();
+    public boolean borrowBook(String user, String book) {
+        if (!login.verify(user) || !inv.isAvailable(book)) return false;
+        inv.reserve(book);  pay.chargeFee(user);  note.send(user, "Borrowed " + book);
+        return true;
+    }
+}</pre>
+<div class="q">Travel website: user books air ticket, hotel and taxi; collect data from different web services. Draw a diagram; which pattern for the sub-system that combines them and why? Challenges and mechanism? <i>2022 Q1.1&ndash;1.2 (15)</i></div>
+{{uml:travel}}
+<div class="a"><b>Facade</b> for combining: <code>TravelBookingFacade.bookTrip()</code> calls Air, Hotel and Taxi services and returns one itinerary &mdash; user does one action, subsystem complexity hidden, low coupling. <b>Challenges:</b> (1) facade grows into a God class as services are added; (2) a failure in one service (taxi down) affects the whole booking / single point of failure; (3) partial booking consistency (air booked, hotel failed). <b>Mechanisms:</b> split into smaller facades; delegate only; timeouts + retries + fallback and run facade as stateless replicas; compensating actions (cancel air if hotel fails). For connecting each sub-service to different third-party web services &rarr; <b>Adapter</b> (Note 04).</div>
+<div class="q">Can you access each subsystem directly? Should there be only one facade? <i>slide Q&amp;A</i></div>
+<div class="a">Yes &mdash; the facade is a convenience, not a lock; advanced clients may use subsystems directly. No &mdash; a complex system can have several facades (one per use-case area) to avoid a God class.</div>
+<div class="q">How is Facade different from Adapter?</div>
+<div class="a">Adapter <b>converts</b> one interface into another the client expects (usually wraps <b>one</b> object, makes it compatible). Facade <b>simplifies</b>: a new, higher-level interface over <b>many</b> objects. Adapter = translator, Facade = simplifier.</div>
+
+<h2>Mistakes</h2>
+<p class="small">Putting business logic in the facade (it only delegates) &middot; drawing subsystems pointing back to the facade (they don&rsquo;t know it) &middot; calling it creational &middot; confusing with Adapter (interface conversion) or Proxy (same interface, access control).</p>
+</body></html>

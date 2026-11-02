@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 00 - Pattern Selector and Multi-Pattern Cases</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "00 Pattern Selector  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>00 &nbsp;Pattern Selector &amp; Multi-Pattern Cases <small>read first &middot; then Notes 01&ndash;10</small></h1>
+
+<h2>Which pattern? &mdash; decision map</h2>
+{{uml:decision}}
+
+<h2>All patterns on one table</h2>
+<table class="long">
+<tr><th style="width:11%">Pattern</th><th style="width:22%">One-line intent</th><th style="width:31%">Trigger phrases in a case study</th><th style="width:25%">UML shape to draw</th><th>Note</th></tr>
+<tr><td><b>Singleton</b> <span class="tag">C</span></td><td>Only one instance + global access</td><td>only one / single global / same file / unique ID / run by one user / new object every time &rArr; duplicates</td><td>1 class: <code>-<u>instance</u></code>, private ctor, <code>+<u>getInstance()</u></code></td><td>01</td></tr>
+<tr><td><b>Multiton</b> <span class="tag">C</span></td><td>Exactly N instances</td><td>max 5 batsmen / 3 printers / N gates</td><td>static List/Map capped at N</td><td>01</td></tr>
+<tr><td><b>Factory Method</b> <span class="tag">C</span></td><td>Subclass/factory decides which class to instantiate</td><td>create different types of X depending on request; hide <code>new</code>; extensible product framework</td><td>Product interface + concretes; Factory with <code>create(type)</code> (or abstract Creator)</td><td>02</td></tr>
+<tr><td><b>Facade</b> <span class="tag">S</span></td><td>One simple interface to a complex subsystem</td><td>one simple interface by internally calling A, B, C; combine air/hotel/taxi; hide complexity</td><td>Client &rarr; Facade &rarr; many subsystem classes</td><td>03</td></tr>
+<tr><td><b>Adapter</b> <span class="tag">S</span></td><td>Convert an interface into the one the client expects</td><td>legacy / vendor / can&rsquo;t modify; new device has a different method; third-party web services with different signatures</td><td>Client &rarr; Target&laquo;i&raquo; &larr; Adapter &#9670;&rarr; Adaptee</td><td>04</td></tr>
+<tr><td><b>Proxy</b> <span class="tag">S</span></td><td>Placeholder that controls access to the real object</td><td>should not access directly; permissions; load only a few pages; lazy; cache; remote; log access</td><td>Subject&laquo;i&raquo; &larr; Proxy &rarr; RealSubject (both implement Subject)</td><td>05</td></tr>
+<tr><td><b>Decorator</b> <span class="tag">S</span></td><td>Add responsibilities dynamically by wrapping</td><td>optional add-ons/toppings; price = base + selections; without subclasses for every combination</td><td>Component&laquo;i&raquo; &larr; Concrete + abstract Decorator (has-a Component) &larr; concrete decorators</td><td>06</td></tr>
+<tr><td><b>Template Method</b> <span class="tag">B</span></td><td>Fixed algorithm skeleton, subclasses fill steps</td><td>same overall process / common workflow; however step X differs; enforce the procedure</td><td>abstract class with <code>final templateMethod()</code> + abstract steps; subclasses</td><td>07</td></tr>
+<tr><td><b>Chain of Resp.</b> <span class="tag">B</span></td><td>Pass request along handlers until handled</td><td>levels of support; approval limits; sequential checks easy to extend; sub-filters; priorities; exceptions</td><td>abstract Handler with <code>next</code> self-link; concrete handlers</td><td>08</td></tr>
+<tr><td><b>State</b> <span class="tag">B</span></td><td>Behaviour changes with internal state</td><td>moves through states; transitions; behaviour depends on current state; draw state diagram</td><td>Context &#9671;&rarr; State&laquo;i&raquo; &larr; concrete states (+ state diagram)</td><td>09</td></tr>
+</table>
+<div class="two">
+<div><table>
+<tr><th>Code smell (case-study lecture)</th><th>Pattern</th></tr>
+<tr><td>Too many if-else for object creation</td><td>Factory</td></tr>
+<tr><td>Bloated class with optional features</td><td>Decorator</td></tr>
+<tr><td>Complex subsystem calls scattered everywhere</td><td>Facade</td></tr>
+<tr><td>Behaviour changes via flags/conditions</td><td>State</td></tr>
+<tr><td>Multiple handlers hard-coded in sequence</td><td>CoR</td></tr>
+<tr><td>Copy-pasted algorithm with small differences</td><td>Template Method</td></tr>
+<tr><td>Several <code>new Manager()</code> for one resource</td><td>Singleton</td></tr>
+</table></div>
+<div><table>
+<tr><th>Often confused</th><th>Difference in one line</th></tr>
+<tr><td>Adapter vs Facade</td><td>Adapter <b>converts</b> one interface; Facade <b>simplifies</b> many</td></tr>
+<tr><td>Proxy vs Decorator</td><td>both same interface: Proxy <b>controls access</b>; Decorator <b>adds features</b>, stackable</td></tr>
+<tr><td>Proxy vs Adapter</td><td>Proxy keeps the <b>same</b> interface; Adapter <b>changes</b> it</td></tr>
+<tr><td>State vs CoR</td><td>State: &ldquo;how do I behave now?&rdquo;; CoR: &ldquo;who handles this request?&rdquo;</td></tr>
+<tr><td>Template vs Strategy</td><td>Template: inheritance, varies steps; Strategy: composition, swaps whole algorithm</td></tr>
+<tr><td>Factory vs Facade</td><td>Factory <b>creates</b>; Facade <b>coordinates</b> existing objects</td></tr>
+<tr><td>Singleton vs Factory</td><td>Singleton controls <b>how many</b>; Factory controls <b>which type</b></td></tr>
+</table></div>
+</div>
+
+<h2>How to answer a 25-mark case study</h2>
+<div class="two">
+<div><ol class="small">
+<li><b>Understand the problem first</b> (case-study lecture): what varies? what must stay fixed? what will change in future?</li>
+<li><b>Categorize:</b> creation / structure / behaviour &rarr; decision map.</li>
+<li><b>Name the pattern + category + GoF intent</b> (1 line).</li>
+<li><b>Map the case to participants</b> (&ldquo;Target = Printer, Adapter = &hellip;&rdquo;) &mdash; this is where marks are.</li>
+<li><b>Reasons</b> (2&ndash;4): problem removed + benefit (coupling, OCP, reuse, consistency).</li>
+<li><b>Diagram:</b> scenario diagram (boxes/arrows) if asked &ldquo;depict the scenario&rdquo;; class diagram with stereotypes, +/&minus;/#, underline static, correct arrows.</li>
+<li><b>Code:</b> interface &rarr; concrete &rarr; pattern class &rarr; 3-line client.</li>
+<li><b>Challenges &rarr; mechanism</b> pairs (table in each note).</li>
+<li><b>State assumptions</b> (paper says so).</li>
+</ol></div>
+<div><table>
+<tr><th colspan="2">UML notation used in all notes</th></tr>
+<tr><td>&laquo;interface&raquo; / <i>Italic</i></td><td>interface / abstract class or method</td></tr>
+<tr><td><code>+ &minus; #</code>, <u>underline</u></td><td>public, private, protected; static</td></tr>
+<tr><td>solid line + hollow &#9651;</td><td>extends (inheritance, is-a)</td></tr>
+<tr><td>dashed line + hollow &#9651;</td><td>implements (realization)</td></tr>
+<tr><td>solid line + open arrow</td><td>association (has a reference)</td></tr>
+<tr><td>&#9670; filled / &#9671; hollow diamond</td><td>composition (owns) / aggregation (wraps)</td></tr>
+<tr><td>dashed line + open arrow</td><td>dependency (uses, creates)</td></tr>
+<tr><td>rounded box + filled arrow, &#9679;</td><td>state + transition (event label), initial state</td></tr>
+</table></div>
+</div>
+
+<h2>Multi-pattern questions &mdash; every combination seen so far</h2>
+<table class="long">
+<tr><th style="width:24%">Case</th><th style="width:28%">Part &rarr; pattern</th><th>How they fit together</th></tr>
+<tr><td>Smart parking <i>(Quiz 1)</i></td><td>session states &rarr; <b>State</b>; vendor payment machine &rarr; <b>Adapter</b></td><td><code>PaymentDueState.pay()</code> calls <code>PaymentProcessor</code> = <code>LegacyPaymentAdapter</code> wrapping the vendor class (N09, N04).</td></tr>
+<tr><td>Database objects <i>(Quiz 2)</i></td><td>MySQL/PostgreSQL/Mongo &rarr; <b>Factory</b>; one active connection &rarr; <b>Singleton</b></td><td><code>DatabaseFactory.getDatabase(type)</code> creates the type; <code>DatabaseConnectionManager.getInstance()</code> keeps one connection (N02, N01).</td></tr>
+<tr><td>Library scanner <i>(Quiz 3)</i></td><td>new scanner &rarr; <b>Adapter</b>; one borrowing interface &rarr; <b>Facade</b></td><td><code>LibraryFacade.borrowBook()</code> calls login, inventory (uses <code>ScannerAdapter</code>), payment, notification (N04, N03).</td></tr>
+<tr><td>Printing <i>(Quiz 4)</i></td><td>one PrinterManager &rarr; <b>Singleton</b> (4 printers &rarr; Multiton)</td><td>N01.</td></tr>
+<tr><td>User profile <i>(Quiz 5)</i></td><td>badge, 2FA, theme &rarr; <b>Decorator</b></td><td>N06.</td></tr>
+<tr><td>Course completion <i>(Quiz 6)</i></td><td>fixed completion flow &rarr; <b>Template Method</b>; optional AI/premium/mentor &rarr; <b>Decorator</b></td><td><code>completeCourse()</code> final in <code>OnlineCourse</code>; extras wrap the <code>Course</code> features/price (N07, N06).</td></tr>
+<tr><td>Tech support <i>(Quiz 7)</i></td><td>L1&rarr;L2&rarr;L3&rarr;Specialist &rarr; <b>CoR</b>; same log&rarr;solve&rarr;log &rarr; <b>Template Method</b></td><td><code>final handle()</code> in the abstract handler; levels implement <code>attemptToSolve()</code> (N08).</td></tr>
+<tr><td>Travel booking <i>(2022 Q1)</i></td><td>combine air+hotel+taxi &rarr; <b>Facade</b>; third-party services &rarr; <b>Adapter</b></td><td>Facade on top, one adapter per provider below each sub-service (N03, N04).</td></tr>
+<tr><td>Payroll <i>(2022 Q2, 2023 Q1)</i></td><td>salary per employee type &rarr; <b>Template Method</b>; run by one user &rarr; <b>Singleton</b>; changing parameters &rarr; Singleton config</td><td>N07, N01.</td></tr>
+<tr><td>Restaurant <i>(2023 Q3)</i></td><td>coffee combos &rarr; <b>Decorator</b>; vendor event sites &rarr; <b>Adapter</b>; logging &rarr; <b>Singleton</b> (or logging Proxy)</td><td>N06, N04, N01/N05.</td></tr>
+<tr><td>Coffee shop + logger <i>(2024 Q1)</i></td><td><b>Decorator</b> + <b>Singleton</b> logger</td><td>N06, N01.</td></tr>
+<tr><td>Workflow document <i>(2024 Q3)</i></td><td><b>State</b> + interfaces</td><td>N09.</td></tr>
+<tr><td>Checkout <i>(2024 Q4)</i></td><td>standard steps &rarr; <b>Template</b>; exceptions &rarr; <b>CoR</b>; authorization levels &rarr; <b>Proxy / CoR</b></td><td>N07, N08, N05.</td></tr>
+<tr><td>Self-checkout kiosk <i>(2025 Q1)</i></td><td>kiosk states &rarr; <b>State</b>; add-ons &rarr; <b>Decorator</b>; global tax calculator &rarr; <b>Singleton</b></td><td>Scanning adds decorated items; Payment state sums <code>getCost()</code> and calls <code>TaxCalculator.getInstance()</code> (N09, N06, N01).</td></tr>
+<tr><td>Library automation <i>(2025 Q3)</i></td><td>sequential checks &rarr; <b>CoR</b>; book types &rarr; <b>Factory</b>; rare books &rarr; <b>Proxy</b>; optional services &rarr; <b>Decorator</b></td><td>Request passes Membership&rarr;Availability&rarr;Fine chain; <code>BookFactory</code> creates the book; <code>ArchiveAccessProxy</code> guards rare books; borrow transaction wrapped with SMS/Email/Extended decorators.</td></tr>
+<tr><td>E-commerce orders <i>(2025 Q4)</i></td><td>payment workflow &rarr; <b>Template</b>; validations &rarr; <b>CoR</b>; OrderID &rarr; <b>Singleton</b>; payment objects &rarr; <b>Factory</b></td><td>See combined diagram below.</td></tr>
+<tr><td>Cake shop / LMS / bank <i>(2022&ndash;23 Q4)</i></td><td>cake options &rarr; Decorator; extensible framework &rarr; Factory; LMS pages &rarr; Proxy; LMS modules &rarr; Factory; accounts &rarr; Factory; exceptions by priority &rarr; CoR; authorization &rarr; Proxy</td><td>Short 5-mark answers: name pattern + 2 reasons + tiny class sketch.</td></tr>
+</table>
+
+<h3>Combined design &mdash; 2025 Q4 e-commerce (CoR + Factory + Template + Singleton)</h3>
+{{uml:ecommerce}}
+<pre>public void placeOrder(Order o) {
+    Validator chain = new InventoryCheck();                                   // CoR
+    chain.linkWith(new FraudCheck()).linkWith(new DeliveryAreaCheck());
+    if (!chain.validate(o)) { System.out.println("Order rejected"); return; }
+    PaymentProcessor p = PaymentFactory.create(o.getPaymentMethod());         // Factory
+    p.handlePayment(o);              // Template: id = OrderIdGenerator.getInstance().nextId() (Singleton) -&gt; validate -&gt; process -&gt; receipt
+}</pre>
+<p class="small"><b>Lecture case studies</b> (likely exam scenarios): <b>Food delivery</b> &mdash; Facade (order flow), Adapter (restaurant/payment APIs), State (order status), Factory (payment), Singleton (config), Observer-like notifications. <b>Smart home</b> &mdash; Facade (&ldquo;away mode&rdquo;), Adapter (Zigbee/Bluetooth devices), State (device modes), Proxy (remote/authorization). <b>LMS</b> &mdash; Factory (modules), Proxy (lazy content, access), Template (exam/grading flow), Decorator (premium features). <b>ATM</b> &mdash; State (idle/card inserted/PIN ok), Singleton (bank connection), Proxy (authorization), CoR (cash dispenser denominations / validations). <b>Shopping cart</b> &mdash; Decorator (promotions/gift wrap), Template (checkout), Factory (payment), CoR (validations), Singleton (ID/tax). <b>Travel</b> &mdash; Facade + Adapter. <b>Video streaming</b> &mdash; Proxy (subscription/protection, CDN cache, lazy load), Decorator (subtitles/HD), Facade (&ldquo;Play&rdquo;), State (player states).</p>
+
+<h2>Generic answer bank</h2>
+<table>
+<tr><td class="k">Why not inheritance for everything?</td><td>Class explosion, rigid compile-time hierarchy, changes ripple to subclasses &rArr; prefer composition (Decorator, State, Strategy, Adapter).</td></tr>
+<tr><td class="k">Use of interfaces / abstract classes</td><td>Interface = contract (CAN-DO), enables polymorphism and loose coupling, DIP, swap implementations, mocking. Abstract class = shared code + enforced steps (IS-A), used by Template Method and abstract Decorator/Handler.</td></tr>
+<tr><td class="k">General pattern trade-offs</td><td>+ reuse, flexibility, loose coupling, maintainability, common vocabulary. &minus; more classes/abstraction, learning curve, overuse = over-engineering; &ldquo;Is it worth the extra abstraction?&rdquo; (case-study lecture).</td></tr>
+<tr><td class="k">Configurability (parameters change over time)</td><td>Move rates/limits to external config (DB table, properties/YAML) read by a Singleton <code>ConfigManager</code>; admin UI to update; version and audit changes; no recompilation.</td></tr>
+<tr><td class="k">High Availability (HA) &amp; Disaster Recovery (DR)</td><td><b>HA:</b> stateless services replicated behind a load balancer, health checks and auto-restart (Kubernetes), no single point of failure (avoid single Singleton server &rarr; replicas), DB replication/cluster, retries/timeouts/circuit breaker, fallback handler in CoR. <b>DR:</b> regular backups, replicated DB to a second region/data centre, defined RPO/RTO, automated failover, infrastructure-as-code to rebuild, periodic DR drills.</td></tr>
+</table>
+
+<h2>Q2 in every past paper: Microservices (not in the slides &mdash; standard answers)</h2>
+{{uml:micro}}
+<table class="long">
+<tr><td class="k">Draw the scenario</td><td>Clients &rarr; API Gateway &rarr; one service per business capability, <b>each with its own DB</b>; message broker for events; registry, config, monitoring; containers on Kubernetes. Library: Book, User, Borrowing, Notification, Catalog Search (search index e.g. Elasticsearch). Supermarket chain: Purchasing, Sales/POS, Warehouse/Inventory, Supplier, Branch, Reporting. Streaming: User Profile, Content Delivery (transcode + CDN), Recommendation (ML), Billing/Subscription, Analytics.</td></tr>
+<tr><td class="k">Scalability, fault isolation, continuous deployment</td><td><b>Scalability:</b> each service scales independently (horizontal pods, auto-scaling on CPU/requests; e.g. scale Content Delivery and Search, not Billing); stateless services; caching/CDN. <b>Fault isolation:</b> separate processes/DBs; circuit breakers, timeouts, bulkheads, retries with back-off; graceful degradation (recommendations down &rarr; show popular list). <b>CD:</b> own repo + CI/CD pipeline per service, automated tests, Docker images, blue-green/canary releases, versioned APIs; independent teams per service; centralized logging, metrics and tracing.</td></tr>
+<tr><td class="k">Data consistency</td><td>Database-per-service &rArr; no shared transactions; use <b>Saga pattern</b> (sequence of local transactions with <b>compensating actions</b>, choreography via events or orchestration), <b>eventual consistency</b> via event-driven messaging (Kafka), <b>transactional outbox</b>, idempotent consumers, CQRS for read models (catalog search), two-phase commit only where strong consistency is essential (rare), data versioning.</td></tr>
+<tr><td class="k">Security</td><td>API Gateway as single entry: <b>authentication</b> (OAuth2/OpenID Connect, JWT tokens), <b>authorization</b> by role (RBAC); <b>service-to-service</b>: mutual TLS, service mesh, short-lived tokens; HTTPS everywhere; encrypt sensitive data at rest (PCI-DSS for payments); secrets vault; rate limiting, input validation, WAF; least privilege per service DB; audit logging and monitoring.</td></tr>
+<tr><td class="k">Same hardware/config for each platform? <i>(2023)</i></td><td>Consistent environments (containers/IaC) make deployment, scaling and failover predictable: any node can run any service, same performance baseline, easier capacity planning, automation, monitoring and troubleshooting; avoids &ldquo;works on my machine&rdquo;; simplifies DR (rebuild identical nodes). Exceptions: GPU nodes for ML recommendation services.</td></tr>
+</table>
+</body></html>

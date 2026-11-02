@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 01 - Singleton Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "01 Singleton  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>01 &nbsp;Singleton <small>Creational</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td>Ensure a class has <b>only one instance</b> and provide a <b>global point of access</b> to it.</td></tr>
+<tr><td class="k">Use when</td><td>One shared resource/manager must exist once for the whole system: printer queue, logger, DB connection manager, configuration, tax calculator, ID generator, payroll engine.</td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;only one&rdquo;, &ldquo;single global&rdquo;, &ldquo;same file / same queue&rdquo;, &ldquo;unique ID for all&rdquo;, &ldquo;run by only one user&rdquo;, &ldquo;new object created every time &rArr; duplicates / inconsistent status&rdquo;. &nbsp;<b>&ldquo;exactly / maximum N&rdquo; &rArr; Multiton.</b></td></tr>
+<tr><td class="k">3 ingredients</td><td>(1) <b>private constructor</b> (2) <b>private static</b> field holding the instance (3) <b>public static getInstance()</b>. Class <code>final</code> (Java) / <code>sealed</code> (C#).</td></tr>
+<tr><td class="k">Problems it removes</td><td>Memory waste &middot; inconsistent data (each object has own state) &middot; resource conflicts (wrong order, duplicates, freezes) &middot; difficult management.</td></tr>
+</table></div>
+
+<h2>UML &mdash; Smart printing system (one PrinterManager for all departments)</h2>
+{{uml:singleton}}
+
+<h2>Java</h2>
+<div class="two">
+<div class="w55"><pre>public final class PrinterManager {
+    private static PrinterManager instance;        // the one object
+    private final Queue&lt;String&gt; jobQueue = new LinkedList&lt;&gt;();
+
+    private PrinterManager() { }                   // no "new" outside
+
+    public static PrinterManager getInstance() {   // lazy
+        if (instance == null)
+            instance = new PrinterManager();
+        return instance;                           // always same object
+    }
+    public synchronized void submitJob(String dept, String doc) {
+        jobQueue.add(dept + ": " + doc);           // one FIFO queue
+    }
+    public String getStatus() { return jobQueue.size() + " jobs waiting"; }
+}
+
+// client (any department)
+PrinterManager p1 = PrinterManager.getInstance();  // creates obj#1
+PrinterManager p2 = PrinterManager.getInstance();  // returns obj#1
+System.out.println(p1 == p2);                      // true</pre></div>
+<div><table>
+<tr><th>Step</th><th>instance</th><th>Result</th></tr>
+<tr><td>1st <code>getInstance()</code></td><td>null &rarr; obj#1</td><td>object created, returned</td></tr>
+<tr><td>2nd <code>getInstance()</code></td><td>obj#1</td><td>no creation, same object</td></tr>
+<tr><td><code>p1 == p2</code></td><td></td><td><b>true</b> (same reference)</td></tr>
+<tr><td><code>new S(); new S();</code> (public ctor)</td><td></td><td>2 objects &rArr; <b>false</b></td></tr>
+</table>
+<table>
+<tr><th>Why?</th><th>Answer</th></tr>
+<tr><td>private constructor</td><td>stops <code>new</code> from outside; class controls creation</td></tr>
+<tr><td>static instance</td><td>belongs to the class &rArr; one copy shared by all</td></tr>
+<tr><td>static getInstance()</td><td>no object exists yet to call a normal method on</td></tr>
+<tr><td>final / sealed</td><td>a nested subclass could still reach the private ctor</td></tr>
+<tr><td>volatile</td><td>all threads see the fully built instance (no reordering/caching)</td></tr>
+</table></div>
+</div>
+
+<h3>Creation variants (thread safety)</h3>
+<div class="two">
+<div><pre>// A. EAGER: thread-safe, created at class load
+private static final Singleton INSTANCE = new Singleton();
+public static Singleton getInstance() { return INSTANCE; }
+
+// B. LAZY (above): NOT thread-safe. Two threads can both
+//    see null and create two objects.
+
+// C. synchronized method: safe, but locks on EVERY call
+public static synchronized Singleton getInstance() {...}</pre></div>
+<div><pre>// D. DOUBLE-CHECKED LOCKING: lazy + thread-safe + fast
+private static volatile Singleton instance;
+public static Singleton getInstance() {
+    if (instance == null) {                  // check 1, no lock
+        synchronized (Singleton.class) {     // C#: lock(obj)
+            if (instance == null)            // check 2, locked
+                instance = new Singleton();
+        }
+    }
+    return instance;
+}</pre></div>
+</div>
+<p class="small"><b>Eager drawback (Sarcar):</b> touching any static member (e.g. <code>Singleton.MyInt</code>) creates the instance even if never used. <b>Check 2</b> is needed because a second thread may be waiting at the lock while the first creates the object.</p>
+
+<h2>Extended Singleton = Multiton (N objects) &middot; Object Pool (N reusable)</h2>
+<div class="two">
+<div class="w40">{{uml:multiton}}
+<p class="small">Round robin: p1&rarr;Printer1 (new), p2&rarr;Printer2 (new), p3&rarr;Printer3 (new), p4&rarr;<b>Printer1</b> again.<br>1 DB manager &rArr; Singleton &middot; 3 printers / 5 ATMs &rArr; Multiton &middot; 10 reusable threads &rArr; Object Pool &middot; unlimited customers &rArr; normal class.</p></div>
+<div><pre>public final class PrinterManager {
+  private static final int MAX_PRINTERS = 3;
+  private static final List&lt;PrinterManager&gt; printers = new ArrayList&lt;&gt;();
+  private static int nextPrinter = 0;
+  private PrinterManager() { }
+
+  public static synchronized PrinterManager getPrinter() {
+    if (printers.size() &lt; MAX_PRINTERS)
+      printers.add(new PrinterManager());          // create up to N
+    PrinterManager p = printers.get(nextPrinter);
+    nextPrinter = (nextPrinter + 1) % MAX_PRINTERS; // round robin
+    return p;
+  }
+}</pre></div>
+</div>
+
+<h2>Advantages / disadvantages / challenge &rarr; mechanism</h2>
+<table>
+<tr><th style="width:25%">Advantages</th><th style="width:28%">Disadvantages</th><th>Challenge &rarr; mechanism to overcome</th></tr>
+<tr><td>Saves memory (one object)</td><td>Hard to unit test (tight coupling, can&rsquo;t mock)</td><td>Race condition creates 2 objects &rarr; double-checked locking / eager init</td></tr>
+<tr><td>Centralized control of shared resource</td><td>Hidden dependencies (global access)</td><td>Testing &rarr; Singleton implements an interface, inject it (DI) so tests pass a mock</td></tr>
+<tr><td>Easy global access</td><td>Can become a global variable if overused</td><td>Bottleneck / single point of failure &rarr; Multiton / pool + standby replica (HA/DR)</td></tr>
+<tr><td>No duplicate objects &rArr; consistent state</td><td>Lazy version not thread-safe</td><td>Subclass/reflection breaks it &rarr; <code>final</code>, private ctor. Overuse &rarr; only for true single resources</td></tr>
+</table>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">Explain two problems that could occur because multiple PrinterManager objects are created. (2)</div>
+<div class="a">(1) <b>Inconsistent state:</b> each object holds its own queue/status, so departments see different printer statuses and no object knows the global order &rArr; jobs print in the wrong order. (2) <b>Resource conflict:</b> uncoordinated objects send jobs to the one printer simultaneously &rArr; duplicated jobs and the printer becomes unresponsive. (Also memory waste.)</div>
+<div class="q">Recommend a design approach and explain why it is suitable. (3)</div>
+<div class="a"><b>Singleton.</b> Private constructor + private static instance + public static <code>getInstance()</code>; every department calls <code>PrinterManager.getInstance()</code> and gets the <b>same object</b> &rArr; one queue (FIFO order, no duplicates), one status for all, no wasted objects. Use double-checked locking because departments submit concurrently.</div>
+<div class="q">How do you ensure only one DB connection is active at a given time?</div>
+<div class="a">Make <code>DatabaseConnectionManager</code> a Singleton: private ctor, static <code>connection</code>; <code>getConnection()</code> opens it only if <code>null</code>, otherwise returns the existing one (synchronized). The Factory creates the right <code>Database</code> type once; everyone reuses that one connection.</div>
+<div class="q">Payroll: salary calculation must run by only one user; all other connections/processes stopped. Pattern and why? (4)</div>
+<div class="a"><b>Singleton</b> <code>SalaryCalculationManager</code> &rArr; only one calculation engine exists. Its <code>runPayroll()</code> is <code>synchronized</code> and sets a <code>running</code> flag; while set, other logins/processes are rejected or queued. Singleton = one controller; lock = one execution at a time.</div>
+<pre>public final class SalaryCalculationManager {
+    private static volatile SalaryCalculationManager instance;
+    private boolean running = false;
+    private SalaryCalculationManager() { }
+    public static SalaryCalculationManager getInstance() { /* double-checked locking (D) */ }
+    public synchronized void runPayroll(String user) {
+        if (running) throw new IllegalStateException("Payroll running - access blocked");
+        running = true;  /* block other sessions, calculate */  running = false;
+    }
+}</pre>
+<div class="q">Logger must write all logs to the same file; multiple instances cause duplicate/inconsistent output. Propose a pattern. (5)</div>
+<div class="a"><b>Singleton Logger</b>: one instance owns the single <code>FileWriter</code>; all classes call <code>Logger.getInstance().log(msg)</code>. One file handle (no corrupt/duplicate lines), one format and order, saves memory, global access. <code>log()</code> is <code>synchronized</code> so lines from threads don&rsquo;t interleave.</div>
+<div class="q">Fantasy cricket: max 5 batsmen, max 5 bowlers, 1 wicketkeeper, 1 captain &mdash; use an extended Singleton. (5)</div>
+<div class="two"><div class="w45">{{uml:cricket}}</div>
+<div><pre>public final class Player {
+  private static final Map&lt;String,Integer&gt; LIMIT =
+      Map.of("BATSMAN",5, "BOWLER",5, "WICKETKEEPER",1);
+  private static final Map&lt;String,List&lt;Player&gt;&gt; team = new HashMap&lt;&gt;();
+  private final String role, name;
+  private Player(String role, String name) { this.role=role; this.name=name; }
+  public static synchronized Player addPlayer(String role, String name) {
+    team.putIfAbsent(role, new ArrayList&lt;&gt;());
+    if (team.get(role).size() &gt;= LIMIT.get(role))
+      throw new IllegalStateException("Max " + role + " reached");
+    Player p = new Player(role, name); team.get(role).add(p); return p;
+  }
+}  // Captain = plain Singleton (exactly one)</pre></div></div>
+<div class="q">Single global tax calculator across all checkout counters &mdash; how is it integrated into the pricing flow? (4)</div>
+<div class="a">Decorated items give <code>item.getCost()</code>; in the <b>Payment</b> state the kiosk sums them and calls <code>TaxCalculator.getInstance().calculateTax(subtotal)</code>. Every counter gets the same instance &rArr; one rate, one rule set, consistent tax; change the rate once &rArr; changes everywhere.</div>
+<div class="q">Design a global OrderID generator and integrate it with payment processing. (5)</div>
+<div class="two"><div><pre>public final class OrderIdGenerator {
+  private static final OrderIdGenerator INSTANCE = new OrderIdGenerator();
+  private final AtomicLong counter = new AtomicLong(1000);
+  private OrderIdGenerator() { }
+  public static OrderIdGenerator getInstance() { return INSTANCE; }
+  public String nextId() { return "ORD-" + counter.incrementAndGet(); }
+}</pre></div>
+<div class="a">Eager Singleton + <code>AtomicLong</code> &rArr; thread-safe, never duplicates. In the template method <code>PaymentProcessor.handlePayment()</code> the first step is <code>id = OrderIdGenerator.getInstance().nextId()</code>, then validate &rarr; processPayment &rarr; sendReceipt(id). All payment subclasses share the same generator &rArr; unique IDs system-wide.</div></div>
+
+<h2>Combinations &amp; mistakes</h2>
+<table>
+<tr><td class="k">+ Factory</td><td>Factory chooses DB type; the connection manager (and often the factory) is a Singleton.</td></tr>
+<tr><td class="k">+ Facade</td><td>Only one facade object needed &rArr; make the facade a Singleton.</td></tr>
+<tr><td class="k">+ State</td><td>Stateless state objects (IdleState&hellip;) can be shared Singletons (vending machine slides).</td></tr>
+<tr><td class="k">Mistakes</td><td>Public constructor &middot; non-static getInstance &middot; not underlining static members in UML &middot; claiming plain lazy is thread-safe &middot; saying Singleton &ldquo;blocks users&rdquo; (it limits <i>objects</i>; blocking execution needs a lock too) &middot; using Singleton for N objects (use Multiton) &middot; calling it structural.</td></tr>
+</table>
+</body></html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Note 02 - Factory Method Design Pattern</title>
+<link rel="stylesheet" href="dp.css">
+<style>@page { @bottom-center { content: "02 Factory Method  |  " counter(page); font: 7.5pt Arial; color: #555; } }</style>
+</head><body>
+
+<h1>02 &nbsp;Factory Method <small>Creational</small></h1>
+<div class="id"><table>
+<tr><td class="k">Intent (GoF)</td><td>Define an <b>interface for creating an object</b>, but let <b>subclasses decide which class to instantiate</b>. Factory Method lets a class defer instantiation to subclasses.</td></tr>
+<tr><td class="k">Use when</td><td>Several related types share one interface and <b>which one to create depends on input</b> (type, user choice, config). Client should not know concrete classes / should not use <code>new</code>.</td></tr>
+<tr><td class="k">Trigger words</td><td>&ldquo;create different types of&rdquo; (payment objects, book objects, accounts, DBs, LMS modules), &ldquo;depending on user request / need&rdquo;, &ldquo;without exposing the class&rdquo;, &ldquo;too many if-else for object creation&rdquo;, &ldquo;scalable, extensible product-based framework&rdquo;.</td></tr>
+<tr><td class="k">Participants</td><td><b>Product</b> (interface) &middot; <b>ConcreteProduct</b> &middot; <b>Creator</b> (declares <code>factoryMethod()</code>) &middot; <b>ConcreteCreator</b> (overrides it, returns a ConcreteProduct) &middot; Client.</td></tr>
+<tr><td class="k">Code smell</td><td><code>if(type.equals("A")) new A(); else if ...</code> scattered in client code &rArr; tight coupling; every new type edits the client.</td></tr>
+</table></div>
+
+<h2>UML &mdash; GoF structure (Creator subclasses decide)</h2>
+{{uml:generic}}
+<p class="small">Dashed + hollow triangle = <b>implements</b> (realization). Solid + hollow triangle = <b>extends</b>. Dashed open arrow = <b>creates / depends on</b>. Creator is <i>abstract</i> (italic); <code>factoryMethod()</code> is abstract.</p>
+
+<h2>UML &mdash; Database creation (Quiz 2) &middot; simple / parameterized factory</h2>
+{{uml:db}}
+
+<h2>Java &mdash; both forms</h2>
+<div class="two">
+<div><pre>// PRODUCT
+public interface Database {
+    void connect();
+    void create(Product p);
+}
+// CONCRETE PRODUCTS
+public class MySQLDatabase implements Database {
+    public void connect() { System.out.println("MySQL connected"); }
+    public void create(Product p) { System.out.println("MySQL insert " + p); }
+}
+public class PostgreSQLDatabase implements Database { ... }
+public class MongoDatabase implements Database { ... }
+
+// SIMPLE (PARAMETERIZED) FACTORY - the lecture form
+public class DatabaseFactory {
+    public static Database getDatabase(String type) {
+        switch (type.toUpperCase()) {
+            case "MYSQL":    return new MySQLDatabase();
+            case "POSTGRES": return new PostgreSQLDatabase();
+            case "MONGO":    return new MongoDatabase();
+            default: throw new IllegalArgumentException(type);
+        }
+    }
+}
+// CLIENT - knows only the interface
+Database db = DatabaseFactory.getDatabase(config.get("db"));
+db.connect();
+db.create(product);</pre></div>
+<div><pre>// GoF FACTORY METHOD - subclass decides
+public abstract class PaymentCreator {
+    public abstract Payment createPayment();   // factory method
+    public void pay(double amt) {              // uses the product
+        Payment p = createPayment();
+        p.validate(); p.process(amt);
+    }
+}
+public class CardPaymentCreator extends PaymentCreator {
+    public Payment createPayment() { return new CreditCardPayment(); }
+}
+public class PayPalPaymentCreator extends PaymentCreator {
+    public Payment createPayment() { return new PayPalPayment(); }
+}
+public interface Payment { void validate(); void process(double a); }
+public class CreditCardPayment implements Payment { ... }
+public class PayPalPayment implements Payment { ... }
+
+// client
+PaymentCreator c = new PayPalPaymentCreator();
+c.pay(1500.00);</pre>
+<table>
+<tr><th></th><th>Simple Factory</th><th>Factory Method (GoF)</th></tr>
+<tr><td>Structure</td><td>1 class, 1 static method + switch</td><td>abstract Creator + ConcreteCreators</td></tr>
+<tr><td>Who decides</td><td>parameter value</td><td>which subclass is used</td></tr>
+<tr><td>New type</td><td>add class + edit switch</td><td>add product + creator (no edits, OCP)</td></tr>
+</table></div>
+</div>
+
+<h2>Advantages / disadvantages / challenge &rarr; mechanism</h2>
+<table>
+<tr><th style="width:30%">Advantages</th><th style="width:28%">Disadvantages</th><th>Challenge &rarr; mechanism</th></tr>
+<tr><td><b>Loose coupling</b>: client depends on the interface, not concrete classes</td><td>More classes (one creator per product in GoF form)</td><td>Class explosion &rarr; use a parameterized simple factory / registry map</td></tr>
+<tr><td><b>Centralized creation</b> logic in one place</td><td>Switch in simple factory must be edited for new types</td><td>Edit switch &rarr; register types in a <code>Map&lt;String,Supplier&gt;</code> or config/reflection</td></tr>
+<tr><td><b>Easy to extend</b> (Open/Closed): add new product class</td><td>Extra abstraction for very simple cases</td><td>Invalid type requested &rarr; validate input, throw/return default</td></tr>
+<tr><td>Hides complex construction; easier testing (mock product)</td><td>Client can&rsquo;t pick construction details</td><td>Need one shared instance &rarr; combine with Singleton</td></tr>
+</table>
+<p class="small"><b>Why is <code>new</code> in client code bad?</b> It hard-codes the concrete class &rArr; client must change for every new type (violates OCP, DIP). <b>SOLID:</b> OCP (extend with new products), DIP (depend on <code>Database</code> abstraction), SRP (creation separated from use).</p>
+
+<h2>Questions &amp; model answers</h2>
+<div class="q">What is the role of the Factory pattern in the database scenario? <i>Quiz 2 Q1</i></div>
+<div class="a">It <b>takes object creation out of the client</b>: the client asks <code>DatabaseFactory.getDatabase("MYSQL")</code> and receives a <code>Database</code>; the factory decides and instantiates <code>MySQLDatabase</code>/<code>PostgreSQLDatabase</code>/<code>MongoDatabase</code>. Client code works only through the <code>Database</code> interface.</div>
+<div class="q">State two advantages of the Factory pattern in this scenario. <i>Quiz 2 Q2</i></div>
+<div class="a">(1) <b>Loose coupling</b> &mdash; switching DB (MySQL &rarr; PostgreSQL) needs no change in business code, only the parameter/config. (2) <b>Extensibility / centralized creation</b> &mdash; adding Oracle = one new class + one factory case; creation logic lives in one place, not repeated everywhere.</div>
+<div class="q">Why doesn&rsquo;t the developer need to know whether the DB is MySQL or PostgreSQL? <i>Quiz 2 Q3</i></div>
+<div class="a">Because of <b>abstraction + polymorphism</b>: the variable type is the <code>Database</code> interface and every concrete DB implements <code>connect()</code>/<code>create()</code>. The factory returns the correct object at runtime; the call <code>db.create(product)</code> runs the right implementation automatically.</div>
+<div class="q">Library: create Fiction, Research or Magazine books depending on user request. Book interface + BookFactory outline. <i>2025 Q3.2&ndash;3.3 (7)</i></div>
+<div class="two"><div class="w45">{{uml:book}}</div>
+<div><pre>public interface Book { String getTitle(); String getCategory(); }
+public class FictionBook implements Book {
+  private String title;
+  public FictionBook(String t) { title = t; }
+  public String getTitle() { return title; }
+  public String getCategory() { return "Fiction"; }
+}  // ResearchBook, Magazine: same shape
+public class BookFactory {
+  public static Book createBook(String type, String title) {
+    switch (type) {
+      case "FICTION":  return new FictionBook(title);
+      case "RESEARCH": return new ResearchBook(title);
+      case "MAGAZINE": return new Magazine(title);
+      default: throw new IllegalArgumentException("Unknown " + type);
+    }
+  }
+}
+Book b = BookFactory.createBook("RESEARCH", "AI Ethics");</pre></div></div>
+<div class="q">Banking system with Current, Saving and Children accounts. <i>2023 Q4.2 (5)</i></div>
+<div class="a"><b>Factory Method.</b> <code>Account</code> interface/abstract class (<code>deposit</code>, <code>withdraw</code>, <code>calculateInterest</code>); <code>CurrentAccount</code>, <code>SavingAccount</code>, <code>ChildrenAccount</code> implement it with their own rules (overdraft, interest, withdrawal limit). <code>AccountFactory.createAccount(type)</code> returns the right one; the bank code works with <code>Account</code> only, so a new FixedDeposit type is added without touching it.</div>
+<div class="q">Payment: creating different payment objects (Credit Card, PayPal, COD). <i>2025 Q4.1(d)</i></div>
+<div class="a"><b>Factory Method</b> &mdash; <code>PaymentFactory.create(method)</code> returns the right <code>PaymentProcessor</code> subclass; it combines with Template Method (each processor follows <code>handlePayment()</code>). Reason: client selects by user choice at runtime without <code>new</code>/if-else.</div>
+<div class="q">LMS needs different modules created depending on the user&rsquo;s needs. / Scalable, extensible product-based framework. <i>2022 Q4.5, Q4.2</i></div>
+<div class="a"><b>Factory Method.</b> <code>Module</code> interface (Quiz, Forum, Assignment, VideoLecture); <code>ModuleFactory.create(userNeed)</code>. New modules/products = new classes registered with the factory, so the framework grows without changing existing code (Open/Closed) &mdash; exactly what a &ldquo;product-based, extensible framework&rdquo; needs.</div>
+<div class="q">&ldquo;Code duplication can be avoided with this pattern.&rdquo; Agree?</div>
+<div class="a">Yes &mdash; creation logic (if-else + <code>new</code>) is written once in the factory instead of being repeated in every client; shared behaviour can sit in the abstract Creator. But concrete creators/products still add classes; keep the factory parameterized to avoid duplicating near-identical creators.</div>
+
+<h2>Comparisons &amp; mistakes</h2>
+<table>
+<tr><td class="k">vs Facade</td><td>Factory = <b>creates objects</b> (&ldquo;which object?&rdquo;). Facade = <b>coordinates existing objects</b> behind one interface (&ldquo;what to do with many objects?&rdquo;).</td></tr>
+<tr><td class="k">vs Singleton</td><td>Factory controls <i>which type</i>; Singleton controls <i>how many</i>. Often combined (factory or created connection is a Singleton).</td></tr>
+<tr><td class="k">vs Abstract Factory</td><td>Abstract Factory creates <i>families</i> of related objects (not covered in detail).</td></tr>
+<tr><td class="k">Mistakes</td><td>Client still calls <code>new MySQLDatabase()</code> &middot; factory returns the concrete type instead of the interface &middot; forgetting the dashed &ldquo;creates&rdquo; arrow &middot; calling it structural.</td></tr>
+</table>
+</body></html>
