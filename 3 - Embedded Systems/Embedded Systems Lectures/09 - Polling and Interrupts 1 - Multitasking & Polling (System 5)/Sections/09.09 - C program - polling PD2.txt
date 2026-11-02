@@ -1,0 +1,134 @@
+[0:00] Have you checked whether something has happened regularly?
+[0:04] That means you have done polling.
+[0:07] Is that clear?
+[0:08] Right.
+[0:09] If the design is clear, then the development.
+[0:13] Firmware development in C.
+[0:15] Right. So this is the C program. We have main function.
+[0:20] And first, we include the necessary header files.
+[0:24] avr.io.h, which contains all the input-output definitions.
+[0:32] Then the speed of the CPU, 16 MHz.
+[0:38] f cpu constant we define.
+[0:41] Then we include delay.h header file because we are going to use underscore delay underscore ms function.
+[0:51] And delay.h header file uses fcpu constant.
+[0:56] Right.
+[0:56] Then the next step.
+[0:58] Configure PB0 and PB5 as outputs.
+[1:04] Right.
+[1:04] So in the DDRB register, PB0 and PB5, right?
+[1:12] Bit 0 and bit 5 we set to make PB0 and PB5 as outputs.
+[1:21] Then PD2 we need to configure as an input.
+[1:25] So we need to clear bit 2 of DDRB, port D register.
+[1:34] bit number 2, bit number 0, bit number 1, bit number 2.
+[1:39] We need to clear so that PD2 becomes an input.
+[1:45] Right.
+[1:46] Configured because PD2 we have connected the switch.
+[1:50] PB0 and PB5 we have connected LEDs.
+[1:54] Then we need to pull up PD2.
+[1:57] Why?
+[1:58] The default state of PD2 we want to have default state as I.
+[2:03] So we need to pull up.
+[2:06] How do we do that?
+[2:07] In the port D.
+[2:09] The register.
+[2:11] Bit number 2 we set.
+[2:14] So doing that we can pull up.
+[2:16] We can activate the internal pull up resistor.
+[2:20] And default state of the PD2.
+[2:22] We can set as high.
+[2:25] Now PD2 default state high.
+[2:29] When you press the switch.
+[2:31] PD2 becomes low.
+[2:32] a clear state change.
+[2:35] If you have released the switch,
+[2:37] the PD2 is high
+[2:38] because it's default state high.
+[2:41] We activated the
+[2:42] internal pull-up resistor
+[2:44] by setting the bit
+[2:46] number 2 of port D
+[2:48] register. Up to this point.
+[2:51] Any question?
+[2:52] No. Right.
+[2:56] Then.
+[2:58] Endless loop.
+[2:59] In the endless loop,
+[3:00] The main job, main task, blinking LED connected to PB5, that is onboard LED.
+[3:11] Blink that LED every two seconds.
+[3:14] So just toggle the state of PB5, state of PB5.
+[3:22] Toggle it.
+[3:23] To toggle, we use the exclusive O operator.
+[3:28] This is the XO operator.
+[3:29] Using exclusive O operator we can toggle the bit number 5.
+[3:35] If the bit number 5 is 0 we set it to 1.
+[3:39] If it is 1 we set it to 0.
+[3:42] Toggle.
+[3:42] That means we blink the LED connected to PB5 which is the onboard LED connected to Arduino pin number 30.
+[3:52] Wait 200 milliseconds.
+[3:54] 2000 milliseconds that is 2 seconds.
+[3:57] That is the regular interval.
+[3:59] thereafter check whether switch is press right this is the if condition we use to check whether
+[4:07] switch has been pressed we use the port d pin d register and this constant value we check we get
+[4:19] the bitwise and operation now let's uh i mean let's pin d this port input register
+[4:29] [unclear — Sinhala / crosstalk]
+[4:42] be either 1 or 0. Then the constant 0 0 0 0 0 1 double 0. Let's take the end operation.
+[4:57] X and 0.
+[5:00] X and 0, 0.
+[5:02] No matter the value of X, the outcome is 0.
+[5:07] X and 0, 0.
+[5:10] 0, 0, 0, 0, 0.
+[5:13] X and 1.
+[5:15] X and 1.
+[5:17] Right?
+[5:17] Outcome depends on X.
+[5:19] If X is 1, 1 and 1, 1.
+[5:23] If X is 0, 0 and 1, 0.
+[5:26] So x and 1 outcome is x.
+[5:30] Other two 0.
+[5:32] 0 x and 0.
+[5:33] 0 x and 0 0.
+[5:36] So this is the if condition.
+[5:38] Now we have.
+[5:39] If we check this value equals to 0.
+[5:42] Right here you can see if condition.
+[5:44] Now if switch has not been pressed.
+[5:48] Switch is released.
+[5:50] Then the default state of PD2 is high.
+[5:55] the false state of the PD2 pin is high.
+[5:59] That means x is 1.
+[6:02] This value not p equals to 0.
+[6:05] If this is 1, the if condition is false.
+[6:09] So nothing happens, we go to the next iteration.
+[6:13] If switch is released,
+[6:15] we don't perform the second task,
+[6:18] we simply go to the next iteration.
+[6:20] But if the switch is pressed,
+[6:22] Then PD2 logic state is low.
+[6:27] PD2 logic state low means the corresponding bit is 0.
+[6:33] Then 0 equals 0.
+[6:36] If condition becomes true.
+[6:39] If condition is true then we toggle the LED connected to PB0.
+[6:46] The second task.
+[6:47] We perform the second task if the if condition is true.
+[6:51] If condition true means switch is press.
+[6:55] So we do the second task.
+[6:57] After doing the second task, we go to the next iteration and we start, we resume the task that was doing.
+[7:08] That is blinking the onboard elite.
+[7:12] Can you understand this algorithm?
+[7:14] Sorry, this is so scored.
+[7:16] If not, let me know.
+[7:17] I think it's a big thing.
+[7:19] I think it's important to see the on-board LED
+[7:21] that blink on the board.
+[7:23] If you switch to the switch,
+[7:25] you can toggle the pin number 8
+[7:27] to the high LED.
+[7:29] Then,
+[7:31] the on-board LED will blink on the board.
+[7:33] If you switch to the on-board LED,
+[7:35] you can toggle the pin number 8
+[7:37] and you can toggle the pin number 8.
+[7:39] Can you understand this source code?
+[7:41] Sir, during the delay,
+[7:43] Sir, during the delay, if we pressed and released the button, did they catch, if they can catch that input?
+[7:55] Very good. You are far ahead. Yes, there's a problem. We'll come to that later.

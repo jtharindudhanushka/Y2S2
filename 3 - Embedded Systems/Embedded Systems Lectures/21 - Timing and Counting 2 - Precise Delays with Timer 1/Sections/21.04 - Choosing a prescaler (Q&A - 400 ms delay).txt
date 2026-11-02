@@ -1,0 +1,47 @@
+[0:00] How about it is, let's say 400 milliseconds delay.
+[0:05] 400 milliseconds delay, to get the 400 milliseconds delay, how many clock cycles do you need?
+[0:10] You need 100,000 clock cycles.
+[0:12] 200 milliseconds, you need 50,000 clock cycles.
+[0:16] 400 milliseconds delay, you need 100,000 clock cycles.
+[0:18] 100,000 you can't count with a 16-bit timer because 16-bit timer can go up to 65,535.
+[0:29] That is the maximum value it can count.
+[0:32] So, 100,000 it cannot count.
+[0:34] Then we have to use the method that Nirasa suggested.
+[0:38] So, you have to keep a variable to track how many times the timer overflowed from maximum value to zero.
+[0:48] And then you can calculate the delay.
+[0:52] Sir, can't we handle with increase the pre-scale?
+[0:57] Yes, another way.
+[0:59] That's good.
+[0:59] Good, good.
+[1:00] Very good.
+[1:01] I'm very happy.
+[1:02] Yes.
+[1:03] Rather than dividing by 64, you divide by a larger pre-scale, 2560, 1024, larger pre-scale.
+[1:12] But even with that, you come to a certain limit.
+[1:17] Right?
+[1:18] Let's say you need a big delay,
+[1:20] a big time measurement you need to calculate.
+[1:23] Even the largest prescale available,
+[1:25] that is 1024, as I remember.
+[1:29] The number of clock cycles that you need,
+[1:31] you may not be able to count that number of clock cycles
+[1:35] with a 16-bit time.
+[1:38] Then you have to go for that method again.
+[1:41] Is that clear, Dilma?
+[1:42] Yes, sir.
+[1:43] Yes, of course.
+[1:44] we can we can using a different scale we can handle the situation but up to a certain limit
+[1:54] these are the things you have to think about right again if you are building hardware from scratch
+[1:59] you can use a slow crystal for the clock frequency you can reduce fcpu then then you
+[2:09] have to modify hardware without using 16 megahertz clock you can use 8 megahertz clock or 4 megahertz
+[2:16] clock another option right then you have to adjust hardware likewise there are various ways to
+[2:24] right do the adjustments one is the pre-scale another one is the fcpu
+[2:31] another one is using a variable to keep the track of number of times time overflow
+[2:39] So using these various methods, you can measure the time that you need.
+[2:46] Right.
+[2:46] Anything else?
+[2:47] Any other question?
+[2:49] Right.
+[2:50] Firmware.
+[2:51] Timer-based blinker.
+[2:53] Configure PB5 as an output pin because LED connected, onboard LED connected to PB5.

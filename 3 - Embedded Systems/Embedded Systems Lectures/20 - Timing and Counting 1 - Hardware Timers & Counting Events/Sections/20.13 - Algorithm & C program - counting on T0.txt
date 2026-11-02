@@ -1,0 +1,125 @@
+[0:00] Then we configure PD4 which is the timer 0 pin as an input.
+[0:07] Actually you don't need to do this because by default this pin is an input pin.
+[0:12] Right.
+[0:13] Because you know that by default the register value is 0.
+[0:19] Pin register value.
+[0:20] Port input register value is 0.
+[0:23] Sorry the DDR.
+[0:26] DDR data direction register value is 0.
+[0:29] So this pin is by default
+[0:32] An input pin
+[0:33] No need this step
+[0:35] But adding this step
+[0:36] Makes your algorithm more clear
+[0:39] Then pull up
+[0:41] P default
+[0:42] The button connected pin pull up
+[0:44] So it's default value high
+[0:47] When you press the button
+[0:49] It will go low
+[0:50] Clear state change
+[0:52] The default state of the pin is high
+[0:55] But when you press the button
+[0:57] It will go low
+[0:59] So clear state change. The microcontroller can detect that state change.
+[1:04] Right. Then select the clock source as T0.
+[1:08] The timer clock source as T0. T0 is the external pin.
+[1:12] The button connected. So the clock source is now external.
+[1:17] That means timer becomes a counter. Set the counter to 0.
+[1:22] Initial value of the counter set to 0. Again no need to do this.
+[1:25] because already it is 0.
+[1:28] By default it is 0.
+[1:29] But again you can make your algorithm
+[1:32] more clear by initializing
+[1:34] the TCNT register
+[1:36] to 0.
+[1:37] Then enter into the endless loop.
+[1:39] Check the count.
+[1:41] Count that count.
+[1:43] If it is greater than 0, no.
+[1:46] Greater than, sorry, greater than
+[1:47] or equal 5, no.
+[1:49] If so, again check.
+[1:51] So you check the count
+[1:53] again and again.
+[1:55] While you are running the loop, the counter can count.
+[2:01] Every clock pulse coming through T0P, the counter counts.
+[2:07] So, while you are monitoring the counter, the counter counts.
+[2:13] At some point of time, the counter count becomes either greater than or equal 5.
+[2:21] 5 or greater than or equal 5.
+[2:23] If so, toggle the LED. Toggle the LED, reset the counter to zero and keep monitoring the
+[2:33] counter. Polling, keep monitoring the counter. Again, counter counts while you are monitoring
+[2:40] the counter, counter counts for every clock pass. If the count greater than or equal five,
+[2:47] toggle the led reset the counter to zero keep monitoring can you understand this algorithm
+[2:54] any question if not let me know i can explain again right let's see the source code main
+[3:01] function io.h right first we configure pb5 as an output pin pb5 is the led connected pin
+[3:11] onboard LED pin 13
+[3:13] Arduino pin 13.
+[3:15] Then we configure PD4
+[3:17] as an input.
+[3:19] This line is not necessary
+[3:21] because already
+[3:23] this bit is 0.
+[3:25] But this line makes
+[3:27] your code
+[3:28] more understandable.
+[3:31] However, it consumes one
+[3:33] extra clock cycle.
+[3:34] Then pull up PD4.
+[3:37] Pull up the PD4.
+[3:39] Activate internal
+[3:40] pull up resistor. Activate internal pull up resistor. So PD4
+[3:44] default state high. PD4 default state high.
+[3:49] Then set the clock source. Time counter
+[3:52] control register B. Using clock select bits
+[3:56] set the clock source as T0 pin.
+[4:00] External T0 pin clock source. Set the clock source.
+[4:04] This is C
+[4:05] clock select cs bit 2
+[4:08] clock select bit 1
+[4:10] clock select bit 0
+[4:12] 1 1 0. Set the external
+[4:15] clock source as external.
+[4:16] Now timer becomes a counter.
+[4:19] Now it's not a
+[4:20] timer. Now it's a counter.
+[4:23] Set the initial value
+[4:25] of timer counter register.
+[4:26] Again this line is not necessary.
+[4:28] By default this is 0.
+[4:30] But again
+[4:31] by writing this line you can make
+[4:34] your code more understandable.
+[4:36] But unnecessary
+[4:38] one clock cycle.
+[4:40] Then we enter into the loop.
+[4:43] Endless loop.
+[4:44] Right. And inside the
+[4:46] endless loop, we check the
+[4:48] counter value. Whether
+[4:50] it is greater than or equal 5.
+[4:52] Using polling, we repeatedly
+[4:54] check the counter value.
+[4:56] While we are checking the counter value,
+[4:58] counter can increment
+[5:00] the TCNT
+[5:02] register
+[5:03] at every clock's pulse on T0P.
+[5:09] The timer can increment the DCNT register,
+[5:12] counter can increment the DCNT register
+[5:14] on every clock pulse.
+[5:17] If the count is greater than O equal 5,
+[5:21] toggle the state of PB5.
+[5:24] Toggle the state of PB5.
+[5:27] That means either you turn on LED or turn off.
+[5:30] If the LED is turned off, you turn it on.
+[5:33] If it is turn it on, you turn it off.
+[5:37] Then reset the counter.
+[5:39] The counter counts on every button press.
+[5:43] Why?
+[5:44] We have set the counter clock source as T0, falling edge.
+[5:50] T0, falling edge.
+[5:53] 110 means falling edge.
+[5:54] That means every button press.
+[5:56] Can you understand this also?
+[5:58] If not, let me know.

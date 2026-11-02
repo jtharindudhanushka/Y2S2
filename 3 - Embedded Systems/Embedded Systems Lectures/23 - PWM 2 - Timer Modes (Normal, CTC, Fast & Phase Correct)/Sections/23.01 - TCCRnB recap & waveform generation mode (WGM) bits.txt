@@ -1,0 +1,67 @@
+[0:00] Right, this is where we stop at the end of morning session PWM Frequence. Before we move forward, do you have any question?
+[0:10] Sorry. Right, no questions. Let's move on.
+[0:17] Timer counter registers. Now we saw that PWM, pulse width modulation depends on timers. PWM uses timers.
+[0:27] So we need to talk about timer counter registers that are related to pulse width modulation.
+[0:35] Right.
+[0:35] Okay.
+[0:36] We are going to talk about timer counter control register, TCCRB.
+[0:41] Now there are two registers, TCCR, TCCR A, TCCR B.
+[0:48] Now here simple N denotes the timer number with the timer 0, timer 1, timer 2 like that.
+[0:55] There are two registers TCCR-A and TCCR-B. Not only for timers, some other peripherals also. For example, universal, synchronous, synchronous, receiver and transmitter, USART.
+[1:13] It also has two registers, TCCRA, that is not TCC, it is something like U, starting with U, I can't exactly remember the term.
+[1:30] Now, two control and status registers.
+[1:32] The reason is if there are more control bits, if the 8 bit register is not enough to accommodate more control bits, then there can be multiple registers with control bits.
+[1:48] Sometimes three registers.
+[1:51] A, B, C.
+[1:53] So in this case TCCR A, TCCR B.
+[1:57] Now let's talk about TCCR B.
+[2:00] Now in the TCCRB register, some of the bits we have already, some of the control bits we have already discussed.
+[2:06] For example, CS bits, clock select bits we have already discussed.
+[2:11] But let's talk about them again in relation to PWM.
+[2:17] Now using clock select bits, you can set the pre-scale.
+[2:22] We already know that.
+[2:24] We have learned that.
+[2:25] Last week we discussed that part.
+[2:27] Using clock select bits we can set the pre-scale.
+[2:33] If you put 0, 0, 0 to 3 clock select bits you can disconnect the clock source.
+[2:40] Then timer won't count.
+[2:42] If you put 0, 0, 1 for the clock select bits that means you directly connect internal clock to the timer.
+[2:50] That means then the timer would run at the speed of CPU.
+[2:54] frequency would be fCPU
+[2:57] timer frequency would be equal to
+[3:01] frequency of the CPU
+[3:03] but if you want to run the timer
+[3:05] the counting part
+[3:07] if you want to do that slower
+[3:09] you can use a prescaler
+[3:13] to scale down the frequency of the CPU
+[3:17] right you know that
+[3:20] we discussed that
+[3:21] Another important control bit in this register is WGM.
+[3:28] WGM bit.
+[3:32] Again, simple and in all the timer, whether it's a timer 0, timer 1, timer 2, timer 3, like that.
+[3:38] And number 2 indicates that there are two bits at least.
+[3:45] O3 means WGM0, WGM1 and WGM2.
+[3:52] Here you have only WGM2.
+[3:55] Then somewhere else there should be WGM1 and WGM0.
+[4:02] We will come to that later.
+[4:04] Here WGM means waveform generation mode.
+[4:09] Wave form generation mode.
+[4:12] W for waveform, G for generation, M for mode.
+[4:17] Bit number 2.
+[4:19] Now where are bit number 1 and bit number 0?
+[4:22] Let's see.
+[4:23] They are in another register, another control register.
+[4:27] That is TCCRA, timer counter control register A.
+[4:33] In the timer counter control register A, you can find WGM0 and WGM1.
+[4:40] So actually there are three bits, three control bits, WGM0, WGM1 and WGM2.
+[4:48] WGM2 is in other register, TCCRB register.
+[4:52] Right.
+[4:53] These waveform generation mode bits, we can use to specify the waveform generation mode.
+[5:02] There are a number of waveform generation modes.
+[5:05] Normal mode, phase correct PWM mode, clear time on compare, that is CTC mode, and finally fast PWM mode.
+[5:16] What are they? Let's discuss.
+[5:19] Right. The first one is normal mode.
+[5:23] If you set 0004, WGM0, WGM1 and WGM2, three waveform generation modes, bits, if you set 0, you get the normal mode.
+[5:37] In the normal mode, timer increments, TCNT register, that is timer counter register, timer increments, timer counter register in the normal mode, right?
+[5:53] normal mode timer implements timer counter register right from 0 to 255 and then

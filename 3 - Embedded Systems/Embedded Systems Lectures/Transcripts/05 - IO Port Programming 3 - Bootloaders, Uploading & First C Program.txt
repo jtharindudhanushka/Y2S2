@@ -1,0 +1,2007 @@
+05 - IO Port Programming 3 - Bootloaders, Uploading & First C Program  (28 Sep 2020)
+
+[0:00] [unclear — Sinhala / crosstalk]
+[0:30] I have a thing, I have a...
+[0:31] [unclear — Sinhala / crosstalk]
+[1:01] is that. this is where I have the other time, all the more.
+[1:03] and the more,
+[1:03] the more,
+[1:03] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:04] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:05] the more,
+[1:06] the more,
+[1:06] the more,
+[1:06] the more,
+[1:06] the more,
+[1:31] We develop a small firmware to control an LED and to control the LED, the firmware we own in assembly.
+[1:45] Then using the assembler, we convert that into a test file, machine code file.
+[1:52] Now we have the machine code file.
+[1:54] The next step is to flash the machine code file into the robot, microcontroller's robot.
+[2:01] For that, these are the options available. Either you have to use commercial or commercial programmer from the manufacturer.
+[2:09] Right? And you can flash the machine code into the microcontroller's drop.
+[2:16] Or you can use aftermarket for who made hardware programs. Hardware programs.
+[2:22] So USB base you can use for example, you can buy this kind of aftermarket one from eBay
+[2:32] or you can have your own programmer you can develop.
+[2:38] But if you try to develop USB one, the job is a little bit complicated because there are a lot of problems in the USB program.
+[2:46] But if you try to develop serial program, very quickly, very easily you can develop
+[2:51] and the problem is nowadays in our computers we don't have serial phones.
+[2:55] The third option is a self-provening. That means, microcontroller can grow from itself.
+[3:01] Ah, that's nice. So we don't need to worry, we don't need to buy or we don't need to find any hardware program
+[3:08] to flash the vent from the end to the rock.
+[3:11] Why is this microcontroller can flash itself?
+[3:15] Now let's talk about that.
+[3:17] Self-proved.
+[3:19] Right.
+[3:20] So actually that is the method utilized by the Arduino tools.
+[3:27] That Arduino tools utilized in that method.
+[3:30] So you simply click the upload button in the Arduino IDE.
+[3:36] You have a particle uploaded.
+[3:38] You see, there is that. Right. Automatically, the firmware is, the R-code is converted into machine code and it is flashing to that. The relevant microcontroller is the connected code. That's the method using Arduino. Right. But many people, right, don't know about the mechanism behind the ID, how that happens.
+[4:08] That's what we are waiting for.
+[4:10] But there is a waiting. Many people doesn't.
+[4:12] They don't.
+[4:14] Self-programming.
+[4:16] In the self-programming, first we need a bootloader.
+[4:18] Bootloader is a piece of boot.
+[4:22] Using your PC you can generate a bootload.
+[4:26] It's a kind of firmware.
+[4:28] Bootloader is a kind of firmware.
+[4:30] Piece of code.
+[4:32] Using your PC you can generate a bootload.
+[4:36] and you can compile the bootloader into hex file. Then you have the hex file, bootloader's
+[4:44] hex file. This is the hex file of the bootloader. Machine code of the bootloader. Using a hardware
+[4:51] program, when you need a hardware program, right from either from manufacturer or from
+[4:57] aftermarket roller or from inventory, using a hardware program you can burn the bootloader
+[5:04] into the microcontroller's ROM.
+[5:07] Microcontroller's ROM, there are two areas.
+[5:10] One area is the bootloader space.
+[5:13] The other area is the application code space.
+[5:17] Right. So application code space.
+[5:20] Bootloader space, application code space.
+[5:24] Now we have partitioned the ROM.
+[5:26] Last semester we discussed about memory partition.
+[5:29] Now same way, we have partitioned.
+[5:32] For the bootloader space, we load the bootloader.
+[5:36] It flashed over inward the bootloader into the bootloader space.
+[5:41] To do that, you need a hardware.
+[5:44] You need a hardware.
+[5:46] Using the hardware programmer, you can flash the bootloader into the bootloader space.
+[5:51] So bootloader is a piece of code.
+[5:54] When you compile the bootloader, you get the X-Fi machine code of the bootloader.
+[5:58] In other words, if somebody asks what is a bootloader.
+[6:02] Bootloader is a pre-flash or pre-bird code into the bootloader space of rock.
+[6:12] Pre-flash or pre-bird code into the bootloader space of rock.
+[6:18] From again bootloader space, pre-flash or pre-bird.
+[6:22] flash no prebird code into the bootloader space of rock. We call bootloader. Now flash no bird in the bootloader in the rock. You need hardware programmer. Right. You must need hardware programmer to flash no bird bootloader into the bootloader space of rock. Right. Then you need a first application. First application. You install the first application.
+[6:52] right into your PC
+[6:55] host application into your PC
+[6:58] right
+[6:59] now the purpose of the host application is
+[7:02] to communicate with the bootload
+[7:05] host application communicates with the bootload
+[7:08] right
+[7:10] now the job of the host application is your application code
+[7:15] this is the firmware
+[7:17] machine code
+[7:18] ring machine code firmware machine code
+[7:21] Now what the host application is, is host application flashes your firmware into the application space of the rotor. Right. Host application flashes, right, the offer wire into the application space of the rotor.
+[7:41] How does first application do that? That is the question. First application communicates with the bootloader and flashes your firmware, mission code firmware into the application space of the robot.
+[7:58] How does that happen? Right. Now an example for our first application is AVRD. The meaning is AVRDownloaderUpload. That's why we call it AVRD.
+[8:14] ABI downloader upload, D from downloader, UDE from upload.
+[8:22] Right. Now this is, right. Now I will explain you what happens behind the scene.
+[8:29] Now whenever you power up or reset the microchartule, whenever you power up or reset the microchartule,
+[8:39] bootloader is the piece of code executed first. Whenever you power up the microcontroller,
+[8:47] bootloader is executed. Because we have pre-burned the code, bootloader is executed. When you
+[8:53] reset the microcontroller, bootloader is executed. That is the code first executed. In other
+[9:00] first instruction of the bootloader is in which address?
+[9:06] address zero of the wrong
+[9:09] so whenever you start with power up the microcontroller or restart the microcontroller
+[9:16] bootloader is executed first
+[9:20] so the job of the bootloader
+[9:23] so when you power up the door is set bootloader is executed
+[9:27] of the bootloader is to communicate with the host application. Host application running
+[9:33] in PC. Bootloader running in micro-throte. So bootloader communicates with host application.
+[9:40] Bootloader communicates with host application. Now you have PC connected to your development
+[9:46] board and you power up the development board. When you power up the development board bootloader
+[9:51] is executed. Right? Bootloader communicates with your PC. Using serial communication.
+[9:56] USB to serial, there is a USB to serial interface, from that the communication happens.
+[10:03] So good loader communicates with the host application and see whether any application code is available.
+[10:12] The purpose of the communication is to see whether any application code is available.
+[10:19] is available. Any application code. For example, how bring the hex file. So an application code
+[10:26] whether such an application code file is available. That is the purpose of the communication.
+[10:33] Bootload or communicates with the PC to see whether any application code is available.
+[10:40] If application code is available, if any application code hex file is available, for example, blinker.hex file, right? Right, similar to that, any application code is available.
+[10:56] [unclear — Sinhala / crosstalk]
+[11:26] I want to bootload an application in host application to see whether an application code is available to be built.
+[11:38] If so, it is burnt into the application code space of the rock.
+[11:44] So bootloading of a line, application code is here.
+[11:48] That is burnt into the application code space of the rock.
+[11:52] If no applicant had done, it is burdened with application code of the rock.
+[11:58] And execution, now bootloader is in execution.
+[12:02] Execution is passed to the newly birthed application code.
+[12:08] And execution is passed to the newly birthed application code.
+[12:12] Right. So what the bootloader does is, when you power up, it is executed.
+[12:17] executor that is the first code executor it communicates with the host application running
+[12:22] even BC to see whether any application code is available to be burned if so it is burned
+[12:29] into the application code space of the RAM and execution is passed to the application
+[12:34] code, newly burned application code. So your application code is then executed.
+[12:41] If no application code is available to people, when bootloader communicates in the host application, if no application code is available to people, then bootloader passes execution to whatever application code currently available in the application code space.
+[13:02] Existing code can be available in the application code space. So that execution is passed. If no new application code is available to be word, food loader passes execution to existing application code in the application code space.
+[13:22] No application code is available to the world.
+[13:25] Food loader passes execution to existing application code in the application code space of the robot.
+[13:35] Existing application code in the application code space of the robot.
+[13:41] So, I am application code that is done.
+[13:44] But if you have a client, what is the application course based?
+[13:51] What is the execution? Who does that? Code loop.
+[13:55] If you have a load in your code, you can use the power loop.
+[13:59] If you have a load in your code, you can communicate with the IDA, the most applications.
+[14:05] If you have a code, you can use the upload.
+[14:11] [unclear — Sinhala / crosstalk]
+[14:41] I have a very good thing, I have a very good thing, to be on a get-r.
+[14:43] I have a very good thing, to be in age-d.
+[14:44] I have a very good thing, to be in a r.
+[14:45] and the instructions.
+[14:46] There are many instructions on the HX2 cycle.
+[14:50] There are many instructions on the PCV cell-mounted address 0.
+[14:53] No, no, no.
+[14:55] But, there is no address 0.
+[14:57] There is no address 0.
+[14:59] There is no bootload.
+[15:00] No bootload is not.
+[15:01] No bootload is not.
+[15:02] We can communicate the most application.
+[15:04] No, no, no.
+[15:06] But, we can't do that.
+[15:07] No, no, no.
+[15:08] What is the application code?
+[15:10] We can't do that.
+[15:11] We can't do that.
+[15:12] [unclear — Sinhala / crosstalk]
+[15:42] f.Q.
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] 
+[15:42] PC, micro and APNM,
+[15:47] and what is wrong with it?
+[15:50] You get it?
+[15:52] You have to set up instructions.
+[15:55] You have to update the instructions.
+[15:58] Then the new instructions, you have to get them.
+[16:01] You have to go in the room.
+[16:03] The CD you can act upon.
+[16:06] you have a very good thing, the goodseinges.
+[16:08] you have a very good thing, the right to the all,
+[16:09] the all, the are the all, the f-c,
+[16:10] the c, a,
+[16:10] the s,
+[16:11] the w,
+[16:10] w,
+[16:10] a,
+[16:10] 
+[16:10] t,
+[16:10] t,
+[16:10] t,
+[16:10] t,
+[16:10] 
+[16:10] 
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] t,
+[16:10] t,
+[16:10] 
+[16:10] t,
+[16:10] t,
+[16:10] t,
+[16:10] t,
+[16:10] 
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] 
+[16:10] t,
+[16:10] t,
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] t,
+[16:10] 
+[16:10] [unclear — Sinhala / crosstalk]
+[16:40] I have a look.
+[16:41] I have a look,
+[16:41] [unclear — Sinhala / crosstalk]
+[16:42] the the a-
+[16:41] 
+[16:41] a-
+[16:41] a-
+[16:41] a-
+[16:41] a-
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] 
+[16:41] t-
+[16:42] t-
+[16:42] 
+[16:42] 
+[16:42] t-
+[16:42] t-
+[16:42] 
+[16:42] 
+[16:42] 
+[16:42] 
+[16:42] t-
+[16:42] I have a really good one, to be a meG, a
+[16:44] a
+[16:44] a
+[16:44] a
+[16:44] a
+[16:44] a
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] 
+[16:44] hist
+[16:45] a
+[16:44] 
+[16:44] hist
+[16:45] a
+[16:44] 
+[16:44] hist
+[16:45] a
+[16:44] hist
+[16:45] a
+[16:44] hist
+[16:45] a
+[16:45] and burn current on CPU and microcontroller.
+[16:51] So, it's not up-road.
+[16:53] No, it's not up-road.
+[16:56] It's not up-road.
+[16:58] It's not up-road.
+[17:01] It's not up-road.
+[17:05] It's not up-road.
+[17:10] [unclear — Sinhala / crosstalk]
+[17:40] The land house is not there, but there is a dead-wild code.
+[17:44] One thing is that the code is clear.
+[17:49] That's not true.
+[17:51] The control is fast.
+[17:53] The code is not there.
+[17:55] The power connector is not there.
+[17:58] The good road is not there.
+[18:01] The code is not there.
+[18:04] The code is not there.
+[18:06] [unclear — Sinhala / crosstalk]
+[18:36] So the application code is not existing and it is existing.
+[18:40] It is existing and it is not existing.
+[18:42] Then check security side is not allowed to bootload.
+[18:45] Endless loop is not allowed to be able to get it.
+[18:49] Yes, it is not that endless loop.
+[18:51] Because bootload cannot be allowed.
+[18:53] We cannot stop the check security side.
+[18:55] So bootload is not allowed to be able to communicate.
+[18:57] The current communication is accessible.
+[18:59] It is not allowed to check the application codes.
+[19:02] If so, do this, else do that.
+[19:05] communication is not successful, do this, take up very good, and do it, run, endless
+[19:12] so even the good loader running on, running on, is open source, what do you get by the
+[19:17] good loader, what do you get by the good loader, what do you get by the good loader, it's
+[19:20] a small piece of loader, this is one of the key successes in IT-ADR running, before ADR,
+[19:27] all the micro controlers, if you do, now if you want to burn a firm micro control, you
+[19:34] you must need hardware programmers. People use hardware programmers to burn hardware in the microcontrollers before AVR. AVR came in this new innovation.
+[19:48] piece of gold in the microcontroller. So microcontroller itself
+[19:52] like uploads any application gold into itself.
+[19:58] Microcontroller all the flashed and the
+[20:02] the angle is set. Using a small piece of sub tank.
+[20:06] Good load is small piece of sub tank. No hardware change.
+[20:10] Right. Based on that because of that sub tank
+[20:14] We load that soft hand first.
+[20:16] We have to use hard hand properly.
+[20:18] We have to burn that into the micro control first.
+[20:20] There after it takes care of everyone.
+[20:23] Any question? Yes, can't do it.
+[20:25] What are you doing?
+[20:27] You are doing your training a fast hand?
+[20:29] Hardware time.
+[20:31] Micro control is not working.
+[20:33] Then you are working.
+[20:35] You are working with the main gear.
+[20:37] You are working with the main gear.
+[20:39] You are working with the main gear.
+[20:41] I have a has a ish.
+[20:42] I have a I I the the
+[20:43] the
+[20:43] the
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] 
+[20:43] hist
+[20:44] the
+[20:43] 
+[20:43] hist
+[20:44] the
+[20:43] hist
+[20:44] the
+[20:43] hist
+[20:44] the
+[20:43] hist
+[20:43] 
+[20:43] hist
+[20:43] the
+[20:43] hist
+[20:43] 
+[20:43] hist
+[20:43] the
+[20:43] hist
+[20:43] 
+[20:43] the
+[20:43] [unclear — Sinhala / crosstalk]
+[21:13] So, you can use a particle or a particle.
+[21:18] So, what is the problem?
+[21:21] What is the problem?
+[21:23] What is the problem?
+[21:25] It's a piece of food.
+[21:28] Food load is a piece of food.
+[21:31] What?
+[21:32] Food load is a piece of food.
+[21:35] Food load is a part-time.
+[21:38] [unclear — Sinhala / crosstalk]
+[22:08] You can see it in the partition, depending on the size of the bootloader.
+[22:14] Some bootloaders are little bit larger, some are very small, depending on that.
+[22:20] Right?
+[22:21] Bootloader space, bootloader consumes some space of rock.
+[22:26] Because you have to load it first.
+[22:28] To load that you need hardware broken.
+[22:31] You need a passive bootloader to make it easier.
+[22:35] and the bootload is directly operating
+[22:38] how do you have to load it?
+[22:40] bootload is a bootload
+[22:43] bootload is a size
+[22:45] stop
+[22:47] is it dependent? is it dependent?
+[22:50] you have to load it
+[22:52] you have to load it
+[22:54] you have to load it
+[22:56] if you have a very efficient algorithm for the bootload
+[22:59] your bootload will be very small
+[23:01] right
+[23:02] if you go through the RDPATH history
+[23:04] They have first good loaders little bit large
+[23:07] Then later they found the better algorithm
+[23:10] Then they replaced it with a smaller good loader
+[23:14] Same functionally but let's go
+[23:16] Let's code space
+[23:18] Probably in future they will come up with another
+[23:21] Probably you propose
+[23:23] We don't know in future you may propose
+[23:25] The better algorithm and the other
+[23:27] I did not good loader
+[23:29] Right? The one problem of this is a very good
+[23:32] innovative very good method
+[23:35] because you don't need hardware programmers very easy
+[23:39] just a click of button you can do programming
+[23:42] flashing, programming is flashing burning
+[23:45] books you can do by just a click of button
+[23:49] but there are downsides and weaknesses
+[23:53] one weakness is you are wrong space
+[23:57] some space you have to sacrifice to the Buddha
+[24:01] Some space you are not going to sacrifice for the people.
+[24:04] Now let's say I want 50 students to cave.
+[24:10] Like that means I need 50 chairs in this world.
+[24:14] Let's assume we have 50 chairs but I have to give one chair for the group.
+[24:19] Then can I upload 50 students?
+[24:23] I can't get it.
+[24:25] The other guy did not listen to my approach.
+[24:28] But you haven't had a beer, you don't have a beer.
+[24:32] So some space of your rock you will have to sacrifice for the bootloader.
+[24:37] That's one negative problem.
+[24:39] If no bootloader and you use a hardware program,
+[24:43] then entire rock is available for your application.
+[24:47] With a bootloader tank you use hardware programmer to build.
+[24:51] Then entire application, the entire rock is available for your application.
+[24:57] You are a little bit more than a hard-dab program.
+[25:01] Where is it?
+[25:03] No, I don't know.
+[25:05] No, I don't know.
+[25:07] I don't know.
+[25:09] I don't know.
+[25:11] I don't know.
+[25:13] I don't know.
+[25:15] I don't know.
+[25:17] I don't know.
+[25:19] I don't know.
+[25:21] I don't know.
+[25:23] I have a very good thing, to be in a very good thing,
+[25:26] to be a very good thing,
+[25:27] to be a very good thing,
+[25:27] to be a very good thing,
+[25:28] to be a very good thing,
+[25:28] to be a very good thing,
+[25:28] to be a very good thing,
+[25:29] to be a very good thing,
+[25:29] to be a very good thing,
+[25:29] to be a very good thing,
+[25:29] to be a more like,
+[25:29] 
+[25:29] a very good thing,
+[25:29] a very good thing,
+[25:29] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:30] a very good thing,
+[25:31] We have to go to the bus.
+[25:33] How many people have been in the bus?
+[25:36] They have been in the bus and they have been in the bus.
+[25:40] No.
+[25:41] Because the bus has been in the bus,
+[25:43] three days.
+[25:45] I have been in the bus.
+[25:47] Three days.
+[25:49] I am not.
+[25:51] In the building,
+[25:53] there is a bus.
+[25:55] I am not in the bus.
+[25:57] I am not in the bus.
+[25:59] When you say that you have to build a construction, you can't do anything.
+[26:06] You are right.
+[26:08] You can't do anything.
+[26:12] You can't do anything.
+[26:14] What's the point?
+[26:16] But it's a situation.
+[26:18] Many people know how to use Google, but they don't know how it happens behind the scenes.
+[26:24] You have to sacrifice some wrong space for the good loader.
+[26:41] Good loader consumes some wrong space.
+[26:44] So entire rock is now not available.
+[26:47] Entire rock is not available.
+[26:50] and let's say you have 32 Kb entire round
+[26:54] full 32 Kb
+[26:56] not a little
+[26:58] you will get little bit less than
+[27:00] that's a problem
+[27:02] because some situations
+[27:04] in some cases
+[27:06] you have a large application code file
+[27:08] your application next file is very large
+[27:12] which is closer to 32 Kb
+[27:14] let's assume
+[27:16] you are
+[27:18] Your bootloader is 2kb. Let's assume 2kb of bootloader. If you belong in 280 microcontroller you have 32kb. Your bootloader is 2kb. That means when you burn the bootloader how much number remains? 30kb remains.
+[27:37] Now your application code requires 31KB. Can you upload 31KB into 30KB space? Put your demo the button and you would have easily uploaded that 31KB into 32KB problem.
+[27:55] But now bootloader has consumed to here. That's one problem.
+[28:00] The second problem, every time when you power up your device, every time when you power up your microcontrol, bootloader is the first code H2M.
+[28:12] It is the code first H2M. So bootloader will pass several flux cycles, probably hundreds of flux cycles in three-pronges.
+[28:21] and thereafter the institution passed to the application code.
+[28:25] Application code with application code space.
+[28:28] Footload is executed first, then the code.
+[28:31] If there are no application code to be burned,
+[28:34] central execution is passed to the existing application code
+[28:39] in the application code space.
+[28:41] So, you can see the application code in the application code space.
+[28:44] Footload is not allowed to be burned.
+[28:47] Is there any application code to be well? No. Control is passed whatever existing application code in the application code speaks. This is another problem. Why? Every time when you power up, when you turn it on your device, there is a slight delay.
+[29:06] I don't know the correct name on my phone. It takes some time. Then only your application code is done.
+[29:13] There is a slight thing. Because as soon as you power up you can't run your application code.
+[29:20] If your system is a very time critical system, as soon as you power up you want to run your application code.
+[29:28] Because the application code delivers you the function at the boot code.
+[29:32] So to get the function very quickly, because your application is very, the system is very time critical, as soon as power up, you want to run your application, good. But you can't do that while. You have a first one to do it.
+[29:46] There after that execution the control is passed to the application. There is a slight delay. It is a very small delay, it is 10 months ago. But when it comes to very time critical applications, it is very considerable.
+[30:01] You can put it upright on your neck.
+[30:04] But some critical applications, it is, now it is very time critical to your time application if you want.
+[30:12] As soon as you power out you want to handle the application.
+[30:15] Can you know?
+[30:17] I could load your hand, will I add?
+[30:20] So there is a slight difference.
+[30:22] Those are the negative points.
+[30:24] The positive points, you don't need hardware to handle.
+[30:28] You don't need to connect any other devices to your microcontroller, your PC.
+[30:35] Just a click of what you can do, upload it.
+[30:39] Where you can be?
+[30:41] Where you can be?
+[30:42] First instruction of the bootloader is, at address here.
+[30:46] Promigate.
+[30:47] Promigate in addresses.
+[30:49] Promigate addresses, you know what?
+[30:52] You can't get a TV.
+[30:54] Then, we will talk about the operating system.
+[31:00] The first instruction is the first thing.
+[31:02] What is it?
+[31:04] The hard disk is the operating system.
+[31:06] What is it?
+[31:08] What is it?
+[31:10] Address 0.
+[31:12] What is it?
+[31:14] The process is the other instruction.
+[31:16] What is it?
+[31:18] Address 0.
+[31:20] PC, universal register of PC program, what is the default address? 0.
+[31:25] The Palo Vidi instruction.
+[31:28] You will not have PC even implement, you know,
+[31:30] you will not have address.
+[31:32] Next address.
+[31:33] Instruction, where are the next address is?
+[31:36] The PIN.
+[31:37] The PIN address is same.
+[31:40] Now, you don't have RTS, you will have a ROM.
+[31:43] Your instructions are not.
+[31:45] But in the microgrid folder, CPU, we have manufacturing,
+[31:49] When you power up, it looks at address 0 for the first instruction.
+[31:55] Then, first instruction should be at address 0.
+[31:59] Address 0 instruction, I think, we are not going to get it.
+[32:03] No voltage. No.
+[32:05] Are you not going to put it? There is a microcontroller in the radio.
+[32:09] You know, a microcontroller has IOM pins.
+[32:13] IOM pins are going to be able to release the headers and the bell.
+[32:17] That's what you say.
+[32:18] That's what you say.
+[32:20] What about the microwave can go on?
+[32:22] That's when you burn the wire to the port.
+[32:25] You don't have to sit on the door.
+[32:27] You don't have to sit on the front of the port.
+[32:29] If you burn the wire to the port, you need a connection between the port and the office.
+[32:34] And you don't have to use the internet.
+[32:37] You don't have to power regulate.
+[32:38] You don't have to use that.
+[32:40] You don't have to use that.
+[32:42] Once you burn the port into the door,
+[32:44] We have to use the microcontroller.
+[32:48] We have to use the red board.
+[32:50] We have to use the red board.
+[32:53] So that board makes our job work.
+[32:56] We have to use the red board.
+[33:00] Not only this is very convenient.
+[33:02] Because it has onboard USB to serial interface.
+[33:08] It has power in the printer.
+[33:11] It has power supply circuit.
+[33:13] It has LED indicator to indicate whether power supply is okay.
+[33:18] It has other LED indicators to indicate whether communication is okay.
+[33:25] Right?
+[33:27] Even if you are not.
+[33:29] It is a complete plan that you can't get out of here.
+[33:33] One superman, one bird, a lot of us.
+[33:36] The first guy with the microcad, he took a big moon.
+[33:40] It was a breadboard, you are missing.
+[33:44] You don't need that.
+[33:46] If you are not going to burn any other goat again,
+[33:49] you don't need that you are supposed to see the interface.
+[33:52] Take one.
+[33:54] That is another misconception that some students have.
+[33:59] They will eat it now.
+[34:01] They won't take a moment in commercial.
+[34:04] For total, the actual ACD is a few months.
+[34:07] There after you can take out the bipolar controller and you can have your own PC, bit and circuit, very small.
+[34:16] All unnecessary components you can retain.
+[34:19] So don't be aware of the things.
+[34:22] I'm worried about the program right now.
+[34:24] It was hard-wired programming, but it was a good loader.
+[34:29] If you are not going to be in the program, why do you need to put loader?
+[34:36] That is your final option.
+[34:38] Then you want to release a final product.
+[34:43] Then you don't need these things.
+[34:45] You don't need serial to USB interface.
+[34:49] You don't need voltage regulators.
+[34:52] If you can supply exactly microbeats from other sources, you don't need them.
+[34:58] Then the only thing you need is the microbeats.
+[35:00] Clock source.
+[35:02] Even clock source you don't need if you have an use in the normal.
+[35:05] They call it 9 gram optimization.
+[35:07] Then during your sensors and activators connected to all your things that's it.
+[35:12] Nothing is.
+[35:13] But during the control time you can even look at it.
+[35:16] The boot is very heavy, very easy to use because it has it as you can plug jumper wires.
+[35:22] It has interface controller.
+[35:24] The interface controller can communicate with the USB port and it has power supply signal
+[35:30] which regulates whatever the power you supply. Between 720 power you can supply it regulates that power to 5 volts.
+[35:38] There are only indicators so we can use them to do any debugging.
+[35:46] For example the power indicator doesn't, it is not turned on. Then we know some problem with the power supply.
+[35:56] So, it could be not the point. Otherwise, you will need that track.
+[36:02] Then, now, this AVIRDUVT, host application, this is an open source host application.
+[36:11] AVIRDUVT is open source, free and open source host application.
+[36:18] you need to add it to Atomal Studio
+[36:25] which is not, which doesn't come with Atomal Studio
+[36:29] AVIR view doesn't come with, it does not come with Atomal Studio
+[36:33] so you have to add it to the Atomal Studio as an external
+[36:39] AVIR view, you have to add to the Atomal Studio as an external
+[36:45] ABRD is free and open source software, no stabilization. But it comes with R2ID. When you install the R2ID, you automatically install ABRD. So it comes with R2ID but it doesn't copy F-MASO. It comes with R2ID.
+[37:07] So if you have restored Arduino IDE, integrated development and required, then what you have to do is just tell the Admin Studio where the ABRP is.
+[37:18] That's the only thing you have to do. You don't need to separate to install ABRP and the ABRP. Why?
+[37:24] It comes with Arduino IDE. Now if you have restored the Arduino IDE, that means you have to know you have ABRP installed.
+[37:31] So what you will do is tell the Atmel Studio the location of AVRD.
+[37:37] That's it.
+[37:38] Then Atmel Studio can work with AVRD.
+[37:42] Now how do we do that?
+[37:44] Now in our computers we have already installed Arduino IDE.
+[37:49] Why?
+[37:50] This is the configuring of the application.
+[37:54] In the Atmel Studio, go to external tools.
+[37:58] This is how we add external tools to administrator.
+[38:03] Now in case, if this menu is not available, in some cases this is not available in the menu, then go to the profile, select profile.
+[38:16] Then you create a box, the dialog box, in that select profile dialog box, select and box box.
+[38:25] Then you will get this external tool mainwiter. Because this external tool mainwiter is available only for the advanced sources. It is available only for the advanced sources. So set the profile as advanced. Go to select profile and select advanced. Then you get these advanced features available.
+[38:45] I told you this is industry standard idea, there are many advanced features.
+[38:52] So this is one, you can add external tools.
+[38:56] Click external tools.
+[38:58] Then you will get this external tool dialog box.
+[39:02] Right.
+[39:03] Now in the external tool dialog box, now we are going to configure the host application using this external tool dialog box.
+[39:12] So very carefully you have to do this if you make a small mistake like additional extra space.
+[39:18] This won't work.
+[39:20] You can do it very well.
+[39:21] You can do it in space and I think it won't work.
+[39:23] But I have to do it.
+[39:24] Very carefully you have to do this.
+[39:27] Right.
+[39:28] First, write the title of the Extender 2.
+[39:32] You are going to add.
+[39:34] You can use any name.
+[39:36] Any name for this you can use Sri Lanka.
+[39:39] Now, you can use it in your calendar, you can go whatever, you can go to the logo if it is a no problem.
+[39:44] But you are being in the tool.
+[39:47] Many days you can get it. So I have given Arduino,
+[39:51] for programmer as the type.
+[39:54] I use the external tool I am going to add.
+[39:57] Because I am going to use Arduino, what I would do,
+[40:00] as my external tool, I am going to add it as a programmer to
+[40:04] my
+[40:06] Atmosphere
+[40:08] And what is the purpose of this atmosphere?
+[40:11] Ashoka
+[40:12] You get U mandala
+[40:15] When you undertook
+[40:17] You get U little mandala
+[40:20] Then all the U you can use to
+[40:24] Trigger that tool
+[40:26] It's a short
+[40:27] Now you learn how to put short as book
+[40:30] Shisha Pani
+[40:31] Shisha Pani Laha Darya
+[40:33] It's a short
+[40:34] Then the command.
+[40:38] Command means you have to give the location where the APR 5 is.
+[40:43] You have to give the location.
+[40:45] This is the location where the host application is in the audience.
+[40:50] Then you have to give the arguments to the host application.
+[40:53] Host application requires many arguments to be passed.
+[40:57] It requires many arguments to be passed.
+[41:00] Now this is the final review of those arguments
+[41:05] Right
+[41:06] Then initial directory
+[41:09] Initial directory is the folder where your hex file is to be bird
+[41:19] Where is the hex file?
+[41:23] That is called initial directory
+[41:25] Right
+[41:26] and this option use output window
+[41:31] use output window if you put it in
+[41:34] now in the output window you get all the information
+[41:38] displayed when you use this external
+[41:41] all the information is displayed in the
+[41:45] external and if you put this prompt arguments
+[41:49] then you will be prompted to enter arguments
+[41:53] and treat art outputs as very good
+[41:57] so there are other options available
+[41:59] now
+[42:01] first thing
+[42:03] how to specify the location
+[42:05] where the host application is
+[42:08] you can click this button
+[42:09] and browse
+[42:11] the location where the host application is
+[42:14] the host application
+[42:17] is with your Arduino IDE
+[42:19] I will show you
+[42:21] the place
+[42:22] and click this button and browse.
+[42:25] Then,
+[42:27] all the elements, we have to type.
+[42:29] This is the place we have to type
+[42:30] very carefully.
+[42:32] One single additional space
+[42:34] would make
+[42:36] this tool not
+[42:38] work.
+[42:39] And then again,
+[42:42] initial directory, we have to type.
+[42:45] Okay.
+[42:46] So let's start with
+[42:47] commands.
+[42:49] Sorry.
+[42:50] Command.
+[42:51] Now, settings, first type menu by level 4 at first to use tools menu.
+[42:58] This is the menu item you get when you add the external menu.
+[43:02] Right? Arduino, App, and Uno, ProGrab.
+[43:06] So you get a new menu item in the tools menu when you add this tool.
+[43:10] So, new underline so you can use it as a shortcut.
+[43:14] Then, come on, the path to host application.
+[43:19] The other post application is, you have to find out this file, avrnew.exe file.
+[43:27] avrnew.exe file.
+[43:30] Right.
+[43:30] Now, this file, if you have a stored adeno ID, if you have a stored adeno ID, this file
+[43:38] is available in the program files.
+[43:43] Right.
+[43:44] In the program files, you have a folder called adeno.
+[43:47] Right.
+[43:48] You have a folder called Rd9 in the program files, whatever C-bri, O-d-bri, whatever you want to use in the situation.
+[43:54] Right?
+[43:55] Program files, Rd9.
+[43:57] Hardware, then there is another folder, subfolder called hardware.
+[44:01] Inside hardware you have a folder called tools.
+[44:05] Tools.
+[44:06] And then inside the tools folder you have AVR for AVR.
+[44:11] And AVR folder you have another folder called B.
+[44:14] B, B-I-A, binary B.
+[44:17] and inside the bin folder you will find avrb.exe
+[44:23] let's write program files
+[44:27] Arduino, hardware, tools, ABR, B
+[44:35] this is the variable, that's the most important
+[44:39] look at the path, you want to do that path very clear
+[44:43] clear. Then arguments. The host application requires many arguments to be passed. Now
+[44:53] we are going to pass arguments. The first argument is the capital C argument. I went
+[45:02] I want capital C, that is the first argument.
+[45:05] Capital C argument.
+[45:07] So capital C argument.
+[45:09] So in the capital C argument you have to pass the path to configuration file of the host application.
+[45:17] Right, that is the path to configuration file of host application.
+[45:22] Configuration file of host application.
+[45:25] Right.
+[45:26] Now again the path is your installation drive, program files, Arduino, hardware, tools, AVR. Up to that point same path. Your installation drive, Arduino, hardware, tools, AVR.
+[45:48] Then there is a folder called EDC etc. EDC. EDC folder. Inside the EDC folder you will find avrdup.conf.co.nf. configuration file.
+[46:08] Let's see. This is the EDC file. Inside the same file, program files are you know, hardware, tools, APR, EDC. Inside that file you have this. Inside the file. Configuration file. Location of the configuration file. So the capital C argument is for configuration file.
+[46:29] Then, that is capital C argument.
+[46:34] Right, capital C, space.
+[46:38] Then you have configuration file, par, within double points.
+[46:43] Configuration file, par, within double points.
+[46:45] Then space, hyper P argument.
+[46:50] Hyper P.
+[46:51] The hyper P arguments, right, hyper P argument
+[46:57] that indicates whether you want to enable verbose or not
+[47:03] verbose, D-E-R-D-O-S-E
+[47:07] whether you want to enable verbose or not
+[47:12] verbose or not
+[47:14] verbose, okay, right
+[47:17] when this tool is used
+[47:19] to details whether you want to get them expressed in verbose
+[47:26] When you use the tool, the details, whether you want to get them expressed in words.
+[47:33] That's why we call words.
+[47:36] Now when you run the tool, there are some information.
+[47:40] Those information, do you want to get them expressed in words?
+[47:45] If you want to get them expressed in less words, just one.
+[47:50] If you want to get more information as well as more information as well as two hypenes.
+[48:04] The number of hypenes used in the specimen, depending on that you will get more and more information.
+[48:11] When the tool is executed, the memory of the parts, whether there are errors, all this information.
+[48:21] If you want to get there, it is output window.
+[48:24] How much information do you need? It depends on number of keys you have to specify.
+[48:31] Number of keys.
+[48:32] With output window you get information, which are all right?
+[48:36] Right. Then, hyphen p, hyphen p, part number, p means part number. What is the part number we are going to use? A, T, mega, three to eight, p. There is a part number. Microwave to a part number.
+[48:53] The key part is to specify the part.
+[48:57] So here, simple T, yeah, we go to simple T, right.
+[49:03] Part, 80Mega, 3 to 80, simple T, yeah.
+[49:08] Then, simple C, how you call simple C, simple C, hardware type, simple C is the hardware type part,
+[49:19] Capital C is configuration code.
+[49:21] Simple C hardware type Arduino.
+[49:25] We are using Arduino code.
+[49:27] So it's Arduino.
+[49:29] Then capital T, Arduino.
+[49:32] Capital T.
+[49:34] Capital T is the port.
+[49:36] They are the board connected.
+[49:39] Port.
+[49:40] They are the board connected.
+[49:42] The board connected port.
+[49:44] So they are going to do a change.
+[49:48] You can't use a secretive port.
+[49:50] You have to put the correct cow port there.
+[49:53] Now let's say you are port connected to COM port 3.
+[49:57] Then you have to put
+[49:59] Hyper capital P space COM 3.
+[50:02] If you are port connected to COM port 4
+[50:06] Then Hyper capital P space COM 4.
+[50:10] Right.
+[50:11] So from where you find which port you have port connected.
+[50:15] You have to go to the revised manager of your new desk.
+[50:19] Right, you have to go to the revised manager.
+[50:21] In the revised manager, there are some item called ports.
+[50:25] You need to go to the revised manager.
+[50:29] Right.
+[50:30] And the revised manager, there are some item called ports.
+[50:33] Expand that item.
+[50:35] When you expel that item, you will see, right,
+[50:39] the particular phone port next to that RD port.
+[50:43] Some computers come 3 hardy, some computers come 5 hardy, it depends on the other way.
+[50:50] That is the board you are going to connect with.
+[50:53] You have to update this argument list with the correct COM board.
+[50:58] Right? You have to update the argument list with the correct COM board.
+[51:03] They are asked that always you have to connect the board to the same board.
+[51:08] Not an incorrect board. You have to connect the board to the same board.
+[51:12] Because we have got bigger now.
+[51:14] Can't bigger the programmer to that port.
+[51:17] So that COM3, COM4, COM5, whatever the port.
+[51:22] These are the important things otherwise you won't be able to program.
+[51:26] Right? Go to the device manager, connect the port,
+[51:30] connect Cardino port, go to the device manager,
+[51:33] find out which port you are going to connect.
+[51:36] Then update the argument with the correct port.
+[51:40] write the space
+[51:43] 1 space
+[51:45] not many spaces
+[51:46] 1 space
+[51:47] 5 and B
+[51:48] simple D
+[51:49] 5 and simple D
+[51:51] write
+[51:52] the maximum
+[51:54] board rate
+[51:55] that the board can handle
+[51:57] maximum board rate
+[51:59] that the board can handle
+[52:02] maximum board rate
+[52:04] D A U D
+[52:06] D A U D
+[52:08] [unclear — Sinhala / crosstalk]
+[52:38] At mega 328p micro generator, it can work at the speed of 150,200 dps.
+[52:51] So, 80 mega 328p can communicate serially at the speed of maximum speed of 150,200.
+[53:00] So, specify the speed of.
+[53:02] Then host application knows the maximum speed that the host application gets communicate with the micro-venture. So host application would not drive speed beyond that limit for the communication.
+[53:18] Then, how you got capital U R U
+[53:22] How you got capital U
+[53:24] That is memory type
+[53:26] You have to specify the memory type
+[53:28] Memory type
+[53:30] Type of the rock
+[53:32] Type of the rock, I will write yes
+[53:34] Type of the rock
+[53:36] Flash
+[53:38] Type of the rock is Flash
+[53:40] We write about Flash
+[53:42] There after
+[53:44] Operation, you have to specify operation
+[53:46] Now flash colon w is right operation
+[53:50] Flash colon w is no space as up
+[53:54] Flash colon w is operation right operation
+[53:58] Right that is the operation we are going to write data to
+[54:02] Flash with a real problem that's the idea
+[54:06] Right operation then
+[54:10] Name of the Higgs point
+[54:14] that you want to word name of the xy to be word name of the xy to be word
+[54:22] then there's a problem the problem is different for different systems you have different names for the
+[54:31] x1 now if you blinker if you develop an application called blinker your xy name is blinker.x
+[54:37] If you develop application called flight controller then your hizmine is flight controller dot hiz.
+[54:45] If you develop application abs then abs dot hiz.
+[54:50] The current names for the hizmine.
+[54:52] Then how do we specify?
+[54:55] So we use the generic name target name.
+[54:59] If you tell the target name then at first you know the target directory is the target
+[55:06] target directory there is a file with hex extension that is the hex file
+[55:13] this is the generic name for all hex files target directory
+[55:16] when appell studio knows they are to look at
+[55:19] target directory there is a file with hex extension that is the hex file
+[55:25] otherwise each and every way you will give the name
+[55:28] now you don't need it
+[55:29] you specify dollar target name
+[55:32] Dollar target name is the generic name for all x-files
+[55:36] Dollar target
+[55:38] and extension x
+[55:41] extension x
+[55:44] otherwise each and every x-file you have to give the name
+[55:48] you have to obtain this
+[55:49] how you don't know, how you don't need
+[55:52] you give a generic name
+[55:53] Dollar target name dot x
+[55:55] extension x file name Dollar target
+[55:59] then, who alert i?
+[56:01] All that time.
+[56:03] You generate the hex file
+[56:05] using Intel architecture.
+[56:08] Your PC is
+[56:10] Intel architecture.
+[56:11] You generate the hex file
+[56:13] with Intel architecture machine.
+[56:15] How do we specify that?
+[56:17] I for Intel.
+[56:19] Say Intel architecture.
+[56:21] The processor.
+[56:23] Even here the architecture is
+[56:25] Intel X-A is in architecture.
+[56:27] If you go for MIPS
+[56:29] some other different direction. Then you have to specify a different parameter. But A, B,
+[56:38] Siren, Celerant, Ola, Ikela, Ikela, Ikela. Right? Then you have to specify the initial
+[56:46] direction. We have to look for the hex point. Dollar, target direction. That is the place
+[56:55] The HTML Studio has to look for X file.
+[56:59] Again this depends on different systems you need.
+[57:03] Different systems, different locations you have the X file.
+[57:07] But generally you can use the layer target divider.
+[57:11] Then the HTML Studio knows where the target divider is.
+[57:16] Because you compile the source code using HTML Studio.
+[57:22] It knows where the X file created.
+[57:25] At that location it is called Targeted.
+[57:28] In the Targeted, in the X file, that is the target team.x.
+[57:33] But actually, you can get a specific order, specific name.
+[57:38] Then, the verbose, the information, to get them displayed,
+[57:44] So, you can put a tick on it.
+[57:46] For use us limit, because you are use output limit.
+[57:51] The processing information will be displayed.
+[57:54] So, this AVRD first application has many other arguments.
+[57:59] So, I have discussed here only the essential arguments, but there are many other arguments.
+[58:05] If you want to know about them, simply go to the command line, specify the path where
+[58:12] the host application is, you know its program file, hardware, tools, even among you learn
+[58:22] you can specify the path, in that path is the command line, type API view, space, hyphen
+[58:32] question mark, enter, then in the command line window you get all the options, hyphen
+[58:39] file name, API view, dot EHC, space, iPad, question. All the options you can get is straight to the camera.
+[58:49] For example, this is the best thing, right. This is the one thing, right. This is the one thing, right.
+[58:55] If you get the path, you will come online, right. Dot EHC, iPad, question. Now, very cute.
+[59:04] all the options parameters are available. More information on the main parameter can be
+[59:11] available. Because this is open source all the details are available. Capital C for configuration
+[59:17] file. Specify location of configuration file. Simple C for programmer. Specify the programmer
+[59:24] programmer type u u for memory type is the operation r w v so we use the we use w because
+[59:34] we write the operation so like this all the leaders are there right
+[59:38] very first
+[59:41] right
+[59:41] read and then you will come
+[59:42] so you use only a w right so you are
+[59:50] right to write the next one into that
+[59:53] You are not going to read it back.
+[59:56] Flash it.
+[59:57] So you can't read it in the Admon serial
+[1:00:00] going like that?
+[1:00:01] When you run the firmware you get the readings.
+[1:00:05] Now this is burning the firmware into the wrong.
+[1:00:09] They are after we execute the firmware.
+[1:00:12] Instead of running a year driver,
+[1:00:14] you need a bus and you have to control the CPA
+[1:00:18] and the next year.
+[1:00:20] They don't have to.
+[1:00:22] I have a very needy.
+[1:00:23] I have a really not.
+[1:00:23] I have a really Andhra,
+[1:00:24] a really you do.
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] I do.
+[1:00:24] I do.
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] I do.
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] I do.
+[1:00:24] I do.
+[1:00:24] I do.
+[1:00:24] 
+[1:00:24] 
+[1:00:24] I do.
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:24] 
+[1:00:52] [unclear — Sinhala / crosstalk]
+[1:01:52] I have a right-get, the one to the one, the one.
+[1:01:53] [unclear — Sinhala / crosstalk]
+[1:02:23] So, you can use the hardware to get the hardware to get the hardware.
+[1:02:30] Clear? Any question?
+[1:02:32] What's the meaning of dollar size?
+[1:02:35] Let's say generic name. Dollar, generic name.
+[1:02:39] In English programming, we use dollar, A for registers like price inside.
+[1:02:45] Generic name combination.
+[1:02:48] Right.
+[1:02:50] Ok let's upload our export.
+[1:02:53] Now you have newly added external tool in the tool screen.
+[1:02:59] This is the external tool we just added.
+[1:03:02] Now it is in the studio tool screen.
+[1:03:05] Right. Now click that.
+[1:03:07] Right. Then output window you get all these information.
+[1:03:12] Here we are given EXEX given 38 bytes of flash and
+[1:03:18] So, the hash went wrong.
+[1:03:21] 38 bytes written, right.
+[1:03:24] Our hex file 38 bytes.
+[1:03:26] As I record hex file 38 bytes.
+[1:03:30] 38 bytes written to?
+[1:03:32] Wrong.
+[1:03:34] Right.
+[1:03:35] And all this information.
+[1:03:37] And last slide,
+[1:03:38] here we are giving pxc, dark value.
+[1:03:42] That means everything is perfect.
+[1:03:45] If you don't get that, that time view, that means something somewhere or sometimes you get errors.
+[1:03:52] There are errors, uploading errors, blah blah blah, any other information.
+[1:03:57] You got that time view, that means, firmware flash into the ROM.
+[1:04:05] firmware flash into the ROM.
+[1:04:07] Right.
+[1:04:08] So what is the firmware reflash?
+[1:04:10] This is the file reflash, I'll show you.
+[1:04:14] and the main point, blink, a, send, and things.
+[1:04:17] That is the five-way finish.
+[1:04:19] Where is that point?
+[1:04:20] In the output fold of our application.
+[1:04:24] So this is the target fold, target event.
+[1:04:27] At first it even knows where it is.
+[1:04:29] This is the target name, the target name.
+[1:04:34] Generic name is specified.
+[1:04:36] At first it even knows what is the one.
+[1:04:39] Target name.
+[1:04:40] This is the five-way finish.
+[1:04:42] Now size of this file 38 pipes. 38. Right? Now this file you can go to the location and you can open this file because you don't bad and see. The hexadec one file. Now what I did? The location did you quite have opened the number? Not bad. Right. Now the machine code put it into the micro-venture. Then power up the micro-venture.
+[1:05:07] Now already powered up because you connected the board to your USB port, already power is there.
+[1:05:13] So as soon as you upload the file, the microcontroller will start working according to your instructions.
+[1:05:21] So what's your instruction? Every half a second, click the link, then on, then on.
+[1:05:27] So as soon as you upload the upload the file, you will see the link in the link, then on, then on.
+[1:05:36] The file size 38 bytes, not to the bytes 38 bytes.
+[1:05:42] The wrong we have 32 KB, 32 KB wrong we have.
+[1:05:46] Out of that 32 KB, now this particular file has consumed 38 bytes.
+[1:05:53] And the bootloader consumed some space.
+[1:05:57] [unclear — Sinhala / crosstalk]
+[1:06:27] The message is the Arduino ID.
+[1:06:33] The information that you get, the same information you get.
+[1:06:38] Why?
+[1:06:39] Same ABRD must have thing as I get used.
+[1:06:43] It is used to categorize it.
+[1:06:45] When you upload a file using Arduino ID, this type of message you get.
+[1:06:50] It is an Arduino ID you upload for other people.
+[1:06:53] So, you can write, read, verify, and then you can write it.
+[1:06:59] If you are not done, then you will go home and go home and go home and go home and go home.
+[1:07:03] Why? Same host application.
+[1:07:05] You can't remember that.
+[1:07:07] Is that clear?
+[1:07:11] One way to specify the path of the host application.
+[1:07:16] It was in the carid isolation mode.
+[1:07:19] I can't do it.
+[1:07:20] I can't do it.
+[1:07:21] I can't do it.
+[1:07:22] I can't do it.
+[1:07:23] Yes.
+[1:07:24] Only the background color of the window is different.
+[1:07:27] That's what I should do.
+[1:07:29] If you want more information, you can increase the purpose by adding another thing.
+[1:07:34] I don't have information.
+[1:07:35] I don't have information.
+[1:07:36] I don't have information.
+[1:07:38] Right.
+[1:07:39] Okay.
+[1:07:40] So all the things that we need to develop our very first system.
+[1:07:48] Now we have to, we discussed about writing the firmware, assembling the firmware, using assembler, now using how can it flash in the firmware in the microbead. Today afternoon we can try this.
+[1:08:02] Now let's talk about what are other options, other alternatives available to bring an LED.
+[1:08:09] Hardware alternatives, hardbired. Hardbired or ordinary.
+[1:08:14] To bring an LED, it's a very simple one, you bring an LED.
+[1:08:18] You don't need a microgram. You don't need all these hardware programming, nothing.
+[1:08:23] Using just two transistors you can bring an LED.
+[1:08:28] using just two transistors you can blink at LED. This LED you can blink using two transistors.
+[1:08:36] Very cheap solution, very cheap, alternative hardwired solution. The LED blinking ring
+[1:08:44] you can adjust using this resistor and this capacitor. By airing the values of this capacitor
+[1:08:53] you can get different blinking weight
+[1:08:57] half a second, half a second, half a second, half a second, half a second, half a second, whatever the blinking weight
+[1:09:03] you can adjust by varying the values of this resistor at this time
+[1:09:08] or else, there is another one, using a small icing
+[1:09:12] you can pick an L.E.P. this is a very popular icing
+[1:09:16] right, triple five icing, it is about 15 rupees, very cheap icing
+[1:09:21] Using that, again you can take this LED whatever the rate you need.
+[1:09:28] To change the rate, with the rate you have to adjust R1, R2 and C.
+[1:09:35] These are the three things you have to change to get a different rate, different thinking rate.
+[1:09:41] These are two hard-boiled solutions, no soft time order and very cheap hard time.
+[1:09:48] Then compare, when you compare this hardware or print use, what are the acquired values of information software based solution.
+[1:10:03] Information driven solution, software based implementation.
+[1:10:07] First of all, software based implementation is very flexible, very flexible.
+[1:10:13] if you want to change the blink-e-grain
+[1:10:15] you'll need to change your one-line-of-could
+[1:10:18] your one-line-of-could
+[1:10:19] you have to want to change the zd-bink-e-grain
+[1:10:20] 
+[1:10:20] 
+[1:10:20] 
+[1:10:20] you have to just all-apfad-bink-e-grain
+[1:10:21] 
+[1:10:21] you have to have a and-bink-e-grain
+[1:10:22] you have to do a y-bink-e-grain
+[1:10:22] you have to do a s-bink-e-grain
+[1:10:22] you have to do a w-bink-e-grain
+[1:10:23] you have to do a w-bink-e-grain
+[1:10:23] Just change one light of code.
+[1:10:25] But hardware is a lot of great use.
+[1:10:27] If you want to change the blinking rate,
+[1:10:29] you have to replace the hardware components.
+[1:10:32] You have to replace the resistors, capacitors.
+[1:10:35] If you want to change the blinking,
+[1:10:37] you have to replace the components.
+[1:10:39] Just changing light of code? No.
+[1:10:42] Then you have to replace the components.
+[1:10:44] Then software-based implementation is easier to modify.
+[1:10:49] Easier to modify and thereby easier to maintain.
+[1:10:52] to maintain. Easy to modify, easy to debug, thereby easier to maintain. Because just updating
+[1:10:59] the code, you can maintain your software based solution. Just update the firmware, that's
+[1:11:07] it. Update the firmware, debug the firmware, modify the firmware, don't touch hardware.
+[1:11:16] But hardware solutions, if you want to change, replace the components. If you want to debug, replace the components. If you want to maintain, you need to go there, remove components and move to components, which is not the key.
+[1:11:33] Software based solution, if the solution is in some other country, no problem.
+[1:11:38] Over the internet you can update.
+[1:11:40] You can even maintain, debug, modify over the internet, remotely.
+[1:11:46] The system running in US, from here can we update? Yes.
+[1:11:50] Can we modify? Yes.
+[1:11:52] Can we debug? Yes.
+[1:11:54] But hardware solutions, you have to fly to US, then they act out.
+[1:12:00] Otherwise how can you remove the parts?
+[1:12:02] How can you modify the settings?
+[1:12:04] Unpossible.
+[1:12:05] So therefore in the long run, software based solutions are very easy to use.
+[1:12:14] Therefore, in the long run, software based implementations are cheap.
+[1:12:20] Initially it is almost high, but in the long run,
+[1:12:24] that's why industry has moved from hardware and products to software based implementations.
+[1:12:31] in various systems, just as from hardware to production software.
+[1:12:36] Using generic hardware, then you can have different functionalities based on different work.
+[1:12:43] Generic hardware would you need using that you can release one product today.
+[1:12:49] Tomorrow you can release a different product and more functionality, just change the firmware.
+[1:12:54] That's why some products you get firmware updates.
+[1:12:58] Right? So for digital cameras, you get from the updates.
+[1:13:03] And even after you release the product to the customer, if you found that some error in your product, you can correct it.
+[1:13:12] Even after releasing the product to the customer, you don't need to recall the product.
+[1:13:18] Otherwise, you have to physically recall the product, remove the components, put new components, correct the problem and give back to the customer.
+[1:13:26] Those things are very expensive. Think about it.
+[1:13:29] A digital camera, you show it all over the world and then you find there is a block.
+[1:13:36] You know, I just said, yeah.
+[1:13:38] Can you recall all the cameras that we are manufacturing plant and correct there and distribute?
+[1:13:47] But what you do is simply your, the page you upload to Amway Applet and you ask the customer to hit them for the best.
+[1:13:54] They back-corrected. Later if you come up with a better algorithm, you update them for the video of Amway Applet.
+[1:14:02] If you want to compete with another competitor's product, you release another Amway Applet.
+[1:14:08] You don't know about your competitors and you can release the product today.
+[1:14:12] and tomorrow your competitive releases a very competitive product, right, better than you are.
+[1:14:20] Then how can you survive in the bathroom?
+[1:14:24] You release one camera today and you are competitive.
+[1:14:27] Say you are going to release one camera.
+[1:14:29] Record releases another camera tomorrow, better than you are.
+[1:14:34] Then tomorrow you realize, you will realize that much better.
+[1:14:38] Much better features with that.
+[1:14:39] You quickly do it. You ask to actual person, at those nearest you are done.
+[1:14:47] Yes. And you get a burden. And you release the burden free of charge.
+[1:14:53] Then you may complete it. You are looking. All these things are possible because the implementations are soft.
+[1:15:00] They are... If harder are based, you have to recall the burden. That's what happened two, three decades or two.
+[1:15:08] Even when I come to me, the camera with the auto-opilot test, there are reports.
+[1:15:15] But very soon, they can't buy a hooper.
+[1:15:19] Very soon the Twitter will ask to plug your car to USB port and get the hooper.
+[1:15:25] The camera recalls the other day, they will come.
+[1:15:28] If there is a problem, they are recalled to the local agent and update them.
+[1:15:33] or in India is a part
+[1:15:36] very soon they will pass that bird to customers
+[1:15:40] but again you will be hard to enter
+[1:15:43] they take their risk
+[1:15:45] because all other products like TVs
+[1:15:48] or these LED smart TVs
+[1:15:51] all the updates you get
+[1:15:53] and sometimes
+[1:15:57] if you are a Google level programmer
+[1:16:00] You can uncover many of the hidden features in the world.
+[1:16:04] They love it.
+[1:16:05] Sometimes the manufacturers, they take a look at a very high standard firm with all the features.
+[1:16:14] And some of the features they receive.
+[1:16:17] And put it into the product.
+[1:16:18] That's the very productive service.
+[1:16:20] That's the first spot.
+[1:16:21] After a couple of months or one year, they come up with a better effort by enabling those features.
+[1:16:27] It enables the environment.
+[1:16:29] Here, in 6 months, some of the features are given in here but they are given in here.
+[1:16:35] But if you are a clever programmer, if you can access, normally these devices, they have
+[1:16:43] a call, a menu for debug menu.
+[1:16:46] Just search debug menu access.
+[1:16:48] Let's say you have a debug camera, some debug model, right?
+[1:16:53] You want that model debug menu to access.
+[1:16:56] And then you will get many ideas from many different forums, especially from Russian forums.
+[1:17:02] Russian hackers like Codavdala, there are many information how to access the debug menu of the device.
+[1:17:08] If you go to the debug menu, you can enable many meetings.
+[1:17:12] And if you very carefully you have to do that.
+[1:17:15] If you make a mistake, they didn't fire a product. Right?
+[1:17:19] You have to throw it away.
+[1:17:22] Because you can't take every one transaction again.
+[1:17:25] Even power delegate you can't take it.
+[1:17:28] Very carefully if you handle it.
+[1:17:30] You can enable many, many hidden features.
+[1:17:34] It's called debug.
+[1:17:35] Then you have to again update the phone.
+[1:17:38] Enable some features and burden it from where to move from.
+[1:17:43] They have various tactics to do all these things.
+[1:17:47] So I encountered one method for a spintex camera. So you have to, the SD card though you have to open. While keep that open, press the view button and turn on the camera. Then you will be entered into the window.
+[1:18:05] And from the network port then you can connect the camera to USB port using the computer and you can enable and disable all the features and for that the console window the Russian header had to go.
+[1:18:20] Maybe they had to go access. The entire website explanation was in Russian using Google Translator.
+[1:18:31] and Devavideva.
+[1:18:33] Okay.
+[1:18:34] Then, now we develop this system to blink an LED every 500 milliseconds,
+[1:18:42] go every half a second.
+[1:18:44] Let's say we won't blink the LED every 200 milliseconds.
+[1:18:49] Not 500, every 200 milliseconds.
+[1:18:52] How do we do this?
+[1:18:53] Modifying our work.
+[1:18:55] This is the original work.
+[1:18:57] Now this program runs, according to this firmware, we can turn on and off at LED connected to PD0P. That is, first we come to code P every half a second.
+[1:19:18] Now I want to change that to 200 TLC, looking right to 200 TLC.
+[1:19:24] This is the only place I have changed.
+[1:19:27] By changing this value, I can get a different delay.
+[1:19:32] Now if you put 41, you get 500 TLC.
+[1:19:38] If you put a large value greater than 41, you get more delay.
+[1:19:43] If you put less value 41, less delay.
+[1:19:46] Now I want to go for 200 seconds.
+[1:19:49] So this is the change.
+[1:19:51] Then I get different.
+[1:19:53] Just one line of code I need to change.
+[1:19:56] Now you can understand how easy to modify the operator.
+[1:20:01] Just one line of code.
+[1:20:03] Compile, Clash.
+[1:20:05] That's it.
+[1:20:06] Is that clear?
+[1:20:07] Modification is simple.
+[1:20:08] I am remotely modifying you.
+[1:20:11] Oh, the network can move.
+[1:20:13] Now with the 16 you can calculate the delay. If you want it, you can get a value very closer to 100 Latt.
+[1:20:22] We can calculate the delay.
+[1:20:28] So from there you can take the end.
+[1:20:31] Book.
+[1:20:32] What is the clock speed of the 1 mAh?
+[1:20:44] 1 mAh, we are using 60 mAh, right?
+[1:20:48] The second bit, we are using 80 mAh, 3280.
+[1:20:52] In the book they talk about 80, 320 some other chip.
+[1:20:59] That is what 80mega328, the book they...
+[1:21:10] We will focus on 80mega32, a different microphone, very similar but if you got the instructions
+[1:21:20] 80mega3283, sorry 80mega3283 instructions that you already have because you have the data
+[1:21:27] Get the data sheet of ADMega32. Get the instructions.
+[1:21:32] Compare instructions. Some instructions, they have made this like differences.
+[1:21:37] 1.2. That could be another reason. For example, some instructions.
+[1:21:43] I don't know. I have to check that. Now let's say, call instructions.
+[1:21:48] Ball inspection may take 3 clock cycles with 80 megahertz to 80p and 80 megahertz 32 it may take 4 clock cycles. There may be slight differences but other than that almost same. As a result when you calculate it may get the value, a small difference in the values like a couple of clock cycles but big difference.
+[1:22:15] Another thing is the clock speed.
+[1:22:17] 1 MHz, 60 kHz.
+[1:22:19] The book uses 80 mHz.
+[1:22:21] Right.
+[1:22:22] This is the change that we do to modify our firmware.
+[1:22:26] Then we can flash the new firmware.
+[1:22:29] Then our microcontroller of our system will work according to the new firmware.
+[1:22:34] The new firmware says, blink the LED every 200 milliseconds.
+[1:22:38] So the microcontroller will blink LED every 200 milliseconds.
+[1:22:43] As soon as you update the program, the microcontroller will work the coding.
+[1:22:47] Right.
+[1:22:48] Now, we develop the firmware using S and L.
+[1:22:53] How about if we develop the same system using C.
+[1:22:57] Links and N and E, every 200 milliseconds using C.
+[1:23:01] Same system using C language.
+[1:23:03] First algorithm.
+[1:23:05] Now, any C program, you have this function.
+[1:23:09] N function.
+[1:23:10] Right.
+[1:23:11] Start the same program, take the end of the same program, start at beginning, start at end, you have the main function. From main function you call all other functions. So main is the very first function where the execution begins.
+[1:23:27] Now what are the codes that we write for the main function?
+[1:23:31] This is the main function. Now I will go for the main function.
+[1:23:35] First, configure PB0 as an output.
+[1:23:39] Output thing. So we have to configure
+[1:23:43] PB0 pin is the first pin of the code P as an output thing.
+[1:23:47] There are. Make PB0 high output.
+[1:23:51] Turn on the data. Now I have to say I will say
+[1:23:55] the dimension. Then delay wait for 200 milliseconds. May Pp0 look. Delay for another 200 milliseconds.
+[1:24:08] Turn on 200 milliseconds. Turn off 200 milliseconds. After that you need to do the repeat and delay.
+[1:24:17] If you want to do that repeatedly in a loop, you have a while loop. What is the condition of the while loop? One. While one is the loop runs forever. Endlessly. So you go again top of the loop, loop condition through. This product is never explained. It is never explained. Endlessly.
+[1:24:43] By using a rescue, we can turn on and off the lady repeatedly again and again.
+[1:24:51] Indefinitely we can escape or complete the lady.
+[1:24:55] On the other hand, using a rescue, we can prevent control for our work.
+[1:25:03] End of the execution of the offer where there is no operating system to take the control.
+[1:25:09] So there is a possibility for control for our work.
+[1:25:12] you can prevent control
+[1:25:14] so this is the C program program
+[1:25:16] can you understand
+[1:25:18] main function, this is the code you write
+[1:25:21] first configure, this is the as a ender's loop
+[1:25:24] within the loop
+[1:25:26] you change the state of
+[1:25:28] logic state of
+[1:25:30] P
+[1:25:32] 5
+[1:25:34] then coding
+[1:25:36] creating a C program
+[1:25:38] go to Android Studio
+[1:25:40] New project, then you get this. New project dialog.
+[1:25:44] In the new project dialog, earlier we select an assembler.
+[1:25:48] Now this time we select CC++.
+[1:25:52] Then the different templates available, you select GCC
+[1:25:56] C-executable project.
+[1:26:00] We are going to use GCC compiler.
+[1:26:04] GCC, that's why GCC. Right. And then even A for the project.
+[1:26:08] Blinkers, Coking, GCCC compiler is open source C compiler.
+[1:26:14] It is an open source C compiler.
+[1:26:16] Then you get this.
+[1:26:18] Your cylinder device also, what?
+[1:26:20] As previously or as the cylinder previous case, you get another dialog box to cylinder the device.
+[1:26:26] Right, from that you are selecting 80 to 80 to 80 microbeats.
+[1:26:29] Then you will be this.
+[1:26:31] Right.
+[1:26:32] In main void, return 0.
+[1:26:34] traditional C code you will get photo generated code.
+[1:26:39] The first step is
+[1:26:42] now you know this is how you write the commit
+[1:26:45] you know C code is
+[1:26:47] first step is to
+[1:26:49] configure EP0 pin as output pin
+[1:26:54] configure EP0 pin as output pin
+[1:26:58] how do we configure EP0 pin?
+[1:27:01] We have to use which register to the configuration?
+[1:27:04] Which register we have to use to configure P as output or input P?
+[1:27:11] Which register?
+[1:27:15] DDR, Data Direction Register.
+[1:27:18] Now we want to configure PPC, that is port P.
+[1:27:22] Then we have to use DDRP.
+[1:27:25] The register DDRP we have to use.
+[1:27:27] In the register DDRP we have 8 pins.
+[1:27:30] Out of those 8 bits, which bit we have set 1 to make first pin an output?
+[1:27:39] 0, first pin. How do we do that?
+[1:27:43] D, D, R, E, aside that value. Starting with 0, B, 0 by 0, B.
+[1:27:50] That is how we indicate binary values. 0x, x and x.
+[1:27:55] [unclear — Sinhala / crosstalk]
+[1:27:59] we assign value 1 for the 0
+[1:28:02] what is the corresponding bid?
+[1:28:04] e b c
+[1:28:06] then p b 0 becomes output
+[1:28:09] can you understand?
+[1:28:11] can you understand this?
+[1:28:12] bid 0 of b dr b is set
+[1:28:16] bid 0 of b dr b is set
+[1:28:18] so p b 0 we configure as output
+[1:28:22] is that it?
+[1:28:24] Hello?
+[1:28:25] Ok
+[1:28:26] While 1 enters 2
+[1:28:28] While 1
+[1:28:30] Then we want to turn on the element
+[1:28:33] That means we have set the logic state of PD0 pin high
+[1:28:38] Logic state of PD0 pin high
+[1:28:41] Which code we have to use?
+[1:28:47] Which code we have to use?
+[1:28:49] Code B
+[1:28:51] which bit we have set?
+[1:28:54] 0 bit
+[1:28:56] code B0
+[1:28:58] now
+[1:28:59] code B0
+[1:29:02] set
+[1:29:04] as soon as you set code B0
+[1:29:06] what happens
+[1:29:08] the corresponding bit
+[1:29:11] BD0 becomes logic high
+[1:29:14] logic high is
+[1:29:16] 5 volts
+[1:29:17] LED connected to the turn off
+[1:29:19] Okay? Then you have to wait 200 milliseconds. How do you wait? There is a function underscore delay underscore s. In milliseconds you have to give it right the required delay 200 milliseconds.
+[1:29:40] Then behind the ceiling the delay loop would be executed.
+[1:29:44] You don't need to worry about it. This is a
+[1:29:47] likely function.
+[1:29:49] Delay underscore, underscore delay underscore this.
+[1:29:53] Right. Then we will turn off the lady. How do we do that?
+[1:29:58] Board B with zero, clear.
+[1:30:01] Wait, another corner will send us.
+[1:30:04] Do this, repeat it again.
+[1:30:07] Now when you try to compile this code, you get a error.
+[1:30:12] Compiler would say, Unrecognized Identifier Delay Underscore Emiss.
+[1:30:19] Compiler that may now. You have to keep the like as a header. Right.
+[1:30:26] And also, compiler would complain, Unknown Identifier DTR key would be unknown identifies.
+[1:30:34] Somebody doesn't know about DDRB, port A. You have to tell DDRB means this particular
+[1:30:42] memory address. Register has a memory address. Port B means that particular memory address.
+[1:30:49] You have to tell that a lot. Fortunately, those details are unified. Port B is memory address.
+[1:30:57] Code C then memory address. Code B, DDRB, DDRC all are mapped in a file.
+[1:31:08] Then what you have to do is you have to tell the GAMPIRE to look at that file.
+[1:31:12] Now you don't need to give specifically one file but you just tell the GAMPIRE look at the file.
+[1:31:16] If you don't know what a meaning of DDRB or code B, look at the file.
+[1:31:21] How do we tell that to the GAMPIRE? As a header file.
+[1:31:25] As a header file you have to specify that particular file.
+[1:31:29] Now in C++ programming you read in the first game.
+[1:31:33] You wrote a program, main file you have to write it
+[1:31:37] C out, A, C out, B,
+[1:31:41] then you write on the screen you wrote A, B,
+[1:31:45] but when you compile at the top
+[1:31:49] in the file you put include
+[1:31:53] I O stream dot H
+[1:31:55] If you remove that line, the pilot would say
+[1:31:57] I don't know C out
+[1:31:59] I don't know C
+[1:32:01] C in C out
+[1:32:03] definition is in
+[1:32:05] header up
+[1:32:07] What is that I O stream?
+[1:32:09] Input output stream dot H
+[1:32:11] It's like when you are reading a book
+[1:32:13] you end up the difficult English word
+[1:32:15] then what do you do?
+[1:32:17] You go to the dictionary
+[1:32:19] get the meaning, continue the reading
+[1:32:21] meaning. When you read a book you found a Shakespeare's English letter word. You don't
+[1:32:27] know the meaning. You go to the dictionary get the simple meaning that you get it. Same
+[1:32:33] way when compiler encountered unknown word we have to tell the compiler we have to look
+[1:32:40] for the meaning. For that we added our files at the top. Can you understand? That's why
+[1:32:47] That's why we are data files. That's the reason we are data files. Otherwise we don't need data files.
+[1:32:54] You tell the compiler, dictionary is there. Look at dictionary. Check the dictionary for me.
+[1:33:00] Same thing. Now we have to tell the compiler where are the known for DDRB and code B.
+[1:33:09] This is the data file that we need.
+[1:33:12] include AVR slash I O dot H. Input output definitions are in that header. I O dot H, which is inside the AVR folder. That's why AVR slash AVR slash I O dot H. This is how we tell the GAMPAR.
+[1:33:31] There are compilers. Now you can go to that file and open that file and see how the mapping has been done. You will see DDRP, some memory address. 4D, some memory address in XMASI.
+[1:33:44] It's an explanation in the memory address, 0 and some memory address.
+[1:33:48] That is the memory.
+[1:33:50] Rather than using actual memory address in your C code,
+[1:33:53] it is very convenient for you to use the memory address.
+[1:33:57] So DDRP is a memory address.
+[1:33:59] But actually your DDRP is a register which has a memory address.
+[1:34:04] If you want to access the register, you need the address.
+[1:34:07] That person has also a register in there.
+[1:34:10] Now that mapping is that name is smart.
+[1:34:13] Compiler doesn't know about delay.txt, delay and slowness.
+[1:34:18] Compiler doesn't know. You have to tell where the definition is.
+[1:34:23] This is the one. In the utility code, there is a word about utility.
+[1:34:30] In the development environment, there is a word about utility.
+[1:34:35] In the utility code, there is a file called delay.txt.
+[1:34:39] The delay.hcundase definition of underscore delay underscore ease.
+[1:34:46] Now the pilot can compile and give you the firmware.
+[1:34:50] Now you flash the firmware to the microcontroller, run and power out the microcontroller.
+[1:34:57] You will get the IE, right?
+[1:35:01] You can see the clicking of the IE.
+[1:35:04] But not at the rate of 200 degrees.
+[1:35:06] Much slower there.
+[1:35:08] Why? The delay accuracy is wrong. The reason is the compiler assumes the clock speed of your microcontroller is 1 MHz. That is the default clock speed that the compiler assumes.
+[1:35:28] The clock speed of your microcontroller is 1 MHz.
+[1:35:33] But your microcontroller runs at 16 MHz.
+[1:35:38] Much faster than that. That's why you can't get the accurate data.
+[1:35:42] Now you have to tell the microcontroller that the pilot says,
+[1:35:45] No, no, no, that is not 1 MHz.
+[1:35:48] My microcontroller is running at the speed of 16 MHz.
+[1:35:54] We have to tell the microcontroller.
+[1:35:56] Lampaila would use the playing well and club speed
+[1:36:02] But you have to tell, no no no, not playing well and there are some strawberry flavor in your day
+[1:36:07] How do you tell them? This is the define
+[1:36:11] You define a constant called FCP
+[1:36:16] Frequency of CP
+[1:36:19] Frequency of CP
+[1:36:21] That is the club speed
+[1:36:22] 16 million
+[1:36:24] Frequency of plug speed like 16 million, 16 million hertz means 16 megahertz.
+[1:36:32] 16 megahertz.
+[1:36:34] And there is a suffix.
+[1:36:38] Not prefix but suffix.
+[1:36:41] Suffix means at the end of the value you have ul.
+[1:36:45] Prefix means before the value.
+[1:36:48] Now after the value.
+[1:36:50] Ul.
+[1:36:51] Why ul?
+[1:36:52] What is the meaning of UL?
+[1:36:54] Because this is related to delay calculations
+[1:36:58] UL means usually late
+[1:37:00] What is the meaning?
+[1:37:02] UL
+[1:37:04] Related to delay
+[1:37:06] UL, usually late
+[1:37:08] In the Sri Laka Dhyana as you have all the time numbers UL
+[1:37:12] The reason is because usually late
+[1:37:16] Usually
+[1:37:18] Suffix
+[1:37:20] 16 million you will
+[1:37:22] Why do we need that summits?
+[1:37:24] Come on see programmers
+[1:37:26] You have learned seeing
+[1:37:28] See that network
+[1:37:30] Why do you need a summits?
+[1:37:32] Now 0B is a prefix
+[1:37:36] 0B
+[1:37:38] 0 0 0 0 0 1
+[1:37:40] That is 0B is a prefix
+[1:37:42] 0 meters in the compiler this is a binary
+[1:37:44] Summits after that
+[1:37:46] You will
+[1:37:48] The default data type of the compiler is integer.
+[1:37:53] If you specify the numeric value, the compiler will treat that as an integer.
+[1:38:00] But 16DL is beyond the age of integer.
+[1:38:03] So you have to tell the compiler, this is unsigned law.
+[1:38:07] This value is unsigned law.
+[1:38:10] Law, not law, unsigned law.
+[1:38:12] That is not negative, only positive.
+[1:38:14] Unsigned law.
+[1:38:15] You have this unsigned law.
+[1:38:18] Otherwise compiler will try to treat this value as integer
+[1:38:24] but compiler cannot treat it as integer because it is beyond the rank of integer.
+[1:38:28] Now in Java you don't need to tell all these things.
+[1:38:31] Why? Java compiler checks all these values and then accordingly the appropriate type is redegnars.
+[1:38:41] But in C, the C philosophy is different.
+[1:38:45] compiler is not very big.
+[1:38:48] C assumes program is in it.
+[1:38:51] You have to tell the compiler what to do and how to do everything.
+[1:38:56] You have the full control.
+[1:38:58] For example, arrays.
+[1:39:01] Let's say you have 10 element array.
+[1:39:04] How do you access the last element?
+[1:39:06] Let's say array 96, x within star rabbit time.
+[1:39:10] That's how you access last element.
+[1:39:12] What would happen if you put X within bracket level?
+[1:39:16] X within bracket level?
+[1:39:19] Can you access beyond the upper amount of the area?
+[1:39:24] In Java, you can see this.
+[1:39:28] You can go even beyond the upper amount of the area.
+[1:39:32] Which is not part of the area.
+[1:39:34] But if you want the memory locations next to the area, you can access.
+[1:39:41] That test it is a real error.
+[1:39:43] Random error.
+[1:39:45] Random error.
+[1:39:47] Random error.
+[1:39:49] Random error.
+[1:39:51] Yes.
+[1:39:53] Random error.
+[1:39:55] It could be random error.
+[1:39:57] It could be some specific error.
+[1:39:59] Yes.
+[1:40:01] Always we can't say the memory location leads to the upper part of the error.
+[1:40:07] It could be random error.
+[1:40:09] don't be so specific value. Specific value very very important for the execution of your system.
+[1:40:16] Now for example if you have access beyond the upper bound of the area and you override that value
+[1:40:23] probably you will make your entire system crash. If it is very specific value for the execution, very important value for the execution of your system.
+[1:40:34] If it is some random character, you will know what.
+[1:40:38] But there is no guarantee.
+[1:40:40] Now in C, Array game is a point.
+[1:40:47] Do you know that? Array game is a point.
+[1:40:50] Then using point alignment, plus plus minus minus.
+[1:40:56] You can navigate from element to element and even go beyond the outer point.
+[1:41:01] point of view, sometimes those features are very useful
+[1:41:05] those features are very useful for good and also for bad
+[1:41:09] if you are happy you will find a system
+[1:41:11] you don't have to use it, there are no power of race
+[1:41:14] if you use it, you can do whatever you like
+[1:41:18] then you don't have to know what you have to do
+[1:41:20] that's the power of the language
+[1:41:22] but if you use some C sharp or a job
+[1:41:27] you are a student friend
+[1:41:29] You got to do whatever you want. There are limits. Only good things to do. Only good things, only good practices. The disciplined way you can do it.
+[1:41:45] And if you see, even that practices in English, rather full freedom, similar to the freedom that you have, in the school time, did you have this freedom?
+[1:42:03] you do a man, I do.
+[1:42:05] [unclear — Sinhala / crosstalk]
+[1:42:35] That's how you're doing.
+[1:42:37] You're doing it.
+[1:42:39] You're doing it.
+[1:42:41] But it's not good.
+[1:42:43] You're doing it.
+[1:42:45] You're doing it.
+[1:42:47] You're doing it.
+[1:42:49] You're doing it.
+[1:42:51] There's a weight weight.
+[1:42:53] For example,
+[1:42:55] with the lecturers,
+[1:42:57] there's no impact out.
+[1:42:59] He will have a man.
+[1:43:01] He will have a man.
+[1:43:03] All other jobs in the country, you have to, there is a specific time, you have to come before this time.
+[1:43:11] And till this time you have to work.
+[1:43:14] You know, the great and work, the high-later work, the high-later work.
+[1:43:19] How is the high-later, high-later, high-later?
+[1:43:22] You are hard-later.
+[1:43:24] Because there is no leaves, you have to leave.
+[1:43:27] I am going to go to the leaves, you have to leave, you have to leave, you have to leave.
+[1:43:32] No leaves.
+[1:43:34] If you want a leaf, you can't.
+[1:43:36] You can't.
+[1:43:38] Leave your poor.
+[1:43:40] Now you are a man.
+[1:43:42] Now you are a man.
+[1:43:44] Then, it's a flat organization.
+[1:43:46] And I can tell you, you know, a hierarchical
+[1:43:48] hierarchical organization
+[1:43:50] that could be orders
+[1:43:52] below, fall ahead, fall ahead, fall ahead.
+[1:43:54] In the illicit, it's a flat
+[1:43:56] organization. But, we have
+[1:43:58] questions.
+[1:44:00] What is the chance to learn again? The lecturer appointed for an period of 3 years.
+[1:44:06] Maximum he can be in that position to get 6 years to the maximum.
+[1:44:11] After 6 years, he has to come back to his lecturers.
+[1:44:15] The maximum 3 years the lecturer appointed to manage the university.
+[1:44:23] I was able to back out these lectures from a couple of years ago.
+[1:44:30] They were just not correct.
+[1:44:32] I had to do this with lecturers.
+[1:44:35] There is only for a particular thing.
+[1:44:51] You know, you are still up to the family.
+[1:44:54] Just for about three years.
+[1:44:57] You can't meet very little man.
+[1:44:59] Even the head, three years.
+[1:45:02] Because he had just a picture and another person is there.
+[1:45:05] They didn't have that part.
+[1:45:07] And have, you know, the police, they cannot get back to the original police.
+[1:45:13] Without waiting for vision from the Russians.
+[1:45:17] [unclear — Sinhala / crosstalk]
+[1:45:47] 100% freedom if you have, then your mind is free.
+[1:45:52] You can come up with even if you are a spirit and no freedom, then you are just a follower of others' orders.
+[1:46:02] You know who is under time? That is what? Right?
+[1:46:07] That is what happened in the wilderness.
+[1:46:12] He said, I am the only one who is in the high office.
+[1:46:16] He said, I don't have a landmines.
+[1:46:20] I don't have a landmines.
+[1:46:24] I don't have a landmines.
+[1:46:28] He said, go, go, go.
+[1:46:30] Fire, go, fire.
+[1:46:32] I don't have a landmines.
+[1:46:36] Fire, fire.
+[1:46:38] They are not part of it.
+[1:46:39] They are restful.
+[1:46:41] They just follow the focus like Omos.
+[1:46:44] If you see the extreme other thing, I don't know whether you are the best person to manage.
+[1:46:48] If not, I am going to be here like,
+[1:46:50] I have to know, I say, I say, just to you, I can't eat it.
+[1:46:53] Like, I am going to be able to see.
+[1:46:56] You know, I am going to be able to do everything.
+[1:46:59] This is the extreme freedom.
+[1:47:02] Then only you can come up with any violence.
+[1:47:05] You have the freedom.
+[1:47:07] But what do you want to use for the bullying? Because in the act, in the act, they assume,
+[1:47:21] we have intelligent people in the community, so they will be using only for the development of the society.
+[1:47:28] They assume that they are not.
+[1:47:30] [unclear — Sinhala / crosstalk]
+[1:47:35] You can't see it, you can't see it.
+[1:47:38] Likewise, the Seed Road.
+[1:47:41] The philosophy of Seed is the entire thing.
+[1:47:45] The developers, they are ideas to give the full freedom to do whatever you like.
+[1:47:52] That's why, you have to specify everything, even if you use a value,
+[1:47:58] You have to tell that valid weather, unsigned or otherwise, compiler will read it as a thing.
+[1:48:07] compiler will read it as a thing.
+[1:48:09] Let's go on it, let's just everything if you specify.
+[1:48:12] Right?
+[1:48:14] You don't need routines lying behind the scene to check the records.
+[1:48:19] How many are the people here?
+[1:48:21] Ah, you have checked the records.
+[1:48:23] Of course you need to have a routine behind the scene to check these things
+[1:48:28] Whether the value is within the range, whether it is this that, greater that
+[1:48:33] Oh you don't need to do it
+[1:48:35] Because everything is this one
+[1:48:37] That is programmer's value
+[1:48:39] Programmer has the freedom
+[1:48:41] Programmer has the responsibility
+[1:48:43] And C has the responsibility
+[1:48:45] Programmers are brilliant programmers
+[1:48:49] That's why C is not for sure of sir
+[1:48:52] C is what?
+[1:48:54] In the university level we use C but normally in the other levels, like school level or other primary levels we don't use C.
+[1:49:05] Because C is highly advanced language.
+[1:49:08] I don't know whether I shared with you.
+[1:49:10] This year C recognized as the most suitable programming language to learn in the world.
+[1:49:20] Most suitable programming language C was very nice.
+[1:49:24] Last year it was 5.
+[1:49:26] This year C opened up 5 because of the widespread of IoT.
+[1:49:33] Most of the IoT devices programming will be C.
+[1:49:37] To learn the programming language, at the university, I mean high studies as well, the programming language, if you want to learn CSL is language.
+[1:49:47] Because you learn everything. If you try to start learning in Java or C-SHA, then you will learn a limited number of things.
+[1:49:58] With C you can learn W and this is the loop component you have got.
+[1:50:03] When you are doing the input system you will learn the LUT OFF.
+[1:50:08] You will learn LUT OFF the features of C.
+[1:50:12] Then, now we specify the club speed.
+[1:50:18] There after we specify the delay function, delay and header file.
+[1:50:23] Because header file requires this cost.
+[1:50:26] So you have to declare the cost time before the header file.
+[1:50:29] Because this cost time in CPU, the header file requires that.
+[1:50:35] Now you get the correct line.
+[1:50:37] Now, I have a small question.
+[1:50:40] Now instead of this delay function,
+[1:50:44] can't we implement a delay view?
+[1:50:47] Now for example,
+[1:50:49] is it on this plan?
+[1:50:52] I write this here.
+[1:50:54] 4 long
+[1:50:56] 5
+[1:50:58] 0
+[1:51:00] 5
+[1:51:02] less than or equal
+[1:51:04] 95,000
+[1:51:06] 
+[1:51:06] 4
+[1:51:08] this is a factor I write this time
+[1:51:10] what is this?
+[1:51:12] the loop
+[1:51:14] how many are relations?
+[1:51:16] 0 to 95,000
+[1:51:18] that is 95,001
+[1:51:20] by directions
+[1:51:22] What does this loop do?
+[1:51:25] What is the other?
+[1:51:26] Body of the loop?
+[1:51:27] There is no body.
+[1:51:28] Only one step.
+[1:51:30] Just a second goal.
+[1:51:31] Are you going to do the really work?
+[1:51:33] No.
+[1:51:34] No.
+[1:51:35] Take one line.
+[1:51:37] That step is nothing.
+[1:51:39] One line you will see here and here and here.
+[1:51:43] Right?
+[1:51:44] Just to spread the time.
+[1:51:46] Now if you put that kind of thing there.
+[1:51:49] You sit down, like number 13 and 15. Can you achieve the relay?
+[1:52:00] What I was trying to do is you sit down that relay function.
+[1:52:05] You sit down that relay function, you write this and see whether you can achieve the relay.
+[1:52:10] You can see whether there is a visible relay or not.
+[1:52:13] You're able to put the name in the same way.
+[1:52:15] Right, what is it? Can you achieve a real?
+[1:52:18] With that kind of group?
+[1:52:20] Ideal, yes.
+[1:52:22] But you won't be able to achieve a real.
+[1:52:25] The reason is, like, compiler, it knows that group.
+[1:52:30] Because that group doesn't do any meaningful thing.
+[1:52:34] So, compiler will simply know that group.
+[1:52:38] Just our compiler, we use compile optimization.
+[1:52:44] In the compile optimization, we have instructed the compiler to ignore unnecessary things.
+[1:52:54] The compiler tries to compile, the compiler will recognize this loop as just a waiting, just a consuming time.
+[1:53:02] but doesn't do anything
+[1:53:04] doesn't do anything but just consume in time
+[1:53:08] so it's a waste
+[1:53:10] so you can't achieve it
+[1:53:12] if you want to achieve the delay in this kind of delay loop
+[1:53:16] then you have to disable the compile optimization
+[1:53:20] you have to disable the compile optimization
+[1:53:22] you can do that
+[1:53:24] in the development environment
+[1:53:26] you can do that
+[1:53:28] just remind me in the container
+[1:53:30] I will show you how to disable compile optimization.
+[1:53:33] You can disable compile optimization, you can enable compile optimization and also you can set the level of compile optimization.
+[1:53:51] With the level 1, 2, 3 likewise, you can set the compile optimization.
+[1:53:56] If you use a very high level compiler optimization, compiler will try to get the best code.
+[1:54:03] Only the best code will be compiled.
+[1:54:05] So if you have variable which you have not used, compiler will be imported.
+[1:54:12] You have a variable but you have read the value of the variable but you are able to update the variable.
+[1:54:20] Now initialize value to a variable and you have used that variable in many places in the
+[1:54:25] upcode to read the variable. But you are not updated the variable any place in the upcode.
+[1:54:32] Then compile and replace that variable with a written across. Variable upcode. Now let's
+[1:54:38] say you have variable x in x assignment initialized with 3 value 3. Then you have used the variable
+[1:54:45] many places in Yambu.
+[1:54:47] But you are not updated
+[1:54:49] the variable.
+[1:54:50] Anyway, I can do it.
+[1:54:52] So what the compiler does is this.
+[1:54:53] Compiler replaces next week
+[1:54:55] just like
+[1:54:56] optimization.
+[1:54:59] Then you will
+[1:55:00] you don't need that barrier.
+[1:55:03] You can include that into the board.
+[1:55:06] With the right one.
+[1:55:07] That kind of optimization
+[1:55:08] is compiled.
+[1:55:10] Again, in C, you have
+[1:55:12] you can disable, you can enable
+[1:55:15] optimization and you can't specify the level of it.
+[1:55:19] If you don't need optimization, this is not optimized.
+[1:55:24] Because some programmers, there are some programmers, you read,
+[1:55:28] when you read any articles related to C, you will find, some programmers, brilliant programmers,
+[1:55:33] they say, compiler cannot optimize the code, I can optimize code better than the compiler.
+[1:55:39] And they do that. They do.
+[1:55:42] coding because they are infinite, therefore is much optimized compared to the compile optimizer.
+[1:55:49] Let's see, again, provides you the message. If you don't need optimization and you think you are better than the compile, okay, you might be out.
+[1:56:00] This is the option, is it? In some programs, in some algorithms, the compile may not be able to optimize the code.
+[1:56:08] But a programmer can do it much better.
+[1:56:11] Right.
+[1:56:12] Okay.
+[1:56:14] In the afternoon, first we will develop the Ascidro Flash and see how it works.
+[1:56:21] Then we will develop the C4 Flash and see how it works.
+[1:56:26] Then we will replace the delay function in the delay loop and see whether it is working.
+[1:56:33] Then we will try to disable the compile optimization and see when you are working.
+[1:56:37] [unclear — Sinhala / crosstalk]
+[1:57:07] Thank you.

@@ -1,0 +1,161 @@
+[0:19] Right. Can you explain this screenshot?
+[0:25] Now it says, digital write 13 height takes roughly 3.95 microseconds.
+[0:35] But the low part takes more time, 4.55 microseconds.
+[0:40] The total is correct again, 8.5 microseconds, which is longer than 62.5 nanoseconds.
+[0:47] Why? Any explanation?
+[0:52] Because of the ripple functions.
+[0:54] Huh? Sorry?
+[0:56] Because of the ripple functions.
+[0:58] Yes. Right.
+[0:59] What is the difference between high time and the low time?
+[1:03] High time means 3.95 microseconds.
+[1:07] Low time means 4.55 microseconds.
+[1:10] Why? Low time means little bit larger than high time.
+[1:14] Why?
+[1:14] Why?
+[1:15] I also wrote a program.
+[1:17] I open 8 pin mode I open output I open high I open low and now I'll show you the hardware setup
+[1:31] follow can you see a pin number eight I have connected a green orange wire
+[1:40] and the ground I have connected a black wire the orange wire and the black wire I have connected
+[1:48] to an oscilloscope nothing else and I have uploaded the code to this microcontroller of
+[1:56] Arduino Uno board right pin number eight high and then immediately I set low and then go back to
+[2:05] next iteration of the loop.
+[2:09] Can you see?
+[2:10] Can you see the headband setup?
+[2:12] Yes, sir.
+[2:13] Right.
+[2:15] Now I'll show you the oscilloscope output.
+[2:19] Right.
+[2:20] And screen
+[2:21] A very clear square wave.
+[2:29] Right.
+[2:33] Can you see?
+[2:35] okay okay i'll tell you the figures
+[2:51] wait a moment i am collaborating oslo scope
+[2:58] right now in this oscilloscope i don't know whether you can see the figures
+[3:03] can you see the measurements the frequency period so what is the frequency 135 135 kilohertz period
+[3:22] 10.38 microseconds right then the plus width
+[3:29] seconds right then minus width 3.9 then the peak voltage 5.12 right now the
+[3:45] The Arduino runs in 16 MHz speed.
+[3:50] But the loop runs, what is the frequency of the loop runs?
+[3:55] 135 kHz.
+[3:57] The loop runs at the speed of 135 kHz.
+[4:01] But the microcontroller runs at 16 MHz.
+[4:05] The period is, that is the time taken for one cycle,
+[4:12] 7.38 microseconds.
+[4:17] Plus width means
+[4:17] in that square wave
+[4:19] the plus part, the top part.
+[4:23] Right?
+[4:23] Type.
+[4:24] 3.5 microseconds
+[4:26] and the minus width means
+[4:28] the bottom part.
+[4:30] The bottom in the square wave
+[4:32] you have a square wave.
+[4:35] Right?
+[4:35] Now you have this kind of square wave.
+[4:38] Square wave.
+[4:39] Plus width.
+[4:41] Plus width.
+[4:42] This is minus width.
+[4:45] And the period is both plus width and minus width.
+[4:49] When you add them together, you get the period.
+[4:52] Right.
+[4:53] Now my question is, plus width is, according to the Osler scope, 3.5 microseconds.
+[5:04] And minus width is 3.9 microseconds.
+[5:08] Right.
+[5:09] What is the reason for this difference?
+[5:11] Because you use the same function. You use digital write. The plus width you get with digital write high. Minus width you get with digital write low. So why you get two different values? Any idea?
+[5:25] I can see that if you have a plus width or 3.5,
+[5:30] you can use the high function for the digital write function.
+[5:37] 3.9 microseconds minus width,
+[5:44] you can use the low function for the digital write function.
+[5:49] [unclear — Sinhala / crosstalk]
+[6:19] the never ending loop but anyway it has to evaluate the condition. Evaluates the condition
+[6:25] and then comes here. And one time is small time. That is added to the minus width. That
+[6:39] small time is also added. Is that clear? Right. Now what would happen if you write the same
+[6:48] program in C. Right? Let's try. Now, you don't need this. I think I have written that also.
+[7:01] Let's see whether I have it. No, I have not written. Let's try. Let's quickly write it.
+[7:08] pin number 8 means
+[7:15] PB0
+[7:16] DDRB
+[7:18] let's do simple assignment
+[7:23] 0B
+[7:24] 1, 2, 3, 4
+[7:26] 5, 6, 7
+[7:28] right
+[7:30] PB0 is output pin
+[7:32] then while
+[7:34] 1, endless loop
+[7:36] Right. In the endless loop, code B. 0 B. 1, 2, 3, 4, 5, 6, 7, 8.
+[7:47] TB 0 make height. Then immediately code B. 0 B. 1, 2, 3, 4, 5, 6, 7, 8.
+[7:59] Right. Return 0. Right. This is the C code.
+[8:03] Let's compile it.
+[8:05] Right.
+[8:05] No compiler errors.
+[8:07] Then flash.
+[8:12] Right.
+[8:13] Now I'll show you.
+[8:16] Whatever.
+[8:18] Now power.
+[8:19] Power.
+[8:20] I lost the power.
+[8:22] Right.
+[8:24] Right.
+[8:26] Now can you see the measurements?
+[8:28] Now what is the frequency?
+[8:31] Can you read?
+[8:33] 4 megahertz.
+[8:35] 4 megahertz.
+[8:37] Right.
+[8:39] Now it is 4 megahertz.
+[8:41] Right.
+[8:42] Earlier it was 135 kilohertz.
+[8:46] Now it is 4 megahertz.
+[8:48] Now if you want you can calculate the performance improvement.
+[8:53] 135 kilohertz to 4 megahertz.
+[8:57] How much performance improvement?
+[8:59] You can calculate.
+[9:01] Right.
+[9:01] This is the time taken for one loop iteration.
+[9:06] Time taken for one loop iteration.
+[9:09] Earlier if you use wrapper functions, it's 135 kilohertz.
+[9:15] Now much faster, right?
+[9:18] The loop runs much faster, 4 megahertz, right?
+[9:22] Now the period is 250 nanoseconds.
+[9:26] So what was the period earlier?
+[9:28] Could you remember?
+[9:31] Right, we will do it again. Now let's comment out this and uncomment the above code and again upload 7.38 microseconds.
+[9:49] Period is 7.38 microseconds
+[9:52] 7.38 microseconds
+[9:56] 7.38 microseconds means
+[10:00] 7380 nanoseconds
+[10:07] 7380 nanoseconds for one loop iterations
+[10:12] If you use Arduino or Apple functions
+[10:15] If you use C
+[10:18] POC code, then it is 250 nanoseconds.
+[10:24] If you use Arduino wrapper functions,
+[10:27] 7,380 nanoseconds for one iteration.
+[10:32] If you see, it's just 250 nanoseconds.
+[10:35] So what is the performance improvement?
+[10:38] You can calculate.
+[10:39] 7,380 minus 250 divided by 7,380 multiplied by 100.
+[10:56] Let me show you that.
+[10:59] 7,380 nanoseconds.
+[11:05] If you use Arduino.
+[11:08] Deduct.
+[11:08] If you use C, 250 nanoseconders.
+[11:12] This is the difference.
+[11:13] Divide this by 7380.
+[11:18] That is, if you use Arduino wrapper function.
+[11:21] Multiply it by 100 to get the percentage.
+[11:25] 96.6 performance improvement.
+[11:29] Performance wise, the improvement is 96.6.
+[11:34] Now we saw the size, firmware size wise improvement. Now we saw the performance wise improvement.
+[11:43] 96.6. Can you understand this?
+[11:47] Are you there?
+[11:49] Do you know your father?
+[11:55] Do you know what you are doing?
+[11:57] I explain how you are doing.
+[11:59] Do you know what you are doing?

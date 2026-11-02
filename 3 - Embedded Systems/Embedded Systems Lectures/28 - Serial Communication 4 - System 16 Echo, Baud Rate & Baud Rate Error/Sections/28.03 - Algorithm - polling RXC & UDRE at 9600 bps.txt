@@ -1,0 +1,376 @@
+[0:00] Data transfer rate we set as 9600 BPS, 9600 bits per second.
+[0:10] That is the data transfer rate we set.
+[0:14] The communication happens between the microcontroller and the connected PC at this rate.
+[0:22] 9600 bits per second.
+[0:25] Then you need to specify the character size.
+[0:27] So we use 8 bit ASCII characters.
+[0:31] So we specify character size as 8.
+[0:35] Then we need to enable the receiver and transmitter.
+[0:40] Enable the receiver and transmitter.
+[0:44] To enable receiver and transmitter to set the character size, we have to use USART, control and status registers.
+[0:55] Then we enter into the endless loop.
+[0:58] Inside the endless loop, we repeatedly check, right?
+[1:03] If receive is completed, is complete, whether the character, whether you have received the receive operation is complete, receive complete.
+[1:17] If receive is not complete, we check whether receive is not complete.
+[1:23] That means if the receive is not complete means no unbreed character in UDR.
+[1:30] If the receive is not complete, that indicates no unread character in the USART data register OUDR.
+[1:41] Receive is not complete.
+[1:43] No new character, no unread character in the UDR USART data register.
+[1:49] Right.
+[1:50] If receive is complete, how do we know whether receive is complete or not?
+[1:55] We can use receive complete flag bit.
+[1:59] receive complete flag bit or xc flag bit you can use because when the receive is complete
+[2:06] this flag bit is set automatically so you can use this flag bit to repeatedly check
+[2:13] whether the receive operation is over if receive is complete if receive operation is complete
+[2:22] That means there is an unread character in the UDR.
+[2:30] If the receive is complete, that means there is an unread character in the UDR.
+[2:38] So this condition becomes false.
+[2:42] If receive is complete, this condition becomes false.
+[2:45] This is actually a polling situation.
+[2:48] We poll receive complete bit.
+[2:52] flag bit again and again to check whether the receive operation is over. If receive operation
+[3:00] is over that means receive is complete then this condition becomes false so we go to the
+[3:08] next step. If the receive complete is over if the receive complete is done read the character in UDR
+[3:18] read the character in UDR.
+[3:22] Whatever the character sent by the PC
+[3:24] you can read from UDR.
+[3:28] Use that data register.
+[3:30] Then you call a function called
+[3:33] transmit chart.
+[3:35] This is a subroutine.
+[3:37] Right?
+[3:38] A subroutine symbol of a flowchart.
+[3:42] So we call transmit chart function.
+[3:46] and we transmit
+[3:48] openSq.
+[3:50] R.
+[3:50] C.
+[3:50] we have
+[3:50] a
+[3:51] m.
+[3:51] c.
+[3:51] c.
+[3:51] 
+[3:51] 
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] 
+[3:51] 
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] 
+[3:51] 
+[3:51] c.
+[3:51] 
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] c.
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] c.
+[3:51] c.
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] 
+[3:51] Then again we call transmit-cha function with the received character.
+[4:00] If the received character is simple A, with that character we again call transmit-cha
+[4:06] function to transmit the character.
+[4:09] Then again we call transmit-cha function, transmit character function with the closing
+[4:16] square bracket.
+[4:17] After transmitting the enclosed character, opening square bracket, the character and closing square bracket, that is enclosed character.
+[4:27] After transmitting enclosed character, we go back to the endless loop again.
+[4:34] Go back to the top of endless loop.
+[4:35] So we do the same thing again and again.
+[4:40] So, whenever we receive a character from the PC, we transmit enclosed character back to the PC.
+[4:49] Receive a character and transmit enclosed character back to the PC.
+[4:54] Now, question is, what is the algorithm of transmit-cha subroutine?
+[5:04] Algorithm of transmit-cha subroutine.
+[5:07] This is the transmit cha subroutine.
+[5:10] The transmit cha subroutine has a parameter.
+[5:15] So that parameter we need to pass what is the character that we want to transmit.
+[5:21] In the first instance, it is an opening square bracket.
+[5:26] Then the character that we receive and finally the closing square bracket.
+[5:32] So as an argument we pass whatever the character we want to transmit.
+[5:38] Then in the function we check whether data register is not empty.
+[5:46] Whether data register is not empty.
+[5:49] Data register means UDR.
+[5:51] Whether UDR is not empty.
+[5:54] Usar data register is not empty.
+[5:56] Why?
+[5:57] If the Usar data register is not empty we can't load a character.
+[6:00] because it already contains a character.
+[6:04] If you try to overload,
+[6:06] if you try to load a character to UDR,
+[6:09] when it is not empty,
+[6:11] that means we are going to overwrite
+[6:13] existing character in the UDR.
+[6:16] So before we load a character to UDR,
+[6:20] we need to check whether UDR is empty.
+[6:23] We do that repeatedly.
+[6:25] Again, polling.
+[6:27] Right?
+[6:27] We pull UDRE flag bit.
+[6:32] USART data register empty flag bit.
+[6:35] Why?
+[6:36] When the UDR becomes empty,
+[6:39] this flag bit is set.
+[6:44] UDRE becomes empty.
+[6:46] UDRE flag bit.
+[6:48] USART data register empty flag bit is set
+[6:51] when UDR becomes empty.
+[6:53] So we check the UDRE flag bit again and again
+[6:56] to see whether UDR is empty.
+[6:59] If UDR is not empty,
+[7:01] we again check.
+[7:02] So when we are polling the UDRE flag bit,
+[7:06] then UDR becomes,
+[7:08] in some time,
+[7:09] UDR becomes empty.
+[7:11] So UDRE flag bit is set.
+[7:14] That means we know that UDR is empty.
+[7:17] We write the character
+[7:19] that we want to transmit to UDR.
+[7:22] Write the character to transmit to UDR.
+[7:26] Return.
+[7:26] So in the first instance, opening square bracket is written.
+[7:31] Then we check again and again.
+[7:33] UDR becomes empty.
+[7:35] The received character is written.
+[7:38] Then again we check whether UDR is empty.
+[7:41] If UDR is empty, closing square bracket is.
+[7:45] So the entire enclosed character we transmit back to the PC over serial port.
+[7:54] PCO whatever the connected system we send the enclosed character over the serial port.
+[8:04] Now can you understand this algorithm?
+[8:08] Any question?
+[8:10] Now without polling whether receive is complete or not.
+[8:17] If you read the character then what would happen?
+[8:20] the same character
+[8:22] you would read again and again
+[8:24] without doing this
+[8:26] polling part to know
+[8:29] whether
+[8:30] we have received a new character.
+[8:33] Receive
+[8:33] operation is over. That means
+[8:36] we have received a new character.
+[8:38] A new character is in the UDR.
+[8:41] Without doing
+[8:42] that, if you read characters
+[8:44] in the UDR, that means
+[8:46] we are going to read the same character
+[8:48] in the UDR again and again.
+[8:51] And also, without
+[8:52] checking whether UDR is
+[8:54] empty, before
+[8:56] loading a character to the UDR
+[8:59] for transmission,
+[9:01] without checking UDR empty,
+[9:03] if you load character to
+[9:04] UDR for transmission,
+[9:06] that means you are going to overwrite
+[9:08] the existing character before
+[9:10] it is transmitted. Now let's say
+[9:13] you have loaded some
+[9:14] character, let's say character
+[9:17] X to UDR.
+[9:18] Before X is transmitted, you are going to load another character Y to UDR.
+[9:25] Then X will be over it.
+[9:27] Y, Y.
+[9:27] So X will not be transmitted as a result.
+[9:31] That's why we check whether UDR is empty before we write a character to UDR.
+[9:39] Can you understand this algorithm?
+[9:41] If you have any question, please ask.
+[9:44] Any question?
+[9:45] No.
+[9:46] Right.
+[9:46] The next part is how to set the board rate.
+[9:50] We need to calculate a value to be assigned to the UBRR register.
+[9:58] UBRR means USAT board rate register.
+[10:02] What is the value we need to assign to UBRR register to get 9600 BPS?
+[10:10] You can't assign 9600 to UBRR register.
+[10:17] UBRR register, you have to assign some other value to get 9600 data transfer rate.
+[10:24] So how do we do that?
+[10:26] Let's see.
+[10:26] Sitting board rate.
+[10:28] Right.
+[10:29] Now first we have to select a standard board rate from these values.
+[10:35] These are the standard board rates.
+[10:37] 2400 BPS, 4800 BPS, 9600 BPS, 14400 BPS.
+[10:48] Likewise, these are the standard data transfer rates.
+[10:54] Right.
+[10:55] They are in BPS, bits per second.
+[10:59] Now, the question is, why not other values?
+[11:04] Any answer?
+[11:05] Why only these values?
+[11:06] Why not otherwise? Why 4,800? Why not 5,000? Why 9,600? Why not 10,000? Any idea? Now I have highlighted the 9,600 board rate because it is the most common data transfer rate used. 9,600 BPS is the most common one and it is the Arduino's default.
+[11:31] right in the Arduino environment that is the default board rate 9600 because it is the most
+[11:39] common widely used board rate my question is why not other values any idea is any idea
+[11:47] and
+[11:48] the
+[11:49] the
+[11:49] the
+[11:49] the
+[11:49] the
+[11:50] the
+[11:50] the
+[11:50] the
+[11:50] the
+[11:50] the
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] the
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] the
+[11:50] the
+[11:50] the
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] 
+[11:50] the
+[11:50] 
+[11:50] the
+[11:50] 
+[11:50] 
+[11:50] the
+[11:50] the
+[11:50] the
+[11:50] 
+[11:50] the
+[11:50] the
+[11:50] 
+[12:17] I have a very part.
+[12:19] I have a more and a more.
+[12:19] I have a really.
+[12:20] I have a really.
+[12:20] I have a really.
+[12:20] I have a really.
+[12:21] I have.
+[12:21] I have.
+[12:21] I have.
+[12:21] I have.
+[12:21] I have.
+[12:21] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:22] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] I have.
+[12:23] Then 16-bit 32-bit microcontrollers use
+[12:27] and then use it on board-rate.
+[12:30] No, no, no.
+[12:32] I'm going to say that
+[12:34] I'm going to say
+[12:37] I'm going to say
+[12:42] I'm going to say
+[12:44] I'm going to say
+[12:47] I have a time a thing, to be more and more, to the...
+[12:51] I can't even process the attack.
+[13:00] Attack?
+[13:01] I don't know if I'm going to get the kit.
+[13:04] I don't know.
+[13:05] I don't know.
+[13:06] I don't know if I'm going to get the system.
+[13:09] I don't know if I'm going to get the clock speed.
+[13:15] I don't know if I'm going to get the standard board rates.
+[13:19] I have a 2% in the 2% to the 1%?
+[13:21] I have a 1%?
+[13:21] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:22] I have a 1%?
+[13:23] I have a 1%?
+[13:23] I have a 1%?
+[13:23] I have a 1%?
+[13:23] I have a 1%?
+[13:23] I have a 1%?
+[13:23] I have a 1%?
+[13:23] I have a 1%?
+[13:23] I have a 1%?
+[13:24] I have a 1%?
+[13:24] I have a 1%?
+[13:24] I have a 1%?
+[13:24] I have a 1%?
+[13:24] I have a 1%?
+[13:24] I have a 1%?
+[13:24] I have a 1%?
+[13:49] Write 9600 kyanne
+[13:52] Banner
+[13:55] Write
+[13:56] Let's write
+[13:58] 9600 kyanne
+[14:04] 9600 bits per second
+[14:11] We know that in the serial communication
+[14:14] A frame size is 10 bits
+[14:18] One frame.
+[14:20] Ten bits.
+[14:21] I start bit plus eight bits plus stop bit.
+[14:29] That's a frame.
+[14:31] Ten bits.
+[14:32] A key means 9600 BPS means 960 frames.
+[14:43] Why? One frame is 10 bit. Each frame you have a character. That means 960 characters. 9600 BPS means 960 characters, 8 bit characters.

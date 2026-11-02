@@ -1,0 +1,77 @@
+[0:00] universal synchronous, asynchronous receiver and transmitter. So these are internal peripheral
+[0:07] devices. They also interrupt CPU. They also interrupt CPU. Right. Now let's talk about
+[0:17] internal interrupts. For example, when timer, there are timers inside the microcontroller,
+[0:31] right? ATmega328P microcontroller, there are three timers. So let's say one particular timer,
+[0:38] timer, right? Overflows. Overflows means timer can count to its maximum value and thereafter
+[0:48] it overflows. So for example, if the timer is 8 bit timer, it can count from 0 to 255
+[0:57] and then it overflows to 0 again because in an 8 bit timer you can't count more than 255.
+[1:06] You can count 0 to 255 then it overflows to 0.
+[1:10] When timer overflows, the timer triggers TOV interrupt.
+[1:18] TOV interrupt.
+[1:20] Again you will learn these interrupts.
+[1:22] This TOV means time overflow interrupt.
+[1:25] Timer triggers TOV interrupt.
+[1:28] Now we need to set whether we enable or disable timer interrupts.
+[1:34] To do that, we use TOIE bit of TIMSK register, TOIE bit.
+[1:47] Using that, we can enable or disable time overflow interrupt.
+[1:53] Now, by default, it is disabled.
+[1:56] But you can enable by setting this bit, you can enable the interrupt.
+[2:00] By clearing the bit, you can disable the interrupt.
+[2:03] Let's say you have set the bit and when time overflows, the timer triggers TOV interrupt and TOV interrupt interrupts the CPU.
+[2:15] Then ADC, analog to digital conversion.
+[2:19] When the analog to digital conversion is over, is completed, ADC triggers ADIF interrupt.
+[2:28] When unlocked digital conversion is complete, ADC triggers, ADIF interrupt.
+[2:35] Again, we can enable or disable this interrupt.
+[2:38] How?
+[2:39] By using ADIE bit of ADCSR register.
+[2:47] Right?
+[2:47] Using ADIE bit of ADCSR register, we can enable or disable ADC interrupt.
+[2:55] by default is disabled. But by setting ADIE bit, you can enable ADIF interrupt. When ADC
+[3:05] conversion, analog digital conversion is complete, ADC triggers ADIF interrupt. ADIF interrupt
+[3:13] interrupts the CPU. Then we have a communication peripheral, internal peripheral call USART.
+[3:22] Universal, synchronous, asynchronous, receiver, transmitter.
+[3:28] Universal, synchronous, asynchronous, receiver, transmitter.
+[3:32] Right.
+[3:33] When the data transmission is complete, when the data transmission is complete,
+[3:39] this USART peripheral triggers TXC interrupt.
+[3:45] TXC, transmission, complete.
+[3:47] TXC interrupt, transmit, complete, interrupt.
+[3:50] Again, you can enable this interrupt or disable it using TXCIE bit of UCSR register. Again, by default, it is disabled, but you can set this bit and enable the interrupt.
+[4:10] If the interrupts are enabled and when the transmission is complete, when the data transmission is complete, USART triggers TXC interrupt and TXC interrupt interrupts the CPU.
+[4:26] Similarly, when the data receive is complete, USART triggers RXC, receive complete interrupt, RXC interrupt.
+[4:37] Again, you can enable or disable RxC interrupt by using RxCIE bit of UCSR register. UCSR register has RxCIE bit. Again, by default, the interrupt is disabled, that means zero in the bit.
+[4:59] You can set value 1 to the bit and enable the interrupt.
+[5:04] If interrupts are enabled, when data receive is complete,
+[5:09] USAT triggers RxC interrupt and RxC interrupt interrupts the CPU.
+[5:15] Right.
+[5:16] Then finally, finally, global interrupts.
+[5:20] All interrupts you can enable low disable.
+[5:23] All these interrupts you can enable low disable.
+[5:27] How?
+[5:27] using i bit.
+[5:29] i bit means
+[5:31] interrupt bit.
+[5:33] Interrupt bit. i bit of
+[5:35] s reg register. s reg
+[5:37] means status register.
+[5:39] Status register has i bit.
+[5:41] Interrupt bit. Using interrupt
+[5:43] bit, when you clear the interrupt
+[5:45] bit, all the interrupts are
+[5:47] disabled. Entire
+[5:49] system. If you set the s reg
+[5:51] bit, all the interrupts
+[5:53] are enabled, then
+[5:55] individually you have to enable and disable different interrupts individually. To globally
+[6:02] enable and disable interrupts we use SEI set interrupt and CLI clear interrupt functions.
+[6:11] Actually when you call set interrupt SEI function that means you set I bit of status register.
+[6:20] When you call CLI, clear interrupt function, what actually happens is you clear the IBIT of status register.
+[6:31] So using SEI and CLI routines, we can set or clear IBIT of S-Rex status register.
+[6:41] Globally, we can enable low disable interrupts to CPU.
+[6:46] Now, can you understand this diagram?
+[6:50] Any questions?
+[6:51] Tilina, any question?
+[6:53] Srianji, any question?
+[6:55] No, sir.
+[6:56] Right.
+[6:57] If no questions, then we'll learn about these interrupts one by one.

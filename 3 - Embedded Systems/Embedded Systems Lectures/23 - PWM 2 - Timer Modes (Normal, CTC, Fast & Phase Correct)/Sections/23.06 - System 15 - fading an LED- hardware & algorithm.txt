@@ -1,0 +1,96 @@
+[0:07] dim an LED. That's an analog effect. Gradually we are going to dim an LED. To do that we need to
+[0:15] reduce the voltage supplied to the LED. If you
+[0:19] supply the proper operating voltage to the LED, LHD will
+[0:23] illuminate with the full brightness. But if you
+[0:27] gradually decrease the voltage supplied to the LED
+[0:30] then you can dim the LED. That means you need to
+[0:35] get a varying, continuously varying voltage
+[0:39] from an output pin. We know how to get 0 or 5
+[0:43] that is digital. Now we are going to get
+[0:47] a continuously varying voltage
+[0:51] from an output. Analog-like output
+[0:55] by means of digital using PWM.
+[0:58] First we should know
+[1:01] what are the IOPs that support
+[1:06] for PWM. Not all IOPs supported
+[1:10] for PWM. Right. So in this micro control only 6 pins are PWM supported. They are right.
+[1:19] This is one of those pins. OC2 pin. Output compare pin number 2. In Arduino Uno board
+[1:27] that is pin number 3 with this tilt character. OC2B. OC0B, OC0A. These are related to timer
+[1:37] 0, 5 and 6 pin. These two are related to timer 1. OC1, OC1A, OC1B. Output compare 1A, output
+[1:49] compare 1B. And these two pins, OC2A and OC2B related to timer 2. There are three timers.
+[1:57] Each timer, you have two OCR registers, two comparators, two waveform generators, two OC
+[2:06] pins. That's why you have 6 OC. These two pins related to timer 0, 8 bit timer. These two pins
+[2:13] related to timer 1, 16 bit timer. And this pin and that pin, they are related to timer 2, again 8 bit
+[2:22] timer. In the Arduino Uno board, these PWM supported pins are denoted using this tilt character. So
+[2:30] other pins, other IOPs are not PWM supported. So analog like output by means of digital you can get
+[2:39] using PWM supported pin. Okay. Right. Now let's talk about the hardware design of our system.
+[2:48] Schematic diagram. This is the LED we are going to dim. That LED I have connected to OCAP. OC0A.
+[3:00] Output compare A pin of timer 0.
+[3:05] 8 bit time.
+[3:07] That is PD6 Arduino pin number 6.
+[3:10] Uno pin number 6.
+[3:12] Can we connect the LED to pin number 8?
+[3:15] No.
+[3:15] Because that is not PWM supported.
+[3:18] You have to use PWM supported pin.
+[3:20] This is one of the common mistakes we make.
+[3:23] We connect the device to some other pin.
+[3:27] Which is not PWM supported.
+[3:29] But then we try to get analog like effect from the device.
+[3:33] No.
+[3:34] You have to connect the device to PWM supported pin.
+[3:38] In this case I have connected the LED to OCA pin of timer 0.
+[3:45] Timer 0 is 8 bit timer.
+[3:47] OCA pin.
+[3:49] Output compare A pin.
+[3:51] Right.
+[3:52] So all other things are pre-connected.
+[3:54] Oscillator pre-connected.
+[3:55] Reset button.
+[3:56] This resistor.
+[3:57] Pull up resistor.
+[3:57] all are pre-connected on the UNO board. So externally on the breadboard you need to connect
+[4:02] this LED with a current limiting resistor to pin number 6 Arduino pin number 6. Right.
+[4:10] So in the wiring diagram you can see pin number 6 which is a PWM supported pin. Right. Denoted
+[4:18] by this tilt character. Here digital PWM means tilt character and you connect the LED
+[4:26] through a resistor to the anode of the LED, cathode connected to the ground power supply.
+[4:32] Right. Then firmware design algorithm. Main function. The main function algorithm. Start.
+[4:42] Configure PD6 as an output. PD6 means OC0AP. Where the LED connected. Configure that pin as an output
+[4:52] because LED connected to that pin.
+[4:54] Specify waveform generation mode as fast PWM.
+[5:00] We use fast PWM while we need high frequencies
+[5:04] to avoid any flickering effect.
+[5:07] So we use fast PWM.
+[5:10] So waveform generation mode we said fast PWM.
+[5:14] Then specify compare output mode as non-inverted.
+[5:18] Right?
+[5:19] Compact output mode as non-inverted
+[5:22] Which is the widely used mode
+[5:25] If you like you can go for inverted mode
+[5:27] Set the PWM frequency as 1 kilohertz or 1000 hertz
+[5:32] High frequency
+[5:33] Then enter into the endless loop
+[5:36] Inside the endless loop
+[5:39] Set the pulse width to 255
+[5:42] Set the pulse width to 255
+[5:44] That means assign 255 to OZR register
+[5:49] Set the pulse width.
+[5:50] If the pulse width is greater than 0, set the output compare value to pulse width.
+[5:57] Set the pulse width to OCR register.
+[6:01] Here we initialize a variable to 255 and then we check whether pulse width is greater than 0.
+[6:08] If so, we assign pulse width to output compare register OCR.
+[6:13] 30 milliseconds delay
+[6:16] decrement pulse width by 5
+[6:19] go again
+[6:20] so this is a loop
+[6:22] within the endless loop
+[6:24] we run another loop
+[6:25] every iteration of the loop
+[6:28] we decrement the pulse width by 5
+[6:30] starting from 255
+[6:32] starting from 255
+[6:33] every iteration we decrement the pulse width
+[6:36] and that decremented value
+[6:39] we assign to the OCR register
+[6:41] that means we gradually
+[6:43] reduce the volume.

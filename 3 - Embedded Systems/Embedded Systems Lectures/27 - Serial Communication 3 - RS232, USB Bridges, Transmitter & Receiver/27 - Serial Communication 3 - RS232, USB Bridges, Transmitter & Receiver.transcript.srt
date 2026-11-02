@@ -1,0 +1,5532 @@
+1
+00:00:00,000 --> 00:00:22,760
+Right, right, turn on recording, let's start. Connection over serial port. Now, how do we connect our embedded system, right, to the serial port, over the serial port, to a PC or some other embedded system?
+
+2
+00:00:22,760 --> 00:00:24,600
+We use line driver.
+
+3
+00:00:25,320 --> 00:00:25,519
+Right.
+
+4
+00:00:25,859 --> 00:00:30,640
+I told you I will explain what is the purpose of using line driver.
+
+5
+00:00:31,100 --> 00:00:32,340
+Now look at this diagram.
+
+6
+00:00:32,979 --> 00:00:34,280
+So in this diagram.
+
+7
+00:00:34,780 --> 00:00:36,200
+Take the laser pointer.
+
+8
+00:00:36,759 --> 00:00:36,899
+Right.
+
+9
+00:00:36,899 --> 00:00:38,520
+This is the USB.
+
+10
+00:00:38,920 --> 00:00:39,119
+Sorry.
+
+11
+00:00:39,299 --> 00:00:40,159
+Serial port.
+
+12
+00:00:41,179 --> 00:00:41,359
+Right.
+
+13
+00:00:41,619 --> 00:00:42,380
+DB9.
+
+14
+00:00:42,520 --> 00:00:43,100
+Serial port.
+
+15
+00:00:43,179 --> 00:00:49,439
+DB9 means D shape sub miniature 9 pins.
+
+16
+00:00:50,119 --> 00:00:52,100
+DB9 means D shape.
+
+17
+00:00:52,100 --> 00:00:54,200
+This is D like D shape.
+
+18
+00:00:55,240 --> 00:00:55,920
+Subminiature.
+
+19
+00:00:56,399 --> 00:00:59,060
+Subminiature from that D you get the B.
+
+20
+00:01:00,500 --> 00:01:03,320
+Subminiature 9 pins port.
+
+21
+00:01:03,520 --> 00:01:07,180
+That is the standard serial port.
+
+22
+00:01:08,120 --> 00:01:10,079
+Now here you can see that serial port.
+
+23
+00:01:10,739 --> 00:01:14,540
+In that serial port you have the receiver pin and the transmitter pin.
+
+24
+00:01:14,799 --> 00:01:18,340
+TXD receive data, transmit data.
+
+25
+00:01:18,439 --> 00:01:20,519
+TSD means transmit data.
+
+26
+00:01:20,519 --> 00:01:23,939
+RxD means the received data, those two pins you have.
+
+27
+00:01:24,620 --> 00:01:26,879
+And this is your microcontroller.
+
+28
+00:01:27,000 --> 00:01:33,319
+Your microcontroller, you have a clock to provide the pulses to the microcontroller.
+
+29
+00:01:33,700 --> 00:01:35,299
+And you have the reset pin.
+
+30
+00:01:35,640 --> 00:01:37,459
+Reset pin, there is no reset button.
+
+31
+00:01:37,900 --> 00:01:46,000
+We have directly connected the reset pin to 5 volt power supply through a 10 kilo ohm resistor.
+
+32
+00:01:46,579 --> 00:01:47,700
+So the pin is high.
+
+33
+00:01:47,700 --> 00:01:51,719
+Therefore microcontroller can execute the programs.
+
+34
+00:01:51,840 --> 00:01:52,819
+There will be no reset.
+
+35
+00:01:53,359 --> 00:01:57,500
+But if you want you can connect a button right to this pin.
+
+36
+00:01:57,680 --> 00:01:59,780
+And the other side of the button you can ground.
+
+37
+00:02:00,859 --> 00:02:02,540
+But I have not shown that part.
+
+38
+00:02:03,500 --> 00:02:07,719
+And the microcontroller has RxD pin and TxD pin.
+
+39
+00:02:08,740 --> 00:02:10,020
+Receive data pin.
+
+40
+00:02:10,500 --> 00:02:11,759
+Transmit data pin.
+
+41
+00:02:11,860 --> 00:02:14,740
+Actually they are PD0 and PD1.
+
+42
+00:02:14,740 --> 00:02:16,840
+I.O. pins of
+
+43
+00:02:16,840 --> 00:02:19,039
+code B. They are I.O.
+
+44
+00:02:19,080 --> 00:02:20,620
+pins. But in this
+
+45
+00:02:20,620 --> 00:02:22,780
+case we are going to use them for
+
+46
+00:02:22,780 --> 00:02:24,460
+data communication not for
+
+47
+00:02:24,460 --> 00:02:26,699
+general purpose input output.
+
+48
+00:02:27,479 --> 00:02:28,879
+These two pins we are going to
+
+49
+00:02:28,879 --> 00:02:30,500
+use for data communication
+
+50
+00:02:30,500 --> 00:02:32,840
+not for general purpose
+
+51
+00:02:32,840 --> 00:02:34,939
+input output. These two pins in Arduino
+
+52
+00:02:34,939 --> 00:02:36,960
+Uno board you can recognize
+
+53
+00:02:36,960 --> 00:02:39,039
+them from pin 0
+
+54
+00:02:39,039 --> 00:02:40,639
+and pin 1 of Arduino
+
+55
+00:02:40,639 --> 00:02:42,860
+Uno board. Now
+
+56
+00:02:42,860 --> 00:02:50,219
+those two pins we connect to the Lion driver and through the Lion driver we connect, then the Lion
+
+57
+00:02:50,219 --> 00:02:58,300
+driver we connect to the RxD and TxD pins of the serial port. Serial port at RxD and TxD pins,
+
+58
+00:02:58,300 --> 00:03:05,819
+we connect the Lion driver to RxD and TxD pins and the Lion driver we connect to the RxD and TxD
+
+59
+00:03:05,819 --> 00:03:17,319
+pins of the microcontroller. Right. Now the serial port uses RS232 standard, that is recommended
+
+60
+00:03:17,319 --> 00:03:29,439
+standard 232, that is the standard serial port, standard for the serial port. Now, why not
+
+61
+00:03:29,439 --> 00:03:37,199
+connect microcontroller directly to the serial port? Why do we connect microcontroller through
+
+62
+00:03:37,199 --> 00:03:43,759
+a line driver to the serial port? That's the question. Why can't we connect microcontroller
+
+63
+00:03:43,759 --> 00:03:56,039
+directly to the serial port? Why do we use a line driver in between microcontroller and the serial
+
+64
+00:03:56,039 --> 00:04:19,040
+The reason is this. This RS 232 standard introduced in 1960s. Introduced in 1960s. Right. Let me switch to the whiteboard. RS recommended standard 232. Right. Introduced in 1960s.
+
+65
+00:04:19,040 --> 00:04:25,839
+1960s during the mainframe era during the mainframe era
+
+66
+00:04:25,839 --> 00:04:39,279
+time at that time in the mainframe computers main frame computers logic high logic high
+
+67
+00:04:39,279 --> 00:04:46,959
+Logic high means minus 3 to minus 25 volts.
+
+68
+00:04:46,959 --> 00:04:51,699
+Minus 3 to minus 25 volts we say logic high.
+
+69
+00:04:52,699 --> 00:04:58,339
+And logic low, right, volt 3 to 25 volts.
+
+70
+00:04:58,639 --> 00:05:03,779
+Those are the two logic levels we use in the name frame here.
+
+71
+00:05:03,779 --> 00:05:15,420
+logic high means minus 3 to 25 volts any voltage of a particular beam is between 3 and 25 volts we say logic high
+
+72
+00:05:15,420 --> 00:05:22,019
+any voltage between plus 3 to plus 25 volts we say logic low
+
+73
+00:05:22,019 --> 00:05:28,800
+that was the mainframe time 1960s during the mainframe era
+
+74
+00:05:28,800 --> 00:05:40,379
+logic standard but today we use TPL, transistor transistor logic. In the TPL
+
+75
+00:05:40,379 --> 00:05:56,639
+standard logic high means 2 to 5 volts. Logic low means 0 to 0.8 volts. This is the
+
+76
+00:05:56,639 --> 00:06:08,000
+TPL standard transistor transistor machine that is the 1960s main frame stand RS 232 stand RS 232 stand
+
+77
+00:06:08,560 --> 00:06:19,839
+now the problem is if can you now connect a TTL microcontroller directly to serial port no that
+
+78
+00:06:19,839 --> 00:06:25,839
+That is not possible. Why? If you connect TPL microcontroller directly to the serial port,
+
+79
+00:06:26,540 --> 00:06:29,019
+there will be a voltage mismatch.
+
+80
+00:06:29,680 --> 00:06:34,959
+Now, in the TPL logic, we say 2 to 5 was logic high.
+
+81
+00:06:35,639 --> 00:06:38,000
+0 to 0.8 was logic low.
+
+82
+00:06:38,000 --> 00:06:43,379
+But in the serial port, logic high means minus 3 to minus 25.
+
+83
+00:06:44,259 --> 00:06:47,079
+Logic low means plus 3 to plus 25.
+
+84
+00:06:47,079 --> 00:07:05,240
+Therefore we need to match the voltages. We need to match the voltages from TtL to RS232 and also RS232 to TtL. To match the voltages we need a line driver.
+
+85
+00:07:05,240 --> 00:07:07,220
+We need a line driver.
+
+86
+00:07:07,639 --> 00:07:11,279
+Now can you understand the purpose of line driver?
+
+87
+00:07:11,459 --> 00:07:13,879
+Why we need a line driver?
+
+88
+00:07:14,420 --> 00:07:14,680
+Right.
+
+89
+00:07:14,839 --> 00:07:22,240
+The line driver is in between the microcontroller and the serial port.
+
+90
+00:07:22,240 --> 00:07:39,240
+The line driver converts TTL voltages to RS232 voltage levels and also RS232 voltage levels to TTL voltage levels.
+
+91
+00:07:39,240 --> 00:07:42,360
+Who does that conversion? Line driver.
+
+92
+00:07:42,800 --> 00:07:51,079
+So one of the popular line driver is MAX232 line driver from MAXIM integrated.
+
+93
+00:07:51,079 --> 00:08:16,079
+Maxim Integrated is a company, right? They market this chip, Max 232, one of the very popular line driver. So the line driver's job is to convert TTL voltage levels to RS 232 voltage levels and RS 232 voltage levels back into TTL voltage levels. Is that clear? Any question?
+
+94
+00:08:16,079 --> 00:08:22,079
+Excuse me sir, why was the high voltage?
+
+95
+00:08:22,079 --> 00:08:30,079
+Your question is why do we use voltage of the CEL to 25 volts?
+
+96
+00:08:30,079 --> 00:08:32,080
+Yes, negative values why?
+
+97
+00:08:32,080 --> 00:08:38,080
+That is because those days, 1960s, mainframes were used.
+
+98
+00:08:38,080 --> 00:08:41,080
+Those mainframes were developed using vacuum tubes.
+
+99
+00:08:41,080 --> 00:08:46,080
+And they consume a lot of power and a lot of high voltages were used.
+
+100
+00:08:46,080 --> 00:08:53,080
+Today we use transistor-transistor logic, TPL logic, very low voltages used.
+
+101
+00:08:53,080 --> 00:09:08,080
+And even now the latest logic circuits use CMOS. CMOS means Complementary Metal Oxide Semiconductor Technology.
+
+102
+00:09:08,080 --> 00:09:14,279
+CMOS complementary metal oxide semiconductor technology is the latest technology.
+
+103
+00:09:14,279 --> 00:09:23,679
+If you have a logic circuit, CMOS logic circuit, your logic levels are, for the logic levels you use, much lower voltages.
+
+104
+00:09:23,899 --> 00:09:29,779
+For example, the 3.3 is the logic high, not 5 volts, right?
+
+105
+00:09:29,779 --> 00:09:38,539
+But in those days, 1960s, those mainframe computers, serial port introduced for the mainframe computers.
+
+106
+00:09:39,220 --> 00:09:41,980
+They used very high voltages.
+
+107
+00:09:43,059 --> 00:09:48,679
+But if you follow the serial port RS-232 standard, you have to follow that old standard.
+
+108
+00:09:49,220 --> 00:09:49,919
+Same standard.
+
+109
+00:09:50,860 --> 00:09:54,259
+This serial port was introduced in 1960s by IDM.
+
+110
+00:09:54,440 --> 00:09:59,159
+At that time, the high voltages were used in the mainframe computers.
+
+111
+00:09:59,779 --> 00:10:09,779
+Even today, if you have a serial port, that serial port follows the same RS-232 standard.
+
+112
+00:10:09,779 --> 00:10:10,779
+Is it clear?
+
+113
+00:10:10,779 --> 00:10:16,779
+My voice, high value is negative and SD2.
+
+114
+00:10:16,779 --> 00:10:19,779
+That is the standard they developed.
+
+115
+00:10:19,779 --> 00:10:20,779
+I don't know.
+
+116
+00:10:20,779 --> 00:10:21,779
+Sorry.
+
+117
+00:10:21,779 --> 00:10:25,779
+The RS-23 is your standard developed by IBM.
+
+118
+00:10:25,779 --> 00:10:30,000
+You have to read the IBM documentation to find out those things.
+
+119
+00:10:30,360 --> 00:10:31,340
+I don't know.
+
+120
+00:10:32,159 --> 00:10:39,860
+One option is you can read IBM old documentation of RS-232 stand.
+
+121
+00:10:40,340 --> 00:10:44,379
+That is the only way you can find out the reason.
+
+122
+00:10:44,720 --> 00:10:45,620
+I have no idea.
+
+123
+00:10:46,100 --> 00:10:46,500
+Thank you.
+
+124
+00:10:47,059 --> 00:10:47,659
+Anything else?
+
+125
+00:10:47,759 --> 00:10:48,539
+Any other question?
+
+126
+00:10:49,240 --> 00:10:52,019
+Now, we don't use other pins in the serial port.
+
+127
+00:10:52,019 --> 00:10:59,460
+the pins in the serial code we don't use for the data communication. Other pins are used
+
+128
+00:10:59,460 --> 00:11:07,779
+for different different purposes. Right. We use only the RXT and TXDPs for the data communication.
+
+129
+00:11:09,139 --> 00:11:20,659
+Now there is Arduino good code, Arduino server reno, right, which uses serial code. Now in this
+
+130
+00:11:20,659 --> 00:11:30,820
+slide you can see the Arduino server you know board with max 232 chip, line driver chip. Now
+
+131
+00:11:30,820 --> 00:11:42,259
+the microcontroller communicates over serial. A line driver converts TTL voltages into RS232
+
+132
+00:11:42,259 --> 00:11:53,940
+and vice versa. Now this is one of the very first Arduino boards developed in the mid 2000s.
+
+133
+00:11:53,940 --> 00:11:59,379
+Arduino introduced in the mid 2000s, one of the very first Arduino board developed which
+
+134
+00:11:59,379 --> 00:12:08,100
+is called Arduino Severino. Severino means in Italian, Serdi. Arduino is the first name,
+
+135
+00:12:08,100 --> 00:12:14,159
+server you know is the CERT that is in Italian right so this is one of the very
+
+136
+00:12:14,159 --> 00:12:20,860
+first Arduino board developer that uses serial for communication and the line
+
+137
+00:12:20,860 --> 00:12:28,860
+driver is to interface microcontroller to the serial right then connection over
+
+138
+00:12:28,860 --> 00:12:37,740
+USB port now we don't have serial ports in our computers in our computers we
+
+139
+00:12:37,740 --> 00:12:46,580
+don't have serial ports. We have USB ports. Now, how do we connect a microcontroller to
+
+140
+00:12:46,580 --> 00:12:55,000
+a PC or some other system over USB port? But we use serial communication. Microcontroller
+
+141
+00:12:55,000 --> 00:13:04,200
+uses serial communication. But unfortunately serial ports are not available. So, how do
+
+142
+00:13:04,200 --> 00:13:14,340
+we connect over serial sorry USB port this is the way we have to use UART to USB interface
+
+143
+00:13:14,340 --> 00:13:22,700
+controller now this time I am using UART not USART why we are talking about a synchronous
+
+144
+00:13:22,700 --> 00:13:31,740
+communication universal a synchronous receiver and transmitter that is UART universal a synchronous
+
+145
+00:13:31,740 --> 00:13:40,559
+receiver and transmitter UART. UART is the microcontroller's side and USB is the other side.
+
+146
+00:13:40,559 --> 00:13:48,720
+Now two sides you need to interface. For that you have to use UART to USB interface controller.
+
+147
+00:13:48,720 --> 00:13:55,419
+Look at this. In this diagram you can see this is the microcontroller UART,
+
+148
+00:13:55,419 --> 00:14:14,419
+inside the microcontroller and this is the USB. And to interface the UART to USB, we use USB to UART interface controller. This is again a very popular UART to USB interface controller, FT232.
+
+149
+00:14:14,419 --> 00:14:20,019
+FT232 is from Future Technology Devices International.
+
+150
+00:14:20,019 --> 00:14:23,620
+That's a company, Future Technology Devices International.
+
+151
+00:14:23,620 --> 00:14:30,919
+That's why they call the chip as FT232, Future Technology Devices International.
+
+152
+00:14:30,919 --> 00:14:31,919
+Right.
+
+153
+00:14:31,919 --> 00:14:37,919
+So this chip interfaces UR to USB.
+
+154
+00:14:37,919 --> 00:14:39,919
+UR to USB.
+
+155
+00:14:39,919 --> 00:14:42,919
+In a USB port, you have four connections.
+
+156
+00:14:42,919 --> 00:14:49,440
+One is for ground, the other one is to supply 5 volts and these two are the data connections.
+
+157
+00:14:49,899 --> 00:14:52,639
+D plus and D minus are the data connections.
+
+158
+00:14:53,320 --> 00:15:01,480
+Now data connections we connect to this chip and then we connect the RxD and DxD fields to this chip.
+
+159
+00:15:02,039 --> 00:15:04,259
+The chip will do the conversion.
+
+160
+00:15:04,899 --> 00:15:10,200
+Now serial is a one protocol, USB is another protocol, protocol matching, voltage matching.
+
+161
+00:15:10,200 --> 00:15:13,100
+everything is done by this chip.
+
+162
+00:15:13,460 --> 00:15:14,399
+And not only that.
+
+163
+00:15:15,120 --> 00:15:16,940
+We have two LED sources.
+
+164
+00:15:17,559 --> 00:15:19,639
+When you transmit, this LED
+
+165
+00:15:19,639 --> 00:15:21,200
+clicks. When you means
+
+166
+00:15:21,200 --> 00:15:23,080
+when microcontroller transmits,
+
+167
+00:15:23,720 --> 00:15:25,019
+this LED clicks.
+
+168
+00:15:25,559 --> 00:15:27,220
+When microcontroller receives
+
+169
+00:15:27,220 --> 00:15:28,940
+data, this LED
+
+170
+00:15:28,940 --> 00:15:30,580
+clicks. So we can
+
+171
+00:15:30,580 --> 00:15:33,299
+recognize whether, we can
+
+172
+00:15:33,299 --> 00:15:35,580
+identify whether microcontroller
+
+173
+00:15:35,580 --> 00:15:37,559
+is transmitting or receiving.
+
+174
+00:15:38,220 --> 00:15:39,340
+Just looking at these
+
+175
+00:15:39,340 --> 00:15:57,639
+And there is another advantage. If you go back to the previous one, you have to supply 5 volts to the microcontroller separately. Because this serial port side, you have very high voltage, up to 25 volts.
+
+176
+00:15:57,639 --> 00:16:01,080
+right this side very high voltage
+
+177
+00:16:01,080 --> 00:16:05,240
+but for the microcontroller we need 5 volts
+
+178
+00:16:05,240 --> 00:16:08,980
+and also for this line driver chip you need 5 volts
+
+179
+00:16:08,980 --> 00:16:12,240
+so you have to supply 5 volts separate
+
+180
+00:16:12,240 --> 00:16:17,019
+but if you go to the second option that is you are
+
+181
+00:16:17,019 --> 00:16:21,000
+to USB interface control option you don't need
+
+182
+00:16:21,000 --> 00:16:25,080
+to supply separate 5 volts separately 5 volts to
+
+183
+00:16:25,080 --> 00:16:29,220
+microcontroller. Why? The microcontroller draws
+
+184
+00:16:29,220 --> 00:16:33,360
+the required current from the USB
+
+185
+00:16:33,360 --> 00:16:37,379
+port. From the USB port, microcontroller can
+
+186
+00:16:37,379 --> 00:16:41,580
+draw 5 volts. So you don't need to supply, provide
+
+187
+00:16:41,580 --> 00:16:45,440
+a separate power supply. So microcontroller draws power
+
+188
+00:16:45,440 --> 00:16:49,320
+from the USB port. That's another advantage.
+
+189
+00:16:49,860 --> 00:16:52,740
+If you use a serial, direct serial port communication,
+
+190
+00:16:52,740 --> 00:16:55,940
+you have to supply 5 volts to the microcontroller
+
+191
+00:16:55,940 --> 00:16:58,299
+secondly. Because serial port size
+
+192
+00:16:58,299 --> 00:17:02,000
+voltages are very high. But if you use
+
+193
+00:17:02,000 --> 00:17:04,859
+UR2 USB interface
+
+194
+00:17:04,859 --> 00:17:07,000
+controller, then
+
+195
+00:17:07,000 --> 00:17:10,859
+the microcontroller can drop 5 volts from
+
+196
+00:17:10,859 --> 00:17:13,799
+USB port. And USB ports are
+
+197
+00:17:13,799 --> 00:17:17,079
+widely available. And our modern computers,
+
+198
+00:17:17,220 --> 00:17:19,680
+desktops and laptops, USB ports are available.
+
+199
+00:17:19,680 --> 00:17:27,359
+so you can easily connect microcontroller to the USB port and have serial communication.
+
+200
+00:17:27,359 --> 00:17:32,160
+For the communication you need the protocol matching, voltage matching, all these things
+
+201
+00:17:32,160 --> 00:17:41,119
+are done by this UART USB serial interface controller. UART means serial, USB means USB,
+
+202
+00:17:41,119 --> 00:17:48,799
+universal serial bus. So all this matching is done by this chip, FTE232 chip. So this is very handy.
+
+203
+00:17:49,680 --> 00:18:00,019
+And a very useful way to communicate with a connected device.
+
+204
+00:18:00,559 --> 00:18:06,960
+Using this method, microcontroller can communicate with some other device very easily.
+
+205
+00:18:07,359 --> 00:18:08,819
+But there are downsides.
+
+206
+00:18:09,200 --> 00:18:11,960
+There are good points we discussed, but there are negative points.
+
+207
+00:18:12,380 --> 00:18:15,819
+The problem is this method is not plugged in.
+
+208
+00:18:15,819 --> 00:18:27,359
+When you connect a microcontroller using UR to USB interface controller to a USB port, you have to install device driver for this chip.
+
+209
+00:18:27,700 --> 00:18:29,799
+You have to install device driver for this chip.
+
+210
+00:18:29,900 --> 00:18:34,779
+Otherwise, your computer operating system will not recognize the chip.
+
+211
+00:18:35,119 --> 00:18:40,660
+FT232 chip, your computer's operating system will not recognize.
+
+212
+00:18:41,119 --> 00:18:43,759
+You have to install device driver.
+
+213
+00:18:43,759 --> 00:18:54,759
+But that's not a big problem why the device drivers are free from ftdichip.com.
+
+214
+00:18:54,759 --> 00:18:57,759
+Ftdichip.com.
+
+215
+00:18:57,759 --> 00:18:59,759
+Let me write it.
+
+216
+00:18:59,759 --> 00:19:07,759
+www.ftdichip.com.
+
+217
+00:19:07,759 --> 00:19:11,759
+FTDI is Future Technology Device International.
+
+218
+00:19:11,759 --> 00:19:21,759
+From this URL you can download the required drivers for this chip.
+
+219
+00:19:21,759 --> 00:19:26,759
+When only your operating system will recognize the chip.
+
+220
+00:19:26,759 --> 00:19:29,759
+Right. Any question? Right.
+
+221
+00:19:29,759 --> 00:19:31,759
+Look at this board.
+
+222
+00:19:31,759 --> 00:19:34,759
+Are you know Dew Miller No Way?
+
+223
+00:19:34,759 --> 00:19:37,759
+Are you know Dew Miller No Way?
+
+224
+00:19:37,759 --> 00:19:40,960
+Right here, Diumilla Nove means 2009.
+
+225
+00:19:41,480 --> 00:19:44,960
+In Italian, Diumilla Nove means 2009.
+
+226
+00:19:45,660 --> 00:19:49,079
+This port uses FTDI chip.
+
+227
+00:19:49,319 --> 00:19:54,359
+You can see FTDI chip, the microcontroller and the USB port.
+
+228
+00:19:54,359 --> 00:19:57,500
+So, the microcontroller is USAR.
+
+229
+00:19:58,079 --> 00:20:00,039
+This connection is USB.
+
+230
+00:20:01,180 --> 00:20:06,240
+The interface matching is done by this FTDI chip.
+
+231
+00:20:06,240 --> 00:20:08,140
+This is the FTDIC.
+
+232
+00:20:08,900 --> 00:20:11,480
+You start to USB interface control.
+
+233
+00:20:12,140 --> 00:20:12,160
+Right.
+
+234
+00:20:12,660 --> 00:20:20,539
+So in 2009, Arduino released this Arduino DuMilanove board with this tube.
+
+235
+00:20:21,119 --> 00:20:21,359
+Right.
+
+236
+00:20:21,799 --> 00:20:23,420
+Now this board is not available.
+
+237
+00:20:24,200 --> 00:20:30,119
+But Arduino Uno, revision 2 boards are available with this tube.
+
+238
+00:20:30,119 --> 00:20:34,400
+I ask you not to buy those boards because they are a little bit cheap.
+
+239
+00:20:34,400 --> 00:20:41,680
+but you have to install device driver for each and every computer you connect the board that's very
+
+240
+00:20:42,640 --> 00:20:50,319
+inconvenient so that's why i asked you to buy Arduino Uno revision 3. The Arduino Uno boards
+
+241
+00:20:50,319 --> 00:20:58,640
+before revision 3 they use FTDH you have to install the device driver you have to get the device driver
+
+242
+00:20:58,640 --> 00:21:06,640
+from the website and install. Otherwise, the operating system will not recognize this. Is that clear? Any question?
+
+243
+00:21:09,839 --> 00:21:19,039
+Right. Then, connection over USB port, second method. Instead of using UART to USB interface
+
+244
+00:21:19,039 --> 00:21:27,440
+controller chip, a dedicated USART to USB interface controller chip, without using a dedicated chip,
+
+245
+00:21:27,440 --> 00:21:37,039
+you can use a microcontroller for that job, for that purpose. Purpose is you are to USB interface
+
+246
+00:21:37,039 --> 00:21:42,240
+controller. For that job you can use a microcontroller, another microcontroller.
+
+247
+00:21:42,240 --> 00:21:49,359
+And this is the right. Two microcontrollers. This is the main microcontroller, ATmega328.
+
+248
+00:21:49,359 --> 00:22:00,319
+This is another microcontroller. ATmega 16U2. This microcontroller acts as UART to USB interface.
+
+249
+00:22:01,200 --> 00:22:12,799
+Act as UART to USB interface. So this side UART serial, this side USB, this side USB
+
+250
+00:22:12,799 --> 00:22:22,180
+and this chip, this microcontroller, right, interfaces UR2, USP.
+
+251
+00:22:22,500 --> 00:22:25,420
+And again, there are two LEDs, right.
+
+252
+00:22:25,420 --> 00:22:31,980
+So, when the main microcontroller receives data, this RX LED blinks.
+
+253
+00:22:33,000 --> 00:22:37,940
+When the main microcontroller transmits data, TX LED blinks.
+
+254
+00:22:37,940 --> 00:22:43,480
+These are the two pins we used to receive and transmit data, RxD and PxD.
+
+255
+00:22:44,319 --> 00:22:52,579
+Those are IEO pins, but now we have configured them to use as for the data communication.
+
+256
+00:22:53,099 --> 00:22:56,619
+So we have sacrificed two IEO pins for data communication.
+
+257
+00:22:56,960 --> 00:23:00,440
+So thanks to serial communication, we need only two pins to sacrifice.
+
+258
+00:23:00,839 --> 00:23:06,519
+But if you are using parallel communication, you have to sacrifice more IEO pins.
+
+259
+00:23:06,519 --> 00:23:13,519
+So, that is not acceptable because we need eye-opens for connecting sensors and actuators.
+
+260
+00:23:13,519 --> 00:23:21,519
+So, that's why in the context of embedded systems, serial communication is, again, the
+
+261
+00:23:21,519 --> 00:23:28,519
+power required for the microcontroller, it can draw from the USB port.
+
+262
+00:23:28,519 --> 00:23:31,519
+So, you don't need to supply power separately.
+
+263
+00:23:31,519 --> 00:23:38,960
+the required power for the microcontroller the microcontroller can grow from USB any question
+
+264
+00:23:38,960 --> 00:23:49,059
+now this ATmega16U2 microcontroller implements UR2 USB interface controller right this is the
+
+265
+00:23:49,059 --> 00:23:56,240
+board that you have revision 3 I do you know no revision in this board you have the main
+
+266
+00:23:56,240 --> 00:24:04,799
+microcontroller, USART and you have the USB port, USB and this is the interface controller
+
+267
+00:24:04,799 --> 00:24:14,539
+chip. That's a microcontroller. This implements USB to UART interface. This is a microcontroller.
+
+268
+00:24:14,539 --> 00:24:22,039
+And this crystal is to provide clock pulses for this chip. This microcontroller we need
+
+269
+00:24:22,039 --> 00:24:27,220
+a crystal to provide clock pulses. If you go back to the schematic diagram, you can see
+
+270
+00:24:27,220 --> 00:24:34,039
+this is the crystal. 16 megahertz crystal to provide clock pulses to this microcontroller.
+
+271
+00:24:34,039 --> 00:24:41,660
+And for that we need very accurate clock pulse. Otherwise, this microcontroller cannot implement
+
+272
+00:24:41,660 --> 00:24:50,599
+USB to UART interfacing. So it needs very accurate clock pulses. That's why we use this.
+
+273
+00:24:50,599 --> 00:24:57,599
+But this main microcontroller we use a smaller resonator, not a crystal, a ceramic resonator.
+
+274
+00:24:57,599 --> 00:24:59,599
+Here you can see a 16 megahertz.
+
+275
+00:24:59,599 --> 00:25:07,039
+Ceramic resonators are small and cheap but not very acute compared to crystals.
+
+276
+00:25:07,039 --> 00:25:08,539
+So this is called Arduino Puno.
+
+277
+00:25:08,539 --> 00:25:11,599
+Puno means one in Italian.
+
+278
+00:25:11,599 --> 00:25:12,599
+Any question?
+
+279
+00:25:12,599 --> 00:25:14,359
+So how about your experience?
+
+280
+00:25:14,359 --> 00:25:19,359
+Do you experience some bandwidth problems?
+
+281
+00:25:19,359 --> 00:25:28,359
+No sir. Sometimes there will be a small one second glitch, something like that, but not a long issue.
+
+282
+00:25:28,359 --> 00:25:31,359
+This method is okay? Yes sir.
+
+283
+00:25:31,359 --> 00:25:37,359
+Right. How about others? Nirasha, I think you have this bandwidth issue.
+
+284
+00:25:37,359 --> 00:25:39,359
+Still not.
+
+285
+00:25:39,359 --> 00:25:55,200
+Okay, let's see. The idea is we have to come up with some sort of more interactive approach
+
+286
+00:25:55,200 --> 00:26:03,920
+to conduct lectures online. Because we have to live with this situation, I mean this condition,
+
+287
+00:26:03,920 --> 00:26:13,920
+I think throughout the next year also. So we have to come up with some sort of mechanism to have more interactive lectures.
+
+288
+00:26:13,920 --> 00:26:18,920
+So what will be the examination process?
+
+289
+00:26:18,920 --> 00:26:29,339
+So you know that I am normally I don't involve into those administrative work, right?
+
+290
+00:26:30,160 --> 00:26:35,920
+So I don't take normally administrative positions and I don't involve into the administrative
+
+291
+00:26:35,920 --> 00:26:40,640
+decision making, those administrative work, right?
+
+292
+00:26:41,440 --> 00:26:44,640
+So therefore, I have no idea about those.
+
+293
+00:26:46,200 --> 00:26:47,599
+Dr. Zurelson.
+
+294
+00:26:47,599 --> 00:26:48,599
+Yes.
+
+295
+00:26:48,920 --> 00:26:57,880
+Right, let's continue. Asynchronous Transmitter. In the synchronous serial communication, how
+
+296
+00:26:57,880 --> 00:27:05,119
+asynchronous transmitter works, that's what we are going to discuss now. Asynchronous
+
+297
+00:27:05,119 --> 00:27:15,720
+Transmitter. This is the internal block diagram of asynchronous transmits. So at first glance,
+
+298
+00:27:15,720 --> 00:27:18,220
+You may feel this is very complicated.
+
+299
+00:27:18,220 --> 00:27:26,480
+Don't worry, I'll explain, right, this, right, these components one by one.
+
+300
+00:27:26,480 --> 00:27:27,480
+Right.
+
+301
+00:27:27,480 --> 00:27:30,480
+Let's start with Bode rate generator.
+
+302
+00:27:30,480 --> 00:27:31,480
+Bode rate generator.
+
+303
+00:27:31,480 --> 00:27:33,480
+What is Bode rate?
+
+304
+00:27:33,480 --> 00:27:36,119
+Bode rate means data transfer rate.
+
+305
+00:27:36,119 --> 00:27:41,960
+The Bode rate generator generates Bode data transfer rate.
+
+306
+00:27:41,960 --> 00:27:50,839
+clock pulses from the oscillator. Clock pulses from the oscillator means FCP.
+
+307
+00:27:50,839 --> 00:28:01,339
+Clock pulses from the oscillator means FCP. Frequency of CPU. FCP. One input to the bauderate
+
+308
+00:28:01,339 --> 00:28:11,400
+generator is FCP. Frequency of CPU. The other input to the bauderate generator is the value
+
+309
+00:28:11,400 --> 00:28:24,359
+of this register, value of this register. This register is called UBRR. UBRR means USART
+
+310
+00:28:24,359 --> 00:28:33,720
+BORDERATE register. USART BORDERATE register. Right. Now there are two inputs to the BORDERATE
+
+311
+00:28:33,720 --> 00:28:44,160
+generator. One is frequency of CPU that is FCPU. The other input is the value of USAT
+
+312
+00:28:44,160 --> 00:28:52,960
+board rate register. Using these two inputs, board rate generator generates the data transfer
+
+313
+00:28:52,960 --> 00:29:00,980
+rate. According to this equation, this is the equation for the board rate generation.
+
+314
+00:29:00,980 --> 00:29:19,279
+So, FCPU divided by 16 multiplied by UBRR plus 1. UBRR means value of this register. So, the value of this register can vary between 0 to 255. 0 to 255 because this is 8 bit register.
+
+315
+00:29:19,279 --> 00:29:27,839
+So, according to this equation, the baud rate generator generates baud rate, data transfer rate.
+
+316
+00:29:28,259 --> 00:29:46,019
+Now, if you want to change the baud rate of the transmitter, if you want to change the baud rate or data transfer rate of the transmitter to match with that of the receive, this is the value you need to change.
+
+317
+00:29:46,019 --> 00:29:49,920
+you have to change. Because you can't change FCPV. That is fixed.
+
+318
+00:29:50,740 --> 00:29:54,279
+But this value you can change. By changing
+
+319
+00:29:54,279 --> 00:29:57,920
+this value you can adjust the board rate of the
+
+320
+00:29:57,920 --> 00:30:02,339
+transmitter to match with the receiver's
+
+321
+00:30:02,339 --> 00:30:05,720
+board rate. Because you know that both receiver
+
+322
+00:30:05,720 --> 00:30:09,480
+and the transmitter they have to agree on
+
+323
+00:30:09,480 --> 00:30:13,240
+the data transfer rate. Because there is no clock signal
+
+324
+00:30:13,240 --> 00:30:20,039
+between the transmitter and the receiver. The transmission is asynchronous. So, the receiver
+
+325
+00:30:20,039 --> 00:30:28,339
+and transmitter, they have to agree on the data transfer rate. So, if you want to adjust
+
+326
+00:30:28,339 --> 00:30:36,079
+the transmitter's data transfer rate to match with the receiver's data transfer rate, what
+
+327
+00:30:36,079 --> 00:30:46,119
+you have to do is change the value of UDRR. Right. Then the character that you want to
+
+328
+00:30:46,119 --> 00:30:53,339
+transmit, we transmit characters. The character that you want to transmit, it's an indie character.
+
+329
+00:30:54,019 --> 00:31:02,440
+You load it to the CPU loads that character to UDR register. The CPU loads the character
+
+330
+00:31:02,440 --> 00:31:11,440
+that the transmitter you want to transmit into UDR register. UDR means USART data register.
+
+331
+00:31:11,440 --> 00:31:20,740
+USART data register. Who loads the character to UDR? CPU. CPU loads character to UDR. Right.
+
+332
+00:31:21,279 --> 00:31:29,980
+Then, then if this is the transmit shift register, transmit shift register. If the transmit shift
+
+333
+00:31:29,980 --> 00:31:42,119
+register is empty. If the transmit shift register is empty, the character in the UDR is transferred
+
+334
+00:31:42,119 --> 00:31:49,859
+to the transmit shift register. If the transmit shift register is empty, character in the UDR,
+
+335
+00:31:49,859 --> 00:31:58,119
+USAT data register, is transferred to transmit shift register. The character's LSB least
+
+336
+00:31:58,119 --> 00:32:08,119
+significant bit we put it here and the character's MSB we put it there and then the entire character
+
+337
+00:32:08,119 --> 00:32:18,819
+is sprayed with a start bit which is zero and a stop bit which is one. Character is sprayed
+
+338
+00:32:18,819 --> 00:32:25,119
+with a start bit and a stop bit. These start bit and stop bits we call synchronization
+
+339
+00:32:25,119 --> 00:32:29,200
+bips or sync bips. Synchronization bips or sync bips.
+
+340
+00:32:29,519 --> 00:32:33,039
+Right. And then the character is transmitted
+
+341
+00:32:33,039 --> 00:32:37,880
+via the TXT pin. Via the TXT pin.
+
+342
+00:32:38,680 --> 00:32:41,240
+Right. At the board print.
+
+343
+00:32:41,799 --> 00:32:45,000
+At the board print. At the data transfer rate board print.
+
+344
+00:32:45,000 --> 00:32:48,519
+The character is transmitted via the
+
+345
+00:32:48,519 --> 00:32:52,480
+TXT pin at the board print. Up to this point.
+
+346
+00:32:52,480 --> 00:33:03,440
+any question no right then now when the character in the udr use our data register when that
+
+347
+00:33:03,440 --> 00:33:12,480
+character is transferred to the transmit shift register udr becomes empty cpu loads the character
+
+348
+00:33:13,920 --> 00:33:20,319
+udr transfers the character to transmit shift register and then character is framed with the
+
+349
+00:33:20,319 --> 00:33:28,160
+a start bit and a stop bit and bit by bit transmitted through the DXT pin at the rate
+
+350
+00:33:28,160 --> 00:33:36,079
+at the board rate. Now when the character in the UDR is transferred to the ship register,
+
+351
+00:33:36,079 --> 00:33:50,140
+transmit a shift register, UDR becomes empty. When UDR becomes empty, UDRE flag bit is set.
+
+352
+00:33:50,799 --> 00:34:01,559
+UDRE flag bit. UDRE flag bit means USART data register empty. UDRE means USART data register
+
+353
+00:34:01,559 --> 00:34:16,239
+empty. That flag bit is set. That flag bit is in UCSRA register. UCSRA means USART control
+
+354
+00:34:16,239 --> 00:34:28,019
+and status register A. USART control and status register A. In that register you have a flag
+
+355
+00:34:28,019 --> 00:34:39,659
+bit call UDRE. USART data register empty. This flag bit is set when UDR becomes empty. This
+
+356
+00:34:39,659 --> 00:34:51,500
+flag bit indicates that UDR is empty. This flag bit indicates that UDR is empty. And
+
+357
+00:34:51,500 --> 00:35:13,519
+UDR is ready to receive another character. This flag bit indicates UDR is MP and ready to receive another character. So you can pull this flag bit and load character by character to UDR.
+
+358
+00:35:13,519 --> 00:35:20,619
+CPU can pull this flag bit and load character by character to the UDR.
+
+359
+00:35:21,179 --> 00:35:22,820
+This flag bit is raised.
+
+360
+00:35:23,260 --> 00:35:28,320
+Raised means it becomes value 1 when the UDR is empty.
+
+361
+00:35:29,539 --> 00:35:34,960
+That indicates UDR is empty and UDR is ready to receive another character.
+
+362
+00:35:35,199 --> 00:35:43,360
+So, by pulling this flag bit, CPU can load character by character to the UDR.
+
+363
+00:35:43,519 --> 00:36:01,960
+Any question up to this point? When this flag bit is 1, that indicates UDR is empty and UDR is ready to receive another character. So by polling this flag bit, we can load character by character to UDR.
+
+364
+00:36:01,960 --> 00:36:06,800
+When you load a new character to the UDR, right?
+
+365
+00:36:07,920 --> 00:36:14,179
+When a new character is written to the UDR, this flag bit is automatically clear.
+
+366
+00:36:15,199 --> 00:36:16,420
+Automatically clear.
+
+367
+00:36:16,559 --> 00:36:18,719
+That means it becomes zero.
+
+368
+00:36:19,119 --> 00:36:26,059
+The flag bit becomes zero automatically when you write a new character to UDR.
+
+369
+00:36:26,860 --> 00:36:30,239
+Again, the flag bit is set to one.
+
+370
+00:36:30,239 --> 00:36:33,880
+when UDR is, UDR becomes empty
+
+371
+00:36:33,880 --> 00:36:37,800
+and UDR is ready to receive a new character.
+
+372
+00:36:38,320 --> 00:36:41,880
+So you can write a new character to UDR. And then
+
+373
+00:36:41,880 --> 00:36:46,000
+flag bit will be 0. Therefore, just
+
+374
+00:36:46,000 --> 00:36:49,820
+pulling this flag bit and when it becomes 1,
+
+375
+00:36:49,920 --> 00:36:53,420
+we can write a value to the UDR, character to the UDR.
+
+376
+00:36:53,420 --> 00:36:56,860
+If the flag bit is 0, you have to wait.
+
+377
+00:36:56,860 --> 00:37:03,860
+If the flag bit is 1, you can write a value to the UDR. Character by character we can write to the UDR.
+
+378
+00:37:03,860 --> 00:37:14,860
+When you write a character to the UDR, UDR transfers that character to the transmit shift register.
+
+379
+00:37:14,860 --> 00:37:25,860
+If the transmit shift register is empty, UDR transfers the character to the transmit shift register.
+
+380
+00:37:25,860 --> 00:37:31,860
+And then the character is framed with the start bit and a stop bit.
+
+381
+00:37:31,860 --> 00:37:43,860
+And then the bit by bit in the transmit shift register, bit by bit, are transmitted through the TXT pin at both rate.
+
+382
+00:37:43,860 --> 00:37:53,820
+question up to this point. So what I am explaining is how the transmitter works inside the micro
+
+383
+00:37:53,820 --> 00:38:01,860
+control. So many people know how to use transmitter but they don't know how transmitter works.
+
+384
+00:38:01,860 --> 00:38:09,360
+But as university students, you are following a university course module, you must know,
+
+385
+00:38:09,360 --> 00:38:18,360
+You should know not only how to use the transmitter but also how the transmitter works.
+
+386
+00:38:18,360 --> 00:38:29,360
+But many people know how to use the transmitter but they don't know how transmitter works.
+
+387
+00:38:29,360 --> 00:38:47,719
+Right. Then there is another bit which is called UDRIE. UDRIE. Another bit. UDRIE means USAT data register empty interrupt enable.
+
+388
+00:38:47,719 --> 00:38:53,219
+USAT data register empty interrupt enable.
+
+389
+00:38:53,880 --> 00:39:01,420
+U D R I E USAT data register empty interrupt enable.
+
+390
+00:39:02,000 --> 00:39:11,659
+Using this bit you can enable or disable data register empty interrupt.
+
+391
+00:39:11,659 --> 00:39:16,659
+You can enable or disable data register empty interrupt.
+
+392
+00:39:16,659 --> 00:39:22,559
+If you write value 1 to this bit, you enable the data register empty interrupt.
+
+393
+00:39:23,059 --> 00:39:29,659
+If you write value 0 to this bit, you disable the data register empty interrupt.
+
+394
+00:39:30,219 --> 00:39:35,579
+So, instead of calling this bit, you can use the interrupt.
+
+395
+00:39:36,000 --> 00:39:45,340
+When UDR becomes empty, if you have enabled the interrupt, the CPU will be interrupted.
+
+396
+00:39:45,340 --> 00:39:55,159
+right because when UDR becomes empty and ready to receive another character right CPU will be
+
+397
+00:39:55,159 --> 00:40:04,320
+interrupted because you have enabled USART data register empty interrupt you have enabled so CPU
+
+398
+00:40:04,320 --> 00:40:12,940
+will be interrupted by USART data register empty interrupt so instead of polling this way you can
+
+399
+00:40:12,940 --> 00:40:21,019
+use the interrupt and load character by character to UDR. Right now there are two options you have.
+
+400
+00:40:21,019 --> 00:40:28,880
+One is you can pull this bit using pulling, load character by character to the UDR. Oh,
+
+401
+00:40:29,239 --> 00:40:36,960
+you can use interrupt. Use our data register in a empty interrupt. Use our data register
+
+402
+00:40:36,960 --> 00:40:44,800
+empty interrupt you can use and load character by character to UDR. Questions? Right. Then,
+
+403
+00:40:45,599 --> 00:40:54,400
+now when you win a character transfer to transmit ship register, the character is framed with a
+
+404
+00:40:54,400 --> 00:41:05,920
+start bit and a stop bit and bit by bit transmitted through the TXT at boundary. When the entire
+
+405
+00:41:05,920 --> 00:41:15,920
+frame is shifted out, the entire frame is transmitted, transmit shift registry becomes
+
+406
+00:41:15,920 --> 00:41:25,119
+empty. Transmit shift register becomes empty. When the entire frame is transmitted bit by bit,
+
+407
+00:41:25,920 --> 00:41:33,519
+transmit shift register becomes empty. When transmit shift register becomes empty, UDR
+
+408
+00:41:33,519 --> 00:41:48,519
+UDR processes the character in the UDR to transmit shipping. Then transmit ship register, frame the character with start bit and stop bit and bit by bit transmitted through the TXP.
+
+409
+00:41:48,519 --> 00:41:59,920
+When transmit ship register becomes empty, UDR transfers the character in UDR to transmit ship register. So that happens again and again.
+
+410
+00:41:59,920 --> 00:42:15,619
+When transmit ship register is empty and UDR is also empty, if UDR contains a character, when transmit ship register becomes empty, UDR will transfer that character to the transmit ship register.
+
+411
+00:42:15,619 --> 00:42:23,500
+But if transmit shift register is empty and UDR is also empty, both empty.
+
+412
+00:42:23,500 --> 00:42:26,260
+This is empty and that is also empty.
+
+413
+00:42:26,940 --> 00:42:30,019
+Then this flag bit is set.
+
+414
+00:42:30,559 --> 00:42:33,000
+TXT flag bit is set.
+
+415
+00:42:34,219 --> 00:42:38,679
+TXT flag bit means transmit complete.
+
+416
+00:42:39,199 --> 00:42:40,380
+TXT means transmit.
+
+417
+00:42:41,119 --> 00:42:42,280
+C means complete.
+
+418
+00:42:43,300 --> 00:42:45,599
+Transmit flag bit is set.
+
+419
+00:42:45,619 --> 00:43:05,679
+Set means 1. TxC flat bit becomes 1. And TxC flat bit is in UCSRA register. UCSRA means USART control and status register A. USART control and status register A.
+
+420
+00:43:05,679 --> 00:43:28,099
+So, this flag bit is set when transmit ship register, both transmit ship register and UDR, both of them become int. This flag bit is set. You can pull this flag bit and load character by character to UDR.
+
+421
+00:43:28,099 --> 00:43:43,099
+The second option. First option, you can pull this flag bit, UDRE flag bit, which indicates this UDRE setting and load character by character to the UDR.
+
+422
+00:43:43,099 --> 00:43:50,099
+The TXC flag bit indicates both transmit shift register and UDRRT.
+
+423
+00:43:50,099 --> 00:43:56,099
+So, by pulling the TXC flag bit you can load character by character.
+
+424
+00:43:56,099 --> 00:44:00,099
+This is the second option for transmitting data.
+
+425
+00:44:00,099 --> 00:44:05,099
+Then, there is another bit called TXCIE bit.
+
+426
+00:44:05,099 --> 00:44:21,440
+TXCIE bit. The TXCIE means, TX means transmit, complete, interrupt, enable. Transmit, complete, interrupt, enable. Transmit, complete, interrupt, enable.
+
+427
+00:44:21,440 --> 00:44:45,559
+That bit is in UCSRB register. UCSRB means USAT control and status register B. USAT control and status register B. Using this B you can enable or disable transmit complete interrupt.
+
+428
+00:44:45,559 --> 00:45:00,219
+you can enable or disable transmit complete. If you write value 1 to this bit, you can enable transmit complete interrupt. If you write value 0 to this bit, you can disable transmit complete interrupt.
+
+429
+00:45:00,219 --> 00:45:23,219
+Now, instead of calling this transmit complete bit, you can use this interrupt. When both transmit shift register and UDR are become empty, if you have enabled this interrupt, the CPU will be interrupted by transmit complete interrupt.
+
+430
+00:45:23,219 --> 00:45:37,219
+So when both transmit shift register and UDR are empty, if you have enabled this interrupt, then CPU will be interrupted by transmit complete interrupt.
+
+431
+00:45:37,219 --> 00:45:48,460
+So instead of calling the transmit complete bit, you can use the transmit complete interrupt and load character by character to UDR.
+
+432
+00:45:48,460 --> 00:46:09,460
+load character by character. The second way of transmit is that clear. Any question? If you want me to explain it again or if you have any particular question or particular component in this block diagram, now you can answer.
+
+433
+00:46:09,460 --> 00:46:17,699
+Now, if you have no questions, then I have a question. So what's the answer? Which flag
+
+434
+00:46:17,699 --> 00:46:30,900
+bit? UDRE, USAR data register, empty flag bit, or transmit complete flag bit? Out of
+
+435
+00:46:30,900 --> 00:46:33,239
+which one gives maximum
+
+436
+00:46:33,239 --> 00:46:34,019
+throughput?
+
+437
+00:46:34,920 --> 00:46:37,239
+Okay? Let's ask
+
+438
+00:46:37,239 --> 00:46:40,900
+from Shani. Shani,
+
+439
+00:46:41,519 --> 00:46:43,300
+your idea about this question?
+
+440
+00:46:43,940 --> 00:46:45,320
+You can come up with some idea.
+
+441
+00:46:46,099 --> 00:46:47,400
+It doesn't matter whether it's correct
+
+442
+00:46:47,400 --> 00:46:49,340
+or wrong. So, what do you
+
+443
+00:46:49,340 --> 00:46:51,340
+think? Which flag bit
+
+444
+00:46:51,340 --> 00:46:52,940
+would give you maximum
+
+445
+00:46:52,940 --> 00:46:54,519
+throughput? Shani?
+
+446
+00:46:55,639 --> 00:46:56,900
+No idea.
+
+447
+00:46:58,280 --> 00:46:59,280
+So, I can't
+
+448
+00:46:59,280 --> 00:47:00,820
+hear you. It's okay.
+
+449
+00:47:00,900 --> 00:47:09,139
+Could you please speak a little bit louder? No idea sir. No idea? Come on. So what is the
+
+450
+00:47:09,139 --> 00:47:16,019
+difference between these two plant bits? So what is the difference? Okay, let's say you have no
+
+451
+00:47:16,019 --> 00:47:20,579
+idea about the throughput Kim? Like what is the difference between these two flag bits?
+
+452
+00:47:21,460 --> 00:47:35,059
+UDRE interrupt used. UDRE sorry? UDRE interrupt used. No, no, no, no, no. I'm not talking about
+
+453
+00:47:35,059 --> 00:47:39,780
+the interrupts. I'm talking about these flag bits. We can use these flag bits for polling.
+
+454
+00:47:39,780 --> 00:47:43,400
+So UDRE flag bit is set when?
+
+455
+00:47:44,099 --> 00:47:47,039
+UDRE flag bit is set when?
+
+456
+00:47:49,019 --> 00:47:49,280
+Okay.
+
+457
+00:47:49,420 --> 00:47:51,960
+TXC flag bit is set when?
+
+458
+00:47:52,659 --> 00:47:54,380
+Then UDRE
+
+459
+00:47:54,380 --> 00:47:57,320
+set when?
+
+460
+00:47:58,159 --> 00:48:01,679
+Ekanidaru, I asked whether if this is not clear,
+
+461
+00:48:02,480 --> 00:48:06,239
+please let me know. I can explain it again.
+
+462
+00:48:06,239 --> 00:48:08,139
+But you don't talk.
+
+463
+00:48:08,139 --> 00:48:10,440
+ultimately
+
+464
+00:48:10,440 --> 00:48:13,119
+you will be in a big trouble.
+
+465
+00:48:13,340 --> 00:48:14,639
+You have not got this
+
+466
+00:48:14,639 --> 00:48:17,199
+understood clearly.
+
+467
+00:48:17,400 --> 00:48:19,139
+But even you don't
+
+468
+00:48:19,139 --> 00:48:20,159
+ask questions.
+
+469
+00:48:20,820 --> 00:48:22,639
+You don't ask me to explain.
+
+470
+00:48:22,719 --> 00:48:24,280
+At least explain it again.
+
+471
+00:48:25,980 --> 00:48:26,159
+So,
+
+472
+00:48:26,159 --> 00:48:27,780
+this opportunity.
+
+473
+00:48:29,880 --> 00:48:31,460
+Simply I could have
+
+474
+00:48:31,460 --> 00:48:33,699
+given the lecture, blah, blah, blah,
+
+475
+00:48:33,780 --> 00:48:34,940
+blah, blah and finish.
+
+476
+00:48:35,599 --> 00:48:36,679
+But I don't do that.
+
+477
+00:48:37,820 --> 00:48:38,039
+Right?
+
+478
+00:48:38,139 --> 00:48:47,019
+I do very slowly and I repeatedly ask you to let me know whether things are not clear.
+
+479
+00:48:47,019 --> 00:48:57,420
+So what's the benefit of doing that? I could have done the lecture straight away and finish
+
+480
+00:48:57,420 --> 00:49:07,179
+the entire module. But I don't do that. I have very slowly, I do the lecture and then I ask
+
+481
+00:49:07,179 --> 00:49:15,900
+questions and I give you the option to, right? Let me know whether things are not clear and if
+
+482
+00:49:15,900 --> 00:49:24,380
+you say things are not clear and if you want me to explain the things again, I am ready to do that.
+
+483
+00:49:24,380 --> 00:49:37,820
+Do I get a pay increment? Do I get any benefit? No. But you get a benefit. I don't get any
+
+484
+00:49:37,820 --> 00:49:52,139
+benefit. But you have a benefit. So why don't you use this opportunity?
+
+485
+00:49:52,139 --> 00:50:01,800
+opportunity okay right so what is the difference between UDRE and TXC flags
+
+486
+00:50:01,800 --> 00:50:13,679
+Madusha now could you please tell me when UDRE flag is set sir when UDRE flag is set
+
+487
+00:50:13,679 --> 00:50:26,940
+Sir, data is transmitted by placing the UDR register.
+
+488
+00:50:26,940 --> 00:50:30,099
+Not clear. Could you speak a little bit louder?
+
+489
+00:50:31,440 --> 00:50:37,239
+Data is transmitted by placing the UDR register.
+
+490
+00:50:37,239 --> 00:50:44,039
+when UDR register is empty, UDRE flag bit is sent.
+
+491
+00:50:45,099 --> 00:50:54,639
+This register empty means this register is ready to receive another character.
+
+492
+00:50:54,639 --> 00:50:57,900
+This register is ready to receive another character.
+
+493
+00:50:58,900 --> 00:51:03,500
+How do we know that this register is ready to receive another character?
+
+494
+00:51:03,500 --> 00:51:11,260
+If this flag bit is 1, that means this register is ready to receive another character.
+
+495
+00:51:11,760 --> 00:51:18,059
+If this flag bit is 0, that means this register contains a character.
+
+496
+00:51:18,719 --> 00:51:22,980
+So, it is not ready to receive another character.
+
+497
+00:51:23,599 --> 00:51:31,599
+May flag bit take a dihae, malala, we can design whether to load a new character to UDR or not.
+
+498
+00:51:31,599 --> 00:51:43,260
+So, when UDR is empty, UDR is empty means UDR is ready to receive another character.
+
+499
+00:51:43,760 --> 00:51:45,300
+Then TXC flag.
+
+500
+00:51:45,920 --> 00:51:49,760
+Mahusha, when does TXC flag be seen?
+
+501
+00:51:49,760 --> 00:52:11,760
+in the transmit shift register has been shift out and there are no new data currently, so it's safe.
+
+502
+00:52:11,760 --> 00:52:21,059
+When the transmit shift register is empty, UDR will transfer the character to transmit
+
+503
+00:52:21,059 --> 00:52:22,059
+shift register.
+
+504
+00:52:22,059 --> 00:52:29,659
+As soon as transmit shift register becomes empty, UDR transfers character to transmit
+
+505
+00:52:29,659 --> 00:52:30,739
+shift register.
+
+506
+00:52:30,739 --> 00:52:41,199
+So this flag is set when both transmit shift register and UDR, both of them are empty.
+
+507
+00:52:41,199 --> 00:52:51,119
+both of them are ending transmit ship register and UDR both this flag so this flag bit indicates
+
+508
+00:52:51,119 --> 00:53:00,019
+transmit ship register is empty UDR is empty so you can load another character UDR who indicates
+
+509
+00:53:00,019 --> 00:53:15,059
+that this flag right now can you tell me out of these two flag bits THC and UDRE which flag
+
+510
+00:53:15,059 --> 00:53:20,059
+would give you maximum throughput.
+
+511
+00:53:20,059 --> 00:53:38,420
+For a given period of time, maximum amount of data you can transmit if you use which flag
+
+512
+00:53:38,420 --> 00:53:39,420
+bit?
+
+513
+00:53:39,420 --> 00:53:40,420
+UDRE.
+
+514
+00:53:40,420 --> 00:53:44,019
+UDRE, correct.
+
+515
+00:53:44,019 --> 00:53:48,820
+Because UDRE is set when the UDR becomes empty.
+
+516
+00:53:48,820 --> 00:53:57,340
+But TXC flag bit is set when both are in transmit shift register as well as UDR.
+
+517
+00:53:57,340 --> 00:53:59,900
+When both are empty this is set.
+
+518
+00:53:59,900 --> 00:54:05,780
+But this is set, UDRE is set when the UDRE is set.
+
+519
+00:54:05,780 --> 00:54:06,780
+Right.
+
+520
+00:54:06,780 --> 00:54:13,780
+Therefore, if you use UDRE flag bit, you can have a maximum problem.
+
+521
+00:54:13,780 --> 00:54:43,780
+[unclear — Sinhala / crosstalk]
+
+522
+00:54:43,780 --> 00:54:49,059
+shift register, I get a UDR again, you know, so you can transfer another character to use that.
+
+523
+00:54:49,059 --> 00:54:55,940
+But if you are using this flag, you load a character to UDR, UDR transfers that character
+
+524
+00:54:55,940 --> 00:55:03,860
+to transmit shift register, transmit shift register transmits bit by bit through TXEP,
+
+525
+00:55:03,860 --> 00:55:10,579
+and then transmit shift register becomes empty, and there is no character in the UDR, UDR is also empty,
+
+526
+00:55:10,579 --> 00:55:16,579
+then this flag so you load a character in the UDR transfers that character
+
+527
+00:55:16,579 --> 00:55:22,460
+transmission transmission transmits the character character by character and
+
+528
+00:55:22,460 --> 00:55:27,579
+then transmission becomes empty UDR is this
+
+529
+00:55:27,579 --> 00:55:55,579
+So, maximum throughput you would get with UDR.
+
+530
+00:55:55,579 --> 00:55:58,420
+the this the the
+
+531
+00:55:58,420 --> 00:55:59,340
+the
+
+532
+00:55:59,340 --> 00:55:59,880
+the
+
+533
+00:55:59,880 --> 00:56:00,199
+the
+
+534
+00:56:00,199 --> 00:56:00,480
+the
+
+535
+00:56:00,480 --> 00:56:00,719
+the
+
+536
+00:56:00,719 --> 00:56:00,800
+the
+
+537
+00:56:00,800 --> 00:56:00,840
+the
+
+538
+00:56:00,840 --> 00:56:00,820
+the
+
+539
+00:56:00,820 --> 00:56:00,800
+the
+
+540
+00:56:00,800 --> 00:56:00,780
+the
+
+541
+00:56:00,780 --> 00:56:00,760
+the
+
+542
+00:56:00,760 --> 00:56:00,739
+the
+
+543
+00:56:00,739 --> 00:56:00,719
+the
+
+544
+00:56:00,719 --> 00:56:00,679
+the
+
+545
+00:56:00,679 --> 00:56:00,639
+the
+
+546
+00:56:00,639 --> 00:56:00,639
+
+
+547
+00:56:00,639 --> 00:56:00,639
+
+
+548
+00:56:00,639 --> 00:56:00,639
+
+
+549
+00:56:00,639 --> 00:56:00,639
+
+
+550
+00:56:00,639 --> 00:56:00,639
+
+
+551
+00:56:00,639 --> 00:56:00,639
+
+
+552
+00:56:00,639 --> 00:56:00,639
+
+
+553
+00:56:00,639 --> 00:56:00,639
+
+
+554
+00:56:00,639 --> 00:56:00,639
+
+
+555
+00:56:00,639 --> 00:56:00,639
+
+
+556
+00:56:00,639 --> 00:56:00,639
+
+
+557
+00:56:00,639 --> 00:56:00,639
+
+
+558
+00:56:00,639 --> 00:56:00,639
+
+
+559
+00:56:00,639 --> 00:56:00,639
+
+
+560
+00:56:00,639 --> 00:56:00,639
+
+
+561
+00:56:00,639 --> 00:56:00,639
+
+
+562
+00:56:00,639 --> 00:56:00,639
+
+
+563
+00:56:00,639 --> 00:56:00,639
+
+
+564
+00:56:00,639 --> 00:56:00,639
+
+
+565
+00:56:00,639 --> 00:56:00,639
+
+
+566
+00:56:00,639 --> 00:56:00,639
+
+
+567
+00:56:00,639 --> 00:56:00,639
+
+
+568
+00:56:00,639 --> 00:56:00,639
+
+
+569
+00:56:00,639 --> 00:56:00,639
+
+
+570
+00:56:00,639 --> 00:56:00,639
+
+
+571
+00:56:00,639 --> 00:56:00,639
+
+
+572
+00:56:00,639 --> 00:56:00,639
+
+
+573
+00:56:00,639 --> 00:56:00,639
+
+
+574
+00:56:00,639 --> 00:56:00,639
+
+
+575
+00:56:00,639 --> 00:56:00,639
+
+
+576
+00:56:00,639 --> 00:56:00,639
+
+
+577
+00:56:00,639 --> 00:56:00,639
+
+
+578
+00:56:00,639 --> 00:56:00,639
+
+
+579
+00:56:00,639 --> 00:56:00,639
+
+
+580
+00:56:00,639 --> 00:56:00,639
+
+
+581
+00:56:00,639 --> 00:56:00,639
+
+
+582
+00:56:00,639 --> 00:56:00,639
+
+
+583
+00:56:00,639 --> 00:56:00,639
+
+
+584
+00:56:00,639 --> 00:56:00,639
+
+
+585
+00:56:00,639 --> 00:56:00,639
+
+
+586
+00:56:00,639 --> 00:56:00,639
+
+
+587
+00:56:00,639 --> 00:56:00,639
+
+
+588
+00:56:00,639 --> 00:56:00,639
+
+
+589
+00:56:00,639 --> 00:56:00,639
+
+
+590
+00:56:00,639 --> 00:56:00,639
+
+
+591
+00:56:00,639 --> 00:56:00,639
+
+
+592
+00:56:00,639 --> 00:56:00,639
+
+
+593
+00:56:00,639 --> 00:56:00,639
+
+
+594
+00:56:00,639 --> 00:56:00,639
+
+
+595
+00:56:00,639 --> 00:56:00,639
+
+
+596
+00:56:00,639 --> 00:56:00,639
+
+
+597
+00:56:00,639 --> 00:56:00,639
+
+
+598
+00:56:00,639 --> 00:56:02,079
+hist
+
+599
+00:56:25,579 --> 00:56:28,579
+I have nothing needed
+
+600
+00:56:28,579 --> 00:56:32,579
+I don't know ABC
+
+601
+00:56:32,579 --> 00:56:35,579
+to load
+
+602
+00:56:35,579 --> 00:56:37,579
+no UDR
+
+603
+00:56:37,579 --> 00:56:41,579
+transfer in our transmit ship register
+
+604
+00:56:41,579 --> 00:56:43,579
+transmit ship register bit by bit
+
+605
+00:56:43,579 --> 00:56:46,579
+transmit transmit
+
+606
+00:56:46,579 --> 00:56:48,579
+I'm a
+
+607
+00:56:48,579 --> 00:56:50,579
+man
+
+608
+00:56:50,579 --> 00:56:52,579
+I
+
+609
+00:56:52,579 --> 00:56:54,579
+I
+
+610
+00:56:54,579 --> 00:56:56,579
+I
+
+611
+00:56:56,579 --> 00:56:58,579
+I
+
+612
+00:56:58,579 --> 00:57:00,579
+I
+
+613
+00:57:00,579 --> 00:57:02,579
+I
+
+614
+00:57:02,579 --> 00:57:04,579
+I
+
+615
+00:57:04,579 --> 00:57:06,579
+I
+
+616
+00:57:06,579 --> 00:57:08,579
+I
+
+617
+00:57:08,579 --> 00:57:10,579
+I
+
+618
+00:57:10,579 --> 00:57:12,579
+I
+
+619
+00:57:12,579 --> 00:57:14,579
+I
+
+620
+00:57:14,579 --> 00:57:44,579
+[unclear — Sinhala / crosstalk]
+
+621
+00:57:44,579 --> 00:57:46,500
+the
+
+622
+00:57:46,500 --> 00:57:47,480
+to the
+
+623
+00:57:47,480 --> 00:57:48,320
+the
+
+624
+00:57:48,320 --> 00:57:48,780
+the
+
+625
+00:57:48,780 --> 00:57:48,980
+the
+
+626
+00:57:48,980 --> 00:57:49,059
+the
+
+627
+00:57:49,059 --> 00:57:49,079
+the
+
+628
+00:57:49,079 --> 00:57:49,079
+
+
+629
+00:57:49,079 --> 00:57:49,059
+the
+
+630
+00:57:49,059 --> 00:57:49,019
+the
+
+631
+00:57:49,019 --> 00:57:48,980
+the
+
+632
+00:57:48,980 --> 00:57:48,940
+the
+
+633
+00:57:48,940 --> 00:57:48,880
+the
+
+634
+00:57:48,880 --> 00:57:48,860
+the
+
+635
+00:57:48,860 --> 00:57:48,820
+the
+
+636
+00:57:48,820 --> 00:57:48,800
+the
+
+637
+00:57:48,800 --> 00:57:48,760
+the
+
+638
+00:57:48,760 --> 00:57:48,739
+the
+
+639
+00:57:48,739 --> 00:57:48,739
+
+
+640
+00:57:48,739 --> 00:57:48,739
+
+
+641
+00:57:48,739 --> 00:57:48,719
+the
+
+642
+00:57:48,719 --> 00:57:48,719
+
+
+643
+00:57:48,719 --> 00:57:48,719
+
+
+644
+00:57:48,719 --> 00:57:48,719
+
+
+645
+00:57:48,719 --> 00:57:48,719
+
+
+646
+00:57:48,719 --> 00:57:48,719
+
+
+647
+00:57:48,719 --> 00:57:48,719
+
+
+648
+00:57:48,719 --> 00:57:48,719
+
+
+649
+00:58:14,579 --> 00:58:27,739
+If you use UD or E flag, if you use TXE flag, you have to wait till when both registers
+
+650
+00:58:27,739 --> 00:58:28,739
+become empty.
+
+651
+00:58:28,739 --> 00:58:38,739
+Vedima data pramanya dhyati khalaya for a given period of time at a given
+
+652
+00:58:38,739 --> 00:58:47,739
+board rate maximum amount of data you can transfer you can transmit if you use UDRI
+
+653
+00:58:47,739 --> 00:59:04,619
+The same thing. If we use UDRI interrupt, that is USAR data register empty interrupt and
+
+654
+00:59:04,619 --> 00:59:08,300
+transmit complete interrupt. There are two interrupts.
+
+655
+00:59:08,639 --> 00:59:10,039
+Transmit complete interrupt.
+
+656
+00:59:11,480 --> 00:59:13,460
+Usad data register empty.
+
+657
+00:59:13,940 --> 00:59:17,940
+This interrupt is triggered when UDR is in.
+
+658
+00:59:18,880 --> 00:59:21,420
+This interrupt, transmit complete interrupt
+
+659
+00:59:21,420 --> 00:59:25,460
+is triggered when both shift register and UDR
+
+660
+00:59:25,460 --> 00:59:28,159
+both time. So if you ask
+
+661
+00:59:28,159 --> 00:59:31,579
+which interrupt you should use to get
+
+662
+00:59:31,579 --> 00:59:37,420
+the maximum throughput. This is the one you have to get. The maximum throughput you can
+
+663
+00:59:37,420 --> 00:59:45,579
+get if you use USAR data register emptied. Because this interrupt is triggered when UDR
+
+664
+00:59:45,579 --> 00:59:52,460
+becomes. But transmit complete interrupt is triggered when both register, transmit ship
+
+665
+00:59:52,460 --> 00:59:54,739
+register and UDR.
+
+666
+00:59:55,139 --> 00:59:56,780
+When both are empty, this is
+
+667
+00:59:56,780 --> 00:59:58,900
+clear. So to get a maximum
+
+668
+00:59:58,900 --> 01:00:00,719
+throughput, this is
+
+669
+01:00:00,719 --> 01:00:02,340
+the interrupt you should use.
+
+670
+01:00:02,679 --> 01:00:03,480
+Is that clear?
+
+671
+01:00:04,679 --> 01:00:05,699
+Is it clear?
+
+672
+01:00:06,619 --> 01:00:08,440
+No feedback? Yes, sir.
+
+673
+01:00:09,440 --> 01:00:10,699
+Right. If it
+
+674
+01:00:10,699 --> 01:00:12,599
+is clear, okay, then I have another
+
+675
+01:00:12,599 --> 01:00:14,739
+question. If you get a
+
+676
+01:00:14,739 --> 01:00:16,699
+maximum, if you can get a maximum
+
+677
+01:00:16,699 --> 01:00:19,019
+throughput using UDR
+
+678
+01:00:19,019 --> 01:00:20,780
+E-flat, what's the
+
+679
+01:00:20,780 --> 01:00:22,519
+purpose of DXC flag.
+
+680
+01:00:23,099 --> 01:00:24,019
+Maximum throughput
+
+681
+01:00:24,019 --> 01:00:25,880
+UDRE flag
+
+682
+01:00:25,880 --> 01:00:28,340
+and the DXC flag.
+
+683
+01:00:28,900 --> 01:00:31,000
+Aruni, any idea?
+
+684
+01:00:31,760 --> 01:00:32,019
+Yes.
+
+685
+01:00:34,760 --> 01:00:36,500
+I can't hear you.
+
+686
+01:00:36,500 --> 01:00:38,260
+Can you please speak a little bit louder?
+
+687
+01:00:39,760 --> 01:00:41,059
+The thing is this,
+
+688
+01:00:41,119 --> 01:00:42,320
+I am not using my
+
+689
+01:00:42,320 --> 01:00:44,440
+headphones in this setup.
+
+690
+01:00:45,219 --> 01:00:45,500
+Right?
+
+691
+01:00:46,360 --> 01:00:48,619
+So you need to speak a little bit louder.
+
+692
+01:00:48,619 --> 01:00:50,380
+Sir, can you hear me?
+
+693
+01:00:50,800 --> 01:00:51,960
+No, I can't hear you.
+
+694
+01:00:52,440 --> 01:00:54,380
+You speak very, very...
+
+695
+01:00:54,380 --> 01:00:55,380
+Okay? Sorry?
+
+696
+01:00:56,380 --> 01:00:57,000
+Can you hear me?
+
+697
+01:00:57,480 --> 01:01:00,400
+No, my question is, what is the purpose of this TXE flag?
+
+698
+01:01:01,599 --> 01:01:02,480
+Wait from
+
+699
+01:01:02,480 --> 01:01:03,920
+starting UR
+
+700
+01:01:03,920 --> 01:01:05,179
+UDR?
+
+701
+01:01:05,780 --> 01:01:08,380
+No, it's not clear. Some disturbance in UR
+
+702
+01:01:08,380 --> 01:01:09,900
+may go communication.
+
+703
+01:01:10,400 --> 01:01:11,380
+It's alright. Okay.
+
+704
+01:01:11,699 --> 01:01:12,900
+Any idea?
+
+705
+01:01:14,039 --> 01:01:14,900
+What's up?
+
+706
+01:01:14,900 --> 01:01:16,300
+What's up?
+
+707
+01:01:16,300 --> 01:01:18,539
+I have a so you the I the gamee
+
+708
+01:01:18,539 --> 01:01:19,079
+a
+
+709
+01:01:19,079 --> 01:01:19,800
+a
+
+710
+01:01:19,800 --> 01:01:20,039
+a
+
+711
+01:01:20,039 --> 01:01:20,159
+a
+
+712
+01:01:20,159 --> 01:01:20,219
+a
+
+713
+01:01:20,219 --> 01:01:20,239
+a
+
+714
+01:01:20,239 --> 01:01:20,239
+
+
+715
+01:01:20,239 --> 01:01:20,219
+a
+
+716
+01:01:20,219 --> 01:01:20,219
+
+
+717
+01:01:20,219 --> 01:01:20,199
+a
+
+718
+01:01:20,199 --> 01:01:20,179
+a
+
+719
+01:01:20,179 --> 01:01:20,159
+a
+
+720
+01:01:20,159 --> 01:01:20,139
+a
+
+721
+01:01:20,139 --> 01:01:20,119
+a
+
+722
+01:01:20,119 --> 01:01:20,119
+
+
+723
+01:01:20,119 --> 01:01:20,099
+a
+
+724
+01:01:20,099 --> 01:01:20,079
+a
+
+725
+01:01:20,079 --> 01:01:20,079
+
+
+726
+01:01:20,079 --> 01:01:20,079
+
+
+727
+01:01:20,079 --> 01:01:20,079
+
+
+728
+01:01:20,079 --> 01:01:20,059
+a
+
+729
+01:01:20,059 --> 01:01:20,059
+
+
+730
+01:01:20,059 --> 01:01:20,039
+a
+
+731
+01:01:20,039 --> 01:01:20,039
+
+
+732
+01:01:20,039 --> 01:01:20,039
+
+
+733
+01:01:20,039 --> 01:01:20,039
+
+
+734
+01:01:20,039 --> 01:01:20,039
+
+
+735
+01:01:20,039 --> 01:01:20,039
+
+
+736
+01:01:20,039 --> 01:01:20,039
+
+
+737
+01:01:20,039 --> 01:01:20,039
+
+
+738
+01:01:20,039 --> 01:01:20,039
+
+
+739
+01:01:20,039 --> 01:01:20,039
+
+
+740
+01:01:20,039 --> 01:01:20,039
+
+
+741
+01:01:20,039 --> 01:01:20,039
+
+
+742
+01:01:20,039 --> 01:01:20,039
+
+
+743
+01:01:20,039 --> 01:01:20,059
+a
+
+744
+01:01:20,059 --> 01:01:20,059
+
+
+745
+01:01:46,300 --> 01:01:47,599
+I have a look you have a DM.
+
+746
+01:01:47,579 --> 01:01:47,940
+I have a DG.
+
+747
+01:01:47,940 --> 01:02:17,940
+[unclear — Sinhala / crosstalk]
+
+748
+01:02:17,940 --> 01:02:19,920
+the
+
+749
+01:02:19,920 --> 01:02:20,940
+the
+
+750
+01:02:20,940 --> 01:02:21,619
+the
+
+751
+01:02:21,619 --> 01:02:21,980
+the
+
+752
+01:02:21,980 --> 01:02:22,179
+the
+
+753
+01:02:22,179 --> 01:02:22,239
+the
+
+754
+01:02:22,239 --> 01:02:22,219
+the
+
+755
+01:02:22,219 --> 01:02:22,159
+the
+
+756
+01:02:22,159 --> 01:02:22,119
+the
+
+757
+01:02:22,119 --> 01:02:22,099
+the
+
+758
+01:02:22,099 --> 01:02:22,079
+the
+
+759
+01:02:22,079 --> 01:02:22,059
+the
+
+760
+01:02:22,059 --> 01:02:22,039
+the
+
+761
+01:02:22,039 --> 01:02:22,039
+
+
+762
+01:02:22,039 --> 01:02:22,039
+
+
+763
+01:02:22,039 --> 01:02:22,019
+the
+
+764
+01:02:22,019 --> 01:02:22,000
+the
+
+765
+01:02:22,000 --> 01:02:22,000
+
+
+766
+01:02:22,000 --> 01:02:22,000
+
+
+767
+01:02:22,000 --> 01:02:22,000
+
+
+768
+01:02:22,000 --> 01:02:22,000
+
+
+769
+01:02:22,000 --> 01:02:22,000
+
+
+770
+01:02:22,000 --> 01:02:22,000
+
+
+771
+01:02:22,000 --> 01:02:22,000
+
+
+772
+01:02:22,000 --> 01:02:22,000
+
+
+773
+01:02:22,000 --> 01:02:22,000
+
+
+774
+01:02:22,000 --> 01:02:22,000
+
+
+775
+01:02:22,000 --> 01:02:22,000
+
+
+776
+01:02:22,000 --> 01:02:22,000
+
+
+777
+01:02:22,000 --> 01:02:22,019
+the
+
+778
+01:02:22,019 --> 01:02:22,019
+
+
+779
+01:02:22,019 --> 01:02:22,019
+
+
+780
+01:02:22,019 --> 01:02:22,019
+
+
+781
+01:02:47,940 --> 01:02:54,940
+UDRE flag, user data register empty interrupt.
+
+782
+01:02:54,940 --> 01:03:00,940
+UDRE flag or user data register empty interrupt, you can get a maximum throw.
+
+783
+01:03:00,940 --> 01:03:09,940
+Then what is the purpose of having transmit complete flag bit and transmit complete interrupt.
+
+784
+01:03:09,940 --> 01:03:14,940
+Maximum throw puttaka humway nothing, it is a bambu.
+
+785
+01:03:14,940 --> 01:03:16,699
+So they can act like a person.
+
+786
+01:03:16,699 --> 01:03:17,699
+I get a gun.
+
+787
+01:03:17,699 --> 01:03:20,699
+I'm not a practical example.
+
+788
+01:03:20,699 --> 01:03:21,699
+Okay.
+
+789
+01:03:21,699 --> 01:03:26,699
+I'll give you an example.
+
+790
+01:03:26,699 --> 01:03:27,699
+Good.
+
+791
+01:03:27,699 --> 01:03:32,780
+In half duplex communication.
+
+792
+01:03:32,780 --> 01:03:35,179
+So what is half duplex communication?
+
+793
+01:03:35,179 --> 01:03:41,820
+Can you give me an example for half duplex communication?
+
+794
+01:03:41,820 --> 01:03:44,699
+Data can be transferred through only one side at a time?
+
+795
+01:03:45,420 --> 01:03:46,059
+Example?
+
+796
+01:03:47,659 --> 01:03:49,539
+I need to ask you to explain.
+
+797
+01:03:50,820 --> 01:03:51,260
+Walk it off.
+
+798
+01:03:52,699 --> 01:03:53,559
+Walk it off.
+
+799
+01:03:53,960 --> 01:03:54,960
+Walk it off.
+
+800
+01:03:55,039 --> 01:03:57,639
+Walk it off.
+
+801
+01:03:58,360 --> 01:04:02,159
+So when one person talks, other person has to listen.
+
+802
+01:04:02,920 --> 01:04:06,260
+When that person talks, the first person has to listen.
+
+803
+01:04:06,940 --> 01:04:08,280
+One-way communication.
+
+804
+01:04:08,280 --> 01:04:22,260
+In that kind of half duplex communication, we need to know whether the transmit is complete before releasing the channel for the other party to communicate.
+
+805
+01:04:22,920 --> 01:04:28,940
+So that's why when you are using walkie talkies, when you have finished talking, you say over.
+
+806
+01:04:29,659 --> 01:04:34,000
+That is to indicate the other party that you are over.
+
+807
+01:04:34,000 --> 01:04:39,880
+So, the other party can use the communication channel to transmit.
+
+808
+01:04:40,559 --> 01:04:50,360
+And again, the other party comes to the end of whatever his message, then he will say over.
+
+809
+01:04:51,019 --> 01:04:55,280
+That indicates the other party is over and you can communicate.
+
+810
+01:04:55,900 --> 01:05:00,800
+So, likewise, when we are using half-duplex communication,
+
+811
+01:05:00,800 --> 01:05:11,960
+You want to know, you need to know whether the transmit is complete or then only you can give the channel to the other party.
+
+812
+01:05:12,380 --> 01:05:23,860
+That means we need to know we have transmitted everything and nothing is left in the buffer before we releasing the channel.
+
+813
+01:05:23,860 --> 01:05:28,980
+In that case, TXC flag is very useful.
+
+814
+01:05:29,739 --> 01:05:38,059
+Because TXC flag indicates transmit shift register empty, UDR data register empty, both empty.
+
+815
+01:05:38,219 --> 01:05:39,239
+Nothing is left.
+
+816
+01:05:39,719 --> 01:05:41,159
+Nothing is left in the buffer.
+
+817
+01:05:41,280 --> 01:05:42,579
+Nothing is left in the middle.
+
+818
+01:05:43,599 --> 01:05:45,159
+Everything shifted out.
+
+819
+01:05:45,699 --> 01:05:48,659
+So you can give the channel to the other part.
+
+820
+01:05:48,659 --> 01:05:53,940
+It's like the overwork in the walkie-talkie communication.
+
+821
+01:05:54,599 --> 01:05:55,239
+Is that clear?
+
+822
+01:05:56,119 --> 01:05:56,480
+Yes, sir.
+
+823
+01:05:56,960 --> 01:05:58,559
+Another example.
+
+824
+01:05:59,380 --> 01:05:59,659
+Right.
+
+825
+01:06:00,380 --> 01:06:02,139
+A power saving application.
+
+826
+01:06:02,739 --> 01:06:04,599
+Let's say you develop a system.
+
+827
+01:06:05,260 --> 01:06:09,559
+That system has a mode, power saving mode.
+
+828
+01:06:09,559 --> 01:06:17,559
+So in the power saving mode, all the peripheral devices are disabled to save power, including usite.
+
+829
+01:06:17,559 --> 01:06:22,639
+Sometimes you develop an embedded system which has a power saving.
+
+830
+01:06:22,639 --> 01:06:27,960
+Sometimes some embedded systems you have to run using battery power.
+
+831
+01:06:27,960 --> 01:06:32,440
+Using a small battery you have to run the system many hours, sometimes many days, many
+
+832
+01:06:32,440 --> 01:06:37,320
+months and sometimes it is difficult to replace the battery when the battery is run out of
+
+833
+01:06:37,320 --> 01:06:38,320
+power.
+
+834
+01:06:38,320 --> 01:06:41,960
+Think about the military systems.
+
+835
+01:06:41,960 --> 01:06:44,619
+You have some spy device.
+
+836
+01:06:44,619 --> 01:06:48,199
+You have installed that device behind the enemy lines.
+
+837
+01:06:48,199 --> 01:06:53,239
+Using a tiny battery, the device transmits enemy movements.
+
+838
+01:06:53,239 --> 01:06:55,239
+It's a spy device.
+
+839
+01:06:55,239 --> 01:06:56,239
+Right?
+
+840
+01:06:56,239 --> 01:07:02,239
+Now, when the battery is run out of power, can you go behind the enemy lines and replace
+
+841
+01:07:02,239 --> 01:07:03,239
+the battery?
+
+842
+01:07:03,239 --> 01:07:05,239
+No, that is not possible.
+
+843
+01:07:05,239 --> 01:07:08,400
+Therefore, you need a power saving mode.
+
+844
+01:07:08,400 --> 01:07:14,340
+So when the transmission is over, you need to switch the device to the battery saving
+
+845
+01:07:14,340 --> 01:07:15,579
+mode, power saving.
+
+846
+01:07:16,159 --> 01:07:20,380
+When the transmission is over, you need to switch to the power saving mode.
+
+847
+01:07:20,440 --> 01:07:26,219
+In the power saving mode, all the peripheral devices are disabled to save power.
+
+848
+01:07:26,219 --> 01:07:33,300
+But before we switch into the power saving mode, we need to make sure transmission is
+
+849
+01:07:33,300 --> 01:07:33,980
+complete.
+
+850
+01:07:34,599 --> 01:07:36,440
+All the data shifted out.
+
+851
+01:07:37,099 --> 01:07:38,039
+Nothing is left.
+
+852
+01:07:38,400 --> 01:07:44,340
+All the data in the shift register shifted out.
+
+853
+01:07:45,340 --> 01:07:47,940
+Nothing is in the UDR data register.
+
+854
+01:07:48,940 --> 01:07:56,280
+We need to make sure before we turn off the USART peripheral to save power.
+
+855
+01:07:56,280 --> 01:08:00,579
+Another application of TXC flag.
+
+856
+01:08:00,579 --> 01:08:09,579
+Because TXC flag indicates, both TXC flag as well as transmit complete interrupt, they
+
+857
+01:08:09,579 --> 01:08:14,900
+indicate all the data transmitted, nothing is left.
+
+858
+01:08:14,900 --> 01:08:21,819
+So using that indication, you can turn off the user to save the power.
+
+859
+01:08:21,819 --> 01:08:24,819
+Can you do that with UDRE?
+
+860
+01:08:24,819 --> 01:08:34,060
+UDRE indicates UDRE register, USART data register is in, but that doesn't guarantee transmit
+
+861
+01:08:34,060 --> 01:08:40,060
+shift register is in. There may be data in the transmit shift register. If you turn off
+
+862
+01:08:40,060 --> 01:08:47,680
+the USART peripheral, while some data in the transmit shift register, those data will not
+
+863
+01:08:47,680 --> 01:08:56,640
+be transmitted. Therefore, you can't use such situations UDRE flag with O, user data registered
+
+864
+01:08:56,640 --> 01:09:02,319
+empty interrupt. Is that clear? Is that clear? Right?
+
+865
+01:09:02,319 --> 01:09:05,319
+There is no flag.
+
+866
+01:09:05,319 --> 01:09:08,319
+There is no flag.
+
+867
+01:09:08,319 --> 01:09:10,319
+Oh, that's right.
+
+868
+01:09:10,319 --> 01:09:16,319
+You said that you were in the lab and you were in the program.
+
+869
+01:09:16,319 --> 01:09:20,319
+You were in the program and you were in the program.
+
+870
+01:09:20,319 --> 01:09:25,319
+You said you were in the saving and you were in the alert.
+
+871
+01:09:25,319 --> 01:09:28,319
+You were in the alert.
+
+872
+01:09:28,319 --> 01:09:58,319
+[unclear — Sinhala / crosstalk]
+
+873
+01:09:58,319 --> 01:10:16,479
+There may be data in the transmit shipping. Now if you turn off the user to the referral,
+
+874
+01:10:16,479 --> 01:10:24,199
+then you would lose whatever data in the transmission. So that's why we have TXC flag
+
+875
+01:10:24,199 --> 01:10:31,000
+and transmit complete interrupt. So, in the appropriate, the suitable situation, suitable
+
+876
+01:10:31,000 --> 01:10:38,760
+applications, we have to use correct flag with correct input. The maximum throughput you can
+
+877
+01:10:38,760 --> 01:10:46,119
+get with UDRA flag with O, use our data register empty input, you can get maximum throughput. But
+
+878
+01:10:46,119 --> 01:10:52,439
+In fact, some situations, TXC flag transmit complete implant.
+
+879
+01:10:53,100 --> 01:10:54,319
+They become useful.
+
+880
+01:10:54,819 --> 01:10:55,340
+Is it clear?
+
+881
+01:10:55,960 --> 01:10:56,180
+Yes.
+
+882
+01:10:56,920 --> 01:10:57,340
+Right.
+
+883
+01:10:58,039 --> 01:11:02,640
+Now, you can see here the CPU.
+
+884
+01:11:03,340 --> 01:11:07,000
+CPU loads entire character to UDR.
+
+885
+01:11:07,680 --> 01:11:10,460
+CPU loads entire character to UDR.
+
+886
+01:11:11,260 --> 01:11:15,500
+UDR transfers entire character to transmit shippers.
+
+887
+01:11:15,500 --> 01:11:37,819
+Transmit shift register transmits bit by bit from TXV. So input is multiple data, 8 bit character input. Input is 8 bit character. Output is bit by bit. Input parallel, output same.
+
+888
+01:11:37,819 --> 01:12:00,979
+Can you understand? Input parallel, output 0. So, 8-bit character you load to UDR. UDR processes 8-bit character to transmit ship register. Transmit ship register transmits bit by. So, 8-bit means parallel means. Input parallel, output 0.
+
+889
+01:12:00,979 --> 01:12:10,979
+Right. Now let's see how that receiver works. This is how transmitter works. How receiver works. This is the block diagram of receiver.
+
+890
+01:12:12,020 --> 01:12:19,060
+A synchronous receiver block diagram. Right. Again let's start with Bordrade generator.
+
+891
+01:12:19,060 --> 01:12:36,859
+Two inputs to the bode rate generator. One is the oscillator signal from CPU. That is F-CPU, frequency of CPU, clock pulses. One input is clock pulses, F-CPU.
+
+892
+01:12:36,859 --> 01:12:46,060
+The other input is the value of UBRR register, USAT board rate register, UBRR register.
+
+893
+01:12:46,539 --> 01:12:54,619
+According to this formula, fcpu divided by 16 multiplied by UBRR plus 1.
+
+894
+01:12:55,300 --> 01:13:02,699
+According to this formula, board rate generator generates board rate, data transfer rate.
+
+895
+01:13:02,699 --> 01:13:06,039
+Board rate generator generates data transfer rate.
+
+896
+01:13:06,039 --> 01:13:17,239
+If you want to match the receiver's board rate to transmitter's board rate, you can change the value of UBRR.
+
+897
+01:13:17,500 --> 01:13:21,680
+By changing this UBRR, you can change the board rate.
+
+898
+01:13:22,060 --> 01:13:24,560
+Because FCPU is normally fixed.
+
+899
+01:13:25,119 --> 01:13:27,939
+So, this is the register value you can change.
+
+900
+01:13:28,319 --> 01:13:33,180
+This register value you can vary between 0 to 255, 8-bit register.
+
+901
+01:13:33,180 --> 01:13:36,260
+and you can adjust the board rate
+
+902
+01:13:36,260 --> 01:13:38,000
+or data transfer rate
+
+903
+01:13:38,000 --> 01:13:40,260
+to match with the
+
+904
+01:13:40,260 --> 01:13:42,119
+data transfer rate of the
+
+905
+01:13:42,119 --> 01:13:44,199
+transmitter. Now we are in the
+
+906
+01:13:44,199 --> 01:13:46,279
+receiver. Why? That's the first
+
+907
+01:13:46,279 --> 01:13:48,380
+one. The receiver
+
+908
+01:13:48,380 --> 01:13:50,119
+receives data
+
+909
+01:13:50,119 --> 01:13:52,640
+through RxPP.
+
+910
+01:13:53,500 --> 01:13:54,520
+Receiver receives
+
+911
+01:13:54,520 --> 01:13:56,060
+bit by bit. Not
+
+912
+01:13:56,060 --> 01:13:58,199
+parallel bits. Serially
+
+913
+01:13:58,199 --> 01:14:00,880
+bit by bit through RxPP.
+
+914
+01:14:01,439 --> 01:14:02,380
+Receiver receives
+
+915
+01:14:02,380 --> 01:14:06,220
+data through RxDB. RxDB means receive data.
+
+916
+01:14:06,220 --> 01:14:09,720
+Receive data. And then synchronization
+
+917
+01:14:09,720 --> 01:14:14,140
+unit. Synchronization unit recognizes
+
+918
+01:14:14,140 --> 01:14:18,279
+sync bits. That is start bit and
+
+919
+01:14:18,279 --> 01:14:21,520
+stop bit. Synchronization unit recognizes
+
+920
+01:14:21,520 --> 01:14:25,479
+sync bits. Using the board drain.
+
+921
+01:14:25,840 --> 01:14:30,439
+Using the board drain, synchronization unit recognizes
+
+922
+01:14:30,439 --> 01:14:41,439
+start bit and stop bit and load the character to receive shift register. Load the database
+
+923
+01:14:41,439 --> 01:14:49,439
+to receive shift register. Every character is framed with a start bit and a stop bit.
+
+924
+01:14:49,439 --> 01:14:56,439
+Synchronization unit recognizes and loads the character to receive shift register. When
+
+925
+01:14:56,439 --> 01:15:09,439
+When received shift register is full, it transfers character to the UDR, USAT data register.
+
+926
+01:15:09,439 --> 01:15:16,439
+When the shift register is full, the character, not the start bit and stop bit, just the character
+
+927
+01:15:16,439 --> 01:15:19,439
+in between start bit and stop bit.
+
+928
+01:15:19,439 --> 01:15:22,439
+The character is transferred to UDR.
+
+929
+01:15:22,439 --> 01:15:36,199
+When UDR contains an unread character, a character that we have not yet read, RxP flag bit is
+
+930
+01:15:36,199 --> 01:15:46,500
+safe. Receive complete flag bit is safe. Receive complete flag bit. That flag bit is in UCSRA
+
+931
+01:15:46,500 --> 01:15:57,619
+register. User control and status register A. Receive complete flag bit of user control and
+
+932
+01:15:57,619 --> 01:16:08,319
+status register A is set. Also, if you have enabled, receive complete interrupt using this particular
+
+933
+01:16:08,319 --> 01:16:15,840
+bit that is called RxCIEB receive complete interrupt enable using this bit
+
+934
+01:16:15,840 --> 01:16:22,479
+you can either enable or disable receive complete interrupt if you set value 1 to
+
+935
+01:16:22,479 --> 01:16:28,060
+this bit you enable receive complete interrupt if you set value 0 to this bit
+
+936
+01:16:28,060 --> 01:16:33,520
+you disable receive complete interrupt so if you enable the receive complete
+
+937
+01:16:33,520 --> 01:16:37,340
+interrupt. When this flag is set, CPU
+
+938
+01:16:37,340 --> 01:16:41,340
+will be interrupted. When this flag bit is set,
+
+939
+01:16:42,039 --> 01:16:45,539
+it indicates UDR contains
+
+940
+01:16:45,539 --> 01:16:49,520
+a new character. This flag bit is set,
+
+941
+01:16:49,520 --> 01:16:53,500
+it indicates a new character is in the UDR.
+
+942
+01:16:54,380 --> 01:16:56,119
+So you can read the character.
+
+943
+01:16:57,479 --> 01:17:01,619
+So when you read the character, automatically this bit is clear.
+
+944
+01:17:01,619 --> 01:17:05,220
+The flag bit is automatically cleared when you read the character.
+
+945
+01:17:05,659 --> 01:17:10,319
+So by polling this flag bit, you can read character by character.
+
+946
+01:17:11,420 --> 01:17:17,420
+By polling this RxC receive complete flag bit, you can read character by character.
+
+947
+01:17:17,819 --> 01:17:21,420
+Instead of polling this flag bit, you can use the interrupt.
+
+948
+01:17:22,020 --> 01:17:23,699
+Receive complete interrupt.
+
+949
+01:17:23,840 --> 01:17:30,539
+If you have enabled it, right, when there's a new character in UDR, this interrupt is
+
+950
+01:17:30,539 --> 01:17:42,300
+you can use this interrupt to read character by character from UDR is that clear when there's a
+
+951
+01:17:42,300 --> 01:17:49,680
+new character in the UDR flag bit is set interrupt is triggered either interrupt or flag bit you can
+
+952
+01:17:49,680 --> 01:17:57,760
+use to read character by character if the UDR contains an already read character not a new
+
+953
+01:17:57,760 --> 01:18:06,000
+character already red character or UDR is empty. Either UDR is empty or it contains already red
+
+954
+01:18:06,000 --> 01:18:14,159
+character. Then RxC flag is not set. Receive complete interrupt is not triggered. RxC flag is set.
+
+955
+01:18:14,720 --> 01:18:22,560
+Receive complete interrupt is triggered only when there's a new character in the UDR. So you can read.
+
+956
+01:18:22,560 --> 01:18:32,960
+is that clear any question okay let me ask a question now without polling rxc flag oh without
+
+957
+01:18:32,960 --> 01:18:37,520
+using this internet sorry
+
+958
+01:18:37,520 --> 01:19:07,520
+[unclear — Sinhala / crosstalk]
+
+959
+01:19:07,520 --> 01:19:09,539
+I have a here, the tos, the the.
+
+960
+01:19:09,539 --> 01:19:17,359
+[unclear — Sinhala / crosstalk]
+
+961
+01:19:17,359 --> 01:19:26,539
+right now I think another thing thank you coming to a time I make it even after their
+
+962
+01:19:26,539 --> 01:19:33,840
+neck right some onion from a data line with your data line again only some
+
+963
+01:19:33,840 --> 01:20:03,840
+[unclear — Sinhala / crosstalk]
+
+964
+01:20:03,840 --> 01:20:06,920
+the man you that the we have a to a
+
+965
+01:20:06,920 --> 01:20:07,680
+the the the the
+
+966
+01:20:07,680 --> 01:20:38,880
+[unclear — Sinhala / crosstalk]
+
+967
+01:20:38,880 --> 01:20:49,399
+the how we need the the how many top ready the receiver a balapro to you know I cut you
+
+968
+01:20:49,399 --> 01:20:59,939
+not I love any top ready stop stop the window are now the harmony top ready in the only stop
+
+969
+01:20:59,939 --> 01:21:25,279
+bit. If you receive the start bit at time zero, the first second, at the tenth second, you
+
+970
+01:21:25,279 --> 01:21:32,279
+should receive some if the data transfer rate is one bit per second data transfer rate
+
+971
+01:21:32,279 --> 01:21:40,100
+the top rated be taken up all of any top ready start with the car now the how many top ready
+
+972
+01:21:40,100 --> 01:21:49,819
+stop it again the how many top ready the cookie lava now up the the top ready our window the
+
+973
+01:21:49,819 --> 01:21:51,720
+the
+
+974
+01:21:51,720 --> 01:21:52,619
+a
+
+975
+01:21:52,619 --> 01:21:53,020
+a
+
+976
+01:21:53,020 --> 01:21:53,420
+a
+
+977
+01:21:53,420 --> 01:21:53,720
+a
+
+978
+01:21:53,720 --> 01:21:53,920
+a
+
+979
+01:21:53,920 --> 01:21:54,020
+a
+
+980
+01:21:54,020 --> 01:21:54,119
+a
+
+981
+01:21:54,119 --> 01:21:54,119
+
+
+982
+01:21:54,119 --> 01:21:54,119
+
+
+983
+01:21:54,119 --> 01:21:54,119
+
+
+984
+01:21:54,119 --> 01:21:54,119
+
+
+985
+01:21:54,119 --> 01:21:54,119
+
+
+986
+01:21:54,119 --> 01:21:54,119
+
+
+987
+01:21:54,119 --> 01:21:54,119
+
+
+988
+01:21:54,119 --> 01:21:54,119
+
+
+989
+01:21:54,119 --> 01:21:54,119
+
+
+990
+01:21:54,119 --> 01:21:54,119
+
+
+991
+01:21:54,119 --> 01:21:54,119
+
+
+992
+01:21:54,119 --> 01:21:54,119
+
+
+993
+01:21:54,119 --> 01:21:54,119
+
+
+994
+01:21:54,119 --> 01:21:54,119
+
+
+995
+01:21:54,119 --> 01:21:54,119
+
+
+996
+01:21:54,119 --> 01:21:54,119
+
+
+997
+01:21:54,119 --> 01:21:54,119
+
+
+998
+01:21:54,119 --> 01:21:54,119
+
+
+999
+01:21:54,119 --> 01:21:54,119
+
+
+1000
+01:21:54,119 --> 01:21:54,119
+
+
+1001
+01:21:54,119 --> 01:21:54,119
+
+
+1002
+01:21:54,119 --> 01:21:54,119
+
+
+1003
+01:21:54,119 --> 01:21:54,119
+
+
+1004
+01:21:54,119 --> 01:21:54,119
+
+
+1005
+01:22:19,819 --> 01:22:21,819
+I have been the target of the very current.
+
+1006
+01:22:21,819 --> 01:22:23,819
+I have a question.
+
+1007
+01:22:23,819 --> 01:22:25,819
+I have begun.
+
+1008
+01:22:25,819 --> 01:22:27,819
+I have to not.
+
+1009
+01:22:27,819 --> 01:22:29,819
+But I call I.
+
+1010
+01:22:29,819 --> 01:22:31,819
+I have to not.
+
+1011
+01:22:31,819 --> 01:22:33,819
+I follow.
+
+1012
+01:22:33,819 --> 01:22:35,819
+I say.
+
+1013
+01:22:35,819 --> 01:22:37,819
+I got the heart.
+
+1014
+01:22:37,819 --> 01:22:39,819
+I got the hand.
+
+1015
+01:22:39,819 --> 01:22:41,819
+I can most significant character.
+
+1016
+01:22:41,819 --> 01:22:43,819
+This side.
+
+1017
+01:22:43,819 --> 01:22:45,819
+The end of the.
+
+1018
+01:22:45,819 --> 01:23:45,819
+[unclear — Sinhala / crosstalk]
+
+1019
+01:23:45,819 --> 01:23:51,279
+I have a very very very very very mage-gurus, the kakwadhahar, a bithyjhjh, a sqa-bh mb.
+
+1020
+01:23:51,279 --> 01:23:52,279
+I do a sdhjh, a tbf, tb.
+
+1021
+01:23:52,279 --> 01:23:52,180
+I is a tb.
+
+1022
+01:23:52,180 --> 01:23:52,060
+I is a tb.
+
+1023
+01:23:52,060 --> 01:23:52,020
+I m1,I.
+
+1024
+01:23:52,020 --> 01:23:52,039
+I a tb.
+
+1025
+01:23:52,039 --> 01:23:52,039
+
+
+1026
+01:23:52,039 --> 01:23:52,039
+
+
+1027
+01:23:52,039 --> 01:23:52,039
+
+
+1028
+01:23:52,039 --> 01:23:52,039
+
+
+1029
+01:23:52,039 --> 01:23:52,039
+
+
+1030
+01:23:52,039 --> 01:23:52,039
+
+
+1031
+01:23:52,039 --> 01:23:52,039
+
+
+1032
+01:23:52,039 --> 01:23:52,039
+
+
+1033
+01:23:52,039 --> 01:23:52,039
+
+
+1034
+01:23:52,039 --> 01:23:52,039
+
+
+1035
+01:23:52,039 --> 01:23:52,039
+
+
+1036
+01:23:52,039 --> 01:23:52,039
+
+
+1037
+01:23:52,039 --> 01:23:52,039
+
+
+1038
+01:23:52,039 --> 01:23:52,039
+
+
+1039
+01:23:52,039 --> 01:23:52,039
+
+
+1040
+01:23:52,039 --> 01:23:52,039
+
+
+1041
+01:23:52,039 --> 01:23:52,039
+
+
+1042
+01:23:52,039 --> 01:23:52,039
+
+
+1043
+01:23:52,039 --> 01:23:52,039
+
+
+1044
+01:23:52,039 --> 01:23:52,020
+I tb.
+
+1045
+01:23:52,020 --> 01:23:52,000
+I tb.
+
+1046
+01:23:52,000 --> 01:23:54,000
+the
+
+1047
+01:23:54,000 --> 01:23:55,000
+the
+
+1048
+01:23:55,000 --> 01:23:55,939
+the
+
+1049
+01:23:55,939 --> 01:23:56,260
+the
+
+1050
+01:23:56,260 --> 01:23:56,600
+the
+
+1051
+01:23:56,600 --> 01:23:56,840
+the
+
+1052
+01:23:56,840 --> 01:23:57,039
+the
+
+1053
+01:23:57,039 --> 01:23:57,159
+the
+
+1054
+01:23:57,159 --> 01:23:57,199
+the
+
+1055
+01:23:57,199 --> 01:23:57,199
+
+
+1056
+01:23:57,199 --> 01:23:57,199
+
+
+1057
+01:23:57,199 --> 01:23:57,199
+
+
+1058
+01:23:57,199 --> 01:23:57,199
+
+
+1059
+01:23:57,199 --> 01:23:57,199
+
+
+1060
+01:23:57,199 --> 01:23:57,220
+the
+
+1061
+01:23:57,220 --> 01:23:57,199
+the
+
+1062
+01:23:57,199 --> 01:23:57,220
+the
+
+1063
+01:23:57,220 --> 01:23:57,220
+
+
+1064
+01:23:57,220 --> 01:23:57,199
+the
+
+1065
+01:23:57,199 --> 01:23:57,220
+the
+
+1066
+01:23:57,220 --> 01:23:57,220
+
+
+1067
+01:23:57,220 --> 01:23:57,239
+the
+
+1068
+01:23:57,239 --> 01:23:57,260
+the
+
+1069
+01:23:57,260 --> 01:23:57,279
+the
+
+1070
+01:23:57,279 --> 01:23:57,279
+
+
+1071
+01:23:57,279 --> 01:23:57,300
+the
+
+1072
+01:23:57,300 --> 01:23:57,319
+the
+
+1073
+01:23:57,319 --> 01:23:57,340
+the
+
+1074
+01:23:57,340 --> 01:23:57,359
+the
+
+1075
+01:23:57,359 --> 01:23:57,399
+the
+
+1076
+01:23:57,399 --> 01:23:57,439
+the
+
+1077
+01:23:57,439 --> 01:23:57,479
+the
+
+1078
+01:23:57,479 --> 01:23:57,479
+
+
+1079
+01:23:57,479 --> 01:23:57,479
+
+
+1080
+01:23:57,479 --> 01:23:57,479
+
+
+1081
+01:23:57,479 --> 01:23:57,479
+
+
+1082
+01:23:57,479 --> 01:23:57,479
+
+
+1083
+01:23:57,479 --> 01:23:57,460
+the
+
+1084
+01:23:57,460 --> 01:23:57,520
+the
+
+1085
+01:23:57,520 --> 01:23:57,500
+the
+
+1086
+01:23:57,500 --> 01:23:57,539
+the
+
+1087
+01:23:57,539 --> 01:23:57,579
+the
+
+1088
+01:23:57,579 --> 01:23:57,579
+
+
+1089
+01:24:22,000 --> 01:24:52,000
+[unclear — Sinhala / crosstalk]
+
+1090
+01:24:52,000 --> 01:25:12,000
+If something is not clear, it doesn't matter.
+
+1091
+01:25:12,000 --> 01:25:19,220
+it was discussed in a previous slide go in a previous session no even in the
+
+1092
+01:25:19,220 --> 01:25:23,000
+last year doesn't matter
+
+1093
+01:25:31,000 --> 01:25:39,000
+the idea is to learn don't keep quiet
+
+1094
+01:25:39,000 --> 01:25:58,619
+When at night? Right. I am very happy at least half of the batch. We have not much name. Nine or ten people among them. At least half. They talk very well. Right. Compared to last year or last couple of years. Your batch is really good. You guys ask questions. Right.
+
+1095
+01:25:58,619 --> 01:26:13,060
+Then, what is this pin control? I will discuss it. Even in the transmitter, we had that pin control. What is this pin control?
+
+1096
+01:26:13,060 --> 01:26:29,319
+What is pin control? The pin control role of the pin control. Let's discuss that.
+
+1097
+01:26:29,319 --> 01:26:46,460
+So, left pin control. Now, these pins are IO pins, input-output pins. These pins are IO pins. We need to disable their IO functionality. Then only we can use them for data communication.
+
+1098
+01:26:46,460 --> 01:26:58,479
+We need to disable their input-output functionality and then only we can use them for data communication.
+
+1099
+01:26:59,140 --> 01:27:01,439
+That is done by PIN control.
+
+1100
+01:27:01,439 --> 01:27:06,939
+Using the PIN control, we can alternate the PIN functions.
+
+1101
+01:27:07,399 --> 01:27:08,659
+PIN has two functions.
+
+1102
+01:27:09,239 --> 01:27:14,699
+One is GPIO function, general purpose input-output function.
+
+1103
+01:27:14,699 --> 01:27:24,300
+GPIO. The other function is RxD function, receive data function. Between these two functions,
+
+1104
+01:27:24,500 --> 01:27:31,840
+RxD function and GPIO function, general purpose input output function, how do we alternate
+
+1105
+01:27:31,840 --> 01:27:42,779
+using PIN. Then you receive data bit by bit. You receive data to receive shift register
+
+1106
+01:27:42,779 --> 01:27:51,680
+bit by bit, you load data to receive shift register bit by and then as a character, as
+
+1107
+01:27:51,680 --> 01:28:01,720
+a whole character, you transfer the character to UDR and then the CPU reads entire 8 bit
+
+1108
+01:28:01,720 --> 01:28:11,279
+characters. But the receive shift register is filled with bit by bit. Bit by bit input,
+
+1109
+01:28:11,279 --> 01:28:22,000
+entire character output serial in parallel out serial in parallel out then you understand right
+
+1110
+01:28:22,000 --> 01:28:29,279
+without shift registers both transmit and receive shift registers you can't implement this function
+
+1111
+01:28:29,840 --> 01:28:37,920
+parallel in serial out at the transmitter serial in parallel out at the receiver
+
+1112
+01:28:37,920 --> 01:28:39,979
+Those two function
+
+1113
+01:28:39,979 --> 01:28:41,739
+you can't implement
+
+1114
+01:28:41,739 --> 01:28:43,159
+without chip register.
+
+1115
+01:28:43,520 --> 01:28:44,899
+That's why we need chip register.
+
+1116
+01:28:45,439 --> 01:28:47,920
+You need transmit chip register to implement
+
+1117
+01:28:47,920 --> 01:28:49,779
+parallel in
+
+1118
+01:28:49,779 --> 01:28:51,579
+serial out function.
+
+1119
+01:28:52,140 --> 01:28:53,859
+You need receive chip register
+
+1120
+01:28:53,859 --> 01:28:56,000
+to implement serial
+
+1121
+01:28:56,000 --> 01:28:58,319
+in parallel out function.
+
+1122
+01:28:58,899 --> 01:28:59,439
+Is that clear?
+
+1123
+01:29:00,020 --> 01:29:00,779
+Any question?
+
+1124
+01:29:01,619 --> 01:29:04,199
+Now let's talk
+
+1125
+01:29:04,199 --> 01:29:06,039
+about USAT registers.
+
+1126
+01:29:06,619 --> 01:29:07,739
+USAT registers.
+
+1127
+01:29:07,920 --> 01:29:13,600
+The first one is UBRR, USART BORDERATE REGISTROR.
+
+1128
+01:29:13,600 --> 01:29:22,300
+USART means universal synchronous receiver and transmit.
+
+1129
+01:29:22,920 --> 01:29:24,739
+USART BORDERATE REGISTROR.
+
+1130
+01:29:25,220 --> 01:29:26,880
+And what is this simple length?
+
+1131
+01:29:27,939 --> 01:29:32,680
+This simple length indicates the USART peripheral number.
+
+1132
+01:29:32,680 --> 01:29:37,680
+Because some microcontrollers, there are multiple USART peripherals.
+
+1133
+01:29:38,760 --> 01:29:39,520
+Like timers.
+
+1134
+01:29:39,659 --> 01:29:40,840
+So, multiple timers.
+
+1135
+01:29:40,979 --> 01:29:42,960
+T0, T1, T2.
+
+1136
+01:29:43,640 --> 01:29:48,680
+Likewise, some microcontrollers, you can have multiple USART peripherals.
+
+1137
+01:29:49,720 --> 01:29:57,680
+Now, in Atmega 328P, the microcontroller in the Arduino Uno board, we have one USART peripheral.
+
+1138
+01:29:58,340 --> 01:30:00,539
+One USART peripheral DS.
+
+1139
+01:30:00,539 --> 01:30:02,659
+Therefore, N is 0.
+
+1140
+01:30:03,399 --> 01:30:04,199
+N is 0.
+
+1141
+01:30:04,819 --> 01:30:09,479
+So, in ATMEGA 3280 microcontroller, you have UBRR 0.
+
+1142
+01:30:10,060 --> 01:30:14,300
+But some microcontrollers like ATMEGA 2560,
+
+1143
+01:30:14,760 --> 01:30:18,819
+ATMEGA 2560, which is on Arduino megaboard,
+
+1144
+01:30:19,939 --> 01:30:23,319
+ATMEGA 2650, which is on Arduino megaboard,
+
+1145
+01:30:24,079 --> 01:30:26,199
+there are four USART variables.
+
+1146
+01:30:26,840 --> 01:30:28,659
+There are four USART variables.
+
+1147
+01:30:28,659 --> 01:30:42,159
+So, the bode rate registers of those USART peripherals, you can number UBRR0, UBRR1, UBRR2, UBRR3.
+
+1148
+01:30:42,159 --> 01:30:57,319
+So, using this simple N, right, including this simple N number to the register name, you can make your code portable, right.
+
+1149
+01:30:57,319 --> 01:31:00,600
+Because only the number you need to change.
+
+1150
+01:31:01,000 --> 01:31:04,340
+So you can make your code up.
+
+1151
+01:31:04,960 --> 01:31:05,340
+Right.
+
+1152
+01:31:05,979 --> 01:31:08,819
+This register we used to set the board rate.
+
+1153
+01:31:09,420 --> 01:31:11,500
+And this is a 16-bit register.
+
+1154
+01:31:12,159 --> 01:31:13,539
+This is a 16-bit register.
+
+1155
+01:31:14,079 --> 01:31:15,880
+But only 12-bit size.
+
+1156
+01:31:16,779 --> 01:31:16,979
+Right.
+
+1157
+01:31:17,140 --> 01:31:18,500
+Only 12-bit size.
+
+1158
+01:31:19,239 --> 01:31:23,520
+And this is the formula to calculate board rate.
+
+1159
+01:31:24,060 --> 01:31:25,899
+This is the formula to calculate board rate.
+
+1160
+01:31:25,899 --> 01:31:47,119
+From this formula, you can derive UBRR. UBRR equals FCPU divided by 16 multiplied by board rate minus 1. Now, if you know the FCPU, if you know the required board rate, you can calculate the value for UBRR.
+
+1161
+01:31:47,119 --> 01:32:02,819
+So, if you know the frequency of C2U, if you know the required goal rate, data transfer rate per second, BPS per BPS, that is bits per second, you can calculate the value for this register.
+
+1162
+01:32:02,819 --> 01:32:06,359
+What is the value you need to initialize to this register?
+
+1163
+01:32:06,979 --> 01:32:07,739
+You can calculate.
+
+1164
+01:32:08,140 --> 01:32:10,760
+How this formula has been derived?
+
+1165
+01:32:11,520 --> 01:32:14,319
+Why it is divided by 16?
+
+1166
+01:32:14,920 --> 01:32:18,579
+All these things are available in the data sheet.
+
+1167
+01:32:19,180 --> 01:32:21,979
+Page 227.
+
+1168
+01:32:22,359 --> 01:32:25,680
+In the page 227 data sheet, right?
+
+1169
+01:32:25,859 --> 01:32:28,159
+How this formula derived?
+
+1170
+01:32:28,939 --> 01:32:30,720
+And why divided by 16?
+
+1171
+01:32:30,840 --> 01:32:31,560
+Why not 8?
+
+1172
+01:32:31,560 --> 01:32:38,560
+all these things are available. So therefore I am not going to talk about those things.
+
+1173
+01:32:38,560 --> 01:32:48,560
+You can read the page 227 of the data sheet. The UDR register, USART data register refers
+
+1174
+01:32:48,560 --> 01:32:56,560
+to Transmit data bubble that holds character to be transmitted to the Transmit shift register.
+
+1175
+01:32:56,560 --> 01:33:04,039
+UDR refers to a transmissed data buffer that holds the character to be transferred to the
+
+1176
+01:33:04,039 --> 01:33:12,279
+transmit shipments. So UDR is a data buffer. It holds the character to be transferred to
+
+1177
+01:33:12,279 --> 01:33:20,600
+the transmit shipments. And also UDR refers to the received data buffer that holds the
+
+1178
+01:33:20,600 --> 01:33:29,479
+character transferred from received shift register. So both data buffers we refer using the same name
+
+1179
+01:33:30,039 --> 01:33:44,680
+UDR. Right UDR. Actually there are two registers but they share the same address. Therefore we refer
+
+1180
+01:33:44,680 --> 01:33:53,960
+both registers using same name. Two registers share the same members. So, we refer two registers
+
+1181
+01:33:53,960 --> 01:34:02,760
+using the same name. Then will there be conflicts? No. Why? If data is written to UDR,
+
+1182
+01:34:02,760 --> 01:34:12,119
+if you write data to UDR, you refer transmit data by. If you read from UDR, you refer
+
+1183
+01:34:12,119 --> 01:34:14,300
+receive data
+
+1184
+01:34:14,300 --> 01:34:16,420
+so you don't need to worry
+
+1185
+01:34:16,420 --> 01:34:18,500
+those things are handled behind this
+
+1186
+01:34:18,500 --> 01:34:19,260
+right
+
+1187
+01:34:19,260 --> 01:34:21,659
+two data buffers
+
+1188
+01:34:21,659 --> 01:34:22,619
+right
+
+1189
+01:34:22,619 --> 01:34:24,579
+transmit ship register
+
+1190
+01:34:24,579 --> 01:34:26,300
+and receive
+
+1191
+01:34:26,300 --> 01:34:29,039
+transmit data buffer
+
+1192
+01:34:29,039 --> 01:34:30,100
+and receive data buffer
+
+1193
+01:34:30,100 --> 01:34:32,939
+let me drop these two
+
+1194
+01:34:32,939 --> 01:34:34,600
+so you can understand
+
+1195
+01:34:34,600 --> 01:34:36,300
+sir we can't see the boat
+
+1196
+01:34:36,300 --> 01:34:36,939
+sorry
+
+1197
+01:34:36,939 --> 01:34:39,340
+we can't see the boat
+
+1198
+01:34:39,340 --> 01:34:40,560
+okay
+
+1199
+01:34:40,560 --> 01:34:55,560
+Now this is Transmeet data. Transmeet shift resistance.
+
+1200
+01:34:55,560 --> 01:35:07,560
+Now, from the cross-piece data buffer to cross-piece shift, parallel link and PXBD serial lock.
+
+1201
+01:35:07,560 --> 01:35:29,560
+Then receive shift register, receive data buffer, RSVP, serial P parallel CPU.
+
+1202
+01:35:29,560 --> 01:35:46,560
+Right. Now, these two data methods, they share the same address. They share the same address. Therefore, we call them using the same name UDR.
+
+1203
+01:35:46,560 --> 01:35:54,560
+Now the question is, will there be conflicts if you use same name for two registers?
+
+1204
+01:35:54,560 --> 01:36:06,560
+No. Why? If you assign a value to UDR, if you assign a value to UDR, this is the register
+
+1205
+01:36:06,560 --> 01:36:08,600
+refer. If you read
+
+1206
+01:36:08,600 --> 01:36:09,760
+from the UDR,
+
+1207
+01:36:10,479 --> 01:36:12,039
+if you read from the UDR,
+
+1208
+01:36:12,220 --> 01:36:14,039
+receive the register UDR.
+
+1209
+01:36:14,500 --> 01:36:16,420
+So those things will be handled
+
+1210
+01:36:16,420 --> 01:36:18,479
+behind the scenes. If you write
+
+1211
+01:36:18,479 --> 01:36:20,359
+away the UDR, you
+
+1212
+01:36:20,359 --> 01:36:22,220
+refer to a cross-sheet data
+
+1213
+01:36:22,220 --> 01:36:24,199
+document. If you read
+
+1214
+01:36:24,199 --> 01:36:26,199
+from UDR, you
+
+1215
+01:36:26,199 --> 01:36:28,100
+refer to receive data document.
+
+1216
+01:36:28,520 --> 01:36:30,560
+They shall save address
+
+1217
+01:36:30,560 --> 01:36:32,060
+so we use
+
+1218
+01:36:32,060 --> 01:36:34,380
+same name. Is that
+
+1219
+01:36:34,380 --> 01:36:36,399
+it? If you want more time to
+
+1220
+01:36:36,399 --> 01:36:43,399
+see that whiteboard I can switch it to the whiteboard again. What do you say?
+
+1221
+01:36:43,399 --> 01:36:46,399
+Sir can you please explain it one more time please.
+
+1222
+01:36:46,399 --> 01:36:54,399
+Sure. Now from CPU you load to the transmit data buffer a character. Then character is
+
+1223
+01:36:54,399 --> 01:37:00,399
+loaded to the transmit chip register and bit by bit you transmit. That's what we discussed
+
+1224
+01:37:00,399 --> 01:37:07,399
+just under transmit of blood data. And you receive data through R-H-T-E-P, right?
+
+1225
+01:37:07,399 --> 01:37:14,399
+So then receive data shift register, receive shift register. And from the receive shift
+
+1226
+01:37:14,399 --> 01:37:20,399
+register, entire character you get to the receive data buffer. And from the receive
+
+1227
+01:37:20,399 --> 01:37:26,399
+data buffer you read the character. Now this receive data buffer and transmit data buffer,
+
+1228
+01:37:26,399 --> 01:37:40,399
+They share same memory objects. Therefore we call them using same name UDR. Then we may think that there will be conflicts. No.
+
+1229
+01:37:40,399 --> 01:37:51,399
+When you write a value to the UDR, you write a value to the UDR, we refer to Transmit data.
+
+1230
+01:37:51,399 --> 01:37:59,399
+When you read a value from UDR, you read a value from UDR to that, you read a value from UDR.
+
+1231
+01:37:59,399 --> 01:38:02,399
+You refer to the UDR.
+
+1232
+01:38:02,399 --> 01:38:05,399
+So behind the scenes that happens.
+
+1233
+01:38:05,399 --> 01:38:17,399
+So you can use the same name. If you write a value to the UDR, that is the register you will. If you read a value from UDR, receive the register you will. Is that clear?
+
+1234
+01:38:17,399 --> 01:38:25,399
+Yes sir. Thank you sir. Because we are using only receive or transmit at a time, that's why we are not getting a conflict.
+
+1235
+01:38:25,399 --> 01:38:34,399
+Even at the same time we can receive when class B. When you refer, the current, the relevant
+
+1236
+01:38:34,399 --> 01:38:40,399
+data buffer is reference. Because two different ones.
+
+1237
+01:38:40,399 --> 01:38:41,399
+Okay sir.
+
+1238
+01:38:41,399 --> 01:38:46,399
+If you write a letter from UDR, that point is reference. If you read a letter from UDR,
+
+1239
+01:38:46,399 --> 01:38:48,399
+this point is reference.
+
+1240
+01:38:48,399 --> 01:38:49,399
+Okay sir.
+
+1241
+01:38:49,399 --> 01:38:50,199
+No problem.
+
+1242
+01:38:50,899 --> 01:38:51,159
+Right.
+
+1243
+01:38:52,560 --> 01:38:52,899
+Then,
+
+1244
+01:38:53,739 --> 01:38:56,640
+USART control and status register A.
+
+1245
+01:38:57,420 --> 01:39:00,020
+It contains receive complete flag.
+
+1246
+01:39:00,699 --> 01:39:00,899
+Right.
+
+1247
+01:39:01,000 --> 01:39:03,100
+Receive complete flag.
+
+1248
+01:39:03,819 --> 01:39:08,460
+This flag is set when UDR contains unread character.
+
+1249
+01:39:08,460 --> 01:39:12,359
+When UDR contains unread character, this flag is set.
+
+1250
+01:39:12,859 --> 01:39:15,420
+And when you read the character from UDR,
+
+1251
+01:39:16,180 --> 01:39:18,119
+when you read the character from UDR,
+
+1252
+01:39:18,119 --> 01:39:20,359
+this flag is automatically cleared.
+
+1253
+01:39:20,939 --> 01:39:23,960
+It is automatically cleared when you read the character from UDR.
+
+1254
+01:39:24,119 --> 01:39:30,880
+So you can use this flag bit and poll it, read character by character.
+
+1255
+01:39:31,560 --> 01:39:34,779
+By polling this flag bit, you can read character by character.
+
+1256
+01:39:35,319 --> 01:39:41,699
+Then we have transmit complete flag bit, bit number 6, transmit complete flag.
+
+1257
+01:39:41,699 --> 01:39:55,920
+This flag bit is set when the entire frame in the transmit shift register has been shifted out and UDR is empty. Both shift register and UDR are empty. This flag bit is set.
+
+1258
+01:39:55,920 --> 01:40:00,739
+Then the third flag bit, UDRE flag bit.
+
+1259
+01:40:01,520 --> 01:40:04,220
+This is set when UDR becomes set.
+
+1260
+01:40:04,979 --> 01:40:09,720
+Either this flag bit or that flag bit you can use,
+
+1261
+01:40:10,500 --> 01:40:18,359
+pull them and load character by character to UDR for transmission.
+
+1262
+01:40:19,060 --> 01:40:22,279
+And if you use UDRE, you can get higher throughput.
+
+1263
+01:40:22,279 --> 01:40:28,460
+but you can use THC flag to make sure that everything has been transferred.
+
+1264
+01:40:28,460 --> 01:40:37,880
+Nothing is left. Right. The default value of UDRE is 1. Why? At the beginning UDRE is
+
+1265
+01:40:37,880 --> 01:40:45,439
+empty. USAR data register is empty at the beginning. So UDRE flag bit is set when UDRE is
+
+1266
+01:40:45,439 --> 01:40:54,560
+empty so default value of UDR is one other two flag bits before really we see UDR a flag with
+
+1267
+01:40:54,560 --> 01:41:01,340
+default value is what why at the beginning when you turn off the USART paragraph UDR USART data
+
+1268
+01:41:01,340 --> 01:41:12,380
+register is empty so UDR USART data register empty flag is one clear right USART control and status
+
+1269
+01:41:12,380 --> 01:41:20,000
+register B which contains some bits important bits one is there are two bits
+
+1270
+01:41:20,000 --> 01:41:28,899
+important bits Rx C I e receive complete interrupt enable bit receive complete
+
+1271
+01:41:28,899 --> 01:41:34,460
+interrupt enable bit and transmit complete interrupt enable it using them
+
+1272
+01:41:34,460 --> 01:41:41,180
+you can enable or disable receive complete interrupt or transmit complete
+
+1273
+01:41:41,180 --> 01:41:50,380
+interrupt you can enable load is equal then you have udr ie usad data register empty interrupt
+
+1274
+01:41:50,380 --> 01:41:59,020
+enable using that you can enable interrupt on udre flag right you can enable you can interrupt when
+
+1275
+01:41:59,020 --> 01:42:08,220
+udr usad data register is empty you can enable it and finally you have rx en flag sorry rx in
+
+1276
+01:42:08,220 --> 01:42:16,640
+a EN bit and TXEN bit. So, whether you want to enable the transmitter and receiver, you
+
+1277
+01:42:16,640 --> 01:42:23,460
+can use these two bits. Because by default, the receiver and the transmitter both are
+
+1278
+01:42:23,460 --> 01:42:28,640
+disabled to save power. If you want to enable them, these are the two bits you have to save.
+
+1279
+01:42:29,159 --> 01:42:34,800
+These are the two bits you have to save. If you set RXEN bit, receiver you can enable.
+
+1280
+01:42:34,800 --> 01:42:45,119
+if you set TXEN, you can enable the transmit. And interrupts you can enable either UDRE user data
+
+1281
+01:42:45,119 --> 01:42:50,560
+register empty interrupt, transmit complete interrupt, receive complete interrupt. These
+
+1282
+01:42:50,560 --> 01:43:00,420
+interrupts you can enable disable using these three bits. And this particular UCSZ we'll discuss
+
+1283
+01:43:00,420 --> 01:43:01,539
+in the next slide.
+
+1284
+01:43:02,119 --> 01:43:03,319
+Sorry, in the next slide.
+
+1285
+01:43:03,680 --> 01:43:06,739
+This is the UCSZ bit number 2.
+
+1286
+01:43:07,500 --> 01:43:09,359
+So before we move into the next slide,
+
+1287
+01:43:09,520 --> 01:43:09,979
+any questions?
+
+1288
+01:43:10,600 --> 01:43:13,180
+And again, these are the two bits
+
+1289
+01:43:13,180 --> 01:43:14,920
+you need to set to enable
+
+1290
+01:43:14,920 --> 01:43:16,939
+and disable transmit and receive.
+
+1291
+01:43:17,439 --> 01:43:19,119
+When you enable the receive,
+
+1292
+01:43:19,939 --> 01:43:20,960
+RXDP,
+
+1293
+01:43:21,800 --> 01:43:22,859
+right, RXDP
+
+1294
+01:43:22,859 --> 01:43:25,100
+becomes the receive,
+
+1295
+01:43:25,260 --> 01:43:26,039
+data receive,
+
+1296
+01:43:26,340 --> 01:43:29,859
+disabling its GPIO function.
+
+1297
+01:43:30,420 --> 01:43:31,800
+PIN control, right?
+
+1298
+01:43:31,840 --> 01:43:40,140
+If you enable the receiver, the relevant GPIOP, general purpose IOP, becomes data received
+
+1299
+01:43:40,140 --> 01:43:42,739
+RxDB, received data.
+
+1300
+01:43:43,399 --> 01:43:51,020
+And when you enable the transmitter, the relevant GPIOP, general purpose input output pin, becomes
+
+1301
+01:43:51,020 --> 01:43:53,800
+TxDB, transmit data.
+
+1302
+01:43:53,800 --> 01:44:04,420
+So you can enable receiver and transmitter and then you can enable TXD and RXD pins.
+
+1303
+01:44:04,840 --> 01:44:10,140
+So then those pins provide the functionality for data communication.
+
+1304
+01:44:10,619 --> 01:44:20,100
+But if you disable receiver and transmitter, the relevant pins you can use for general purpose input output, GPI.
+
+1305
+01:44:20,600 --> 01:44:22,000
+That's important.
+
+1306
+01:44:22,000 --> 01:44:28,000
+Let's say you are developing an embedded system and you don't want to do any data in English.
+
+1307
+01:44:28,000 --> 01:44:32,000
+But you need some pins to connect sensors and actuators.
+
+1308
+01:44:32,000 --> 01:44:41,000
+Disable receiver, disable transmitter, TXV and RxV pins used for GPIO, general purpose input.
+
+1309
+01:44:41,000 --> 01:44:46,000
+That is possible. Right. So this is what I discussed.
+
+1310
+01:44:46,000 --> 01:44:48,939
+The need of enabling, disabling RxQ.
+
+1311
+01:44:49,199 --> 01:44:51,699
+One need is to save power.
+
+1312
+01:44:52,619 --> 01:45:01,680
+The second need is, right, to override the GPIO functionality of relevant pins.
+
+1313
+01:45:02,359 --> 01:45:04,920
+That's why we enable, disable, receive and transfer.
+
+1314
+01:45:05,319 --> 01:45:10,220
+The one reason is we can save power by disabling receiver and transfer.
+
+1315
+01:45:10,220 --> 01:45:26,359
+The another reason is by enabling the receiver and transmitter, we can override the GPIO functionality, general purpose input output functionality we can override with data communication function.
+
+1316
+01:45:26,359 --> 01:45:51,199
+Right. Then USART, control and status register C, the third register. Control and status register C. And that register we have two important bits. UCSZ bit 1, UCSZ bit 0 and the previous register we saw, UCSZ bit number 2.
+
+1317
+01:45:51,199 --> 01:46:12,579
+What are they? They are called USART character size bits. USART character size bits. Now using these three bits, you can specify the character size. I told you the character size could vary between five bits to nine bits. This is the default character size, eight bit.
+
+1318
+01:46:12,579 --> 01:46:25,380
+This is the default. Right? UCSZ 0 bit 1, UCSZ 1 bit 1 and UCSZ 2 bit 0. That is the default.
+
+1319
+01:46:25,380 --> 01:46:31,699
+But if you want, you can have other character sizes. For example, 8 bit character with a
+
+1320
+01:46:31,699 --> 01:46:38,779
+one parity bit, you can have 9 bit characters or you can have 5 bit character sizes. If
+
+1321
+01:46:38,779 --> 01:46:45,340
+If you want to communicate just hexadecimal numbers, 4 bit for the number and 1 for the
+
+1322
+01:46:45,340 --> 01:46:46,340
+paradigm.
+
+1323
+01:46:46,340 --> 01:46:53,500
+So likewise, you can have different character sizes for different purposes.
+
+1324
+01:46:53,500 --> 01:46:56,880
+But generally, typically we use 8 bit character.
+
+1325
+01:46:56,880 --> 01:47:00,159
+With that we come to the end of theory part.
+
+1326
+01:47:00,159 --> 01:47:09,720
+The next part is to develop a system to understand how USAT works, serial data communication
+
+1327
+01:47:09,720 --> 01:47:10,720
+works.
+
+1328
+01:47:10,720 --> 01:47:15,920
+Before we move into that practical part, any question on theory part?
+
+1329
+01:47:15,920 --> 01:47:16,920
+Right.
+
+1330
+01:47:16,920 --> 01:47:27,319
+If so, you better go through all these theory things again and we'll discuss the practical
+
+1331
+01:47:27,319 --> 01:47:29,520
+thing, the system development
+
+1332
+01:47:29,520 --> 01:47:31,079
+part in the next
+
+1333
+01:47:31,079 --> 01:47:33,079
+so that's all for today
+
+1334
+01:47:33,079 --> 01:47:34,920
+and also
+
+1335
+01:47:34,920 --> 01:47:36,359
+right
+
+1336
+01:47:36,359 --> 01:47:39,260
+let me know, right, you can write
+
+1337
+01:47:39,260 --> 01:47:40,979
+emails, let me know
+
+1338
+01:47:40,979 --> 01:47:42,960
+your experience, right
+
+1339
+01:47:42,960 --> 01:47:44,899
+on this new setup
+
+1340
+01:47:44,899 --> 01:47:46,960
+right, whether you prefer
+
+1341
+01:47:46,960 --> 01:47:49,180
+this new setup or the old
+
+1342
+01:47:49,180 --> 01:47:51,260
+way of conducting
+
+1343
+01:47:51,260 --> 01:47:52,300
+online lectures
+
+1344
+01:47:52,300 --> 01:47:55,000
+sometimes the slides
+
+1345
+01:47:55,000 --> 01:47:56,640
+going blurred
+
+1346
+01:47:56,640 --> 01:48:08,000
+sometimes just after switching to a video to slides sometimes it blows then you experience
+
+1347
+01:48:08,000 --> 01:48:16,399
+that in long time oh it's a today's okay we'll see i also have the recording i will go through the
+
+1348
+01:48:16,399 --> 01:48:24,560
+recording and see whether it's right it's not a very big issue sir but sometimes
+
+1349
+01:48:26,079 --> 01:48:35,920
+after a few times it cannot do the normal way just after switching to the slide from video it
+
+1350
+01:48:37,039 --> 01:48:44,479
+seems sometimes okay i'll i'll go through the recording then i can see the see that problem
+
+1351
+01:48:44,479 --> 01:48:55,239
+Okay, the idea is now if we have to conduct lectures in this manner for next several months,
+
+1352
+01:48:55,239 --> 01:49:02,140
+we need to come up with some sort of mechanism to make the lectures more interactive.
+
+1353
+01:49:02,140 --> 01:49:07,140
+So that's why we are thinking about these different different options.
+
+1354
+01:49:07,140 --> 01:49:13,479
+But I don't know whether all these things will be useful or practically feasible.
+
+1355
+01:49:13,479 --> 01:49:25,640
+My preferred method is how lectures, physical lectures, that means have personal touch,
+
+1356
+01:49:25,640 --> 01:49:32,560
+so you are in front of me, you can see me, I can see you, even I can come to you.
+
+1357
+01:49:32,560 --> 01:49:37,180
+So unfortunately with this situation, those things are not possible.
+
+1358
+01:49:37,180 --> 01:49:38,979
+So let's see.
+
+1359
+01:49:38,979 --> 01:49:44,060
+So at least some sort of method we can figure out.
+
+1360
+01:49:44,060 --> 01:49:45,060
+We'll see.
+
+1361
+01:49:45,060 --> 01:49:46,060
+Right.
+
+1362
+01:49:46,060 --> 01:49:47,060
+Okay.
+
+1363
+01:49:47,060 --> 01:49:48,060
+Thank you very much.
+
+1364
+01:49:48,060 --> 01:49:49,060
+Sir, small thing.
+
+1365
+01:49:49,060 --> 01:49:50,060
+Yeah.
+
+1366
+01:49:50,060 --> 01:49:54,060
+This is not relevant to embedded systems.
+
+1367
+01:49:54,060 --> 01:49:55,060
+No, not.
+
+1368
+01:49:55,060 --> 01:49:56,060
+Family problem.
+
+1369
+01:49:56,060 --> 01:49:57,060
+No, not.
+
+1370
+01:49:57,060 --> 01:49:58,060
+Family problem.
+
+1371
+01:49:58,060 --> 01:49:59,060
+No, not.
+
+1372
+01:49:59,060 --> 01:50:00,060
+No, not.
+
+1373
+01:50:00,060 --> 01:50:01,060
+No, not.
+
+1374
+01:50:01,060 --> 01:50:03,119
+I have a very very very very say-
+
+1375
+01:50:03,119 --> 01:50:03,640
+I have a very very say-
+
+1376
+01:50:03,640 --> 01:50:03,960
+I have a very very time
+
+1377
+01:50:03,960 --> 01:50:04,359
+to go to a very very very Yin-Ce.
+
+1378
+01:50:04,359 --> 01:50:04,699
+I have a very very and and a very so-
+
+1379
+01:50:04,699 --> 01:50:04,800
+I have a very say-
+
+1380
+01:50:04,800 --> 01:50:04,979
+I have a very at-
+
+1381
+01:50:04,979 --> 01:50:05,260
+I have a very so-
+
+1382
+01:50:05,260 --> 01:50:05,359
+I have a very and a really
+
+1383
+01:50:05,359 --> 01:50:05,859
+you
+

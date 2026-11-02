@@ -1,0 +1,4664 @@
+1
+00:00:00,000 --> 00:00:16,000
+Sir, Atkinson, Jamatka said that he went to the hospital because of unavoidable circumstances. So, he will come to the lecture after he comes.
+
+2
+00:00:16,000 --> 00:00:20,000
+That's alright. He can attend during the lecture. No issue at all.
+
+3
+00:00:20,000 --> 00:00:22,000
+Thank you, sir.
+
+4
+00:00:22,000 --> 00:00:49,119
+Right. Today is a new lesson. The topic is polling and interrupt handling. One of the powerful concepts in computing, not just in embedded systems, in computing and sometimes a little bit difficult concept to understand.
+
+5
+00:00:49,119 --> 00:01:08,719
+So therefore, pay your attention. Polling is very straightforward. Interrupt parties, some people, they say it's a bit complicated. But anyway, it's a very powerful facility, a concept available in computing, not just for embedded systems.
+
+6
+00:01:08,719 --> 00:01:27,959
+Right. As usual, let's look at the learning outcomes of this session. Right. On completion of this session, you should be able to compare and contrast polling versus interrupts.
+
+7
+00:01:27,959 --> 00:01:44,140
+Now actually, the two mechanisms, one is polling, one is interrupts, we use in computing to perform more than one task at the same time.
+
+8
+00:01:44,680 --> 00:01:51,799
+Now we want our computers to do more than one task at the same time, right?
+
+9
+00:01:51,799 --> 00:01:57,680
+So in operating systems terminology, we call it multitasking.
+
+10
+00:01:57,959 --> 00:02:05,560
+Now, to achieve that goal, execute multiple tasks at the same time.
+
+11
+00:02:05,560 --> 00:02:14,080
+We use, in computing, we use, not just in embedded systems, in computing, we use two approaches.
+
+12
+00:02:14,520 --> 00:02:17,699
+One is pooling, the other one is interrupts.
+
+13
+00:02:17,960 --> 00:02:22,740
+Now, they have their pros and cons, strengths and weaknesses.
+
+14
+00:02:23,039 --> 00:02:26,979
+So, you should be able to compare and contrast them.
+
+15
+00:02:26,979 --> 00:02:44,840
+So, these learning objectives, learning outcomes are very important because at the end of the module, when we set the exam paper, we set exam paper to assess whether you have achieved these learning outcomes.
+
+16
+00:02:44,840 --> 00:02:53,659
+So, if you are more concerned about your exam, so this is the most important slide in the entire slide set.
+
+17
+00:02:54,000 --> 00:02:56,419
+Because exam is based on this slide.
+
+18
+00:02:56,919 --> 00:03:03,659
+We set the paper to assess whether students have achieved these learning outcomes.
+
+19
+00:03:04,400 --> 00:03:04,580
+Right.
+
+20
+00:03:04,979 --> 00:03:13,500
+So, one learning outcome is you should be able to compare and contrast polling versus interrupts.
+
+21
+00:03:13,500 --> 00:03:22,199
+The two mechanisms that we use to perform more than one task at the same time.
+
+22
+00:03:22,719 --> 00:03:24,000
+Two alternative approaches.
+
+23
+00:03:24,639 --> 00:03:39,259
+The second learning outcome, construct a microcontroller based system and program it to perform more than one task seemingly at the same time using polling.
+
+24
+00:03:39,259 --> 00:03:44,099
+Then we use polling to perform more than one task.
+
+25
+00:03:44,520 --> 00:03:50,020
+Now here the word seemingly is very important.
+
+26
+00:03:50,979 --> 00:03:55,039
+Now you know that even in operating systems, even in modern operating systems,
+
+27
+00:03:55,280 --> 00:04:00,039
+multitasking is an illusion as bamboo.
+
+28
+00:04:00,639 --> 00:04:06,259
+Because the multiple tasks are not executed actually at the same time.
+
+29
+00:04:06,259 --> 00:04:14,319
+Only one task is executed and then we switch the processor among the task very fast.
+
+30
+00:04:14,319 --> 00:04:26,639
+We switch the processor among the task very fast so that the users, they feel multiple tasks are executed at the same time.
+
+31
+00:04:26,800 --> 00:04:31,160
+However, only one task is executed at a time.
+
+32
+00:04:31,160 --> 00:04:36,319
+But we feel multiple tasks are executed at the same time.
+
+33
+00:04:36,480 --> 00:04:40,660
+So it is seemingly, seemingly at the same time.
+
+34
+00:04:41,300 --> 00:04:43,019
+Not truly at the same time.
+
+35
+00:04:43,019 --> 00:04:52,259
+If you want to execute multiple tasks at the same time truly, you need multiple CPUs.
+
+36
+00:04:53,480 --> 00:04:54,160
+Right.
+
+37
+00:04:54,319 --> 00:04:56,019
+We need multiple CPUs.
+
+38
+00:04:57,000 --> 00:04:57,240
+Right.
+
+39
+00:04:57,740 --> 00:05:00,019
+Now, right.
+
+40
+00:05:00,019 --> 00:05:09,139
+Right. We need multiple CPUs to execute multiple tasks truly at the same time.
+
+41
+00:05:09,579 --> 00:05:14,579
+Multiple CPUs may come in one chip.
+
+42
+00:05:15,240 --> 00:05:16,579
+They may come in one chip.
+
+43
+00:05:16,579 --> 00:05:23,019
+If they come in one chip, we call it a multi-core processor.
+
+44
+00:05:23,579 --> 00:05:28,439
+You use dual-core, quad-core processors these days.
+
+45
+00:05:28,439 --> 00:05:44,620
+So they are multiple, the processor with multiple CPUs, not just one central processing unit, but multiple central processing units in the same chip, same die, multi-core processors.
+
+46
+00:05:44,620 --> 00:05:54,620
+When you have a multi-core processor, you can allocate one CPU to do one task and another CPU to do another task.
+
+47
+00:05:55,680 --> 00:06:01,459
+And the both CPUs can execute those two tasks at the same time truly.
+
+48
+00:06:02,120 --> 00:06:03,000
+That is possible.
+
+49
+00:06:03,420 --> 00:06:06,560
+If you have two CPUs, let's say you have a dual core processor.
+
+50
+00:06:07,259 --> 00:06:12,519
+At dual core processor, you want one CPU, you can assign one task to execute.
+
+51
+00:06:12,519 --> 00:06:16,660
+And another CPU, you can assign another task to execute.
+
+52
+00:06:17,180 --> 00:06:21,459
+So both tasks you can execute at the same time, truly.
+
+53
+00:06:22,139 --> 00:06:23,980
+That's not an illusion, right?
+
+54
+00:06:24,120 --> 00:06:33,800
+Even in the microcontroller world, there are microcontrollers with multico microcontrollers, multiple CPUs.
+
+55
+00:06:34,079 --> 00:06:35,540
+There are microcontrollers, right?
+
+56
+00:06:35,680 --> 00:06:40,220
+Multico microcontrollers are available.
+
+57
+00:06:40,220 --> 00:06:51,120
+So if you use multi-core microcontrollers with multiple CPUs, you can do, you can perform multiple tasks truly at the same time.
+
+58
+00:06:51,620 --> 00:06:56,420
+In operating systems, we call this multiprocessing.
+
+59
+00:06:56,819 --> 00:07:01,360
+True execution at the same time, we call multiprocessing, not multitasking.
+
+60
+00:07:02,300 --> 00:07:03,720
+Multitasking is an illusion.
+
+61
+00:07:03,720 --> 00:07:21,319
+In multitasking, one task is executed, a certain time contact, and then the processor is switched to another task, and then processor executes that task another certain time contact, and again processor is switched to another task.
+
+62
+00:07:21,459 --> 00:07:26,459
+Likewise, we switch the processor among the tasks rapidly.
+
+63
+00:07:27,160 --> 00:07:30,160
+We switch the processor among the tasks rapidly.
+
+64
+00:07:30,160 --> 00:07:32,600
+So very fast we switch the processor.
+
+65
+00:07:32,600 --> 00:07:41,740
+As a result, we see the users feel multiple tasks are executed at the same time.
+
+66
+00:07:41,860 --> 00:07:46,120
+However, only one task is executed at a time.
+
+67
+00:07:46,899 --> 00:07:51,519
+But we see, we feel multiple tasks are executed at the same time.
+
+68
+00:07:51,519 --> 00:08:10,759
+Now, for example, one good example is you may have seen in some circus events, sometimes the people throw multiple bowls at the same time.
+
+69
+00:08:11,420 --> 00:08:17,540
+They throw up multiple bowls at the same time and then catch them repeatedly.
+
+70
+00:08:17,540 --> 00:08:19,699
+They do it very fast.
+
+71
+00:08:20,279 --> 00:08:23,600
+But at a time, only one ball in their hand.
+
+72
+00:08:24,220 --> 00:08:25,480
+The other balls are in the air.
+
+73
+00:08:26,360 --> 00:08:31,699
+But you see multiple balls are throwing and catching at the same time.
+
+74
+00:08:32,000 --> 00:08:34,279
+The reason is they do it very fast.
+
+75
+00:08:35,419 --> 00:08:37,740
+So our eyes are not that accurate.
+
+76
+00:08:38,460 --> 00:08:44,539
+As a result, we see, we feel that multiple balls are thrown
+
+77
+00:08:44,539 --> 00:08:52,019
+and multiple poles are catch at the same time. No, that is an illusion. So multitasking is
+
+78
+00:08:52,019 --> 00:08:59,639
+illusion, but we like that illusion, right? In our life, we like illusions, right? So many
+
+79
+00:08:59,639 --> 00:09:06,759
+illusions we like. So therefore we are very happy with illusions. So now in multitasking
+
+80
+00:09:06,759 --> 00:09:13,179
+also, we do word processing at the same time we download something from using the web browser.
+
+81
+00:09:13,179 --> 00:09:18,460
+at the same time we play a music at the same time we send a printout to the printer
+
+82
+00:09:19,340 --> 00:09:26,059
+but so we we are very happy with that multitasking concept and the question is how can we
+
+83
+00:09:27,019 --> 00:09:32,059
+implement multitasking in microcontrollers very very tiny
+
+84
+00:09:35,419 --> 00:09:42,059
+low power microcontrollers small computer single chip how can we do these things if
+
+85
+00:09:42,059 --> 00:09:47,960
+If you have an operating system, yes, you can delegate this, the responsibility for
+
+86
+00:09:47,960 --> 00:09:53,460
+the operating system, then operating system has to execute multiple tasks.
+
+87
+00:09:53,460 --> 00:09:57,980
+Operating system has to switch the processor among the multiple tasks.
+
+88
+00:09:57,980 --> 00:10:03,440
+So you can delegate that to operating systems in general purpose PCs, personal computers.
+
+89
+00:10:03,440 --> 00:10:07,519
+So that's why we don't need to worry about this because operating system takes care of
+
+90
+00:10:07,519 --> 00:10:10,100
+all these things.
+
+91
+00:10:10,100 --> 00:10:19,139
+system handles multitasking so we call it context switching then various technical terms we use we
+
+92
+00:10:19,139 --> 00:10:25,620
+discussed that in our pre the previous semester under data computer architecture and operating
+
+93
+00:10:25,620 --> 00:10:34,659
+systems how multitasking happens how uh context switching happens all these things we discuss
+
+94
+00:10:34,659 --> 00:10:39,460
+Now, in this tiny microcontrollers, we don't have that luxury.
+
+95
+00:10:40,100 --> 00:10:42,399
+The operating system luxury we don't have.
+
+96
+00:10:42,919 --> 00:10:53,379
+Now, as programmers, firmware developers, now multitasking has become our responsibility.
+
+97
+00:10:53,379 --> 00:11:00,500
+We can't delegate it to operating system and we can't focus on only the functionality of our firmware.
+
+98
+00:11:00,679 --> 00:11:04,200
+Now, we have to worry about the multitasking part as well.
+
+99
+00:11:04,659 --> 00:11:09,779
+You can't simply delegate that to operating system because there is no operating system.
+
+100
+00:11:10,059 --> 00:11:11,100
+You have to do it.
+
+101
+00:11:11,919 --> 00:11:18,139
+If you want to execute multiple tasks seemingly at the same time, it is your responsibility.
+
+102
+00:11:18,620 --> 00:11:18,759
+Right.
+
+103
+00:11:19,320 --> 00:11:20,759
+Can you understand that?
+
+104
+00:11:21,179 --> 00:11:22,620
+Now it is your responsibility.
+
+105
+00:11:23,039 --> 00:11:23,200
+Right.
+
+106
+00:11:23,700 --> 00:11:30,700
+Achieving multitasking is your responsibility because there is no operating system to handle that.
+
+107
+00:11:31,700 --> 00:11:32,100
+Right.
+
+108
+00:11:32,100 --> 00:11:34,519
+Now one approach is polling.
+
+109
+00:11:34,659 --> 00:11:44,080
+The second learning outcome is we construct a microcontroller based system and program it to perform more than one task seemingly.
+
+110
+00:11:44,940 --> 00:11:48,500
+Seemingly means looks like tenavidhiata, right?
+
+111
+00:11:48,679 --> 00:11:51,840
+Seemingly at the same time using polling.
+
+112
+00:11:52,279 --> 00:11:53,100
+How to do that?
+
+113
+00:11:53,799 --> 00:11:56,679
+Practically, it is our responsibility, right?
+
+114
+00:11:56,820 --> 00:11:57,840
+How do we do that?
+
+115
+00:11:58,220 --> 00:12:01,500
+That is the second learning outcome.
+
+116
+00:12:01,500 --> 00:12:08,879
+Then the third learning outcome, explain how interrupt handling works.
+
+117
+00:12:09,440 --> 00:12:12,580
+This is another mechanism, actually hardware mechanism.
+
+118
+00:12:12,799 --> 00:12:15,299
+Interrupt is a hardware mechanism, right?
+
+119
+00:12:15,799 --> 00:12:22,259
+How interrupt handling works in computing, not just in embedded systems,
+
+120
+00:12:22,419 --> 00:12:25,320
+but generally computing how interrupt handling works.
+
+121
+00:12:25,320 --> 00:12:27,500
+So you should be able to explain.
+
+122
+00:12:27,779 --> 00:12:31,120
+Explain the functionality of interrupt registers.
+
+123
+00:12:31,500 --> 00:12:41,539
+As usual, if you want to handle interrupts, you have to deal with interrupt registers because we are using C programming language.
+
+124
+00:12:42,159 --> 00:12:48,080
+If you are using Arduino platforms, then you have wrapper functions.
+
+125
+00:12:48,320 --> 00:12:50,480
+You don't need to worry about the registers.
+
+126
+00:12:51,259 --> 00:12:53,379
+Using wrapper functions, you can do the job.
+
+127
+00:12:54,120 --> 00:12:55,360
+You can handle interrupts.
+
+128
+00:12:55,360 --> 00:12:56,720
+But we use C.
+
+129
+00:12:56,720 --> 00:13:03,039
+Therefore, we should know about the functionality of the interrupt registers that we have to use.
+
+130
+00:13:03,759 --> 00:13:17,720
+And at the end of this session, you should be able to construct a microcontroller based system and program it to perform more than one task seemingly at the same time using interrupts.
+
+131
+00:13:18,500 --> 00:13:18,639
+Right.
+
+132
+00:13:19,059 --> 00:13:22,720
+Using interrupts, how can we achieve multitasking?
+
+133
+00:13:23,740 --> 00:13:23,960
+Right.
+
+134
+00:13:24,299 --> 00:13:25,080
+How to do that?
+
+135
+00:13:25,080 --> 00:13:26,759
+These are the learning outcomes.
+
+136
+00:13:27,200 --> 00:13:29,240
+Any questions on learning outcomes?
+
+137
+00:13:29,740 --> 00:13:31,779
+I have learned learning outcomes.
+
+138
+00:13:32,259 --> 00:13:33,500
+I have learned how to do it.
+
+139
+00:13:34,139 --> 00:13:35,100
+No, right.
+
+140
+00:13:35,620 --> 00:13:36,940
+Polling and interrupt.
+
+141
+00:13:37,440 --> 00:13:44,159
+Two approaches to perform more than one task seemingly at the same time.
+
+142
+00:13:44,600 --> 00:13:44,740
+Right.
+
+143
+00:13:45,159 --> 00:13:47,820
+Now, again, you have to be very clear.
+
+144
+00:13:48,700 --> 00:13:53,539
+More than one task are executed not truly at the same time.
+
+145
+00:13:53,539 --> 00:14:00,659
+If you want to execute multiple tasks truly at the same time, you need multi-core processor.
+
+146
+00:14:00,659 --> 00:14:05,500
+Now here we talk about single-core primitive microcontrollers.
+
+147
+00:14:05,820 --> 00:14:12,480
+So therefore, but we can achieve, we can execute multiple tasks seemingly at the same time.
+
+148
+00:14:12,580 --> 00:14:17,679
+So that illusion, that's an illusion and we are very happy with that illusion.
+
+149
+00:14:17,679 --> 00:14:26,960
+Right. Now in PCs, in general purpose computers, operating system performs multiple tasks at the same time.
+
+150
+00:14:27,080 --> 00:14:31,539
+We call it multitasking. Now here we don't have operating system.
+
+151
+00:14:32,120 --> 00:14:39,720
+So we have to deal that problem, multitasking problem by ourselves.
+
+152
+00:14:40,259 --> 00:14:46,480
+Right. Used to provide. What is the purpose of executing multiple tasks at the same time?
+
+153
+00:14:46,480 --> 00:14:58,919
+The idea is used to provide polling and interrupts are used to provide CPUs, central processing unit service to peripheral devices.
+
+154
+00:14:59,919 --> 00:15:07,100
+When CPU is busy with one task, right, CPU is busy with one particular task.
+
+155
+00:15:07,860 --> 00:15:10,419
+That means CPU is doing one task.
+
+156
+00:15:10,419 --> 00:15:17,259
+While CPU is busy with one task, how can we do another task?
+
+157
+00:15:17,740 --> 00:15:27,779
+While CPU is busy with another task, how to provide our service, CPU service to peripheral devices?
+
+158
+00:15:28,480 --> 00:15:30,220
+Now, what are peripheral devices?
+
+159
+00:15:30,700 --> 00:15:35,779
+There can be external peripheral devices and internal peripheral devices.
+
+160
+00:15:35,779 --> 00:15:40,159
+For example, an external peripheral device could be a sensor.
+
+161
+00:15:40,419 --> 00:15:43,379
+External peripheral device could be a button.
+
+162
+00:15:43,919 --> 00:15:46,820
+Because which is external to the microcontroller.
+
+163
+00:15:47,399 --> 00:15:48,759
+A sensor, a button.
+
+164
+00:15:49,720 --> 00:15:51,899
+So those are external peripheral devices.
+
+165
+00:15:52,399 --> 00:15:53,879
+Internal peripheral devices.
+
+166
+00:15:54,379 --> 00:15:57,460
+The devices inside the microcontroller.
+
+167
+00:15:57,940 --> 00:15:59,759
+It's a single chip computer.
+
+168
+00:16:00,559 --> 00:16:01,840
+Not just the CPU.
+
+169
+00:16:02,279 --> 00:16:06,360
+There are other components inside the microcontroller.
+
+170
+00:16:06,360 --> 00:16:10,100
+For example, inside the microcontroller we have timers.
+
+171
+00:16:10,419 --> 00:16:17,379
+to measure the time inside the microcontrollers we have adc and lock to digital converter
+
+172
+00:16:17,940 --> 00:16:27,539
+to convert analog signals into digital inside the microcontroller we have you want universal
+
+173
+00:16:27,539 --> 00:16:37,940
+asynchronous serial receiver and transmitter right for serial communication now these are
+
+174
+00:16:37,940 --> 00:16:48,259
+internal peripherals. Now when CPU is busy with one task, if a peripheral device wants CPU service,
+
+175
+00:16:48,759 --> 00:16:56,480
+how do we provide that service? When CPU is busy with one task, if a peripheral device,
+
+176
+00:16:56,480 --> 00:17:03,019
+it could be external peripheral device or internal peripheral device, wants CPU service,
+
+177
+00:17:03,019 --> 00:17:07,319
+then CPU has to provide the CPU service to the peripheral device.
+
+178
+00:17:07,819 --> 00:17:10,740
+But the problem is CPU is busy with another task.
+
+179
+00:17:11,000 --> 00:17:18,720
+How can we provide, how can CPU provide its service to peripheral devices
+
+180
+00:17:18,720 --> 00:17:21,900
+when it is busy with another task?
+
+181
+00:17:22,559 --> 00:17:25,140
+Two tasks at the same time.
+
+182
+00:17:25,599 --> 00:17:29,740
+To handle that, we can use either polling or interrupt.
+
+183
+00:17:29,740 --> 00:17:31,779
+Is that clear? Any question?
+
+184
+00:17:33,019 --> 00:17:38,480
+First we have to sort it out.
+
+185
+00:17:39,160 --> 00:17:41,680
+All these problems before we move into.
+
+186
+00:17:42,420 --> 00:17:42,680
+Right.
+
+187
+00:17:43,460 --> 00:17:44,819
+More complicated thing.
+
+188
+00:17:45,099 --> 00:17:47,579
+If you have questions please ask.
+
+189
+00:17:49,579 --> 00:17:49,940
+Right.
+
+190
+00:17:50,539 --> 00:17:50,960
+Then.
+
+191
+00:17:52,640 --> 00:17:53,319
+Polling.
+
+192
+00:17:53,440 --> 00:17:54,680
+Now let's talk about polling.
+
+193
+00:17:54,680 --> 00:18:07,140
+CPU keeps on checking the status of peripheral devices at regular intervals repeatedly while performing another task.
+
+194
+00:18:07,140 --> 00:18:10,759
+Now in polling, CPU keeps on checking.
+
+195
+00:18:11,200 --> 00:18:18,759
+Keeps on checking means monitoring status of peripheral devices at regular intervals.
+
+196
+00:18:19,599 --> 00:18:25,559
+Repeatedly, again and again, while performing another task.
+
+197
+00:18:25,900 --> 00:18:35,720
+While doing another task, CPU again and again checks the status of peripheral devices.
+
+198
+00:18:35,720 --> 00:18:40,640
+When the status condition of a device is met, right?
+
+199
+00:18:40,960 --> 00:18:44,140
+Now when CPU checks the status of peripheral devices,
+
+200
+00:18:44,880 --> 00:18:50,619
+if the status change, CPU provides its service to the device
+
+201
+00:18:50,619 --> 00:18:55,119
+and resumes the task it was doing again.
+
+202
+00:18:55,680 --> 00:19:03,039
+CPU then starts again monitoring the status of devices, right?
+
+203
+00:19:03,039 --> 00:19:05,480
+Now you can see multiple tasks.
+
+204
+00:19:05,720 --> 00:19:08,960
+One is the task that the CPU was doing.
+
+205
+00:19:10,039 --> 00:19:14,059
+The other task is the peripheral device service.
+
+206
+00:19:14,059 --> 00:19:29,380
+So what the CPU does is CPU keeps on checking the status of peripheral devices at regular intervals repeatedly while performing another task while doing another task.
+
+207
+00:19:29,380 --> 00:19:35,839
+When the status condition of a device is met, CPU provides its service to the device.
+
+208
+00:19:36,460 --> 00:19:40,539
+After that, CPU resumes the task it was doing.
+
+209
+00:19:41,180 --> 00:19:44,960
+CPU then starts again monitoring the status of the devices.
+
+210
+00:19:45,440 --> 00:19:45,700
+Right.
+
+211
+00:19:46,119 --> 00:19:48,799
+Now, let's take a simple example.
+
+212
+00:19:49,380 --> 00:19:49,680
+Right.
+
+213
+00:19:50,279 --> 00:19:57,640
+Now, we have, let's say, we have a security system, home security system.
+
+214
+00:19:57,640 --> 00:20:05,200
+Now in that home security system, system monitors, the task system is doing.
+
+215
+00:20:06,759 --> 00:20:15,059
+Is a system, let's say, let's take simple day-to-day example, forget about computers.
+
+216
+00:20:15,579 --> 00:20:17,200
+Then you can easily understand this.
+
+217
+00:20:17,539 --> 00:20:22,839
+Let's assume, right, you all are married and you have a kid.
+
+218
+00:20:23,960 --> 00:20:24,599
+Right.
+
+219
+00:20:24,599 --> 00:20:26,059
+I know you are not married.
+
+220
+00:20:27,059 --> 00:20:27,839
+But let's assume.
+
+221
+00:20:28,960 --> 00:20:30,420
+You are married and you have a kid.
+
+222
+00:20:30,900 --> 00:20:31,539
+Small kid.
+
+223
+00:20:31,680 --> 00:20:32,099
+Small.
+
+224
+00:20:32,259 --> 00:20:33,140
+Very small kid.
+
+225
+00:20:33,740 --> 00:20:35,799
+Now, as a parent.
+
+226
+00:20:36,559 --> 00:20:36,920
+Right.
+
+227
+00:20:37,380 --> 00:20:39,839
+So you have to take care of that small fellow.
+
+228
+00:20:40,259 --> 00:20:40,779
+Right.
+
+229
+00:20:41,839 --> 00:20:44,259
+Now you are reading the newspaper.
+
+230
+00:20:44,259 --> 00:20:49,259
+That is the task you are performing currently.
+
+231
+00:20:50,059 --> 00:20:51,599
+You are reading the newspaper.
+
+232
+00:20:52,339 --> 00:20:53,579
+And you are small fellow.
+
+233
+00:20:53,720 --> 00:20:54,420
+Small kid.
+
+234
+00:20:54,599 --> 00:21:00,740
+is on the floor playing with his or her toys.
+
+235
+00:21:01,400 --> 00:21:01,519
+Right.
+
+236
+00:21:01,779 --> 00:21:08,279
+So near to you, he or she is playing his or her toys.
+
+237
+00:21:09,160 --> 00:21:12,579
+And you could be either mother or father.
+
+238
+00:21:13,480 --> 00:21:14,940
+You are reading the newspaper.
+
+239
+00:21:15,339 --> 00:21:16,920
+So you are doing one task.
+
+240
+00:21:17,400 --> 00:21:17,599
+Right.
+
+241
+00:21:17,599 --> 00:21:21,400
+But as a responsible parent, you have to be.
+
+242
+00:21:21,400 --> 00:21:23,059
+This is a small fellow.
+
+243
+00:21:23,359 --> 00:21:26,319
+Let's say one or two years old.
+
+244
+00:21:26,519 --> 00:21:27,579
+Let's say one year old.
+
+245
+00:21:28,519 --> 00:21:35,440
+Now you have to regularly check whether his nappy is wet.
+
+246
+00:21:36,180 --> 00:21:39,799
+If the small fellow's nappy is wet, you have to change it.
+
+247
+00:21:40,140 --> 00:21:41,500
+That is the peripheral device.
+
+248
+00:21:41,500 --> 00:21:45,200
+So small fellow's nappy is the peripheral device.
+
+249
+00:21:45,900 --> 00:21:50,140
+You have to check that regularly while reading the newspaper.
+
+250
+00:21:50,140 --> 00:21:52,400
+You read the newspaper.
+
+251
+00:21:52,680 --> 00:21:55,259
+Let's say you start reading the newspaper.
+
+252
+00:21:55,480 --> 00:21:58,259
+You read the first article in the newspaper.
+
+253
+00:21:59,059 --> 00:21:59,380
+Right.
+
+254
+00:21:59,960 --> 00:22:04,339
+Then you touch the nappy of small fellow and check whether it is wet.
+
+255
+00:22:04,500 --> 00:22:04,640
+No.
+
+256
+00:22:05,240 --> 00:22:08,400
+You read the second story in the newspaper.
+
+257
+00:22:08,799 --> 00:22:12,259
+Then again you see whether the nappy is wet.
+
+258
+00:22:12,720 --> 00:22:13,000
+No.
+
+259
+00:22:13,519 --> 00:22:16,559
+You read the third story in the newspaper.
+
+260
+00:22:17,140 --> 00:22:18,960
+You check whether the nappy is wet.
+
+261
+00:22:18,960 --> 00:22:20,400
+ah nappy is wet
+
+262
+00:22:20,400 --> 00:22:22,980
+then you stop
+
+263
+00:22:22,980 --> 00:22:24,539
+reading the newspaper
+
+264
+00:22:24,539 --> 00:22:27,299
+you attend to the child
+
+265
+00:22:27,299 --> 00:22:29,319
+you chain the nappy
+
+266
+00:22:29,319 --> 00:22:31,160
+and again you
+
+267
+00:22:31,160 --> 00:22:32,680
+start reading the newspaper
+
+268
+00:22:32,680 --> 00:22:34,640
+from the fourth story
+
+269
+00:22:34,640 --> 00:22:36,940
+after reading the fourth story
+
+270
+00:22:36,940 --> 00:22:38,720
+in the newspaper you check whether
+
+271
+00:22:38,720 --> 00:22:39,839
+nappy is wet
+
+272
+00:22:39,839 --> 00:22:42,920
+then you know then you again
+
+273
+00:22:42,920 --> 00:22:45,200
+read the fifth story
+
+274
+00:22:45,200 --> 00:22:46,940
+in the newspaper check whether
+
+275
+00:22:46,940 --> 00:22:48,880
+nappy is wet yes it's wet
+
+276
+00:22:48,880 --> 00:22:57,819
+so you stop reading the newspaper you attend to the small fellow chain the nappy and then again
+
+277
+00:22:57,819 --> 00:23:08,119
+you start the again you resume what you were doing that is reading the newspaper so both tasks you do
+
+278
+00:23:08,119 --> 00:23:15,740
+seemingly at the same time so you regularly check whether small fellows nappy is wet that is the
+
+279
+00:23:15,740 --> 00:23:22,460
+peripheral device if it is wet that means the peripheral device requires your service
+
+280
+00:23:22,460 --> 00:23:30,079
+provide the service to the peripheral device after doing that resume the work that was doing
+
+281
+00:23:30,079 --> 00:23:35,960
+reading the newspaper can you understand mom make you a katan the rate a runada
+
+282
+00:23:35,960 --> 00:23:43,039
+They have mastered that.
+
+283
+00:23:43,759 --> 00:23:44,200
+Pulling.
+
+284
+00:23:45,660 --> 00:23:46,200
+Especially
+
+285
+00:23:46,200 --> 00:23:49,599
+they are doing
+
+286
+00:23:49,599 --> 00:23:51,599
+multiple tasks.
+
+287
+00:23:51,599 --> 00:23:53,599
+They are doing
+
+288
+00:23:53,599 --> 00:23:56,140
+telephone call.
+
+289
+00:23:58,460 --> 00:24:02,019
+So they do all these things.
+
+290
+00:24:02,619 --> 00:24:02,779
+Right?
+
+291
+00:24:03,039 --> 00:24:04,519
+Therefore, they know
+
+292
+00:24:04,519 --> 00:24:14,400
+the concept of pulling. Very well. Right. Another example, the computing example, ABS,
+
+293
+00:24:15,039 --> 00:24:22,200
+anti-lock braking system. Now the car has four wheels. The anti-lock braking system has to
+
+294
+00:24:22,200 --> 00:24:30,640
+monitor the rotational speed of each and every wheel. If one wheel, when you apply brake,
+
+295
+00:24:30,640 --> 00:24:34,440
+if one wheel is slower than the others
+
+296
+00:24:34,440 --> 00:24:39,180
+the ABS has to release the brake of that wheel
+
+297
+00:24:39,180 --> 00:24:43,200
+and bring the rotational speed of that wheel
+
+298
+00:24:43,200 --> 00:24:47,240
+equal to the rotational speed of other wheels
+
+299
+00:24:47,240 --> 00:24:49,960
+so that you can avoid
+
+300
+00:24:49,960 --> 00:24:54,440
+going the car off direction.
+
+301
+00:24:54,940 --> 00:24:57,619
+If one wheel is slower than the others
+
+302
+00:24:57,619 --> 00:25:00,539
+we release the brake of that wheel
+
+303
+00:25:00,539 --> 00:25:05,779
+to avoid the car going off direction.
+
+304
+00:25:06,359 --> 00:25:08,500
+That is the job of ABS,
+
+305
+00:25:09,140 --> 00:25:10,619
+anti-lock braking system.
+
+306
+00:25:10,819 --> 00:25:12,839
+Now there are four wheels to monitor.
+
+307
+00:25:13,740 --> 00:25:19,420
+So that is the job of the main task of ABS.
+
+308
+00:25:20,140 --> 00:25:23,299
+So ABS monitors the first wheel rotational speed,
+
+309
+00:25:23,299 --> 00:25:26,579
+then monitors the second wheel rotational speed,
+
+310
+00:25:27,119 --> 00:25:29,859
+then monitors the third wheel rotational speed,
+
+311
+00:25:29,859 --> 00:25:32,980
+Then monitors the fourth wheel rotational speed.
+
+312
+00:25:33,259 --> 00:25:36,099
+Again it monitors the first wheel rotational speed.
+
+313
+00:25:36,460 --> 00:25:44,400
+So likewise ABS monitors each and every wheel rotational speed again and again.
+
+314
+00:25:44,839 --> 00:25:48,640
+While monitoring these rotational speeds regularly.
+
+315
+00:25:49,640 --> 00:25:56,519
+If ABS finds that one particular wheel is slower than the others.
+
+316
+00:25:56,519 --> 00:26:00,400
+Then ABS has to attend to that wheel.
+
+317
+00:26:00,920 --> 00:26:02,720
+ABS has to attend to that wheel.
+
+318
+00:26:03,460 --> 00:26:06,059
+And ABS will release the brake of that wheel.
+
+319
+00:26:06,660 --> 00:26:06,940
+Right.
+
+320
+00:26:07,740 --> 00:26:13,880
+To bring the rotational speed of that wheel up to the speed of other three wheels.
+
+321
+00:26:14,480 --> 00:26:21,220
+And after that, ABS again starts monitoring the rotational speed of other wheels.
+
+322
+00:26:21,619 --> 00:26:22,640
+Again and again.
+
+323
+00:26:23,099 --> 00:26:23,279
+Right.
+
+324
+00:26:23,279 --> 00:26:31,200
+So ABS monitoring the rotational speed of each and every wheel repeatedly.
+
+325
+00:26:31,619 --> 00:26:42,099
+If it encounters, if it finds one wheel is slower than others, then ABS has to attend to that wheel.
+
+326
+00:26:42,900 --> 00:26:49,779
+ABS has to release the brake of that wheel to bring its speed up to the speed of other three wheels.
+
+327
+00:26:49,779 --> 00:26:54,299
+and thereafter again ABS can resume
+
+328
+00:26:54,299 --> 00:26:56,559
+the task it was doing.
+
+329
+00:26:57,000 --> 00:27:00,880
+The task it was doing is monitoring the
+
+330
+00:27:00,880 --> 00:27:04,380
+rotational speed of each and every wheel.
+
+331
+00:27:04,920 --> 00:27:08,519
+In our day-to-day example, you are reading the newspaper,
+
+332
+00:27:08,779 --> 00:27:12,759
+you read the first article, you check the small fellow
+
+333
+00:27:12,759 --> 00:27:16,779
+snapping. You read the second article, check the small fellow
+
+334
+00:27:16,779 --> 00:27:18,279
+nappy whether it is wet.
+
+335
+00:27:18,759 --> 00:27:20,160
+Read the third article.
+
+336
+00:27:20,660 --> 00:27:23,160
+Check the small fellow's nappy whether it is wet.
+
+337
+00:27:23,359 --> 00:27:24,059
+It is wet.
+
+338
+00:27:24,619 --> 00:27:26,460
+Then can you read the fourth article?
+
+339
+00:27:26,660 --> 00:27:28,779
+No. You have to attend to the small fellow.
+
+340
+00:27:29,359 --> 00:27:30,720
+And you change the nappy
+
+341
+00:27:30,720 --> 00:27:31,839
+of the small fellow.
+
+342
+00:27:32,579 --> 00:27:34,740
+Thereafter you resume
+
+343
+00:27:34,740 --> 00:27:36,259
+the job that
+
+344
+00:27:36,259 --> 00:27:38,700
+was doing. What is the job
+
+345
+00:27:38,700 --> 00:27:39,500
+that was doing?
+
+346
+00:27:40,240 --> 00:27:41,460
+Reading the newspaper.
+
+347
+00:27:42,460 --> 00:27:44,599
+You start again reading the
+
+348
+00:27:44,599 --> 00:27:46,740
+newspaper and regularly
+
+349
+00:27:46,740 --> 00:27:55,119
+check the small fellow's neppy whether it is wet or not. This is the concept of poli.
+
+350
+00:27:55,119 --> 00:28:07,000
+Is it clear? Any question? Ask anything if you have. Don't keep quiet. If you have any
+
+351
+00:28:07,000 --> 00:28:11,000
+doubts please ask.
+
+352
+00:28:11,000 --> 00:28:32,220
+Right. No questions. Then let's move on. System number five. Polling based trigger. Right. This system toggles an LED on user input while blinking another LED in every two seconds. Right. Now there are two tasks.
+
+353
+00:28:32,220 --> 00:28:37,079
+The main task is blinking an LED every two seconds.
+
+354
+00:28:37,559 --> 00:28:38,579
+That is the main task.
+
+355
+00:28:38,819 --> 00:28:41,539
+Blinking an LED every two seconds.
+
+356
+00:28:41,819 --> 00:28:46,039
+That is the main task.
+
+357
+00:28:46,400 --> 00:28:49,380
+That is similar to the reading of the newspaper.
+
+358
+00:28:49,880 --> 00:28:51,420
+Main task, reading of the newspaper.
+
+359
+00:28:51,740 --> 00:28:59,779
+Then the second task is, right, when there is a user input, toggle another LED.
+
+360
+00:28:59,779 --> 00:29:07,740
+another second led you have to toggle on user input that means while doing the main task that
+
+361
+00:29:07,740 --> 00:29:15,480
+is blinking an led every two seconds while doing it you have to monitor whether there is an input
+
+362
+00:29:15,480 --> 00:29:21,220
+you have to monitor whether there is an input if there is an input you toggle another led
+
+363
+00:29:21,220 --> 00:29:28,619
+now let's see there are two leds red and green the red one is the main led so you blink it every
+
+364
+00:29:28,619 --> 00:29:30,680
+seconds. While blinking
+
+365
+00:29:30,680 --> 00:29:32,599
+that LED, you monitor
+
+366
+00:29:32,599 --> 00:29:34,339
+whether there is an input.
+
+367
+00:29:34,819 --> 00:29:36,759
+Whether there is an input. If there
+
+368
+00:29:36,759 --> 00:29:38,599
+is an input, you
+
+369
+00:29:38,599 --> 00:29:40,160
+toggle the green LED.
+
+370
+00:29:40,539 --> 00:29:42,660
+Toggle that green LED means if the
+
+371
+00:29:42,660 --> 00:29:44,660
+green LED was off,
+
+372
+00:29:45,259 --> 00:29:46,380
+you turn on.
+
+373
+00:29:46,839 --> 00:29:48,579
+If it was on, you
+
+374
+00:29:48,579 --> 00:29:50,799
+turn it off. That means toggle.
+
+375
+00:29:51,460 --> 00:29:52,319
+You do that
+
+376
+00:29:52,319 --> 00:29:54,460
+only when there is an input.
+
+377
+00:29:55,019 --> 00:29:56,220
+If there is no input,
+
+378
+00:29:56,220 --> 00:29:58,119
+you simply blink
+
+379
+00:29:58,119 --> 00:30:01,180
+the red LED every two seconds.
+
+380
+00:30:01,539 --> 00:30:02,420
+That is the main task.
+
+381
+00:30:02,500 --> 00:30:04,240
+You simply read the newspaper.
+
+382
+00:30:04,779 --> 00:30:05,859
+But you monitor
+
+383
+00:30:05,859 --> 00:30:09,180
+whether the small fellow's
+
+384
+00:30:09,180 --> 00:30:10,079
+nappy is wet.
+
+385
+00:30:10,220 --> 00:30:11,259
+You monitor that.
+
+386
+00:30:11,640 --> 00:30:13,599
+You are not going to change the nappy.
+
+387
+00:30:14,140 --> 00:30:16,400
+You just monitor it whether it is wet
+
+388
+00:30:16,400 --> 00:30:18,319
+while reading the newspaper.
+
+389
+00:30:18,839 --> 00:30:20,140
+If it is wet,
+
+390
+00:30:20,140 --> 00:30:22,220
+then only you change it.
+
+391
+00:30:22,480 --> 00:30:23,420
+So in this system,
+
+392
+00:30:23,920 --> 00:30:26,519
+we blink the main LED
+
+393
+00:30:26,519 --> 00:30:27,799
+every two seconds.
+
+394
+00:30:28,119 --> 00:30:32,079
+While doing that, we monitor whether there is an input.
+
+395
+00:30:32,660 --> 00:30:36,359
+If there is an input, we toggle the other LDD.
+
+396
+00:30:36,359 --> 00:30:42,519
+We read the newspaper while monitoring small fellow's nappy.
+
+397
+00:30:42,819 --> 00:30:46,839
+If it is wet, then only we change the nappy.
+
+398
+00:30:47,339 --> 00:30:53,500
+And thereafter, we again continue what we were doing, that is reading the newspaper.
+
+399
+00:30:53,500 --> 00:31:00,099
+This polling based trigger blinks one LED every two seconds.
+
+400
+00:31:01,000 --> 00:31:01,740
+Main task.
+
+401
+00:31:02,079 --> 00:31:05,380
+While doing that, it monitors whether there is an input.
+
+402
+00:31:05,380 --> 00:31:15,519
+If there is an input, it toggles another LED and again continues the task it was doing.
+
+403
+00:31:15,819 --> 00:31:20,380
+That is blinking the first LED every two seconds.
+
+404
+00:31:20,660 --> 00:31:23,259
+Can you understand this system?
+
+405
+00:31:23,500 --> 00:31:31,660
+the functionality of the system polling based trigger any question any question madusha no sir
+
+406
+00:31:33,740 --> 00:31:42,220
+anything right if no questions let's move into hardware design right so we design hardware
+
+407
+00:31:42,220 --> 00:31:50,940
+using a schematic diagram schematic diagram so schematic diagram shows how components are connected
+
+408
+00:31:50,940 --> 00:31:57,759
+using standard symbols right using symbols how components are connected we can show
+
+409
+00:31:57,759 --> 00:32:06,980
+using schematic diagram right now this is the schematic diagram right now here you can see
+
+410
+00:32:06,980 --> 00:32:16,299
+the microcontroller the reset button the pull-up resistor 10 kilo ohm pull-up resistor for the
+
+411
+00:32:16,299 --> 00:32:20,460
+reset pin, the clock source, 16 MHz
+
+412
+00:32:20,460 --> 00:32:24,599
+clock source and an LED
+
+413
+00:32:24,599 --> 00:32:27,779
+connected to PB5
+
+414
+00:32:27,779 --> 00:32:32,400
+pin. The PB5 pin is Arduino pin
+
+415
+00:32:32,400 --> 00:32:36,539
+number 30. On Arduino Uno board, you know
+
+416
+00:32:36,539 --> 00:32:39,200
+that there is an LED connected to pin number 30.
+
+417
+00:32:39,839 --> 00:32:44,299
+There is an onboard LED connected
+
+418
+00:32:44,299 --> 00:32:54,619
+to pin number 30 so this is that led so we don't need to connect anything extra everything is
+
+419
+00:32:54,619 --> 00:33:02,380
+already connected the led already connected on board the clock source the ceramic resonator
+
+420
+00:33:02,380 --> 00:33:08,940
+already connected the reset button and the pull-up resistor already connected all these
+
+421
+00:33:08,940 --> 00:33:16,019
+components are already connected on the Arduino Uno boot. So you don't need to connect them
+
+422
+00:33:16,019 --> 00:33:24,779
+externally. However, the second LED, this is the first LED, this LED we need to blink every two
+
+423
+00:33:24,779 --> 00:33:34,539
+seconds. The LED connected to the digital IO pin 13 of Arduino Uno boot. Digital IO pin 13 is
+
+424
+00:33:34,539 --> 00:33:37,039
+PB5. In AVR
+
+425
+00:33:37,039 --> 00:33:38,319
+terms PB5.
+
+426
+00:33:39,059 --> 00:33:41,000
+Port B, pin number 5.
+
+427
+00:33:41,660 --> 00:33:42,940
+Right. That is
+
+428
+00:33:42,940 --> 00:33:44,839
+the LED we are going to blink
+
+429
+00:33:44,839 --> 00:33:47,059
+every 2 seconds. The second
+
+430
+00:33:47,059 --> 00:33:48,779
+LED that we want to
+
+431
+00:33:48,779 --> 00:33:51,160
+toggle. When there is an input
+
+432
+00:33:51,160 --> 00:33:52,880
+we need to toggle another
+
+433
+00:33:52,880 --> 00:33:55,079
+LED. Right. First we need
+
+434
+00:33:55,079 --> 00:33:56,440
+a switch to give the input.
+
+435
+00:33:57,059 --> 00:33:59,339
+Now here you can see the switch
+
+436
+00:33:59,339 --> 00:34:01,099
+right. We
+
+437
+00:34:01,099 --> 00:34:03,099
+used to give the input. So
+
+438
+00:34:03,099 --> 00:34:11,619
+So this switch, a push button switch, we have connected to PD2, port D, pin number 2.
+
+439
+00:34:12,699 --> 00:34:17,340
+PD2 is Arduino Uno board, digital IO pin 2.
+
+440
+00:34:18,420 --> 00:34:23,960
+In Arduino Uno board, PD2 means digital IO pin number 2.
+
+441
+00:34:23,960 --> 00:34:30,380
+To that we have connected a switch, a push button switch to give the input.
+
+442
+00:34:30,940 --> 00:34:31,159
+Right.
+
+443
+00:34:31,159 --> 00:34:40,719
+then if there is an input we need to toggle another led so we need another led so that led
+
+444
+00:34:40,719 --> 00:34:53,500
+as usual we connect to digital io pin 8 of arduino uno right that is tb0 port b pin 0 right now this
+
+445
+00:34:53,500 --> 00:35:01,579
+microcontroller or this microcontroller blinks this led i think you can see my uh
+
+446
+00:35:02,539 --> 00:35:07,659
+mouse pointer right blinks this led every two seconds
+
+447
+00:35:12,219 --> 00:35:21,500
+while blinking this led every two seconds microcontroller monitors this switch this is
+
+448
+00:35:21,500 --> 00:35:28,219
+the peripheral device the main task and the peripheral device while doing the main task
+
+449
+00:35:28,780 --> 00:35:35,500
+the microcontroller monitors peripheral device this is external peripheral device it monitors
+
+450
+00:35:35,500 --> 00:35:43,900
+the switch if switch is pressed then microcontroller attends to the second led the microcontroller
+
+451
+00:35:43,900 --> 00:35:51,820
+attends to the second LED and toggles the second LED. After doing that, microcontroller resumes
+
+452
+00:35:51,820 --> 00:36:00,019
+the task it was doing. That is blinking the first LED every two seconds and monitoring the
+
+453
+00:36:00,019 --> 00:36:06,980
+peripheral device. If switch is pressed, microcontroller toggles the second LED,
+
+454
+00:36:06,980 --> 00:36:10,000
+Attends to the second LED and toggles it.
+
+455
+00:36:10,699 --> 00:36:15,760
+After that microcontroller again resumes the task it was doing.
+
+456
+00:36:16,380 --> 00:36:18,960
+Blinking the first LED every two seconds.
+
+457
+00:36:19,340 --> 00:36:22,440
+And monitoring the peripheral device.
+
+458
+00:36:22,800 --> 00:36:24,380
+Status of peripheral device.
+
+459
+00:36:24,679 --> 00:36:25,619
+Now two tasks.
+
+460
+00:36:26,079 --> 00:36:31,119
+Blinking one LED and toggling another LED on user input.
+
+461
+00:36:31,719 --> 00:36:33,900
+Blinking one LED every two seconds.
+
+462
+00:36:34,019 --> 00:36:35,159
+That is the main task.
+
+463
+00:36:35,159 --> 00:36:41,340
+The second task is toggling another LED on user input.
+
+464
+00:36:41,860 --> 00:36:42,000
+Right.
+
+465
+00:36:42,400 --> 00:36:49,260
+Now, how do we do those two tasks seemingly at the same time?
+
+466
+00:36:50,420 --> 00:36:52,340
+For that we use polling.
+
+467
+00:36:53,159 --> 00:36:53,800
+Any question?
+
+468
+00:36:54,400 --> 00:36:54,780
+Right.
+
+469
+00:36:55,219 --> 00:36:58,380
+If you don't have questions, I have questions.
+
+470
+00:36:58,860 --> 00:37:01,440
+Now look at this schematic diagram.
+
+471
+00:37:01,440 --> 00:37:03,539
+The onboard LED.
+
+472
+00:37:04,099 --> 00:37:05,039
+Are you on a board?
+
+473
+00:37:05,159 --> 00:37:12,900
+pin 13 there is an led connected on board led for the on board led we limit the current using
+
+474
+00:37:12,900 --> 00:37:21,739
+one kilo ohm resistor yes on the arduino uno board the on board led right the current is
+
+475
+00:37:21,739 --> 00:37:29,000
+limited to the on board led using one kilo ohm resistor however the external led we connected
+
+476
+00:37:29,000 --> 00:37:38,599
+to the pin number 8. We limit the current using 220 ohm resistor. Why? Why don't you use 1 kilo
+
+477
+00:37:38,599 --> 00:37:47,400
+ohm resistor for the external LED or why don't you use 220 ohm resistor for the onboard LED?
+
+478
+00:37:47,820 --> 00:37:53,800
+I am talking about these two resistors. One is 1 kilo ohm, this is the onboard resistor,
+
+479
+00:37:53,800 --> 00:37:55,019
+on board LED.
+
+480
+00:37:55,880 --> 00:37:57,559
+So you don't need to do anything.
+
+481
+00:37:57,719 --> 00:37:59,659
+Those are already connected on Arduino
+
+482
+00:37:59,659 --> 00:38:01,599
+on board. These are externally
+
+483
+00:38:01,599 --> 00:38:02,760
+connected resistor
+
+484
+00:38:02,760 --> 00:38:05,559
+and LED. This is to 1 and
+
+485
+00:38:05,559 --> 00:38:07,699
+to end your off. What is the reason
+
+486
+00:38:07,699 --> 00:38:08,559
+for the difference?
+
+487
+00:38:09,559 --> 00:38:10,940
+Any answer?
+
+488
+00:38:13,699 --> 00:38:14,760
+Yes, Thilina.
+
+489
+00:38:15,500 --> 00:38:18,039
+I can't clearly hear you.
+
+490
+00:38:18,579 --> 00:38:19,139
+Yes, Thilina.
+
+491
+00:38:19,139 --> 00:38:21,139
+Yes, Thilina.
+
+492
+00:38:23,800 --> 00:38:32,800
+No, Tilina, I can't hear you. Sorry.
+
+493
+00:38:33,679 --> 00:38:35,800
+One thing I can...
+
+494
+00:38:35,800 --> 00:38:41,539
+Can you send me using chat your answer, Tilina?
+
+495
+00:38:42,000 --> 00:38:42,500
+Okay.
+
+496
+00:38:43,059 --> 00:38:45,300
+Anybody else? Any other answer?
+
+497
+00:38:46,139 --> 00:38:46,519
+Aruni?
+
+498
+00:38:46,519 --> 00:39:03,119
+Can you give any answer to this question? Yes, Aruni? Yes. Why two different resistors? Any idea?
+
+499
+00:39:03,119 --> 00:39:11,900
+Sir, inside the board LED is very small so it takes very low current.
+
+500
+00:39:11,900 --> 00:39:28,360
+Correct. Correct. Very good. Right. So it's very good. Correct answer. Only problem is you didn't use the technical terms, but I would give you full marks. Right.
+
+501
+00:39:28,360 --> 00:39:32,500
+Now the technical term, onboard LED.
+
+502
+00:39:33,519 --> 00:39:37,079
+Onboard LED is SMD LED.
+
+503
+00:39:37,340 --> 00:39:41,639
+SMD, surface mounted device.
+
+504
+00:39:42,059 --> 00:39:44,880
+Surface mounted device, SMD.
+
+505
+00:39:45,699 --> 00:39:45,920
+Right.
+
+506
+00:39:46,619 --> 00:39:50,380
+Surface mounted, small, tiny LED.
+
+507
+00:39:51,159 --> 00:39:54,800
+Which requires a tiny current.
+
+508
+00:39:54,800 --> 00:39:59,420
+So, to limit the current, you have to use a large resistor.
+
+509
+00:39:59,940 --> 00:40:03,900
+1000 kilo ohm resistor, in other words, 1 kilo ohm resistor,
+
+510
+00:40:04,480 --> 00:40:08,420
+we use because we have to limit lot of current.
+
+511
+00:40:09,039 --> 00:40:13,139
+Otherwise, this tiny SMD LED would be destroyed.
+
+512
+00:40:13,800 --> 00:40:19,440
+However, the external LED that we use is a through hole LED.
+
+513
+00:40:19,699 --> 00:40:22,980
+Through hole, through hole, through hole.
+
+514
+00:40:22,980 --> 00:40:26,139
+Why through hole? Because it's leads.
+
+515
+00:40:26,800 --> 00:40:31,260
+You can insert through the holes of the circuit board.
+
+516
+00:40:31,920 --> 00:40:32,039
+Right?
+
+517
+00:40:32,340 --> 00:40:46,139
+So we insert the leads of the LED through the holes in the circuit board.
+
+518
+00:40:46,300 --> 00:40:48,820
+And from underside we can solder them.
+
+519
+00:40:49,260 --> 00:40:51,360
+So it is called through hole LED.
+
+520
+00:40:51,360 --> 00:40:52,619
+Through hole.
+
+521
+00:40:52,980 --> 00:41:08,800
+Right? Through hole device. Not surface mounted device. Through hole device. Through hole devices are large. They consume more current. They need more current to illuminate.
+
+522
+00:41:08,800 --> 00:41:10,940
+unlike SMD LEDs.
+
+523
+00:41:11,119 --> 00:41:13,579
+SMD LEDs, they need very little
+
+524
+00:41:13,579 --> 00:41:14,800
+current to illuminate.
+
+525
+00:41:15,320 --> 00:41:17,760
+But through all LEDs, they take
+
+526
+00:41:17,760 --> 00:41:19,780
+fairly large
+
+527
+00:41:19,780 --> 00:41:21,460
+current to illuminate.
+
+528
+00:41:21,639 --> 00:41:23,659
+So to give larger
+
+529
+00:41:23,659 --> 00:41:25,659
+current, we have to use smaller
+
+530
+00:41:25,659 --> 00:41:27,980
+resistor, 220
+
+531
+00:41:27,980 --> 00:41:29,260
+Ohm. But
+
+532
+00:41:29,260 --> 00:41:31,679
+SMD LED, a
+
+533
+00:41:31,679 --> 00:41:33,519
+very tiny current, so
+
+534
+00:41:33,519 --> 00:41:35,719
+a larger resistor. Now is that
+
+535
+00:41:35,719 --> 00:41:36,900
+clear? Right.
+
+536
+00:41:36,900 --> 00:41:54,900
+Then let's move into wiring diagram. Now wiring diagram is a simplified pictorial representation of an electronic circuit. Right. This is a pictorial pictures. Right. Simplified pictorial representation of an electronic circuits.
+
+537
+00:41:54,900 --> 00:41:57,079
+circuits. It shows
+
+538
+00:41:57,079 --> 00:41:58,719
+relative position and
+
+539
+00:41:58,719 --> 00:42:00,719
+arrangement of components.
+
+540
+00:42:01,300 --> 00:42:02,980
+It shows relative
+
+541
+00:42:02,980 --> 00:42:05,000
+position and arrangement of
+
+542
+00:42:05,000 --> 00:42:07,340
+components using realistic pictures.
+
+543
+00:42:08,139 --> 00:42:08,900
+Not symbols.
+
+544
+00:42:09,260 --> 00:42:11,400
+Schematic diagram, symbols.
+
+545
+00:42:11,599 --> 00:42:13,039
+Wiring diagram, pictures.
+
+546
+00:42:13,539 --> 00:42:14,480
+Realistic pictures.
+
+547
+00:42:15,400 --> 00:42:17,300
+Now relative arrangement,
+
+548
+00:42:18,139 --> 00:42:18,579
+relative
+
+549
+00:42:18,579 --> 00:42:21,059
+position and arrangement you can see.
+
+550
+00:42:21,579 --> 00:42:22,900
+Now here you can see
+
+551
+00:42:22,900 --> 00:42:24,480
+this is the
+
+552
+00:42:24,480 --> 00:42:31,760
+pin 13 led led connected to digital iopin 13 right you don't need to do anything
+
+553
+00:42:31,760 --> 00:42:42,579
+it's already on board right and this is the switch the switch one side connected to pd2 that is iopin
+
+554
+00:42:42,579 --> 00:42:48,860
+number two the other side of the switch connected to the ground power supply ground power supply
+
+555
+00:42:48,860 --> 00:42:57,199
+Then the second LED, the cathode is connected to ground power supply, cathode.
+
+556
+00:42:57,199 --> 00:43:10,079
+An anode through a 220 ohm current limiting resistor connected to digital IO pin 8, which is PB5.
+
+557
+00:43:10,679 --> 00:43:13,519
+Sorry, PB0. This is PB0, right?
+
+558
+00:43:13,519 --> 00:43:19,579
+It is connected to IO pin number 8 through the current limiting resistor.
+
+559
+00:43:19,940 --> 00:43:22,480
+This is the wiring diagram.
+
+560
+00:43:22,840 --> 00:43:23,659
+Can you understand?
+
+561
+00:43:24,300 --> 00:43:26,260
+Then required functionality.
+
+562
+00:43:26,900 --> 00:43:35,760
+The required functionality is the microcontroller has to blink this LED every 2 seconds.
+
+563
+00:43:35,760 --> 00:43:39,760
+When the LED is a blink.
+
+564
+00:43:40,400 --> 00:43:43,199
+While monitoring this switch.
+
+565
+00:43:43,519 --> 00:43:48,639
+Whether it is press or release while monitoring this switch.
+
+566
+00:43:49,300 --> 00:43:55,139
+External peripheral device monitor and do a task.
+
+567
+00:43:55,139 --> 00:43:59,460
+You are doing a task while monitoring external peripheral device.
+
+568
+00:44:00,079 --> 00:44:09,480
+If switch is press, you toggle this LED and then you resume the task that was doing.
+
+569
+00:44:09,480 --> 00:44:14,860
+That is blinking the LED and monitoring the switch.
+
+570
+00:44:15,480 --> 00:44:17,820
+If switch press, toggles this.
+
+571
+00:44:18,139 --> 00:44:19,860
+Multiple tasks.
+
+572
+00:44:20,480 --> 00:44:24,960
+We try to perform seemingly at the same time.
+
+573
+00:44:25,440 --> 00:44:26,039
+Is that clear?
+
+574
+00:44:26,579 --> 00:44:27,500
+Can you understand?
+
+575
+00:44:28,199 --> 00:44:28,980
+Okay, right.
+
+576
+00:44:29,800 --> 00:44:33,460
+Then the hardware design part is over.
+
+577
+00:44:33,599 --> 00:44:34,679
+Design and development.
+
+578
+00:44:34,840 --> 00:44:35,739
+Hardware part over.
+
+579
+00:44:36,079 --> 00:44:37,639
+Then the firmware.
+
+580
+00:44:37,639 --> 00:44:43,000
+Before we develop firmware, we have to design firmware.
+
+581
+00:44:44,039 --> 00:44:46,619
+Now first, let's design firmware.
+
+582
+00:44:47,000 --> 00:44:51,719
+To design the firmware, we have to first come up with an algorithm.
+
+583
+00:44:52,500 --> 00:44:55,119
+Then algorithm you have to represent.
+
+584
+00:44:55,820 --> 00:45:00,699
+To represent algorithms, we know two approaches, two methods.
+
+585
+00:45:01,460 --> 00:45:03,460
+One is using pseudocode.
+
+586
+00:45:04,019 --> 00:45:06,559
+The other approach is using flowchart.
+
+587
+00:45:06,559 --> 00:45:11,619
+But we know that a picture is worth than 1000 words.
+
+588
+00:45:12,420 --> 00:45:16,480
+So we prefer flowcharts because easier to understand.
+
+589
+00:45:16,920 --> 00:45:21,420
+So let's design our algorithm using flowcharts.
+
+590
+00:45:21,860 --> 00:45:22,039
+Right.
+
+591
+00:45:22,159 --> 00:45:24,059
+This is the algorithm.
+
+592
+00:45:24,800 --> 00:45:28,380
+Polling based trigger start of the flowchart.
+
+593
+00:45:28,900 --> 00:45:32,619
+The main function because we use C programming language.
+
+594
+00:45:32,619 --> 00:45:36,860
+In the C programming language, every program is executed.
+
+595
+00:45:37,380 --> 00:45:40,679
+Every program starts execution from main function.
+
+596
+00:45:41,079 --> 00:45:45,079
+Then we have stop, end of the algorithm, end of the flowchart.
+
+597
+00:45:45,559 --> 00:45:49,619
+Now, main function algorithm or main function flowchart.
+
+598
+00:45:50,619 --> 00:45:59,840
+In the main function, first we configure PB0 and PB5 as output pins.
+
+599
+00:45:59,840 --> 00:46:04,480
+because two LEDs are connected to these two pins.
+
+600
+00:46:05,139 --> 00:46:10,360
+The built-in LED connected to onboard LED connected to PB5,
+
+601
+00:46:11,019 --> 00:46:13,340
+that is Arduino pin number 13.
+
+602
+00:46:14,059 --> 00:46:17,920
+The external LED on the breadboard connected to PB0,
+
+603
+00:46:18,059 --> 00:46:20,400
+which is Arduino Uno pin number 8.
+
+604
+00:46:20,400 --> 00:46:21,039
+Right.
+
+605
+00:46:21,400 --> 00:46:26,739
+So therefore, now we want to turn on of these LEDs.
+
+606
+00:46:26,739 --> 00:46:31,340
+So those two pins we have to configure as output pins.
+
+607
+00:46:31,860 --> 00:46:32,079
+Right.
+
+608
+00:46:32,599 --> 00:46:35,780
+We know that to configure those two pins as output pins.
+
+609
+00:46:35,920 --> 00:46:37,099
+What we have to do is.
+
+610
+00:46:37,639 --> 00:46:37,940
+Right.
+
+611
+00:46:38,280 --> 00:46:39,340
+What we have to do is.
+
+612
+00:46:39,820 --> 00:46:49,840
+We have to set the relevant bits of the port B DDR register.
+
+613
+00:46:50,480 --> 00:46:52,800
+Data direction register of port B.
+
+614
+00:46:53,199 --> 00:46:54,920
+We have to set the relevant bits.
+
+615
+00:46:54,920 --> 00:47:04,579
+Then configure PD2 port D pin number 2 which is Arduino pin number 2.
+
+616
+00:47:05,420 --> 00:47:07,579
+Arduino digital IO pin number 2.
+
+617
+00:47:08,219 --> 00:47:10,059
+PD2 AVR terms.
+
+618
+00:47:10,780 --> 00:47:16,360
+Configure it as input pin Y as the switch is connected to that pin.
+
+619
+00:47:16,900 --> 00:47:20,039
+Now using the switch we are going to provide an input.
+
+620
+00:47:20,039 --> 00:47:25,400
+So configure this IOPin, digital IOPin as input pin.
+
+621
+00:47:25,900 --> 00:47:26,119
+Right.
+
+622
+00:47:26,579 --> 00:47:33,320
+Now when you press the switch, this pin, the logic state of this pin becomes low.
+
+623
+00:47:33,619 --> 00:47:34,000
+Why?
+
+624
+00:47:34,679 --> 00:47:37,360
+The other side of the switch connected to ground.
+
+625
+00:47:38,099 --> 00:47:45,659
+When you press the switch, that means you turn on the switch, PD2 logic state becomes low.
+
+626
+00:47:45,659 --> 00:47:52,820
+To recognize that state change, we need the PD2 by default high.
+
+627
+00:47:53,440 --> 00:47:56,480
+We need to keep PD2 by default high.
+
+628
+00:47:57,280 --> 00:47:59,840
+Then when you press the switch, it becomes low.
+
+629
+00:48:00,139 --> 00:48:02,159
+A clear state change.
+
+630
+00:48:02,920 --> 00:48:06,340
+The microcontroller can recognize that clear state change.
+
+631
+00:48:06,639 --> 00:48:13,760
+If you keep PD2 high by default and when the switch is pressed, PD2 becomes low.
+
+632
+00:48:13,760 --> 00:48:17,900
+so that we can clearly identify the state change.
+
+633
+00:48:18,300 --> 00:48:22,019
+Now, how do we keep PD2 by default high?
+
+634
+00:48:22,719 --> 00:48:27,199
+The logic state of the PD2, we need to keep high by default.
+
+635
+00:48:28,059 --> 00:48:30,820
+For that, we pull up PD2.
+
+636
+00:48:31,320 --> 00:48:32,800
+We pull up PD2.
+
+637
+00:48:33,119 --> 00:48:33,519
+Right.
+
+638
+00:48:33,519 --> 00:48:36,179
+So that PD2 is high by default.
+
+639
+00:48:36,619 --> 00:48:40,280
+When you press the switch, PD2 becomes low
+
+640
+00:48:40,280 --> 00:48:43,760
+so that microcontroller can recognize the state change.
+
+641
+00:48:44,380 --> 00:48:46,119
+Then we have endless loop.
+
+642
+00:48:46,619 --> 00:48:50,320
+Inside the endless loop, we toggle PB5.
+
+643
+00:48:50,920 --> 00:48:52,199
+We toggle PB5.
+
+644
+00:48:52,300 --> 00:48:55,940
+That means we toggle the onboard LED.
+
+645
+00:48:56,679 --> 00:49:00,000
+If the onboard LED is off, we turn it on.
+
+646
+00:49:00,800 --> 00:49:02,900
+If it is on, we turn it off.
+
+647
+00:49:02,900 --> 00:49:05,599
+We wait two seconds.
+
+648
+00:49:06,000 --> 00:49:07,039
+We wait two seconds.
+
+649
+00:49:07,039 --> 00:49:10,699
+Thereafter we check whether switch has been pressed.
+
+650
+00:49:11,179 --> 00:49:14,820
+If PD2 is low we check whether the switch is pressed.
+
+651
+00:49:15,900 --> 00:49:19,340
+We know that if the switch is pressed PD2 becomes low.
+
+652
+00:49:19,719 --> 00:49:21,639
+We check whether PD2 is low.
+
+653
+00:49:22,280 --> 00:49:27,739
+If it is low the second LED we toggle.
+
+654
+00:49:28,199 --> 00:49:31,460
+The second LED we toggle that is PB0.
+
+655
+00:49:31,940 --> 00:49:33,500
+We toggle the second LED.
+
+656
+00:49:33,500 --> 00:49:37,139
+If the second LED is off, we turn it on.
+
+657
+00:49:37,659 --> 00:49:39,920
+If it is on, we turn it off.
+
+658
+00:49:40,340 --> 00:49:44,159
+After that, we go to the next iteration of the loop.
+
+659
+00:49:44,500 --> 00:49:47,659
+And again, we toggle onboard LED.
+
+660
+00:49:48,599 --> 00:49:50,239
+Wait two seconds.
+
+661
+00:49:50,920 --> 00:49:52,539
+Check whether there is an input.
+
+662
+00:49:52,739 --> 00:49:55,639
+If so, toggle the second LED.
+
+663
+00:49:56,559 --> 00:49:59,400
+Go again for the next iteration.
+
+664
+00:49:59,400 --> 00:50:01,820
+And toggle the onboard LED.
+
+665
+00:50:01,820 --> 00:50:07,639
+Wait 2 seconds and check whether there is an input.
+
+666
+00:50:07,800 --> 00:50:10,039
+If no input, do nothing.
+
+667
+00:50:10,840 --> 00:50:12,840
+Go to the top of the loop again.
+
+668
+00:50:13,460 --> 00:50:15,059
+Toggle onboard LED.
+
+669
+00:50:15,519 --> 00:50:16,559
+Wait 2 seconds.
+
+670
+00:50:16,940 --> 00:50:18,340
+Check whether there is an input.
+
+671
+00:50:18,579 --> 00:50:19,280
+No input.
+
+672
+00:50:19,880 --> 00:50:20,599
+Do nothing.
+
+673
+00:50:21,300 --> 00:50:22,920
+Go to the top of the loop.
+
+674
+00:50:23,280 --> 00:50:24,940
+Toggle onboard LED.
+
+675
+00:50:25,159 --> 00:50:26,159
+Wait 2 seconds.
+
+676
+00:50:26,360 --> 00:50:27,780
+Check whether there is an input.
+
+677
+00:50:27,920 --> 00:50:29,099
+Yes, there is an input.
+
+678
+00:50:29,639 --> 00:50:31,059
+Toggle the second LED.
+
+679
+00:50:31,059 --> 00:50:32,780
+and go to the next item.
+
+680
+00:50:33,139 --> 00:50:35,219
+Now let's take our day-to-day example.
+
+681
+00:50:35,860 --> 00:50:36,119
+Right?
+
+682
+00:50:36,619 --> 00:50:38,300
+You are reading the newspaper.
+
+683
+00:50:39,119 --> 00:50:40,260
+You are reading the newspaper.
+
+684
+00:50:40,880 --> 00:50:42,300
+And every two seconds,
+
+685
+00:50:43,199 --> 00:50:45,800
+you check small fellow's nappy is wet.
+
+686
+00:50:46,340 --> 00:50:47,440
+If it is not wet,
+
+687
+00:50:47,659 --> 00:50:49,719
+you continue reading the newspaper.
+
+688
+00:50:50,079 --> 00:50:51,119
+Every two seconds,
+
+689
+00:50:51,300 --> 00:50:53,840
+you check whether small fellow's nappy is wet.
+
+690
+00:50:53,980 --> 00:50:55,400
+No, it is not wet.
+
+691
+00:50:56,119 --> 00:50:58,639
+Then you continue reading the newspaper.
+
+692
+00:50:58,760 --> 00:51:00,079
+Every two seconds,
+
+693
+00:51:00,079 --> 00:51:30,079
+[unclear — Sinhala / crosstalk]
+
+694
+00:51:30,079 --> 00:51:35,079
+Attend to the small fellow, chain the nappy, continue reading the newspaper.
+
+695
+00:51:35,320 --> 00:51:37,559
+Can you understand this algorithm?
+
+696
+00:51:38,119 --> 00:51:38,739
+Any questions?
+
+697
+00:51:39,260 --> 00:51:39,679
+Sir?
+
+698
+00:51:39,940 --> 00:51:40,340
+Yes.
+
+699
+00:51:40,780 --> 00:51:48,059
+Sir, what is the difference between the previous one and this one?
+
+700
+00:51:49,059 --> 00:51:52,739
+Isn't that one also polling?
+
+701
+00:51:53,440 --> 00:51:54,820
+What do you mean by previous one?
+
+702
+00:51:54,820 --> 00:51:59,739
+The switch on, off, off.
+
+703
+00:52:00,079 --> 00:52:09,280
+Last week application we developed. Yes sir. Yes. We didn't mention that we were using polling but it
+
+704
+00:52:09,280 --> 00:52:15,599
+is it was it was based on polling. No difference. Thank you. Right. Very good. Good question. That
+
+705
+00:52:15,599 --> 00:52:23,440
+means you have compared this with the last time work. That's why you could you got that question.
+
+706
+00:52:23,440 --> 00:52:36,880
+Last time also, right, we developed a system, right, if there is no input, we blink the LED every half a second.
+
+707
+00:52:37,400 --> 00:52:44,420
+If there is an input, we blink the same LED every 200 milliseconds, right.
+
+708
+00:52:45,079 --> 00:52:46,860
+Now, two tasks.
+
+709
+00:52:47,440 --> 00:52:51,099
+One is blinking the LED, whatever the rate,
+
+710
+00:52:51,639 --> 00:52:55,480
+and monitoring the external switch, the second task.
+
+711
+00:52:55,920 --> 00:52:58,900
+So if there is no input, you blink the LED every half a second.
+
+712
+00:53:00,039 --> 00:53:04,980
+If there is an input, you blink the LED every 200 milliseconds.
+
+713
+00:53:05,639 --> 00:53:05,800
+Right?
+
+714
+00:53:06,480 --> 00:53:07,880
+So we use polling.
+
+715
+00:53:07,880 --> 00:53:11,059
+But at that time, we didn't mention that.
+
+716
+00:53:11,059 --> 00:53:19,360
+So, idea of polling is you regularly monitor the peripheral devices.
+
+717
+00:53:19,960 --> 00:53:24,019
+Now, here you can see the loop, the endless loop.
+
+718
+00:53:25,019 --> 00:53:28,639
+Every iteration of endless loop, right?
+
+719
+00:53:29,300 --> 00:53:33,099
+We monitor whether PD2 is low.
+
+720
+00:53:33,699 --> 00:53:38,920
+That means we monitor the peripheral device again and again.
+
+721
+00:53:38,920 --> 00:53:42,960
+status of the peripheral device we monitor again and again.
+
+722
+00:53:43,300 --> 00:53:49,019
+At regular intervals, in this example the regular interval is two seconds.
+
+723
+00:53:49,519 --> 00:53:53,940
+Every two seconds we monitor the state of peripheral device.
+
+724
+00:53:54,400 --> 00:54:00,280
+If the state is low then we attend to the second task.
+
+725
+00:54:00,679 --> 00:54:07,320
+If the state is not low we don't do anything we do the first task.
+
+726
+00:54:07,320 --> 00:54:14,019
+Reading the newspaper we do while monitoring whether the nappy is wet.
+
+727
+00:54:14,739 --> 00:54:18,679
+If the nappy is not wet, keep reading the newspaper.
+
+728
+00:54:19,179 --> 00:54:20,099
+Don't do anything.
+
+729
+00:54:20,280 --> 00:54:22,980
+Keep reading the newspaper if nappy is not wet.
+
+730
+00:54:23,280 --> 00:54:23,460
+Why?
+
+731
+00:54:24,019 --> 00:54:27,340
+One hour, two hour, three hour nappy is not wet.
+
+732
+00:54:27,519 --> 00:54:28,619
+Keep reading the newspaper.
+
+733
+00:54:29,119 --> 00:54:32,519
+But monitor whether nappy is wet regularly.
+
+734
+00:54:32,519 --> 00:54:37,519
+If nappy is wet, then stop reading the newspaper.
+
+735
+00:54:37,940 --> 00:54:41,400
+Attend to the small fellow, change the nappy.
+
+736
+00:54:42,000 --> 00:54:48,159
+After that, keep reading the newspaper and monitoring whether the nappy is wet.
+
+737
+00:54:48,679 --> 00:54:48,820
+Right.
+
+738
+00:54:49,400 --> 00:54:53,380
+Now here, this loop, this loop runs again and again.
+
+739
+00:54:54,460 --> 00:54:57,539
+Now this part is the reading newspaper.
+
+740
+00:54:58,139 --> 00:55:00,099
+This is the regular interval.
+
+741
+00:55:00,099 --> 00:55:04,380
+and this is the part you check whether nappy is wet.
+
+742
+00:55:04,900 --> 00:55:07,940
+If it is not wet, keep reading the newspaper.
+
+743
+00:55:08,639 --> 00:55:12,300
+And if it is wet, attend to the small fellow,
+
+744
+00:55:12,480 --> 00:55:13,400
+change the nappy.
+
+745
+00:55:13,860 --> 00:55:16,639
+After that, keep reading the newspaper.
+
+746
+00:55:16,639 --> 00:55:22,280
+But at regular intervals, check whether nappy is wet.
+
+747
+00:55:23,139 --> 00:55:24,739
+Now in day-to-day life,
+
+748
+00:55:24,739 --> 00:55:31,199
+If you can think about many examples that you have used polling.
+
+749
+00:55:31,199 --> 00:55:39,199
+If you have polling used examples, you can use polling examples.
+
+750
+00:55:39,199 --> 00:55:42,199
+You can use polling examples.
+
+751
+00:55:42,199 --> 00:55:47,099
+You can tell us about polling.
+
+752
+00:55:47,099 --> 00:55:50,099
+That is the main task.
+
+753
+00:55:50,099 --> 00:55:56,320
+But regularly you monitor the buzzword, whether that girl has come.
+
+754
+00:55:57,260 --> 00:56:01,019
+Interested girl, regularly monitor her.
+
+755
+00:56:01,099 --> 00:56:09,039
+But while talking with your friend, if she has come, then you start doing something else.
+
+756
+00:56:09,440 --> 00:56:10,179
+The second task.
+
+757
+00:56:10,179 --> 00:56:10,860
+Holy!
+
+758
+00:56:11,599 --> 00:56:13,059
+You have to give a little bit of a question.
+
+759
+00:56:13,679 --> 00:56:14,780
+You have to give a little bit of a question.
+
+760
+00:56:15,420 --> 00:56:15,619
+Right?
+
+761
+00:56:16,159 --> 00:56:16,380
+Right?
+
+762
+00:56:16,380 --> 00:56:21,940
+Listening to the lecture, that is the main task.
+
+763
+00:56:21,940 --> 00:56:31,820
+You regularly look at the screen of your smartphone.
+
+764
+00:56:32,380 --> 00:56:32,880
+Message.
+
+765
+00:56:35,019 --> 00:56:36,760
+Regularly check.
+
+766
+00:56:37,960 --> 00:56:41,320
+Then you reply to that text.
+
+767
+00:56:41,900 --> 00:56:45,880
+And again you start resuming your work.
+
+768
+00:56:45,880 --> 00:56:47,679
+That is listening to the lecture.
+
+769
+00:56:48,039 --> 00:56:55,119
+The main task is attending to this lecture online.
+
+770
+00:56:55,760 --> 00:56:59,119
+While doing that, have you done any other task?
+
+771
+00:56:59,619 --> 00:57:03,440
+Have you checked whether something has happened regularly?
+
+772
+00:57:04,099 --> 00:57:06,460
+That means you have done polling.
+
+773
+00:57:07,019 --> 00:57:07,639
+Is that clear?
+
+774
+00:57:08,400 --> 00:57:08,679
+Right.
+
+775
+00:57:09,139 --> 00:57:12,980
+If the design is clear, then the development.
+
+776
+00:57:13,400 --> 00:57:15,219
+Firmware development in C.
+
+777
+00:57:15,219 --> 00:57:19,760
+Right. So this is the C program. We have main function.
+
+778
+00:57:20,239 --> 00:57:24,179
+And first, we include the necessary header files.
+
+779
+00:57:24,820 --> 00:57:31,340
+avr.io.h, which contains all the input-output definitions.
+
+780
+00:57:32,079 --> 00:57:38,320
+Then the speed of the CPU, 16 MHz.
+
+781
+00:57:38,880 --> 00:57:41,280
+f cpu constant we define.
+
+782
+00:57:41,280 --> 00:57:51,099
+Then we include delay.h header file because we are going to use underscore delay underscore ms function.
+
+783
+00:57:51,920 --> 00:57:55,480
+And delay.h header file uses fcpu constant.
+
+784
+00:57:56,000 --> 00:57:56,159
+Right.
+
+785
+00:57:56,639 --> 00:57:58,619
+Then the next step.
+
+786
+00:57:58,960 --> 00:58:03,980
+Configure PB0 and PB5 as outputs.
+
+787
+00:58:04,599 --> 00:58:04,840
+Right.
+
+788
+00:58:04,840 --> 00:58:12,539
+So in the DDRB register, PB0 and PB5, right?
+
+789
+00:58:12,980 --> 00:58:20,639
+Bit 0 and bit 5 we set to make PB0 and PB5 as outputs.
+
+790
+00:58:21,139 --> 00:58:25,139
+Then PD2 we need to configure as an input.
+
+791
+00:58:25,139 --> 00:58:34,739
+So we need to clear bit 2 of DDRB, port D register.
+
+792
+00:58:34,840 --> 00:58:39,300
+bit number 2, bit number 0, bit number 1, bit number 2.
+
+793
+00:58:39,960 --> 00:58:44,760
+We need to clear so that PD2 becomes an input.
+
+794
+00:58:45,320 --> 00:58:45,599
+Right.
+
+795
+00:58:46,039 --> 00:58:49,320
+Configured because PD2 we have connected the switch.
+
+796
+00:58:50,340 --> 00:58:54,079
+PB0 and PB5 we have connected LEDs.
+
+797
+00:58:54,760 --> 00:58:56,840
+Then we need to pull up PD2.
+
+798
+00:58:57,500 --> 00:58:57,940
+Why?
+
+799
+00:58:58,619 --> 00:59:03,840
+The default state of PD2 we want to have default state as I.
+
+800
+00:59:03,840 --> 00:59:05,659
+So we need to pull up.
+
+801
+00:59:06,159 --> 00:59:07,340
+How do we do that?
+
+802
+00:59:07,860 --> 00:59:09,059
+In the port D.
+
+803
+00:59:09,800 --> 00:59:11,380
+The register.
+
+804
+00:59:11,679 --> 00:59:13,480
+Bit number 2 we set.
+
+805
+00:59:14,000 --> 00:59:15,980
+So doing that we can pull up.
+
+806
+00:59:16,079 --> 00:59:19,300
+We can activate the internal pull up resistor.
+
+807
+00:59:20,119 --> 00:59:22,820
+And default state of the PD2.
+
+808
+00:59:22,960 --> 00:59:24,639
+We can set as high.
+
+809
+00:59:25,239 --> 00:59:28,539
+Now PD2 default state high.
+
+810
+00:59:29,099 --> 00:59:30,440
+When you press the switch.
+
+811
+00:59:31,340 --> 00:59:32,679
+PD2 becomes low.
+
+812
+00:59:32,679 --> 00:59:34,920
+a clear state change.
+
+813
+00:59:35,300 --> 00:59:36,679
+If you have released the switch,
+
+814
+00:59:37,440 --> 00:59:38,800
+the PD2 is high
+
+815
+00:59:38,800 --> 00:59:40,820
+because it's default state high.
+
+816
+00:59:41,579 --> 00:59:42,880
+We activated the
+
+817
+00:59:42,880 --> 00:59:44,480
+internal pull-up resistor
+
+818
+00:59:44,480 --> 00:59:46,920
+by setting the bit
+
+819
+00:59:46,920 --> 00:59:48,920
+number 2 of port D
+
+820
+00:59:48,920 --> 00:59:51,000
+register. Up to this point.
+
+821
+00:59:51,239 --> 00:59:51,900
+Any question?
+
+822
+00:59:52,599 --> 00:59:56,079
+No. Right.
+
+823
+00:59:56,400 --> 00:59:56,599
+Then.
+
+824
+00:59:58,260 --> 00:59:59,039
+Endless loop.
+
+825
+00:59:59,739 --> 01:00:00,860
+In the endless loop,
+
+826
+01:00:00,860 --> 01:00:10,900
+The main job, main task, blinking LED connected to PB5, that is onboard LED.
+
+827
+01:00:11,460 --> 01:00:14,400
+Blink that LED every two seconds.
+
+828
+01:00:14,800 --> 01:00:21,460
+So just toggle the state of PB5, state of PB5.
+
+829
+01:00:22,139 --> 01:00:22,860
+Toggle it.
+
+830
+01:00:23,460 --> 01:00:28,159
+To toggle, we use the exclusive O operator.
+
+831
+01:00:28,159 --> 01:00:29,860
+This is the XO operator.
+
+832
+01:00:29,860 --> 01:00:35,000
+Using exclusive O operator we can toggle the bit number 5.
+
+833
+01:00:35,519 --> 01:00:38,559
+If the bit number 5 is 0 we set it to 1.
+
+834
+01:00:39,159 --> 01:00:41,500
+If it is 1 we set it to 0.
+
+835
+01:00:42,099 --> 01:00:42,400
+Toggle.
+
+836
+01:00:42,900 --> 01:00:52,079
+That means we blink the LED connected to PB5 which is the onboard LED connected to Arduino pin number 30.
+
+837
+01:00:52,599 --> 01:00:54,400
+Wait 200 milliseconds.
+
+838
+01:00:54,659 --> 01:00:57,500
+2000 milliseconds that is 2 seconds.
+
+839
+01:00:57,500 --> 01:00:59,400
+That is the regular interval.
+
+840
+01:00:59,860 --> 01:01:07,059
+thereafter check whether switch is press right this is the if condition we use to check whether
+
+841
+01:01:07,059 --> 01:01:19,059
+switch has been pressed we use the port d pin d register and this constant value we check we get
+
+842
+01:01:19,059 --> 01:01:28,420
+the bitwise and operation now let's uh i mean let's pin d this port input register
+
+843
+01:01:29,619 --> 01:01:42,260
+[unclear — Sinhala / crosstalk]
+
+844
+01:01:42,260 --> 01:01:57,780
+be either 1 or 0. Then the constant 0 0 0 0 0 1 double 0. Let's take the end operation.
+
+845
+01:01:57,780 --> 01:01:59,280
+X and 0.
+
+846
+01:02:00,360 --> 01:02:01,880
+X and 0, 0.
+
+847
+01:02:02,579 --> 01:02:07,000
+No matter the value of X, the outcome is 0.
+
+848
+01:02:07,639 --> 01:02:09,440
+X and 0, 0.
+
+849
+01:02:10,400 --> 01:02:13,300
+0, 0, 0, 0, 0.
+
+850
+01:02:13,739 --> 01:02:14,920
+X and 1.
+
+851
+01:02:15,760 --> 01:02:16,699
+X and 1.
+
+852
+01:02:17,239 --> 01:02:17,559
+Right?
+
+853
+01:02:17,940 --> 01:02:19,800
+Outcome depends on X.
+
+854
+01:02:19,800 --> 01:02:22,699
+If X is 1, 1 and 1, 1.
+
+855
+01:02:23,300 --> 01:02:26,500
+If X is 0, 0 and 1, 0.
+
+856
+01:02:26,500 --> 01:02:30,239
+So x and 1 outcome is x.
+
+857
+01:02:30,679 --> 01:02:31,820
+Other two 0.
+
+858
+01:02:32,019 --> 01:02:33,679
+0 x and 0.
+
+859
+01:02:33,920 --> 01:02:35,539
+0 x and 0 0.
+
+860
+01:02:36,019 --> 01:02:38,059
+So this is the if condition.
+
+861
+01:02:38,280 --> 01:02:39,019
+Now we have.
+
+862
+01:02:39,199 --> 01:02:42,219
+If we check this value equals to 0.
+
+863
+01:02:42,699 --> 01:02:44,300
+Right here you can see if condition.
+
+864
+01:02:44,840 --> 01:02:47,780
+Now if switch has not been pressed.
+
+865
+01:02:48,559 --> 01:02:49,659
+Switch is released.
+
+866
+01:02:50,320 --> 01:02:55,280
+Then the default state of PD2 is high.
+
+867
+01:02:55,280 --> 01:02:58,519
+the false state of the PD2 pin is high.
+
+868
+01:02:59,119 --> 01:03:01,519
+That means x is 1.
+
+869
+01:03:02,119 --> 01:03:04,760
+This value not p equals to 0.
+
+870
+01:03:05,400 --> 01:03:08,820
+If this is 1, the if condition is false.
+
+871
+01:03:09,639 --> 01:03:12,679
+So nothing happens, we go to the next iteration.
+
+872
+01:03:13,199 --> 01:03:14,579
+If switch is released,
+
+873
+01:03:15,400 --> 01:03:18,019
+we don't perform the second task,
+
+874
+01:03:18,019 --> 01:03:20,239
+we simply go to the next iteration.
+
+875
+01:03:20,920 --> 01:03:22,639
+But if the switch is pressed,
+
+876
+01:03:22,639 --> 01:03:26,880
+Then PD2 logic state is low.
+
+877
+01:03:27,579 --> 01:03:32,980
+PD2 logic state low means the corresponding bit is 0.
+
+878
+01:03:33,639 --> 01:03:35,940
+Then 0 equals 0.
+
+879
+01:03:36,780 --> 01:03:38,480
+If condition becomes true.
+
+880
+01:03:39,079 --> 01:03:46,000
+If condition is true then we toggle the LED connected to PB0.
+
+881
+01:03:46,159 --> 01:03:47,280
+The second task.
+
+882
+01:03:47,659 --> 01:03:51,460
+We perform the second task if the if condition is true.
+
+883
+01:03:51,460 --> 01:03:54,659
+If condition true means switch is press.
+
+884
+01:03:55,159 --> 01:03:57,039
+So we do the second task.
+
+885
+01:03:57,539 --> 01:04:08,219
+After doing the second task, we go to the next iteration and we start, we resume the task that was doing.
+
+886
+01:04:08,559 --> 01:04:11,659
+That is blinking the onboard elite.
+
+887
+01:04:12,199 --> 01:04:13,920
+Can you understand this algorithm?
+
+888
+01:04:14,480 --> 01:04:15,539
+Sorry, this is so scored.
+
+889
+01:04:16,380 --> 01:04:17,679
+If not, let me know.
+
+890
+01:04:17,679 --> 01:04:19,679
+I think it's a big thing.
+
+891
+01:04:19,679 --> 01:04:21,679
+I think it's important to see the on-board LED
+
+892
+01:04:21,679 --> 01:04:23,679
+that blink on the board.
+
+893
+01:04:23,679 --> 01:04:25,679
+If you switch to the switch,
+
+894
+01:04:25,679 --> 01:04:27,679
+you can toggle the pin number 8
+
+895
+01:04:27,679 --> 01:04:29,679
+to the high LED.
+
+896
+01:04:29,679 --> 01:04:31,679
+Then,
+
+897
+01:04:31,679 --> 01:04:33,679
+the on-board LED will blink on the board.
+
+898
+01:04:33,679 --> 01:04:35,679
+If you switch to the on-board LED,
+
+899
+01:04:35,679 --> 01:04:37,679
+you can toggle the pin number 8
+
+900
+01:04:37,679 --> 01:04:39,679
+and you can toggle the pin number 8.
+
+901
+01:04:39,679 --> 01:04:41,679
+Can you understand this source code?
+
+902
+01:04:41,679 --> 01:04:43,679
+Sir, during the delay,
+
+903
+01:04:43,679 --> 01:04:54,380
+Sir, during the delay, if we pressed and released the button, did they catch, if they can catch that input?
+
+904
+01:04:55,739 --> 01:05:03,699
+Very good. You are far ahead. Yes, there's a problem. We'll come to that later.
+
+905
+01:05:03,699 --> 01:05:08,699
+Sir, if you have a connection, you can't get a connection.
+
+906
+01:05:08,699 --> 01:05:15,579
+Now, what you mentioned is very correct.
+
+907
+01:05:16,420 --> 01:05:16,739
+Right.
+
+908
+01:05:17,699 --> 01:05:21,699
+Now, actually, you have...
+
+909
+01:05:21,699 --> 01:05:28,699
+Please wait, there's a call.
+
+910
+01:05:29,639 --> 01:05:29,940
+Right.
+
+911
+01:05:31,139 --> 01:05:32,079
+There's a problem.
+
+912
+01:05:32,300 --> 01:05:35,239
+Problem in this polling method.
+
+913
+01:05:35,900 --> 01:05:37,340
+We are going to discuss that.
+
+914
+01:05:37,340 --> 01:05:39,480
+That is what Telina mentioned.
+
+915
+01:05:40,500 --> 01:05:48,219
+During the delay, if you press the switch, our input may go undetected.
+
+916
+01:05:48,960 --> 01:05:56,619
+Because the delay is considerably large delay, lengthy delay, 2 seconds delay.
+
+917
+01:05:57,300 --> 01:06:04,059
+During the 2 seconds, if you press the switch and release, your input may go undetected.
+
+918
+01:06:04,059 --> 01:06:09,780
+So as a result, the second task you may not perform.
+
+919
+01:06:10,460 --> 01:06:24,300
+If you take the day-to-day example, you read the newspaper, but at the same time you monitor the smell of nappy is wet at every one hour.
+
+920
+01:06:24,300 --> 01:06:31,420
+Every one hour.
+
+921
+01:06:31,420 --> 01:06:33,079
+You read the newspaper.
+
+922
+01:06:33,820 --> 01:06:35,239
+While reading the newspaper,
+
+923
+01:06:35,460 --> 01:06:37,579
+you monitor small fellow's
+
+924
+01:06:37,579 --> 01:06:39,460
+nappies, whether wet or not.
+
+925
+01:06:40,179 --> 01:06:41,119
+Every one hour.
+
+926
+01:06:41,760 --> 01:06:43,820
+One hour is a large duration.
+
+927
+01:06:46,219 --> 01:06:47,480
+During that
+
+928
+01:06:47,480 --> 01:06:49,099
+one hour's time,
+
+929
+01:06:50,199 --> 01:06:50,440
+right,
+
+930
+01:06:51,480 --> 01:06:52,920
+nappy can be wet
+
+931
+01:06:52,920 --> 01:06:56,219
+and it can be dried again.
+
+932
+01:06:57,300 --> 01:07:02,579
+So you may miss that event.
+
+933
+01:07:03,280 --> 01:07:06,699
+It can be wet and also it can get dry
+
+934
+01:07:06,699 --> 01:07:10,139
+because one hour is large time duration.
+
+935
+01:07:10,679 --> 01:07:12,420
+So you may miss that event.
+
+936
+01:07:12,420 --> 01:07:14,860
+The same thing can happen here.
+
+937
+01:07:15,880 --> 01:07:19,860
+During the delay, if you press the button and release,
+
+938
+01:07:19,860 --> 01:07:23,019
+Your input may go undetected.
+
+939
+01:07:23,860 --> 01:07:25,619
+That's a problem of polling.
+
+940
+01:07:26,400 --> 01:07:26,559
+Right.
+
+941
+01:07:27,179 --> 01:07:29,480
+But you can reduce that problem.
+
+942
+01:07:30,139 --> 01:07:33,340
+By reducing the monitoring time.
+
+943
+01:07:33,880 --> 01:07:36,500
+Now in this example the monitoring time.
+
+944
+01:07:36,699 --> 01:07:39,219
+The monitoring interval is 2 seconds.
+
+945
+01:07:39,659 --> 01:07:41,179
+So fairly large interval.
+
+946
+01:07:41,860 --> 01:07:47,639
+But if you reduce the monitoring interval to let's say 100 milliseconds.
+
+947
+01:07:47,639 --> 01:07:53,960
+seconds, then there's a high chance that all your inputs will be detected.
+
+948
+01:07:53,960 --> 01:08:00,639
+Rather than checking the state of the button every two seconds, if you check the state
+
+949
+01:08:00,639 --> 01:08:05,880
+of the button every 100 milliseconds, then there's a high chance that all your inputs,
+
+950
+01:08:05,880 --> 01:08:08,139
+button inputs will be detected.
+
+951
+01:08:08,139 --> 01:08:14,519
+But on the other hand, if you increase the monitoring interval rather than two seconds,
+
+952
+01:08:14,519 --> 01:08:22,199
+say you go for five seconds then there's a high chance your inputs button inputs may go undetected.
+
+953
+01:08:22,199 --> 01:08:31,319
+So the blinking time also blinking speed also changes? Yes correct correct right these are the
+
+954
+01:08:31,319 --> 01:08:38,600
+things you have to think about right so the polling has its inherited weaknesses right we
+
+955
+01:08:38,600 --> 01:08:47,640
+will come to that later now can you understand this how this source code works very good i'm
+
+956
+01:08:47,640 --> 01:08:59,079
+very happy some of you are thinking far ahead right this becomes a university course module
+
+957
+01:08:59,079 --> 01:09:15,960
+This becomes a university lecture, university learning experience.
+
+958
+01:09:16,439 --> 01:09:21,479
+If you start thinking beyond what we have discussed.
+
+959
+01:09:21,859 --> 01:09:22,960
+Right, we'll come to that.
+
+960
+01:09:22,960 --> 01:09:26,500
+Now, this is the C implementation.
+
+961
+01:09:26,500 --> 01:09:34,779
+How about can't we implement this polling based trigger system using Arduino platform?
+
+962
+01:09:35,159 --> 01:09:36,079
+Yes, we can.
+
+963
+01:09:36,939 --> 01:09:42,500
+But then the algorithm would be a little bit different because we have to use wrapper functions.
+
+964
+01:09:43,619 --> 01:09:44,100
+Let's see.
+
+965
+01:09:44,659 --> 01:09:46,500
+Algorithm for Arduino platform.
+
+966
+01:09:46,500 --> 01:09:50,600
+In the Arduino platform, polling based triggers start.
+
+967
+01:09:51,279 --> 01:09:55,899
+You declare digital IO pin 8 and 13.
+
+968
+01:09:56,500 --> 01:10:06,500
+as led pin 1 led pin 2 led pin 1 led pin 2 you declare digital io pin 8 and 13 8 is the external
+
+969
+01:10:06,500 --> 01:10:15,460
+led connected pin io pin 13 is the onboard led connected pin then declare digital io pin 2 as
+
+970
+01:10:15,460 --> 01:10:20,819
+switch pin because that is the pin that the switch is connected then Arduino we have setup function
+
+971
+01:10:20,819 --> 01:10:29,560
+and loop function. Setup. Configure LED pin 1 and LED pin 2 as outputs. Yes, configure them.
+
+972
+01:10:29,939 --> 01:10:36,600
+Configure switch pin as input pin and pull up because we want to have default state of that pin
+
+973
+01:10:36,600 --> 01:10:44,520
+high. So pull up. That is the setup function. Then loop function. Toggle state of LED pin 2.
+
+974
+01:10:44,520 --> 01:10:47,300
+that is pin number 13.
+
+975
+01:10:47,960 --> 01:10:50,699
+When you toggle the state of LED pin 2,
+
+976
+01:10:51,659 --> 01:10:53,659
+the onboard LED you blink.
+
+977
+01:10:54,260 --> 01:10:56,739
+Then wait for 2000 milliseconds.
+
+978
+01:10:57,100 --> 01:10:58,020
+Wait 2 seconds.
+
+979
+01:10:58,720 --> 01:11:00,680
+Read the state at switch pin.
+
+980
+01:11:01,720 --> 01:11:03,180
+Read the state at switch pin.
+
+981
+01:11:03,760 --> 01:11:08,800
+If it is low, toggle LED pin number 1.
+
+982
+01:11:09,319 --> 01:11:11,359
+Toggle the state of LED pin number 1.
+
+983
+01:11:11,359 --> 01:11:14,560
+That means external LED toggle.
+
+984
+01:11:15,079 --> 01:11:18,239
+Do it again and again because loop runs again and again.
+
+985
+01:11:18,979 --> 01:11:23,899
+So every iteration we toggle onboard LED, wait two seconds,
+
+986
+01:11:24,460 --> 01:11:26,159
+check whether switch has been pressed.
+
+987
+01:11:26,520 --> 01:11:30,199
+If so, if it is pressed, toggle the other LED.
+
+988
+01:11:30,619 --> 01:11:35,199
+If switch is not pressed, do nothing, go to the next iteration.
+
+989
+01:11:35,199 --> 01:11:42,199
+That's how the same system we implement using Arduino software platform.
+
+990
+01:11:42,199 --> 01:11:44,199
+Can you understand this algorithm?
+
+991
+01:11:44,199 --> 01:11:49,199
+Okay, if so, let's go to the source code, Arduino source code, using Arduino wrapper functions.
+
+992
+01:11:49,199 --> 01:11:54,199
+Right, in Arduino we have void setup, void loop, two functions.
+
+993
+01:11:54,199 --> 01:11:57,199
+Then we declare the pins.
+
+994
+01:11:57,199 --> 01:12:01,199
+Pin number 8, LED pin 1.
+
+995
+01:12:01,199 --> 01:12:04,199
+Pin number 13, LED pin 2.
+
+996
+01:12:04,199 --> 01:12:14,220
+pin number 2 switch pin then configure led pin 1 output pin using pin mode function led pin 2
+
+997
+01:12:14,220 --> 01:12:22,720
+output switch pin input not just input input pull up activate internal resistor internal pull up
+
+998
+01:12:22,720 --> 01:12:31,439
+resistor and pull up so switch pin default state high right then now we need to toggle
+
+999
+01:12:31,439 --> 01:12:41,800
+on board led every two seconds that is the main job main task toggle on board led that is led
+
+1000
+01:12:41,800 --> 01:12:48,899
+connected to pin number 13 which is led pin 2 right every two seconds and this is the code
+
+1001
+01:12:48,899 --> 01:12:55,920
+what is this code digital right pin number led pin 2 that is pin number 13
+
+1002
+01:12:55,920 --> 01:13:03,460
+pin number 30. Digital right. That is the pin we want to toggle the state. Then the second
+
+1003
+01:13:03,460 --> 01:13:12,180
+argument of digital right, you have to tell with the high or low pin and the state with the high
+
+1004
+01:13:12,180 --> 01:13:19,180
+or low. Now toggling the state means we need to know the current state. If the current state is
+
+1005
+01:13:19,180 --> 01:13:22,560
+low then we can toggle it to high.
+
+1006
+01:13:22,560 --> 01:13:26,659
+If the current state is high we can toggle it
+
+1007
+01:13:26,659 --> 01:13:30,100
+to low. Then how do we get the current state?
+
+1008
+01:13:30,619 --> 01:13:34,520
+We can read the pin number 13 state
+
+1009
+01:13:34,520 --> 01:13:38,460
+digital read. We can read the pin numbers 13
+
+1010
+01:13:38,460 --> 01:13:42,680
+state. LED pin 2 means pin number 30. We can
+
+1011
+01:13:42,680 --> 01:13:46,819
+read using digital read. If that is low
+
+1012
+01:13:46,819 --> 01:13:49,180
+current state is low
+
+1013
+01:13:49,180 --> 01:13:50,460
+not low
+
+1014
+01:13:50,460 --> 01:13:53,239
+it becomes high. Toggle.
+
+1015
+01:13:53,560 --> 01:13:55,539
+If the current state is high
+
+1016
+01:13:55,539 --> 01:13:57,300
+not high
+
+1017
+01:13:57,300 --> 01:13:59,699
+bitwise not operator
+
+1018
+01:13:59,699 --> 01:14:01,319
+not high. That means
+
+1019
+01:14:01,319 --> 01:14:03,399
+low. You can
+
+1020
+01:14:03,399 --> 01:14:05,479
+toggle the pin very easy.
+
+1021
+01:14:05,720 --> 01:14:07,659
+One line. Can you understand
+
+1022
+01:14:07,659 --> 01:14:09,560
+that line? Or else you
+
+1023
+01:14:09,560 --> 01:14:10,840
+can do
+
+1024
+01:14:10,840 --> 01:14:13,560
+the same thing you can do in a
+
+1025
+01:14:13,560 --> 01:14:15,539
+different way. For example
+
+1026
+01:14:15,539 --> 01:14:18,699
+you can declare a variable
+
+1027
+01:14:18,699 --> 01:14:21,899
+called boolean state
+
+1028
+01:14:21,899 --> 01:14:24,739
+false initialize with false
+
+1029
+01:14:24,739 --> 01:14:27,680
+then here you can say state
+
+1030
+01:14:27,680 --> 01:14:30,819
+assignment operator not
+
+1031
+01:14:30,819 --> 01:14:33,819
+state then instead of this particular part
+
+1032
+01:14:33,819 --> 01:14:36,800
+you can write state this is
+
+1033
+01:14:36,800 --> 01:14:39,680
+another way but then you need extra variable
+
+1034
+01:14:39,680 --> 01:14:42,699
+right so here you can see
+
+1035
+01:14:42,699 --> 01:14:45,380
+the default value of the variable is
+
+1036
+01:14:45,380 --> 01:14:47,079
+false and you
+
+1037
+01:14:47,079 --> 01:14:48,239
+get the
+
+1038
+01:14:48,239 --> 01:14:50,800
+negation of that.
+
+1039
+01:14:51,399 --> 01:14:52,760
+False, not false.
+
+1040
+01:14:53,159 --> 01:14:54,000
+That means true.
+
+1041
+01:14:54,760 --> 01:14:57,239
+Then you put true as the
+
+1042
+01:14:57,239 --> 01:14:59,060
+argument
+
+1043
+01:14:59,060 --> 01:15:00,279
+for digital right.
+
+1044
+01:15:00,800 --> 01:15:02,880
+LED you turn on. Next iteration.
+
+1045
+01:15:03,579 --> 01:15:04,659
+State variable
+
+1046
+01:15:04,659 --> 01:15:07,319
+is true.
+
+1047
+01:15:07,319 --> 01:15:09,399
+Not true. False.
+
+1048
+01:15:09,920 --> 01:15:11,560
+You put false as the
+
+1049
+01:15:11,560 --> 01:15:13,319
+argument for digital
+
+1050
+01:15:13,319 --> 01:15:14,920
+right. You turn off the LED.
+
+1051
+01:15:15,380 --> 01:15:24,420
+Now it's one very important thing is false, low, 0, true, high, 1.
+
+1052
+01:15:24,920 --> 01:15:27,220
+Instead of high you can use true or 1.
+
+1053
+01:15:28,159 --> 01:15:30,399
+Instead of low you can use false or 0.
+
+1054
+01:15:30,680 --> 01:15:31,159
+No problem.
+
+1055
+01:15:31,640 --> 01:15:31,819
+Right.
+
+1056
+01:15:32,359 --> 01:15:37,460
+This is another way of writing the same program.
+
+1057
+01:15:38,100 --> 01:15:38,340
+Right.
+
+1058
+01:15:38,340 --> 01:15:42,279
+So we blink the onboard LED every 2 seconds.
+
+1059
+01:15:42,279 --> 01:15:46,380
+Then we need to check whether switch is pressed or not.
+
+1060
+01:15:46,979 --> 01:15:49,619
+If switch is pressed, toggle the other LED.
+
+1061
+01:15:50,119 --> 01:15:52,340
+We check whether switch is pressed or not.
+
+1062
+01:15:52,579 --> 01:15:56,020
+If switch is pressed, this particular part becomes low.
+
+1063
+01:15:56,840 --> 01:16:00,279
+If switch is pressed, the read state, digital read,
+
+1064
+01:16:00,399 --> 01:16:03,340
+when you switch pin, when you read the state, it is low.
+
+1065
+01:16:03,920 --> 01:16:04,560
+Switch is pressed.
+
+1066
+01:16:05,180 --> 01:16:09,300
+You get the negation, not low, high, if condition is true.
+
+1067
+01:16:09,840 --> 01:16:11,020
+That means switch is pressed.
+
+1068
+01:16:11,020 --> 01:16:19,920
+then toggle the other led same way pin number eight read the state of the pin number eight
+
+1069
+01:16:19,920 --> 01:16:29,159
+if the pin number eight state is low make it high toggle if the pin number eight state is high
+
+1070
+01:16:29,159 --> 01:16:37,819
+toggle make it low the other led you can toggle can you understand this arduino code using wrapper
+
+1071
+01:16:37,819 --> 01:16:39,819
+functions. This is also C,
+
+1072
+01:16:39,979 --> 01:16:41,779
+Arduino based on C language,
+
+1073
+01:16:41,899 --> 01:16:43,539
+but we use wrapper functions.
+
+1074
+01:16:43,880 --> 01:16:45,460
+There is no language called Arduino.
+
+1075
+01:16:46,319 --> 01:16:47,060
+This is C,
+
+1076
+01:16:48,000 --> 01:16:49,619
+but we use wrapper functions.
+
+1077
+01:16:49,899 --> 01:16:51,859
+Then we don't need to worry about the registers.
+
+1078
+01:16:52,460 --> 01:16:53,819
+Can you understand? Any question?
+
+1079
+01:16:55,340 --> 01:16:57,060
+If you want to make a code,
+
+1080
+01:16:57,060 --> 01:16:59,060
+if you want to make a code,
+
+1081
+01:16:59,060 --> 01:17:00,680
+if you want to make a variable,
+
+1082
+01:17:00,859 --> 01:17:02,060
+you want to change the state.
+
+1083
+01:17:03,420 --> 01:17:05,060
+If you want to make a code,
+
+1084
+01:17:05,060 --> 01:17:06,060
+you don't want to make a code.
+
+1085
+01:17:06,060 --> 01:17:17,539
+Can you understand?
+
+1086
+01:17:18,880 --> 01:17:21,319
+Shri Anjit, can you understand?
+
+1087
+01:17:22,039 --> 01:17:22,399
+Yes, sir.
+
+1088
+01:17:22,880 --> 01:17:24,119
+Shani, any question?
+
+1089
+01:17:24,920 --> 01:17:25,579
+No, it's fine.
+
+1090
+01:17:26,000 --> 01:17:26,399
+Right.
+
+1091
+01:17:26,880 --> 01:17:28,479
+Now the time is 11 o'clock.
+
+1092
+01:17:28,479 --> 01:17:31,159
+We have the lecture till 12 o'clock.
+
+1093
+01:17:31,380 --> 01:17:33,000
+But now I am going to stop.
+
+1094
+01:17:33,619 --> 01:17:33,899
+Why?
+
+1095
+01:17:34,680 --> 01:17:34,880
+Right?
+
+1096
+01:17:36,060 --> 01:17:38,079
+I stopped the lecture but you can't stop.
+
+1097
+01:17:38,600 --> 01:17:42,800
+I want you to build these two systems.
+
+1098
+01:17:42,800 --> 01:17:45,439
+You have your kit at home.
+
+1099
+01:17:46,000 --> 01:17:49,699
+Using that, build the first, build the hardware.
+
+1100
+01:17:50,680 --> 01:17:56,260
+Then implement the C firmware and try.
+
+1101
+01:17:56,680 --> 01:18:01,140
+Then implement the Arduino firmware using wrapper functions.
+
+1102
+01:18:01,619 --> 01:18:01,859
+Try.
+
+1103
+01:18:01,859 --> 01:18:06,300
+With that experience, only we can proceed.
+
+1104
+01:18:07,420 --> 01:18:12,800
+When you build and try these two systems using Arduino as well as C,
+
+1105
+01:18:13,239 --> 01:18:15,180
+the functionality is almost the same.
+
+1106
+01:18:15,579 --> 01:18:17,880
+Only difference is Arduino implementation.
+
+1107
+01:18:18,479 --> 01:18:25,319
+It takes more than 1100 bytes from the source code size.
+
+1108
+01:18:25,859 --> 01:18:28,979
+But the C program is just 180 bytes.
+
+1109
+01:18:28,979 --> 01:18:33,100
+180 you can compare with more than 1100.
+
+1110
+01:18:33,899 --> 01:18:35,060
+So huge difference.
+
+1111
+01:18:36,060 --> 01:18:39,140
+The performance wise also there is a huge difference.
+
+1112
+01:18:40,039 --> 01:18:42,640
+Other than that functionality wise same.
+
+1113
+01:18:43,640 --> 01:18:45,640
+Implement these two systems.
+
+1114
+01:18:46,060 --> 01:18:46,699
+Try them.
+
+1115
+01:18:47,100 --> 01:18:53,319
+When you try them you will realize the problem that Tilina pointed out.
+
+1116
+01:18:53,819 --> 01:18:57,739
+During the delay if you press and release the button.
+
+1117
+01:18:57,739 --> 01:19:00,840
+your input will go undetected.
+
+1118
+01:19:01,479 --> 01:19:03,279
+Your input will go undetected.
+
+1119
+01:19:03,680 --> 01:19:05,119
+To solve that problem
+
+1120
+01:19:05,119 --> 01:19:07,319
+what you can do is
+
+1121
+01:19:07,319 --> 01:19:09,260
+the monitoring interval
+
+1122
+01:19:09,260 --> 01:19:10,640
+you can reduce.
+
+1123
+01:19:11,260 --> 01:19:14,000
+So very frequently
+
+1124
+01:19:14,000 --> 01:19:15,859
+monitor the switch state.
+
+1125
+01:19:16,520 --> 01:19:17,800
+If you take long
+
+1126
+01:19:17,800 --> 01:19:19,500
+time duration to monitor
+
+1127
+01:19:19,500 --> 01:19:22,079
+then your input will go undetected.
+
+1128
+01:19:22,439 --> 01:19:23,760
+If you check whether the nappy
+
+1129
+01:19:23,760 --> 01:19:25,680
+is wet or not every one hour
+
+1130
+01:19:25,680 --> 01:19:30,140
+the nappy can be wet and it can go, it can get
+
+1131
+01:19:30,140 --> 01:19:34,319
+dry within the one hour. You will not notice that.
+
+1132
+01:19:35,359 --> 01:19:38,300
+But if you, every five minutes if you
+
+1133
+01:19:38,300 --> 01:19:41,979
+check whether nappy is wet or not, then you can detect
+
+1134
+01:19:41,979 --> 01:19:46,439
+whether nappy is wet. You won't miss the event.
+
+1135
+01:19:47,340 --> 01:19:50,140
+So you can understand these
+
+1136
+01:19:50,140 --> 01:19:53,760
+the strengths and weaknesses of bowling
+
+1137
+01:19:53,760 --> 01:19:56,260
+when you implement these two
+
+1138
+01:19:56,260 --> 01:19:58,079
+firmware and try.
+
+1139
+01:19:58,600 --> 01:20:00,220
+For that, I will give you one
+
+1140
+01:20:00,220 --> 01:20:02,399
+hour, 11 to 12.
+
+1141
+01:20:03,340 --> 01:20:04,239
+And then have
+
+1142
+01:20:04,239 --> 01:20:04,880
+your lunch.
+
+1143
+01:20:05,920 --> 01:20:08,180
+We will meet again at 1 o'clock.
+
+1144
+01:20:08,659 --> 01:20:09,899
+Right. Before you leave,
+
+1145
+01:20:10,960 --> 01:20:11,739
+any question?
+
+1146
+01:20:12,420 --> 01:20:13,279
+Is there any questions?
+
+1147
+01:20:14,560 --> 01:20:15,840
+Is there any questions?
+
+1148
+01:20:16,579 --> 01:20:17,140
+Is there any questions?
+
+1149
+01:20:17,479 --> 01:20:17,920
+Right.
+
+1150
+01:20:19,760 --> 01:20:22,000
+Then develop
+
+1151
+01:20:22,000 --> 01:20:24,539
+the system and try it.
+
+1152
+01:20:25,319 --> 01:20:26,779
+Right. Increase the
+
+1153
+01:20:26,779 --> 01:20:28,760
+monitoring duration
+
+1154
+01:20:28,760 --> 01:20:30,619
+from 2 seconds to
+
+1155
+01:20:30,619 --> 01:20:32,640
+5 seconds. See
+
+1156
+01:20:32,640 --> 01:20:34,859
+what happens. Decrease
+
+1157
+01:20:34,859 --> 01:20:36,600
+the monitoring duration from
+
+1158
+01:20:36,600 --> 01:20:38,779
+2 seconds to half a second.
+
+1159
+01:20:39,720 --> 01:20:40,760
+See what happens.
+
+1160
+01:20:41,260 --> 01:20:42,020
+Experiment.
+
+1161
+01:20:42,779 --> 01:20:44,340
+With that experience,
+
+1162
+01:20:44,340 --> 01:20:46,239
+we'll meet at 1 o'clock.
+
+1163
+01:20:46,800 --> 01:20:47,979
+Okay. Right.
+
+1164
+01:20:48,359 --> 01:20:50,359
+So, we'll meet at
+
+1165
+01:20:50,359 --> 01:20:51,579
+1 o'clock. Thank you.
+
+1166
+01:20:52,000 --> 01:20:52,500
+Thank you.
+

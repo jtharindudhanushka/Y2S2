@@ -1,0 +1,188 @@
+[0:00] for a given timer.
+[0:02] Timer 0, timer 1,
+[0:04] timer 2.
+[0:05] Right.
+[0:06] And in the TCCRB register,
+[0:10] there are three important bits.
+[0:13] Bit 0, bit 1, bit 2.
+[0:15] Those are called CS bits
+[0:18] or clock select bits.
+[0:21] Clock select bits.
+[0:23] Now using these clock select bits,
+[0:25] we can select the clock source
+[0:27] and also the pre-scale.
+[0:31] If you set all three bits to zero,
+[0:33] that means you disconnect the timer from any clock source.
+[0:38] This value is very important if you want to stop counting.
+[0:41] You immediately set these three bits to zero
+[0:44] and stop counting,
+[0:46] then you can get the existing value of the TCNT register.
+[0:51] If you set 1 internal oscillator at the full speed frequency of CPU, full speed you connect the internal oscillator to the timer.
+[1:04] If you set 2 internal oscillator CPU frequency you divide by 8, the prescaler is 8, then you connect to the timer.
+[1:14] If it is 3, you divide by 64.
+[1:18] If it is 4, divide by 256.
+[1:22] 5024.
+[1:24] All these settings, you connect the internal clock to the timer.
+[1:34] Internal clock zone.
+[1:36] And last two are for external clock zone.
+[1:39] If these are the settings you set for the CS bits,
+[1:41] use the clock source is external
+[1:45] on the TN pin. T0 for timer 0,
+[1:50] T1 for timer 1, T2 for timer 2. Whatever the clock source
+[1:54] connected to TN pin, timer pin. And the
+[1:58] timer counts on the falling edge of
+[2:02] the pulse. The timer counts on the falling edge of the pulse. That means
+[2:06] if this is the pulse on the falling edge timer counts.
+[2:10] And the next setting, right, external clock source connected to the end pin time accounts on the rising edge.
+[2:20] On the rising edge.
+[2:21] Rising edge of the pulse.
+[2:23] Is that clear?
+[2:24] Now what is the importance of this falling edge, rising edge?
+[2:28] Now let's say you want to call.
+[2:30] Yes.
+[2:31] Yeah.
+[2:32] Yes.
+[2:33] That's your question.
+[2:34] Sir, don't we want to slow down the external thing?
+[2:39] Slow down what? Slow down what?
+[2:42] Clock source from the external.
+[2:44] No. There is no
+[2:46] prescaler for slow downing
+[2:48] external clock source.
+[2:50] Normally,
+[2:51] compared to the frequency
+[2:54] of CPU,
+[2:56] all external clock sources are very slow.
+[2:59] All external clock sources
+[3:00] are very slow.
+[3:02] Right? Compared to the frequency
+[3:04] of CPU. So there is no need.
+[3:06] Right. Now let's say
+[3:08] you want to count
+[3:11] number of button pressers.
+[3:13] When you press the button
+[3:15] every time you want to count.
+[3:17] You can use
+[3:18] Falling Edge. Press
+[3:20] High to Low.
+[3:22] You have pull up the pin
+[3:24] and when you press the button, the pin
+[3:27] becomes low.
+[3:28] Falling Edge. And you want
+[3:31] to count number of
+[3:33] button releases.
+[3:35] Not the pressers, button releases.
+[3:37] How many button releases?
+[3:38] Then, when you press the button, the pin becomes low.
+[3:42] But when you release the button, the pin becomes high.
+[3:45] Because you have pulled up the pin.
+[3:48] Rising H.
+[3:49] Based on that, you can count whether the number of button presses or releases.
+[3:55] That's one example.
+[3:57] Any more questions?
+[3:59] All right.
+[3:59] TC and T register.
+[4:02] Increments at every clock pulse.
+[4:04] This register is increments at every clock pulse.
+[4:07] If the timer is an 8 bit timer, this register can count from 0 to 255 then overflows.
+[4:14] Overflows to 0 and starts again.
+[4:17] If the timer is an 8 bit timer, this register can count from 0 to 255.
+[4:22] Then it overflows to 0 and starts again.
+[4:25] If the timer is a 16 bit timer, right.
+[4:28] If it is a 16 bit timer, this register can count from 0 to what is the maximum value?
+[4:36] 0 to 2 to the power 16 minus 1.
+[4:42] That means 0 to 65,535.
+[4:48] And then overflows and starts again.
+[4:51] If the timer is a 16 bit timer.
+[4:56] If the timer is a 16 bit timer.
+[4:59] The register can count from 0 to 65,535.
+[5:04] and then overflows and starts again.
+[5:08] Right. Counts to maximum, overflows and starts again.
+[5:12] Use to set the start count and also to get the end count.
+[5:17] Now so far we discussed about the end count.
+[5:21] But this register we can use to set the start count as well.
+[5:26] Now for example if you want to count 5 types,
+[5:30] timer 0, let's say you want to count 5 types
+[5:33] and you use timer 0.
+[5:35] Timer 0 is 8 bit.
+[5:37] So what you do is
+[5:39] you set the
+[5:40] TCNT register to
+[5:43] 251.
+[5:46] Right. Then you
+[5:47] start counting. Then start.
+[5:50] Every clock pulse
+[5:51] the timer counter register increments.
+[5:54] It increments to
+[5:55] 252.
+[5:58] Then it increments to
+[5:59] 253. The next clock
+[6:02] pulse. Then it is to
+[6:03] 2, 5, 4.
+[6:06] And then
+[6:07] 2, 5, 5.
+[6:09] High money clock pulses. 1, 2,
+[6:12] 3, 4. We want to
+[6:13] 5 times count. Then it
+[6:16] overflows to 0.
+[6:17] When it overflows,
+[6:19] right, when it overflows,
+[6:21] TOV bit
+[6:23] is set. Right.
+[6:26] So we keep
+[6:27] eye on this bit. If the
+[6:29] bit is set,
+[6:30] That means how many pulses?
+[6:33] 5 pulses.
+[6:35] 5 times count.
+[6:36] So by setting initial value,
+[6:40] the number of times you want to count,
+[6:45] you can specify.
+[6:47] Is that clear?
+[6:48] Right?
+[6:49] You want to count 5 times.
+[6:51] You set the initial value of the register 251.
+[6:55] Then you connect the clock source.
+[6:57] Start means, right?
+[6:59] Connect clock source to T0.
+[7:05] Then every clock pass.
+[7:07] The T0 counts.
+[7:08] 252, 253, 254, 255.
+[7:13] Then 0 overflow.
+[7:15] When overflow happens, this bit is set.
+[7:17] That means how many times counted?
+[7:21] Five times count.
+[7:23] Now if you want to stop the timer,
+[7:25] disconnect clock source.
+[7:27] Disconnect clock source.
+[7:28] When this bit is set, when the TOV bit is set, disconnect the clock source.
+[7:34] 5 times counter, disconnected.
+[7:36] You want to let 5 people to enter into the room, only 5.
+[7:41] This is the way you set, you set the TNCD register 251.
+[7:47] The first person entered into the room, the beam, crossing the beam, IR beam, the counter becomes 252.
+[7:55] Second person entered crossing the beam
+[7:58] TCNT register counts
+[8:00] 253
+[8:01] The third person entered into the room crossing the IR beam
+[8:04] TCNT register counts
+[8:06] 254
+[8:07] The fourth person enters into the room crossing the IR beam
+[8:11] The count is 255
+[8:13] Then the fifth person entered into the room
+[8:16] TCNT overflows to 0
+[8:18] Right
+[8:19] Tov
+[8:20] Time overflow bit is set
+[8:23] As soon as TOEBIT is set, we disconnect the plug source to the timer and lock the door.
+[8:30] Maximum 5 people entered into the room.
+[8:33] Is that clear?
+[8:35] When the TOEBIT is set, you lock the door.
+[8:38] Thelina?
+[8:38] Yes, sir.
+[8:39] Any question?
+[8:41] Right.
+[8:41] That is about TC and T register.
+[8:44] If you want to count more, you can use a 16-bit timer.
+[8:48] Then your age is 0 to 65,535.
+[8:52] 5. TIFR register, time interrupt
+[8:56] flag register of timer n.

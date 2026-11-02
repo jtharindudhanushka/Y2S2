@@ -1,0 +1,169 @@
+[0:01] Now we can use this interrupt to read the new character.
+[0:04] We can use this interrupt to read the new character.
+[0:09] Okay.
+[0:09] Let's handle that interrupt.
+[0:11] Handle receive complete interrupt.
+[0:13] Right.
+[0:14] Read from data register to array.
+[0:17] Data register is the UDR.
+[0:18] Read the character from data registers to middle element of the array.
+[0:23] Then disable receive complete interrupt.
+[0:27] Now disable the receive complete interrupt because if you get another character, you don't have space in the array to load.
+[0:34] You need to transmit the received character first before you get the second character.
+[0:41] So we disable the receive complete interrupt.
+[0:44] By doing that, we force the serial port to hold the next character in the serial buffer.
+[0:52] So if there is another character coming in, now we disable the interrupt so that serial port has to hold it in the serial buffer.
+[1:01] The idea is when you got a character, first you have to transmit it with the scrub records.
+[1:07] Then you can receive the second character.
+[1:09] So we disable receive complete interrupt.
+[1:12] And we enable data register empty interrupt.
+[1:16] That is for transmitting.
+[1:19] Data register empty interrupt.
+[1:20] Right.
+[1:21] UDRE interrupt.
+[1:25] USART data register empty interrupt
+[1:27] V enable. Then we need to transmit.
+[1:30] If the data register UDR is empty
+[1:34] then this interrupt ISR
+[1:37] is automatically executed.
+[1:40] Data register empty interrupt. If the data register UDR is empty
+[1:44] this ISR is automatically called.
+[1:47] In that ISR, we write the value from array to data register.
+[1:54] From array to data register UDR, we write the value.
+[1:58] So array index is 0, initialize with 0.
+[2:03] So first element, value in the first element, we write to the data register.
+[2:08] Then we increment the array index.
+[2:10] So array index becomes 1.
+[2:12] Then we check whether entire enclosed character.
+[2:15] that means all three
+[2:17] elements transmitted.
+[2:20] If no,
+[2:22] write, we exit.
+[2:23] So again, when the data
+[2:26] register is empty,
+[2:28] this ISR
+[2:30] is called. The second
+[2:32] character we write to the data
+[2:33] register. Increment the index.
+[2:36] Index becomes 2.
+[2:38] Check whether entire
+[2:40] enclosed character written.
+[2:42] No. Exit.
+[2:43] When UDR
+[2:44] isr becomes empty. This isr is again called. Write the third element value into the data
+[2:55] register. Increment the index. Index becomes 3. Check whether entire enclose character
+[3:02] written. Yes. If so, reset the array index to 0. Disable the data register empty interrupt.
+[3:09] So this interrupt we disable.
+[3:13] Enable the receive complete interrupt.
+[3:16] Enable this.
+[3:17] Can you understand?
+[3:18] Any question?
+[3:21] Right.
+[3:22] If so, let's move into source code.
+[3:24] Right.
+[3:25] We use ior.h header file for ior definitions.
+[3:28] Interrupt.h header file because we are using interrupt proteins.
+[3:33] Right.
+[3:33] Declare char array.
+[3:36] Initialize the char array.
+[3:37] First element with open square bracket.
+[3:40] Second element with closing square bracket.
+[3:43] Middle element with just a space.
+[3:46] Declare array index as a global volatile variable.
+[3:50] Because we are going to use this variable in the interrupt service routines.
+[3:56] And initialize that with zero.
+[3:58] Array index.
+[3:59] Set the UBRR with the relevant value to get the 9600 BPS.
+[4:06] 103%. Specify the character size as 8 bits.
+[4:11] Enable receiver and transmit. Enable receive
+[4:14] complete interrupt. Enable receive complete
+[4:18] interrupt. This is the bit to enable receive complete interrupt in the
+[4:22] USART control and status register bit. Enable
+[4:27] global interrupt using set interrupt function. Then
+[4:30] endless loop. In this example we don't have anything
+[4:34] any other task to do. So endless loop is empty.
+[4:39] But you could use this to do some other task.
+[4:44] Right. In this example, we don't have other tasks. So we can keep it empty.
+[4:47] But because now everything is handled by interrupts, so you can use
+[4:52] the main loop to do something else, some computational task.
+[4:56] This is the receive complete interrupt. When the data receive
+[5:00] operation is over, this ISR is automatically executed.
+[5:04] receive complete interrupt. In the receive complete interrupt, we assign the value, the new character in the UDR to the middle element of the array.
+[5:14] Middle element of the array. Then we disable receive complete interrupts. This is the bit to disable, so we set it 0.
+[5:24] disable the receive complete interrupt
+[5:27] enable
+[5:29] data register empty interrupt
+[5:31] data register empty interrupt
+[5:33] for transmission
+[5:34] enable
+[5:35] when the data register is empty
+[5:38] this ISR is automatically called
+[5:41] data register
+[5:43] UDR empty
+[5:44] interrupt vector
+[5:46] USAT UDR empty
+[5:49] interrupt vector
+[5:50] this is automatically called
+[5:52] in that
+[5:53] the value in the array
+[5:55] we assign to UDR.
+[5:58] So i is 0
+[5:59] initially.
+[6:01] So we assign the value
+[6:03] the first element value that is the
+[6:05] opening scar bracket
+[6:07] to UDR for transmission.
+[6:09] Then we increment
+[6:11] i by 1.
+[6:13] So post fix operator
+[6:15] now if you look at this statement
+[6:17] there are several
+[6:19] operations. One is the assignment
+[6:21] operation. Another
+[6:23] operation is the increment operation. Now increment operation is a post fix operation. So assignment
+[6:30] happens first. Then only the increment happens. So if I is 0, CH 0, our first element value,
+[6:39] that is the opening square bracket which is assigned to the UDR and then only the I is
+[6:45] incremented from 0 to 1. Then using if condition
+[6:49] we check whether i equals 3. If i equals 3
+[6:53] that means we have assigned all values in the
+[6:57] array to the UDR because the
+[7:01] last element index is 2. If i has become 3
+[7:05] means you have assigned the value in the last element also.
+[7:10] So by checking whether i equals 3
+[7:13] we can make sure the entire enclosed character
+[7:17] has been transmitted. Then if so,
+[7:21] initialize, set the i array index, reset
+[7:25] the array index to 0. Right? Reset the array
+[7:29] index to 0. Then we disable
+[7:33] data register empty interrupt and enable receive complete interrupt.
+[7:38] Right? We disable data register empty interrupt
+[7:41] and enable receive
+[7:43] complete in turn.
+[7:45] So this ISR is automatically
+[7:47] executed when
+[7:48] data register becomes
+[7:51] empty. This ISR is
+[7:53] automatically executed when
+[7:55] receive complete
+[7:57] operation is over.
+[8:00] Can you understand this
+[8:01] source code? Could you please give
+[8:03] me five minutes?
+[8:04] I need
+[8:06] to do something else.
+[8:08] I will come back in five minutes.
+[8:09] right okay any question no right if so the same program using label constant same one with label
+[8:23] cost right so more understandable because you can see right all the bit names right for example here
+[8:34] RxEn. Receiver
+[8:37] enable bit. Transmitter
+[8:39] enable bit.
+[8:41] Receiver complete
+[8:43] interrupt enable.
+[8:44] RxCIE. Receiver
+[8:46] complete interrupt enable. So
+[8:48] these things more
+[8:50] understandable.
+[8:52] Okay. With that we come to
+[8:55] end of serial communication.
+[8:57] So now you know that how to send
+[8:59] data, how to receive data

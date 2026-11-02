@@ -1,0 +1,6392 @@
+1
+00:00:00,000 --> 00:00:18,000
+Right. Can you see the slides? Yes, sir. Right. Then let's start. Now, today we are going to develop another system to learn how to use analog to digital conversion.
+
+2
+00:00:18,000 --> 00:00:37,600
+But before that, let's quickly refresh our knowledge. Now, our input is a continuous analog voltage. So, we say VIN and we feed that to analog to digital converter.
+
+3
+00:00:37,600 --> 00:00:59,380
+An analog digital converter converts this analog input voltage into a discrete number. Now this number is available in ADCW register. ADC word register, this number is available.
+
+4
+00:00:59,380 --> 00:01:17,959
+And now we want to know this voltage. This is what we want to know. We have this discrete number. We multiply the discrete number by reference voltage and divided by total number of steps.
+
+5
+00:01:17,959 --> 00:01:34,159
+Actually, more correctly we can say ADC converts analog input voltage into discrete steps, which gives us the analog input voltage VIN.
+
+6
+00:01:34,159 --> 00:01:42,719
+This reference voltage is for our microcontroller ATmega3285 by default it is 5 volts.
+
+7
+00:01:43,500 --> 00:01:51,459
+And because our ADC is a 10 bit ADC total number of steps is 1023 sorry 1024.
+
+8
+00:01:51,459 --> 00:01:55,159
+That means 2 to the power resolution.
+
+9
+00:01:55,159 --> 00:02:08,120
+And ADCW will give you discrete number of steps that represents the analog input voltage which is between 0 and 1023.
+
+10
+00:02:08,639 --> 00:02:13,159
+This equation will give us this analog input voltage.
+
+11
+00:02:14,180 --> 00:02:14,900
+Is that clear?
+
+12
+00:02:15,560 --> 00:02:17,379
+Before we move further.
+
+13
+00:02:19,139 --> 00:02:20,419
+Any question?
+
+14
+00:02:20,419 --> 00:02:21,340
+Okay.
+
+15
+00:02:21,759 --> 00:02:25,120
+Now the system that we are going to develop.
+
+16
+00:02:25,159 --> 00:02:46,819
+It's a voltmeter. It can measure and display any voltage between 0 and 5 volts with a set of LEDs. It can measure any voltage between 0 and 5 volts and display the output using a set of LEDs.
+
+17
+00:02:46,819 --> 00:02:52,139
+Now, any voltage, that means analog.
+
+18
+00:02:53,319 --> 00:03:04,180
+It could be 1 volt, it could be 2 volts, it could be 2.35, it could be 3.147, any voltage between 0 to 5.
+
+19
+00:03:04,960 --> 00:03:11,759
+So, that variation of input is continuous between 0 to 5, a continuous variation.
+
+20
+00:03:12,400 --> 00:03:14,020
+That's why you get any voltage.
+
+21
+00:03:14,020 --> 00:03:24,580
+right. So, you can have 3.147589 so many many decimal places right. So, it's a any voltage
+
+22
+00:03:24,580 --> 00:03:36,139
+between 0 to 5. Then we that is the input this is our input. Then output right. So,
+
+23
+00:03:36,139 --> 00:03:39,400
+we give the output using set of LEDs.
+
+24
+00:03:39,900 --> 00:03:41,520
+Set of LEDs.
+
+25
+00:03:44,199 --> 00:03:44,919
+Right.
+
+26
+00:03:45,919 --> 00:03:47,659
+You know that LED
+
+27
+00:03:47,659 --> 00:03:50,860
+is a digital device.
+
+28
+00:03:51,759 --> 00:03:54,259
+You can either turn on or turn off.
+
+29
+00:03:54,719 --> 00:03:57,719
+That means output is digital. Using set of LEDs
+
+30
+00:03:57,719 --> 00:04:01,080
+you can give the output. You can measure this voltage,
+
+31
+00:04:01,080 --> 00:04:03,240
+input voltage and give it
+
+32
+00:04:03,240 --> 00:04:14,020
+display that voltage using set of LEDs. LEDs are digital. On, off. Discrete output. Output is
+
+33
+00:04:14,020 --> 00:04:26,959
+discrete. Digital. So, we need ADC. Can you understand? Okay. Right. If so, let's move on.
+
+34
+00:04:26,959 --> 00:04:50,779
+Right. First we should know the ADC pinout of our microcontroller. So we can find out that from data sheet. Right. Now here this microcontroller, this particular microcontroller, right, has one ADC, one ADC peripheral device.
+
+35
+00:04:50,779 --> 00:05:18,920
+That peripheral device has six channels. That means six input channels this ADC device inside this microcontroller has. And that ADC device is a 10-bit ADC peripheral. And that ADC device, that peripheral device shares its inputs with general purpose input output bits.
+
+36
+00:05:18,920 --> 00:05:24,319
+So port C is multiplex, right?
+
+37
+00:05:24,500 --> 00:05:27,819
+Port C for general purpose IO, input output.
+
+38
+00:05:28,339 --> 00:05:36,899
+And the same port C we use for analog to digital conversion inputs, ADC inputs.
+
+39
+00:05:37,279 --> 00:05:46,160
+So we share the same port C for GPIO, general purpose input output, as well as for ADC.
+
+40
+00:05:46,160 --> 00:06:11,199
+So, these are the six channels of ADC. One, two, three, four, five, six, six channels. So, six input channels, 10-bit ADC inside this microcontroller. Right. Out of these six channels, so you have to keep in your mind, you can use only one channel at a time. At a time, only one channel. Right.
+
+41
+00:06:11,199 --> 00:06:38,699
+So you can use multiple channels. First you have to use one channel, thereafter the second channel. Not multiple channels at the same time. Right. So you have six channels. Any question? Yes. Right. You have six channels in the ADC peripheral device. These six channels are shared with general purpose IEO pills of port C. Right.
+
+42
+00:06:38,699 --> 00:06:43,699
+Sir, why can't you step-pots in the same time?
+
+43
+00:06:43,699 --> 00:06:46,699
+No, I couldn't get your answer.
+
+44
+00:06:46,699 --> 00:06:47,699
+Question.
+
+45
+00:06:47,699 --> 00:06:50,699
+So that you told the analog pins,
+
+46
+00:06:50,699 --> 00:06:54,699
+we can use one pin at once.
+
+47
+00:06:54,699 --> 00:06:55,699
+Yes.
+
+48
+00:06:55,699 --> 00:06:59,699
+Why can't you use...
+
+49
+00:06:59,699 --> 00:07:01,699
+Right.
+
+50
+00:07:01,699 --> 00:07:04,699
+You mean we have six channel ADC.
+
+51
+00:07:04,699 --> 00:07:09,540
+why can't use multiple channels, ADC channels at the same time?
+
+52
+00:07:09,920 --> 00:07:10,180
+Yes.
+
+53
+00:07:10,720 --> 00:07:13,899
+The reason is we have one ADC peripheral device.
+
+54
+00:07:14,399 --> 00:07:16,899
+The one analog digital converter we have.
+
+55
+00:07:16,980 --> 00:07:24,240
+The converter can convert one input to some digital output at a time.
+
+56
+00:07:24,899 --> 00:07:27,819
+After that, another input it can convert.
+
+57
+00:07:28,040 --> 00:07:29,240
+We have only one ADC.
+
+58
+00:07:29,800 --> 00:07:32,420
+If you have multiple ADCs, some microcontrollers,
+
+59
+00:07:32,420 --> 00:07:34,220
+there are multiple ADCs.
+
+60
+00:07:34,220 --> 00:07:47,360
+Then you can use multiple channels to get the multiple ADCs you can use to get converted inputs coming from multiple channels at the same time.
+
+61
+00:07:48,180 --> 00:07:49,139
+Yes, I understand.
+
+62
+00:07:49,579 --> 00:07:49,920
+Right.
+
+63
+00:07:50,259 --> 00:07:50,839
+Thank you.
+
+64
+00:07:50,839 --> 00:08:00,360
+And the other thing is when you are using ADC, your input channels, your input pins are ADC input channels.
+
+65
+00:08:01,079 --> 00:08:05,339
+Your input pins are ADC input channels when you are using ADC.
+
+66
+00:08:05,939 --> 00:08:10,040
+At that time, you can't use them as general purpose input output pins.
+
+67
+00:08:10,519 --> 00:08:13,180
+General purpose GPIO, you can't use them.
+
+68
+00:08:13,180 --> 00:08:20,259
+Because you share the same set of pins with GPIO as well as for ADC.
+
+69
+00:08:20,259 --> 00:08:24,879
+When you are using them as for ADC, you can't use them for GPIO.
+
+70
+00:08:25,079 --> 00:08:28,579
+When you are using them for GPIO, you can't use them for ADC.
+
+71
+00:08:29,920 --> 00:08:32,559
+Because general purpose input output pins are digital.
+
+72
+00:08:33,299 --> 00:08:35,019
+So we can multiplex that.
+
+73
+00:08:35,600 --> 00:08:38,299
+That's what we discuss under input multiplexing.
+
+74
+00:08:38,659 --> 00:08:44,759
+So we discuss some registers where you can specify which ADC channel you are going to use.
+
+75
+00:08:45,419 --> 00:08:47,059
+That's input multiplexing.
+
+76
+00:08:47,059 --> 00:08:56,440
+Okay, now we need to talk about another sensor, another external peripheral device.
+
+77
+00:08:56,980 --> 00:08:58,659
+Potentiometer, right.
+
+78
+00:08:58,659 --> 00:09:11,019
+So, we call this device potentiometer because it can measure, it can meter the potential of electrical energy.
+
+79
+00:09:11,460 --> 00:09:14,919
+The potential of electrical energy it can use to measure.
+
+80
+00:09:14,919 --> 00:09:18,200
+Potential of electrical energy is the voltage.
+
+81
+00:09:18,759 --> 00:09:22,360
+So we can use this to meter voltage.
+
+82
+00:09:22,620 --> 00:09:23,940
+Voltage difference.
+
+83
+00:09:24,799 --> 00:09:26,600
+That's why we call it potential meter.
+
+84
+00:09:27,080 --> 00:09:27,279
+Right.
+
+85
+00:09:27,419 --> 00:09:29,019
+So it's a very simple device.
+
+86
+00:09:29,919 --> 00:09:30,220
+Right.
+
+87
+00:09:30,620 --> 00:09:32,679
+So this is a variable resistor.
+
+88
+00:09:33,039 --> 00:09:34,740
+This is a variable resistor.
+
+89
+00:09:34,740 --> 00:09:42,259
+When you turn this resistor, this knob, when you turn, you can change the resistance of this device.
+
+90
+00:09:42,679 --> 00:09:44,799
+And it has three pins usually.
+
+91
+00:09:44,919 --> 00:09:53,779
+and let's say we connected one pin to the 5 volt, the other pin to the ground and from the middle pin
+
+92
+00:09:53,779 --> 00:10:06,100
+we can get a voltage between 0 and 5. Ground is 0, 5 volt is 5, 0 to 5 voltage you can get from V in.
+
+93
+00:10:06,100 --> 00:10:18,159
+when you turn, when you rotate this potentiometer. So, it converts rotation around an axis.
+
+94
+00:10:18,159 --> 00:10:26,480
+So, there is an axis in this potentiometer, rotation around an axis. Rotation around an
+
+95
+00:10:26,480 --> 00:10:33,080
+axis is the kinetic energy. Any rotation, it is a kinetic energy, right? So, you can
+
+96
+00:10:33,080 --> 00:10:45,100
+convert using this device rotation around an axis into an analog voltage. So, analog voltage is
+
+97
+00:10:45,100 --> 00:10:51,899
+electrical energy. So, the rotation you can rotation around an axis you can get converted
+
+98
+00:10:51,899 --> 00:11:00,200
+into an analog voltage. So, kinetic energy is converted into electrical energy. Inside
+
+99
+00:11:00,200 --> 00:11:09,100
+the potentiometer, you have a wiper. The green color one is the wiper, right? And this wiper
+
+100
+00:11:09,100 --> 00:11:18,320
+rotates on electrically resistive path, a circular electrically resistive path.
+
+101
+00:11:19,139 --> 00:11:25,860
+The black color one is the electrically resistive circular path. So, wiper rotates on that path,
+
+102
+00:11:25,860 --> 00:11:38,019
+Right. Now, let's assume you rotated the viper, you rotated this potentiometer clockwise to its end.
+
+103
+00:11:38,580 --> 00:11:41,340
+The clockwise when you rotate it to its end.
+
+104
+00:11:41,960 --> 00:11:52,519
+Right. Now, tell me what is the voltage at V in when you rotate the potentiometer clockwise to its end.
+
+105
+00:11:53,080 --> 00:11:53,700
+You tell me.
+
+106
+00:11:53,700 --> 00:11:55,080
+Plus 5 volts.
+
+107
+00:11:55,080 --> 00:12:02,539
+5 volts, yes, correct. Because then the viper, when you rotate the potentiometer clockwise to its end,
+
+108
+00:12:03,259 --> 00:12:09,480
+viper goes to the 5 volts place. So, the V in would be 5 volts, right.
+
+109
+00:12:09,840 --> 00:12:16,580
+Similarly, when you rotate the potentiometer anticlockwise to its end,
+
+110
+00:12:17,000 --> 00:12:23,620
+then V in would be 0 volts because viper goes to ground end.
+
+111
+00:12:23,620 --> 00:12:36,179
+So, when you rotate potentiometer, the V in voltage would be changed continuously between 0 and 5.
+
+112
+00:12:36,799 --> 00:12:36,919
+Right?
+
+113
+00:12:37,220 --> 00:12:47,500
+So, the voltage, V in voltage would be changed continuously 0 and 5 when you rotate the potentiometer clockwise and anticlockwise.
+
+114
+00:12:47,700 --> 00:12:49,620
+So, that variation is continuous.
+
+115
+00:12:50,840 --> 00:12:51,080
+Why?
+
+116
+00:12:51,080 --> 00:12:53,139
+The rotation is continuous.
+
+117
+00:12:53,620 --> 00:12:54,960
+Rotation is not discrete.
+
+118
+00:12:54,960 --> 00:12:57,120
+It's very smooth rotation.
+
+119
+00:12:57,919 --> 00:13:04,580
+So voltage variation between 0 to 5 at V in is continuous.
+
+120
+00:13:04,899 --> 00:13:06,440
+So analog voltage.
+
+121
+00:13:07,200 --> 00:13:07,360
+Right.
+
+122
+00:13:07,940 --> 00:13:09,960
+Then applications of the potentiometer.
+
+123
+00:13:11,080 --> 00:13:11,279
+Right.
+
+124
+00:13:11,899 --> 00:13:17,019
+So we all know these potentiometers are widely used for volume control in audio equipment.
+
+125
+00:13:17,480 --> 00:13:21,340
+And they are using light dimmers to dim the lights.
+
+126
+00:13:21,340 --> 00:13:31,039
+And also, right, they are used in more advanced applications like electric and hybrid cars.
+
+127
+00:13:31,559 --> 00:13:42,100
+In electric and hybrid cars, the accelerator pedal, when you press, then you can accelerate and go move the vehicle.
+
+128
+00:13:42,700 --> 00:13:51,240
+When you press and release the pedal, behind the scene what happens is you are rotating a potentiometer, right?
+
+129
+00:13:51,340 --> 00:13:55,460
+That pedal is attached to a potentiometer.
+
+130
+00:13:56,399 --> 00:14:01,399
+When you press and release, what actually happens is you are rotating a potentiometer.
+
+131
+00:14:02,059 --> 00:14:10,360
+So when you rotate the potentiometer for the V in, you get a voltage between 0 and 5.
+
+132
+00:14:10,360 --> 00:14:12,879
+It's a continuous input voltage.
+
+133
+00:14:13,659 --> 00:14:16,740
+So this is the symbol in a schematic diagrams.
+
+134
+00:14:17,620 --> 00:14:24,820
+right? So, V in you can move up and down. When you move it, move up, you get 5 volts. When you move
+
+135
+00:14:24,820 --> 00:14:32,340
+down V in, you get this arrow, you move down, you get zero. So, when you move V in, you get
+
+136
+00:14:32,340 --> 00:14:41,139
+a voltage between 0, 2 and 5, a continuous variation, right? Now, if viper is between,
+
+137
+00:14:41,139 --> 00:14:46,200
+its wiper is at somewhere between 5 volts and ground.
+
+138
+00:14:46,200 --> 00:14:50,799
+Like this particular instance.
+
+139
+00:14:51,500 --> 00:14:53,879
+Wiper is between 5 volts and ground.
+
+140
+00:14:54,600 --> 00:14:58,940
+Then this creates two resistors.
+
+141
+00:14:59,600 --> 00:15:02,279
+The potentiometer creates two resistors.
+
+142
+00:15:02,580 --> 00:15:05,860
+R1 between 5 volts and the wiper, R1.
+
+143
+00:15:06,460 --> 00:15:09,379
+Between wiper and the ground, R2.
+
+144
+00:15:09,379 --> 00:15:17,639
+So, it creates a voltage divider. At this moment, it has created a voltage divider.
+
+145
+00:15:18,200 --> 00:15:27,200
+And when you rotate the potentiometer R1 and R2, they change, right? If you rotate the potentiometer
+
+146
+00:15:27,200 --> 00:15:35,700
+clockwise to its end, R1 would be 0 and R2 would be its maximum. If you rotate the potentiometer
+
+147
+00:15:35,700 --> 00:15:44,419
+anticlockwise to its end, R2 would be 0 and R1 would be its maximum. So, likewise, when you
+
+148
+00:15:44,419 --> 00:15:52,000
+rotate the potentiometer, you adjust R1 and R2. So, this arrangement we call a voltage divider.
+
+149
+00:15:52,000 --> 00:15:59,000
+Right. Then there is a mathematical formula to know the voltage in a voltage divider.
+
+150
+00:15:59,000 --> 00:16:01,000
+This is the mathematical formula.
+
+151
+00:16:01,919 --> 00:16:14,539
+Vin equals voltage, that is 5 volts, multiplied by R2, resistance of R2, divided by R1 plus R2.
+
+152
+00:16:15,080 --> 00:16:16,639
+We discussed this equation.
+
+153
+00:16:17,659 --> 00:16:19,960
+No, not yet we discussed this equation.
+
+154
+00:16:20,259 --> 00:16:21,559
+This is the first time we are discussing.
+
+155
+00:16:21,899 --> 00:16:22,200
+Right.
+
+156
+00:16:23,159 --> 00:16:24,080
+Is this clear?
+
+157
+00:16:24,080 --> 00:16:34,179
+Now you can simply turn this, rotate this potentiometer clockwise to its end, then R1 would be 0.
+
+158
+00:16:34,320 --> 00:16:41,879
+If R1 is 0, R2 divided by VR2 divided by R2, Vin would be V.
+
+159
+00:16:42,100 --> 00:16:44,220
+That means Vin would be 5 volts.
+
+160
+00:16:44,740 --> 00:16:51,639
+And if you rotate the potentiometer anticlockwise to ground, then R2 would be 0.
+
+161
+00:16:51,639 --> 00:16:58,620
+If R2 is 0, no matter R1 or whatever, right, V in is 0, right?
+
+162
+00:16:59,580 --> 00:17:12,700
+So, if the wiper is between somewhere, I mean it is at 5 and 0 between somewhere, 5 volt and ground, then you can calculate the V in using this equation.
+
+163
+00:17:13,059 --> 00:17:14,259
+Is that clear? Any question?
+
+164
+00:17:16,839 --> 00:17:17,559
+Right.
+
+165
+00:17:17,559 --> 00:17:22,539
+Now the voltage at V is a continuous voltage, analog.
+
+166
+00:17:23,980 --> 00:17:28,519
+The CPUs or microcontrollers, they can't process analog.
+
+167
+00:17:29,400 --> 00:17:32,440
+So we need to get them converted into digital.
+
+168
+00:17:32,599 --> 00:17:34,059
+So we have to use ADC.
+
+169
+00:17:34,420 --> 00:17:34,559
+Right.
+
+170
+00:17:35,160 --> 00:17:41,599
+Now let's move into the schematic diagram of our system, volt meter.
+
+171
+00:17:42,059 --> 00:17:42,460
+Right.
+
+172
+00:17:42,460 --> 00:18:00,440
+This is the microcontroller and we have now here you can see we have connected a 16 megahertz oscillator to provide the clock pulses to the microcontroller and reset button.
+
+173
+00:18:00,440 --> 00:18:02,740
+and we have pulled up the reset
+
+174
+00:18:02,740 --> 00:18:04,420
+pit. This is pull up
+
+175
+00:18:04,420 --> 00:18:06,839
+and we have supplied 5 volts
+
+176
+00:18:06,839 --> 00:18:08,400
+to microcontroller.
+
+177
+00:18:09,200 --> 00:18:10,579
+Supplied ground power
+
+178
+00:18:10,579 --> 00:18:12,579
+supply to microcontroller. Not
+
+179
+00:18:12,579 --> 00:18:14,420
+only that. We have
+
+180
+00:18:14,420 --> 00:18:16,500
+supplied 5 volts to
+
+181
+00:18:16,500 --> 00:18:18,680
+ADC. This is the ADC
+
+182
+00:18:18,680 --> 00:18:20,680
+power supply and ground power
+
+183
+00:18:20,680 --> 00:18:21,839
+supply to ADC.
+
+184
+00:18:22,319 --> 00:18:24,460
+ADC is a peripheral inside the
+
+185
+00:18:24,460 --> 00:18:26,079
+microcontroller. You have to
+
+186
+00:18:26,079 --> 00:18:28,759
+provide a separate power supply
+
+187
+00:18:28,759 --> 00:18:37,619
+to ADC. Ground power supply and ADC 5 volt power supply. Then we need to connect the potentiometer
+
+188
+00:18:37,619 --> 00:18:43,980
+to this microcontroller. First we connect the potentiometer between 5 volts and ground.
+
+189
+00:18:44,579 --> 00:18:50,779
+10 kilo ohm potentiometer we connect 5 volts and ground. Now the middle pin of the potentiometer
+
+190
+00:18:50,779 --> 00:19:00,099
+will give you an analog continuous voltage. Now that voltage, that analog voltage we need to get
+
+191
+00:19:00,099 --> 00:19:07,579
+converted into digital. So we have to use ADC. Now we need to connect this pin, the middle pin
+
+192
+00:19:07,579 --> 00:19:15,180
+of the potentiometer to ADC supported input channel. These are the ADC supported input
+
+193
+00:19:15,180 --> 00:19:22,619
+channel that is port C. So there are six channels. So you can use whatever the channel you like
+
+194
+00:19:22,619 --> 00:19:29,660
+to connect this middle pin. So in this example I connect the potentiometer middle pin
+
+195
+00:19:30,299 --> 00:19:41,900
+right which provides us an analog input voltage to PCC row or A0 ADC C row pin right. Then this
+
+196
+00:19:41,900 --> 00:19:50,319
+input voltage. This input voltage varies when you rotate the potentiometer. This input voltage varies
+
+197
+00:19:50,319 --> 00:20:00,059
+between 0 to 5 volts. Now that continuous, it's a continuous variation because the rotation is
+
+198
+00:20:00,059 --> 00:20:08,339
+continuous. Now that continuous variation of voltage we need to display using 5 LEDs.
+
+199
+00:20:08,339 --> 00:20:10,299
+So, connect 5 LEDs.
+
+200
+00:20:10,940 --> 00:20:15,119
+So, I am going to use port C, right?
+
+201
+00:20:15,359 --> 00:20:18,460
+Sorry, port B for connecting LEDs.
+
+202
+00:20:18,799 --> 00:20:19,259
+Port B.
+
+203
+00:20:19,859 --> 00:20:26,559
+PB0, PB1, PB2, PB3 and PB4.
+
+204
+00:20:26,720 --> 00:20:30,420
+These 5 pins I am going to use to connect LEDs.
+
+205
+00:20:31,119 --> 00:20:31,339
+Right.
+
+206
+00:20:31,420 --> 00:20:36,640
+Using 220 ohm current limiting resistors, I have connected 5 LEDs.
+
+207
+00:20:36,640 --> 00:20:37,440
+Right.
+
+208
+00:20:38,259 --> 00:20:42,980
+Now this is how, now let me explain how this system works.
+
+209
+00:20:43,180 --> 00:20:53,680
+When you rotate the potentiometer, voltage at this analog input channel would vary between 0 and 5.
+
+210
+00:20:54,079 --> 00:20:58,460
+If the input voltage is 1 volt, greater than 0, sorry.
+
+211
+00:20:58,920 --> 00:21:04,420
+If the input voltage is greater than 0 but less than 1, greater than 0, less than 1.
+
+212
+00:21:04,819 --> 00:21:06,539
+Then we turn on 1 LED.
+
+213
+00:21:06,539 --> 00:21:16,559
+if the input voltage is greater than one but less than two, we turn on 2 LEDs, if input voltage is
+
+214
+00:21:16,559 --> 00:21:24,759
+greater than 2, but less than 3, we turn on 3 LEDs, if input voltage is get greater than 3,
+
+215
+00:21:24,759 --> 00:21:33,680
+but less than 4, we turn on 4 LEDs, if input voltage is greater than 4, we turn on all 5 LEDs,
+
+216
+00:21:33,680 --> 00:21:42,019
+5 LEDs. So when you rotate the potentiometer, voltage, input voltage varies between 0 to 5.
+
+217
+00:21:42,440 --> 00:21:52,059
+If the input voltage is between greater than 0 but less than 1 volt, turn on 1 LED. If the input
+
+218
+00:21:52,059 --> 00:22:01,240
+voltage is greater than 1 volt but less than 2 volts, turn on 2 LEDs. If input voltage is greater
+
+219
+00:22:01,240 --> 00:22:09,960
+than 2 volts but less than 3 volts, turn on 3 LEDs. If input voltage is greater than 3 volts but
+
+220
+00:22:09,960 --> 00:22:18,799
+less than 4 volts, turn on 4 LEDs. If input voltage is greater than 4 volts, turn on all LEDs.
+
+221
+00:22:18,799 --> 00:22:27,359
+So the analog variation of the voltage we can display using a discrete number of LEDs,
+
+222
+00:22:27,359 --> 00:22:35,599
+5 LEDs. Right? Analog to digital conversion. Input is a continuous variation of voltage
+
+223
+00:22:35,599 --> 00:22:45,359
+but we display that using set of discrete LEDs, 5 LEDs. Is it clear? Any question?
+
+224
+00:22:45,359 --> 00:22:57,359
+Sir, when we are using these analog pins as input,
+
+225
+00:22:57,359 --> 00:22:59,619
+can't you use
+
+226
+00:22:59,619 --> 00:23:01,880
+for an example
+
+227
+00:23:01,880 --> 00:23:04,160
+a PC, can you use PC5
+
+228
+00:23:04,160 --> 00:23:06,019
+pin to blink and LED?
+
+229
+00:23:06,759 --> 00:23:07,480
+Yes, you can.
+
+230
+00:23:08,079 --> 00:23:10,039
+Then you have to configure that pin
+
+231
+00:23:10,039 --> 00:23:11,720
+as GPIO.
+
+232
+00:23:12,880 --> 00:23:14,059
+We'll discuss that later.
+
+233
+00:23:14,960 --> 00:23:15,119
+Right?
+
+234
+00:23:16,119 --> 00:23:18,240
+So, one question.
+
+235
+00:23:18,240 --> 00:23:18,920
+So,
+
+236
+00:23:19,160 --> 00:23:22,460
+these have
+
+237
+00:23:22,460 --> 00:23:24,579
+five resistors
+
+238
+00:23:24,579 --> 00:23:26,740
+220 ohm resistors.
+
+239
+00:23:26,740 --> 00:23:39,559
+Instead of using 5 resistors, we can use one 220 ohm resistor to connecting all the negative
+
+240
+00:23:39,559 --> 00:23:42,619
+pins of LEDs and connect to the ground.
+
+241
+00:23:43,839 --> 00:23:44,779
+Good question.
+
+242
+00:23:45,299 --> 00:23:45,579
+Right.
+
+243
+00:23:46,759 --> 00:23:47,339
+Better way.
+
+244
+00:23:48,059 --> 00:23:48,700
+Right.
+
+245
+00:23:48,920 --> 00:23:49,160
+Okay.
+
+246
+00:23:49,180 --> 00:23:49,859
+Let me do explain.
+
+247
+00:23:50,440 --> 00:23:51,440
+This is your idea.
+
+248
+00:23:52,079 --> 00:23:52,680
+Yes, sir.
+
+249
+00:23:52,880 --> 00:23:53,059
+Yes.
+
+250
+00:23:53,079 --> 00:23:53,380
+Right.
+
+251
+00:23:54,000 --> 00:23:55,599
+The problem is here.
+
+252
+00:23:55,599 --> 00:24:07,259
+Now, we use for this 220 Ohm a quarter watt resistor, right?
+
+253
+00:24:08,099 --> 00:24:17,160
+Now, let's say you flow 15 milliampere through these LEDs, 15 milliampere.
+
+254
+00:24:17,160 --> 00:24:27,640
+then when you have turned on all three LEDs, the flow through the resistor would be 45 mA.
+
+255
+00:24:27,640 --> 00:24:39,039
+If each LED through the LED, if you flow 15 mA through the resistor, the current flow would be 45 mA.
+
+256
+00:24:39,660 --> 00:24:46,799
+Then if the resistor is not capable of flowing that much of current,
+
+257
+00:24:47,160 --> 00:24:53,880
+right it will blow out the solution is one solution is you can increase the
+
+258
+00:24:53,880 --> 00:25:05,079
+voltage of the resistor to for example 220 ohm half watt that's one solution right
+
+259
+00:25:05,079 --> 00:25:12,599
+oh one watt half watt or one watt resistor you can use and then the resistor can capable of
+
+260
+00:25:12,599 --> 00:25:20,920
+flowing a larger current. Otherwise, it will blow out, right? So it will burn. The second problem,
+
+261
+00:25:21,420 --> 00:25:28,420
+different LEDs, right? Because these LEDs are sometimes in different colors, not the same
+
+262
+00:25:28,420 --> 00:25:35,019
+color. Sometimes you have LEDs in different colors. And if they are in different colors,
+
+263
+00:25:35,019 --> 00:25:36,960
+definitely they draw
+
+264
+00:25:36,960 --> 00:25:38,240
+different
+
+265
+00:25:38,240 --> 00:25:41,299
+current. They draw different
+
+266
+00:25:41,299 --> 00:25:42,900
+current. And sometimes
+
+267
+00:25:42,900 --> 00:25:45,240
+even the same color LEDs
+
+268
+00:25:45,240 --> 00:25:46,920
+due to they are
+
+269
+00:25:46,920 --> 00:25:48,619
+not perfect.
+
+270
+00:25:49,039 --> 00:25:51,059
+So they may draw different
+
+271
+00:25:51,059 --> 00:25:53,319
+currents. But if you have connected
+
+272
+00:25:53,319 --> 00:25:55,240
+these LEDs separately
+
+273
+00:25:55,240 --> 00:25:57,240
+to the ground using
+
+274
+00:25:57,240 --> 00:25:58,819
+separate resistors,
+
+275
+00:25:59,319 --> 00:26:01,279
+there will be
+
+276
+00:26:01,279 --> 00:26:02,160
+no issue.
+
+277
+00:26:02,160 --> 00:26:10,720
+right, they will draw whatever the current they want, right. So this problem of flowing a larger
+
+278
+00:26:10,720 --> 00:26:19,940
+current through a resistor, you can avoid. That's why typically in the electronic systems,
+
+279
+00:26:19,940 --> 00:26:28,339
+we use multiple resistors. Sometimes we use a device called resistor arrays.
+
+280
+00:26:28,339 --> 00:26:30,599
+resistor arrays.
+
+281
+00:26:31,019 --> 00:26:32,900
+Resistor array is something like this.
+
+282
+00:26:33,460 --> 00:26:34,220
+A device
+
+283
+00:26:34,220 --> 00:26:36,700
+with multiple pins.
+
+284
+00:26:38,059 --> 00:26:38,220
+Right.
+
+285
+00:26:38,660 --> 00:26:40,700
+Inside you have
+
+286
+00:26:40,700 --> 00:26:41,799
+resistor.
+
+287
+00:26:43,279 --> 00:26:44,980
+Something like this.
+
+288
+00:26:44,980 --> 00:26:45,539
+Right.
+
+289
+00:26:46,299 --> 00:26:49,000
+So multiple resistors inside.
+
+290
+00:26:49,640 --> 00:26:50,680
+So this kind of resist
+
+291
+00:26:50,680 --> 00:26:52,160
+arrays sometimes use.
+
+292
+00:26:52,579 --> 00:26:54,819
+Right. If you can flow a large
+
+293
+00:26:54,819 --> 00:26:56,759
+current through the resistor then there
+
+294
+00:26:56,759 --> 00:26:57,619
+won't be a problem.
+
+295
+00:26:58,339 --> 00:27:02,640
+Then you have to use a resistor capable of flowing a larger car.
+
+296
+00:27:02,640 --> 00:27:06,200
+Typically we use very small resistors, right?
+
+297
+00:27:06,400 --> 00:27:11,319
+In most of the embedded systems we use SMD, surface mount device.
+
+298
+00:27:11,819 --> 00:27:18,839
+Small, tiny SMD resistors which are even less than 1.4 Watt, right?
+
+299
+00:27:18,920 --> 00:27:20,400
+Very tiny, right?
+
+300
+00:27:20,579 --> 00:27:21,200
+Surface mount.
+
+301
+00:27:21,279 --> 00:27:24,079
+Now you use 220.4 Watt resistors.
+
+302
+00:27:24,180 --> 00:27:26,319
+These are fairly large resistors.
+
+303
+00:27:26,319 --> 00:27:32,200
+but in the small embedded systems we use surface SMD resistors.
+
+304
+00:27:32,200 --> 00:27:34,940
+They are very tiny, right?
+
+305
+00:27:35,519 --> 00:27:38,900
+So if you try to flow a larger current through these resistors,
+
+306
+00:27:39,180 --> 00:27:40,460
+they will burn.
+
+307
+00:27:41,019 --> 00:27:44,200
+So therefore, it's better to use multiple resistors.
+
+308
+00:27:45,220 --> 00:27:45,680
+Is that clear?
+
+309
+00:27:46,259 --> 00:27:46,619
+Yes, sir.
+
+310
+00:27:47,019 --> 00:27:48,079
+Okay, right.
+
+311
+00:27:48,720 --> 00:27:53,220
+Now, any other questions on this schematic diagram?
+
+312
+00:27:53,619 --> 00:27:54,160
+No, right.
+
+313
+00:27:54,160 --> 00:27:57,059
+Then move into wiring that.
+
+314
+00:27:57,460 --> 00:27:57,680
+Right.
+
+315
+00:27:58,420 --> 00:28:06,900
+The potentiometer, one end to ground, the other end to 5 volts and the middle pin to analog input channel.
+
+316
+00:28:07,359 --> 00:28:07,700
+Right.
+
+317
+00:28:07,880 --> 00:28:19,640
+This is 5 volts, 5 volt railing, the ground power supply railing and the 5 LED is connected to PB0 to PB4,
+
+318
+00:28:19,640 --> 00:28:23,059
+which are Arduino numbers 8 to
+
+319
+00:28:23,059 --> 00:28:25,680
+digital IO pin 8 to 12.
+
+320
+00:28:26,119 --> 00:28:29,640
+Now when you turn this potentiometer
+
+321
+00:28:30,299 --> 00:28:33,039
+the voltage at this
+
+322
+00:28:33,039 --> 00:28:36,059
+blue wire would vary between
+
+323
+00:28:36,059 --> 00:28:39,339
+0 to 5. Using the ADC
+
+324
+00:28:39,339 --> 00:28:42,940
+microcontroller ADC we measure this voltage.
+
+325
+00:28:42,940 --> 00:28:45,980
+If the voltage is greater than 0
+
+326
+00:28:45,980 --> 00:28:48,619
+but less than 1 volt
+
+327
+00:28:48,619 --> 00:28:55,619
+we turn on this led. if the voltage is greater than one volt, but less than 2�, we turn on
+
+328
+00:28:55,619 --> 00:29:03,019
+these 2 led. if the voltage is greater than 2V, but less than 3V, we turn on these 3 led.
+
+329
+00:29:03,019 --> 00:29:10,799
+LED. If the voltage is greater than 3 volts but less than 4 volts, we turn on this 4 LED.
+
+330
+00:29:11,160 --> 00:29:17,859
+If the voltage is greater than 4 volts, we turn on all 5 LED. Right. That's the idea.
+
+331
+00:29:18,599 --> 00:29:25,779
+Now, the hardware design and implementation is over. So, let's move into firmware design.
+
+332
+00:29:25,779 --> 00:29:32,519
+So, we'll start with an algorithm. So, we use C programming. So, we have main function.
+
+333
+00:29:32,519 --> 00:29:40,779
+voltmeter start flowchart stop voltmeter main function. Then main function flowchart. This is
+
+334
+00:29:40,779 --> 00:29:48,400
+the main function flowchart. So, we start the main function. First, we configure PB0 to PB4 as
+
+335
+00:29:48,400 --> 00:29:59,660
+outputs. Port B, pin 0 to pin 4 because LED is 5 LED is connected to these 5 pins. PB0 to PB4
+
+336
+00:29:59,660 --> 00:30:03,920
+port B. Therefore, we need to configure them as output
+
+337
+00:30:03,920 --> 00:30:07,759
+bits. Then configure, now that part
+
+338
+00:30:07,759 --> 00:30:12,079
+is missing, as an input. Configure PC0
+
+339
+00:30:12,079 --> 00:30:15,559
+ADC0. PC0 means
+
+340
+00:30:15,559 --> 00:30:19,539
+ADC0. ADC0 input channel
+
+341
+00:30:19,539 --> 00:30:22,799
+as an input. So this as an input.
+
+342
+00:30:24,019 --> 00:30:27,720
+So this is not necessary because
+
+343
+00:30:27,720 --> 00:30:33,660
+by default, these ADC input channels are input pins.
+
+344
+00:30:34,119 --> 00:30:37,500
+They are by default, they are input pins.
+
+345
+00:30:37,500 --> 00:30:41,720
+So, this is not necessary. This step is not necessary
+
+346
+00:30:41,720 --> 00:30:45,500
+but having it, no harm. Then you have to
+
+347
+00:30:45,500 --> 00:30:49,339
+set the reference voltage. So, we set
+
+348
+00:30:49,339 --> 00:30:53,200
+the reference voltage to supply voltage of
+
+349
+00:30:53,200 --> 00:30:57,420
+ADC which is 5 volts. That is the default. Reference voltage
+
+350
+00:30:57,420 --> 00:31:04,460
+you can set to different voltages for example 1.1 volt or some other externally supplied voltage
+
+351
+00:31:04,460 --> 00:31:11,819
+but in this example we use the default voltage we set the reference voltage to supply voltage of
+
+352
+00:31:11,819 --> 00:31:22,140
+adc then we select out of the six channels we select a pc 0 that is adc 0 as the input channel
+
+353
+00:31:22,140 --> 00:31:43,140
+Right, this is the ADC input multiplexing. We select ADC zero as the input channel. Then we need to set ADC clock speed. We need to set ADC clock speed. We know that ADC takes time because it uses successive approximation. It takes time for the conversion.
+
+354
+00:31:43,140 --> 00:31:47,500
+So it cannot run at the CPU speed.
+
+355
+00:31:48,019 --> 00:31:57,519
+So we need to scale down CPU clock speed using a prescaler and set a proper speed for the ADC.
+
+356
+00:31:58,599 --> 00:32:04,460
+Thereafter we enable the ADC because by default ADC is disabled to save power.
+
+357
+00:32:05,500 --> 00:32:07,279
+So we enable ADC.
+
+358
+00:32:07,279 --> 00:32:12,259
+Then we enter into endless load.
+
+359
+00:32:13,140 --> 00:32:19,579
+Inside the endless loop, we start the ADC, we start the conversion.
+
+360
+00:32:20,200 --> 00:32:26,680
+And then we repeatedly check whether ADC is over or not.
+
+361
+00:32:27,680 --> 00:32:30,119
+The conversion is over or not.
+
+362
+00:32:30,579 --> 00:32:31,759
+We repeatedly check.
+
+363
+00:32:32,480 --> 00:32:37,259
+If it is not over, we check again whether it is over.
+
+364
+00:32:37,259 --> 00:32:40,359
+If not over, check again.
+
+365
+00:32:40,759 --> 00:32:41,599
+We repeat.
+
+366
+00:32:41,720 --> 00:32:42,619
+That is poorly.
+
+367
+00:32:43,140 --> 00:33:03,440
+Right. Using polling, we check whether ADC is over. If ADC is over, then not over falls. If ADC is over, conversion is over, then not over falls. Right. Okay. Exit. Compute the input voltage. Compute the ADC input voltage.
+
+368
+00:33:03,440 --> 00:33:09,240
+When the conversion is over, conversion result is in ADCW.
+
+369
+00:33:09,680 --> 00:33:13,400
+Conversion result is in ADCW register.
+
+370
+00:33:13,900 --> 00:33:15,079
+When conversion is over.
+
+371
+00:33:15,640 --> 00:33:26,319
+If you multiply this with Vref, Vref, reference voltage, and divided by 1024, and then you
+
+372
+00:33:26,319 --> 00:33:28,039
+will get input voltage.
+
+373
+00:33:28,039 --> 00:33:31,240
+So this is the
+
+374
+00:33:31,240 --> 00:33:34,460
+that computation we do here.
+
+375
+00:33:35,460 --> 00:33:36,299
+This computation.
+
+376
+00:33:36,839 --> 00:33:40,339
+When the ADC is over, conversion is over, we take the
+
+377
+00:33:40,339 --> 00:33:44,019
+converted value which is between 0 and
+
+378
+00:33:44,019 --> 00:33:47,900
+1023. Vref is 5 volts
+
+379
+00:33:47,900 --> 00:33:50,740
+and we calculate the input voltage
+
+380
+00:33:50,740 --> 00:33:54,160
+at the input ADC input pin.
+
+381
+00:33:54,160 --> 00:33:56,359
+And then we turn off all LEDs.
+
+382
+00:33:56,359 --> 00:33:59,680
+setting PB0 to PB4 low.
+
+383
+00:34:00,279 --> 00:34:04,880
+If the calculated voltage is greater than 4,
+
+384
+00:34:05,819 --> 00:34:08,980
+turn on all LEDs, PB0 to PB4,
+
+385
+00:34:09,420 --> 00:34:10,619
+all pins set high.
+
+386
+00:34:11,460 --> 00:34:15,780
+If not, then we check whether input voltage
+
+387
+00:34:15,780 --> 00:34:16,920
+is greater than 3.
+
+388
+00:34:17,940 --> 00:34:24,460
+If so, turn on PB0 to set PB0 to PB3 pins high.
+
+389
+00:34:24,460 --> 00:34:26,920
+that means turn on 4 LEDs.
+
+390
+00:34:27,579 --> 00:34:32,199
+If not, check whether the input voltage is greater than 2.
+
+391
+00:34:32,920 --> 00:34:36,880
+If so, right, turn on 3 LEDs.
+
+392
+00:34:37,880 --> 00:34:40,539
+Set PB0 to PB2 high.
+
+393
+00:34:41,679 --> 00:34:45,219
+If not, check whether voltage is greater than 1.
+
+394
+00:34:45,739 --> 00:34:49,039
+If it is greater than 1, turn on 2 LEDs.
+
+395
+00:34:49,420 --> 00:34:53,400
+Set PB0 and PB1 high, those two pins.
+
+396
+00:34:53,400 --> 00:34:58,039
+If not, check whether voltage is computed voltage here.
+
+397
+00:34:58,159 --> 00:34:59,320
+The computation done here.
+
+398
+00:34:59,880 --> 00:35:02,579
+The voltage, computed voltage is greater than zero.
+
+399
+00:35:02,920 --> 00:35:06,320
+If so, turn on one LED.
+
+400
+00:35:06,780 --> 00:35:08,159
+Set PB0 high.
+
+401
+00:35:08,579 --> 00:35:10,860
+After doing that, do it again.
+
+402
+00:35:11,320 --> 00:35:13,380
+Again, convert the input voltage.
+
+403
+00:35:14,039 --> 00:35:16,480
+And check whether conversion is over.
+
+404
+00:35:16,800 --> 00:35:19,300
+If over, compute the voltage.
+
+405
+00:35:19,300 --> 00:35:26,800
+Turn on all LEDs and display the computed voltage using set of LEDs.
+
+406
+00:35:27,179 --> 00:35:28,840
+Do this again and again.
+
+407
+00:35:29,260 --> 00:35:35,840
+Now when you rotate the potentiometer, you get different voltages at the ADC input channel.
+
+408
+00:35:36,420 --> 00:35:46,420
+And accordingly, you turn on, turn off some discrete number of LEDs and represent that analog input voltage.
+
+409
+00:35:46,420 --> 00:35:48,579
+Can you understand this algorithm?
+
+410
+00:35:48,579 --> 00:35:51,739
+If not, please let me know. I am ready to explain again.
+
+411
+00:35:52,679 --> 00:35:54,800
+Oh, if you have questions, now you can ask.
+
+412
+00:35:56,300 --> 00:35:56,820
+Yes.
+
+413
+00:35:57,360 --> 00:36:03,400
+Sir, that ADC is not over loop mean comparison, right?
+
+414
+00:36:03,880 --> 00:36:10,659
+We start the ADC and then ADC takes some time because it uses successive approximation.
+
+415
+00:36:11,239 --> 00:36:13,920
+So we want to know whether ADC is over.
+
+416
+00:36:14,039 --> 00:36:15,619
+Then only we can get the result.
+
+417
+00:36:15,619 --> 00:36:18,119
+The result is in the ADCW register.
+
+418
+00:36:18,579 --> 00:36:23,579
+The ADCW register will be updated once the ADC is over.
+
+419
+00:36:24,280 --> 00:36:27,300
+So we need to check whether ADC is over.
+
+420
+00:36:27,559 --> 00:36:30,019
+We repeatedly check whether ADC is over.
+
+421
+00:36:30,659 --> 00:36:36,000
+If it is over, then we are sure that ADCW contains the result.
+
+422
+00:36:36,519 --> 00:36:40,159
+Using that result, we can calculate the input voltage.
+
+423
+00:36:40,420 --> 00:36:44,380
+To do that, we need to repeatedly check whether ADC is over.
+
+424
+00:36:44,980 --> 00:36:48,000
+That means we pull ADC.
+
+425
+00:36:48,579 --> 00:36:50,199
+Is it clear? Yes, sir.
+
+426
+00:36:50,239 --> 00:36:52,460
+Thank you. What else? Ask us
+
+427
+00:36:52,460 --> 00:36:54,139
+if you have any question, ask.
+
+428
+00:36:54,480 --> 00:36:56,000
+So this example uses
+
+429
+00:36:56,000 --> 00:36:56,420
+polling.
+
+430
+00:36:58,420 --> 00:37:00,179
+No. Right. So let's
+
+431
+00:37:00,179 --> 00:37:02,079
+move into source code. Right.
+
+432
+00:37:02,440 --> 00:37:04,400
+This is the typical C function,
+
+433
+00:37:04,519 --> 00:37:06,239
+main function. And we
+
+434
+00:37:06,239 --> 00:37:08,300
+need avr slash
+
+435
+00:37:08,300 --> 00:37:10,239
+io dot h because it
+
+436
+00:37:10,239 --> 00:37:12,139
+contains io definitions
+
+437
+00:37:12,139 --> 00:37:13,659
+that header file.
+
+438
+00:37:14,260 --> 00:37:16,280
+First of all, we need to configure
+
+439
+00:37:16,280 --> 00:37:18,300
+pb0 to
+
+440
+00:37:18,300 --> 00:37:20,500
+PB4 pins as
+
+441
+00:37:20,500 --> 00:37:21,559
+output pins.
+
+442
+00:37:22,559 --> 00:37:24,659
+Because our LEDs are connected
+
+443
+00:37:24,659 --> 00:37:26,340
+to these 5 pins.
+
+444
+00:37:26,639 --> 00:37:28,019
+PB0 to PB4.
+
+445
+00:37:28,519 --> 00:37:30,739
+So what we do is we set
+
+446
+00:37:30,739 --> 00:37:32,699
+bit 0 to bit 4
+
+447
+00:37:32,699 --> 00:37:34,079
+of port B
+
+448
+00:37:34,079 --> 00:37:36,519
+registered. Right. We set those
+
+449
+00:37:36,519 --> 00:37:37,460
+5 bits.
+
+450
+00:37:38,260 --> 00:37:40,699
+Bit 0 to bit 4.
+
+451
+00:37:41,619 --> 00:37:42,260
+Without
+
+452
+00:37:42,260 --> 00:37:43,880
+disturbing to other bits.
+
+453
+00:37:44,320 --> 00:37:46,619
+That's why we have used bitwise
+
+454
+00:37:46,619 --> 00:37:47,840
+O operator.
+
+455
+00:37:48,300 --> 00:37:55,199
+Then we need to configure PC0 which is the ADC0 as an input.
+
+456
+00:37:55,900 --> 00:38:01,980
+Because our input the potentiometer middle pin we have connected to PC0.
+
+457
+00:38:01,980 --> 00:38:03,239
+That is our input.
+
+458
+00:38:03,699 --> 00:38:06,599
+So that pin we need to configure as an input pin.
+
+459
+00:38:07,219 --> 00:38:08,679
+But that is not necessary.
+
+460
+00:38:09,019 --> 00:38:09,280
+Why?
+
+461
+00:38:11,019 --> 00:38:16,400
+The default value of the port C bits are 0.
+
+462
+00:38:17,059 --> 00:38:17,260
+Right.
+
+463
+00:38:17,260 --> 00:38:19,940
+any port, the default
+
+464
+00:38:19,940 --> 00:38:22,480
+bit value is 0.
+
+465
+00:38:23,539 --> 00:38:25,739
+That means by default
+
+466
+00:38:25,739 --> 00:38:28,539
+all IEO pins are input pins.
+
+467
+00:38:28,539 --> 00:38:31,539
+So you don't need to explicitly configure
+
+468
+00:38:32,139 --> 00:38:34,760
+them as input because by default
+
+469
+00:38:34,760 --> 00:38:37,579
+all pins are input pins because
+
+470
+00:38:37,579 --> 00:38:40,880
+the bit values of all IEO registers
+
+471
+00:38:40,880 --> 00:38:43,239
+are 0 by default. However,
+
+472
+00:38:43,820 --> 00:38:46,739
+this is a good practice. Then which makes your
+
+473
+00:38:46,739 --> 00:38:49,199
+program is more readable and understandable.
+
+474
+00:38:49,760 --> 00:38:52,860
+Right. So anybody go through your program can
+
+475
+00:38:52,860 --> 00:38:55,840
+quickly understand. So you have
+
+476
+00:38:55,840 --> 00:38:59,360
+configured PC0 as
+
+477
+00:38:59,360 --> 00:39:02,320
+an input because you have set the bit 0
+
+478
+00:39:02,320 --> 00:39:05,000
+of port C. You have cleared
+
+479
+00:39:05,000 --> 00:39:07,320
+bit 0 of port C. You have cleared.
+
+480
+00:39:08,000 --> 00:39:10,739
+You have put 0 to bit 0 of port C.
+
+481
+00:39:11,300 --> 00:39:13,820
+That indicates PC0
+
+482
+00:39:13,820 --> 00:39:15,900
+you are going to use as an input pin.
+
+483
+00:39:15,900 --> 00:39:21,840
+But this line is, line number 6 is not necessary but a good practice.
+
+484
+00:39:22,159 --> 00:39:23,539
+Not necessary, good practice.
+
+485
+00:39:23,860 --> 00:39:26,960
+Which improves understandability of your code.
+
+486
+00:39:27,659 --> 00:39:32,079
+On the other hand, it consumes one extra clock cycle.
+
+487
+00:39:32,480 --> 00:39:37,519
+So if you are so concerned about the performance, you don't need that line.
+
+488
+00:39:38,960 --> 00:39:42,639
+Then, we need to set the reference voltage.
+
+489
+00:39:42,639 --> 00:39:51,280
+In this example, we set the ADC reference voltage to ADC supply voltage.
+
+490
+00:39:51,579 --> 00:39:55,380
+AVCC is the ADC supply voltage, which is 5 volt.
+
+491
+00:39:55,840 --> 00:40:05,539
+But to do that, we need to set reference selection bits, ref S0 and ref S1.
+
+492
+00:40:06,280 --> 00:40:10,239
+Reference selection bits of admox register.
+
+493
+00:40:10,239 --> 00:40:14,300
+Admax means ADC multiplexer selection register.
+
+494
+00:40:14,780 --> 00:40:22,980
+We need to set refs0 bit and we need to clear refs1 bit.
+
+495
+00:40:23,340 --> 00:40:24,820
+That's what we have done here.
+
+496
+00:40:24,820 --> 00:40:31,820
+Now you can see we have cleared refs1 bit and then we have set refs0 bit.
+
+497
+00:40:32,199 --> 00:40:34,900
+This part is to clear the bit 7.
+
+498
+00:40:34,900 --> 00:40:37,539
+this part is to set
+
+499
+00:40:37,539 --> 00:40:38,639
+bit 6
+
+500
+00:40:38,639 --> 00:40:41,260
+of AdMux register.
+
+501
+00:40:41,539 --> 00:40:43,099
+Can you understand this line?
+
+502
+00:40:43,619 --> 00:40:45,159
+If not, please let me know.
+
+503
+00:40:45,699 --> 00:40:46,619
+I can explain.
+
+504
+00:40:47,300 --> 00:40:47,980
+Sir?
+
+505
+00:40:48,320 --> 00:40:48,639
+Yes.
+
+506
+00:40:48,639 --> 00:40:50,199
+Sir, can you explain?
+
+507
+00:40:50,739 --> 00:40:51,179
+Sure.
+
+508
+00:40:55,760 --> 00:40:57,440
+Let's take this part.
+
+509
+00:40:57,840 --> 00:40:58,920
+Now let's assume
+
+510
+00:40:58,920 --> 00:41:01,199
+AdMux is 8-bit register
+
+511
+00:41:01,199 --> 00:41:02,400
+which contains
+
+512
+00:41:02,400 --> 00:41:04,400
+XXX
+
+513
+00:41:04,400 --> 00:41:08,340
+x, x, x, x, x.
+
+514
+00:41:08,440 --> 00:41:10,400
+x could be either 0 or 1.
+
+515
+00:41:11,139 --> 00:41:12,340
+And with that value,
+
+516
+00:41:12,880 --> 00:41:14,880
+we take end operation
+
+517
+00:41:14,880 --> 00:41:18,159
+0, 1, 1, 1,
+
+518
+00:41:18,820 --> 00:41:20,659
+1, 1, 1, 1.
+
+519
+00:41:21,460 --> 00:41:22,320
+This part.
+
+520
+00:41:22,679 --> 00:41:24,619
+Now x and 0,
+
+521
+00:41:25,280 --> 00:41:26,000
+end operation.
+
+522
+00:41:26,340 --> 00:41:28,280
+x and 0, no matter the value.
+
+523
+00:41:28,360 --> 00:41:29,480
+x could be 1 or 0.
+
+524
+00:41:29,480 --> 00:41:32,679
+x could be
+
+525
+00:41:32,679 --> 00:41:35,320
+1 O 0.
+
+526
+00:41:36,000 --> 00:41:39,059
+No matter the value of X, if you take
+
+527
+00:41:39,059 --> 00:41:42,860
+end operation with 0, it is 0. It will be 0.
+
+528
+00:41:42,860 --> 00:41:44,559
+Then X and 1.
+
+529
+00:41:45,880 --> 00:41:49,179
+The outcome depends on value of X.
+
+530
+00:41:49,619 --> 00:41:52,699
+If X is 1, 1 1. 1 and 1 1.
+
+531
+00:41:53,260 --> 00:41:57,059
+If X is 0, 0 and 1 0.
+
+532
+00:41:57,860 --> 00:42:00,179
+So X and 1 means X.
+
+533
+00:42:00,179 --> 00:42:02,800
+outcome depends on x.
+
+534
+00:42:03,440 --> 00:42:05,300
+Likewise, so this is
+
+535
+00:42:05,300 --> 00:42:07,519
+the result of this particular
+
+536
+00:42:07,519 --> 00:42:09,099
+part. So we have
+
+537
+00:42:09,099 --> 00:42:11,219
+cleared the bit number 7.
+
+538
+00:42:11,820 --> 00:42:13,179
+We have cleared the bit. Then
+
+539
+00:42:13,179 --> 00:42:14,840
+operator
+
+540
+00:42:14,840 --> 00:42:16,320
+this value.
+
+541
+00:42:16,940 --> 00:42:19,219
+0 1 0
+
+542
+00:42:19,219 --> 00:42:21,219
+0 0
+
+543
+00:42:21,219 --> 00:42:22,940
+0 0 0.
+
+544
+00:42:22,940 --> 00:42:25,219
+Right. 0 0 0
+
+545
+00:42:25,219 --> 00:42:27,079
+0. X
+
+546
+00:42:27,079 --> 00:42:27,840
+O 1.
+
+547
+00:42:28,820 --> 00:42:30,920
+X could be either 1 or 0.
+
+548
+00:42:31,360 --> 00:42:32,300
+X or 1.
+
+549
+00:42:32,820 --> 00:42:35,340
+If X is 1, 1 or 1, 1.
+
+550
+00:42:36,199 --> 00:42:39,699
+If X is 0, 0 or 1, 1.
+
+551
+00:42:40,199 --> 00:42:42,179
+So no matter the value of X.
+
+552
+00:42:42,719 --> 00:42:44,400
+X or 1, 1.
+
+553
+00:42:44,599 --> 00:42:45,619
+Outcome is 1.
+
+554
+00:42:46,159 --> 00:42:47,360
+X or 0.
+
+555
+00:42:48,440 --> 00:42:49,840
+X or 0.
+
+556
+00:42:49,960 --> 00:42:54,559
+If X is 1, 1 or 0, that is 1.
+
+557
+00:42:54,559 --> 00:42:58,820
+If x is 0, 0, 0, 0.
+
+558
+00:42:59,519 --> 00:43:02,719
+That means outcome depends on x.
+
+559
+00:43:03,480 --> 00:43:05,340
+x, 0, 0, x.
+
+560
+00:43:05,760 --> 00:43:10,320
+Now this is the value that we've assigned to Admax.
+
+561
+00:43:11,119 --> 00:43:16,300
+Now we have not touched these 6 bits of Admax.
+
+562
+00:43:16,699 --> 00:43:21,360
+We have cleared the 7th bit and set the 6th bit.
+
+563
+00:43:21,760 --> 00:43:24,079
+Other bits we have not touched.
+
+564
+00:43:24,559 --> 00:43:45,699
+Without disturbing to the other bits, we have set RE reference FS 0 bit and we have cleared RE FS 1 bit.
+
+565
+00:43:45,699 --> 00:43:53,780
+By doing that we have set the reference voltage, right, V ref to 5 volts.
+
+566
+00:43:53,780 --> 00:44:09,820
+That is AVCC, analog input voltage, sorry, analog power supply to ADC, supply voltage, supply voltage to ADC.
+
+567
+00:44:12,179 --> 00:44:14,000
+Can you understand?
+
+568
+00:44:15,699 --> 00:44:20,699
+without disturbing other bits,
+
+569
+00:44:20,699 --> 00:44:24,900
+this bit we have set, this bit we have cleared.
+
+570
+00:44:27,699 --> 00:44:30,900
+Is it clear now? If not, let me know.
+
+571
+00:44:39,000 --> 00:44:41,400
+If it is still not clear, please let me know.
+
+572
+00:44:42,300 --> 00:44:43,420
+Can you explain it?
+
+573
+00:44:43,420 --> 00:44:47,760
+Right. This is the register.
+
+574
+00:44:49,300 --> 00:44:52,099
+Admax ADC multiplexer selection register.
+
+575
+00:44:52,360 --> 00:44:55,619
+These are the two bits we want to handle.
+
+576
+00:44:56,320 --> 00:44:59,599
+Reference selection 1, reference selection 0.
+
+577
+00:45:00,099 --> 00:45:03,900
+What is their meaning? By setting different values
+
+578
+00:45:03,900 --> 00:45:07,500
+to these two bits, we can set the reference voltage.
+
+579
+00:45:07,500 --> 00:45:11,760
+If you clear this bit and set this bit
+
+580
+00:45:11,760 --> 00:45:38,280
+Right. Bit number 6, 1. Bit number 7, 0. This is the situation. 0 and 1. We set reference voltage to AVCC. AVCC is the ADC supply voltage. The voltage you supply to ADC. And that supply voltage is typically 5 volt. So, we set that to set that as reference voltage.
+
+581
+00:45:38,960 --> 00:45:39,679
+0, 1.
+
+582
+00:45:39,780 --> 00:45:46,340
+For that, you have to clear the bit number 7 and set the bit number 6.
+
+583
+00:45:46,860 --> 00:45:47,000
+Right.
+
+584
+00:45:47,320 --> 00:45:48,639
+Bit 7, you have to clear.
+
+585
+00:45:48,860 --> 00:45:50,480
+Bit 6, you have to set.
+
+586
+00:45:50,480 --> 00:45:55,440
+Then you can set the reference voltage to ABCC.
+
+587
+00:45:55,800 --> 00:45:59,780
+ABCC means supply voltage to ADC.
+
+588
+00:46:00,260 --> 00:46:00,559
+Right.
+
+589
+00:46:02,019 --> 00:46:02,780
+Right.
+
+590
+00:46:03,119 --> 00:46:04,860
+This is the ABCC bit.
+
+591
+00:46:05,179 --> 00:46:07,179
+Supply voltage to ADC.
+
+592
+00:46:07,179 --> 00:46:26,579
+That is 5 volts. Supply voltage to ADC. Right. Again. Now if you use this 0 and 0, this setting, bit 7 you clear, bit 6 you clear, then reference voltage is set to VARF supplied externally.
+
+593
+00:46:26,579 --> 00:46:35,780
+Reference voltage is set to externally supplied voltage. Externally supplied voltage to which pin?
+
+594
+00:46:36,579 --> 00:46:44,940
+A ref pin. If you set 0, 0 for these two bits, reference voltage is set to V A ref,
+
+595
+00:46:45,659 --> 00:46:54,059
+supplied externally. Reference voltage is set to externally supplied voltage to A ref pin.
+
+596
+00:46:54,059 --> 00:46:55,559
+What is ARFP?
+
+597
+00:46:56,440 --> 00:47:03,659
+Now in this example, we are not going to supply externally a voltage to ARFP.
+
+598
+00:47:03,960 --> 00:47:05,320
+So we have not used that.
+
+599
+00:47:06,019 --> 00:47:10,360
+Now in the ADMUX register, we need to clear bit 7.
+
+600
+00:47:10,619 --> 00:47:15,059
+We need to set bit 6 without disturbing to other bits.
+
+601
+00:47:15,480 --> 00:47:15,719
+Right.
+
+602
+00:47:16,500 --> 00:47:18,820
+So this particular part, because there is bracket.
+
+603
+00:47:19,039 --> 00:47:21,719
+So this particular part executed first.
+
+604
+00:47:21,719 --> 00:47:23,460
+Admax register.
+
+605
+00:47:24,300 --> 00:47:25,320
+Let's assume.
+
+606
+00:47:25,920 --> 00:47:27,539
+It contains the default.
+
+607
+00:47:27,840 --> 00:47:29,880
+It contains values.
+
+608
+00:47:29,880 --> 00:47:34,159
+[unclear — Sinhala / crosstalk]
+
+609
+00:47:34,239 --> 00:47:35,059
+8 bit register.
+
+610
+00:47:35,559 --> 00:47:37,500
+X could be either.
+
+611
+00:47:38,099 --> 00:47:41,599
+X could be 1, O, 0.
+
+612
+00:47:42,119 --> 00:47:44,300
+Any X could be either 1 or 0.
+
+613
+00:47:44,840 --> 00:47:45,820
+And with that.
+
+614
+00:47:46,400 --> 00:47:47,960
+This is the value of Admax.
+
+615
+00:47:49,500 --> 00:47:50,760
+And operation.
+
+616
+00:47:50,760 --> 00:47:56,239
+[unclear — Sinhala / crosstalk]
+
+617
+00:47:56,539 --> 00:47:57,679
+This particular value.
+
+618
+00:47:58,039 --> 00:48:00,360
+Now let's take the bitwise end operation.
+
+619
+00:48:00,619 --> 00:48:03,059
+X and 0 bitwise.
+
+620
+00:48:03,659 --> 00:48:06,039
+Start from your left side.
+
+621
+00:48:06,900 --> 00:48:07,920
+X and 0.
+
+622
+00:48:08,699 --> 00:48:12,059
+No matter the value of X, outcome is 0.
+
+623
+00:48:12,579 --> 00:48:16,079
+Because if you take end operation with a 0, outcome is 0.
+
+624
+00:48:16,079 --> 00:48:20,860
+Then X and 1, bit number 6, X and 1.
+
+625
+00:48:21,480 --> 00:48:26,099
+If X is 1, 1 and 1, outcome is 1.
+
+626
+00:48:26,840 --> 00:48:31,920
+If X is 0, 0 and 1, outcome is 0.
+
+627
+00:48:32,480 --> 00:48:34,820
+So outcome depends on X.
+
+628
+00:48:35,239 --> 00:48:38,719
+X and 1 means outcome is X.
+
+629
+00:48:39,119 --> 00:48:41,159
+If X is 1, this is 1.
+
+630
+00:48:41,320 --> 00:48:42,960
+If X is 0, this is 0.
+
+631
+00:48:43,599 --> 00:48:45,059
+Outcome depends on X.
+
+632
+00:48:45,059 --> 00:48:51,559
+Similarly, this is the answer you get when you perform this operation.
+
+633
+00:48:52,559 --> 00:48:59,760
+Then with that result, we take the operation of another value.
+
+634
+00:49:00,360 --> 00:49:02,219
+O, another value.
+
+635
+00:49:02,460 --> 00:49:06,840
+0, 1, 0, 0, 0, 0, 0.
+
+636
+00:49:06,840 --> 00:49:10,280
+Now 0, O, 0, which is 0.
+
+637
+00:49:11,539 --> 00:49:12,880
+X, O, 1.
+
+638
+00:49:13,480 --> 00:49:14,539
+X, O, 1.
+
+639
+00:49:15,059 --> 00:49:19,019
+If X is 1, 1 O 1, 1.
+
+640
+00:49:19,539 --> 00:49:23,260
+If X is 0, 0 O 1, 1.
+
+641
+00:49:23,679 --> 00:49:30,519
+That means no matter the value of X, X O 1 outcome would be 1.
+
+642
+00:49:30,519 --> 00:49:33,039
+Then X O 0.
+
+643
+00:49:33,699 --> 00:49:37,059
+If X is 1, 1 O 0, 1.
+
+644
+00:49:37,920 --> 00:49:41,460
+If X is 0, 0 O 0, 0.
+
+645
+00:49:41,460 --> 00:49:49,519
+Then that means if you take the cooperation with x and 0 outcome depends on x.
+
+646
+00:49:49,920 --> 00:49:50,480
+Same way.
+
+647
+00:49:51,019 --> 00:49:52,940
+This is the answer you get.
+
+648
+00:49:53,440 --> 00:49:57,420
+That answer you assign to at max.
+
+649
+00:49:57,639 --> 00:49:58,300
+At max.
+
+650
+00:49:58,480 --> 00:50:05,599
+So what we have done is we have set reference selection bit 0.
+
+651
+00:50:05,599 --> 00:50:11,119
+We have cleared reference selection bit 1.
+
+652
+00:50:11,460 --> 00:50:32,519
+As a result, we have set V ref to AVCC. AVCC means 5 volts. Is that clear now? Still, if it is not clear, please let me know. Is that okay now?
+
+653
+00:50:32,519 --> 00:50:46,519
+Before the last diagram, block diagram,
+
+654
+00:50:46,519 --> 00:51:00,039
+No sir, that ADC block diagram last we did in that there was a control and status register
+
+655
+00:51:00,039 --> 00:51:11,320
+and the clock pre-scale. What are the duties of these two?
+
+656
+00:51:11,320 --> 00:51:14,559
+to the status register.
+
+657
+00:51:14,559 --> 00:51:17,199
+Yeah, control and the purpose of that register.
+
+658
+00:51:17,199 --> 00:51:18,199
+Yes, sir.
+
+659
+00:51:18,199 --> 00:51:20,199
+Last week we discussed that.
+
+660
+00:51:20,199 --> 00:51:23,199
+Not related to this.
+
+661
+00:51:23,199 --> 00:51:29,940
+It's the control and status register bits, right?
+
+662
+00:51:29,940 --> 00:51:35,239
+So you can enable ADC, you can start ADC, right?
+
+663
+00:51:35,239 --> 00:51:37,119
+The ADC interrupt flag.
+
+664
+00:51:37,119 --> 00:51:43,059
+When the ADC is over, this flag is raised and ADC interrupt enable bit.
+
+665
+00:51:43,519 --> 00:51:46,360
+And then the prescalers, right?
+
+666
+00:51:46,519 --> 00:51:47,840
+Prescaler select bits.
+
+667
+00:51:48,380 --> 00:51:52,980
+Using these prescaler select bits, you can select various prescalers.
+
+668
+00:51:52,980 --> 00:51:59,239
+You can scale down the CPU frequency to suit to ADC.
+
+669
+00:51:59,780 --> 00:52:06,239
+So for that, you have to use the bits of ADC control and status register.
+
+670
+00:52:06,239 --> 00:52:12,320
+And in the diagram, right, this is that register, control and status register.
+
+671
+00:52:12,760 --> 00:52:16,480
+This is the ADMAX register, multiplexes election register, ADMAX.
+
+672
+00:52:17,119 --> 00:52:19,159
+This is the control and status register.
+
+673
+00:52:19,679 --> 00:52:22,239
+And this is the data register, ADCW.
+
+674
+00:52:22,900 --> 00:52:23,800
+You got the answer?
+
+675
+00:52:24,260 --> 00:52:25,280
+Yes, I have. Thank you.
+
+676
+00:52:25,559 --> 00:52:26,980
+Right. Anything else?
+
+677
+00:52:28,179 --> 00:52:28,820
+Right.
+
+678
+00:52:29,619 --> 00:52:32,340
+Then, reference voltage we set.
+
+679
+00:52:32,340 --> 00:52:41,119
+thereafter we need to select the ADC input channel. We need to select the ADC input channel. So,
+
+680
+00:52:41,119 --> 00:52:49,179
+we have to use at max register and set the ADC input channel. Now, in this example,
+
+681
+00:52:50,039 --> 00:52:59,519
+we have connected the potentiometer middle pin, right, where you get analog input voltage to
+
+682
+00:52:59,519 --> 00:53:07,860
+TC0 or ADC0 channel. Now we have to select this particular channel as our input channel.
+
+683
+00:53:14,099 --> 00:53:22,699
+ADC0 channel you want to select. Then what you have to do is set clear all the MUX bits.
+
+684
+00:53:22,699 --> 00:53:26,400
+0, 0, 0 of AdMux register.
+
+685
+00:53:26,739 --> 00:53:27,380
+0, 0.
+
+686
+00:53:27,500 --> 00:53:29,840
+That means you are selecting this input chat.
+
+687
+00:53:30,079 --> 00:53:31,599
+0, 0, 0.
+
+688
+00:53:31,940 --> 00:53:34,019
+Now here that's what we have done.
+
+689
+00:53:34,440 --> 00:53:35,420
+We have cleared
+
+690
+00:53:35,420 --> 00:53:38,340
+Max 0, Max 1, Max 2 bits
+
+691
+00:53:38,340 --> 00:53:40,980
+without disturbing to other bits.
+
+692
+00:53:41,300 --> 00:53:41,940
+Is that clear?
+
+693
+00:53:42,380 --> 00:53:44,480
+Without disturbing to other bits
+
+694
+00:53:44,480 --> 00:53:45,780
+of the AdMux register,
+
+695
+00:53:45,780 --> 00:53:48,300
+we have cleared first 3 bits.
+
+696
+00:53:48,679 --> 00:53:50,519
+Now without disturbing to other bits,
+
+697
+00:53:50,619 --> 00:53:52,659
+if you want to set or clear bits,
+
+698
+00:53:52,699 --> 00:53:56,460
+You have to use bitwise logical operators.
+
+699
+00:53:56,920 --> 00:53:58,440
+You can't do simple assignment.
+
+700
+00:53:58,940 --> 00:54:01,360
+Can you understand this line number 8?
+
+701
+00:54:01,840 --> 00:54:03,099
+If not, let me know.
+
+702
+00:54:03,679 --> 00:54:03,800
+Okay.
+
+703
+00:54:04,380 --> 00:54:05,800
+Then clock speed.
+
+704
+00:54:06,460 --> 00:54:08,039
+ADC clock speed you have to set.
+
+705
+00:54:08,139 --> 00:54:13,380
+You have to use a proper prescaler and scale down the CPU frequency.
+
+706
+00:54:13,780 --> 00:54:14,059
+Right.
+
+707
+00:54:14,760 --> 00:54:21,099
+Now, in this example, we use the prescale 1 to 8.
+
+708
+00:54:21,099 --> 00:54:26,199
+That means CPU frequency we divided by 128.
+
+709
+00:54:26,800 --> 00:54:35,900
+To use this prescaler, we have to set or clear some bits of this control and status register.
+
+710
+00:54:36,019 --> 00:54:37,599
+ADC control and status register.
+
+711
+00:54:37,860 --> 00:54:39,039
+Let's go to that register.
+
+712
+00:54:39,480 --> 00:54:44,500
+If you want to divide by 128, this is the prescaler that I am going to use.
+
+713
+00:54:44,500 --> 00:54:46,980
+you need to set
+
+714
+00:54:46,980 --> 00:54:48,820
+ADC
+
+715
+00:54:48,820 --> 00:54:50,960
+ADPS 0
+
+716
+00:54:50,960 --> 00:54:52,119
+ADPS 1
+
+717
+00:54:52,119 --> 00:54:53,400
+ADPS 2
+
+718
+00:54:53,400 --> 00:54:55,159
+all 3 bits you have to set
+
+719
+00:54:55,159 --> 00:54:57,420
+ADPS means
+
+720
+00:54:57,420 --> 00:55:00,019
+ADC prescaler select
+
+721
+00:55:00,019 --> 00:55:01,960
+all 3 bits you have to set
+
+722
+00:55:01,960 --> 00:55:04,219
+in the controller status register
+
+723
+00:55:04,219 --> 00:55:06,739
+these are the bits you have to set
+
+724
+00:55:06,739 --> 00:55:08,059
+these are the bits you have
+
+725
+00:55:08,059 --> 00:55:10,340
+and that's what we have done here
+
+726
+00:55:10,340 --> 00:55:12,539
+first 3 bits we have set
+
+727
+00:55:12,539 --> 00:55:13,820
+by doing that
+
+728
+00:55:13,820 --> 00:55:24,360
+we have selected this prescaler and we have scaled out CPU frequency by dividing it 128.
+
+729
+00:55:24,360 --> 00:55:39,820
+When you divide CPU frequency which is 16 million hertz, 16 million hertz means 16,000 kilohertz.
+
+730
+00:55:40,260 --> 00:55:46,719
+If you divide it by 128, you get 125 kilohertz.
+
+731
+00:55:46,719 --> 00:55:48,880
+This is the ADC frequency.
+
+732
+00:55:49,119 --> 00:55:53,179
+In this example, we have selected 125 kilohertz.
+
+733
+00:55:53,179 --> 00:56:03,179
+According to the data sheet, this particular microcontroller, this particular ADC can give you a fairly accurate result.
+
+734
+00:56:04,219 --> 00:56:17,300
+If the ADC frequency is less than 200 kilohertz, if the ADC frequency is less than 200 kilohertz, this ADC can give you an accurate conversion result.
+
+735
+00:56:17,300 --> 00:56:28,519
+If the ADC frequency is greater than, faster than 200 kilohertz, still it will give you a result, but the accuracy is not that high.
+
+736
+00:56:28,980 --> 00:56:31,119
+Conversion accuracy is not that high.
+
+737
+00:56:31,320 --> 00:56:40,079
+If the ADC speed is less than 200 kilohertz, according to the data sheet, you read the data sheet, accuracy would be very high.
+
+738
+00:56:40,079 --> 00:56:44,079
+So that's why I have used 128 pre-scale.
+
+739
+00:56:44,079 --> 00:56:55,079
+When you divide 16 MHz by 128, you get 125 kHz as the ADC speed, which is less than 200 kHz.
+
+740
+00:56:55,920 --> 00:57:01,460
+So, I can get a fairly good accurate result. Is that clear? Any question?
+
+741
+00:57:02,079 --> 00:57:09,099
+Sir, that means most of the time we have to use, we have to divide from 1 to 8.
+
+742
+00:57:09,099 --> 00:57:18,719
+if your CPU clock speed is 16 megahertz if your CPU clock speed is 8 megahertz or 4 megahertz
+
+743
+00:57:18,719 --> 00:57:26,599
+then you can use different pre-scale yes it depends on your CPU clock speed that's why you
+
+744
+00:57:26,599 --> 00:57:33,800
+have set of pre-scales not what Sarah set of pre-scales you have right depending on your
+
+745
+00:57:33,800 --> 00:57:38,780
+Now CPU clock speed you have to use proper prescale.
+
+746
+00:57:39,880 --> 00:57:40,219
+Right.
+
+747
+00:57:41,000 --> 00:57:43,960
+And if you are concerned about the accuracy.
+
+748
+00:57:45,039 --> 00:57:49,920
+Try to keep ADC clock speed less than 200 kilohertz.
+
+749
+00:57:49,920 --> 00:57:53,940
+If you are not worrying about the accuracy and if you want the speed.
+
+750
+00:57:54,880 --> 00:57:57,179
+Quick conversion but not very accurate.
+
+751
+00:57:57,980 --> 00:57:58,940
+But quick conversion.
+
+752
+00:57:59,360 --> 00:58:00,139
+You can go.
+
+753
+00:58:00,719 --> 00:58:01,039
+Right.
+
+754
+00:58:01,039 --> 00:58:05,960
+You can go for higher speeds, higher than 200 kilohertz.
+
+755
+00:58:06,139 --> 00:58:08,139
+You can go. No problem. Right.
+
+756
+00:58:08,900 --> 00:58:14,280
+In some cases, the conversion results accuracy is not very important.
+
+757
+00:58:14,800 --> 00:58:17,039
+You get fairly good result. Right.
+
+758
+00:58:17,280 --> 00:58:20,780
+You won't get a totally 100 percent inaccurate result.
+
+759
+00:58:20,960 --> 00:58:23,039
+No, you get a good result.
+
+760
+00:58:23,039 --> 00:58:30,460
+But more than the accuracy, you are concerned about the speed.
+
+761
+00:58:31,000 --> 00:58:35,400
+Then you can use a frequency higher than 200 kHz.
+
+762
+00:58:36,039 --> 00:58:43,679
+And you can use some other pre-scale to scale down the CPU clock speed.
+
+763
+00:58:44,280 --> 00:58:45,400
+Is that clear, Tilna?
+
+764
+00:58:46,079 --> 00:58:46,519
+Yes, sir.
+
+765
+00:58:47,000 --> 00:58:47,260
+Good.
+
+766
+00:58:48,059 --> 00:58:48,820
+Right.
+
+767
+00:58:48,820 --> 00:58:53,280
+That's why here you have number of prescale.
+
+768
+00:58:53,599 --> 00:58:58,619
+Depending on your clock speed, you have to use suitable prescale.
+
+769
+00:58:58,940 --> 00:59:00,219
+Depending on your clock speed.
+
+770
+00:59:00,559 --> 00:59:04,559
+And also depending on your requirement, whether you want the accuracy or the speed.
+
+771
+00:59:05,179 --> 00:59:05,340
+Right.
+
+772
+00:59:06,300 --> 00:59:08,679
+Then we enable ADC.
+
+773
+00:59:09,000 --> 00:59:14,199
+So the control and status register bit 7, we set to enable ADC.
+
+774
+00:59:14,199 --> 00:59:18,119
+Because ADC is disabled by default to save power.
+
+775
+00:59:18,119 --> 00:59:27,280
+So that is the normal, the usual practice of microcontrollers.
+
+776
+00:59:27,539 --> 00:59:32,739
+All the unnecessary peripherals turn off by default to save power.
+
+777
+00:59:33,300 --> 00:59:35,159
+Whenever you need, you turn it on.
+
+778
+00:59:35,800 --> 00:59:37,559
+Get the job done, then turn it off.
+
+779
+00:59:37,920 --> 00:59:40,980
+So in this case, ADC turn off by default.
+
+780
+00:59:41,300 --> 00:59:42,380
+We enable ADC.
+
+781
+00:59:42,380 --> 00:59:49,920
+To do that, in the controller status register, bit number 7, right?
+
+782
+00:59:50,239 --> 00:59:54,719
+Bit number 7 is the ADC enable bit, ADEN bit, right?
+
+783
+00:59:54,980 --> 00:59:57,340
+Reset, ADEN bit, right?
+
+784
+00:59:57,820 --> 01:00:03,460
+Then, I'm in the wrong place, right?
+
+785
+01:00:03,460 --> 01:00:06,619
+clock speed, enable ADC,
+
+786
+01:00:07,139 --> 01:00:10,139
+then enter into
+
+787
+01:00:10,139 --> 01:00:14,679
+endless loop. Enable ADC,
+
+788
+01:00:14,840 --> 01:00:18,760
+enter into endless loop. Right. Because I switched some
+
+789
+01:00:18,760 --> 01:00:22,619
+slides back and forth. As a result, I have moved to a wrong
+
+790
+01:00:22,619 --> 01:00:24,659
+place. Now I am in the correct slide.
+
+791
+01:00:26,239 --> 01:00:30,719
+Now, in the endless loop, we
+
+792
+01:00:30,719 --> 01:00:41,199
+start ADC. To start the ADC, I use ADC start conversion bit. ADC start conversion bit is
+
+793
+01:00:41,199 --> 01:00:49,039
+the bit number six of control and status register, bit number six. ADC start conversion bit. I set that
+
+794
+01:00:49,039 --> 01:00:55,280
+bit and start the ADC. Then once you start the ADC, you have to check whether ADC is over.
+
+795
+01:00:55,280 --> 01:00:58,420
+because when the ADC is over,
+
+796
+01:00:59,119 --> 01:01:01,119
+the data registers are updated.
+
+797
+01:01:01,679 --> 01:01:02,860
+Data registers are updated.
+
+798
+01:01:03,380 --> 01:01:06,619
+So here actually data registers are ADC L and ADC H.
+
+799
+01:01:07,420 --> 01:01:09,320
+ADC low and ADC high.
+
+800
+01:01:09,800 --> 01:01:12,420
+When the ADC L and ADC H are updated,
+
+801
+01:01:12,420 --> 01:01:15,599
+the virtual register ADC W, we get the result.
+
+802
+01:01:16,699 --> 01:01:20,059
+To get the result from ADC W, the virtual register,
+
+803
+01:01:21,019 --> 01:01:24,099
+first the data registers, we need to get updated.
+
+804
+01:01:24,099 --> 01:01:29,099
+The data registers will be updated when the ADC is over.
+
+805
+01:01:29,099 --> 01:01:32,099
+Now, we have to check whether ADC is over.
+
+806
+01:01:32,099 --> 01:01:35,099
+Then only we can get the conversion result.
+
+807
+01:01:35,099 --> 01:01:40,099
+When the ADC is over, now to start the ADC, we set this bit.
+
+808
+01:01:40,099 --> 01:01:44,099
+ADC start conversion bit, we set to start the ADC.
+
+809
+01:01:44,099 --> 01:01:47,099
+When the ADC is over, this bit is automatically clear.
+
+810
+01:01:47,099 --> 01:01:49,099
+This bit is automatically clear.
+
+811
+01:01:49,099 --> 01:01:53,099
+ADC clears this bit when the ADC is over.
+
+812
+01:01:53,099 --> 01:02:02,699
+So this bit is a very good indication to know whether ADC is over. So we can pull this bit.
+
+813
+01:02:02,699 --> 01:02:09,820
+We can check this bit. Now we have set the bit to start the ADC and then we can check this bit.
+
+814
+01:02:09,820 --> 01:02:17,099
+And if this bit goes zero, that means ADC is over. Conversion is over. To start ADC,
+
+815
+01:02:17,099 --> 01:02:26,139
+we set the bit and then we keep check this bit we check this bit and if this bit goes zero that
+
+816
+01:02:26,139 --> 01:02:34,619
+means adz conversion is over so we need to check this bit repeatedly to see whether conversion is
+
+817
+01:02:35,500 --> 01:02:43,900
+so we have to use polling now how do we check this bit whether this is over repeatedly this is
+
+818
+01:02:43,900 --> 01:02:51,260
+the loop. We run a loop. The loop condition, in the loop condition we check this bit. ADC start
+
+819
+01:02:51,260 --> 01:02:59,420
+conversion bit. And the loop body, nothing. Just a semicolon. Just a semicolon. So what is the loop
+
+820
+01:02:59,420 --> 01:03:12,420
+condition, right? ADCSRA, control and status register. Let's assume its values are x, x, x, x,
+
+821
+01:03:12,420 --> 01:03:21,900
+x, x, x, x. Its values are this register. X could be either 1 or 0. And with that we take
+
+822
+01:03:21,900 --> 01:03:37,940
+[unclear — Sinhala / crosstalk]
+
+823
+01:03:37,940 --> 01:03:46,980
+Now this is the outcome of this operation. So while now this is the condition and no statements
+
+824
+01:03:46,980 --> 01:03:48,940
+under the loop, just a semicolon.
+
+825
+01:03:49,579 --> 01:03:50,900
+Right. Now, if
+
+826
+01:03:50,900 --> 01:03:52,840
+we know that this bit is
+
+827
+01:03:52,840 --> 01:03:54,300
+this particular bit.
+
+828
+01:03:54,920 --> 01:03:58,559
+This is the ADSC bit.
+
+829
+01:03:59,219 --> 01:04:01,719
+ADC start conversion bit.
+
+830
+01:04:02,219 --> 01:04:03,300
+If you want to start
+
+831
+01:04:03,300 --> 01:04:04,960
+the conversion, you set this bit.
+
+832
+01:04:05,500 --> 01:04:07,340
+And when the conversion is over,
+
+833
+01:04:07,519 --> 01:04:09,300
+this bit is, this bit
+
+834
+01:04:09,300 --> 01:04:11,219
+goes zero. It becomes
+
+835
+01:04:11,219 --> 01:04:13,480
+zero when the conversion is over.
+
+836
+01:04:13,900 --> 01:04:15,260
+If the conversion is not
+
+837
+01:04:15,260 --> 01:04:16,519
+over, this bit is one.
+
+838
+01:04:16,980 --> 01:04:32,980
+This bit 1 means this is a positive result. 0 1 0 0 0 0 0 0. This is a positive value if this is 1. While positive value means conditioned true loop runs.
+
+839
+01:04:32,980 --> 01:04:39,159
+But if the ADC is over, this bit becomes 0.
+
+840
+01:04:40,159 --> 01:04:45,280
+Then this entire expression of the while loop becomes 0.
+
+841
+01:04:45,820 --> 01:04:49,360
+While 0 means end of the loop.
+
+842
+01:04:49,860 --> 01:04:53,119
+So we move to the next statement, right?
+
+843
+01:04:53,239 --> 01:04:59,119
+End of the loop, loop terminates and we go to the next statement when the conversion is over.
+
+844
+01:04:59,119 --> 01:05:06,320
+If the conversion is not over, x is 1, then this contains a positive value.
+
+845
+01:05:06,559 --> 01:05:13,739
+While a positive value means condition is true, loop runs again and again, but doing nothing.
+
+846
+01:05:14,960 --> 01:05:16,139
+Can you understand?
+
+847
+01:05:16,460 --> 01:05:17,699
+If not, let me know.
+
+848
+01:05:17,780 --> 01:05:18,739
+I can explain again.
+
+849
+01:05:19,139 --> 01:05:20,960
+Is that clear?
+
+850
+01:05:21,519 --> 01:05:21,739
+Sir.
+
+851
+01:05:22,260 --> 01:05:22,880
+Is that clear?
+
+852
+01:05:23,260 --> 01:05:23,760
+Yes, sir.
+
+853
+01:05:24,519 --> 01:05:24,860
+Aruni?
+
+854
+01:05:25,460 --> 01:05:26,039
+Yes, sir.
+
+855
+01:05:26,179 --> 01:05:26,400
+Clear.
+
+856
+01:05:26,400 --> 01:05:26,699
+Okay.
+
+857
+01:05:26,699 --> 01:05:37,619
+If not, let me know. I can explain again. Right. So, using this loop, we check whether ADC is over.
+
+858
+01:05:38,179 --> 01:05:45,559
+If ADC is over, then we move into the next slide. Right. If ADC is not over, we keep checking.
+
+859
+01:05:45,559 --> 01:05:48,599
+We repeat this loop, right?
+
+860
+01:05:48,940 --> 01:05:54,539
+We repeat this loop and pull this ADC start conversion.
+
+861
+01:05:54,860 --> 01:05:57,599
+If ADC is over, we move to the next line.
+
+862
+01:05:58,119 --> 01:06:01,320
+In the next line, we get the result, conversion result,
+
+863
+01:06:01,920 --> 01:06:04,820
+which is in the ADCW, ADC word register.
+
+864
+01:06:05,480 --> 01:06:10,280
+Multiply that value by reference voltage
+
+865
+01:06:10,280 --> 01:06:15,280
+divided by the total number of discrete steps.
+
+866
+01:06:15,559 --> 01:06:22,500
+total number of discrete steps 1024 because ADC is a 10 bit ADC.
+
+867
+01:06:23,619 --> 01:06:24,039
+Right.
+
+868
+01:06:24,360 --> 01:06:29,559
+And we calculate the input analog voltage to V in,
+
+869
+01:06:29,659 --> 01:06:32,320
+which is a floating point variable.
+
+870
+01:06:32,320 --> 01:06:38,260
+Now, this is very important to put 0.05.0.
+
+871
+01:06:39,019 --> 01:06:42,380
+If you simply write something like this,
+
+872
+01:06:42,380 --> 01:06:44,900
+ADCW
+
+873
+01:06:44,900 --> 01:06:47,119
+multiplied by
+
+874
+01:06:47,119 --> 01:06:49,159
+5 divided
+
+875
+01:06:49,159 --> 01:06:50,920
+by 1024
+
+876
+01:06:50,920 --> 01:06:52,760
+into
+
+877
+01:06:52,760 --> 01:06:54,639
+V in.
+
+878
+01:06:55,099 --> 01:06:57,199
+Then you will, you won't get
+
+879
+01:06:57,199 --> 01:06:59,280
+the correct result. The reason
+
+880
+01:06:59,280 --> 01:07:00,500
+is this is integer.
+
+881
+01:07:01,340 --> 01:07:03,340
+ADCW value is integer value
+
+882
+01:07:03,340 --> 01:07:04,559
+0 to 1023.
+
+883
+01:07:04,559 --> 01:07:05,980
+This is integer
+
+884
+01:07:05,980 --> 01:07:08,039
+and this is integer.
+
+885
+01:07:09,519 --> 01:07:10,800
+So, integer
+
+886
+01:07:10,800 --> 01:07:14,219
+division you lose the decimal part.
+
+887
+01:07:15,219 --> 01:07:19,139
+In an integer division you lose the decimal part.
+
+888
+01:07:19,139 --> 01:07:23,340
+You will get integer result not a floating
+
+889
+01:07:23,340 --> 01:07:26,840
+point result. But we know that when we do this calculation
+
+890
+01:07:26,840 --> 01:07:31,139
+we get some decimal part. If you want to get that
+
+891
+01:07:31,139 --> 01:07:34,980
+decimal part at least one operand should be decimal
+
+892
+01:07:34,980 --> 01:07:38,099
+or at least one operand should be floating point.
+
+893
+01:07:38,099 --> 01:07:46,099
+If you divide integer operand with another integer operand, you get integer result,
+
+894
+01:07:46,099 --> 01:07:48,099
+losing the decimal part.
+
+895
+01:07:48,099 --> 01:07:52,099
+So, at least one operand must be floating point.
+
+896
+01:07:52,099 --> 01:07:54,099
+That's why I have put point zero.
+
+897
+01:07:54,099 --> 01:07:58,099
+This is one of the mistakes we do.
+
+898
+01:07:58,099 --> 01:08:00,099
+5 volt divided by 1024.
+
+899
+01:08:00,099 --> 01:08:04,099
+Integer operand divided by integer operand, you get integer result,
+
+900
+01:08:04,099 --> 01:08:10,159
+losing all the decimal value, decimal part of the division.
+
+901
+01:08:10,920 --> 01:08:13,000
+Then your result would not be accurate.
+
+902
+01:08:13,559 --> 01:08:18,800
+If you want accurate result, accurate input voltage calculation,
+
+903
+01:08:19,159 --> 01:08:23,960
+then you have to use at least one operand of this equation
+
+904
+01:08:23,960 --> 01:08:26,739
+as floating point operating.
+
+905
+01:08:27,140 --> 01:08:28,380
+Floating point operand.
+
+906
+01:08:28,880 --> 01:08:31,840
+Then only the value would be converted into floating point.
+
+907
+01:08:32,140 --> 01:08:32,779
+Is that clear?
+
+908
+01:08:32,779 --> 01:08:35,319
+These are basic programming things.
+
+909
+01:08:36,739 --> 01:08:42,220
+In the programming, I am sure you have learned explicit conversions and implicit conversions.
+
+910
+01:08:42,699 --> 01:08:44,500
+In programming, it is called casting.
+
+911
+01:08:48,119 --> 01:08:48,880
+Right.
+
+912
+01:08:50,399 --> 01:08:58,739
+Then we calculated the input voltage, right, using the converted result.
+
+913
+01:08:58,739 --> 01:09:00,180
+This is the conversion result.
+
+914
+01:09:00,180 --> 01:09:03,800
+Using that, we determine input voltage.
+
+915
+01:09:04,260 --> 01:09:06,500
+Then turn off all LEDs.
+
+916
+01:09:07,159 --> 01:09:11,640
+Clear bit 0 to bit 4 of code B.
+
+917
+01:09:12,140 --> 01:09:18,920
+That means set all PB0 to PB4 pins low and turn off all LEDs.
+
+918
+01:09:19,439 --> 01:09:25,279
+If voltage is greater than 4 volts, this computed voltage is greater than 4 volts,
+
+919
+01:09:25,279 --> 01:09:27,539
+turn on all 5 LEDs.
+
+920
+01:09:27,539 --> 01:09:39,340
+set PB0 to PB4 pins high. Turn on 5 LEDs. If not, else if voltage is greater than 3,
+
+921
+01:09:39,880 --> 01:09:47,079
+not greater than 4 but greater than 3, that means between 3 and 4 voltage, turn on 4 LEDs.
+
+922
+01:09:47,659 --> 01:09:57,159
+Set PB0 to PB3 high and turn on 4 LEDs. Else if computed voltage is greater than 2 but not 3,
+
+923
+01:09:57,159 --> 01:10:08,920
+that means between 2 and 3, turn on 3 LEDs. Set PB0 to PB2 high. Else if voltage is greater than 1,
+
+924
+01:10:09,159 --> 01:10:20,180
+that means greater than 1, less than 2, turn on 2 LEDs. Set PB0 to PB1 high. If not, else voltage
+
+925
+01:10:20,180 --> 01:10:29,920
+is greater than zero, greater than zero but less than. Turn on only one LV. Set PB0. Right. So the
+
+926
+01:10:29,920 --> 01:10:38,819
+input continuous analog input voltage, now we are going to display using five discrete LVs
+
+927
+01:10:38,819 --> 01:10:46,340
+and do this again and again. Now whenever you rotate the potentiometer and change the input
+
+928
+01:10:46,340 --> 01:10:55,140
+voltage immediately you get that value reflected on five discrete delugals now can you understand
+
+929
+01:10:55,779 --> 01:11:05,939
+this code resource code if not let me know i can explain again if you have any question on particular
+
+930
+01:11:05,939 --> 01:11:13,220
+part you can ask is that clear that is the first question
+
+931
+01:11:16,340 --> 01:11:23,340
+Now you can ask.
+
+932
+01:11:23,340 --> 01:11:26,340
+No, right.
+
+933
+01:11:26,340 --> 01:11:27,340
+Sir.
+
+934
+01:11:27,340 --> 01:11:28,340
+Yes.
+
+935
+01:11:28,340 --> 01:11:29,340
+Yes, Isra.
+
+936
+01:11:29,340 --> 01:11:35,340
+Sir, here is ADCW 15th line.
+
+937
+01:11:35,340 --> 01:11:40,340
+Your question is not clear.
+
+938
+01:11:40,340 --> 01:11:43,680
+here ADC is
+
+939
+01:11:43,680 --> 01:11:45,899
+ATCW is
+
+940
+01:11:45,899 --> 01:11:48,340
+that 16-bit
+
+941
+01:11:48,340 --> 01:11:48,960
+word
+
+942
+01:11:48,960 --> 01:11:52,340
+yeah it's a register 16-bit virtual register
+
+943
+01:11:52,340 --> 01:11:53,939
+yes sir so
+
+944
+01:11:53,939 --> 01:11:55,779
+where we
+
+945
+01:11:55,779 --> 01:11:58,000
+declare it or
+
+946
+01:11:58,000 --> 01:11:58,640
+create it
+
+947
+01:11:58,640 --> 01:12:00,300
+you don't need to do that
+
+948
+01:12:00,300 --> 01:12:03,859
+it is a compiler defined register
+
+949
+01:12:03,859 --> 01:12:08,340
+you can simply read it
+
+950
+01:12:08,340 --> 01:12:10,100
+but in the data sheet you want
+
+951
+01:12:10,100 --> 01:12:21,220
+find that register because it's not a hardware register. What else? Anything else? Any other
+
+952
+01:12:21,220 --> 01:12:33,220
+question? So your output is a binary value, sir? Not binary value. It's not a binary value. It's
+
+953
+01:12:33,220 --> 01:12:40,420
+kind of indicators, if the voltage is greater than 4V, if the L-E-D is in the display, if
+
+954
+01:12:40,420 --> 01:12:38,560
+the L-E-D is on, you know, the voltage isous, to the hap, the L-E-D-A, the 2-A, the T-A, the
+
+955
+01:12:38,560 --> 01:13:08,560
+[unclear — Sinhala / crosstalk]
+
+956
+01:13:08,560 --> 01:13:14,800
+and off, you have some idea about the input voltage. Because the input voltage is a continuous
+
+957
+01:13:14,800 --> 01:13:21,359
+voltage, it's a continuous variation, but output is discrete. Is that clear?
+
+958
+01:13:22,720 --> 01:13:27,600
+Yes. For the V in, what kind of value we can give?
+
+959
+01:13:27,600 --> 01:13:33,279
+V in, you get a decimal value, floating point value. That particular moment,
+
+960
+01:13:33,279 --> 01:13:40,159
+based on the potentiometer rotation, the voltage, input voltage to ADC.
+
+961
+01:13:40,159 --> 01:13:48,420
+If the potentiometer you have turned clockwise to its end, the input voltage is 5 volts to ADC.
+
+962
+01:13:48,840 --> 01:13:51,560
+Then VIN will contain 5.
+
+963
+01:13:51,939 --> 01:13:57,020
+As a result, all 5 LEDs, this system will turn on.
+
+964
+01:13:57,520 --> 01:14:02,460
+But if you have rotated the potentiometer anticlockwise to its end,
+
+965
+01:14:03,279 --> 01:14:07,100
+Then V in, the input voltage to ADC is 0.
+
+966
+01:14:07,600 --> 01:14:11,479
+As a result, this V in variable would contain,
+
+967
+01:14:11,720 --> 01:14:13,500
+when you do the calculation,
+
+968
+01:14:14,300 --> 01:14:16,500
+for the V in variable, you would get 0.
+
+969
+01:14:17,079 --> 01:14:21,159
+As a result, the system will turn off all the values.
+
+970
+01:14:21,720 --> 01:14:23,439
+Now, when you rotate the potentiometer
+
+971
+01:14:23,439 --> 01:14:27,779
+between the minimum value and the maximum value,
+
+972
+01:14:27,779 --> 01:14:33,680
+the input voltage to ADC would be between 0 and 5.
+
+973
+01:14:34,180 --> 01:14:36,779
+Depending on the position of the potentiometer,
+
+974
+01:14:37,659 --> 01:14:44,500
+the corresponding input voltage we can get calculated into VIN variable.
+
+975
+01:14:44,500 --> 01:14:47,500
+Then depending on the value in the VIN variable,
+
+976
+01:14:48,279 --> 01:14:53,859
+we can turn on some LEDs and show the input voltage
+
+977
+01:14:53,859 --> 01:14:56,039
+to the system
+
+978
+01:14:56,039 --> 01:14:58,159
+using discrete
+
+979
+01:14:58,159 --> 01:14:59,479
+number of LEDs.
+
+980
+01:15:00,159 --> 01:15:00,899
+Is that clear?
+
+981
+01:15:01,899 --> 01:15:02,899
+Yes, sir.
+
+982
+01:15:04,180 --> 01:15:06,220
+Isn't it ADCW
+
+983
+01:15:06,220 --> 01:15:07,140
+is a binary value?
+
+984
+01:15:07,699 --> 01:15:09,859
+No. Actually, it's a binary value.
+
+985
+01:15:10,479 --> 01:15:12,260
+Right? So, it's a register.
+
+986
+01:15:12,500 --> 01:15:13,779
+It contains a binary value.
+
+987
+01:15:13,779 --> 01:15:15,399
+But when you do the calculation,
+
+988
+01:15:15,920 --> 01:15:17,760
+you get the decimal floating
+
+989
+01:15:17,760 --> 01:15:19,380
+point value into VIN.
+
+990
+01:15:20,619 --> 01:15:21,220
+It's
+
+991
+01:15:21,220 --> 01:15:23,340
+no problem with...
+
+992
+01:15:23,340 --> 01:15:25,100
+No, that's not what you need to worry about.
+
+993
+01:15:26,279 --> 01:15:28,279
+Because ultimately all these are binary.
+
+994
+01:15:29,000 --> 01:15:30,359
+5.0 is binary.
+
+995
+01:15:31,140 --> 01:15:36,479
+1024 is binary at the processor level.
+
+996
+01:15:37,039 --> 01:15:37,739
+All are binary.
+
+997
+01:15:38,380 --> 01:15:40,779
+And even the V in register, right?
+
+998
+01:15:40,880 --> 01:15:44,979
+The value in the V in register is a binary value,
+
+999
+01:15:45,079 --> 01:15:47,159
+floating point value, floating point representation.
+
+1000
+01:15:48,460 --> 01:15:50,699
+IEEE 750, binary.
+
+1001
+01:15:51,680 --> 01:15:52,500
+Yes, sir.
+
+1002
+01:15:52,500 --> 01:15:55,359
+Mataji, IEEE 754.
+
+1003
+01:15:57,460 --> 01:15:58,439
+Anything else?
+
+1004
+01:15:58,500 --> 01:15:59,260
+Any other questions?
+
+1005
+01:15:59,880 --> 01:16:00,420
+Sir,
+
+1006
+01:16:00,720 --> 01:16:04,119
+if ADCW
+
+1007
+01:16:04,119 --> 01:16:06,359
+is not hardware defined,
+
+1008
+01:16:06,779 --> 01:16:07,539
+if we
+
+1009
+01:16:07,539 --> 01:16:09,979
+are using it in
+
+1010
+01:16:09,979 --> 01:16:12,220
+assembly, can we use it as ADCW?
+
+1011
+01:16:12,220 --> 01:16:12,979
+No, no, no.
+
+1012
+01:16:14,199 --> 01:16:15,380
+Assembly is not available.
+
+1013
+01:16:15,720 --> 01:16:18,600
+So, sir, for that purpose
+
+1014
+01:16:18,600 --> 01:16:20,039
+you have
+
+1015
+01:16:20,039 --> 01:16:21,680
+ADCL and ADCH
+
+1016
+01:16:21,680 --> 01:16:29,279
+ADCL contains the lower six eight bits and ADCH contains upper two bits.
+
+1017
+01:16:29,279 --> 01:16:37,199
+So, separately we have to use them? Yes, that's not very convenient. That's why the C has,
+
+1018
+01:16:37,760 --> 01:16:41,600
+C compiler provides you a virtual register. Okay, thank you sir.
+
+1019
+01:16:41,600 --> 01:17:01,600
+Right. Now this system we develop using C program. Can't we do it using Arduino wrapper functions? Yes. Much easily we can do it using Arduino wrapper functions. Now let's see.
+
+1020
+01:17:01,600 --> 01:17:03,720
+small
+
+1021
+01:17:03,720 --> 01:17:04,460
+yeah
+
+1022
+01:17:04,460 --> 01:17:06,579
+sorry sir
+
+1023
+01:17:06,579 --> 01:17:07,619
+no that's alright
+
+1024
+01:17:07,619 --> 01:17:10,279
+sir
+
+1025
+01:17:10,279 --> 01:17:14,460
+there was a
+
+1026
+01:17:14,460 --> 01:17:15,859
+binary conversion now
+
+1027
+01:17:15,859 --> 01:17:16,659
+so
+
+1028
+01:17:16,659 --> 01:17:19,359
+for that also
+
+1029
+01:17:19,359 --> 01:17:20,180
+can we
+
+1030
+01:17:20,180 --> 01:17:23,439
+assign a decimal
+
+1031
+01:17:23,439 --> 01:17:24,319
+value
+
+1032
+01:17:24,319 --> 01:17:27,300
+instead of binary
+
+1033
+01:17:27,300 --> 01:17:28,180
+value sir
+
+1034
+01:17:28,180 --> 01:17:31,220
+I can understand
+
+1035
+01:17:31,220 --> 01:17:41,060
+your question which line you are talking about and not not this in our exercise research
+
+1036
+01:17:42,819 --> 01:17:47,859
+in exercise uh three we had that uh binary
+
+1037
+01:17:50,420 --> 01:17:58,180
+yeah yeah yeah so you have to give the output in binary yeah can't you uh saying that as a
+
+1038
+01:17:58,180 --> 01:18:05,539
+decimal value if you assign a decimal value to a output register like port b or port d
+
+1039
+01:18:06,420 --> 01:18:13,859
+some output register input output register a decimal value so register is a binary register
+
+1040
+01:18:13,859 --> 01:18:19,380
+it's a 8-bit register let's say you assign value decimal value 3.
+
+1041
+01:18:19,380 --> 01:18:31,939
+Look at you. You have port B. For the port B, you assign decimal value 3. So, what actually
+
+1042
+01:18:31,939 --> 01:18:43,300
+happens is you assign 000011. This is the assignment you do. Then if you have connected
+
+1043
+01:18:43,300 --> 01:18:46,579
+8 LEDs to these pins of this port.
+
+1044
+01:18:47,520 --> 01:18:47,819
+Right?
+
+1045
+01:18:48,260 --> 01:18:49,420
+The port has 8 pins.
+
+1046
+01:18:49,640 --> 01:18:51,460
+If you are connected 8 LEDs,
+
+1047
+01:18:51,960 --> 01:18:53,000
+the first 2 LEDs
+
+1048
+01:18:53,000 --> 01:18:54,500
+would turn on.
+
+1049
+01:18:56,100 --> 01:18:56,619
+So,
+
+1050
+01:18:57,539 --> 01:18:59,739
+we don't need to sign
+
+1051
+01:18:59,739 --> 01:19:01,800
+only the
+
+1052
+01:19:01,800 --> 01:19:03,619
+we can use
+
+1053
+01:19:03,619 --> 01:19:05,840
+also the decimal values also.
+
+1054
+01:19:06,279 --> 01:19:06,760
+Yes.
+
+1055
+01:19:08,260 --> 01:19:08,979
+Right?
+
+1056
+01:19:08,979 --> 01:19:10,779
+Which is similar to
+
+1057
+01:19:10,779 --> 01:19:12,720
+0, D,
+
+1058
+01:19:13,300 --> 01:19:30,819
+[unclear — Sinhala / crosstalk]
+
+1059
+01:19:31,539 --> 01:19:38,020
+Whichever you like you can assign. When you assign that but actually what assigned is this is the
+
+1060
+01:19:38,020 --> 01:19:43,300
+value actually, sir. Because the register cannot hold hexadecimal values, register cannot hold
+
+1061
+01:19:43,300 --> 01:19:48,020
+decimal values. So ultimately register will contain this value.
+
+1062
+01:19:52,020 --> 01:19:58,340
+Okay. Because the register has bits, ultimately everything should be bits and bytes.
+
+1063
+01:19:58,340 --> 01:20:07,220
+right then firmware development for Arduino algorithm for Arduino okay voltmeter start
+
+1064
+01:20:07,779 --> 01:20:14,899
+and Arduino has setup function and loop function first setup function in the setup function we
+
+1065
+01:20:14,899 --> 01:20:25,619
+configure analog pin a zero as an input this this step is not necessary because it is already an
+
+1066
+01:20:25,619 --> 01:20:36,500
+input pin by default a0 is analog input pin so this step is not necessary but this is necessary
+
+1067
+01:20:36,500 --> 01:20:46,500
+configure digital pins 8 to 12 as outputs 8 to 12 means pb0 to pb4 as out then loop function
+
+1068
+01:20:46,500 --> 01:20:51,340
+read the ADC converted value.
+
+1069
+01:20:53,199 --> 01:20:56,979
+Arduino has a function to read the ADC converted value.
+
+1070
+01:20:57,439 --> 01:20:57,899
+Read it.
+
+1071
+01:20:58,760 --> 01:21:02,420
+Using that value, compute the input voltage.
+
+1072
+01:21:03,300 --> 01:21:04,640
+Compute the input voltage.
+
+1073
+01:21:05,140 --> 01:21:08,619
+Declare a variable called n and assign 0.
+
+1074
+01:21:08,619 --> 01:21:13,819
+Set all digital pins, set digital pins 8 to 12 low.
+
+1075
+01:21:14,159 --> 01:21:15,239
+Turn off all LEDs.
+
+1076
+01:21:15,239 --> 01:21:23,920
+If computed voltage is greater than 4, assign 12 to n.
+
+1077
+01:21:24,460 --> 01:21:26,119
+Assign value 12 to n.
+
+1078
+01:21:26,640 --> 01:21:31,600
+If not, check whether computed voltage greater than 3.
+
+1079
+01:21:31,939 --> 01:21:34,819
+If so, assign 11 to n.
+
+1080
+01:21:35,500 --> 01:21:40,960
+If not, check whether computed voltage is greater than 2 volts.
+
+1081
+01:21:41,539 --> 01:21:43,260
+Assign 10 to n.
+
+1082
+01:21:43,260 --> 01:21:50,260
+If not check whether computer voltage greater than 1, if so, assign 9 to n.
+
+1083
+01:21:50,779 --> 01:21:56,239
+If not check whether computer voltage is greater than 0, assign 8 to n.
+
+1084
+01:21:56,800 --> 01:22:01,020
+And then set the digital pins 8 to n high.
+
+1085
+01:22:01,460 --> 01:22:04,039
+Set the digital pins 8 to n high.
+
+1086
+01:22:04,039 --> 01:22:13,039
+Using this n variable, we can determine the upper bound to set the turn on LEDs.
+
+1087
+01:22:13,039 --> 01:22:25,039
+8 to 8. If 8 to 8, just one LED. 8 to 9, just two LEDs. 8 to 10, three LEDs. 8 to 11, four LEDs.
+
+1088
+01:22:25,039 --> 01:22:32,239
+four LDDs, eight to twelve, five LDDs. So using n variable we can determine the upper bound
+
+1089
+01:22:32,880 --> 01:22:36,319
+to turn on LDD. Can you understand this algorithm?
+
+1090
+01:22:38,479 --> 01:22:48,960
+If not, please ask questions. Okay, if no questions, let's move into source code using wrapper functions.
+
+1091
+01:22:48,960 --> 01:22:58,720
+right you have setup function you have loop function voltmeter dot i no that's the file
+
+1092
+01:22:58,720 --> 01:23:08,960
+view first in the setup function configure a zero pin as an input pin which is not necessary because
+
+1093
+01:23:08,960 --> 01:23:15,920
+a zero pin is by default an input but this is a good practice not necessary but good practice
+
+1094
+01:23:15,920 --> 01:23:25,840
+then configure iop in 8 to 12 as output rather than writing this line pin mode 8 output pin
+
+1095
+01:23:25,840 --> 01:23:36,000
+mode 9 output pin mode 10 output five times you can use a loop to set the pins 8 to 12 high sorry
+
+1096
+01:23:36,000 --> 01:23:43,600
+8 to 12 as output so pins eight digital input pins 8 to 12 you can set as output pins using
+
+1097
+01:23:43,600 --> 01:23:51,760
+a loop the other option is you can write pin mode 8 output pin mode 9 output pin more 10 output pin
+
+1098
+01:23:51,760 --> 01:23:59,199
+mode 11 output pin mode 12 out the same line five times you can run can you understand then look
+
+1099
+01:24:00,159 --> 01:24:06,640
+Arduino has a function analog read you don't need to worry about the registers you don't need to
+
+1100
+01:24:06,640 --> 01:24:12,880
+worry about the reference voltage you don't need to worry about the pre-scaler selection you don't
+
+1101
+01:24:12,880 --> 01:24:19,359
+need to worry about the selecting analog channel input channel nothing just use this wrapper
+
+1102
+01:24:19,359 --> 01:24:25,680
+function inside this wrapper function everything happens right if you want to go inside this
+
+1103
+01:24:25,680 --> 01:24:31,279
+wrapper function then there's a file call in the analog the arduino installation folder there's a
+
+1104
+01:24:31,279 --> 01:24:38,560
+file called wiring analog and inside that file you will find the definition of this one wiring
+
+1105
+01:24:38,560 --> 01:24:46,399
+analog right now this function you have to give the analog input pin input channel you have to give
+
+1106
+01:24:46,399 --> 01:24:53,840
+and this function will give you the converted result input pin the input pin voltage
+
+1107
+01:24:53,840 --> 01:25:01,520
+could vary between zero and five right the voltage of input pin this is the input pin
+
+1108
+01:25:01,520 --> 01:25:12,939
+right. The voltage could vary between 0 to 5 volts and the function will return 0 to 1023.
+
+1109
+01:25:13,680 --> 01:25:21,899
+And it steps. Right. Very simple. Then using this converted value, compute the voltage,
+
+1110
+01:25:22,279 --> 01:25:28,739
+input voltage. We don't know that voltage. We need to get that computed. Converted value
+
+1111
+01:25:28,739 --> 01:25:39,479
+multiplied by 5 divided by 1080 you get the converted voltage the input sorry input voltage
+
+1112
+01:25:39,479 --> 01:25:56,619
+then turn off all leds again using a loop 8 to 12 right pins turn all those pins 8 to 12
+
+1113
+01:25:56,619 --> 01:25:58,600
+loop. Set all those
+
+1114
+01:25:58,600 --> 01:26:00,600
+spins 8 to 12 loop using
+
+1115
+01:26:00,600 --> 01:26:02,539
+this loop. Turn off all LED
+
+1116
+01:26:02,539 --> 01:26:04,640
+loops. Then declare
+
+1117
+01:26:04,640 --> 01:26:06,239
+integer variable n.
+
+1118
+01:26:07,399 --> 01:26:08,899
+If computed voltage
+
+1119
+01:26:08,899 --> 01:26:09,859
+greater than 4,
+
+1120
+01:26:11,020 --> 01:26:12,199
+assign 12 to n.
+
+1121
+01:26:12,600 --> 01:26:14,779
+If computed voltage greater than
+
+1122
+01:26:14,779 --> 01:26:16,500
+3, assign 11 to n.
+
+1123
+01:26:16,880 --> 01:26:18,500
+If computed voltage
+
+1124
+01:26:18,500 --> 01:26:20,479
+greater than 2, assign
+
+1125
+01:26:20,479 --> 01:26:22,420
+10 to n. If
+
+1126
+01:26:22,420 --> 01:26:24,319
+computed voltage greater than 1,
+
+1127
+01:26:24,520 --> 01:26:26,539
+assign 9 to n. If computed
+
+1128
+01:26:26,539 --> 01:26:32,939
+voltage greater than 0, assign 8 to n. That is the upper bound. They are using again a
+
+1129
+01:26:32,939 --> 01:26:42,939
+four loop. Set pins 8 to n, 8 to n high. Set the pins 8 to n high and turn on LEDs.
+
+1130
+01:26:44,060 --> 01:26:53,739
+Can you understand this? Any question? Using these four loops, I have reduced the number of lines
+
+1131
+01:26:53,739 --> 01:27:23,739
+[unclear — Sinhala / crosstalk]
+
+1132
+01:27:23,739 --> 01:27:26,939
+write pin number 10 high, digital write pin number 11 high.
+
+1133
+01:27:27,539 --> 01:27:31,060
+If voltage is greater than 2, digital write pin number 8 high,
+
+1134
+01:27:31,439 --> 01:27:35,079
+digital write pin number 9 high, digital write pin number 10 high.
+
+1135
+01:27:35,699 --> 01:27:39,060
+Many lines you have to write. Rather than doing that,
+
+1136
+01:27:39,159 --> 01:27:43,479
+I use a variable and put the upper bound
+
+1137
+01:27:43,479 --> 01:27:47,220
+to that variable and finally I run a loop from 8
+
+1138
+01:27:47,220 --> 01:27:50,100
+to that upper bound and turn on and loop.
+
+1139
+01:27:50,100 --> 01:27:54,819
+These are programming techniques. Rather than writing many lines,
+
+1140
+01:27:55,500 --> 01:27:58,600
+in few lines you can get the job done. Any question?
+
+1141
+01:27:58,920 --> 01:28:01,260
+Is this clear? Right.
+
+1142
+01:28:01,819 --> 01:28:05,920
+In the C program, we previously
+
+1143
+01:28:05,920 --> 01:28:10,260
+developed. We use poly. We repeatedly
+
+1144
+01:28:10,260 --> 01:28:14,159
+check ADC SC bit. ADC
+
+1145
+01:28:14,159 --> 01:28:18,119
+start conversion bit. To see whether ADC is over.
+
+1146
+01:28:18,119 --> 01:28:20,220
+conversion is over.
+
+1147
+01:28:20,739 --> 01:28:21,680
+We use polling.
+
+1148
+01:28:22,340 --> 01:28:24,720
+Now you know that using polling is a waste.
+
+1149
+01:28:25,180 --> 01:28:26,060
+The time you
+
+1150
+01:28:26,060 --> 01:28:28,319
+used to check whether
+
+1151
+01:28:28,319 --> 01:28:30,420
+a particular thing has happened
+
+1152
+01:28:30,420 --> 01:28:32,779
+again and again is a waste.
+
+1153
+01:28:33,199 --> 01:28:34,739
+Because during that time
+
+1154
+01:28:34,739 --> 01:28:36,180
+you could have done
+
+1155
+01:28:36,180 --> 01:28:37,659
+some other task.
+
+1156
+01:28:38,159 --> 01:28:40,140
+Rather than repeatedly checking
+
+1157
+01:28:40,140 --> 01:28:42,180
+whether a particular thing has happened
+
+1158
+01:28:42,180 --> 01:28:44,100
+or not. You could have done
+
+1159
+01:28:44,100 --> 01:28:46,479
+something else during that time.
+
+1160
+01:28:46,479 --> 01:28:54,399
+So, in the C program that we developed earlier, we use polling, we check, we repeatedly check
+
+1161
+01:28:54,399 --> 01:29:03,439
+whether the conversion is over by monitoring, by checking ADC, ADC bit.
+
+1162
+01:29:05,920 --> 01:29:10,500
+ADC bit means ADC start conversion bit.
+
+1163
+01:29:10,500 --> 01:29:13,840
+Because if you want to start the conversion, you set that bit.
+
+1164
+01:29:13,840 --> 01:29:18,439
+and when the conversion is over, that bit is automatically clear.
+
+1165
+01:29:18,880 --> 01:29:20,899
+So we check whether that bit is clear.
+
+1166
+01:29:21,119 --> 01:29:23,359
+If it is zero, that means conversion is over.
+
+1167
+01:29:24,220 --> 01:29:27,479
+So that's a waste polling a bit again and again.
+
+1168
+01:29:27,979 --> 01:29:29,380
+Not only in the C program.
+
+1169
+01:29:30,340 --> 01:29:34,960
+Arduino analog read function is also polling based.
+
+1170
+01:29:35,500 --> 01:29:37,539
+Analog read function uses polling.
+
+1171
+01:29:37,539 --> 01:29:46,260
+So, Arduino analog read function is not an efficient way to use ADC.
+
+1172
+01:29:46,840 --> 01:29:51,960
+If it uses polling means, it wastes time.
+
+1173
+01:29:52,479 --> 01:29:56,880
+You could have used that time to do something else.
+
+1174
+01:29:57,300 --> 01:29:59,960
+So, the better approach is using interrupts.
+
+1175
+01:30:00,260 --> 01:30:03,640
+When the ADC is over, ADC will interrupt you.
+
+1176
+01:30:04,579 --> 01:30:06,979
+Let the ADC to do the conversion.
+
+1177
+01:30:07,539 --> 01:30:15,420
+When the conversion is over ADC will interrupt. Then you attend to ADC. Then you can attend
+
+1178
+01:30:15,420 --> 01:30:21,859
+to ADC. Kill them, you can do something else, some other task. Rather than monitoring the
+
+1179
+01:30:21,859 --> 01:30:30,720
+ADC, you do some other task. When the ADC will over, ADC will notify you. ADC will interrupt
+
+1180
+01:30:30,720 --> 01:30:39,199
+you. So you don't need to check ADC whether ADC is over again and again. You can do something else.
+
+1181
+01:30:39,199 --> 01:30:46,159
+From other tasks you can do. And when ADC is over, ADC will interrupt you, then you can add into ADC.
+
+1182
+01:30:46,159 --> 01:30:52,319
+That is the better approach, efficient approach. However, with Arduino, you can't do that because
+
+1183
+01:30:52,319 --> 01:31:00,079
+Arduino has analog to analog read function, which is based on polling. This is another example that,
+
+1184
+01:31:00,739 --> 01:31:07,199
+right, this is another example that you can use to prove that Arduino is inefficient. Because if you
+
+1185
+01:31:07,199 --> 01:31:12,739
+want to do analog to digital conversion, you have to use analog read function, which is based on
+
+1186
+01:31:12,739 --> 01:31:19,899
+polling. We know that polling is inefficient, right. Now, how to do the job efficiently
+
+1187
+01:31:19,899 --> 01:31:28,779
+using in drums. Same volt meter measure and display any voltage between 0 and 5 with set
+
+1188
+01:31:28,779 --> 01:31:37,020
+of LEDs using in drums. Now when it comes to ADC this is very critical because ADC takes
+
+1189
+01:31:37,020 --> 01:31:46,300
+time and running slow because ADC is based on successive approximation. So it again and
+
+1190
+01:31:46,300 --> 01:31:54,939
+again gradually it it comes to an approximated value so it takes takes time it is it takes time
+
+1191
+01:31:54,939 --> 01:32:03,340
+and it is running slow it is it cannot run at the speed of cpu so you use a pre-scaler and you scale
+
+1192
+01:32:03,340 --> 01:32:09,979
+down the speed and if you want better accuracy in this particular microcontroller this particular
+
+1193
+01:32:09,979 --> 01:32:16,140
+micro according to its data sheet this may be different to another micro controller but this
+
+1194
+01:32:16,140 --> 01:32:21,739
+particular micro controller based on the data sheet if you need that you have to run the adc
+
+1195
+01:32:21,739 --> 01:32:27,100
+less than 200 kilohertz it's very slow speed 200 kilohertz not even one megahertz
+
+1196
+01:32:29,100 --> 01:32:29,899
+so it is slow
+
+1197
+01:32:29,899 --> 01:32:41,159
+Now, if you are going to check a slow ADC, whether it's over again and again, using polling,
+
+1198
+01:32:41,319 --> 01:32:46,560
+if you are going to check whether it's over or not, over or not, over or not, again and again,
+
+1199
+01:32:46,840 --> 01:32:53,100
+because ADC is running slow, you waste time. So, the better approach is using interrupts.
+
+1200
+01:32:53,359 --> 01:32:58,159
+You start the ADC and then you carry out something else, some other task you do.
+
+1201
+01:32:58,159 --> 01:33:01,800
+When the ADC is over, ADC will notify you.
+
+1202
+01:33:01,899 --> 01:33:03,020
+ADC will interrupt you.
+
+1203
+01:33:03,399 --> 01:33:05,159
+And then you can attend to ADC.
+
+1204
+01:33:05,460 --> 01:33:06,699
+That's the idea of interrupt.
+
+1205
+01:33:07,100 --> 01:33:07,300
+Right.
+
+1206
+01:33:07,640 --> 01:33:11,020
+So ADC interrupts are not available in RDE.
+
+1207
+01:33:11,460 --> 01:33:11,880
+Right.
+
+1208
+01:33:12,000 --> 01:33:13,500
+But in C, you can't do that.
+
+1209
+01:33:13,840 --> 01:33:14,199
+You can.
+
+1210
+01:33:14,659 --> 01:33:14,939
+Sorry.
+
+1211
+01:33:15,060 --> 01:33:15,760
+You can do that.
+
+1212
+01:33:16,539 --> 01:33:17,039
+Let's see.
+
+1213
+01:33:17,619 --> 01:33:18,140
+Algorithm.
+
+1214
+01:33:19,140 --> 01:33:22,680
+The same hardware, only the firmware is different.
+
+1215
+01:33:23,140 --> 01:33:23,579
+Algorithm.
+
+1216
+01:33:23,939 --> 01:33:24,640
+Main function.
+
+1217
+01:33:24,880 --> 01:33:26,439
+Volt meter using interrupts.
+
+1218
+01:33:26,439 --> 01:33:26,760
+Start.
+
+1219
+01:33:27,079 --> 01:33:27,699
+Main function.
+
+1220
+01:33:27,699 --> 01:33:29,760
+stop voltmeter using impact.
+
+1221
+01:33:30,020 --> 01:33:31,300
+Right. Main function.
+
+1222
+01:33:31,760 --> 01:33:33,460
+As in the previous example,
+
+1223
+01:33:34,420 --> 01:33:36,079
+we configure PB0
+
+1224
+01:33:36,079 --> 01:33:37,680
+to PB4 as
+
+1225
+01:33:37,680 --> 01:33:39,859
+outputs because LED is connected
+
+1226
+01:33:39,859 --> 01:33:41,779
+to these peaks. Configure
+
+1227
+01:33:41,779 --> 01:33:43,920
+PC0 or ADC0
+
+1228
+01:33:43,920 --> 01:33:45,920
+which is ADC0 we multiplex
+
+1229
+01:33:45,920 --> 01:33:47,699
+as an input.
+
+1230
+01:33:48,100 --> 01:33:49,539
+Not necessary but
+
+1231
+01:33:49,539 --> 01:33:51,659
+a good practice. Set the reference
+
+1232
+01:33:51,659 --> 01:33:52,899
+voltage to 5 volts.
+
+1233
+01:33:53,779 --> 01:33:55,779
+The supply voltage to ADC.
+
+1234
+01:33:56,460 --> 01:33:57,619
+Multiplex PC
+
+1235
+01:33:57,619 --> 01:34:06,819
+0 as ADC input channel. Select PC 0 as ADC input channel. Set the ADC clock speed. Set
+
+1236
+01:34:06,819 --> 01:34:14,819
+the ADC clock speed. Enable ADC. Enable ADC. Up to this point, everything is similar to
+
+1237
+01:34:14,819 --> 01:34:22,340
+what we have already done. Then enable ADC complete interrupt. Enable the interrupt because
+
+1238
+01:34:22,340 --> 01:34:28,500
+interrupts are by default disabled. Enable interrupt. Right. So when the ADC is over,
+
+1239
+01:34:29,539 --> 01:34:37,699
+the ADC will interrupt the CPU. ADC complete interrupt, enable. Enable global interrupt.
+
+1240
+01:34:37,699 --> 01:34:46,579
+Enable the global interrupts. Start ADC. Enter into endless loop. In the endless loop, you can do your
+
+1241
+01:34:46,579 --> 01:34:52,340
+main task. Some other job you can do. In this example, we have no other job to do. Therefore,
+
+1242
+01:34:53,060 --> 01:34:59,140
+endless loop is empty, but you can use this endless loop to do something else, some useful
+
+1243
+01:34:59,140 --> 01:35:04,579
+other task. Because you are not going to monitor whether ADC is over. You start the ADC and then
+
+1244
+01:35:04,579 --> 01:35:12,180
+you can do whatever you like. In this example, we have nothing to do that. That's why endless loop is
+
+1245
+01:35:12,180 --> 01:35:18,420
+empty but you can use this endless loop to do something else from other tasks then when the
+
+1246
+01:35:18,420 --> 01:35:25,939
+adc is over adc will interrupt the cpu when adc interrupted the cpu we have to handle that interrupt
+
+1247
+01:35:27,859 --> 01:35:37,220
+this is the interrupt handling routine handle adc interrupt interrupt handler right in the
+
+1248
+01:35:37,220 --> 01:35:45,060
+interrupt handler we compute the input voltage because we know that now ADC is over so the result
+
+1249
+01:35:45,060 --> 01:35:52,659
+is available in the data registers so we compute the input voltage then we turn off all LEDs
+
+1250
+01:35:54,180 --> 01:36:01,619
+if computed voltage greater than 2 turn on all LEDs else if computed voltage greater than 3 turn
+
+1251
+01:36:01,619 --> 01:36:09,300
+on four LEDs. Else if computer voltage greater than two, turn on three LEDs. Else if computer
+
+1252
+01:36:09,300 --> 01:36:16,500
+voltage greater than one, turn on two LEDs. Else if computer voltage greater than zero, turn on one
+
+1253
+01:36:16,500 --> 01:36:25,060
+LED. After that, restart ADC. After doing all these things, restart the ADC. Because you know
+
+1254
+01:36:25,060 --> 01:36:38,180
+that to start the ADC, we set the ADC start conversion bit, we set. And when the ADC is over,
+
+1255
+01:36:40,819 --> 01:36:48,659
+ADC start conversion bit is clear. ADC start conversion bit becomes zero when the ADC is over.
+
+1256
+01:36:49,460 --> 01:36:56,260
+So we have to start the ADC again for the next conversion. So again, you have to set ADC start
+
+1257
+01:36:58,100 --> 01:37:06,819
+conversion loop. In the polling example, we set this bit inside the loop. So when the ADC,
+
+1258
+01:37:07,539 --> 01:37:14,100
+when all these calculations are over, then we can restart the, we got the ADC restarted
+
+1259
+01:37:14,100 --> 01:37:20,899
+because we set this bit inside the loop. But in this case, we set the start bit
+
+1260
+01:37:20,899 --> 01:37:28,100
+EREC start before the loop. Therefore, before we leaving interrupt handler, we have to restart the EREC.
+
+1261
+01:37:29,539 --> 01:37:31,460
+Can you understand this algorithm?
+
+1262
+01:37:35,220 --> 01:37:39,779
+Any question? No, it's not. Let's move into source code.
+
+1263
+01:37:39,779 --> 01:37:51,279
+The interrupt parties are light path way to the counter, so interrupts?
+
+1264
+01:37:51,279 --> 01:38:01,779
+Light path way to compute voltage, light path way to ISR, interrupt handling routine.
+
+1265
+01:38:01,779 --> 01:38:04,779
+What is normal?
+
+1266
+01:38:04,779 --> 01:38:06,779
+You can do it in a loop.
+
+1267
+01:38:06,779 --> 01:38:09,779
+You can do it in a example.
+
+1268
+01:38:09,779 --> 01:38:13,779
+You can do it in a way.
+
+1269
+01:38:13,779 --> 01:38:18,779
+You can do it in multiple tasks.
+
+1270
+01:38:18,779 --> 01:38:24,779
+You can do it in a way.
+
+1271
+01:38:24,779 --> 01:38:27,779
+You can do it in a way.
+
+1272
+01:38:27,779 --> 01:38:29,779
+You can do it in a loop.
+
+1273
+01:38:29,779 --> 01:38:31,779
+I have a say, I have a look.
+
+1274
+01:38:31,779 --> 01:38:32,779
+I have a look.
+
+1275
+01:38:32,779 --> 01:38:33,779
+I have a look.
+
+1276
+01:38:33,779 --> 01:38:34,779
+I have a look.
+
+1277
+01:38:34,779 --> 01:38:35,779
+I have a look.
+
+1278
+01:38:35,779 --> 01:38:36,720
+I have a look.
+
+1279
+01:38:36,720 --> 01:38:37,439
+I have a look.
+
+1280
+01:38:37,439 --> 01:38:37,779
+I have a look.
+
+1281
+01:38:37,779 --> 01:38:38,119
+I have a look.
+
+1282
+01:38:38,119 --> 01:38:38,279
+I have a look.
+
+1283
+01:38:38,279 --> 01:38:38,539
+I have a look.
+
+1284
+01:38:38,539 --> 01:38:38,760
+I have a look.
+
+1285
+01:38:38,760 --> 01:38:38,920
+I have a look.
+
+1286
+01:38:38,920 --> 01:38:39,060
+I have a look.
+
+1287
+01:38:39,060 --> 01:38:39,140
+I have a look.
+
+1288
+01:38:39,140 --> 01:38:39,279
+I have a look.
+
+1289
+01:38:39,279 --> 01:38:39,500
+I have a look.
+
+1290
+01:38:39,500 --> 01:38:39,659
+I have a look.
+
+1291
+01:38:39,659 --> 01:38:39,840
+I have a look.
+
+1292
+01:38:39,840 --> 01:38:39,960
+I have a look.
+
+1293
+01:38:39,960 --> 01:38:40,039
+I have a look.
+
+1294
+01:38:40,039 --> 01:38:40,079
+I have a look.
+
+1295
+01:38:40,079 --> 01:38:40,119
+I have a look.
+
+1296
+01:38:40,119 --> 01:38:40,119
+
+
+1297
+01:38:40,119 --> 01:38:40,119
+
+
+1298
+01:38:40,119 --> 01:38:40,119
+
+
+1299
+01:38:40,119 --> 01:38:40,119
+
+
+1300
+01:38:40,119 --> 01:38:40,119
+
+
+1301
+01:38:40,119 --> 01:38:40,119
+
+
+1302
+01:38:40,119 --> 01:38:40,119
+
+
+1303
+01:38:40,119 --> 01:38:40,119
+
+
+1304
+01:38:40,119 --> 01:39:07,000
+is that clear yes everything else right so school right now we are going to use interrupts
+
+1305
+01:39:07,000 --> 01:39:10,819
+So we have to include this interrupt.h header file.
+
+1306
+01:39:11,239 --> 01:39:15,159
+In addition to io.h, now interrupt.h you have to include.
+
+1307
+01:39:15,600 --> 01:39:15,800
+Why?
+
+1308
+01:39:16,840 --> 01:39:19,920
+This header file contains your ISR.
+
+1309
+01:39:20,199 --> 01:39:22,460
+Definition for ISR is in this header file.
+
+1310
+01:39:22,819 --> 01:39:26,520
+SCI, set interrupt function, is in this header file.
+
+1311
+01:39:27,720 --> 01:39:31,399
+CLI function, clear interrupt function defined in this header file.
+
+1312
+01:39:31,399 --> 01:39:32,880
+So you need this header file.
+
+1313
+01:39:32,880 --> 01:39:43,680
+Then similar to the previous example, configure PB0 to PB4 as output pins, configure PC0 that is
+
+1314
+01:39:43,680 --> 01:39:51,520
+input channel 1 ADC, ADC0 as an input. This line is not necessary because by default it is an input
+
+1315
+01:39:52,319 --> 01:39:58,319
+channel. Then set the reference voltage, multiplex PC0 as input channel,
+
+1316
+01:39:58,319 --> 01:40:06,520
+set the clock speed by dividing 128 16 megahertz divided by 128 that is clock speed would be
+
+1317
+01:40:06,520 --> 01:40:13,579
+125 kilohertz enable adc up to this point similar to the previous example then
+
+1318
+01:40:13,579 --> 01:40:22,640
+we have to enable adc complete interrupt this particular bit we have to set adc complete
+
+1319
+01:40:22,640 --> 01:40:32,640
+interrup. That is ADEN bit. ADC enable bit. ADEN bit. We have to say to enable ADC complete interrup.
+
+1320
+01:40:33,039 --> 01:40:47,920
+Then, next one. Enable global interrup. Enable global interrup. Start ADC using ADC
+
+1321
+01:40:47,920 --> 01:40:49,699
+ADC conversion
+
+1322
+01:40:49,699 --> 01:40:51,739
+start conversion
+
+1323
+01:40:51,739 --> 01:40:52,939
+ADSCD.
+
+1324
+01:40:53,399 --> 01:40:55,640
+Start ADC. Set this bit
+
+1325
+01:40:55,640 --> 01:40:57,880
+so ADC would start
+
+1326
+01:40:57,880 --> 01:40:58,840
+running.
+
+1327
+01:40:59,699 --> 01:41:01,600
+Then enter into the endless loop.
+
+1328
+01:41:02,640 --> 01:41:03,859
+Now in the endless loop
+
+1329
+01:41:03,859 --> 01:41:05,619
+there is nothing but
+
+1330
+01:41:05,619 --> 01:41:07,960
+you can use it to perform
+
+1331
+01:41:07,960 --> 01:41:09,819
+another task. If you have
+
+1332
+01:41:09,819 --> 01:41:12,020
+another task inside
+
+1333
+01:41:12,020 --> 01:41:13,859
+the loop you can do. But in this
+
+1334
+01:41:13,859 --> 01:41:15,920
+example there is no
+
+1335
+01:41:15,920 --> 01:41:17,460
+another task to do. So
+
+1336
+01:41:17,460 --> 01:41:19,939
+I leave endless loop empty.
+
+1337
+01:41:20,100 --> 01:41:21,739
+But you can use it to do
+
+1338
+01:41:21,739 --> 01:41:23,840
+something else. When the ADC
+
+1339
+01:41:23,840 --> 01:41:25,840
+is over, when the conversion is over,
+
+1340
+01:41:26,000 --> 01:41:27,420
+ADC will interrupt the CPU.
+
+1341
+01:41:27,880 --> 01:41:29,300
+ADC will interrupt the CPU.
+
+1342
+01:41:30,180 --> 01:41:31,920
+Right. Then you
+
+1343
+01:41:31,920 --> 01:41:33,960
+have to, when interrupted, you have to
+
+1344
+01:41:33,960 --> 01:41:35,899
+handle that interrupt.
+
+1345
+01:41:36,199 --> 01:41:36,800
+That means
+
+1346
+01:41:36,800 --> 01:41:39,739
+you have to handle the
+
+1347
+01:41:39,739 --> 01:41:41,819
+relevant ISR, interrupt
+
+1348
+01:41:41,819 --> 01:41:43,899
+service routine. This is
+
+1349
+01:41:43,899 --> 01:41:45,100
+the relevant ISR.
+
+1350
+01:41:45,100 --> 01:41:50,039
+The vector is ADC vector, ISR ADC vector.
+
+1351
+01:41:50,539 --> 01:41:55,380
+Now this ISR is automatically executed when ADC is over.
+
+1352
+01:41:55,859 --> 01:42:00,159
+Now we know that when the ADC is over, result is in the data register.
+
+1353
+01:42:00,619 --> 01:42:02,359
+Conversion result is in the data register.
+
+1354
+01:42:03,159 --> 01:42:08,239
+Using the result in the data register, we can calculate, we can compute the input voltage.
+
+1355
+01:42:08,239 --> 01:42:10,159
+We compute the input voltage.
+
+1356
+01:42:10,159 --> 01:42:18,079
+The result is in the ADCW multiplied by reference voltage divided by the total number of discrete
+
+1357
+01:42:18,079 --> 01:42:26,000
+states. You get the input voltage, a floating point value. Then you turn off all LEDs. If the
+
+1358
+01:42:26,000 --> 01:42:33,119
+voltage is greater than 4, turn on all LEDs. If the voltage is greater than 3, turn on 4 LEDs.
+
+1359
+01:42:33,119 --> 01:42:39,359
+If the voltage is greater than 2, turn on 3 LEDs. If the voltage is greater than 1, turn on 2 LEDs.
+
+1360
+01:42:39,359 --> 01:42:46,640
+if the voltage greater than zero turn on one le display the output after displaying the output
+
+1361
+01:42:47,199 --> 01:42:57,439
+for the next conversion you have to restart the adc again set the adscb adc start conversion
+
+1362
+01:42:57,439 --> 01:43:04,640
+bit set the bit and restart it for the next conversion because we know that conversion is over
+
+1363
+01:43:04,640 --> 01:43:11,279
+this particular bit is cleared now so we have to reset it can you understand this
+
+1364
+01:43:11,920 --> 01:43:20,560
+this is the efficient way to do adc this approach is not possible with ardino because there is no
+
+1365
+01:43:20,560 --> 01:43:27,600
+wrapper function arduino wrapper function to support adc interrupts arduino wrapper function
+
+1366
+01:43:27,600 --> 01:43:29,119
+analog read uses for it
+
+1367
+01:43:34,640 --> 01:44:04,640
+[unclear — Sinhala / crosstalk]
+
+1368
+01:44:04,640 --> 01:44:06,159
+hda
+
+1369
+01:44:06,159 --> 01:44:06,159
+
+
+1370
+01:44:06,159 --> 01:44:05,979
+w
+
+1371
+01:44:05,979 --> 01:44:06,020
+w
+
+1372
+01:44:06,020 --> 01:44:06,000
+w
+
+1373
+01:44:06,000 --> 01:44:05,960
+w
+
+1374
+01:44:05,960 --> 01:44:05,939
+w
+
+1375
+01:44:05,939 --> 01:44:05,920
+w
+
+1376
+01:44:05,920 --> 01:44:05,920
+
+
+1377
+01:44:05,920 --> 01:44:05,920
+
+
+1378
+01:44:05,920 --> 01:44:05,920
+
+
+1379
+01:44:05,920 --> 01:44:05,920
+
+
+1380
+01:44:05,920 --> 01:44:05,920
+
+
+1381
+01:44:05,920 --> 01:44:05,920
+
+
+1382
+01:44:05,920 --> 01:44:05,920
+
+
+1383
+01:44:05,920 --> 01:44:05,920
+
+
+1384
+01:44:05,920 --> 01:44:05,920
+
+
+1385
+01:44:05,920 --> 01:44:05,920
+
+
+1386
+01:44:05,920 --> 01:44:05,920
+
+
+1387
+01:44:05,920 --> 01:44:05,920
+
+
+1388
+01:44:05,920 --> 01:44:05,920
+
+
+1389
+01:44:05,920 --> 01:44:05,920
+
+
+1390
+01:44:05,920 --> 01:44:05,920
+
+
+1391
+01:44:05,920 --> 01:44:05,920
+
+
+1392
+01:44:05,920 --> 01:44:05,920
+
+
+1393
+01:44:05,920 --> 01:44:05,920
+
+
+1394
+01:44:05,920 --> 01:44:05,920
+
+
+1395
+01:44:05,920 --> 01:44:05,920
+
+
+1396
+01:44:05,920 --> 01:44:05,920
+
+
+1397
+01:44:05,920 --> 01:44:05,920
+
+
+1398
+01:44:05,920 --> 01:44:05,920
+
+
+1399
+01:44:05,920 --> 01:44:05,920
+
+
+1400
+01:44:05,920 --> 01:44:05,920
+
+
+1401
+01:44:05,920 --> 01:44:05,920
+
+
+1402
+01:44:05,920 --> 01:44:05,920
+
+
+1403
+01:44:05,920 --> 01:44:05,920
+
+
+1404
+01:44:05,920 --> 01:44:05,920
+
+
+1405
+01:44:05,920 --> 01:44:05,920
+
+
+1406
+01:44:05,920 --> 01:44:05,920
+
+
+1407
+01:44:05,920 --> 01:44:05,920
+
+
+1408
+01:44:05,920 --> 01:44:05,920
+
+
+1409
+01:44:05,920 --> 01:44:05,920
+
+
+1410
+01:44:05,920 --> 01:44:05,920
+
+
+1411
+01:44:05,920 --> 01:44:05,920
+
+
+1412
+01:44:05,920 --> 01:44:05,920
+
+
+1413
+01:44:34,640 --> 01:46:04,640
+[unclear — Sinhala / crosstalk]
+
+1414
+01:46:04,640 --> 01:46:09,920
+in the
+
+1415
+01:46:09,920 --> 01:46:15,359
+programming skills. Any other question? Any other question?
+
+1416
+01:46:19,760 --> 01:46:22,960
+All others are ADC experts. No questions.
+
+1417
+01:46:25,439 --> 01:46:29,920
+Right. Now, rather than writing these lengthy binary values,
+
+1418
+01:46:29,920 --> 01:46:44,920
+We can write the same program using hexadecimal values. Same program using hexadecimal values.
+
+1419
+01:46:44,920 --> 01:46:57,079
+Now, for example, 0x1f means 0b, 0xfe means.
+
+1420
+01:46:59,560 --> 01:47:05,319
+So likewise, if you are very well familiar with hexadecimal notation,
+
+1421
+01:47:06,279 --> 01:47:11,399
+rather than writing lengthy binary values, you can use hexadecimal values.
+
+1422
+01:47:11,399 --> 01:47:21,840
+So this approach would be very useful and very handy when you are dealing with, when you are working with 32-bit microcontroller.
+
+1423
+01:47:22,579 --> 01:47:28,579
+Because it's very inconvenient to write binary values in 32-bit architecture.
+
+1424
+01:47:29,119 --> 01:47:30,840
+Because you have to write 32-bit values.
+
+1425
+01:47:31,340 --> 01:47:32,779
+32 bits you have to write.
+
+1426
+01:47:32,880 --> 01:47:34,060
+That is very inconvenient.
+
+1427
+01:47:34,239 --> 01:47:37,579
+In that case, you can easily use hexadecimal values.
+
+1428
+01:47:37,579 --> 01:47:45,640
+So, experienced programmers who are very familiar with hexadecimal notation, when they work
+
+1429
+01:47:45,640 --> 01:47:51,380
+with 32-bit or 64-bit architectures, they heavily use hexadecimal notation.
+
+1430
+01:47:53,079 --> 01:48:02,239
+Then, if you want to make your code more understandable, you can use labelled constants.
+
+1431
+01:48:02,239 --> 01:48:14,000
+Then it's a very understandable your code. For example, here you can look at this line,
+
+1432
+01:48:14,000 --> 01:48:24,239
+line number 11, ADC control and status register A. In that register you set ADE and BID. ADC,
+
+1433
+01:48:24,239 --> 01:48:36,000
+right? Enable bit. ADC enable bit. Then the next line ADC SRA. ADC control and status
+
+1434
+01:48:36,000 --> 01:48:43,500
+register A. You set A-D-I-E bit. ADC interrupt enable bit. I-E means interrupt enable bit.
+
+1435
+01:48:43,500 --> 01:48:50,819
+So more understandable. Readable and understandable. Another approach. So which approach you use
+
+1436
+01:48:50,819 --> 01:49:01,220
+doesn't matter right the same code size same performance right so space complexity time
+
+1437
+01:49:01,220 --> 01:49:09,460
+complexity no effect right these are the different approaches available for coding so i discuss all
+
+1438
+01:49:09,460 --> 01:49:16,340
+these things because if you happen to read if accidentally at least you may encounter
+
+1439
+01:49:16,340 --> 01:49:20,659
+this kind of examples you may find.
+
+1440
+01:49:21,300 --> 01:49:24,779
+And probably when you go to the industry, you will see these examples,
+
+1441
+01:49:24,899 --> 01:49:27,939
+these kind of examples. Then at least you know
+
+1442
+01:49:27,939 --> 01:49:32,239
+these things are possible. Especially when you are working with
+
+1443
+01:49:32,239 --> 01:49:36,859
+32-bit architecture. So it's very inconvenient
+
+1444
+01:49:36,859 --> 01:49:39,199
+to use lengthy binary values.
+
+1445
+01:49:43,600 --> 01:49:44,579
+Any question?
+
+1446
+01:49:46,340 --> 01:50:11,680
+Now, right. Then, the light sensor, which is called LDR or light dependent resistance.
+
+1447
+01:50:11,680 --> 01:50:21,180
+So this LDR, using the LDR, we can get converted radiation energy, which is light, light is
+
+1448
+01:50:21,180 --> 01:50:26,840
+radiation energy, into electrical energy or a voltage.
+
+1449
+01:50:26,840 --> 01:50:32,239
+So light intensity we can get converted into a voltage, that means radiation energy we
+
+1450
+01:50:32,239 --> 01:50:37,579
+can get converted into a voltage.
+
+1451
+01:50:37,579 --> 01:50:41,100
+So this LDR changes resistance.
+
+1452
+01:50:41,100 --> 01:50:48,380
+a resistor, light dependent resistor, it changes resistance on the intensity of the light falls
+
+1453
+01:50:48,380 --> 01:51:01,340
+upon. Right. In this graph you can see, right, when the light intensity is increased, resistance
+
+1454
+01:51:01,340 --> 01:51:08,859
+goes down. When the light intensity is decreased, resistance goes up. But this variation is not
+
+1455
+01:51:08,859 --> 01:51:22,460
+linear. This is not a linear. Typically, we use LDR in a voltage divider to get converted
+
+1456
+01:51:22,460 --> 01:51:27,100
+the light intensity into a voltage. Like today morning we discussed voltage dividers.
+
+1457
+01:51:28,619 --> 01:51:36,939
+As a voltage divider we use. This is the LDR. This is a symbol for LDR. So, light falls upon on the
+
+1458
+01:51:36,939 --> 01:51:47,960
+resistor. So, we use LDR with another resistor. Typically, we use a large resistor like 10 kilo
+
+1459
+01:51:47,960 --> 01:51:59,859
+ohms. Right. Now, this is the equation to calculate the voltage at VE. Now, let's say
+
+1460
+01:52:00,659 --> 01:52:06,979
+When the light intensity is zero, that means fully dark. When the light intensity is zero,
+
+1461
+01:52:06,979 --> 01:52:17,060
+it's fully dark. The R1 goes to infinity. R1 goes to infinity. Theoretically, R1 goes to infinity.
+
+1462
+01:52:17,060 --> 01:52:27,699
+When the light, if no light, fully dark. At that time, V in is left connected only to ground.
+
+1463
+01:52:28,579 --> 01:52:36,979
+V in is left connected only to ground through R2. R1 infinity means a full disconnection. So,
+
+1464
+01:52:36,979 --> 01:52:47,060
+V in left connected only to ground. So, what is the voltage at V in at this moment? Zero.
+
+1465
+01:52:48,979 --> 01:52:55,460
+Voltage is zero. Why? V in connected to ground. When there is a full light, lot of light,
+
+1466
+01:52:55,460 --> 01:53:05,060
+maximum light, full bright, R1 goes to zero. Look at this graph. When light intensity goes to
+
+1467
+01:53:05,060 --> 01:53:12,260
+infinity, that means full light, resistance goes to zero. When light intensity goes to zero,
+
+1468
+01:53:12,260 --> 01:53:17,380
+resistance goes to infinity. So when there's a lot of light, full light, full brightness,
+
+1469
+01:53:17,380 --> 01:53:26,640
+R1 goes to zero, connecting VIN directly to 5 volts, connecting VIN directly to 5 volts.
+
+1470
+01:53:26,640 --> 01:53:37,600
+So VIN becomes 5. If full light, VIN is 5. If no light, pulled up, VIN is zero. Depending
+
+1471
+01:53:37,600 --> 01:53:48,159
+the light falls upon this resistance LDR, the voltage at V in varies between 0 and 5.
+
+1472
+01:53:48,600 --> 01:53:56,060
+Depending on the light falls upon R1, the voltage at V in varies between 0 and 5.
+
+1473
+01:53:56,560 --> 01:53:59,199
+The variation of light intensity is continuous.
+
+1474
+01:54:01,119 --> 01:54:03,699
+Variation of light intensity is continuous.
+
+1475
+01:54:03,699 --> 01:54:08,800
+As a result, variation of the voltage at VIN is also continuous.
+
+1476
+01:54:09,319 --> 01:54:10,319
+That means analog.
+
+1477
+01:54:10,859 --> 01:54:12,539
+Voltage at VIN is analog.
+
+1478
+01:54:12,979 --> 01:54:18,000
+So you have to get that digitized using an ADC.
+
+1479
+01:54:18,319 --> 01:54:23,500
+So this voltage at VIN you have to get digitized using an ADC.
+
+1480
+01:54:24,220 --> 01:54:27,779
+Then only you can process with a CTE.
+
+1481
+01:54:28,359 --> 01:54:28,880
+Right.
+
+1482
+01:54:30,220 --> 01:54:33,460
+Now I'll give you an exercise.
+
+1483
+01:54:33,699 --> 01:54:39,420
+Now using LDR, develop a light meter.
+
+1484
+01:54:39,699 --> 01:54:45,840
+Light meter to indicate the light level as a percentage using 4 LEDs.
+
+1485
+01:54:46,420 --> 01:54:51,079
+Develop a light meter to indicate the light level, light intensity.
+
+1486
+01:54:53,000 --> 01:54:53,880
+Right?
+
+1487
+01:54:53,880 --> 01:54:59,380
+In your room as a percentage using 4 LEDs.
+
+1488
+01:54:59,380 --> 01:55:02,520
+get the light intensity converted into
+
+1489
+01:55:02,520 --> 01:55:04,819
+a discrete number.
+
+1490
+01:55:07,439 --> 01:55:10,680
+We know that that discrete number is between
+
+1491
+01:55:10,680 --> 01:55:14,640
+0 to 1023. If that
+
+1492
+01:55:14,640 --> 01:55:16,699
+number is less than 256
+
+1493
+01:55:16,699 --> 01:55:20,359
+if the number
+
+1494
+01:55:20,359 --> 01:55:24,840
+is less than 256, turn on 1 LED. That means
+
+1495
+01:55:24,840 --> 01:55:26,859
+light level is 25%.
+
+1496
+01:55:26,859 --> 01:55:35,619
+If the number is less than 512, turn on 2 LEDs indicating light level 50%.
+
+1497
+01:55:35,619 --> 01:55:46,560
+If the number is less than 768, turn on 3 LEDs indicating 75% light.
+
+1498
+01:55:49,619 --> 01:55:56,180
+If the light level is less than 1023, that is the maximum value you can have.
+
+1499
+01:55:56,859 --> 01:56:05,819
+less than 1023, turn on four LEDs, all four LEDs indicating 100% light level. Develop this system,
+
+1500
+01:56:06,460 --> 01:56:14,640
+light meter system, using C, also using Arduino wrapper function. With and without Arduino wrapper
+
+1501
+01:56:14,640 --> 01:56:20,899
+functions, develop. Is that clear? Is that clear, this light meter example that I ask you to develop?
+
+1502
+01:56:20,899 --> 01:56:24,960
+both using C and Arduino Rapper functions.
+
+1503
+01:56:25,199 --> 01:56:27,939
+Separately. Can you understand this exercise?
+
+1504
+01:56:28,640 --> 01:56:30,939
+Any question on this exercise?
+
+1505
+01:56:31,399 --> 01:56:34,119
+What is the value for 25%?
+
+1506
+01:56:35,220 --> 01:56:39,239
+256. So this voltage you get converted
+
+1507
+01:56:39,239 --> 01:56:43,279
+the VIN voltage you get converted into a digital number
+
+1508
+01:56:43,279 --> 01:56:46,840
+discrete number. That number is between 0 and 1023.
+
+1509
+01:56:46,840 --> 01:56:53,079
+If you have 100% light, this number, the number you get 1023.
+
+1510
+01:56:53,800 --> 01:56:58,460
+If no light, you get zero when you get converted the number.
+
+1511
+01:56:59,020 --> 01:57:06,279
+So if you divide that into four, four slots, if the number less than 256, that is 25% of light.
+
+1512
+01:57:06,819 --> 01:57:09,680
+If the number less than 512, that is 50% of light.
+
+1513
+01:57:10,000 --> 01:57:14,560
+If the number less than 768, that is 75% of light.
+
+1514
+01:57:14,560 --> 01:57:22,380
+If the number is less than 1023, you have 100% light.
+
+1515
+01:57:22,380 --> 01:57:26,500
+Because when there's a full light, voltage is 5.
+
+1516
+01:57:26,500 --> 01:57:30,079
+Voltage 5 means 1023 you get from ADC.
+
+1517
+01:57:30,079 --> 01:57:34,899
+If no light, voltage is 0, from ADC you get 0.
+
+1518
+01:57:34,899 --> 01:57:39,100
+Depending on the light level, you get a voltage between 0 to 5.
+
+1519
+01:57:39,100 --> 01:57:43,359
+That means you get a number between 0 to 1023 from ADC.
+
+1520
+01:57:43,359 --> 01:57:49,920
+that number you can divide into flow slots and you can represent the light level as a percentage
+
+1521
+01:57:49,920 --> 01:57:56,880
+using four LEDs. Is that clear? Can you understand this example? This exercise? If not asked,
+
+1522
+01:58:00,079 --> 01:58:09,279
+is this clear? Yes, sir. Right, good. Then second example, another sensor. Second exercise, LM35.
+
+1523
+01:58:09,279 --> 01:58:14,880
+a temperature sensor this sensor
+
+1524
+01:58:14,880 --> 01:58:24,000
+right using this sensor you can get converted the thermal energy into electrical energy
+
+1525
+01:58:24,000 --> 01:58:31,479
+thermal energy into electrical energy that means temperature into a voltage so this sensor provides
+
+1526
+01:58:31,479 --> 01:58:39,479
+voltage linearly proportional to the temperature sense. Now the temperature variation is continuous.
+
+1527
+01:58:40,180 --> 01:58:48,340
+So voltage at this middle pin of the sensor is also continuous. We supply 5 volts to the left
+
+1528
+01:58:48,340 --> 01:58:54,819
+hand side pin, ground to the right hand side pin. On the middle pin you get a voltage proportional
+
+1529
+01:58:54,819 --> 01:59:01,220
+to the temperature sense. Voltage proportional to the temperature sense. That is a continuous voltage
+
+1530
+01:59:01,220 --> 01:59:05,520
+analog voltage because temperature variation is continuous.
+
+1531
+01:59:06,039 --> 01:59:09,819
+So this is analog temperature sensor. And when you use this sensor
+
+1532
+01:59:09,819 --> 01:59:13,899
+you have to be very careful, right, left hand
+
+1533
+01:59:13,899 --> 01:59:17,640
+side pin, when you turn the sensor towards you
+
+1534
+01:59:17,640 --> 01:59:21,340
+the numbering and all these things towards you
+
+1535
+01:59:21,340 --> 01:59:25,619
+then the left hand side pin 5 volts, right hand side
+
+1536
+01:59:25,619 --> 01:59:28,000
+pin ground, middle pin is the output pin.
+
+1537
+01:59:28,000 --> 01:59:48,340
+So, if you supply ground to the left hand and 5 volts to the right hand pin, then this will be over. You can easily burn this, blow out this if you change the plus minus voltage supply.
+
+1538
+01:59:48,340 --> 01:59:49,619
+So therefore very careful.
+
+1539
+01:59:50,819 --> 01:59:58,720
+And this sensor is sensitive to a wide range of temperatures from minus 55 to plus 150.
+
+1540
+01:59:59,319 --> 01:59:59,579
+Right.
+
+1541
+02:00:00,199 --> 02:00:02,880
+This is even higher than the boiling temperature value.
+
+1542
+02:00:03,960 --> 02:00:11,760
+And the temperature you can calculate by multiplying the output voltage of the sensor by 100.
+
+1543
+02:00:11,760 --> 02:00:18,920
+If you know this voltage, by multiplying it 100, you can get the temperature value in Celsius.
+
+1544
+02:00:19,579 --> 02:00:22,140
+But the problem is we don't know this voltage.
+
+1545
+02:00:22,640 --> 02:00:29,319
+We feed this voltage to ADC and ADC will give you a number between 0 to 1023.
+
+1546
+02:00:30,359 --> 02:00:34,340
+Using this number, you have to get computed this voltage.
+
+1547
+02:00:36,199 --> 02:00:41,260
+Using the ADC return value, discrete number, you have to get computed this voltage.
+
+1548
+02:00:41,760 --> 02:00:46,020
+And then multiply the voltage by 100, you can get the temperature in Celsius.
+
+1549
+02:00:46,020 --> 02:00:51,779
+Then the second exercise that I asked, I want you to do.
+
+1550
+02:00:54,399 --> 02:00:55,140
+Right?
+
+1551
+02:00:55,760 --> 02:00:56,899
+The thermometer.
+
+1552
+02:00:58,600 --> 02:01:03,960
+The thermometer indicating the temperature using set of LEDs.
+
+1553
+02:01:05,920 --> 02:01:07,720
+Let's say 4 LEDs.
+
+1554
+02:01:08,439 --> 02:01:11,619
+Using 4 LEDs, you can indicate the temperature.
+
+1555
+02:01:11,760 --> 02:01:30,800
+So you compute the temperature. You get using this sensor, you sense the temperature and you get the analog voltage and using analog, you feed the analog voltage to ADC, get converted analog voltage into a discrete number.
+
+1556
+02:01:30,800 --> 02:01:37,260
+using the discrete number, you calculate the voltage and multiply the voltage by 100 and you
+
+1557
+02:01:37,260 --> 02:01:44,359
+get the temperature in Celsius. And if the calculated temperature is less than 20%, 20 Celsius,
+
+1558
+02:01:44,760 --> 02:01:50,380
+sorry, not percent, 20 Celsius, calculated temperature is less than 20 Celsius, turn on
+
+1559
+02:01:50,380 --> 02:01:58,020
+one LED. If the calculated temperature is between 20 Celsius and 25 Celsius, turn on two LEDs.
+
+1560
+02:01:58,020 --> 02:02:05,000
+If the calculated temperature is between 25 Celsius and 30 Celsius, turn on 3 LEDs.
+
+1561
+02:02:05,539 --> 02:02:16,039
+If the calculated temperature is greater than 40 Celsius or 35 Celsius, turn on all 4 LEDs.
+
+1562
+02:02:18,180 --> 02:02:21,220
+If less than 20, 1 LED.
+
+1563
+02:02:21,680 --> 02:02:24,239
+Between 20 to 25 Celsius, 2 LEDs.
+
+1564
+02:02:24,840 --> 02:02:27,479
+Between 25 to 30, 3 LEDs.
+
+1565
+02:02:28,020 --> 02:02:30,340
+between 30 to 35 OLDs.
+
+1566
+02:02:30,619 --> 02:02:32,140
+Then using this temperature,
+
+1567
+02:02:32,300 --> 02:02:33,880
+determine your room temperature.
+
+1568
+02:02:34,340 --> 02:02:38,460
+And then wrap your fingers around this sensor.
+
+1569
+02:02:39,060 --> 02:02:40,920
+Wrap the fingers around the sensor.
+
+1570
+02:02:41,640 --> 02:02:43,359
+And because of your body heat,
+
+1571
+02:02:43,840 --> 02:02:46,020
+you can raise the temperature of the sensor.
+
+1572
+02:02:46,619 --> 02:02:49,520
+Normally your body heat is about 35, 36 Celsius.
+
+1573
+02:02:50,520 --> 02:02:54,819
+So you can increase the temperature of the sensor
+
+1574
+02:02:54,819 --> 02:03:02,119
+and see how it shows the temperature using LDDs.
+
+1575
+02:03:03,300 --> 02:03:06,600
+By developing these two systems,
+
+1576
+02:03:07,159 --> 02:03:09,680
+now I have given you as exercises,
+
+1577
+02:03:10,180 --> 02:03:14,939
+you can understand how to capture an analog input
+
+1578
+02:03:14,939 --> 02:03:17,039
+from a physical phenomenon.
+
+1579
+02:03:17,739 --> 02:03:19,939
+Variation of light is a physical phenomenon.
+
+1580
+02:03:20,859 --> 02:03:23,640
+Variation of temperature is a physical phenomenon.
+
+1581
+02:03:23,640 --> 02:03:25,560
+So, Baha Vika Salsidhyya.
+
+1582
+02:03:26,359 --> 02:03:27,579
+How to capture
+
+1583
+02:03:27,579 --> 02:03:29,699
+a continuous variation
+
+1584
+02:03:29,699 --> 02:03:31,500
+of a physical phenomenon using
+
+1585
+02:03:31,500 --> 02:03:33,039
+a sensor, analog sensor.
+
+1586
+02:03:33,520 --> 02:03:35,680
+And provide a discrete
+
+1587
+02:03:35,680 --> 02:03:37,560
+output. If you are providing the
+
+1588
+02:03:37,560 --> 02:03:39,579
+output using LEDs, that's a
+
+1589
+02:03:39,579 --> 02:03:41,420
+discrete output. Input is
+
+1590
+02:03:41,420 --> 02:03:43,180
+analog, output is digital.
+
+1591
+02:03:43,680 --> 02:03:44,399
+ADC.
+
+1592
+02:03:47,420 --> 02:03:48,579
+With that,
+
+1593
+02:03:49,319 --> 02:03:51,800
+we come to end of ADC.
+
+1594
+02:03:51,800 --> 02:04:12,180
+Now you have two exercises to do. Any question? Okay, if no questions, that's the end of morning session. We'll start afternoon session at 1 o'clock.
+
+1595
+02:04:12,180 --> 02:04:18,840
+the same link, same Zoom link, right?
+
+1596
+02:04:19,840 --> 02:04:22,479
+So join at one at one.
+
+1597
+02:04:22,979 --> 02:04:23,600
+Thank you.
+
+1598
+02:04:24,819 --> 02:04:26,220
+We started.
+

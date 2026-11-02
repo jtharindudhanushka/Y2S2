@@ -1,0 +1,1747 @@
+11 - Polling and Interrupts 3 - External Interrupts, Capacitors & Debouncing  (27 Oct 2020 (afternoon))
+
+[0:00] Right. This is where we stopped last time. Okay. We discussed about different interrupt vectors, interrupt service routine, how to enable interrupts globally, how to disable interrupts globally using CLI and SEI functions.
+[0:22] Right. Now it's time to talk about the different types of interrupt resistors. Right. Now we are going to deal with interrupt register. Okay. Now in this diagram, we can summarize all interrupts. Right. Into one diagram.
+[0:43] Now in this diagram you can see this particular part for external devices and external peripheral interrupts.
+[0:57] And this particular part for internal peripheral interrupts.
+[1:01] Now in any computing system there can be, there are some external.
+[1:10] Right, can you see my slide?
+[1:13] Yes, sir.
+[1:14] Right.
+[1:15] Right.
+[1:16] There are two types of devices interrupt the CPU.
+[1:21] The first one type is external, external, peripheral devices.
+[1:26] The other type is internal, peripheral devices.
+[1:29] Right.
+[1:30] Now, here you can see the pins we use to connect external devices.
+[1:38] In the microcontroller we have INT pins.
+[1:43] INT simple N means there may be multiple pins.
+[1:48] INT0, INT1 like that way.
+[1:53] There can be many pins.
+[1:54] INT pins, interrupt pins.
+[1:57] So these pins you can connect external devices.
+[2:01] You can connect external devices to these pins.
+[2:04] right and also in the microcontroller you have pcint pins pcint means pin change interrupt pin
+[2:18] change interrupt and simple m means there can be multiple pins pcint zero pcint one pcint two like
+[2:31] that way there can be many pins right so these pins we can connect external peripheral devices
+[2:39] for example we can connect some sensor some push button switch right so various sensors
+[2:48] we can connect to these external these int pins and pc int pins when these external
+[2:56] peripheral devices connected to these INT and PC INT pins, when they need CPU service,
+[3:06] they interrupt the CPU. Here you can see the CPU. They interrupt the CPU through these pins.
+[3:14] They can interrupt the CPU through these pins when they need the CPU service. So those interrupts
+[3:21] we call external and pin change interrupts, right?
+[3:26] So any peripheral device,
+[3:29] if a peripheral device interrupts the CPU, right?
+[3:34] Through INT pin, we call it external interrupt.
+[3:38] A peripheral device interrupts the CPU through INT pins,
+[3:44] INT0, INT1, there may be many pins.
+[3:47] So, if a peripheral device interrupts the CPU through IN-T pin, any IN-T pin, we call it external interrupt.
+[3:57] If a peripheral device, a sensor interrupts the CPU through PC-IN-T pin, any PC-IN-T pin, pin change interrupt pin, then we call it pin change interrupt.
+[4:12] Right. Now external interrupts, right. Let's first consider the external interrupts. Peripheral devices interrupt the CPU through the interrupt pins, INT pins. So they are called external interrupts.
+[4:30] Now, external devices connected to an interrupt pin, INT pin, triggers external interrupt. Now, the question is when to trigger the external interrupt? When to trigger? Right? Any peripheral device connected to INT pin triggers external interrupt to CPU.
+[4:57] Now when to interrupt? So we can specify that. How? We use ISC, right? The meaning you will learn in the next couple of slides, the meaning of ISC. ISC bits of EICR register.
+[5:16] ISC bits of EICR register specify when to interact.
+[5:24] Right.
+[5:25] ISC bits of EICR register specify when to interact.
+[5:31] Now there are four choices.
+[5:33] Right.
+[5:33] These are the four choices when to interact.
+[5:36] The first choice.
+[5:38] INTP.
+[5:40] If the INTP is held low.
+[5:43] If the INTP is held low.
+[5:46] Interrupt the CPU. That is the first choice. The second choice, interrupt the CPU when there is a logic change in the interrupt pin. When there is a logic change in the interrupt pin.
+[6:01] For example, interrupt pin was high and it became low. So interrupt the CP. Oh, interrupt pin was low, now it becomes high. A logic change. So interrupt the CP.
+[6:17] The first choice, interrupt pin is held low. If the interrupt pin is held low, INT pin is held low, right? Interrupt the CPU. The second choice, if there's a logic change on interrupt pin, INT pin, interrupt the CPU.
+[6:38] The third choice, right? So, if the INTE pin is going low, it's going low, it has not become low. It is still going. It is going low. From high to low, it is going. It has not become low. Now, it is not high. It is not high, not low. It is going low.
+[7:02] falling edge, right. This is high, this is low and this particular part we call falling
+[7:11] edge of the pulse. If the IN pin, INT pin is going low, interrupt the CPU, falling edge,
+[7:20] the same thing, right, but in the opposite direction. Interrupt the CPU when INT pin
+[7:28] is going high. It is going high. It has not become high. It is going high. Rising edge.
+[7:38] On rising edge of INTP, interrupt the CPU. So there are four choices. Now, how do we
+[7:48] select the particular choice we can use isc bits of eicr register to specify when to interrupt when
+[7:59] to interrupt the cpu so the four choices among the four choices we can select one choice by using isc
+[8:08] bits of eicr register so the four choices are if the int pin is held low interrupt the cpu if the
+[8:17] the INTP in logic change, interrupt the CPU. Logic change means it could be high to low
+[8:24] or low to high. INTP in logic is falling. INTP in state is falling. Right. It is going
+[8:34] low. INTP in is going low. Falling it. Interrupt the CPU. INTP in logic is going high. It is
+[8:43] going high. That means rising, right? Rising edge interrupt the CP. Right. Then there's another
+[8:52] register. EIMSK register. Right. EIMSK register. Right. Very soon you will learn about this register.
+[9:03] more details, right? EIMSK register, that register has INT bits.
+[9:14] INT bits. Simple end means there may be multiple bits.
+[9:18] Int0, Int1, likewise, multiple bits.
+[9:22] Now using these bits, you can enable or disable external interrupts.
+[9:29] If you set the bit, int bit tough, E-I-M-S-K register, you can enable external interrupts. If you clear the bit, you can disable external interrupts. Right. So this is to specify when to interrupt. This is to enable and disable external interrupts. Right.
+[9:53] So before we move into pin change interrupt, any question on external interrupts?
+[10:00] So it means that we can use this external interrupt pin for in these situations.
+[10:12] In low level or in a low level.
+[10:15] The idea is this.
+[10:17] Let's say you have connected a sensor to this particular pin.
+[10:23] Let's say in zero pin in the microcontroller we have a pin call in zero.
+[10:29] Right?
+[10:29] In one there are multiple pins.
+[10:32] Now let's say we use in zero pin.
+[10:35] For the in zero pin we have connected a sensor.
+[10:38] Now when to interrupt the CPU.
+[10:41] So you can select one choice out of the four choices.
+[10:46] So if you for example if you select the choice number one first choice.
+[10:50] That means when the sensor holds this pin low, right, we interrupt the CT.
+[11:02] The second choice, when the sensor changes the state of this pin, either high to low or low to high, we interrupt the CT.
+[11:13] The third choice, when the sensor connected to this pin, right, makes the pin going low, falling edge, we interrupt the CTE.
+[11:25] When the sensor connected to this pin, right, changes the state of this pin, going high, that is rising, we interrupt the CTE.
+[11:37] Then using this particular bit of this register, we can enable or disable interrupts.
+[11:45] If you disable the interrupts, no matter what does this sensor do, CPU will not be interrupted.
+[11:53] If you disable the interrupt, no matter what this sensor does, CPU will not be interrupted.
+[12:00] If you enable the interrupts, right, depending on the choice you have selected, right, when this sensor does something, the CPU will be interrupt depending on the choice you have selected if you have enabled the interrupt, external interrupt. Is that clear?
+[12:20] Yes.
+[12:21] Anything else? Any other question on external interrupts?
+[12:25] Excuse me, sir.
+[12:26] Yes.
+[12:27] Where is the
+[12:30] int pin situated?
+[12:33] Like in the
+[12:34] Arduino board?
+[12:36] Yes.
+[12:37] In the Arduino board,
+[12:40] int pin situated on the
+[12:42] microcontroller.
+[12:44] Microcontroller pins
+[12:46] are exposed
+[12:48] through the headers
+[12:50] of Arduino board.
+[12:52] Very soon you will learn
+[12:54] which header you have to
+[12:56] use to access in zero pin in one pin very soon you will learn thank you anything else
+[13:05] right then let's move into pin change interrupts right in the microcontroller we have pcint pins
+[13:16] PCINT. PCINT means
+[13:19] pin change interrupt pins.
+[13:21] And same way
+[13:23] we can connect some
+[13:25] sensor to PCINT
+[13:27] pin. Some sensor.
+[13:29] Right? Right.
+[13:31] We can connect some sensor to PCINT
+[13:33] pin. So external
+[13:35] device connected to PCINT
+[13:38] pin.
+[13:39] Here simple M means
+[13:41] there are many PCINT
+[13:44] pins. Not one, not two,
+[13:46] Many, that's why M.
+[13:48] So PCINT 0, PCINT 1, PCINT 2, like that way, there are many pins.
+[13:54] So external peripheral device connected to PCINT pin, right, can trigger pin change interrupt, can trigger pin change interrupt, right.
+[14:08] Then PCIE bit of PCICR register.
+[14:19] PCIE bit of PCICR register.
+[14:25] You will learn all these registers in the next couple of slides.
+[14:28] PCIe bit of PCICR register, right, using this bit of this particular register, we can enable
+[14:43] or disable, we can enable or disable interrupts. We can enable or disable interrupts on different
+[14:56] IO ports. We can enable or disable interrupts on different IO ports. For example, right? For example,
+[15:06] Well, PC, let me write here, PCIe 0 bit, bit of PCICR register, right, enables interrupts
+[15:25] on port B. PCIe 1 bit of PCICR register enables interrupt on port C. PCIe 2 bit of PCICR
+[15:52] register enables or disables interrupts on port D. So what is the meaning? Meaning is using PCIE
+[16:08] bits of PCICR register, we can enable, disable interrupts on certain different IO ports.
+[16:20] By default, all are disabled.
+[16:23] But you can enable them interrupts on different IO ports, different IO port pins.
+[16:31] Then the external peripheral device connected to this PCI and TP,
+[16:37] if it makes a logic change, high to low or low to high, then CPU will be interrupted.
+[16:46] Now, unlike the previous case, there are no multiple choices.
+[16:50] Only one choice, logic change.
+[16:52] If the external device makes a logic change on this pin, CPU is interrupted.
+[16:59] Right.
+[17:01] Now, the interrupts on different ports, IO ports, we can enable or disable using PCIe bits of PCICR register.
+[17:15] Then PCINT bits of PCMSK register.
+[17:23] Actually there are several registers.
+[17:26] That's why PCMSKN, simple A.
+[17:30] PCMSK 0 register, PCMSK 1 register, PCMSK 2 register.
+[17:37] Likewise, there are multiple registers.
+[17:39] Those registers have multiple bits.
+[17:43] PCINT N.
+[17:45] PCI-NT-M means PCI-NT0, PCI-NT1, PCI-NT2, likewise multiple bits.
+[17:53] So PCI-NT bits of PCMSK registers, they enable or disable interrupts on particular pin of enable port.
+[18:08] Now, here we use PCIE bits of PCICR register to enable the ports.
+[18:18] Here we use PCINT bits of PCMSK register to enable the pins of enable port.
+[18:30] First you have to enable the port, for example, you have to enable the port B, for example.
+[18:35] Then you have to enable which pin on port B.
+[18:40] PB0, PB1, PB2.
+[18:43] Likewise, which pin you want to enable on port B.
+[18:48] That's why two steps.
+[18:53] The first step you enable the port with the port B, port C, port D you enable.
+[18:59] Then in that port you select particular bit.
+[19:03] particular bit. Whether you want to enable the port B PB0, PB1, PB2. First you have to enable
+[19:11] port B. Then you can enable individual port pins. Individual port pins. Right. When the external
+[19:20] peripheral device makes this pin, the state of this pin, a logic change, then CPU is interrupted.
+[19:31] First, you need to enable the particular port.
+[19:34] Then you need to enable the particular IOP.
+[19:38] By default, all are disabled.
+[19:41] Right.
+[19:41] Before we move further, any question?
+[19:44] Right.
+[19:45] Now, this external and pin change interrupts for external peripheral devices.
+[19:50] Right.
+[19:50] External peripheral devices are generally sensors.
+[19:53] But there are internal peripheral devices.
+[19:56] Timers.
+[19:57] Unlock to digital converter.
+[19:59] universal synchronous, asynchronous receiver and transmitter. So these are internal peripheral
+[20:07] devices. They also interrupt CPU. They also interrupt CPU. Right. Now let's talk about
+[20:17] internal interrupts. For example, when timer, there are timers inside the microcontroller,
+[20:31] right? ATmega328P microcontroller, there are three timers. So let's say one particular timer,
+[20:38] timer, right? Overflows. Overflows means timer can count to its maximum value and thereafter
+[20:48] it overflows. So for example, if the timer is 8 bit timer, it can count from 0 to 255
+[20:57] and then it overflows to 0 again because in an 8 bit timer you can't count more than 255.
+[21:06] You can count 0 to 255 then it overflows to 0.
+[21:10] When timer overflows, the timer triggers TOV interrupt.
+[21:18] TOV interrupt.
+[21:20] Again you will learn these interrupts.
+[21:22] This TOV means time overflow interrupt.
+[21:25] Timer triggers TOV interrupt.
+[21:28] Now we need to set whether we enable or disable timer interrupts.
+[21:34] To do that, we use TOIE bit of TIMSK register, TOIE bit.
+[21:47] Using that, we can enable or disable time overflow interrupt.
+[21:53] Now, by default, it is disabled.
+[21:56] But you can enable by setting this bit, you can enable the interrupt.
+[22:00] By clearing the bit, you can disable the interrupt.
+[22:03] Let's say you have set the bit and when time overflows, the timer triggers TOV interrupt and TOV interrupt interrupts the CPU.
+[22:15] Then ADC, analog to digital conversion.
+[22:19] When the analog to digital conversion is over, is completed, ADC triggers ADIF interrupt.
+[22:28] When unlocked digital conversion is complete, ADC triggers, ADIF interrupt.
+[22:35] Again, we can enable or disable this interrupt.
+[22:38] How?
+[22:39] By using ADIE bit of ADCSR register.
+[22:47] Right?
+[22:47] Using ADIE bit of ADCSR register, we can enable or disable ADC interrupt.
+[22:55] by default is disabled. But by setting ADIE bit, you can enable ADIF interrupt. When ADC
+[23:05] conversion, analog digital conversion is complete, ADC triggers ADIF interrupt. ADIF interrupt
+[23:13] interrupts the CPU. Then we have a communication peripheral, internal peripheral call USART.
+[23:22] Universal, synchronous, asynchronous, receiver, transmitter.
+[23:28] Universal, synchronous, asynchronous, receiver, transmitter.
+[23:32] Right.
+[23:33] When the data transmission is complete, when the data transmission is complete,
+[23:39] this USART peripheral triggers TXC interrupt.
+[23:45] TXC, transmission, complete.
+[23:47] TXC interrupt, transmit, complete, interrupt.
+[23:50] Again, you can enable this interrupt or disable it using TXCIE bit of UCSR register. Again, by default, it is disabled, but you can set this bit and enable the interrupt.
+[24:10] If the interrupts are enabled and when the transmission is complete, when the data transmission is complete, USART triggers TXC interrupt and TXC interrupt interrupts the CPU.
+[24:26] Similarly, when the data receive is complete, USART triggers RXC, receive complete interrupt, RXC interrupt.
+[24:37] Again, you can enable or disable RxC interrupt by using RxCIE bit of UCSR register. UCSR register has RxCIE bit. Again, by default, the interrupt is disabled, that means zero in the bit.
+[24:59] You can set value 1 to the bit and enable the interrupt.
+[25:04] If interrupts are enabled, when data receive is complete,
+[25:09] USAT triggers RxC interrupt and RxC interrupt interrupts the CPU.
+[25:15] Right.
+[25:16] Then finally, finally, global interrupts.
+[25:20] All interrupts you can enable low disable.
+[25:23] All these interrupts you can enable low disable.
+[25:27] How?
+[25:27] using i bit.
+[25:29] i bit means
+[25:31] interrupt bit.
+[25:33] Interrupt bit. i bit of
+[25:35] s reg register. s reg
+[25:37] means status register.
+[25:39] Status register has i bit.
+[25:41] Interrupt bit. Using interrupt
+[25:43] bit, when you clear the interrupt
+[25:45] bit, all the interrupts are
+[25:47] disabled. Entire
+[25:49] system. If you set the s reg
+[25:51] bit, all the interrupts
+[25:53] are enabled, then
+[25:55] individually you have to enable and disable different interrupts individually. To globally
+[26:02] enable and disable interrupts we use SEI set interrupt and CLI clear interrupt functions.
+[26:11] Actually when you call set interrupt SEI function that means you set I bit of status register.
+[26:20] When you call CLI, clear interrupt function, what actually happens is you clear the IBIT of status register.
+[26:31] So using SEI and CLI routines, we can set or clear IBIT of S-Rex status register.
+[26:41] Globally, we can enable low disable interrupts to CPU.
+[26:46] Now, can you understand this diagram?
+[26:50] Any questions?
+[26:51] Tilina, any question?
+[26:53] Srianji, any question?
+[26:55] No, sir.
+[26:56] Right.
+[26:57] If no questions, then we'll learn about these interrupts one by one.
+[27:04] Let's start with external interrupts.
+[27:06] Thereafter, we can go to pin change interrupts.
+[27:11] So, we'll start with external interrupts.
+[27:15] External interrupt registers.
+[27:17] The first register is External Interrupt Control Register A. EICRA Register. External Interrupt Control Register A. And this is that register. That register has two important bits.
+[27:37] two important bits. ISC01, ISC00. These are the two important bits in this register. Now,
+[27:51] these bits, ISC01, that means interrupt, sense, control 01. And the other bit, ISC00,
+[28:02] interrupt sense control
+[28:04] 0 0. These two
+[28:06] bits specify when to
+[28:09] interrupt on
+[28:10] int 0 bit.
+[28:13] When to interrupt on
+[28:14] int 0 bit. There are
+[28:16] four possible choices.
+[28:19] These are the possible choices.
+[28:21] If the both
+[28:22] bits are 0.
+[28:24] If the both bits are 0 0 0
+[28:27] CPU will be
+[28:28] interrupted when
+[28:30] int 0 pin is held low.
+[28:35] When int 0 pin is held logic low,
+[28:38] CPU will be interrupted if these two bits are
+[28:42] 0, 0. Right? So held low means
+[28:46] the pin you have to
+[28:48] hold the pin low until the current
+[28:54] instruction completes its execution.
+[28:57] right so held low means
+[29:00] the pin we have to hold
+[29:02] low until
+[29:04] the current instruction
+[29:06] currently running instruction
+[29:08] completes
+[29:10] its execution right
+[29:12] if you
+[29:12] keep holding
+[29:18] the pin low
+[29:19] in zero pin keep holding the
+[29:22] in zero pin you keep
+[29:24] holding low
+[29:25] until the current instruction completes its execution,
+[29:31] CPU will be interrupted.
+[29:32] But to do that, you have to set these two bits 0, 0.
+[29:36] The second option, 0, 1.
+[29:40] This bit 0, this bit 1.
+[29:43] Then CPU will be interrupted on logic change.
+[29:49] Will be interrupted, right?
+[29:52] on the logic change of int 0 pin.
+[29:55] Let's say int 0 pin is high
+[29:58] and it becomes low.
+[30:00] Logic change.
+[30:01] CPU will be interrupted.
+[30:04] Or int 0 pin is low
+[30:08] and it becomes high.
+[30:10] Logic change.
+[30:11] CPU will be interrupted.
+[30:13] Right.
+[30:14] But to do that,
+[30:15] you have to set these two bits,
+[30:17] 0 and 1.
+[30:19] 0 and 1.
+[30:21] The third option.
+[30:22] 1, 0. This bit 1, this bit 0.
+[30:25] I see ISE 0, 1 bit 1.
+[30:29] ISE 0, 0 bit 0. This is the third option.
+[30:34] CPU will be interrupted, right?
+[30:37] When int 0 pin is going low.
+[30:42] Int 0 pin is going low. In 0 pin
+[30:46] going low means int 0 pin was high.
+[30:49] Now it is going low and in next moment it will be low.
+[30:55] Next moment it will be low but at the moment it is going low.
+[31:00] It is not low.
+[31:01] It is not high.
+[31:03] It is going low.
+[31:04] It was high.
+[31:05] It is going low.
+[31:07] That means falling edge of the pulse.
+[31:10] CPU will be interrupted.
+[31:11] Then the last option if you set the both bits 1-1.
+[31:14] CPU will be interrupted when int 0 pin is going high.
+[31:21] When int 0 pin is going high.
+[31:25] Int 0 pin going high means int 0 pin was low.
+[31:29] And now it is going high.
+[31:32] And very soon it will be high.
+[31:35] But now it is not high.
+[31:38] It is not low.
+[31:39] It was low.
+[31:40] Now it is going high.
+[31:42] And very soon it will be high.
+[31:44] rising edge of the pulse,
+[31:47] CPU will be interrupted.
+[31:48] Can you understand?
+[31:52] Right.
+[31:52] These are the four possible choices.
+[31:55] You can specify
+[31:57] when to interrupt
+[31:58] on int 0p.
+[32:02] When to interrupt
+[32:03] on int 0p.
+[32:05] Right.
+[32:06] Excuse me.
+[32:07] Yes.
+[32:08] What about the other 5 bits
+[32:11] of the EICR register?
+[32:13] Good question. Now, during in my slides, when you see the registers, sometimes you will see
+[32:24] two particular bits or one particular couple of bits with some symbolic names. That means we are
+[32:33] going to discuss about these bits in the slide. And some bits you will see not applicable. That
+[32:41] means these two bits are not applicable for this particular slide but they will be discussed
+[32:49] in another slide. So these two bits will be discussed in another slide but for this slide
+[32:58] they are not applicable. Now there are symbolic names that means we are going to discuss we
+[33:03] discuss them in the current slide and these bits will be discussed in the future slides
+[33:10] and these bits will be discussed
+[33:13] not in this slide set
+[33:16] but could be in a different slide set.
+[33:20] That's why some hypers.
+[33:23] These two will be discussed
+[33:25] in the next couple of slides
+[33:26] and these two we have already discussed
+[33:30] in the current slide
+[33:31] and these will not be discussed
+[33:34] in the current slide set
+[33:37] but maybe they may be discussed in a different slide set.
+[33:42] But if you are interested about these bits,
+[33:45] why don't you refer the data sheet?
+[33:53] And in the data sheet, all the bits are explained.
+[33:57] But in my lecture, sometimes certain information
+[34:03] I don't discuss
+[34:06] because then it becomes
+[34:09] more complicated.
+[34:11] Certain information will be
+[34:13] discussed later, not
+[34:14] immediately.
+[34:18] To make
+[34:19] the things much
+[34:21] simpler so that students
+[34:23] can learn easily.
+[34:25] But if you go to the data sheet,
+[34:27] data sheet will give you everything at once.
+[34:29] Right? So in
+[34:31] teaching, we normally
+[34:33] try to make the things
+[34:36] simple. Therefore,
+[34:38] certain things
+[34:39] we discuss, certain things we discuss
+[34:42] later, certain things
+[34:44] we don't discuss
+[34:45] throughout the slide.
+[34:48] To make
+[34:50] the things simple.
+[34:52] That's a way of teaching.
+[34:54] It's a teaching strategy.
+[34:56] But students, you are university students,
+[34:58] so it's very good you are keen on
+[35:00] these things. Then what you have to do
+[35:02] is go to the data sheet, read about these four bits, one, two, three, four, these four bits.
+[35:11] And these two bits, don't worry, in the next couple of slides you will learn. So that's the,
+[35:19] these are the notations that I use in my slides. If the particular bits are with symbolic names,
+[35:26] they will be discussed in the current slide. If the if particular bits with not applicable,
+[35:32] that means not applicable to the current slide, but they will be discussed very soon.
+[35:37] If there are hypers, they will not be discussed throughout this particular slide set. But they
+[35:44] may be discussed in a different slide set. But if you are very keen, go to the data sheet and read.
+[35:52] Anything else? Very good question you asked. Right. Now these are the four choices when to interrupt on int 0 pin. But not int 0 pin. There are other int pins. For example, ATmega328P microcontroller has two int pins. int 0 and int 1. Two int pins.
+[36:14] So what about INT1 pin? Let's see. Same register, external interrupt control register A. Now we discuss the next two bits. ISC11, ISC10. Next two bits. Interrupt sense control 11. Interrupt sense control 10 bits.
+[36:37] These specify when to interrupt on INT1 pin. Again, the same set of choices, right? Same set of choices. The microcontroller has two external interrupt pins. They are INT0 and INT1.
+[36:54] So, these int 0 and int 1 pins you can use to connect external sensors, external peripheral devices.
+[37:03] And then you can specify when to interrupt the CPU.
+[37:07] If the pin is held low, if there's a logic change on the pin, if the pin is going low, if the pin is going high, when to interrupt the CPU.
+[37:20] Any question?
+[37:21] So, there are no difference between INT1 and INT0, no?
+[37:29] Yes.
+[37:30] Same kind of?
+[37:33] Yeah. Both pins are similar, right? You can connect two different sensors to these two pins,
+[37:40] IN0 and IN1. Both pins can handle external interaction, right? But you can specify,
+[37:48] For example, logic change for int 0 pin and rising edge for int 1 pin.
+[37:53] Different choices you can set for two different pins.
+[37:56] That is possible.
+[37:57] Right.
+[37:58] Then we need to enable, disable interrupts on these pins.
+[38:05] These are when to interrupt, the choices.
+[38:07] Then int 0 and int 1, these two pins, interrupts, we need to enable and disable.
+[38:15] By default, all interrupts are disabled. The idea is to save power. Right? So, most of the peripherals inside the microcontroller, they are disabled by default to save power. If you need, you can enable them. How? Let's see.
+[38:35] For that we have to use EIMSK register, external interrupt mask register.
+[38:43] We have to use external interrupt mask register.
+[38:47] In the external interrupt mask register, the bit 0 and bit 1, they are in 0 bit and in 1 bit.
+[38:57] Using them, you can enable, disable external interrupts on in 0 and in 1 bits.
+[39:05] For example, if you set this bit in 0 bit, that means you enable interrupts on int 0 bit.
+[39:12] If you set this bit, you enable interrupts on int 1 bit.
+[39:18] If you clear these two bits, you disable interrupts on both int 0 and int 1 bits.
+[39:25] So using these two bits, you can enable or disable interrupts.
+[39:30] By default, they are 0.
+[39:32] They contain 0.
+[39:34] so interrupts are
+[39:35] disabled. Any question?
+[39:39] Sir,
+[39:40] can you
+[39:41] explain the previous
+[39:44] side logic
+[39:45] change section?
+[39:48] Logic change section, yes.
+[39:50] Right. This part.
+[39:52] Okay. Now if you set
+[39:53] 0 for this bit
+[39:55] and 1 for this bit,
+[39:58] 0, 1, then
+[40:00] CPU will
+[40:02] be interrupted when there is a
+[40:04] Logic change on int1 pin.
+[40:07] Logic change on int1 pin.
+[40:09] What do you mean by a logic change?
+[40:11] Logic change means the int1 pin was high, now it is low.
+[40:16] There is a logic change.
+[40:18] So interrupt the CPU.
+[40:20] Oh, int1 pin was low, now it is high.
+[40:25] Interrupt the CPU.
+[40:26] Now let's say you have connected a button to int1 pin.
+[40:30] When you press the button, the pin becomes low.
+[40:34] And you have pull up the peak.
+[40:36] That means it is high, but when you press the button, it becomes low.
+[40:40] A logic change.
+[40:42] Then you can interrupt the CPU.
+[40:44] To do that, you have to set 0, 1 to these two peaks.
+[40:49] Is that clear?
+[40:50] Yes, sir.
+[40:51] Thank you.
+[40:51] this the
+[40:53] the
+[40:54] the
+[40:55] the
+[40:55] the
+[40:56] the
+[40:56] the
+[40:56] 
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] 
+[40:56] 
+[40:56] 
+[40:56] the
+[40:56] 
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] 
+[40:56] 
+[40:56] the
+[40:56] the
+[40:56] 
+[40:56] 
+[40:56] 
+[40:56] 
+[40:56] 
+[40:56] 
+[40:56] the
+[40:56] 
+[40:56] the
+[40:56] 
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[40:56] the
+[41:21] low level low level is a pin local
+[41:25] local
+[41:27] you interrupt
+[41:29] head low
+[41:31] the pin local
+[41:33] local
+[41:35] currently run instruction
+[41:37] the other way
+[41:39] press
+[41:41] and interrupt
+[41:43] the way
+[41:45] press
+[41:47] The logic changes.
+[41:52] It's so interrupted.
+[41:54] You say that the high tip is pressed.
+[41:58] It's so interrupted.
+[42:04] It's so interrupted.
+[42:06] The high tip is pressed.
+[42:09] It's so released.
+[42:11] It's not high.
+[42:14] I have a look.
+[42:15] I have a look, the one to aca.
+[42:16] I have a look, the one to aca, a c.b.
+[42:16] I have a look, the one to aca, a c.b.
+[42:17] I have a look, the one to aca, a c.b.
+[42:17] I have a look, the one to aca, a c.b.
+[42:18] I have a look, the one to aca, a c.b.
+[42:18] I have a look, the one to aca, a c.b.
+[42:18] I have a look, the one to aca, a c.b.
+[42:18] I have a look, the one to aca, a c.b.
+[42:19] I have a look, the one to aca, a c.b.
+[42:19] I have a look, the one to aca, a c.b.
+[42:19] I have a look, the one to aca, a c.b.
+[42:20] in a...
+[42:21] the stu-d
+[42:22] I have a no-dome.
+[42:23] [unclear — Sinhala / crosstalk]
+[42:53] the more the one-h just�.
+[42:54] 
+[42:54] the fronk.
+[42:55] you have a chisq.
+[42:56] the fj.
+[42:56] press the button and release the button.
+[43:00] Press the button and release the button.
+[43:03] The button is high.
+[43:05] The button is rising edge.
+[43:08] How do you interrupt?
+[43:10] How do you interrupt?
+[43:14] The button is in the middle of the hardware.
+[43:17] The hardware is in the middle of the hardware mechanism.
+[43:20] The CPU interrupts.
+[43:22] [unclear — Sinhala / crosstalk]
+[43:52] I'm a zero not me interrupt the current
+[43:55] you'll be monitoring specific a lot of pussy a day when a
+[44:02] quarter up it on water the new popular you're going
+[44:07] right if the nappy is wet the small fellow will cry you are not going to check with an
+[44:16] a piece wet or not. Small
+[44:18] fellow will cry. You read. You keep
+[44:20] reading the newspaper.
+[44:23] If small fellow
+[44:24] cries, then you have to
+[44:26] attend to small fellow.
+[44:30] Right.
+[44:32] So, if you have questions, please ask.
+[44:34] Then only you get these things clear.
+[44:37] So, this is one of the
+[44:38] complicated topic in
+[44:40] computing. Not only
+[44:42] in embedded systems. The entire
+[44:44] computer science one of the complicated
+[44:47] topic interrupt handling.
+[44:49] Normally interrupt handling is
+[44:50] done by the operating system.
+[44:52] So the programmers, application
+[44:55] programmers they don't need to worry
+[44:56] because system software
+[44:58] takes care of
+[44:59] interrupt handling.
+[45:02] But system programmers, system software
+[45:04] developers they have to deal
+[45:06] with interrupt. They need
+[45:08] this knowledge. Not application
+[45:10] programmers but system programmers.
+[45:12] Now, if you are going to develop an operating system, then you need this knowledge.
+[45:17] But in microcontrollers, we don't have that luxury operating system.
+[45:20] So we have to handle interrupts.
+[45:23] One of the complicated concepts of computer science.
+[45:28] But when you learn these things, then you will gradually get started to sense how computers work.
+[45:38] So you will get to know all these
+[45:40] internal things of the
+[45:43] computer, how they work
+[45:44] internally. Then it won't
+[45:46] be a black box for you.
+[45:48] Right.
+[45:49] Excuse me, sir.
+[45:51] We need more than two
+[45:54] systems?
+[45:55] Yes, this ATmega328P
+[45:59] microcontroller has
+[46:00] only two
+[46:01] int pins. That means int 0
+[46:05] and int 1. Right.
+[46:06] If you want more in pins, external interrupt pins, you have to go for a different microcontroller.
+[46:13] But this microcontroller provides you only two external interrupt pins.
+[46:18] Thank you.
+[46:19] Right.
+[46:20] Now to understand the concept that we discussed, let's develop this system.
+[46:26] System number six.
+[46:28] External interrupt based trigger.
+[46:31] The same system that we develop using polling.
+[46:35] now we are going to develop using interrupts.
+[46:39] So what is the system?
+[46:41] Toggles an LED on user input
+[46:44] while blinking another LED in every two seconds.
+[46:48] That's what we develop using polling.
+[46:51] Right.
+[46:51] The polling system, using polling we develop a system.
+[46:55] That system blinks an LED every two seconds
+[46:58] but when you give an input using a push button
+[47:01] it can toggle another LED.
+[47:03] Now the same system, now we are going to develop using interrupts. We experience the problems of using, developing that system using polling. Sometimes our inputs are not detected, right? And we cannot specify the concept of priority. Those are the problems of polling. Sometimes inputs go undetected.
+[47:30] detected. Now we can solve these problems using interrupts, right? And also when you use polling,
+[47:38] you waste your computing power to monitor the peripheral devices. You periodically monitor
+[47:45] the peripheral devices. That means you waste computing power, right? Now with interrupts,
+[47:51] you are not going to monitor. You keep doing whatever the task you like. The device will
+[47:58] interrupt you when it needs your service. Right. External interrupt pin out. Pin out of ATmega328P
+[48:07] micro control. These are the two pins. In zero pin, in one pin. Those two pins belong to port B.
+[48:17] They belong to port B.
+[48:19] PD2, PD3 pins.
+[48:22] In Arduino terms,
+[48:24] digital IO pin number 2
+[48:26] and digital IO pin number 3.
+[48:29] Right.
+[48:30] That's the question that
+[48:32] Nirash asked earlier.
+[48:34] Right.
+[48:34] Arduino pins.
+[48:36] Yes, these are the two pins.
+[48:37] On the UNO board,
+[48:39] pin number 2 and pin number 3.
+[48:41] Pin number 2 means in 0 pin.
+[48:44] Pin number 3 means in 1 pin.
+[48:45] external interruptings. Right. Now before we can you see my slides I lost the connection for a
+[48:55] moment. Yes sir. Right. Before we move further let's talk about another electronic component.
+[49:05] Capacity. Look at this animation. The capacitor you can charge. When you connect the capacitors
+[49:18] to a power source, you can charge and you can discharge. In this animation you can see when
+[49:27] and you connect the capacitor to the battery, right?
+[49:31] The capacitor gets charged.
+[49:34] And when you connect the two terminals of the capacitor through a resistor,
+[49:40] the capacitor gets discharged, right?
+[49:44] To keep the electrical charge temporarily, not permanently,
+[49:51] to keep it temporarily, we use capacitor.
+[49:54] A capacitor contains two conductors, two metal plates and an insulating material.
+[50:05] The insulating material sandwiched between the two metal plates. Now here you can see the two
+[50:11] metal plates and in the middle between the two metal plates we put an insulating material. So
+[50:19] So insulating material sandwich between two metal plates.
+[50:24] So insulating material could be ceramic, could be mica, could be polyester, some insulating material.
+[50:32] We use capacitors to store electrical energy or charge, electrical energy temporarily, not permanently.
+[50:43] The capacitor cannot keep the charge permanently.
+[50:47] It cannot keep the charge because the charge gets discharged with the time through the insulating material.
+[50:59] Through the insulating material, the charge gets discharged over the time.
+[51:07] Right.
+[51:08] For example, now let's say, let's draw a graph.
+[51:14] time
+[51:18] time
+[51:24] voltage
+[51:28] 0. Now this is how we charge the capacitor.
+[51:34] Then, now it is at the full charge.
+[51:37] Now it is in its full charge. Then with the
+[51:41] time the capacitor gets discharged and becomes even. Right. We show this kind of, we observe
+[51:52] this situation when we discuss dynamic memory. So, you charge the capacitor and automatically
+[52:00] it gets discharged. So, dynamic memory implemented with capacitors, you had to recharge periodically
+[52:09] to keep the charge. Right. So, that's the nature of capacity. The capacitor, the capacitance,
+[52:17] capacitance of a capacitor is measured in Farad, a unit called Farad. So, Farad is a very large unit.
+[52:27] Right. Therefore, normally we use microfarad, nanofarad and picofarad. Right. So, thousand
+[52:36] picofarad, one nanofarad.
+[52:39] Thousand nanofarad,
+[52:40] one microfarad.
+[52:42] Thousand microfarad, one
+[52:44] millifarad. Thousand millifarad,
+[52:47] one farad.
+[52:48] So we call this
+[52:50] unit as farad
+[52:52] in honor of English
+[52:54] scientist Michael Farad.
+[52:57] So Michael Farad
+[52:58] is
+[52:59] one of the
+[53:01] key figures
+[53:03] behind the
+[53:05] inventions in electricity. So, in honor of him, we have named this unit for the capacitance
+[53:17] as parent. Right. Now, an application of capacitor. A typical application of capacitor
+[53:30] is to for smoothing power supply.
+[53:34] For smoothing the power supply, typically we use catastrophe.
+[53:38] For example, let's say we have
+[53:42] a power supply. This is the power supply.
+[53:46] And we have some device.
+[53:51] Now this device you supply positive
+[53:54] power and ground. Now this
+[53:58] power supply could be a power adapter connected to your wall supply. Now the problem is sometimes
+[54:05] the power can get, the power supply can get fluctuate. It fluctuates sometimes.
+[54:13] As a result, the supply voltage to the device is fluctuating. That is not good for the device.
+[54:21] The power supply fluctuation is not good for the reverse.
+[54:26] So, one solution for this is connect a capacitor in between the ground line and the positive
+[54:38] rail and the ground rail of power supply.
+[54:42] So, capacitor gets charged with the power supply and when there is a fluctuation in
+[54:49] in the power supply. Let's say when the power, there's a power drop in the power supply,
+[54:55] the capacitor is discharged and fill up that power gap, right? The capacitor is charged
+[55:06] with the power supply and when there's a fluctuation in the supply, if the power goes,
+[55:12] if there is a power drop, the capacitor will discharge itself and fill up that gap.
+[55:20] So, for the device, we can provide a smooth power supply.
+[55:26] So, this is a typical application of a capacitor, smoothing a power supply.
+[55:32] For example, now, if there's this kind of ripples in the power supply, they will be filled on the other side because of the capacity.
+[55:49] All these ripples will be filled, right?
+[55:52] Because capacitor has the charge, the capacitor will discharge itself and fill up these gaps in the power supply.
+[55:59] So, power supply right to the device is a very smooth power supply, very stable smooth power
+[56:06] supply. But up to the capacitor there are fluctuations in the power supply. So, this is
+[56:12] called smoothing the power supply using capacitor. Is that clear? Can you understand that? The one
+[56:20] typical application of capacitors? Any question?
+[56:26] Right. Then there are two types of capacitors, polarized capacitors and non-polarized capacitors.
+[56:43] Polarized capacitors, the two terminals capacitor has, the terminals are polarized. That means
+[56:52] there's a plus terminal and negative terminal.
+[56:54] Plus minus terminals.
+[56:56] Positive, negative terminal.
+[56:58] You have to connect them correctly.
+[57:00] That is very important
+[57:02] when you connect polarized capacitors.
+[57:06] Then non-polarized capacitors,
+[57:08] there are both terminals
+[57:10] are same.
+[57:12] There is no polarity.
+[57:15] So there is no
+[57:16] positive or negative terminal.
+[57:18] Non-polarized capacitors.
+[57:19] In the polarized capacitors, the capacitance is printed. For example, this one you can
+[57:27] see 10 micro farad is the capacitance. 10 micro farad is the capacitor. It is printed.
+[57:35] And the 50 volts that is the maximum voltage that the capacitor can handle. If you supply
+[57:43] more than 50 volt, then this will be destroyed.
+[57:46] That's the maximum voltage.
+[57:48] In the non-polarized capacitors, the voltage, the maximum voltage is coded.
+[57:57] So the code you have to, you have to look at the table for the code.
+[58:02] Now here 2E, 2E means 250 volts.
+[58:06] And then the capacitance also coded.
+[58:10] Now here, for example, 104.
+[58:12] 4. 1 0 4 means
+[58:13] the first two digits you have to take.
+[58:17] 1 and 0.
+[58:19] The third digit is a
+[58:20] multiplier.
+[58:22] Multiplied by 10 to the power
+[58:24] of 4. 4 means 10 to the power
+[58:26] of 4.
+[58:28] First two digits you take them as
+[58:30] it is and the third digit
+[58:32] is a multiplier
+[58:35] 10 to the power of 4.
+[58:37] 4 means 10 to the power of 4.
+[58:39] Calculate.
+[58:40] 100,000.
+[58:42] The answer is in picofarad. Then picofarad 100,000 means 0.1 microfarad. So 104 means 0.1 microfarad
+[58:55] or 100 nanofarad. Another answer for this
+[58:59] 100 nano farad. 0.1 micro farad means 100 nano farad. Oh 100,000 picofarad. Then
+[59:13] capacitor has a tolerance. Now if this capacitors, capacitors, capacitance is not exactly 100 nano.
+[59:21] Not exactly. There's a tolerance. Again there's a code for the tolerance. You have to look at the
+[59:27] K. K means 10% tolerable. So, these capacitors could be 110 nanogarad or 90 nanogarad in between 90 and 110. So, 10% plus minus tolerables.
+[59:44] There are some capacitors with very precise capacitors, less tolerables, but they are very expensive.
+[59:51] They are used for military purposes.
+[59:54] But for our academic work, this 10%, 5% capacitors are really good because they are very cheap.
+[1:00:03] Right.
+[1:00:04] Now, in your kit, you have 100 nanofarad capacitors.
+[1:00:09] Normally, these capacitors are 1 rupee or 150 rupees.
+[1:00:13] Very cheap.
+[1:00:14] Right. Now let's go to schematic diagram of our system number 6. Now before we move into that, any question on capacitors?
+[1:00:25] Sir?
+[1:00:26] Yes.
+[1:00:27] Does some capacitors have not any code or something like that in the capacitor?
+[1:00:43] Is that possible?
+[1:00:44] No, that means no voltage, code for the voltage and no code for the tolerance.
+[1:00:51] Yes, sir.
+[1:00:52] Yes, sir. But the capacitance code is there. Not that as a model.
+[1:01:00] Oh, come on. It should be 104, 103. No, sir. Nothing is written. Then nothing is written.
+[1:01:09] Yes, sir. Come on. That means due to some reason it got erased. Ideally, the capacitance value should be there.
+[1:01:21] But some cheap capacitors, there are good capacitors, good capacitors come with voltage
+[1:01:27] rating and the tolerance, not in addition to the capacitance, but there are very cheap
+[1:01:32] capacitors in the market.
+[1:01:34] They don't specify the voltage.
+[1:01:37] They don't specify the tolerance, but only the capacitors will be specified.
+[1:01:42] So these are very cheap ones, right?
+[1:01:45] But if you've got a good capacitor, good capacitors are a little bit expensive, right?
+[1:01:49] very hard to find in the market, in the Sri Lankan market.
+[1:01:53] Unless you buy them from a reputed supplier
+[1:01:57] like Spark Fund, then online you have
+[1:02:01] to purchase. Then you will get all these
+[1:02:05] goods. But in Sri Lankan market, very difficult to find
+[1:02:09] good capacitors, good
+[1:02:12] capacitors with all these ratings. But the capacitors should
+[1:02:17] be there. The capacitors could be there. It has got erased.
+[1:02:26] For one that has, for other one it is not there.
+[1:02:32] Right. Due to some reason it got erased. That's what I can guess. Anything else?
+[1:02:45] Schematic diagram. This is the schematic diagram we use, hardware schematic diagram we use for
+[1:02:54] the polling based trigger. Now in this same hardware, how hardware components are connected,
+[1:03:05] you can see in this diagram. Now this built-in LED, onboard LED, it blinks every two seconds.
+[1:03:13] The other external LED connected to PB0, that is Arduino pin number 8, right?
+[1:03:22] We toggle that LED when we push the button.
+[1:03:27] When there's an input, this LED is toggled.
+[1:03:31] But this LED, it blinks every two seconds.
+[1:03:35] So that is the main job of the microcurriculum.
+[1:03:38] that is the main job blinking onboard LED every two seconds while doing that if there is an input
+[1:03:49] the other LED externally connected LED is toggled this toggle while doing the main job
+[1:03:58] so while you keep reading the newspaper and if small fellow cries then you have to attend to
+[1:04:06] small thing. So blink the LED every two seconds. That is the main job. If there is an input,
+[1:04:13] toggle the other LED, same circuit. But to this circuit, we make a small change.
+[1:04:22] Actually, it's a small addition, not a change, small addition. Now here you can see
+[1:04:28] this switch connected to in zero pin, in zero pin. That means we are going to use external
+[1:04:37] interacts. That's why we have connected the switch to in zero pin. That is PD2, port D,
+[1:04:44] PD2 pin, Arduino pin number 2. Now we add, we do a small addition to this circuit. That is,
+[1:04:52] we add a capacitor across the switch. Across the switch we add a capacitor,
+[1:05:00] 100 nano farad capacitor. Now the question is why do we need this capacitor? In parallel to the switch,
+[1:05:10] in parallel to the switch there's a 100 nano farad capacitor that is 0.1 micro farad capacitor.
+[1:05:17] Why do we need it? The purpose of this capacitor is to debounce the input. Now the question is
+[1:05:29] what do you mean by debounce? Debounce means we are going to handle the input bouncing.
+[1:05:40] Debounce means we are going to handle the input bouncing. This capacitor is to handle input
+[1:05:46] bouncing. Input bouncing is a problem. To handle that problem, we use the capacitor. So, we call it
+[1:05:53] a debounce capacitor. Now, a lot of questions we have. What the meaning of input bouncing?
+[1:06:01] How a capacitor can debounce the input bouncing? Let's see.
+[1:06:06] debouncing inputs. Before we move into debouncing, we should know about bouncing.
+[1:06:16] Contact bounce on mechanical switchers. Now, this is a mechanical switch. The mechanical switchers
+[1:06:24] have a problem. The problem is contact bounce. What is contact bounce? Right. So, when you press
+[1:06:34] these switches, when you turn on
+[1:06:36] off these switches,
+[1:06:39] their contacts
+[1:06:40] inside, they have contacts,
+[1:06:42] they collide together.
+[1:06:44] They collide together.
+[1:06:47] Right? To on
+[1:06:48] and off the switch, the
+[1:06:50] contacts collide together.
+[1:06:53] But
+[1:06:53] instead of producing a single
+[1:06:57] clean connection,
+[1:06:59] they bounce
+[1:07:00] several times very
+[1:07:02] quickly due to their momentum. The contacts bounce several times very quickly due to their momentum.
+[1:07:12] So you don't get one single clean connection. You don't get one single clean connection.
+[1:07:21] You get several bounces right very quickly due to their momentum. Now for example,
+[1:07:30] If you have pull up a port pin, that means pin is high, voltage 5 volts.
+[1:07:39] And you have connected the switch to that port pin.
+[1:07:44] Now, when the switch is in the release position, you have not pressed.
+[1:07:50] Then the port pin is high because you have pulled up the port pin.
+[1:07:54] Port pin is high when the switch you have not pressed.
+[1:07:58] But when you press the switch, right, the other side of the switch you have connected to the ground.
+[1:08:06] So, when you press the switch, the port becomes low, 0 volts.
+[1:08:12] And input bouncing happens.
+[1:08:15] Look at this.
+[1:08:16] Now, you have pulled up the port pit, 5 volts.
+[1:08:21] Switch release.
+[1:08:23] And the other side of the switch you have connected to the ground.
+[1:08:26] Then you press the switch.
+[1:08:28] So, the port pin goes low and the port voltage becomes, port pin voltage becomes zero.
+[1:08:37] So, this is the switch on moment.
+[1:08:39] So, this is a very clear high to low, very clear high to low state transition.
+[1:08:49] However, you can't expect this kind of clean connection.
+[1:08:54] What actually happens is when you press the switch, the contacts, they bounce very rapidly.
+[1:09:03] And then they settle.
+[1:09:05] Then they settle.
+[1:09:07] They bounce, contacts bounce several times very quickly.
+[1:09:11] And then they settle.
+[1:09:13] So this is not a clear state change.
+[1:09:16] And as a result, the microcontroller sees this kind of pulses.
+[1:09:22] high, low, again high, low, high, low, high, low, high, low, high, low and then low.
+[1:09:31] Because of this contact bouncing you get this kind of pulses.
+[1:09:37] Not just one pulse but multiple pulses.
+[1:09:42] So result a series of rapid voltage changes.
+[1:09:47] So, you press the button, then voltage of the port pin goes high to low, but that doesn't go very clean. So, what happens is there will be a rapid input bouncing. So, as a result, there will be multiple high-low cycles.
+[1:10:06] So microcontroller may misinterpret this as not a one state change, but a series of state changes. But actually what happened was one state change. But microcontroller may misinterpret that as a series of state changes.
+[1:10:29] If the interrupts are enabled, microcontroller may interrupt the CPU multiple times.
+[1:10:38] You wanted to interrupt the CPU only one time, but microcontroller interrupts the CPU multiple times.
+[1:10:46] Because microcontroller misinterprets these input bounds as a series of inputs.
+[1:10:54] Not one input, but multiple inputs.
+[1:10:55] So, microcontroller will interrupt the CPU multiple times.
+[1:11:01] Can you understand this problem?
+[1:11:07] So, it's the kind of error of the body, sir?
+[1:11:13] That is not an error.
+[1:11:14] That is the nature of mechanical switches.
+[1:11:18] When you turn on a switch or turn off a switch,
+[1:11:21] it is not one clear connection
+[1:11:24] Because their contacts, when they collide, they bounce several times, very rapidly.
+[1:11:31] Before they settle, due to their momentum, there is mechanical switch contacts.
+[1:11:37] When you are on a switch, you expect the contacts to touch each other at once.
+[1:11:46] No, that doesn't happen. What happens is they touch each other and then bounce several times
+[1:11:56] before they settle. And again, when you off the switch, you expect the contacts to
+[1:12:02] right? I mean, move away from each other. But that doesn't happen at once. So, they bounce
+[1:12:11] several times and then they move away due to their momentum. So this is called input
+[1:12:19] bouncing. So we want to have one state change but the microcontroller may misinterpret
+[1:12:28] this input bouncing as multiple state changes. If you have enabled the interrupts,
+[1:12:36] the microcontroller will interrupt the CPU multiple times.
+[1:12:41] Now, this is a problem.
+[1:12:42] The problem is, now let's say you have an LED to toggle when there is an input.
+[1:12:49] You provided the input by pressing the button.
+[1:12:52] You expect the LED to toggle.
+[1:12:55] But LED is toggled multiple times.
+[1:12:59] Because microcontroller misinterpret your input as not a one input, but a series of inputs.
+[1:13:05] So LED will be
+[1:13:07] tugged multiple times.
+[1:13:09] But you provided only one input.
+[1:13:11] But LED is tugged multiple times.
+[1:13:14] Because microcontroller
+[1:13:16] misinterpreted.
+[1:13:17] You have single input as
+[1:13:19] series of inputs.
+[1:13:22] Due to this
+[1:13:23] input bounce.
+[1:13:26] Can you understand?
+[1:13:28] Any question?
+[1:13:29] No problem, sir.
+[1:13:33] Okay.
+[1:13:34] Good.
+[1:13:35] Okay, all right. Now how do we solve this problem, input-boucer? So we have to debouse the inputs.
+[1:13:48] We have to debouse the inputs. How do we do that? So we use a capacity. Right, microcontroller may
+[1:13:56] misinterpret the input. So we use a capacity. So this is the switch
+[1:14:02] and this is the capacitor connected parallel to the switch and we pull up the microcontroller
+[1:14:13] pin using by activating the internal pull-up resistor by activating internal pull-up resistor
+[1:14:20] we pull up the microcontroller pin right now what happens is when the switch is off
+[1:14:27] off, when the switch is off, capacitor is charged through the internal pull-up resistor.
+[1:14:37] Through the internal pull-up resistor capacitor is charged. And when you press the switch
+[1:14:43] or when you on the switch, input bounce, input bouncing happens. Then capacitor discharges
+[1:14:54] itself and stabilizes the voltage fluctuation in the input. The capacitor will discharge
+[1:15:04] itself and fill up the gaps in the voltage fluctuation. So when the switch is off, the
+[1:15:13] capacitor is charged through the internal pull-up resistor and when you on the switch,
+[1:15:20] input bouncing happens, there will be voltage fluctuations, those fluctuation gaps will be
+[1:15:27] filled up, will be filled by the capacitor by discharging itself. So, you get a very clean
+[1:15:35] state change, high to low, one state change, no gaps, gaps will be filled by the capacitor. So,
+[1:15:43] that is called input debouncing. Input debouncing. Can you understand? Capacitors like a reservoir,
+[1:15:54] it will hold the charge and when there is the fluctuation of the voltage,
+[1:16:01] it will discharge itself and fill up the gas. Can you understand this concept input debouncing?
+[1:16:13] Okay.
+[1:16:15] Yes.
+[1:16:18] Nirasha?
+[1:16:20] Please, sir.
+[1:16:21] Right.
+[1:16:23] Now this is the hardware approach.
+[1:16:26] Capacitor is external hardware company.
+[1:16:29] Using hardware, we can debounce the input.
+[1:16:32] This is the hardware approach.
+[1:16:34] Right.
+[1:16:35] Then there's a software approach for debouncing inputs.
+[1:16:39] Software approach.
+[1:16:40] Using writing couple of lines of code.
+[1:16:43] writing couple of lines of code, you can debounce, you can handle this input bouncing problem.
+[1:16:49] You can handle this input bouncing problem by writing couple of lines of codes.
+[1:16:53] Now I explained you the hardware approach. Yes, Isurid.
+[1:16:57] Sir, after the wiring the capacitor, how this graph comes?
+[1:17:08] Which graph?
+[1:17:10] This one zero.
+[1:17:12] This one?
+[1:17:13] Oh, this one?
+[1:17:14] No.
+[1:17:15] Yeah.
+[1:17:16] This one?
+[1:17:18] Yeah, is it declining?
+[1:17:20] It is before the capacitor, before connecting the capacitor.
+[1:17:25] Yeah, after.
+[1:17:26] After connecting the capacitor, all these voltage gaps will be filled by the capacitor.
+[1:17:32] So what happens is, okay, I'll draw that graph.
+[1:17:37] Right.
+[1:17:40] then all these gaps will be filled by the capacitor and you get this kind of
+[1:17:51] clear state change. So the capacitor will discharge itself and fill up all these
+[1:17:57] gaps and the microcontroller will understand this as one state change. No
+[1:18:06] more gaps. So it is not a declining graph? Sorry? It not becomes a declining graph. What
+[1:18:19] do you mean by decline graph? Decline graph, I don't have any sign. I don't have any sign.
+[1:18:27] [unclear — Sinhala / crosstalk]
+[1:18:57] So, is that clear?
+[1:19:13] Okay.
+[1:19:16] Then we discuss about the hardware approach.
+[1:19:25] but there's a software approach.
+[1:19:29] By writing
+[1:19:30] several lines of
+[1:19:33] codes
+[1:19:33] we can debouse
+[1:19:36] inputs.
+[1:19:38] I want you to find
+[1:19:41] out the software approach.
+[1:19:42] I'm not going to discuss that.
+[1:19:44] That is for you to find out.
+[1:19:46] Because you know coding.
+[1:19:48] So I explain you the hardware approach.
+[1:19:51] I want you to find out
+[1:19:53] the software approach.
+[1:19:54] for input debouncing. Okay. Right. Now, let's go to the wiring diagram. So,
+[1:20:09] software approach for input debouncing, you have to find out. So, hardware approach,
+[1:20:14] I explained. Now, this is the wiring diagram. Can you understand this diagram?
+[1:20:18] Now here you can see the int zero pin that is the Arduino pin number two int zero pin connected to
+[1:20:28] switch and other side of the switch connected to ground and across the switch there is a capacitor
+[1:20:37] 100 nanofarad pin number eight connected through the 220 ohm resistor to the external LED
+[1:20:46] and there is onboard LED.
+[1:20:51] Right.
+[1:20:52] This is the hardware design.
+[1:20:56] When the hardware part is over,
+[1:20:59] then we have to go for firmware.
+[1:21:02] The firmware development,
+[1:21:03] you have to start with designing the firmware
+[1:21:06] using an algorithm.
+[1:21:08] Firmware algorithm.
+[1:21:11] Right.
+[1:21:11] This is our flowchamp.
+[1:21:13] External interrupt based trigger
+[1:21:15] start. Main function, stop external
+[1:21:19] interrupt based trigger. So the C programming we use
+[1:21:23] so main function. Then the main functions flow chart.
+[1:21:29] Now here you can see the main functions
+[1:21:31] flow chart. Start the main function. Configure
+[1:21:35] PB0 that is pin number 8
+[1:21:39] Arduino pin number 8. PB5 Arduino pin number
+[1:21:43] 13, port B as outputs.
+[1:21:48] Why? Two LED is connected to these two pins. Arduino
+[1:21:51] pin number 8, Arduino pin number 13, onboard LED,
+[1:21:56] external LED. So, those two pins we configure as
+[1:21:59] outputs. Then, configure PD2. PD2
+[1:22:04] is int 0 pin. Arduino pin number 2.
+[1:22:08] PD2 is int 0 pin as an input. Why?
+[1:22:11] switch is connected to that pin in 0 pin.
+[1:22:16] PD2 as input.
+[1:22:18] Configure.
+[1:22:19] Pull up PD2.
+[1:22:21] So the default state of PD2, high.
+[1:22:23] Pull up PD2.
+[1:22:25] Activate internal pull up resistance.
+[1:22:28] Pull up PD2.
+[1:22:29] That is in 0 pin.
+[1:22:32] Configure to interrupt on falling edge of in 0 pin.
+[1:22:38] Then configure to interrupt.
+[1:22:41] When to interrupt? On the falling edge of in zero pin. Falling edge of in zero pin means when in
+[1:22:50] zero pin is going low, interrupt the CPU. When in zero pin is going low, falling, interrupt the CPU.
+[1:23:03] Enable external interrupt on IN-0P. Enable external interrupt on IN-0P. Enable global interrupts using SEI function, set interrupt function. Enable global interrupts.
+[1:23:20] Then endless loop. Inside the endless loop, toggle PB5, that is pin number 13, Arduino pin number 13, toggle. State of the PB5, toggle. Where? Two seconds. Do it again.
+[1:23:37] So, what happens is the onboard LED is blink every two seconds.
+[1:23:46] So, the system blinks onboard LED every two seconds.
+[1:23:51] So, this is the main function.
+[1:23:54] Right.
+[1:23:54] Now, when there is an input, we need to toggle the external LED.
+[1:24:00] When there is an input, we need to toggle external LED.
+[1:24:04] When there is an input, an interrupt will be triggered.
+[1:24:11] An interrupt will be triggered.
+[1:24:13] So we have to handle the interrupt.
+[1:24:16] This is the interrupt service routine.
+[1:24:19] Handle external interrupt.
+[1:24:21] When there is an input, this is automatically called.
+[1:24:25] This function is automatically, this interrupt service routine is automatically called.
+[1:24:31] when there is an interrupt, when there is an input.
+[1:24:34] Inside the interrupt service routine, toggle the external LED pin.
+[1:24:40] External LED connected pin, toggle. Can you understand this algorithm?
+[1:24:52] Any question?
+[1:25:01] Can you hear me clearly?
+[1:25:04] Yes, sir.
+[1:25:05] Okay.
+[1:25:07] Right.
+[1:25:07] If the algorithm is clear, then let's go to source code.
+[1:25:14] Right.
+[1:25:16] This is the C program.
+[1:25:18] As usual, we have included IO.h header file,
+[1:25:25] which contains the definitions for input-output registers,
+[1:25:29] port B, port C registers.
+[1:25:33] And then we are going to,
+[1:25:35] we need to, we are planning to use
+[1:25:38] underscore delay ms underscore function.
+[1:25:42] So that function defined in delay.h header file.
+[1:25:45] So we got that file included.
+[1:25:49] And that header file, we have to give
+[1:25:51] the speed of our CPU.
+[1:25:55] Frequency of CPU, 16 megahertz, right?
+[1:25:59] We define that.
+[1:26:00] So this constant will be used by the delay.h header file.
+[1:26:05] Right.
+[1:26:07] Then in the main function, right, we set PB0 and PB5 pins as outputs.
+[1:26:18] We set the bit 0 and bit 5 of DDRB register.
+[1:26:24] and we configure PB0 and PB5 pins as outputs.
+[1:26:31] Then we configure PD2 pin,
+[1:26:36] which is the int0 pin, PD2 pin as an input pin.
+[1:26:41] So how do we do that?
+[1:26:42] We clear the bit number 2, bit 0, 1, 2, bit number 2 of DDRD.
+[1:26:49] We clear the bit number 2 of DDRD register
+[1:26:52] and we configure PD2 as PD2 is in zero pin as input pin
+[1:26:58] because switch connected to that pin.
+[1:27:01] Then we want to activate the internal pull-up resistor
+[1:27:05] connected to that pin.
+[1:27:07] To do that, we use the port deregister
+[1:27:10] and we set the bit number 2 of port deregister
+[1:27:16] and we pull up PD2.
+[1:27:19] We pull up the PD2 pin.
+[1:27:21] So the state of the PD2 pin, which is in zero pin, is high.
+[1:27:25] That means voltage is 5 volts.
+[1:27:27] That is the default state of the pin.
+[1:27:31] But when you press the button, the state of the pin will go low.
+[1:27:36] But by default, it is high.
+[1:27:38] Then configure to input on falling edge of in zero pin.
+[1:27:44] Right.
+[1:27:45] Now we need to set and clear several two bits of two bits.
+[1:27:54] Actually, these are ISC bits, interrupt sense control bits, interrupt sense control bit 0 and interrupt sense control bit 1 of external interrupt control register A.
+[1:28:09] this register.
+[1:28:12] There are two bits.
+[1:28:13] Those are
+[1:28:13] ISC0
+[1:28:17] and ISC1.
+[1:28:20] ISC0
+[1:28:21] bit we need to clear.
+[1:28:23] And ISC1
+[1:28:25] bit we need to set.
+[1:28:27] First we clear the
+[1:28:29] ISC0 bit using
+[1:28:31] bitwise and operator.
+[1:28:33] Then we set
+[1:28:35] ISC1 bit.
+[1:28:39] First we clear the ISC 0 bit and then we set ISC 1 bit.
+[1:28:46] To set the ISC 1 bit, we use bitwise O operator.
+[1:28:51] To clear the ISC 0 bit, we use bitwise and double.
+[1:28:57] So because of the bracket, this happens first.
+[1:28:59] And thereafter, we take the result of this operation,
+[1:29:04] bitwise O operator
+[1:29:07] and this constant value.
+[1:29:11] Can you understand this line?
+[1:29:14] Line number 13.
+[1:29:16] Any question
+[1:29:17] on line number 13?
+[1:29:22] So when to interrupt
+[1:29:24] on the falling
+[1:29:26] edge of in 0.
+[1:29:27] right then we need to enable external interrupts on int 0p how do we do that
+[1:29:42] right external interrupt mask register external interrupt mask register
+[1:29:50] has int 0 bit. The int 0 bit of the external interrupt mass register we set, right? Int 0 bit of
+[1:30:02] external interrupt mass register we set. By doing that, we enable external interrupt on int 0 bit.
+[1:30:10] Then global interrupts, we enable global interrupts, right, using set interrupt function.
+[1:30:20] Then we come to the endless loop.
+[1:30:22] In the endless loop, we toggle PB5P, state of the PB5P.
+[1:30:30] That means we toggle the bit 5 of code B register.
+[1:30:36] Bit 5 of code B register using XO operator.
+[1:30:40] we toggle. Every two seconds we toggle. That means onboard LED we blink every two seconds.
+[1:30:49] That is the main task. If there is an input, if int zero pin is going low, if int zero pin is going
+[1:30:58] low, then CPU will be interrupted. If int zero pin is going low, that means falling edge,
+[1:31:07] automatically CPU will be interrupted. We don't know what will happen, when that will happen.
+[1:31:12] We don't know. We have no idea when that will happen. Whenever right user presses the switch
+[1:31:21] that will happen. At that moment CPU will be interrupted. So handle the interrupt. To handle
+[1:31:27] the interrupt we have to handle the relevant ISR, interrupt service routine. This is the ISR,
+[1:31:35] interrupt service routine. And the correct interrupt vector you have to use.
+[1:31:40] In zero vector you have to use. Why? We are handling external interrupts on in zero
+[1:31:46] B. In zero vector. Inside the ISR, we have to do the second task. Second task is to
+[1:31:56] toggle the external input. If there is an interrupt, if there is an input,
+[1:32:01] code, then there will be interrupt. If there is an interrupt, toggle the external LED.
+[1:32:07] How do we do that? Toggle the bit 0 of code B. That means toggle the state of PB0P. So
+[1:32:18] external LED will be toggled. We have no idea when this ISR will be called. We don't know.
+[1:32:26] At the time of writing the program, at the time of compiling the code, we have no idea.
+[1:32:33] But that will be executed somewhere during the life of the system.
+[1:32:39] When user presses the button, the inch zero pin will go low.
+[1:32:45] That means falling edge.
+[1:32:47] Interrupt is triggered.
+[1:32:49] CPU will be interrupted.
+[1:32:51] And then this ISR is executed.
+[1:32:53] At that time, we toggle the external link.
+[1:32:57] But we don't monitor when that will happen.
+[1:33:00] Without monitoring, we do our main task repeatedly.
+[1:33:06] It's like keep reading the newspaper.
+[1:33:09] While, right, keep reading the newspaper
+[1:33:12] till the small fellow cries.
+[1:33:15] If small fellow cries, then attend to small fellow.
+[1:33:20] Otherwise, keep reading the newspaper.
+[1:33:22] Can you understand this source? Any question?
+[1:33:25] Sir, in this EIMSK, they're enabling the external interrupt line.
+[1:33:36] Which line you are talking about?
+[1:33:39] Fourteenth line.
+[1:33:40] Fourteenth line. That is to enable external interrupts on in zero pin.
+[1:33:46] Because by default, all interrupts are disabled to save power.
+[1:33:49] Now we need to enable a particular interrupt. So we enable interrupt external interruptor in 0 bit. To do that external interrupt mass register with 0 we set.
+[1:34:02] So in EICR we are using 2 bits. Why only changing only 1 bit in EICR?
+[1:34:17] This particular register, using the two bits of this particular register, we specify when to interrupt.
+[1:34:27] There are four choices.
+[1:34:29] When the pin is held low, when there's a logic change, when falling edge, when rising edge.
+[1:34:36] Four choices.
+[1:34:38] But that doesn't mean you have enabled the interrupts.
+[1:34:41] Those are four choices.
+[1:34:42] Then you have to separately enable the interrupts.
+[1:34:45] Let's go back to that register. These are the two bits of that register. By default,
+[1:35:02] both bits contain zero. That means all interrupts disabled. But if you set this bit, you enable
+[1:35:10] int 0 pin interrupts. If you set this bit, you enable int 1 pin interrupts. But in this
+[1:35:18] example, we don't need to enable int 1 pin interrupt because no switch or no sensor connected
+[1:35:23] to int 1 pin. The sensor connected to int 0 pin. So, we enable only the int 0 pin interrupts.
+[1:35:29] And when you enable the int 0 pin interrupt, then when to interrupt on int 0 pin? The second
+[1:35:35] First you enable the interrupts on int 0P, then when to interrupt on int 0P. Four choices.
+[1:35:44] These are the four choices. When to interrupt on int 0P. For that you have to use these
+[1:35:50] two bits of EICRA register. Is that clear? Yes, sir. Anything else? Can all of you understand
+[1:36:01] understand this source code? If not, please ask. Don't keep quiet. Right. Now this is using registers,
+[1:36:13] using the microcontroller registers, using C programming language. We can manipulate the
+[1:36:20] registers and we can handle external interrupts. Right. Now to do all these things, we need another
+[1:36:30] header file. That is this particular header file. Interrupt.h header file. You need to include this
+[1:36:38] header file. Otherwise, your program will not be able to compile your program. Interrupt.h header
+[1:36:45] file you have to include. Why? This header file contains the definition of interrupt registers,
+[1:36:51] definition of ISR, definition of interrupt vectors, interrupt vectors, ISR, and also
+[1:37:02] interrupt registers, definition of interrupt registers, they are in this header file.
+[1:37:08] So, if you are going to use interrupts, you have to use this header file.
+[1:37:12] You have to get that included into YASO's code file.
+[1:37:16] That is very important.
+[1:37:17] And also this SCI function, this SCI set interrupt function defined in interrupt.h header file.
+[1:37:25] So interrupt.h header file contains the definition for interrupt registers, SCI function, and ISR.
+[1:37:32] So you will not be able to compile your code if this file not included.
+[1:37:38] So one time exam question.
+[1:37:41] some source code was given using interrupts
+[1:37:46] and there were some blanks to fill. And here
+[1:37:49] the line was not there. And none of the students
+[1:37:54] detected that missing line.
+[1:37:57] But they filled other blanks in the code.
+[1:38:01] This is very important. Otherwise your code will not work.
+[1:38:05] You won't be able to compile.
+[1:38:07] Right.
+[1:38:08] Yes. In here, port B is a variable or something, sir.
+[1:38:20] Port B is a register. 8-bit register.
+[1:38:25] Yeah, last line. This line.
+[1:38:30] I have a
+[1:38:32] a
+[1:38:32] a
+[1:38:32] a
+[1:38:33] a
+[1:38:33] a
+[1:38:33] a
+[1:38:33] a
+[1:38:34] a
+[1:38:34] a
+[1:38:34] a
+[1:38:34] a
+[1:38:34] a
+[1:38:34] a
+[1:38:34] 
+[1:38:34] a
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] a
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:38:34] 
+[1:39:00] If you have a memory address, you can use port B.
+[1:39:08] If you have a memory address, you can use port B.
+[1:39:14] You can use the header file.
+[1:39:19] If you have a header file, you can tell the memory address, hexadecimal memory address.
+[1:39:27] This is so complicated.
+[1:39:30] So, what is the problem with the header file?
+[1:39:34] Is it a problem with the header file?
+[1:39:38] No, I don't have to write the port and register.
+[1:39:42] The register defined header file.
+[1:39:45] We define variable.
+[1:39:51] We define a global with the header.
+[1:39:54] We don't need to worry.
+[1:39:56] We don't need to use header file.
+[1:40:00] We don't need to worry.
+[1:40:03] Then, now, can we do this using Arduino wrapper function?
+[1:40:11] Yes, we can. But most people don't know. Right? Because it is not very popular thing in Arduino,
+[1:40:22] using interrupts. In the Arduino world, right? Interrupt handling is not very popular.
+[1:40:29] But using Arduino, you can do that. How? This is the algorithm for Arduino. Right? Start.
+[1:40:38] It should be not rolling base trigger, it should be interrupt base trigger, small mistake.
+[1:40:53] This should be, let me to correct that.
+[1:41:03] Interrupt base trigger.
+[1:41:04] Right.
+[1:41:05] First, we declare two digital IEO pins that the LED is connected, pin number 8 and pin
+[1:41:16] number 13 as LED pin 1 and LED pin 2.
+[1:41:22] Onboard LED pin we define as LED pin 2.
+[1:41:27] External LED pin we define as LED pin 1.
+[1:41:32] we define, we declare
+[1:41:33] the pin number 2
+[1:41:35] where the switch is connected as
+[1:41:38] switch pin.
+[1:41:39] Then setup function. In the setup
+[1:41:42] function, we configure LED pin
+[1:41:44] 1 and LED pin 2. That is
+[1:41:45] pin number 8 and pin number 13
+[1:41:47] as output pins because LED
+[1:41:49] is connected to those two pins.
+[1:41:52] We configure switch pin
+[1:41:53] as input pin. Switch pin
+[1:41:56] is the pin number 2 which is the
+[1:41:57] pin 0 pin as
+[1:42:00] input and then pull up.
+[1:42:02] Because before state of that pin is high, you want to keep it high. Then map the pin number,
+[1:42:13] map the pin number to interrupt number. You need to map the input pin number, that is pin number 2,
+[1:42:21] which is switch pin, that is pin number 2 to interrupt number. You need to map.
+[1:42:28] Then attach interrupt to toggle function. There's a function. To that function you need to attach
+[1:42:36] interrupt. End of the setup. Then in the loop function, toggle the onboard LED every two seconds.
+[1:42:45] Repeat at you. Toggle the onboard LED every two seconds. And this is the toggle function.
+[1:42:51] So, we attach that toggle function to interrupt.
+[1:42:56] When there is an interrupt, this function is automatically called and inside the function
+[1:43:02] toggle the external input.
+[1:43:05] Toggle the external input.
+[1:43:08] Now this is the interrupt handling routine.
+[1:43:11] This interrupt handling routine we have attached to the interrupt, right?
+[1:43:16] Attach interrupt to toggle function.
+[1:43:18] We have attached this interrupt handling routine to the interrupt.
+[1:43:22] So, if there is an interrupt, this is called and inside the function we toggle the external
+[1:43:29] input.
+[1:43:31] Can you understand this algorithm?
+[1:43:37] Any question?
+[1:43:39] This algorithm is for using Arduino wrapper function.
+[1:43:46] Right. Then let's move into source code.
+[1:43:55] Using Arduino wrapper function.
+[1:43:57] Right. Set up loop.
+[1:44:01] First we declare the pins.
+[1:44:04] Pin number 8, LED pin 1.
+[1:44:06] Pin number 13, LED pin 2.
+[1:44:09] number 2 switch pin. Then we configure LED pin as output, LED pin 2 as output, switch pin as input
+[1:44:19] and also pull up. Thereafter we need to map IO pin to interrupt number. For that we use another
+[1:44:29] wrapper function digital pin to interrupt. This is the pin, digital pin that we use.
+[1:44:38] Now we need to map that to interrupt number. The digital pin number is pin number two,
+[1:44:44] or do you know pin number two? That is PD2, AVR terms PD2. That is in zero pin, right? Now,
+[1:44:59] Now this one pin number 2.
+[1:45:08] How do you know pin number 2?
+[1:45:15] AVR PD2 that is pin sorry, pin 0.
+[1:45:26] IN 0 P. Now we need to map this pin to, this value of this switch pin is 2. We need to map it to 0.
+[1:45:41] Why? IN 0 is the interrupt.
+[1:45:47] So Arduino pin number 2, AVR PD2, we need to map to in 0. That mapping we can do using digital pin to interrupt function. Can you understand?
+[1:46:04] switch pin means two that is Arduino pin number two in AVR terms it is PD2
+[1:46:16] but we need to use the interrupt number so we map the pin to correct interrupt number
+[1:46:22] to do that we use digital pin to interrupt wrapper function right now then we need to attach
+[1:46:32] For that we use another wrapper function called attach interrupt. Attach interrupt. Attach
+[1:46:43] the interrupt to this toggle function. Toggle is the interrupt handling routine, toggle
+[1:46:49] function. What is the interrupt that we attach? Int 0 interrupt. Int 0 interrupt. That is
+[1:46:57] interrupt number in zero. Interrupt attached to the toggle function on the falling edge,
+[1:47:05] on the falling edge. Another wrapper function. Then in the main loop, toggle on board LED
+[1:47:14] every two seconds. Can you understand this line? Line number 15, can you understand?
+[1:47:21] If not, let me know.
+[1:47:27] We read the state of LED pin 2, that is pin number 13.
+[1:47:32] We read the state of pin number 13 and the negation of that.
+[1:47:38] If the pin number 13 is low, negation of that is high.
+[1:47:44] Digital write, pin number 13 high.
+[1:47:47] The next time we read the state of pin number 13, that now it is high, negation of that low.
+[1:47:55] Digital right, pin number 13 low. We toggle the state of pin number 13 every two seconds.
+[1:48:03] That means onboard LED, we blink every two seconds. And we do this job again and again.
+[1:48:13] So, we keep doing this job. And we don't know when there will be an interrupt, but sometimes
+[1:48:24] we get an input. When we get an input, as a result we get an input. If there is an input,
+[1:48:31] if somebody presses the button, then there is an input, as a result there will be an
+[1:48:37] So, we need to handle the interrupt. Now, we have attached the interrupt in zero interrupt to the toggle function. On the falling edge, the interrupt happens. So, toggle function is the interrupt handling routine. Now, you have to handle it. This is the toggle function.
+[1:48:57] In the toggle function, we toggle the external LED. We toggle the external LED. The same way. We read the state of external LED which is connected to pin number 8. If it is high, negation of that low. Digital right, pin number 8, low.
+[1:49:20] The next time, we read the state of pin number 8, if it is high, if it is low, now it is
+[1:49:29] low, right?
+[1:49:33] The negation of that high, digital write, pin number 8 high, we toggle the.
+[1:49:41] Can you understand this?
+[1:49:43] This is how we use Arduino wrapper functions to handle external interrupts.
+[1:49:53] Now there are two external interrupt pins in zero pin and in one pin. So you can use those two pins
+[1:50:01] to handle external interrupts. Any question?
+[1:50:05] Sir, can you explain the 10th and 11th line? 10, 11, is it the numbers? 10 and 11. 10 and 11, yes.
+[1:50:23] Now, the switch pin variable, this is a variable and it's a constant, sorry, actually constant.
+[1:50:29] Switch pin is a constant. Its value is 2. 2 means Rdnopin number 2.
+[1:50:37] AVR terms PD2 again 2. But interrupt terms, it should be in 0. So how do we map pin number 2 to
+[1:50:48] in 0? This function. Digital pin to interrupt function maps the switch pin value, the IO pin
+[1:50:57] value to interrupt number. IOPin value to interrupt number is mapped by digital pin to interrupt
+[1:51:05] function. So you don't need to know about when if you are an Arduino user, you don't need to know
+[1:51:11] about the interrupt number. You only, you should know only the IOPin number. If you know the IOPin
+[1:51:19] number that will be mapped to the correct interrupt number by this function. Because
+[1:51:24] Arduino platform, we don't expect the users to know interrupts. The users are not the computer
+[1:51:33] science people in the Arduino platform. The platform developed not for the engineering or
+[1:51:39] computer science or IT students. It was developed for non-technical people. So, they don't know.
+[1:51:47] They shouldn't know about the interrupt number. Only thing they should know is the digital IOP
+[1:51:54] If you put the digital IOP number, the correct interrupt number this function will give.
+[1:52:01] And to that interrupt, you attach a function.
+[1:52:06] Because again, the users, they don't know about ISR, interrupt service routine.
+[1:52:12] They don't need to know ISR.
+[1:52:15] They don't need to know about the interrupt vector.
+[1:52:18] Those are technical things.
+[1:52:20] So, what we do is we simply attach the relevant interrupt to a function and that function
+[1:52:28] is called on the falling edge.
+[1:52:31] So, it could be rising edge.
+[1:52:36] It could be logic change.
+[1:52:38] So, possible value, there are possible values for this parameter.
+[1:52:44] that function is called when you press the button and this is executed. Inside the function we toggle
+[1:52:53] the LD. So you don't need to know about the registers, you don't need to know about the
+[1:53:00] interrupt vectors, you don't need to know about the ISR, you don't need to know about the interrupt
+[1:53:05] numbers? Nothing. So the possible values for this argument, falling, rising, change, low.
+[1:53:19] Low means you keep the pin, you keep the pin hold at logic low. Then change means logic change.
+[1:53:31] Falling, the pin going low. Rising, pin going high. Those are the possible values.
+[1:53:38] Low, change, falling and rising.
+[1:53:43] Actually, this function, toggle function, when you attach the toggle function to interrupt,
+[1:53:49] actually this function is called inside the ISR. But the Arduino users, they don't need to know
+[1:53:56] about the ISR. Behind the scene, inside this function,
+[1:54:01] attach interrupt function, the ISR, the relevant ISR
+[1:54:05] and the interrupt vector is used and inside that
+[1:54:08] this function is called. Inside the ISR this function is called.
+[1:54:13] So you can read the definition of these
+[1:54:16] wrapper functions. You can go to the
+[1:54:19] relevant folder and open the C
+[1:54:23] files and read the definitions.
+[1:54:25] Then you can understand how these things happen behind the C.
+[1:54:30] Any question?
+[1:54:32] Is that clear, Azul?
+[1:54:35] Anything else?
+[1:54:41] But when you are using C programming, you don't need to know about the registers.
+[1:54:45] You need to know about the ISR.
+[1:54:46] You need to know about the interrupt vectors and everything you should know.
+[1:54:49] But in Arduino platform, you don't need to know about these things.
+[1:54:53] Very easy.
+[1:54:56] Right.
+[1:54:57] Our next topic is pin change interrupts.
+[1:55:02] Now external interrupts we completed.
+[1:55:04] The next topic is pin change interrupts.
+[1:55:07] Before we start pin change interrupts, I want you all to try these two systems.
+[1:55:14] One with C programming, one with Arduino.
+[1:55:16] with that practical knowledge we can easily move forward right so therefore i stopped now
+[1:55:25] the lecture i stopped now because the next topic is pin change interrupt before we move into that
+[1:55:31] i want you to do the practice right so you have the kit at your home you can do the practice and
+[1:55:37] last time also i asked you to do certain practices now it's time to discuss the questions or the
+[1:55:44] problems that you encounter when you were doing practical.
+[1:55:50] It is very important to do practicals, right?
+[1:55:53] But unfortunately, I cannot do practicals with you, right?
+[1:56:00] Hands-on practicals we can't do.
+[1:56:02] This is online session.
+[1:56:04] So, but it is your responsibility to do practicals at the home.
+[1:56:09] Now, when you encounter, if you encounter problems,
+[1:56:12] then you are doing practicals.
+[1:56:14] now it's time to ask
+[1:56:18] excuse me sir yes channel uh for the uh question number one in exercise two sir
+[1:56:25] we have implemented the assembly code uh it is working but uh i don't know that whether that code
+[1:56:36] that code whether that code can be more efficient or not because the code is about 50 bytes how
+[1:56:45] how many bytes 50 50 50 means it's reasonably good like anyway um i want to have a look
+[1:56:55] your code so what you can do is write
+[1:56:58] the source code file assembly file asm file right can you email me okay right then i can have a look
+[1:57:12] your code and uh if uh there are ways to improve it then i'll i'll suggest okay right okay you you
+[1:57:22] you after this session you can email me so in the same email i'll reply with my suggestions
+[1:57:28] Okay. Thank you.
+[1:57:32] Anything else?
+[1:57:33] Yes.
+[1:58:03] I have to do the exercise.
+[1:58:07] Do you have to calculate the delay?
+[1:58:10] I have to calculate the delay.
+[1:58:15] Right, okay.
+[1:58:18] I have to calculate the loop.
+[1:58:28] [unclear — Sinhala / crosstalk]
+[1:58:58] the
+[1:59:00] the
+[1:59:01] the
+[1:59:01] the
+[1:59:02] the
+[1:59:02] the
+[1:59:02] the
+[1:59:02] the
+[1:59:02] the
+[1:59:02] the
+[1:59:02] the
+[1:59:02] 
+[1:59:02] the
+[1:59:02] the
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] the
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] 
+[1:59:02] the
+[1:59:02] 
+[1:59:02] the
+[1:59:02] the
+[1:59:02] 
+[1:59:02] 
+[1:59:02] the
+[1:59:02] the
+[1:59:02] the
+[1:59:02] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:03] the
+[1:59:28] the The R&B.
+[1:59:29] I do.
+[1:59:30] I do.
+[1:59:30] I do.
+[1:59:31] I do.
+[1:59:31] I do.
+[1:59:31] I do.
+[1:59:31] I do.
+[1:59:31] I do.
+[1:59:31] I do.
+[1:59:31] I do.
+[1:59:32] I do.
+[1:59:32] I do.
+[1:59:32] I do.
+[1:59:32] I do.
+[1:59:32] I do.
+[1:59:33] I do.
+[1:59:33] I do.
+[1:59:33] I do.
+[1:59:33] I do.
+[1:59:33] I do.
+[1:59:33] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] I do.
+[1:59:34] 
+[1:59:34] I do.
+[1:59:34] 
+[1:59:34] 
+[1:59:34] 
+[1:59:34] 
+[1:59:34] 
+[1:59:34] 
+[1:59:34] 
+[1:59:34] 
+[1:59:34] to the...
+[1:59:35] to the ques.
+[1:59:36] to the ques.
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:38] to the ques.
+[1:59:38] to the ques.
+[1:59:37] to the ques.
+[1:59:37] 
+[1:59:37] 
+[1:59:37] 
+[1:59:37] 
+[1:59:37] 
+[1:59:37] 
+[1:59:37] to the ques.
+[1:59:37] 
+[1:59:37] 
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:37] to the ques.
+[1:59:37] 
+[1:59:37] 
+[1:59:37] 
+[1:59:37] 
+[1:59:37] 
+[1:59:37] to the ques.
+[1:59:37] 
+[1:59:37] I have a time.
+[1:59:38] I have a time.
+[1:59:39] I have a time-dra S.
+[1:59:39] I have a time-dra I do.
+[1:59:40] I do.
+[1:59:40] I do-I.
+[1:59:41] [unclear — Sinhala / crosstalk]
+[1:59:44] I I oI.
+[1:59:45] I me, I do.
+[1:59:46] [unclear — Sinhala / crosstalk]
+[2:00:46] I have a time. I have a time.
+[2:00:48] I have a time- an and a right- a and a if-
+[2:00:50] time complexity. Somehow time, speed, we worry about memory, we can do it.
+[2:01:02] We can do it with memory, speed, we can do it with the power work.
+[2:01:07] Readability, maintainability, testability, software engineering factors achieve and draw
+[2:01:20] I have a time.
+[2:01:21] I have a time.
+[2:01:21] I have a time.
+[2:01:22] I have a time.
+[2:01:22] I have a time.
+[2:01:22] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:23] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:24] I have a time.
+[2:01:25] I have a time.
+[2:01:25] I have a time.
+[2:01:50] The moment you see the sequence, the code, the memory usage is ready.
+[2:02:04] Memory usage is ready.
+[2:02:06] Performance, speed, and improvement.
+[2:02:10] I have a really they in a really in a get.
+[2:02:13] I have a get.
+[2:02:14] I have a that.
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] 
+[2:02:15] [unclear — Sinhala / crosstalk]
+[2:02:45] What else?
+[2:02:49] Any other questions?
+[2:02:53] Right.
+[2:02:53] If no more questions, that's all for today.
+[2:02:57] Right.
+[2:02:57] We'll see you on next Tuesday.
+[2:03:00] Right.
+[2:03:00] I highly, highly recommend you to do the practicals.
+[2:03:04] Do the practicals and come up with your questions.
+[2:03:08] Because I cannot be with you during the practicals.
+[2:03:12] practicals. Unfortunately, due to the prevailing situation, that is not possible. Only thing I can
+[2:03:18] do online lectures, right? But you have to do practicals and the problem that you encounter,
+[2:03:25] you have to come up with those problems, right? You have to discuss with them, discuss them,
+[2:03:31] right? At the end of the lecture, at least then I can guide you to solve, get solved those
+[2:03:39] problems but if you don't do practicals and if you just listen to the lectures right you will be in
+[2:03:45] a big trouble another small question just come up sir uh excuse me sir i have another small question
+[2:03:55] yes yes regarding microcontrollers uh in the arduino board there is a sin megahertz oscillator
+[2:04:04] So there is also a clock in the microcontroller.
+[2:04:11] So there are two microcontrollers.
+[2:04:14] So if we attach the external oscillator,
+[2:04:21] whether the internal clock will be disabled for both AT-meg-dip.
+[2:04:33] Now in the Arduino UNO board we have ATmega 3 to 18. For that microcontroller we have a ceramic resonator, external ceramic resonator connected. And then there's a metal crystal oscillator also which is connected to the other microcontroller that we use for serial to USB interfacing.
+[2:04:57] Serial to USB interfacing, there's another microcontroller. For that, we have a metal crystal connected. And you don't need to worry about that part. That is just a USB to serial interface controller.
+[2:05:12] The main microcontroller ATmega328P, then there's a small ceramic resonator connected to provide clock pulses.
+[2:05:22] So when you connect external clock, you need to disable internal clock.
+[2:05:27] So in the Arduino Uno board, internal clock is disabled.
+[2:05:36] Okay, thank you.
+[2:05:38] All right.
+[2:05:38] If no more questions, that's all for today.
+[2:05:41] see you on next Tuesday as usual the morning lecture micro control only and
+[2:05:51] can we disable the internal yes yes disabling the internal clock so there are
+[2:05:59] certain bits you have to set on a certain register right so you can easily
+[2:06:06] find out which register which bits you need to enable disable internal clock in
+[2:06:14] the data sheet right just search in the data sheet using the search term internal
+[2:06:21] clock you will find the correct register and the correct bits you need to set and
+[2:06:29] to enable, disable internal clock.
+[2:06:32] Thank you.

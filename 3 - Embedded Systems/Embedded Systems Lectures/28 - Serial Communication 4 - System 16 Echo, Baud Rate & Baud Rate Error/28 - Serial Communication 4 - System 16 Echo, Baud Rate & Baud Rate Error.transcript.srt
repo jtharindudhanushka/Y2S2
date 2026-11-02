@@ -1,0 +1,4996 @@
+1
+00:00:00,000 --> 00:00:29,980
+This is the place where we stopped last week. We discussed about serial communication, asynchronous serial communication we discussed. Then we discussed about the asynchronous transmitter, asynchronous receiver, and UART registers. Universal, synchronous, asynchronous receiver and transmitter.
+
+2
+00:00:30,000 --> 00:00:53,899
+So use our registers we discussed and now we are going to develop small embedded system based on a microcontroller to understand how serial communication both the receiving part and the transmission part works.
+
+3
+00:00:53,899 --> 00:00:59,939
+Right. So this system we call char enclosure, character enclosure.
+
+4
+00:01:00,460 --> 00:01:04,280
+Right. This system receives characters from PC.
+
+5
+00:01:05,159 --> 00:01:10,239
+So this microcontroller based system is connected to a PC, personal computer.
+
+6
+00:01:11,280 --> 00:01:15,920
+From the personal computer, the microcontroller receives characters.
+
+7
+00:01:17,980 --> 00:01:18,859
+Sorry.
+
+8
+00:01:18,859 --> 00:01:27,760
+receives characters and then encloses these characters with square buckets and transmits
+
+9
+00:01:27,760 --> 00:01:36,659
+enclosed characters back to the PC. What does that mean? Now let's say let me to drop right
+
+10
+00:01:36,659 --> 00:01:44,579
+this is the PC and this is the microcontroller. So PC sends characters to microcontroller. Let's
+
+11
+00:01:44,579 --> 00:01:48,900
+say PC, let's assume PC sent simply.
+
+12
+00:01:49,540 --> 00:01:52,359
+The microcontroller, what the microcontroller does is,
+
+13
+00:01:52,819 --> 00:01:55,120
+microcontroller receives simple A,
+
+14
+00:01:55,879 --> 00:01:58,480
+encloses simple A with square brackets
+
+15
+00:01:58,480 --> 00:02:02,959
+and transmits enclosed character back to PC.
+
+16
+00:02:03,599 --> 00:02:06,939
+This is what transmitted back to the PC.
+
+17
+00:02:07,319 --> 00:02:11,520
+If you send A, you get A enclosed with square brackets.
+
+18
+00:02:11,520 --> 00:02:15,620
+If you send B, you get B enclosed with scrap records.
+
+19
+00:02:16,080 --> 00:02:16,360
+Right.
+
+20
+00:02:16,580 --> 00:02:19,500
+So very simple system.
+
+21
+00:02:21,719 --> 00:02:25,300
+There is no practical usefulness of this kind of system.
+
+22
+00:02:25,879 --> 00:02:31,099
+But using this kind of system, we can learn how serial communication works very easily.
+
+23
+00:02:31,740 --> 00:02:36,680
+Without, I mean, making the things more complicated.
+
+24
+00:02:37,479 --> 00:02:40,419
+Very simply, we can learn how serial communication works.
+
+25
+00:02:40,419 --> 00:02:47,159
+because the microcontroller has to receive characters sent by the PC.
+
+26
+00:02:47,340 --> 00:02:49,580
+So the receiving part we can learn.
+
+27
+00:02:50,620 --> 00:02:54,479
+Then the received character we enclose with square brackets
+
+28
+00:02:54,479 --> 00:02:57,139
+and we transmit back to the PC.
+
+29
+00:02:57,360 --> 00:02:59,560
+The transmission part also we can learn.
+
+30
+00:03:00,439 --> 00:03:02,860
+Both synchronous receiving part,
+
+31
+00:03:03,479 --> 00:03:08,199
+synchronous transmission part we can learn by developing this system.
+
+32
+00:03:08,199 --> 00:03:32,219
+So once you have the knowledge, how an embedded system receives characters using serial communication and how embedded system can transmit characters using serial communication, thereafter you can use those knowledge for some useful applications.
+
+33
+00:03:32,219 --> 00:03:39,479
+something like data logging application right which i have which i have uh asked you to develop
+
+34
+00:03:39,479 --> 00:03:46,580
+for your exercise number seven a data logger right so then it's a very useful application
+
+35
+00:03:46,580 --> 00:03:54,379
+using a sensors we we capture data then those data we log in a pc right a computer when you
+
+36
+00:03:54,379 --> 00:04:00,639
+can log data in a pc there are then you can save data in a database you can save them in a file
+
+37
+00:04:00,639 --> 00:04:07,080
+You can even upload them into a web page, a cloud platform, whatever you want, you can do.
+
+38
+00:04:07,219 --> 00:04:12,979
+If you can transmit data, you capture from sensors to a PC, right?
+
+39
+00:04:13,159 --> 00:04:16,959
+So by developing this application is not useful, right?
+
+40
+00:04:17,079 --> 00:04:19,600
+Practically, this is not useful.
+
+41
+00:04:19,939 --> 00:04:26,560
+But using this, we can learn how you can receive data and how you can transmit data.
+
+42
+00:04:26,560 --> 00:04:29,000
+An embedded system, this is the embedded system.
+
+43
+00:04:29,160 --> 00:04:30,339
+This is the external world.
+
+44
+00:04:30,639 --> 00:04:38,480
+some other system. A communication, serial communication between an embedded system and some other system.
+
+45
+00:04:38,480 --> 00:04:46,139
+So that's the idea of developing this system. Is it clear? Yes, sir. Right.
+
+46
+00:04:47,439 --> 00:04:55,720
+First of all, we should learn about USART pinout of ATmega328B microcontroller.
+
+47
+00:04:55,720 --> 00:04:59,240
+Whatever the microcontroller you use, you can download the data sheet.
+
+48
+00:04:59,660 --> 00:05:07,939
+And from the data sheet, you can learn universal synchronous, asynchronous receiver and transmitter pinout.
+
+49
+00:05:08,439 --> 00:05:09,879
+Now, this is the microcontroller.
+
+50
+00:05:10,319 --> 00:05:12,779
+In this microcontroller, there are 28 pins.
+
+51
+00:05:13,740 --> 00:05:19,579
+Out of these 28 pins, these two are the pins we use for serial communication.
+
+52
+00:05:20,199 --> 00:05:21,600
+Pin number 2 and 3.
+
+53
+00:05:21,939 --> 00:05:25,579
+Actually, they are input-output pins of port D.
+
+54
+00:05:25,720 --> 00:05:28,500
+PD0 and PD1.
+
+55
+00:05:28,620 --> 00:05:31,079
+They are two IO pins.
+
+56
+00:05:31,360 --> 00:05:32,699
+General purpose IO.
+
+57
+00:05:32,899 --> 00:05:35,120
+GPIO pins of port D.
+
+58
+00:05:35,720 --> 00:05:36,360
+But we can
+
+59
+00:05:36,360 --> 00:05:37,319
+multiplex them.
+
+60
+00:05:37,500 --> 00:05:39,019
+We can multiplex them
+
+61
+00:05:39,019 --> 00:05:42,100
+as receive
+
+62
+00:05:42,100 --> 00:05:44,259
+data pin and transmit
+
+63
+00:05:44,259 --> 00:05:46,139
+data pin. Receive data
+
+64
+00:05:46,139 --> 00:05:48,079
+T. RxD, transmit
+
+65
+00:05:48,079 --> 00:05:49,579
+data. Txt.
+
+66
+00:05:50,540 --> 00:05:50,839
+Right.
+
+67
+00:05:51,399 --> 00:05:52,920
+So we can tell the
+
+68
+00:05:52,920 --> 00:05:53,839
+microcontroller
+
+69
+00:05:53,839 --> 00:06:03,560
+right, override the function I.O. functionality of these two pins and make them data communication
+
+70
+00:06:03,560 --> 00:06:09,500
+pins. We can tell the microcontroller. So we need to give instruction to the microcontroller
+
+71
+00:06:09,500 --> 00:06:16,959
+to override the I.O. functionality, GP I.O. functionality of these two pins right as
+
+72
+00:06:16,959 --> 00:06:23,680
+data communication pins. Now in the Arduino Uno board these two pins are numbered as 0 and 1.
+
+73
+00:06:23,839 --> 00:06:26,079
+0 pin for receive data.
+
+74
+00:06:27,100 --> 00:06:31,379
+Then number 1 pin is for transmit data.
+
+75
+00:06:31,800 --> 00:06:40,160
+Now we discussed last week how to enable receiver using a bit in a register.
+
+76
+00:06:40,720 --> 00:06:45,300
+Now when you enable the receiver of this microcontroller, USART receiver,
+
+77
+00:06:45,959 --> 00:06:51,319
+when you enable using a bit in a control register, USART control and status register,
+
+78
+00:06:51,319 --> 00:06:54,060
+if you enable the receiver,
+
+79
+00:06:54,660 --> 00:06:59,560
+then this pin, the PD0 becomes receive data pin.
+
+80
+00:06:59,980 --> 00:07:03,819
+When you enable the transmitter, right,
+
+81
+00:07:04,339 --> 00:07:05,620
+in the control register,
+
+82
+00:07:05,980 --> 00:07:07,519
+a bit in the control register,
+
+83
+00:07:08,240 --> 00:07:12,800
+PD1 pin becomes transmit data pin, right.
+
+84
+00:07:13,160 --> 00:07:16,040
+When you are using these two pins for data communication,
+
+85
+00:07:16,259 --> 00:07:20,079
+you can't use them for general purpose input output.
+
+86
+00:07:20,079 --> 00:07:35,819
+That means if you have connected any actuator or sensor to these two pins while you are trying to communicate data, those sensors and actuators may interfere with the communication.
+
+87
+00:07:36,839 --> 00:07:47,079
+So therefore, don't connect any actuator, any sensor to these two pins if you are planning to use these two pins for data communication.
+
+88
+00:07:47,079 --> 00:07:55,000
+Otherwise, those actuators, sensors, they may interfere the data communication operation, right?
+
+89
+00:07:55,439 --> 00:08:04,000
+If there's a data communication problem in your system, the first thing you should look, these two pins.
+
+90
+00:08:04,199 --> 00:08:12,540
+Whether these two pins, right, whether some sensors, some actuators connected to these two pins.
+
+91
+00:08:12,540 --> 00:08:14,579
+first check. If there's a data
+
+92
+00:08:14,579 --> 00:08:16,459
+communication problem, check these two
+
+93
+00:08:16,459 --> 00:08:17,300
+pins are free.
+
+94
+00:08:18,639 --> 00:08:19,839
+Nothing connected.
+
+95
+00:08:20,620 --> 00:08:22,620
+If any sensor actuator
+
+96
+00:08:22,620 --> 00:08:24,560
+connected, then you may not
+
+97
+00:08:24,560 --> 00:08:26,439
+be able to do data communication.
+
+98
+00:08:26,839 --> 00:08:28,519
+But in some systems, you don't need
+
+99
+00:08:28,519 --> 00:08:29,720
+to do data communication.
+
+100
+00:08:30,620 --> 00:08:32,620
+In such systems, you can use
+
+101
+00:08:32,620 --> 00:08:34,500
+these two pins as general
+
+102
+00:08:34,500 --> 00:08:36,820
+purpose IO pins, input-output
+
+103
+00:08:36,820 --> 00:08:38,580
+pin. Is it clear? Any question?
+
+104
+00:08:39,240 --> 00:08:40,559
+Now the time is 9.16.
+
+105
+00:08:40,559 --> 00:08:42,440
+Still internet is available.
+
+106
+00:08:42,539 --> 00:08:43,340
+Let's see.
+
+107
+00:08:44,399 --> 00:08:46,740
+Then schematic diagram.
+
+108
+00:08:47,340 --> 00:08:50,360
+This is our ATmega328P microcontroller.
+
+109
+00:08:51,019 --> 00:08:55,519
+The crystal oscillator to provide clock pulses to the processor.
+
+110
+00:08:56,399 --> 00:08:56,879
+CPU.
+
+111
+00:08:58,200 --> 00:08:59,159
+Reset button.
+
+112
+00:09:00,039 --> 00:09:03,240
+10K resistor to keep the reset pin high.
+
+113
+00:09:03,960 --> 00:09:04,139
+Right.
+
+114
+00:09:04,639 --> 00:09:09,100
+And power supply to the microcontroller through pin number 7.
+
+115
+00:09:09,100 --> 00:09:12,519
+And the ground power supply to pin number 8.
+
+116
+00:09:12,539 --> 00:09:19,220
+Ground power supply to ADC, 5V power supply to ADC.
+
+117
+00:09:19,720 --> 00:09:25,240
+Then, this is the USAR to USB interface controller.
+
+118
+00:09:26,159 --> 00:09:34,879
+So, USAR to USB interface controller, this could be FT232 chip or some other microcontroller.
+
+119
+00:09:35,259 --> 00:09:41,220
+We discussed two possible options to communicate over USB port.
+
+120
+00:09:41,220 --> 00:09:43,559
+one option is you can use
+
+121
+00:09:43,559 --> 00:09:45,580
+FT232 chip
+
+122
+00:09:45,580 --> 00:09:47,399
+then the problem is
+
+123
+00:09:47,399 --> 00:09:48,639
+you need to
+
+124
+00:09:48,639 --> 00:09:51,320
+install the device driver
+
+125
+00:09:51,320 --> 00:09:52,139
+or else
+
+126
+00:09:52,139 --> 00:09:54,460
+as used in Arduino
+
+127
+00:09:54,460 --> 00:09:57,100
+Uno revision 3 board
+
+128
+00:09:57,100 --> 00:09:59,419
+you can use some other micro
+
+129
+00:09:59,419 --> 00:10:00,100
+controller
+
+130
+00:10:00,100 --> 00:10:03,379
+to implement USAT
+
+131
+00:10:03,379 --> 00:10:05,659
+to USB interface controller
+
+132
+00:10:05,659 --> 00:10:07,220
+so whatever it is
+
+133
+00:10:07,220 --> 00:10:08,919
+this is the USB
+
+134
+00:10:08,919 --> 00:10:16,299
+interface controller and this is the usb port we we draw power from the usb port for the micro
+
+135
+00:10:16,299 --> 00:10:25,659
+controllers power supply we draw from the usb port and this is the usr2 usb interface controller
+
+136
+00:10:25,659 --> 00:10:34,240
+right now in the usr2 usb interface controller we have transmiss data feed receive data feed
+
+137
+00:10:34,240 --> 00:10:41,340
+one important thing is, when you connect the microcontroller to U-Sart2 USB interface controller,
+
+138
+00:10:42,559 --> 00:10:51,340
+the transmit data pin of the U-Sart2 USB interface controller, we connect to received data pin of the microcontroller,
+
+139
+00:10:51,340 --> 00:11:02,019
+and then received data pin of the U-Sart2 USB interface controller, we connect to transmit data pin of microcontroller,
+
+140
+00:11:02,019 --> 00:11:08,419
+controller so receiver is connected to the transmitter transmitter is connected to the
+
+141
+00:11:08,419 --> 00:11:15,820
+receiver right that's obvious now when you let's say you communicate over telephone right when you
+
+142
+00:11:15,820 --> 00:11:23,679
+speak to the mic microphone of the telephone the other party the receiving party right
+
+143
+00:11:23,679 --> 00:11:30,820
+should listen to that and when that party communicates you have to listen you have to
+
+144
+00:11:30,820 --> 00:11:32,259
+then you can't use microphone.
+
+145
+00:11:32,440 --> 00:11:34,679
+Then you have to use the headphone
+
+146
+00:11:34,679 --> 00:11:38,559
+or whatever the speaker in your mobile phone.
+
+147
+00:11:39,679 --> 00:11:43,559
+So when you communicate to the microphone of your mobile phone,
+
+148
+00:11:43,639 --> 00:11:46,320
+the other party, they need to use the speaker.
+
+149
+00:11:46,899 --> 00:11:48,799
+Then when the other party communicates
+
+150
+00:11:48,799 --> 00:11:51,779
+to their microphone in the mobile phone,
+
+151
+00:11:51,840 --> 00:11:53,000
+then you have to use the speaker.
+
+152
+00:11:53,539 --> 00:11:54,419
+So same thing.
+
+153
+00:11:54,960 --> 00:11:59,039
+When we transmit data from the microcontroller,
+
+154
+00:11:59,039 --> 00:12:06,919
+those transmitted data must be received by the USAR to USB interface controller.
+
+155
+00:12:07,559 --> 00:12:12,179
+That's why transmit data pin connected to receive data pin.
+
+156
+00:12:12,679 --> 00:12:17,179
+Again, when the USAR to USB controller transmit data,
+
+157
+00:12:17,960 --> 00:12:21,159
+the microcontroller should receive data.
+
+158
+00:12:21,799 --> 00:12:26,539
+That's why the transmit data pin of USAR to USB interface controller
+
+159
+00:12:26,539 --> 00:12:31,639
+connected to the received data pin of microcontroller.
+
+160
+00:12:32,159 --> 00:12:35,200
+These are the four pins of USB connection,
+
+161
+00:12:35,720 --> 00:12:38,320
+two pins for the power supply, two pins for data.
+
+162
+00:12:39,000 --> 00:12:42,120
+Can you understand this schematic diagram?
+
+163
+00:12:42,120 --> 00:12:43,000
+Right.
+
+164
+00:12:44,139 --> 00:12:45,519
+Now what happens is,
+
+165
+00:12:46,059 --> 00:12:49,080
+now from PC side,
+
+166
+00:12:49,860 --> 00:12:51,700
+you send a character
+
+167
+00:12:51,700 --> 00:12:57,519
+and that character is received by that microcontroller.
+
+168
+00:12:57,519 --> 00:13:02,620
+And then microcontroller encloses that character with square bracket.
+
+169
+00:13:03,019 --> 00:13:07,240
+And microcontroller, right, this is A,
+
+170
+00:13:07,720 --> 00:13:12,659
+microcontroller transmits enclosed character to the PC.
+
+171
+00:13:13,220 --> 00:13:16,320
+So whatever character you send to the microcontroller,
+
+172
+00:13:16,919 --> 00:13:21,059
+microcontroller will enclose that character with square brackets
+
+173
+00:13:21,059 --> 00:13:24,259
+and transmits it back to the PC.
+
+174
+00:13:24,759 --> 00:13:28,379
+So that's the functionality of char and closer.
+
+175
+00:13:29,039 --> 00:13:29,600
+Is it clear?
+
+176
+00:13:30,279 --> 00:13:30,700
+Yes, sir.
+
+177
+00:13:31,179 --> 00:13:32,220
+Wiring diagram.
+
+178
+00:13:32,659 --> 00:13:33,980
+So nothing to wire.
+
+179
+00:13:34,679 --> 00:13:38,580
+Everything has already been wired on this boot.
+
+180
+00:13:39,139 --> 00:13:40,179
+Arduino Uno boot.
+
+181
+00:13:40,179 --> 00:13:42,139
+You have the microcontroller.
+
+182
+00:13:42,820 --> 00:13:44,200
+You have the microcontroller.
+
+183
+00:13:44,639 --> 00:13:48,659
+You have the USART USB interface controller.
+
+184
+00:13:49,159 --> 00:13:50,919
+You have the USB port.
+
+185
+00:13:51,059 --> 00:13:57,159
+Just connect the USB port through a USB cable to your PC.
+
+186
+00:13:57,340 --> 00:13:57,879
+That's it.
+
+187
+00:13:58,320 --> 00:14:04,519
+Everything you need, hardware you need for the char enclosure already on this board.
+
+188
+00:14:04,899 --> 00:14:06,940
+Already connected on this board.
+
+189
+00:14:07,200 --> 00:14:07,379
+Right.
+
+190
+00:14:08,019 --> 00:14:12,120
+So what we do is from the PC.
+
+191
+00:14:12,840 --> 00:14:14,179
+Let's say this is the PC.
+
+192
+00:14:14,720 --> 00:14:16,960
+So you connect the PC to USB port.
+
+193
+00:14:17,440 --> 00:14:17,659
+Right.
+
+194
+00:14:17,779 --> 00:14:18,279
+You send.
+
+195
+00:14:18,919 --> 00:14:19,820
+That's the connection.
+
+196
+00:14:19,820 --> 00:14:24,000
+To the microcontroller side you send a character simple label.
+
+197
+00:14:24,960 --> 00:14:29,960
+And then you will receive the PC will receive N close capital A.
+
+198
+00:14:30,500 --> 00:14:33,259
+Sorry N close simple right.
+
+199
+00:14:33,720 --> 00:14:38,080
+First we need to develop an algorithm for the firmware.
+
+200
+00:14:38,679 --> 00:14:41,419
+Algorithm for the firmware.
+
+201
+00:14:42,100 --> 00:14:44,700
+Now this is the firmware algorithm.
+
+202
+00:14:44,700 --> 00:14:50,659
+main function, char and closer start, char and closer stop.
+
+203
+00:14:51,440 --> 00:14:53,419
+Then the main function algorithm.
+
+204
+00:14:54,039 --> 00:14:59,279
+First in the main function, we set the board rate for the data communication.
+
+205
+00:15:00,399 --> 00:15:10,139
+Data transfer rate we set as 9600 BPS, 9600 bits per second.
+
+206
+00:15:10,139 --> 00:15:13,840
+That is the data transfer rate we set.
+
+207
+00:15:14,700 --> 00:15:21,059
+The communication happens between the microcontroller and the connected PC at this rate.
+
+208
+00:15:22,139 --> 00:15:24,659
+9600 bits per second.
+
+209
+00:15:25,080 --> 00:15:27,940
+Then you need to specify the character size.
+
+210
+00:15:27,940 --> 00:15:31,360
+So we use 8 bit ASCII characters.
+
+211
+00:15:31,580 --> 00:15:34,919
+So we specify character size as 8.
+
+212
+00:15:35,539 --> 00:15:39,720
+Then we need to enable the receiver and transmitter.
+
+213
+00:15:40,360 --> 00:15:43,759
+Enable the receiver and transmitter.
+
+214
+00:15:44,700 --> 00:15:55,700
+To enable receiver and transmitter to set the character size, we have to use USART, control and status registers.
+
+215
+00:15:55,700 --> 00:15:58,700
+Then we enter into the endless loop.
+
+216
+00:15:58,700 --> 00:16:03,700
+Inside the endless loop, we repeatedly check, right?
+
+217
+00:16:03,700 --> 00:16:17,100
+If receive is completed, is complete, whether the character, whether you have received the receive operation is complete, receive complete.
+
+218
+00:16:17,440 --> 00:16:22,700
+If receive is not complete, we check whether receive is not complete.
+
+219
+00:16:23,120 --> 00:16:30,240
+That means if the receive is not complete means no unbreed character in UDR.
+
+220
+00:16:30,240 --> 00:16:41,120
+If the receive is not complete, that indicates no unread character in the USART data register OUDR.
+
+221
+00:16:41,600 --> 00:16:42,879
+Receive is not complete.
+
+222
+00:16:43,620 --> 00:16:48,879
+No new character, no unread character in the UDR USART data register.
+
+223
+00:16:49,379 --> 00:16:49,519
+Right.
+
+224
+00:16:50,059 --> 00:16:54,639
+If receive is complete, how do we know whether receive is complete or not?
+
+225
+00:16:55,580 --> 00:16:59,019
+We can use receive complete flag bit.
+
+226
+00:16:59,019 --> 00:17:06,240
+receive complete flag bit or xc flag bit you can use because when the receive is complete
+
+227
+00:17:06,240 --> 00:17:13,819
+this flag bit is set automatically so you can use this flag bit to repeatedly check
+
+228
+00:17:13,819 --> 00:17:22,980
+whether the receive operation is over if receive is complete if receive operation is complete
+
+229
+00:17:22,980 --> 00:17:29,619
+That means there is an unread character in the UDR.
+
+230
+00:17:30,259 --> 00:17:38,059
+If the receive is complete, that means there is an unread character in the UDR.
+
+231
+00:17:38,680 --> 00:17:42,599
+So this condition becomes false.
+
+232
+00:17:42,740 --> 00:17:45,880
+If receive is complete, this condition becomes false.
+
+233
+00:17:45,960 --> 00:17:48,440
+This is actually a polling situation.
+
+234
+00:17:48,440 --> 00:17:52,579
+We poll receive complete bit.
+
+235
+00:17:52,980 --> 00:18:00,980
+flag bit again and again to check whether the receive operation is over. If receive operation
+
+236
+00:18:00,980 --> 00:18:08,180
+is over that means receive is complete then this condition becomes false so we go to the
+
+237
+00:18:08,180 --> 00:18:18,660
+next step. If the receive complete is over if the receive complete is done read the character in UDR
+
+238
+00:18:18,660 --> 00:18:21,559
+read the character in UDR.
+
+239
+00:18:22,119 --> 00:18:24,839
+Whatever the character sent by the PC
+
+240
+00:18:24,839 --> 00:18:27,579
+you can read from UDR.
+
+241
+00:18:28,200 --> 00:18:29,779
+Use that data register.
+
+242
+00:18:30,200 --> 00:18:33,319
+Then you call a function called
+
+243
+00:18:33,319 --> 00:18:34,740
+transmit chart.
+
+244
+00:18:35,740 --> 00:18:37,140
+This is a subroutine.
+
+245
+00:18:37,859 --> 00:18:38,240
+Right?
+
+246
+00:18:38,240 --> 00:18:41,420
+A subroutine symbol of a flowchart.
+
+247
+00:18:42,099 --> 00:18:46,160
+So we call transmit chart function.
+
+248
+00:18:46,160 --> 00:18:48,200
+and we transmit
+
+249
+00:18:48,359 --> 00:18:49,400
+openSq.
+
+250
+00:18:50,119 --> 00:18:50,200
+R.
+
+251
+00:18:50,500 --> 00:18:50,380
+C.
+
+252
+00:18:50,539 --> 00:18:50,960
+we have
+
+253
+00:18:50,960 --> 00:18:51,160
+a
+
+254
+00:18:51,160 --> 00:18:51,180
+m.
+
+255
+00:18:51,180 --> 00:18:51,200
+c.
+
+256
+00:18:51,200 --> 00:18:51,220
+c.
+
+257
+00:18:51,220 --> 00:18:51,220
+
+
+258
+00:18:51,220 --> 00:18:51,220
+
+
+259
+00:18:51,220 --> 00:18:51,240
+c.
+
+260
+00:18:51,240 --> 00:18:51,259
+c.
+
+261
+00:18:51,259 --> 00:18:51,279
+c.
+
+262
+00:18:51,279 --> 00:18:51,299
+c.
+
+263
+00:18:51,299 --> 00:18:51,299
+
+
+264
+00:18:51,299 --> 00:18:51,299
+
+
+265
+00:18:51,299 --> 00:18:51,299
+
+
+266
+00:18:51,299 --> 00:18:51,299
+
+
+267
+00:18:51,299 --> 00:18:51,319
+c.
+
+268
+00:18:51,319 --> 00:18:51,339
+c.
+
+269
+00:18:51,339 --> 00:18:51,380
+c.
+
+270
+00:18:51,380 --> 00:18:51,420
+c.
+
+271
+00:18:51,420 --> 00:18:51,440
+c.
+
+272
+00:18:51,440 --> 00:18:51,440
+
+
+273
+00:18:51,440 --> 00:18:51,440
+
+
+274
+00:18:51,440 --> 00:18:51,460
+c.
+
+275
+00:18:51,460 --> 00:18:51,480
+c.
+
+276
+00:18:51,480 --> 00:18:51,500
+c.
+
+277
+00:18:51,500 --> 00:18:51,500
+
+
+278
+00:18:51,500 --> 00:18:51,500
+
+
+279
+00:18:51,500 --> 00:18:51,519
+c.
+
+280
+00:18:51,519 --> 00:18:51,519
+
+
+281
+00:18:51,519 --> 00:18:51,539
+c.
+
+282
+00:18:51,539 --> 00:18:51,559
+c.
+
+283
+00:18:51,559 --> 00:18:51,579
+c.
+
+284
+00:18:51,579 --> 00:18:51,599
+c.
+
+285
+00:18:51,599 --> 00:18:51,599
+
+
+286
+00:18:51,599 --> 00:18:51,599
+
+
+287
+00:18:51,599 --> 00:18:51,599
+
+
+288
+00:18:51,599 --> 00:18:51,599
+
+
+289
+00:18:51,599 --> 00:18:51,599
+
+
+290
+00:18:51,599 --> 00:18:51,599
+
+
+291
+00:18:51,599 --> 00:18:51,619
+c.
+
+292
+00:18:51,619 --> 00:18:51,640
+c.
+
+293
+00:18:51,640 --> 00:18:51,640
+
+
+294
+00:18:51,640 --> 00:18:51,640
+
+
+295
+00:18:51,640 --> 00:18:51,640
+
+
+296
+00:18:51,640 --> 00:18:51,640
+
+
+297
+00:18:51,640 --> 00:18:51,640
+
+
+298
+00:18:51,640 --> 00:18:51,640
+
+
+299
+00:18:51,640 --> 00:18:51,640
+
+
+300
+00:18:51,640 --> 00:18:51,640
+
+
+301
+00:18:51,640 --> 00:18:51,640
+
+
+302
+00:18:51,640 --> 00:18:51,640
+
+
+303
+00:18:51,640 --> 00:19:00,200
+Then again we call transmit-cha function with the received character.
+
+304
+00:19:00,200 --> 00:19:06,099
+If the received character is simple A, with that character we again call transmit-cha
+
+305
+00:19:06,099 --> 00:19:09,819
+function to transmit the character.
+
+306
+00:19:09,819 --> 00:19:16,359
+Then again we call transmit-cha function, transmit character function with the closing
+
+307
+00:19:16,359 --> 00:19:17,740
+square bracket.
+
+308
+00:19:17,740 --> 00:19:26,920
+After transmitting the enclosed character, opening square bracket, the character and closing square bracket, that is enclosed character.
+
+309
+00:19:27,619 --> 00:19:33,680
+After transmitting enclosed character, we go back to the endless loop again.
+
+310
+00:19:34,000 --> 00:19:35,759
+Go back to the top of endless loop.
+
+311
+00:19:35,759 --> 00:19:40,119
+So we do the same thing again and again.
+
+312
+00:19:40,119 --> 00:19:48,720
+So, whenever we receive a character from the PC, we transmit enclosed character back to the PC.
+
+313
+00:19:49,220 --> 00:19:54,259
+Receive a character and transmit enclosed character back to the PC.
+
+314
+00:19:54,759 --> 00:20:03,759
+Now, question is, what is the algorithm of transmit-cha subroutine?
+
+315
+00:20:04,240 --> 00:20:07,500
+Algorithm of transmit-cha subroutine.
+
+316
+00:20:07,500 --> 00:20:10,140
+This is the transmit cha subroutine.
+
+317
+00:20:10,839 --> 00:20:13,960
+The transmit cha subroutine has a parameter.
+
+318
+00:20:15,079 --> 00:20:21,319
+So that parameter we need to pass what is the character that we want to transmit.
+
+319
+00:20:21,900 --> 00:20:25,319
+In the first instance, it is an opening square bracket.
+
+320
+00:20:26,180 --> 00:20:32,099
+Then the character that we receive and finally the closing square bracket.
+
+321
+00:20:32,099 --> 00:20:38,079
+So as an argument we pass whatever the character we want to transmit.
+
+322
+00:20:38,539 --> 00:20:45,720
+Then in the function we check whether data register is not empty.
+
+323
+00:20:46,059 --> 00:20:48,339
+Whether data register is not empty.
+
+324
+00:20:49,039 --> 00:20:50,839
+Data register means UDR.
+
+325
+00:20:51,660 --> 00:20:53,799
+Whether UDR is not empty.
+
+326
+00:20:54,460 --> 00:20:56,359
+Usar data register is not empty.
+
+327
+00:20:56,460 --> 00:20:56,640
+Why?
+
+328
+00:20:57,119 --> 00:21:00,619
+If the Usar data register is not empty we can't load a character.
+
+329
+00:21:00,619 --> 00:21:03,720
+because it already contains a character.
+
+330
+00:21:04,359 --> 00:21:05,640
+If you try to overload,
+
+331
+00:21:06,319 --> 00:21:09,099
+if you try to load a character to UDR,
+
+332
+00:21:09,940 --> 00:21:11,359
+when it is not empty,
+
+333
+00:21:11,359 --> 00:21:13,240
+that means we are going to overwrite
+
+334
+00:21:13,240 --> 00:21:15,960
+existing character in the UDR.
+
+335
+00:21:16,500 --> 00:21:19,519
+So before we load a character to UDR,
+
+336
+00:21:20,099 --> 00:21:23,079
+we need to check whether UDR is empty.
+
+337
+00:21:23,519 --> 00:21:25,180
+We do that repeatedly.
+
+338
+00:21:25,920 --> 00:21:26,920
+Again, polling.
+
+339
+00:21:27,779 --> 00:21:27,940
+Right?
+
+340
+00:21:27,940 --> 00:21:31,619
+We pull UDRE flag bit.
+
+341
+00:21:32,079 --> 00:21:35,460
+USART data register empty flag bit.
+
+342
+00:21:35,700 --> 00:21:35,940
+Why?
+
+343
+00:21:36,539 --> 00:21:38,619
+When the UDR becomes empty,
+
+344
+00:21:39,599 --> 00:21:44,000
+this flag bit is set.
+
+345
+00:21:44,940 --> 00:21:46,440
+UDRE becomes empty.
+
+346
+00:21:46,579 --> 00:21:48,160
+UDRE flag bit.
+
+347
+00:21:48,660 --> 00:21:51,420
+USART data register empty flag bit is set
+
+348
+00:21:51,420 --> 00:21:53,099
+when UDR becomes empty.
+
+349
+00:21:53,099 --> 00:21:56,900
+So we check the UDRE flag bit again and again
+
+350
+00:21:56,900 --> 00:21:58,839
+to see whether UDR is empty.
+
+351
+00:21:59,339 --> 00:22:01,079
+If UDR is not empty,
+
+352
+00:22:01,319 --> 00:22:02,119
+we again check.
+
+353
+00:22:02,460 --> 00:22:05,400
+So when we are polling the UDRE flag bit,
+
+354
+00:22:06,279 --> 00:22:08,099
+then UDR becomes,
+
+355
+00:22:08,440 --> 00:22:09,200
+in some time,
+
+356
+00:22:09,460 --> 00:22:10,740
+UDR becomes empty.
+
+357
+00:22:11,240 --> 00:22:13,680
+So UDRE flag bit is set.
+
+358
+00:22:14,579 --> 00:22:17,019
+That means we know that UDR is empty.
+
+359
+00:22:17,019 --> 00:22:19,359
+We write the character
+
+360
+00:22:19,359 --> 00:22:22,319
+that we want to transmit to UDR.
+
+361
+00:22:22,619 --> 00:22:25,619
+Write the character to transmit to UDR.
+
+362
+00:22:26,240 --> 00:22:26,519
+Return.
+
+363
+00:22:26,900 --> 00:22:30,720
+So in the first instance, opening square bracket is written.
+
+364
+00:22:31,380 --> 00:22:33,019
+Then we check again and again.
+
+365
+00:22:33,960 --> 00:22:35,019
+UDR becomes empty.
+
+366
+00:22:35,519 --> 00:22:37,259
+The received character is written.
+
+367
+00:22:38,480 --> 00:22:41,680
+Then again we check whether UDR is empty.
+
+368
+00:22:41,680 --> 00:22:45,039
+If UDR is empty, closing square bracket is.
+
+369
+00:22:45,579 --> 00:22:54,420
+So the entire enclosed character we transmit back to the PC over serial port.
+
+370
+00:22:54,420 --> 00:23:04,380
+PCO whatever the connected system we send the enclosed character over the serial port.
+
+371
+00:23:04,799 --> 00:23:07,839
+Now can you understand this algorithm?
+
+372
+00:23:08,400 --> 00:23:09,039
+Any question?
+
+373
+00:23:10,519 --> 00:23:16,339
+Now without polling whether receive is complete or not.
+
+374
+00:23:17,460 --> 00:23:20,500
+If you read the character then what would happen?
+
+375
+00:23:20,500 --> 00:23:22,500
+the same character
+
+376
+00:23:22,500 --> 00:23:24,779
+you would read again and again
+
+377
+00:23:24,779 --> 00:23:26,500
+without doing this
+
+378
+00:23:26,500 --> 00:23:29,000
+polling part to know
+
+379
+00:23:29,000 --> 00:23:30,099
+whether
+
+380
+00:23:30,099 --> 00:23:32,900
+we have received a new character.
+
+381
+00:23:33,380 --> 00:23:33,859
+Receive
+
+382
+00:23:33,859 --> 00:23:36,539
+operation is over. That means
+
+383
+00:23:36,539 --> 00:23:38,539
+we have received a new character.
+
+384
+00:23:38,960 --> 00:23:40,799
+A new character is in the UDR.
+
+385
+00:23:41,640 --> 00:23:42,799
+Without doing
+
+386
+00:23:42,799 --> 00:23:44,779
+that, if you read characters
+
+387
+00:23:44,779 --> 00:23:46,779
+in the UDR, that means
+
+388
+00:23:46,779 --> 00:23:48,900
+we are going to read the same character
+
+389
+00:23:48,900 --> 00:23:50,819
+in the UDR again and again.
+
+390
+00:23:51,220 --> 00:23:52,980
+And also, without
+
+391
+00:23:52,980 --> 00:23:54,960
+checking whether UDR is
+
+392
+00:23:54,960 --> 00:23:56,779
+empty, before
+
+393
+00:23:56,779 --> 00:23:59,299
+loading a character to the UDR
+
+394
+00:23:59,299 --> 00:24:00,559
+for transmission,
+
+395
+00:24:01,279 --> 00:24:03,099
+without checking UDR empty,
+
+396
+00:24:03,200 --> 00:24:04,759
+if you load character to
+
+397
+00:24:04,759 --> 00:24:06,740
+UDR for transmission,
+
+398
+00:24:06,940 --> 00:24:08,980
+that means you are going to overwrite
+
+399
+00:24:08,980 --> 00:24:10,960
+the existing character before
+
+400
+00:24:10,960 --> 00:24:13,119
+it is transmitted. Now let's say
+
+401
+00:24:13,119 --> 00:24:14,900
+you have loaded some
+
+402
+00:24:14,900 --> 00:24:17,099
+character, let's say character
+
+403
+00:24:17,099 --> 00:24:18,079
+X to UDR.
+
+404
+00:24:18,900 --> 00:24:24,380
+Before X is transmitted, you are going to load another character Y to UDR.
+
+405
+00:24:25,200 --> 00:24:26,759
+Then X will be over it.
+
+406
+00:24:27,019 --> 00:24:27,420
+Y, Y.
+
+407
+00:24:27,880 --> 00:24:31,579
+So X will not be transmitted as a result.
+
+408
+00:24:31,839 --> 00:24:38,880
+That's why we check whether UDR is empty before we write a character to UDR.
+
+409
+00:24:39,259 --> 00:24:40,940
+Can you understand this algorithm?
+
+410
+00:24:41,119 --> 00:24:43,380
+If you have any question, please ask.
+
+411
+00:24:44,579 --> 00:24:45,380
+Any question?
+
+412
+00:24:45,960 --> 00:24:46,160
+No.
+
+413
+00:24:46,339 --> 00:24:46,599
+Right.
+
+414
+00:24:46,599 --> 00:24:50,579
+The next part is how to set the board rate.
+
+415
+00:24:50,579 --> 00:24:58,000
+We need to calculate a value to be assigned to the UBRR register.
+
+416
+00:24:58,619 --> 00:25:01,900
+UBRR means USAT board rate register.
+
+417
+00:25:02,299 --> 00:25:10,859
+What is the value we need to assign to UBRR register to get 9600 BPS?
+
+418
+00:25:10,859 --> 00:25:16,700
+You can't assign 9600 to UBRR register.
+
+419
+00:25:17,339 --> 00:25:24,559
+UBRR register, you have to assign some other value to get 9600 data transfer rate.
+
+420
+00:25:24,960 --> 00:25:26,019
+So how do we do that?
+
+421
+00:25:26,200 --> 00:25:26,579
+Let's see.
+
+422
+00:25:26,880 --> 00:25:28,019
+Sitting board rate.
+
+423
+00:25:28,539 --> 00:25:28,779
+Right.
+
+424
+00:25:29,339 --> 00:25:35,359
+Now first we have to select a standard board rate from these values.
+
+425
+00:25:35,900 --> 00:25:37,720
+These are the standard board rates.
+
+426
+00:25:37,720 --> 00:25:48,180
+2400 BPS, 4800 BPS, 9600 BPS, 14400 BPS.
+
+427
+00:25:48,319 --> 00:25:54,099
+Likewise, these are the standard data transfer rates.
+
+428
+00:25:54,559 --> 00:25:54,680
+Right.
+
+429
+00:25:55,220 --> 00:25:58,819
+They are in BPS, bits per second.
+
+430
+00:25:59,460 --> 00:26:03,779
+Now, the question is, why not other values?
+
+431
+00:26:04,200 --> 00:26:04,759
+Any answer?
+
+432
+00:26:05,279 --> 00:26:06,960
+Why only these values?
+
+433
+00:26:06,960 --> 00:26:31,660
+Why not otherwise? Why 4,800? Why not 5,000? Why 9,600? Why not 10,000? Any idea? Now I have highlighted the 9,600 board rate because it is the most common data transfer rate used. 9,600 BPS is the most common one and it is the Arduino's default.
+
+434
+00:26:31,660 --> 00:26:39,039
+right in the Arduino environment that is the default board rate 9600 because it is the most
+
+435
+00:26:39,039 --> 00:26:47,740
+common widely used board rate my question is why not other values any idea is any idea
+
+436
+00:26:47,740 --> 00:26:48,599
+and
+
+437
+00:26:48,599 --> 00:26:49,160
+the
+
+438
+00:26:49,160 --> 00:26:49,480
+the
+
+439
+00:26:49,480 --> 00:26:49,680
+the
+
+440
+00:26:49,680 --> 00:26:49,839
+the
+
+441
+00:26:49,839 --> 00:26:50,019
+the
+
+442
+00:26:50,019 --> 00:26:50,140
+the
+
+443
+00:26:50,140 --> 00:26:50,200
+the
+
+444
+00:26:50,200 --> 00:26:50,259
+the
+
+445
+00:26:50,259 --> 00:26:50,279
+the
+
+446
+00:26:50,279 --> 00:26:50,299
+the
+
+447
+00:26:50,299 --> 00:26:50,299
+
+
+448
+00:26:50,299 --> 00:26:50,299
+
+
+449
+00:26:50,299 --> 00:26:50,299
+
+
+450
+00:26:50,299 --> 00:26:50,299
+
+
+451
+00:26:50,299 --> 00:26:50,279
+the
+
+452
+00:26:50,279 --> 00:26:50,279
+
+
+453
+00:26:50,279 --> 00:26:50,279
+
+
+454
+00:26:50,279 --> 00:26:50,279
+
+
+455
+00:26:50,279 --> 00:26:50,279
+
+
+456
+00:26:50,279 --> 00:26:50,279
+
+
+457
+00:26:50,279 --> 00:26:50,279
+
+
+458
+00:26:50,279 --> 00:26:50,279
+
+
+459
+00:26:50,279 --> 00:26:50,279
+
+
+460
+00:26:50,279 --> 00:26:50,279
+
+
+461
+00:26:50,279 --> 00:26:50,299
+the
+
+462
+00:26:50,299 --> 00:26:50,279
+the
+
+463
+00:26:50,279 --> 00:26:50,299
+the
+
+464
+00:26:50,299 --> 00:26:50,299
+
+
+465
+00:26:50,299 --> 00:26:50,299
+
+
+466
+00:26:50,299 --> 00:26:50,299
+
+
+467
+00:26:50,299 --> 00:26:50,299
+
+
+468
+00:26:50,299 --> 00:26:50,299
+
+
+469
+00:26:50,299 --> 00:26:50,319
+the
+
+470
+00:26:50,319 --> 00:26:50,319
+
+
+471
+00:26:50,319 --> 00:26:50,339
+the
+
+472
+00:26:50,339 --> 00:26:50,339
+
+
+473
+00:26:50,339 --> 00:26:50,339
+
+
+474
+00:26:50,339 --> 00:26:50,359
+the
+
+475
+00:26:50,359 --> 00:26:50,339
+the
+
+476
+00:26:50,339 --> 00:26:50,359
+the
+
+477
+00:26:50,359 --> 00:26:50,359
+
+
+478
+00:26:50,339 --> 00:26:50,380
+the
+
+479
+00:26:50,380 --> 00:26:50,400
+the
+
+480
+00:26:50,400 --> 00:26:50,400
+
+
+481
+00:27:17,740 --> 00:27:19,019
+I have a very part.
+
+482
+00:27:19,019 --> 00:27:19,740
+I have a more and a more.
+
+483
+00:27:19,740 --> 00:27:20,319
+I have a really.
+
+484
+00:27:20,319 --> 00:27:20,619
+I have a really.
+
+485
+00:27:20,619 --> 00:27:20,819
+I have a really.
+
+486
+00:27:20,819 --> 00:27:21,059
+I have a really.
+
+487
+00:27:21,059 --> 00:27:21,259
+I have.
+
+488
+00:27:21,259 --> 00:27:21,420
+I have.
+
+489
+00:27:21,420 --> 00:27:21,559
+I have.
+
+490
+00:27:21,559 --> 00:27:21,700
+I have.
+
+491
+00:27:21,700 --> 00:27:21,859
+I have.
+
+492
+00:27:21,859 --> 00:27:22,000
+I have.
+
+493
+00:27:22,000 --> 00:27:22,059
+I have.
+
+494
+00:27:22,059 --> 00:27:22,119
+I have.
+
+495
+00:27:22,119 --> 00:27:22,180
+I have.
+
+496
+00:27:22,180 --> 00:27:22,259
+I have.
+
+497
+00:27:22,259 --> 00:27:22,359
+I have.
+
+498
+00:27:22,359 --> 00:27:22,440
+I have.
+
+499
+00:27:22,440 --> 00:27:22,539
+I have.
+
+500
+00:27:22,539 --> 00:27:22,660
+I have.
+
+501
+00:27:22,660 --> 00:27:22,759
+I have.
+
+502
+00:27:22,759 --> 00:27:22,859
+I have.
+
+503
+00:27:22,859 --> 00:27:22,960
+I have.
+
+504
+00:27:22,960 --> 00:27:23,039
+I have.
+
+505
+00:27:23,039 --> 00:27:23,099
+I have.
+
+506
+00:27:23,099 --> 00:27:23,180
+I have.
+
+507
+00:27:23,180 --> 00:27:23,240
+I have.
+
+508
+00:27:23,240 --> 00:27:23,299
+I have.
+
+509
+00:27:23,299 --> 00:27:23,319
+I have.
+
+510
+00:27:23,319 --> 00:27:23,380
+I have.
+
+511
+00:27:23,380 --> 00:27:23,440
+I have.
+
+512
+00:27:23,440 --> 00:27:23,480
+I have.
+
+513
+00:27:23,480 --> 00:27:23,519
+I have.
+
+514
+00:27:23,519 --> 00:27:23,559
+I have.
+
+515
+00:27:23,559 --> 00:27:23,599
+I have.
+
+516
+00:27:23,599 --> 00:27:23,680
+I have.
+
+517
+00:27:23,680 --> 00:27:23,720
+I have.
+
+518
+00:27:23,720 --> 00:27:23,779
+I have.
+
+519
+00:27:23,779 --> 00:27:23,839
+I have.
+
+520
+00:27:23,839 --> 00:27:23,920
+I have.
+
+521
+00:27:23,920 --> 00:27:23,960
+I have.
+
+522
+00:27:23,960 --> 00:27:27,960
+Then 16-bit 32-bit microcontrollers use
+
+523
+00:27:27,960 --> 00:27:30,960
+and then use it on board-rate.
+
+524
+00:27:30,960 --> 00:27:32,960
+No, no, no.
+
+525
+00:27:32,960 --> 00:27:34,960
+I'm going to say that
+
+526
+00:27:34,960 --> 00:27:37,960
+I'm going to say
+
+527
+00:27:37,960 --> 00:27:42,960
+I'm going to say
+
+528
+00:27:42,960 --> 00:27:44,960
+I'm going to say
+
+529
+00:27:44,960 --> 00:27:47,960
+I'm going to say
+
+530
+00:27:47,960 --> 00:27:51,059
+I have a time a thing, to be more and more, to the...
+
+531
+00:27:51,059 --> 00:27:56,059
+I can't even process the attack.
+
+532
+00:28:00,059 --> 00:28:01,059
+Attack?
+
+533
+00:28:01,059 --> 00:28:04,059
+I don't know if I'm going to get the kit.
+
+534
+00:28:04,059 --> 00:28:05,059
+I don't know.
+
+535
+00:28:05,059 --> 00:28:06,059
+I don't know.
+
+536
+00:28:06,059 --> 00:28:09,059
+I don't know if I'm going to get the system.
+
+537
+00:28:09,059 --> 00:28:15,059
+I don't know if I'm going to get the clock speed.
+
+538
+00:28:15,059 --> 00:28:19,059
+I don't know if I'm going to get the standard board rates.
+
+539
+00:28:19,059 --> 00:28:21,099
+I have a 2% in the 2% to the 1%?
+
+540
+00:28:21,099 --> 00:28:21,700
+I have a 1%?
+
+541
+00:28:21,700 --> 00:28:22,000
+I have a 1%?
+
+542
+00:28:22,000 --> 00:28:22,160
+I have a 1%?
+
+543
+00:28:22,160 --> 00:28:22,259
+I have a 1%?
+
+544
+00:28:22,259 --> 00:28:22,319
+I have a 1%?
+
+545
+00:28:22,319 --> 00:28:22,400
+I have a 1%?
+
+546
+00:28:22,400 --> 00:28:22,559
+I have a 1%?
+
+547
+00:28:22,559 --> 00:28:22,700
+I have a 1%?
+
+548
+00:28:22,700 --> 00:28:22,799
+I have a 1%?
+
+549
+00:28:22,799 --> 00:28:22,900
+I have a 1%?
+
+550
+00:28:22,900 --> 00:28:23,059
+I have a 1%?
+
+551
+00:28:23,059 --> 00:28:23,259
+I have a 1%?
+
+552
+00:28:23,259 --> 00:28:23,400
+I have a 1%?
+
+553
+00:28:23,400 --> 00:28:23,519
+I have a 1%?
+
+554
+00:28:23,519 --> 00:28:23,619
+I have a 1%?
+
+555
+00:28:23,619 --> 00:28:23,700
+I have a 1%?
+
+556
+00:28:23,700 --> 00:28:23,839
+I have a 1%?
+
+557
+00:28:23,839 --> 00:28:23,960
+I have a 1%?
+
+558
+00:28:23,960 --> 00:28:24,119
+I have a 1%?
+
+559
+00:28:24,119 --> 00:28:24,240
+I have a 1%?
+
+560
+00:28:24,240 --> 00:28:24,380
+I have a 1%?
+
+561
+00:28:24,380 --> 00:28:24,500
+I have a 1%?
+
+562
+00:28:24,500 --> 00:28:24,640
+I have a 1%?
+
+563
+00:28:24,640 --> 00:28:24,779
+I have a 1%?
+
+564
+00:28:24,779 --> 00:28:24,900
+I have a 1%?
+
+565
+00:28:24,900 --> 00:28:25,059
+I have a 1%?
+
+566
+00:28:49,059 --> 00:28:52,900
+Write 9600 kyanne
+
+567
+00:28:52,900 --> 00:28:55,799
+Banner
+
+568
+00:28:55,799 --> 00:28:56,900
+Write
+
+569
+00:28:56,900 --> 00:28:58,259
+Let's write
+
+570
+00:28:58,259 --> 00:29:04,720
+9600 kyanne
+
+571
+00:29:04,720 --> 00:29:11,200
+9600 bits per second
+
+572
+00:29:11,200 --> 00:29:14,759
+We know that in the serial communication
+
+573
+00:29:14,759 --> 00:29:18,039
+A frame size is 10 bits
+
+574
+00:29:18,039 --> 00:29:19,559
+One frame.
+
+575
+00:29:20,200 --> 00:29:20,920
+Ten bits.
+
+576
+00:29:21,440 --> 00:29:29,259
+I start bit plus eight bits plus stop bit.
+
+577
+00:29:29,759 --> 00:29:30,500
+That's a frame.
+
+578
+00:29:31,140 --> 00:29:31,759
+Ten bits.
+
+579
+00:29:32,180 --> 00:29:43,039
+A key means 9600 BPS means 960 frames.
+
+580
+00:29:43,039 --> 00:30:05,700
+Why? One frame is 10 bit. Each frame you have a character. That means 960 characters. 9600 BPS means 960 characters, 8 bit characters.
+
+581
+00:30:05,700 --> 00:30:23,700
+Right. Now serial communication was introduced during the mainframe era in 1960s. Right. So in 1960s the mainframes were connected with terminals, dump terminals. Right.
+
+582
+00:30:23,700 --> 00:30:30,000
+The terminal screen can display 80 characters in a line.
+
+583
+00:30:30,000 --> 00:30:42,519
+A terminal can display, screen of a terminal can display 80 characters in a line.
+
+584
+00:30:43,079 --> 00:30:47,420
+One line on the terminal display, you can display 80 characters.
+
+585
+00:30:48,180 --> 00:30:52,759
+960 characters means, right, how many lines you need?
+
+586
+00:30:52,759 --> 00:30:55,279
+12 lines on display.
+
+587
+00:30:55,940 --> 00:30:58,819
+If one line is 80 characters
+
+588
+00:30:58,819 --> 00:31:02,259
+960 characters per second means
+
+589
+00:31:02,259 --> 00:31:06,279
+12 lines per second on the display.
+
+590
+00:31:06,279 --> 00:31:08,160
+The display height
+
+591
+00:31:08,160 --> 00:31:12,019
+the screen can display
+
+592
+00:31:12,019 --> 00:31:14,420
+80 character lines
+
+593
+00:31:14,420 --> 00:31:16,880
+the width is 80 characters
+
+594
+00:31:16,880 --> 00:31:20,140
+that kind of 24 lines.
+
+595
+00:31:20,140 --> 00:31:24,500
+So in one second, half of the screen you can print.
+
+596
+00:31:24,960 --> 00:31:38,519
+That's how this 9600K, the 1960s monitor, the character width, the line width is 80 characters.
+
+597
+00:31:38,880 --> 00:31:41,119
+The height of the monitor is 12 lights.
+
+598
+00:31:41,519 --> 00:31:42,619
+Sorry, 24 lights.
+
+599
+00:31:42,619 --> 00:31:53,819
+If you use 9600 BPS data transfer rate per second, you can print 12 lights, 1280 character lights on the monitor.
+
+600
+00:31:54,339 --> 00:31:56,299
+1280 character lights on the monitor.
+
+601
+00:31:56,579 --> 00:31:59,619
+That means half of the monitor you can print per second.
+
+602
+00:32:00,299 --> 00:32:04,700
+That's how 9600 came.
+
+603
+00:32:05,279 --> 00:32:11,680
+And if you look at all these data standard board rates, they are multiples of 80.
+
+604
+00:32:11,680 --> 00:32:23,259
+Why? One line is in the terminal screen, dump terminal screen, one line is AD characters.
+
+605
+00:32:23,259 --> 00:32:37,960
+There is no relationship to word size of the microprocessor or the CPU. So it depends on the screen, the terminal window screen.
+
+606
+00:32:37,960 --> 00:32:43,400
+In the text terminal, one line is 80 characters.
+
+607
+00:32:43,759 --> 00:32:46,700
+So all the board rates are multiples of 8.
+
+608
+00:32:47,180 --> 00:32:47,759
+Is that clear?
+
+609
+00:32:48,380 --> 00:32:48,720
+Haritha?
+
+610
+00:32:49,420 --> 00:32:51,900
+Any question?
+
+611
+00:32:53,900 --> 00:32:54,460
+Yes.
+
+612
+00:32:58,460 --> 00:32:59,259
+Okay.
+
+613
+00:33:00,039 --> 00:33:01,839
+Then, set board rate.
+
+614
+00:33:02,339 --> 00:33:04,299
+How do we set board rate?
+
+615
+00:33:04,960 --> 00:33:05,240
+Right.
+
+616
+00:33:05,240 --> 00:33:13,240
+First we need to determine the value we need to assign to UBRR.
+
+617
+00:33:13,400 --> 00:33:18,319
+Value we need to assign to UBRR we need to determine.
+
+618
+00:33:19,119 --> 00:33:19,400
+Right.
+
+619
+00:33:20,380 --> 00:33:22,240
+For that we can use this equation.
+
+620
+00:33:23,440 --> 00:33:25,420
+We discussed this equation earlier.
+
+621
+00:33:26,180 --> 00:33:30,259
+The value of UBRR, USAT Bound Rate Register.
+
+622
+00:33:30,259 --> 00:33:32,240
+we can calculate
+
+623
+00:33:32,240 --> 00:33:34,440
+FCPU divided by
+
+624
+00:33:34,440 --> 00:33:36,339
+16 multiplied by
+
+625
+00:33:36,339 --> 00:33:37,980
+board rate minus 1.
+
+626
+00:33:38,700 --> 00:33:40,160
+Using this equation
+
+627
+00:33:40,160 --> 00:33:42,519
+we can calculate what is the value
+
+628
+00:33:42,519 --> 00:33:44,279
+we need to assign to
+
+629
+00:33:44,279 --> 00:33:46,539
+UBRR to get
+
+630
+00:33:46,539 --> 00:33:48,180
+the required
+
+631
+00:33:48,180 --> 00:33:50,140
+board rate. To get the required
+
+632
+00:33:50,140 --> 00:33:52,279
+board rate, what is the value
+
+633
+00:33:52,279 --> 00:33:54,759
+you need to assign to UBRR?
+
+634
+00:33:55,279 --> 00:33:55,740
+Right.
+
+635
+00:33:56,359 --> 00:33:57,759
+FCPU is
+
+636
+00:33:57,759 --> 00:33:59,700
+16 MHz.
+
+637
+00:33:59,700 --> 00:34:02,359
+So we convert that into hertz.
+
+638
+00:34:02,880 --> 00:34:04,059
+This is in hertz.
+
+639
+00:34:04,599 --> 00:34:05,140
+FCP.
+
+640
+00:34:05,740 --> 00:34:07,299
+Divided by 60.
+
+641
+00:34:08,380 --> 00:34:10,900
+Multiplied by 9600.
+
+642
+00:34:11,099 --> 00:34:12,860
+That is the bode rate that we need.
+
+643
+00:34:13,400 --> 00:34:14,280
+Minus 1.
+
+644
+00:34:14,780 --> 00:34:15,079
+Right.
+
+645
+00:34:15,719 --> 00:34:17,679
+So when you do this calculation.
+
+646
+00:34:18,599 --> 00:34:18,880
+Right.
+
+647
+00:34:19,320 --> 00:34:19,880
+60.
+
+648
+00:34:21,260 --> 00:34:22,059
+9600.
+
+649
+00:34:22,739 --> 00:34:23,559
+Minus 1.
+
+650
+00:34:23,559 --> 00:34:25,400
+That will give you.
+
+651
+00:34:26,539 --> 00:34:29,559
+103.165.
+
+652
+00:34:29,699 --> 00:34:35,840
+Can you assign this kind of value to UBRR register?
+
+653
+00:34:36,519 --> 00:34:38,699
+103.167.
+
+654
+00:34:39,420 --> 00:34:41,199
+Can you assign to UBRR?
+
+655
+00:34:41,840 --> 00:34:42,139
+No.
+
+656
+00:34:42,659 --> 00:34:43,699
+Why not?
+
+657
+00:34:45,079 --> 00:34:46,440
+Floating point.
+
+658
+00:34:47,340 --> 00:34:55,039
+The register is, right, register can accept only integers, not floating point values.
+
+659
+00:34:55,340 --> 00:34:57,119
+This is not a floating point register.
+
+660
+00:34:57,119 --> 00:34:58,739
+Floating point registers are different.
+
+661
+00:34:58,739 --> 00:35:03,619
+This register you can't assign any decimal part.
+
+662
+00:35:03,940 --> 00:35:11,980
+So what happens is when you try to assign this to register, the register will get only 103.
+
+663
+00:35:12,760 --> 00:35:15,300
+Register will get only 103.
+
+664
+00:35:16,139 --> 00:35:18,599
+And approximation happens.
+
+665
+00:35:19,079 --> 00:35:22,539
+You lose this decimal part.
+
+666
+00:35:22,539 --> 00:35:28,539
+Only the 103 is assigned to UBRR.
+
+667
+00:35:28,739 --> 00:35:29,260
+Right.
+
+668
+00:35:30,039 --> 00:35:31,599
+This results.
+
+669
+00:35:32,300 --> 00:35:34,300
+An approximation error.
+
+670
+00:35:34,980 --> 00:35:35,239
+Right.
+
+671
+00:35:35,300 --> 00:35:36,320
+I will come to that later.
+
+672
+00:35:37,239 --> 00:35:37,820
+So this.
+
+673
+00:35:38,400 --> 00:35:40,139
+As a result you get.
+
+674
+00:35:40,860 --> 00:35:42,440
+A board rate error.
+
+675
+00:35:43,000 --> 00:35:45,380
+Because the required board rate.
+
+676
+00:35:45,380 --> 00:35:47,480
+For the required board rate.
+
+677
+00:35:47,800 --> 00:35:50,719
+This is the value you need to assign to UBRR.
+
+678
+00:35:51,179 --> 00:35:52,320
+But you are assigning.
+
+679
+00:35:53,019 --> 00:35:54,500
+Little bit less than.
+
+680
+00:35:55,480 --> 00:35:57,179
+A value little bit less than.
+
+681
+00:35:57,300 --> 00:35:57,619
+To that.
+
+682
+00:35:57,619 --> 00:36:02,019
+as a result there can be
+
+683
+00:36:02,019 --> 00:36:06,039
+a baud rate error. We will discuss that later
+
+684
+00:36:06,039 --> 00:36:10,320
+in the next slide. Now what is the purpose
+
+685
+00:36:10,320 --> 00:36:14,139
+of ul in this equation? I discussed
+
+686
+00:36:14,139 --> 00:36:17,099
+this earlier the ul
+
+687
+00:36:17,099 --> 00:36:22,099
+suffix in some other example.
+
+688
+00:36:23,119 --> 00:36:26,119
+Now can you tell me what is the purpose of
+
+689
+00:36:26,119 --> 00:36:28,239
+UL in this calculation.
+
+690
+00:36:28,840 --> 00:36:29,760
+When we define
+
+691
+00:36:29,760 --> 00:36:32,199
+FCPU4 delay
+
+692
+00:36:32,199 --> 00:36:34,059
+functions, we use
+
+693
+00:36:34,059 --> 00:36:36,039
+UL suffix. At that
+
+694
+00:36:36,039 --> 00:36:38,320
+time I explain the purpose of UL.
+
+695
+00:36:38,760 --> 00:36:39,059
+Right.
+
+696
+00:36:39,920 --> 00:36:42,320
+So what is the meaning, what is the purpose
+
+697
+00:36:42,320 --> 00:36:44,199
+of adding UL
+
+698
+00:36:44,199 --> 00:36:46,179
+suffix to this equation?
+
+699
+00:36:46,679 --> 00:36:48,420
+These are the types of questions
+
+700
+00:36:48,420 --> 00:36:50,619
+you should expect
+
+701
+00:36:50,619 --> 00:36:51,599
+at the exam.
+
+702
+00:36:52,119 --> 00:36:53,360
+A UL only.
+
+703
+00:36:53,920 --> 00:36:54,320
+Exam.
+
+704
+00:36:54,320 --> 00:36:56,820
+then how do you ask?
+
+705
+00:36:57,400 --> 00:36:58,820
+I don't ask in the exam
+
+706
+00:36:58,820 --> 00:36:59,920
+what is board rate?
+
+707
+00:37:00,599 --> 00:37:02,500
+Which unit board rate is measured?
+
+708
+00:37:03,219 --> 00:37:04,940
+What do you mean by UBRR?
+
+709
+00:37:05,840 --> 00:37:06,739
+What do you mean by
+
+710
+00:37:06,739 --> 00:37:07,480
+FCPU?
+
+711
+00:37:08,219 --> 00:37:09,920
+No, I don't ask those questions.
+
+712
+00:37:10,179 --> 00:37:11,000
+Anybody can answer.
+
+713
+00:37:11,500 --> 00:37:12,659
+But I would ask,
+
+714
+00:37:13,320 --> 00:37:14,159
+for example,
+
+715
+00:37:14,980 --> 00:37:16,800
+why all board rates
+
+716
+00:37:16,800 --> 00:37:18,719
+are multiples of 80?
+
+717
+00:37:19,300 --> 00:37:20,579
+When you calculate
+
+718
+00:37:20,579 --> 00:37:22,880
+the value to be assigned
+
+719
+00:37:22,880 --> 00:37:23,739
+to the UBU,
+
+720
+00:37:24,320 --> 00:37:30,159
+rr register ubr i but within bracket i will give you the name of the ubrr use art bordered register
+
+721
+00:37:30,719 --> 00:37:36,639
+when you do that calculation why do we need to add ul suffix to the equation
+
+722
+00:37:39,360 --> 00:37:51,679
+any idea why do we need to add ul suffix you show a question using a suitable example explain
+
+723
+00:37:51,679 --> 00:37:53,559
+the purpose of
+
+724
+00:37:53,559 --> 00:37:55,719
+adding ul suffix
+
+725
+00:37:55,719 --> 00:37:58,139
+to the equation
+
+726
+00:37:58,139 --> 00:37:59,199
+given below.
+
+727
+00:37:59,860 --> 00:38:00,559
+Example.
+
+728
+00:38:01,559 --> 00:38:02,559
+Example.
+
+729
+00:38:02,559 --> 00:38:03,400
+Example.
+
+730
+00:38:07,400 --> 00:38:10,780
+If you have learned
+
+731
+00:38:10,780 --> 00:38:12,119
+the concepts well,
+
+732
+00:38:12,699 --> 00:38:13,920
+you can answer very well.
+
+733
+00:38:14,400 --> 00:38:18,699
+Any idea?
+
+734
+00:38:19,179 --> 00:38:19,380
+Ul?
+
+735
+00:38:20,119 --> 00:38:21,559
+Shri Anji?
+
+736
+00:38:21,679 --> 00:38:22,800
+Come on.
+
+737
+00:38:24,079 --> 00:38:25,239
+You can't give at least
+
+738
+00:38:25,239 --> 00:38:27,760
+some idea the purpose
+
+739
+00:38:27,760 --> 00:38:28,340
+of UL.
+
+740
+00:38:29,340 --> 00:38:30,500
+What do you mean by UL?
+
+741
+00:38:31,360 --> 00:38:32,780
+The meaning of the UL?
+
+742
+00:38:33,539 --> 00:38:34,420
+Unsigned law.
+
+743
+00:38:35,139 --> 00:38:37,559
+Unsigned law. Why do we need
+
+744
+00:38:37,559 --> 00:38:39,900
+to add unsigned law suffix
+
+745
+00:38:39,900 --> 00:38:41,739
+to this equation?
+
+746
+00:38:42,420 --> 00:38:44,059
+To avoid the errors.
+
+747
+00:38:44,559 --> 00:38:45,480
+Avoid what?
+
+748
+00:38:46,079 --> 00:38:46,820
+The error.
+
+749
+00:38:47,820 --> 00:38:49,940
+Which error? Calculation errors?
+
+750
+00:38:49,940 --> 00:38:53,320
+or the floating point error.
+
+751
+00:38:54,199 --> 00:38:55,500
+Unsigned long is an integer.
+
+752
+00:38:55,920 --> 00:38:56,980
+Unsigned long is an integer.
+
+753
+00:38:57,699 --> 00:38:59,980
+With that, how can you avoid floating point error?
+
+754
+00:38:59,980 --> 00:39:06,340
+Because the default value point
+
+755
+00:39:06,340 --> 00:39:12,480
+is not unsigned long.
+
+756
+00:39:12,880 --> 00:39:15,539
+Can you say that again?
+
+757
+00:39:15,539 --> 00:39:18,800
+Because the default
+
+758
+00:39:18,800 --> 00:39:21,179
+integer type
+
+759
+00:39:21,179 --> 00:39:22,300
+is not
+
+760
+00:39:22,300 --> 00:39:22,980
+untying
+
+761
+00:39:22,980 --> 00:39:26,599
+Yes, correct. The default
+
+762
+00:39:26,599 --> 00:39:27,619
+data type is integer.
+
+763
+00:39:28,380 --> 00:39:29,980
+Default numeric data type
+
+764
+00:39:29,980 --> 00:39:32,599
+default numeric data type is integer.
+
+765
+00:39:33,219 --> 00:39:33,960
+Right, so
+
+766
+00:39:33,960 --> 00:39:36,820
+the compiler will treat
+
+767
+00:39:36,820 --> 00:39:38,119
+16
+
+768
+00:39:38,119 --> 00:39:40,659
+and 9600
+
+769
+00:39:40,659 --> 00:39:41,599
+as integer.
+
+770
+00:39:41,599 --> 00:39:43,039
+Because default
+
+771
+00:39:43,039 --> 00:39:52,159
+numeric data type is integer. So 16 will be treated as integer. 9600 will be treated as integer.
+
+772
+00:39:52,159 --> 00:40:01,139
+An operation between two integer operands result and integer. So 16 and 9600 multiplication
+
+773
+00:40:01,139 --> 00:40:09,940
+will give you an integer result because the operands are integer. 16 is integer. 9600 is
+
+774
+00:40:09,940 --> 00:40:12,360
+integer. Two integer operands
+
+775
+00:40:12,360 --> 00:40:12,840
+if you
+
+776
+00:40:12,840 --> 00:40:16,139
+make an
+
+777
+00:40:16,139 --> 00:40:18,340
+operation between two integer operands
+
+778
+00:40:18,340 --> 00:40:20,320
+that operation would result
+
+779
+00:40:20,320 --> 00:40:22,300
+an integer. Integer is
+
+780
+00:40:22,300 --> 00:40:23,300
+16 bits.
+
+781
+00:40:23,840 --> 00:40:26,219
+But when you for example
+
+782
+00:40:26,219 --> 00:40:27,760
+now let's get right
+
+783
+00:40:27,760 --> 00:40:29,679
+now 16
+
+784
+00:40:29,679 --> 00:40:31,719
+multiplied by
+
+785
+00:40:31,719 --> 00:40:34,300
+9600. Answer
+
+786
+00:40:34,300 --> 00:40:35,099
+is
+
+787
+00:40:35,099 --> 00:40:37,219
+15,000
+
+788
+00:40:37,219 --> 00:40:39,920
+153,000
+
+789
+00:40:39,920 --> 00:40:46,440
+Now this is a 20 bit value.
+
+790
+00:40:46,440 --> 00:40:48,119
+20 bit value.
+
+791
+00:40:48,559 --> 00:40:52,119
+If you convert this into binary you get
+
+792
+00:40:52,119 --> 00:40:55,840
+0010
+
+793
+00:40:55,840 --> 00:40:59,280
+00101
+
+794
+00:40:59,280 --> 00:41:02,360
+0000
+
+795
+00:41:02,360 --> 00:41:05,079
+0000
+
+796
+00:41:05,079 --> 00:41:07,079
+0000
+
+797
+00:41:07,079 --> 00:41:10,019
+1, 2, 3, 4, 5
+
+798
+00:41:10,019 --> 00:41:11,079
+This is the 20 bit value
+
+799
+00:41:11,079 --> 00:41:13,639
+But integer is 16 bit
+
+800
+00:41:13,639 --> 00:41:16,400
+Integer data type is 16 bit
+
+801
+00:41:16,400 --> 00:41:18,280
+This is integer
+
+802
+00:41:18,280 --> 00:41:19,500
+This is integer
+
+803
+00:41:19,500 --> 00:41:21,239
+So result is integer
+
+804
+00:41:21,239 --> 00:41:24,039
+So the compiler will count
+
+805
+00:41:24,039 --> 00:41:26,760
+Only the lower 16 bits
+
+806
+00:41:26,760 --> 00:41:29,019
+1, 2, 3, 4
+
+807
+00:41:29,019 --> 00:41:30,300
+Compiler will
+
+808
+00:41:30,300 --> 00:41:32,340
+Out of this answer
+
+809
+00:41:32,340 --> 00:41:34,179
+Compiler will count
+
+810
+00:41:34,179 --> 00:41:36,539
+Only lower 16 bits
+
+811
+00:41:36,539 --> 00:41:49,800
+[unclear — Sinhala / crosstalk]
+
+812
+00:41:50,239 --> 00:41:51,860
+That is 16 bits.
+
+813
+00:41:52,179 --> 00:42:00,539
+Now this will give you 22,528.
+
+814
+00:42:00,539 --> 00:42:11,739
+This is the actual result of the multiplication but the compiler will use this as the result.
+
+815
+00:42:11,739 --> 00:42:13,199
+At the result.
+
+816
+00:42:13,199 --> 00:42:27,219
+This result is a result.
+
+817
+00:42:27,219 --> 00:42:31,519
+This result is a 20 bit result
+
+818
+00:42:31,519 --> 00:42:33,380
+But compiler thinks
+
+819
+00:42:33,380 --> 00:42:34,519
+This is integer
+
+820
+00:42:34,519 --> 00:42:35,860
+16 integer
+
+821
+00:42:35,860 --> 00:42:38,260
+9600 integer
+
+822
+00:42:38,260 --> 00:42:40,300
+When you multiply 2 integers
+
+823
+00:42:40,300 --> 00:42:41,300
+You get integer
+
+824
+00:42:41,300 --> 00:42:43,400
+Integer is 16 bit
+
+825
+00:42:43,400 --> 00:42:47,039
+Only the lower 16 bit of the result
+
+826
+00:42:47,039 --> 00:42:49,780
+Is taken by the compiler
+
+827
+00:42:49,780 --> 00:42:51,900
+20 bit result
+
+828
+00:42:51,900 --> 00:42:54,579
+Lower 16 bit
+
+829
+00:42:54,579 --> 00:42:55,559
+With the compiler
+
+830
+00:42:55,559 --> 00:43:21,420
+Now what happens is, if you divide this by 22,528 minus 1, this will give you 709 and
+
+831
+00:43:21,420 --> 00:43:34,139
+you assign that to UBRR. Ideally to get the 9600 BPS board rate you need to assign 103.
+
+832
+00:43:34,139 --> 00:43:47,340
+But now you assign 709. If you put 709 to UBRR you won't get 9600 board rate. So we tell the
+
+833
+00:43:47,340 --> 00:43:50,800
+compiler no treat this
+
+834
+00:43:50,800 --> 00:43:55,039
+multiplication as unsigned long
+
+835
+00:43:55,039 --> 00:43:59,139
+not integer the multiplication is unsigned long
+
+836
+00:43:59,139 --> 00:44:03,320
+we force the compiler how do we force the compiler
+
+837
+00:44:03,320 --> 00:44:07,159
+to treat it as unsigned long we
+
+838
+00:44:07,159 --> 00:44:11,159
+convert one of the operands to unsigned long
+
+839
+00:44:11,159 --> 00:44:15,320
+if one of the operand is unsigned long the result would be
+
+840
+00:44:15,320 --> 00:44:19,139
+unsigned long. Right. Unsigned long is a 32 bit
+
+841
+00:44:19,139 --> 00:44:23,199
+data type. A 32 bit data type can
+
+842
+00:44:23,199 --> 00:44:27,059
+count 20 bit result. So the compiler
+
+843
+00:44:27,059 --> 00:44:31,119
+will use the correct result of the
+
+844
+00:44:31,119 --> 00:44:35,179
+multiplication. As a result, this is the
+
+845
+00:44:35,179 --> 00:44:37,820
+value we assign to UBRR register.
+
+846
+00:44:38,199 --> 00:44:42,460
+Not 709. If you remove UL,
+
+847
+00:44:42,460 --> 00:44:45,960
+709 will be assigned to UBRR.
+
+848
+00:44:46,619 --> 00:44:49,300
+Then you can't get the required board rate.
+
+849
+00:44:49,300 --> 00:44:53,519
+This is a big error. But if you force the compiler
+
+850
+00:44:53,519 --> 00:44:57,619
+to treat the multiplication as unsigned
+
+851
+00:44:57,619 --> 00:45:00,900
+long. Unsigned long is a 32-bit data type.
+
+852
+00:45:02,679 --> 00:45:04,840
+So 20-bit result
+
+853
+00:45:04,840 --> 00:45:09,639
+can accommodate
+
+854
+00:45:09,639 --> 00:45:12,860
+in the 32-bit unsigned law.
+
+855
+00:45:13,360 --> 00:45:17,320
+So the compiler will use the correct result of the multiplication
+
+856
+00:45:17,320 --> 00:45:20,719
+for the equation and will assign
+
+857
+00:45:20,719 --> 00:45:26,199
+the correct answer 103 to UBRR.
+
+858
+00:45:26,860 --> 00:45:28,760
+Is that clear?
+
+859
+00:45:29,960 --> 00:45:32,980
+If not, please tell me. I can explain again.
+
+860
+00:45:34,199 --> 00:45:35,000
+What did you say?
+
+861
+00:45:35,000 --> 00:45:41,000
+If you have a new URL, you can use the suffix to use the UL.
+
+862
+00:45:41,000 --> 00:45:43,000
+Yes, sir.
+
+863
+00:45:43,000 --> 00:45:49,000
+If you have a new programming, you can use the suffix to use the compiler.
+
+864
+00:45:49,000 --> 00:45:54,000
+If you have a compiler, you can treat the operation in the same type.
+
+865
+00:45:54,000 --> 00:45:59,000
+Otherwise, compiler will treat the operation based on the default type.
+
+866
+00:45:59,000 --> 00:46:10,000
+If the operation is let's say 20 bit, default data type is 16 bit, the upper 4 bits are
+
+867
+00:46:10,000 --> 00:46:11,000
+discarded.
+
+868
+00:46:11,000 --> 00:46:17,000
+Only the lower 16 bit will be considered, which will give you entirely wrong answer.
+
+869
+00:46:17,000 --> 00:46:20,000
+So these are logical errors.
+
+870
+00:46:20,000 --> 00:46:23,000
+They are not compile errors.
+
+871
+00:46:23,000 --> 00:46:26,000
+Very difficult to find these errors.
+
+872
+00:46:26,000 --> 00:46:30,000
+unless if you know the subject well the name of the equation
+
+873
+00:46:30,000 --> 00:46:32,000
+in a lot of the
+
+874
+00:46:32,000 --> 00:46:34,000
+the
+
+875
+00:46:34,000 --> 00:46:36,000
+the
+
+876
+00:46:36,000 --> 00:46:38,000
+the
+
+877
+00:46:38,000 --> 00:46:40,000
+the
+
+878
+00:46:40,000 --> 00:46:42,000
+the
+
+879
+00:46:42,000 --> 00:46:44,000
+the
+
+880
+00:46:44,000 --> 00:46:46,000
+the
+
+881
+00:46:46,000 --> 00:46:48,000
+the
+
+882
+00:46:48,000 --> 00:46:50,000
+the
+
+883
+00:46:50,000 --> 00:46:52,000
+the
+
+884
+00:46:52,000 --> 00:46:54,000
+the
+
+885
+00:46:54,000 --> 00:47:06,159
+These are logical errors.
+
+886
+00:47:06,159 --> 00:47:15,440
+Unless you know the subject very well, you can't write, find and answer for these logical
+
+887
+00:47:15,440 --> 00:47:16,440
+errors.
+
+888
+00:47:16,440 --> 00:47:17,599
+You can't debug these errors.
+
+889
+00:47:17,599 --> 00:47:23,840
+So compiler errors is nothing because compiler will detect those errors.
+
+890
+00:47:23,840 --> 00:47:30,880
+logical errors detecting logical errors to do that you have to be a very good programmer who knows
+
+891
+00:47:30,880 --> 00:47:37,360
+everything very well right body code that dala the end of pull up exam sort of the end of the
+
+892
+00:47:37,360 --> 00:47:41,679
+problem person suffix saka dala kakoda adhano suffix second atro thau code you know
+
+893
+00:47:41,679 --> 00:48:01,420
+Now you saw that even with the suffix you can't assign the exact value to UBRR register.
+
+894
+00:48:01,659 --> 00:48:11,179
+You assign only approximated value 103 and you lose the decimal part because the calculation results
+
+895
+00:48:11,179 --> 00:48:13,480
+a floating point value.
+
+896
+00:48:14,099 --> 00:48:15,420
+The register can
+
+897
+00:48:15,420 --> 00:48:18,159
+capable, register is capable
+
+898
+00:48:18,159 --> 00:48:20,000
+of holding an
+
+899
+00:48:20,000 --> 00:48:22,139
+integer value. As a result
+
+900
+00:48:22,139 --> 00:48:24,000
+only the integer part of the
+
+901
+00:48:24,000 --> 00:48:25,940
+result is assigned.
+
+902
+00:48:26,559 --> 00:48:28,179
+So this is, this
+
+903
+00:48:28,179 --> 00:48:29,239
+may
+
+904
+00:48:29,239 --> 00:48:31,980
+cause for a board
+
+905
+00:48:31,980 --> 00:48:34,139
+rate error. Now let's
+
+906
+00:48:34,139 --> 00:48:35,800
+talk about board rate error.
+
+907
+00:48:36,360 --> 00:48:37,840
+Right. Now the same
+
+908
+00:48:37,840 --> 00:48:38,760
+equation,
+
+909
+00:48:38,760 --> 00:48:41,320
+how you saw this equation.
+
+910
+00:48:42,019 --> 00:48:43,579
+Now I am going to
+
+911
+00:48:43,579 --> 00:48:45,860
+get the
+
+912
+00:48:45,860 --> 00:48:47,679
+board rate. I am going to
+
+913
+00:48:47,679 --> 00:48:49,599
+determine the board rate from this
+
+914
+00:48:49,599 --> 00:48:51,900
+equation. From this equation
+
+915
+00:48:51,900 --> 00:48:53,539
+I am going to determine the board rate.
+
+916
+00:48:53,960 --> 00:48:55,179
+Board rate means
+
+917
+00:48:55,179 --> 00:48:57,940
+FCPU divided by 16
+
+918
+00:48:57,940 --> 00:48:59,760
+multiplied by UBRR
+
+919
+00:48:59,760 --> 00:49:02,019
+plus 1. This is the actual
+
+920
+00:49:02,019 --> 00:49:03,739
+board rate. Actual
+
+921
+00:49:03,739 --> 00:49:05,619
+board rate. Let's calculate our actual
+
+922
+00:49:05,619 --> 00:49:07,699
+board rate. Actual board
+
+923
+00:49:07,699 --> 00:49:14,059
+rate let's calculate this is the value we assigned we lost the decimal part now when you do this
+
+924
+00:49:14,059 --> 00:49:27,440
+calculation the actual as the actual board rate you will get 9615.38 you want 9600 but you get
+
+925
+00:49:27,440 --> 00:49:32,139
+9615.38 as the actual
+
+926
+00:49:32,139 --> 00:49:35,920
+board rate. So let's calculate board rate error.
+
+927
+00:49:36,659 --> 00:49:41,619
+Actual board rate 9615.38
+
+928
+00:49:41,619 --> 00:49:45,199
+desired board rate 9600
+
+929
+00:49:45,199 --> 00:49:49,559
+divided by desired board rate. So you will get the
+
+930
+00:49:49,559 --> 00:49:53,760
+board rate error. So your board rate error would be
+
+931
+00:49:53,760 --> 00:49:56,800
+0.16%
+
+932
+00:49:56,800 --> 00:49:58,360
+0.16%
+
+933
+00:49:58,360 --> 00:50:00,059
+That means which is
+
+934
+00:50:00,059 --> 00:50:02,739
+More or less equal to
+
+935
+00:50:02,739 --> 00:50:04,780
+0.2%
+
+936
+00:50:04,780 --> 00:50:05,940
+0.2%
+
+937
+00:50:05,940 --> 00:50:06,659
+Right
+
+938
+00:50:06,659 --> 00:50:08,920
+This is how we calculate
+
+939
+00:50:08,920 --> 00:50:09,820
+Bord rate error
+
+940
+00:50:09,820 --> 00:50:12,920
+We calculate the actual Bord rate
+
+941
+00:50:12,920 --> 00:50:14,639
+Using the value of
+
+942
+00:50:14,639 --> 00:50:15,820
+UBRR register
+
+943
+00:50:15,820 --> 00:50:19,840
+We calculate the actual Bord rate
+
+944
+00:50:19,840 --> 00:50:20,699
+Then
+
+945
+00:50:20,699 --> 00:50:23,539
+We calculate the Bord rate error
+
+946
+00:50:23,539 --> 00:50:25,800
+percentage. Actual
+
+947
+00:50:25,800 --> 00:50:27,579
+board rate minus desired
+
+948
+00:50:27,579 --> 00:50:29,559
+board rate divided by desired. Desired
+
+949
+00:50:29,559 --> 00:50:31,539
+board rate is 9600. That is what
+
+950
+00:50:31,539 --> 00:50:33,360
+we want. But we got
+
+951
+00:50:33,360 --> 00:50:35,800
+9615.38.
+
+952
+00:50:36,000 --> 00:50:37,420
+Why? The board rate
+
+953
+00:50:37,420 --> 00:50:39,159
+register we assign 103.
+
+954
+00:50:39,940 --> 00:50:41,320
+The decimal part we
+
+955
+00:50:41,320 --> 00:50:43,440
+dropped. As a result
+
+956
+00:50:43,440 --> 00:50:45,940
+it's about 0.2%
+
+957
+00:50:45,940 --> 00:50:47,500
+error. Board rate
+
+958
+00:50:47,500 --> 00:50:49,280
+error we have. Right.
+
+959
+00:50:49,800 --> 00:50:51,360
+So what is the importance of
+
+960
+00:50:51,360 --> 00:50:53,320
+board rate error? If
+
+961
+00:50:53,320 --> 00:51:05,820
+If the board rate error is a higher percentage, the receiver will not be able to recognize
+
+962
+00:51:05,820 --> 00:51:08,380
+what the transmitter says.
+
+963
+00:51:08,380 --> 00:51:19,559
+If the board rate percentage is a higher board rate percentage, the receiver would not be
+
+964
+00:51:19,559 --> 00:51:28,440
+able to recognize what transmitter said let's take simple example what would happen if board
+
+965
+00:51:28,440 --> 00:51:38,440
+rate with higher error percentage is used let's take simple example let's assume board rate is 1
+
+966
+00:51:38,440 --> 00:51:53,159
+bps right let's assume board rate is 1 bps if board rate is 1 bps transmitter takes 10 seconds
+
+967
+00:51:53,719 --> 00:52:05,239
+to send one character why what 10 seconds because 10 bits one character is 8 bit start bit and stop
+
+968
+00:52:05,239 --> 00:52:13,400
+bit 10 bits, 1 bit per second. So transmitter takes 10 seconds to send one character, one frame that
+
+969
+00:52:13,400 --> 00:52:29,960
+means one character. Now if transmitter, if Tx is 10% slow, then one second delay between Tx and Rx,
+
+970
+00:52:29,960 --> 00:52:33,260
+for every
+
+971
+00:52:33,260 --> 00:52:35,039
+10 seconds.
+
+972
+00:52:35,760 --> 00:52:39,159
+If transmitter is slower than 10%,
+
+973
+00:52:39,159 --> 00:52:40,500
+that means 10%
+
+974
+00:52:40,500 --> 00:52:41,059
+board rate.
+
+975
+00:52:41,519 --> 00:52:42,679
+Board rate error.
+
+976
+00:52:43,300 --> 00:52:46,480
+10% between transmitter and receiver
+
+977
+00:52:46,480 --> 00:52:48,380
+there is a 10% board rate
+
+978
+00:52:48,380 --> 00:52:49,440
+error. That means
+
+979
+00:52:49,440 --> 00:52:51,679
+every 10 seconds,
+
+980
+00:52:52,219 --> 00:52:53,280
+1 second delay.
+
+981
+00:52:53,880 --> 00:52:56,179
+Every 10 seconds, 1 second delay.
+
+982
+00:52:56,860 --> 00:52:57,159
+Right.
+
+983
+00:52:57,159 --> 00:52:58,880
+So as a result,
+
+984
+00:52:58,880 --> 00:53:01,559
+Receiver at the 10th second
+
+985
+00:53:01,559 --> 00:53:05,519
+Receiver will not receive the stop bit
+
+986
+00:53:05,519 --> 00:53:07,780
+Receiver will receive
+
+987
+00:53:07,780 --> 00:53:11,360
+More significant bit of the character
+
+988
+00:53:11,360 --> 00:53:12,780
+At the 10th second
+
+989
+00:53:12,780 --> 00:53:15,039
+Because transmitter is slow
+
+990
+00:53:15,039 --> 00:53:17,500
+10% board rate error
+
+991
+00:53:17,500 --> 00:53:18,360
+Right
+
+992
+00:53:18,360 --> 00:53:19,820
+The board rate
+
+993
+00:53:19,820 --> 00:53:23,239
+Agreed board rate is 1 BPS
+
+994
+00:53:23,239 --> 00:53:24,820
+1 bit per second
+
+995
+00:53:24,820 --> 00:53:26,780
+So receiver expect
+
+996
+00:53:26,780 --> 00:53:30,719
+to receive the stop bit at the 10th second.
+
+997
+00:53:31,280 --> 00:53:32,840
+But transmit is slow.
+
+998
+00:53:32,960 --> 00:53:34,840
+Every 10 second, 1 second delay.
+
+999
+00:53:35,579 --> 00:53:39,079
+Therefore, although receiver expects to receive
+
+1000
+00:53:39,079 --> 00:53:41,159
+stop bit at the 10th second,
+
+1001
+00:53:41,739 --> 00:53:45,639
+receiver will not be able to receive the stop bit at the 10th second.
+
+1002
+00:53:46,079 --> 00:53:48,239
+Instead of that, receiver will receive
+
+1003
+00:53:48,239 --> 00:53:52,840
+most significant bit of the character at the 10th second.
+
+1004
+00:53:52,840 --> 00:53:54,420
+Can you understand this?
+
+1005
+00:53:54,420 --> 00:53:58,199
+Receiver and transmitter agree.
+
+1006
+00:53:58,980 --> 00:54:02,440
+Data transfer is 1 bit per second.
+
+1007
+00:54:03,059 --> 00:54:08,980
+To send 1 frame from transmitter to receiver, you need 10 seconds.
+
+1008
+00:54:09,900 --> 00:54:11,340
+1 frame means 10 bits.
+
+1009
+00:54:11,860 --> 00:54:14,159
+Start bit, stop bit, 8 bit character.
+
+1010
+00:54:14,320 --> 00:54:14,860
+10 bits.
+
+1011
+00:54:15,760 --> 00:54:18,940
+1 bit per second, that means 10 bits in 10 seconds.
+
+1012
+00:54:19,260 --> 00:54:19,980
+That means you agree.
+
+1013
+00:54:19,980 --> 00:54:44,980
+the receiver is a 10% error. 10% error means there is a one second delay for every 10 seconds
+
+1014
+00:54:44,980 --> 00:54:47,239
+between the receiver and transmit.
+
+1015
+00:54:47,639 --> 00:54:50,179
+So, see, the border is a transmitter.
+
+1016
+00:54:51,079 --> 00:54:53,239
+The receiver is a delay.
+
+1017
+00:54:53,900 --> 00:54:56,019
+So, the receiver is a delay.
+
+1018
+00:54:56,019 --> 00:54:56,980
+The stop bit is a stop bit.
+
+1019
+00:54:57,780 --> 00:55:05,920
+The most significant bit of the character.
+
+1020
+00:55:06,179 --> 00:55:07,599
+Can you understand this?
+
+1021
+00:55:08,019 --> 00:55:09,000
+Make you talk about it.
+
+1022
+00:55:10,079 --> 00:55:10,260
+Okay?
+
+1023
+00:55:10,780 --> 00:55:11,500
+Okay, sir.
+
+1024
+00:55:11,800 --> 00:55:12,019
+Is it?
+
+1025
+00:55:12,440 --> 00:55:12,960
+Yes.
+
+1026
+00:55:13,480 --> 00:55:13,860
+Nirasha?
+
+1027
+00:55:14,460 --> 00:55:14,960
+Yes, sir.
+
+1028
+00:55:14,980 --> 00:55:40,860
+Now what is the consequence? Now stop bit is what? Stop bit is 1. So receiver expects to receive value 1 at the 10th second. Receiver is waiting for value 1 at the 10th second because stop bit is 1.
+
+1029
+00:55:40,860 --> 00:55:50,059
+Right. If the MSB, most significant bit of the character is one, receiver will consider it as a stop bit.
+
+1030
+00:55:50,059 --> 00:55:54,059
+The receiver will consider it as a stop bit.
+
+1031
+00:55:54,440 --> 00:55:59,380
+Most significant bit of the character.
+
+1032
+00:56:00,179 --> 00:56:04,000
+Most significant bit of the character is one.
+
+1033
+00:56:04,800 --> 00:56:08,539
+One is one. Receiver will consider it as stop bit.
+
+1034
+00:56:08,539 --> 00:56:15,179
+Receiver will consider it as stop bit and receiver will recognize a wrong character.
+
+1035
+00:56:19,519 --> 00:56:28,760
+In case, if the most significant bit of the character is zero, character's most significant bit is zero.
+
+1036
+00:56:29,539 --> 00:56:32,500
+Receiver is one of the top bits.
+
+1037
+00:56:32,500 --> 00:56:52,800
+The receiver will go mad and the receiver will print weird characters on the screen.
+
+1038
+00:56:52,800 --> 00:56:56,099
+When you are using Arduino,
+
+1039
+00:56:56,760 --> 00:56:57,420
+there are no board rate.
+
+1040
+00:56:58,420 --> 00:57:00,880
+There are no characters.
+
+1041
+00:57:01,679 --> 00:57:06,440
+Have you seen that?
+
+1042
+00:57:06,980 --> 00:57:08,599
+In the serial monitor of the Arduino,
+
+1043
+00:57:08,739 --> 00:57:09,800
+there are no board rate.
+
+1044
+00:57:10,360 --> 00:57:16,019
+What kind of characters printed on your screen?
+
+1045
+00:57:16,739 --> 00:57:17,559
+Have you seen that?
+
+1046
+00:57:17,559 --> 00:57:18,320
+Have you seen that?
+
+1047
+00:57:19,019 --> 00:57:19,380
+Yes.
+
+1048
+00:57:19,380 --> 00:57:35,320
+Receiver will go mad and print weird characters on your screen.
+
+1049
+00:57:38,320 --> 00:57:41,079
+Therefore, board rate error is very important.
+
+1050
+00:57:42,019 --> 00:57:45,639
+If the board rate error is high, a higher percentage,
+
+1051
+00:57:45,639 --> 00:57:49,800
+receiver will not be able to recognize
+
+1052
+00:57:49,800 --> 00:57:52,360
+what the transmitter say
+
+1053
+00:57:52,360 --> 00:57:55,440
+if the board rate error is a higher percentage.
+
+1054
+00:57:55,920 --> 00:57:56,260
+Right.
+
+1055
+00:57:56,619 --> 00:57:58,219
+So what is the upper limit?
+
+1056
+00:57:58,760 --> 00:58:01,019
+Some board rate errors we can accept.
+
+1057
+00:58:01,019 --> 00:58:04,460
+But if the board rate error percentage is higher
+
+1058
+00:58:04,460 --> 00:58:06,639
+then there will be problems.
+
+1059
+00:58:07,400 --> 00:58:08,320
+How much higher?
+
+1060
+00:58:09,739 --> 00:58:12,300
+So typically, right,
+
+1061
+00:58:12,300 --> 00:58:17,539
+the generally acceptable limit is 2.5%.
+
+1062
+00:58:17,539 --> 00:58:23,079
+If the board rate error percentage is above 2.5%,
+
+1063
+00:58:23,079 --> 00:58:25,900
+we cannot accept that board rate error
+
+1064
+00:58:25,900 --> 00:58:29,940
+because receiver will not be able to recognize
+
+1065
+00:58:29,940 --> 00:58:32,179
+what the transmitter say.
+
+1066
+00:58:32,760 --> 00:58:35,840
+In some cases, receiver will be able to recognize
+
+1067
+00:58:35,840 --> 00:58:38,340
+but some cases, no.
+
+1068
+00:58:39,059 --> 00:58:41,699
+Now, we discussed example 10% board rate error.
+
+1069
+00:58:42,300 --> 00:58:45,019
+At the 10% board rate error, never.
+
+1070
+00:58:45,280 --> 00:58:47,980
+Receiver cannot recognize what the transmitter said.
+
+1071
+00:58:47,980 --> 00:58:52,320
+But 2.5% board rate error,
+
+1072
+00:58:52,599 --> 00:58:57,000
+receiver may be able to recognize some characters transmitter said.
+
+1073
+00:58:57,480 --> 00:58:58,820
+Some characters, no.
+
+1074
+00:58:59,119 --> 00:59:00,960
+Receiver may not be able to recognize.
+
+1075
+00:59:01,260 --> 00:59:07,980
+Therefore, the generally accepted upper limit is 2.5%.
+
+1076
+00:59:08,659 --> 00:59:11,960
+So therefore, when you are developing systems,
+
+1077
+00:59:12,300 --> 00:59:21,820
+you must make sure the board rate error should be less than 2.5 percent right for a reliable
+
+1078
+00:59:21,820 --> 00:59:27,340
+communication if you want to have a reliable communication board rate error percentage
+
+1079
+00:59:27,980 --> 00:59:38,139
+must be less than 2.5 percent right is that clear right then then some critical applications
+
+1080
+00:59:38,139 --> 00:59:43,340
+you know that embedded systems are used in many critical applications like military applications
+
+1081
+00:59:43,340 --> 00:59:49,900
+like medical applications like automotive applications like amonic systems right many
+
+1082
+00:59:49,900 --> 00:59:55,579
+critical applications embedded systems are used right critical applications means a failure could
+
+1083
+00:59:55,579 --> 01:00:04,780
+result loss of human life in such applications critical applications even 2.5 percent baud rate
+
+1084
+01:00:04,780 --> 01:00:12,059
+error you cannot accept you cannot allow because the application is a critical application right
+
+1085
+01:00:12,059 --> 01:00:18,940
+the error board rate error percentage must be zero for communication otherwise you cannot rely
+
+1086
+01:00:18,940 --> 01:00:26,539
+on the communication at least a 0.1 percent board rate error is there you can't rely on the
+
+1087
+01:00:26,539 --> 01:00:35,820
+communication because the the the application is a critical application now let's assume right some
+
+1088
+01:00:36,940 --> 01:00:44,139
+a guided missile you are controlling remotely remotely controlling a guided missile
+
+1089
+01:00:44,139 --> 01:00:51,420
+so data communication between the controller and the missile missile is on the air that data
+
+1090
+01:00:51,420 --> 01:01:01,420
+communication must be 100% accurate. You can't leave 1% error in the communication. 0.1%
+
+1091
+01:01:01,420 --> 01:01:10,340
+no. 0.01% no. 0% errors in the communication because it's a very critical application.
+
+1092
+01:01:11,139 --> 01:01:19,119
+A small error in the communication right would result a friendly fire. You would hit the
+
+1093
+01:01:19,119 --> 01:01:28,239
+friendly forces, not the enemy. So how do we achieve 0% communication error,
+
+1094
+01:01:29,360 --> 01:01:37,619
+baud rate error for critical application? Possible. How? In such cases, how to minimize
+
+1095
+01:01:37,619 --> 01:01:47,719
+baud rate error? Use precision crystals. You have seen some crystals have very precise
+
+1096
+01:01:47,719 --> 01:02:00,000
+frequencies. Now this is an example. 18.432. 18.432 megahertz. That is the frequency of the crystal.
+
+1097
+01:02:00,539 --> 01:02:06,099
+Now we have used 16 megahertz crystal. Now instead of a 16 megahertz crystal, if you use this kind
+
+1098
+01:02:06,099 --> 01:02:11,780
+of precision crystal, then what would happen? Right. Let's calculate the bode rate again.
+
+1099
+01:02:11,780 --> 01:02:13,480
+Board rate register value.
+
+1100
+01:02:14,559 --> 01:02:16,840
+So to calculate the board rate register value.
+
+1101
+01:02:17,159 --> 01:02:18,219
+You have to divide.
+
+1102
+01:02:18,860 --> 01:02:20,440
+F CPU.
+
+1103
+01:02:21,599 --> 01:02:23,260
+You have to divide by.
+
+1104
+01:02:24,039 --> 01:02:24,880
+16.
+
+1105
+01:02:25,719 --> 01:02:28,059
+Multiplied by the.
+
+1106
+01:02:28,739 --> 01:02:30,039
+Board rate.
+
+1107
+01:02:30,699 --> 01:02:31,699
+Then minus 1.
+
+1108
+01:02:32,239 --> 01:02:32,480
+Right.
+
+1109
+01:02:33,420 --> 01:02:34,940
+F CPU is now.
+
+1110
+01:02:35,739 --> 01:02:36,619
+18.
+
+1111
+01:02:37,900 --> 01:02:38,659
+Megahertz.
+
+1112
+01:02:38,659 --> 01:02:40,659
+18.432.
+
+1113
+01:02:40,659 --> 01:02:41,420
+Megahertz.
+
+1114
+01:02:41,780 --> 01:02:45,639
+4, 3, 2 hertz.
+
+1115
+01:02:45,860 --> 01:02:46,199
+Right.
+
+1116
+01:02:47,019 --> 01:02:52,340
+Divided by 16 into 9,600.
+
+1117
+01:02:52,500 --> 01:02:53,880
+This is the baud rate we need.
+
+1118
+01:02:54,000 --> 01:02:54,699
+Minus 1.
+
+1119
+01:02:55,360 --> 01:02:58,800
+Which will give you exact value.
+
+1120
+01:02:58,920 --> 01:02:59,880
+119.
+
+1121
+01:03:00,480 --> 01:03:01,599
+No decimal parts.
+
+1122
+01:03:02,119 --> 01:03:06,900
+So exact 119 you can assign to UBRR register.
+
+1123
+01:03:07,400 --> 01:03:08,599
+No baud rate error.
+
+1124
+01:03:08,599 --> 01:03:10,260
+0% baud rate error.
+
+1125
+01:03:10,260 --> 01:03:30,659
+If you want 0% bode rate error for communication, for a critical application, use precision crystals for FCPU. Use precision crystals for FCPU. That's why this kind of precision crystals are available in the market.
+
+1126
+01:03:40,260 --> 01:03:48,059
+That is clear.
+
+1127
+01:03:48,059 --> 01:03:49,059
+Is that clear?
+
+1128
+01:03:49,059 --> 01:03:50,059
+Yes.
+
+1129
+01:03:50,059 --> 01:03:51,059
+Any question?
+
+1130
+01:03:51,059 --> 01:03:52,059
+You?
+
+1131
+01:03:52,059 --> 01:03:53,059
+Clear?
+
+1132
+01:03:53,059 --> 01:03:54,059
+Yes.
+
+1133
+01:03:54,059 --> 01:03:55,059
+Yes.
+
+1134
+01:03:55,059 --> 01:03:56,059
+Yes.
+
+1135
+01:03:56,059 --> 01:03:57,059
+Yes.
+
+1136
+01:03:57,059 --> 01:03:58,059
+I have a question.
+
+1137
+01:03:58,059 --> 01:04:06,059
+I mean, precision, very accurate crystals, now you should be able to answer.
+
+1138
+01:04:06,059 --> 01:04:10,059
+There are precision crystals.
+
+1139
+01:04:10,059 --> 01:04:15,059
+There are critical applications.
+
+1140
+01:04:15,059 --> 01:04:19,059
+There are no communication errors.
+
+1141
+01:04:19,059 --> 01:04:21,059
+Now you know.
+
+1142
+01:04:21,059 --> 01:04:25,059
+Because this is a university program you must know.
+
+1143
+01:04:25,059 --> 01:04:33,059
+If you know all the bits and bytes, everything.
+
+1144
+01:04:33,059 --> 01:05:03,059
+[unclear — Sinhala / crosstalk]
+
+1145
+01:05:03,059 --> 01:05:08,159
+The reason behind purpose of this precision crystal.
+
+1146
+01:05:08,519 --> 01:05:12,400
+Now in the Arduino Uno board, the crystal that you are using is not a precision crystal.
+
+1147
+01:05:12,780 --> 01:05:15,719
+Because Arduino Uno board we don't use for critical applications.
+
+1148
+01:05:16,239 --> 01:05:21,920
+Now when you are designing critical applications, then you have to think about this factor.
+
+1149
+01:05:21,920 --> 01:05:23,980
+If the application is a critical application.
+
+1150
+01:05:24,239 --> 01:05:26,940
+If you want 0% communication error.
+
+1151
+01:05:27,559 --> 01:05:30,039
+So if you can't tolerate any error.
+
+1152
+01:05:31,099 --> 01:05:32,400
+Some applications, yes.
+
+1153
+01:05:32,400 --> 01:05:35,760
+Now you don't need to think about the military applications.
+
+1154
+01:05:36,519 --> 01:05:39,139
+Let's say you are developing a flight controller for a drone.
+
+1155
+01:05:39,880 --> 01:05:44,179
+Then the data communication between the flight controller in the drone
+
+1156
+01:05:44,179 --> 01:05:49,579
+and the embedded system in your remote controller.
+
+1157
+01:05:50,519 --> 01:05:52,320
+There are two embedded systems.
+
+1158
+01:05:52,460 --> 01:05:57,239
+One is the flight controller on the drone.
+
+1159
+01:05:57,539 --> 01:06:00,760
+The other one is the embedded system in the remote controller.
+
+1160
+01:06:00,760 --> 01:06:02,019
+They communicate.
+
+1161
+01:06:02,400 --> 01:06:07,599
+right now then it's a critical application it's not a military application but it's a
+
+1162
+01:06:07,599 --> 01:06:16,159
+critical application even it's a toy uh a great drone critical application one and error a
+
+1163
+01:06:16,159 --> 01:06:25,840
+communication and error could result the drone to crash now think about if it crash onto a crowded
+
+1164
+01:06:25,840 --> 01:06:35,599
+place some event you are going to video record using a drone
+
+1165
+01:06:45,360 --> 01:06:53,760
+there are a lot of people in on the ground so drone is flying with a video camera over those
+
+1166
+01:06:53,760 --> 01:07:03,400
+people. Now due to some communication error, suddenly, right, you lose the control of the drone
+
+1167
+01:07:03,400 --> 01:07:15,619
+and it crash. Drones are plastic propellers, the issue will not be very serious. But some drones,
+
+1168
+01:07:15,619 --> 01:07:23,539
+there are carbon fiber propellers because carbon fiber is less, the weight is less,
+
+1169
+01:07:23,760 --> 01:07:31,360
+and also very strong right plastic quality about a very high carbon fiber carbon fiber
+
+1170
+01:07:45,199 --> 01:07:52,000
+so it's a critical application it's a critical application so such applications right when you
+
+1171
+01:07:52,000 --> 01:07:57,559
+you are developing but many people develop such applications but they don't consider
+
+1172
+01:07:57,559 --> 01:08:03,980
+the critical critical part the the the how serious this application they don't consider
+
+1173
+01:08:03,980 --> 01:08:11,780
+they just want the functionality they don't think about the possibility of errors worst case scenarios
+
+1174
+01:08:11,780 --> 01:08:18,180
+they don't consider but now when you are developing you must consider because you know
+
+1175
+01:08:18,180 --> 01:08:20,859
+how to solve these issues.
+
+1176
+01:08:21,399 --> 01:08:22,119
+You have to consider
+
+1177
+01:08:22,119 --> 01:08:24,500
+worst case scenarios.
+
+1178
+01:08:25,079 --> 01:08:26,619
+How to minimize the errors.
+
+1179
+01:08:27,420 --> 01:08:28,880
+How to make the communication
+
+1180
+01:08:28,880 --> 01:08:30,840
+the board rate error
+
+1181
+01:08:30,840 --> 01:08:31,939
+percentage zero.
+
+1182
+01:08:32,800 --> 01:08:34,859
+Because you know now how to
+
+1183
+01:08:34,859 --> 01:08:36,260
+handle these
+
+1184
+01:08:36,260 --> 01:08:38,659
+problems. Any question?
+
+1185
+01:08:39,420 --> 01:08:40,539
+Excuse me sir.
+
+1186
+01:08:40,899 --> 01:08:41,159
+Yes.
+
+1187
+01:08:41,800 --> 01:08:43,579
+The timer
+
+1188
+01:08:43,579 --> 01:08:46,479
+also being changed
+
+1189
+01:08:46,479 --> 01:08:54,720
+by the change of the fcpu yes yes correct what can we do about that yes then you have to when
+
+1190
+01:08:54,720 --> 01:09:03,199
+you calculate the timer frequency right you have to use the fcpu frequency of cpu if you if you
+
+1191
+01:09:03,199 --> 01:09:16,960
+change the crystal fcpu would be changed then timers then the pwm then adc frequency pulse
+
+1192
+01:09:16,960 --> 01:09:24,479
+with modulation pwm frequency timer frequency everything will be changed you have to do the
+
+1193
+01:09:24,479 --> 01:09:26,319
+the calculations proper.
+
+1194
+01:09:26,899 --> 01:09:28,500
+What if they also have
+
+1195
+01:09:28,500 --> 01:09:29,659
+a floating point
+
+1196
+01:09:29,659 --> 01:09:32,180
+number or something?
+
+1197
+01:09:32,220 --> 01:09:33,880
+Yeah, that can happen.
+
+1198
+01:09:34,159 --> 01:09:35,859
+So these values
+
+1199
+01:09:35,859 --> 01:09:38,399
+would result a floating point.
+
+1200
+01:09:38,859 --> 01:09:40,899
+Now one option
+
+1201
+01:09:40,899 --> 01:09:42,420
+is you can multiply the
+
+1202
+01:09:42,420 --> 01:09:44,380
+frequency or divide the
+
+1203
+01:09:44,380 --> 01:09:46,260
+frequency by a prescaler
+
+1204
+01:09:46,260 --> 01:09:48,699
+and then convert
+
+1205
+01:09:48,699 --> 01:09:50,399
+this into an integer value.
+
+1206
+01:09:50,880 --> 01:09:51,819
+That is one option.
+
+1207
+01:09:52,399 --> 01:09:54,319
+If you multiply or divide this
+
+1208
+01:09:54,319 --> 01:09:56,399
+18.43 to
+
+1209
+01:09:56,399 --> 01:09:58,180
+by some prescaler,
+
+1210
+01:09:58,920 --> 01:10:00,239
+then you get an integer value.
+
+1211
+01:10:01,199 --> 01:10:02,460
+Then you can feed
+
+1212
+01:10:02,460 --> 01:10:04,359
+that integer value to timer,
+
+1213
+01:10:05,020 --> 01:10:06,739
+ADC or PWM.
+
+1214
+01:10:07,359 --> 01:10:08,560
+Then you can avoid floating
+
+1215
+01:10:08,560 --> 01:10:09,180
+point part.
+
+1216
+01:10:10,859 --> 01:10:12,619
+So these are the things you have to think
+
+1217
+01:10:12,619 --> 01:10:12,979
+about.
+
+1218
+01:10:13,840 --> 01:10:14,760
+Communication is
+
+1219
+01:10:14,760 --> 01:10:16,180
+a problem.
+
+1220
+01:10:18,760 --> 01:10:20,239
+So how do we handle it?
+
+1221
+01:10:20,779 --> 01:10:22,899
+So for that you can use prescalers.
+
+1222
+01:10:23,460 --> 01:10:24,060
+What else?
+
+1223
+01:10:24,319 --> 01:10:25,579
+What are the other questions you have?
+
+1224
+01:10:26,100 --> 01:10:28,479
+Now for example, as she asked,
+
+1225
+01:10:29,079 --> 01:10:33,079
+now let's say you are using this 18.432 crystal.
+
+1226
+01:10:33,840 --> 01:10:39,199
+18.432 means 18.432.
+
+1227
+01:10:40,199 --> 01:10:41,500
+Right, this is megahertz.
+
+1228
+01:10:41,500 --> 01:10:48,560
+It means 18.432 30 hertz.
+
+1229
+01:10:49,619 --> 01:10:52,939
+Now if you divide this by 1024 prescaler,
+
+1230
+01:10:52,939 --> 01:11:02,939
+you will get 18000. This is the integer value and this integer value you can use for as time of frequency.
+
+1231
+01:11:02,939 --> 01:11:16,939
+So 18, this is 18kHz as time of frequency. ADC frequency, PWM calculations you can use. This is integer.
+
+1232
+01:11:16,939 --> 01:11:18,939
+So that's why you have prescalers.
+
+1233
+01:11:18,939 --> 01:11:24,939
+And if you have 432 values, you can match with the prescalers.
+
+1234
+01:11:24,939 --> 01:11:26,939
+You can't do that.
+
+1235
+01:11:26,939 --> 01:11:32,939
+If you have the value of the crystal, you can match with the prescalers.
+
+1236
+01:11:32,939 --> 01:11:33,939
+Is that clear?
+
+1237
+01:11:33,939 --> 01:11:34,939
+Okay, right.
+
+1238
+01:11:34,939 --> 01:11:37,939
+Then we need to talk about the source code.
+
+1239
+01:11:37,939 --> 01:11:38,939
+Right?
+
+1240
+01:11:38,939 --> 01:11:42,939
+But I have a meeting at 11 o'clock.
+
+1241
+01:11:42,939 --> 01:11:43,939
+Right?
+
+1242
+01:11:43,939 --> 01:11:44,939
+So I have the department.
+
+1243
+01:11:44,939 --> 01:11:50,659
+So therefore now I am going to stop and we'll meet at one o'clock.
+
+1244
+01:11:51,380 --> 01:11:51,739
+Okay.
+
+1245
+01:11:52,359 --> 01:11:52,659
+Right.
+
+1246
+01:11:52,779 --> 01:11:53,000
+Okay.
+
+1247
+01:11:53,100 --> 01:11:53,560
+Thank you.
+
+1248
+01:11:54,239 --> 01:11:54,600
+Thank you.
+
+1249
+01:11:54,960 --> 01:11:55,420
+Thank you.
+

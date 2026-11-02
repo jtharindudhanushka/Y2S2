@@ -1,0 +1,1616 @@
+1
+00:00:00,000 --> 00:00:21,760
+Right, okay, we were talking about the algorithm. So each iteration, right, we decrement the pulse width by 5, starting from 255. And that pulse width we set to output compare register. And doing that, we reduce the voltage at OC pin gradually.
+
+2
+00:00:21,760 --> 00:00:26,079
+This 30 millisecond delay is very important, right?
+
+3
+00:00:26,559 --> 00:00:31,179
+Because we, otherwise, if this delay, if you don't put this delay,
+
+4
+00:00:31,879 --> 00:00:35,020
+it would be very difficult to see the fading.
+
+5
+00:00:35,640 --> 00:00:40,539
+So small delay makes fading visible because our eyes are not very accurate.
+
+6
+00:00:41,100 --> 00:00:44,579
+So that's why we introduce a small delay so that we can see
+
+7
+00:00:44,579 --> 00:00:50,079
+the fading of the brightness of LED clear.
+
+8
+00:00:50,079 --> 00:01:12,000
+So we start with 255. 255 means if you put 255 to OCR, you get 5 volts from the OCP. Then we decrement 5 from the OCR value. It goes to 250. Then it goes to 245, 240. Likewise, gradually it drops.
+
+9
+00:01:12,000 --> 00:01:20,079
+When it comes to somewhere around 125, you get 50% of the supply voltage.
+
+10
+00:01:20,239 --> 00:01:21,579
+That means 2.5.
+
+11
+00:01:22,140 --> 00:01:31,439
+If the OCR value comes somewhere around 60 or 65, you get 25% of the voltage.
+
+12
+00:01:31,640 --> 00:01:35,400
+That is 1.25 somewhere around.
+
+13
+00:01:35,400 --> 00:01:50,379
+So likewise we drop the voltage from 5 volt to 0 volts gradually with the step size of 5, right, decrement step size of 5 every 30 milliseconds.
+
+14
+00:01:50,379 --> 00:01:57,299
+By doing that, we reduce the voltage supply to the LED gradually.
+
+15
+00:01:57,819 --> 00:02:04,519
+So we would see a fading LED with the full brightness to 0.
+
+16
+00:02:04,519 --> 00:02:07,659
+Then again full brightness to gradually see.
+
+17
+00:02:07,879 --> 00:02:08,639
+Can you understand?
+
+18
+00:02:09,060 --> 00:02:10,259
+Can you understand this algorithm?
+
+19
+00:02:10,840 --> 00:02:11,280
+Okay, sir.
+
+20
+00:02:11,680 --> 00:02:11,979
+Right.
+
+21
+00:02:12,219 --> 00:02:13,419
+Let's see the program.
+
+22
+00:02:13,979 --> 00:02:14,240
+Right.
+
+23
+00:02:14,819 --> 00:02:19,639
+So we are going to use delay function for the delay, 30 milliseconds delay.
+
+24
+00:02:19,840 --> 00:02:21,979
+That's why I have used this header file.
+
+25
+00:02:22,500 --> 00:02:26,180
+And this header file requires the speed of the CPU.
+
+26
+00:02:26,500 --> 00:02:28,500
+That's why I have defined fCPU.
+
+27
+00:02:29,180 --> 00:02:32,520
+First, configure this particular pin, PD6,
+
+28
+00:02:32,520 --> 00:02:34,659
+which is OCAP.
+
+29
+00:02:35,439 --> 00:02:37,939
+We have LED connected as an output.
+
+30
+00:02:38,400 --> 00:02:41,979
+Then specify the fast PWM
+
+31
+00:02:41,979 --> 00:02:44,919
+waveform generation mode.
+
+32
+00:02:45,379 --> 00:02:46,979
+You know that waveform generation
+
+33
+00:02:46,979 --> 00:02:50,560
+WGM bits, two bits are in
+
+34
+00:02:50,560 --> 00:02:54,020
+TCCR A register and one bit
+
+35
+00:02:54,020 --> 00:02:56,759
+is in TCCR B register.
+
+36
+00:02:56,759 --> 00:03:00,460
+The bit in the TCCR B register
+
+37
+00:03:00,460 --> 00:03:01,419
+we need to clear
+
+38
+00:03:01,419 --> 00:03:05,639
+and the 2 bits in the TCC are A register
+
+39
+00:03:05,639 --> 00:03:09,360
+we need to set. By doing that we can specify
+
+40
+00:03:09,360 --> 00:03:12,800
+fast PWM mode.
+
+41
+00:03:12,800 --> 00:03:16,580
+See fast PWM mode 0 1 1
+
+42
+00:03:16,580 --> 00:03:20,300
+waveform generation mode 2 bit 0
+
+43
+00:03:20,300 --> 00:03:22,759
+waveform generation mode 1 bit 1
+
+44
+00:03:22,759 --> 00:03:25,580
+waveform generation mode 0 bit 1
+
+45
+00:03:25,580 --> 00:03:30,740
+we specify fast PWM mode
+
+46
+00:03:30,740 --> 00:03:42,840
+Then the compare output mode non-inverted we specify using combits of TCCRA register.
+
+47
+00:03:43,199 --> 00:03:46,759
+Timer control, timer counter control register A.
+
+48
+00:03:47,699 --> 00:03:57,460
+Using the bits of that register we specify using the combits of that register we specify non-inverted mode.
+
+49
+00:03:57,460 --> 00:04:01,460
+Using the combits we can specify non-inverted mode.
+
+50
+00:04:01,460 --> 00:04:07,460
+Then set the PWM frequency as 1 kilohertz.
+
+51
+00:04:07,460 --> 00:04:11,460
+Set the PWM frequency as 1 kilohertz.
+
+52
+00:04:11,460 --> 00:04:17,459
+Now we know that the equation, what is our equation?
+
+53
+00:04:17,459 --> 00:04:30,300
+Our equation is FPWM equals FCPU divided by top plus 1 multiplied by prescale.
+
+54
+00:04:30,720 --> 00:04:38,220
+FCPU, you have to put it in hertz, divide the 6 megahertz, 16 megahertz, sorry, right.
+
+55
+00:04:38,220 --> 00:04:45,639
+And this is 8 bit timer, 255 maximum value plus 1 multiplied by prescale.
+
+56
+00:04:45,639 --> 00:04:55,459
+So what is the pre-scale that we have to use to get 1000 Hz PWM frequency?
+
+57
+00:04:55,839 --> 00:04:59,180
+So we need to reorganize this equation.
+
+58
+00:04:59,180 --> 00:05:17,339
+Pre-scale, FCPU, divided by, top plus one, multiplied by, FPWM, hertz, 16 megahertz, 255 plus one, top is 255, 1000 hertz, PWM frequency, 1000 hertz.
+
+59
+00:05:17,339 --> 00:05:44,540
+Calculate, right? You get a value 62.5 when you do the calculation. 62.5 as the result. Now, we don't have a pre-scale equal to 64.5, but we have a pre-scale 64, which is the nearest pre-scale value we have.
+
+60
+00:05:44,540 --> 00:05:46,379
+So use that 64.
+
+61
+00:05:47,100 --> 00:05:50,220
+When you use 64 you can't get 1 kilohertz.
+
+62
+00:05:50,220 --> 00:05:52,720
+Because if you use 64.
+
+63
+00:05:54,100 --> 00:05:58,060
+62.5 then only you get 1 kilohertz.
+
+64
+00:05:58,500 --> 00:05:59,319
+1 kilohertz.
+
+65
+00:05:59,680 --> 00:06:01,079
+Here we use 1 kilohertz.
+
+66
+00:06:01,480 --> 00:06:07,139
+But if you use 64 you get something less than 1 kilohertz.
+
+67
+00:06:07,279 --> 00:06:10,139
+Something around 950.
+
+68
+00:06:10,759 --> 00:06:11,339
+I don't know.
+
+69
+00:06:11,540 --> 00:06:12,100
+You have to calculate.
+
+70
+00:06:12,620 --> 00:06:12,819
+Right.
+
+71
+00:06:12,819 --> 00:06:21,600
+something little bit something little bit less than one kilohertz you cannot get exactly one
+
+72
+00:06:21,600 --> 00:06:28,639
+kilohertz huh right because if you want to get one kilohertz this is the pre-scale you have to use
+
+73
+00:06:28,639 --> 00:06:37,019
+62.5 but that kind of pre-scale we don't have but we have 64 pre-scale so better to use 64 pre-scale
+
+74
+00:06:37,019 --> 00:06:43,060
+and get a PWM frequency closer to 1 kilohertz.
+
+75
+00:06:43,480 --> 00:06:44,639
+Not exactly.
+
+76
+00:06:45,139 --> 00:06:47,920
+So exact frequency would be when you calculate,
+
+77
+00:06:48,019 --> 00:06:48,600
+let me calculate.
+
+78
+00:06:49,180 --> 00:06:52,480
+Exact, if you put 64 pre-scale,
+
+79
+00:06:53,639 --> 00:06:57,019
+use this one, your exact frequency would be
+
+80
+00:06:57,019 --> 00:07:04,519
+976.5 hertz, not 1000.
+
+81
+00:07:04,519 --> 00:07:07,279
+That's the exact frequency you get.
+
+82
+00:07:08,180 --> 00:07:09,079
+Can you understand?
+
+83
+00:07:09,639 --> 00:07:11,180
+Can you understand this calculation?
+
+84
+00:07:11,899 --> 00:07:12,500
+Any question?
+
+85
+00:07:12,620 --> 00:07:13,500
+One of you are going to get a loop?
+
+86
+00:07:14,060 --> 00:07:14,279
+Right.
+
+87
+00:07:14,779 --> 00:07:15,519
+No questions.
+
+88
+00:07:16,040 --> 00:07:16,240
+Then.
+
+89
+00:07:17,480 --> 00:07:18,000
+Right.
+
+90
+00:07:18,620 --> 00:07:20,040
+Now we set the frequency.
+
+91
+00:07:20,319 --> 00:07:20,480
+Then.
+
+92
+00:07:21,600 --> 00:07:22,300
+Endless loop.
+
+93
+00:07:23,060 --> 00:07:24,560
+Inside the endless loop.
+
+94
+00:07:25,120 --> 00:07:26,240
+We run another loop.
+
+95
+00:07:26,860 --> 00:07:27,680
+A full loop.
+
+96
+00:07:28,319 --> 00:07:28,639
+Right.
+
+97
+00:07:29,120 --> 00:07:30,879
+Starting from 255.
+
+98
+00:07:30,879 --> 00:07:34,759
+Loop condition is greater than O equals 0
+
+99
+00:07:34,759 --> 00:07:37,240
+And decrement the value
+
+100
+00:07:37,240 --> 00:07:40,560
+Every iteration decrement the value by 5
+
+101
+00:07:40,560 --> 00:07:43,220
+And that value you get
+
+102
+00:07:43,220 --> 00:07:45,759
+You assign to OCRA register
+
+103
+00:07:45,759 --> 00:07:48,240
+So the first time value is 255
+
+104
+00:07:48,240 --> 00:07:52,300
+That means direct 5 volts at OCAP
+
+105
+00:07:52,300 --> 00:07:55,339
+Then you gradually decrease the value
+
+106
+00:07:55,339 --> 00:07:57,240
+Every time by 5
+
+107
+00:07:57,240 --> 00:08:00,660
+And there is a 30 milliseconds small delay
+
+108
+00:08:00,660 --> 00:08:02,939
+to make the fading visible.
+
+109
+00:08:04,019 --> 00:08:09,040
+So if you connect an oscilloscope to the OC pin
+
+110
+00:08:09,040 --> 00:08:13,420
+and if you see the pulse with modulated signal from the OC pin
+
+111
+00:08:13,420 --> 00:08:16,120
+this kind of output you would see.
+
+112
+00:08:16,120 --> 00:08:21,560
+So initially the percentage of time that the output is high is more.
+
+113
+00:08:22,459 --> 00:08:27,680
+Then gradually you reduce the percentage of time that the output is high
+
+114
+00:08:27,680 --> 00:08:29,259
+in one clock cycle.
+
+115
+00:08:29,259 --> 00:08:32,659
+That means you gradually reduce the voltage at OC.
+
+116
+00:08:33,100 --> 00:08:40,539
+So as a result, the LED connected to the OC pin, you will see a gradual fading effect.
+
+117
+00:08:40,980 --> 00:08:49,720
+When the pulse width becomes 0, you again set it to 255 and run the loop.
+
+118
+00:08:50,059 --> 00:08:55,480
+That means you fade the LED to 0 and then again to full brightness.
+
+119
+00:08:55,860 --> 00:08:58,440
+Again gradually reduce the brightness.
+
+120
+00:08:58,440 --> 00:09:23,519
+Can you understand this code? Any question? No. Right. So the same program using hexadecimal constant. Instead of writing lengthy binary values, you can use hexadecimal constant. Same program. And same program using label constant. Right. And finally, how can we do this using Arduino wrapper function?
+
+121
+00:09:23,519 --> 00:09:49,440
+algorithm for what do you know? So first we declare the LED connected pin, pin number 6 which is PWM supported. Then in the setup function we configure that pin as output pin. Then in the loop function we set pulse width to 255 and then gradually we reduce that value.
+
+122
+00:09:49,440 --> 00:10:00,840
+If the pulse width greater than 0, output pulses with specified width from LED pin, 30 millisecond delay, decrement by 5.
+
+123
+00:10:01,200 --> 00:10:02,059
+The same thing.
+
+124
+00:10:02,580 --> 00:10:09,460
+Gradually decrease the pulse width, right, in every iteration by 5.
+
+125
+00:10:09,980 --> 00:10:16,360
+So by doing that, you can gradually reduce the voltage of the pin number 6.
+
+126
+00:10:16,360 --> 00:10:25,960
+And we have introduced 30 millisecond delay to make the fading visible and the firmware.
+
+127
+00:10:26,659 --> 00:10:27,000
+Right.
+
+128
+00:10:27,600 --> 00:10:31,279
+Declare the pin, pin number 6 as LED pin.
+
+129
+00:10:31,919 --> 00:10:36,139
+Configure the pin as output pin using pin mode wrapper function.
+
+130
+00:10:36,860 --> 00:10:37,480
+Run a loop.
+
+131
+00:10:38,259 --> 00:10:44,799
+Within the loop function run a for loop from 255 to 0.
+
+132
+00:10:44,799 --> 00:10:48,299
+every iteration decrement the
+
+133
+00:10:48,299 --> 00:10:50,899
+loop count by 5
+
+134
+00:10:50,899 --> 00:10:53,179
+similar to previous C program
+
+135
+00:10:53,179 --> 00:10:53,980
+right
+
+136
+00:10:53,980 --> 00:10:55,759
+the only difference
+
+137
+00:10:55,759 --> 00:10:58,480
+is in the C program
+
+138
+00:10:58,480 --> 00:11:01,379
+you have to specify all the values
+
+139
+00:11:01,379 --> 00:11:02,000
+to registers
+
+140
+00:11:02,000 --> 00:11:05,080
+you have to specify the waveform generation mode
+
+141
+00:11:05,080 --> 00:11:07,200
+you have to specify the compare
+
+142
+00:11:07,200 --> 00:11:08,000
+match mode
+
+143
+00:11:08,000 --> 00:11:11,620
+you have to specify the PWM frequency
+
+144
+00:11:11,620 --> 00:11:13,379
+all these things you have to do
+
+145
+00:11:13,379 --> 00:11:21,539
+But in Arduino, you don't need to do anything because everything is handled behind the scene.
+
+146
+00:11:22,200 --> 00:11:25,019
+Only thing is you have to use this wrapper function.
+
+147
+00:11:25,240 --> 00:11:25,980
+Analog write.
+
+148
+00:11:26,600 --> 00:11:27,320
+Analog write.
+
+149
+00:11:27,860 --> 00:11:32,600
+Which pin you want to output the PWM pulses?
+
+150
+00:11:33,600 --> 00:11:34,419
+Pin number 6.
+
+151
+00:11:34,919 --> 00:11:37,980
+And what is the width of the PWM signal?
+
+152
+00:11:38,940 --> 00:11:40,480
+You start with 255.
+
+153
+00:11:40,480 --> 00:11:42,620
+That means direct 5 voltage.
+
+154
+00:11:43,379 --> 00:11:46,980
+And then gradually you reduce the pulse width, right?
+
+155
+00:11:46,980 --> 00:11:50,460
+So voltage is reduced on pin number 6.
+
+156
+00:11:51,120 --> 00:11:56,360
+Every 30 milliseconds you decrement 5 from the pulse width.
+
+157
+00:11:56,639 --> 00:11:59,940
+So you don't need to specify the waveform generation mode.
+
+158
+00:12:00,600 --> 00:12:03,779
+You don't need to specify the compare output mode.
+
+159
+00:12:04,100 --> 00:12:06,980
+You don't specify the PWM frequency.
+
+160
+00:12:07,720 --> 00:12:10,980
+Everything is handled behind the scene by this function.
+
+161
+00:12:11,480 --> 00:12:12,919
+This is called a wrapper function.
+
+162
+00:12:12,919 --> 00:12:17,019
+analog write. In the analog write function you have to pass two
+
+163
+00:12:17,019 --> 00:12:20,980
+arguments. First one is the pin that you want
+
+164
+00:12:20,980 --> 00:12:25,159
+to get pulse width modulated output.
+
+165
+00:12:25,539 --> 00:12:28,220
+That pin should be PWM supported pin.
+
+166
+00:12:28,720 --> 00:12:33,059
+The second part is the pulse width that you
+
+167
+00:12:33,059 --> 00:12:37,059
+need. In other words duty cycle that you need.
+
+168
+00:12:37,059 --> 00:12:40,820
+In other words percentage of time that the output
+
+169
+00:12:40,820 --> 00:12:51,580
+is high in one clock cycle. Then from this pin, specified pin, you get the pulses with
+
+170
+00:12:51,580 --> 00:13:00,580
+that specified width. So unlock write function when you call, right, you will get pulses
+
+171
+00:13:00,580 --> 00:13:10,200
+from the specified pin with the specified width. So the first pulse 255
+
+172
+00:13:10,200 --> 00:13:17,200
+then gradually you reduce it to zero. So from this pin if you measure the voltage using a multimeter or voltmeter
+
+173
+00:13:17,200 --> 00:13:27,200
+so it will start with 5 volts and then gradually it is decreased to zero. Then again start with 5 volts and gradually decrease. Is that clear?
+
+174
+00:13:27,200 --> 00:13:29,200
+Any question?
+
+175
+00:13:29,200 --> 00:13:32,200
+Sir. Yes.
+
+176
+00:13:32,200 --> 00:14:02,200
+[unclear — Sinhala / crosstalk]
+
+177
+00:14:02,200 --> 00:14:06,980
+to the right-fear, the more the one-�-e-cour, the one-e-cour, the one-e-cour, the one-e-cour,
+
+178
+00:14:06,980 --> 00:14:43,059
+[unclear — Sinhala / crosstalk]
+
+179
+00:14:43,059 --> 00:14:44,919
+to the right- should the NL.
+
+180
+00:14:44,820 --> 00:14:45,899
+I have a because the we do.
+
+181
+00:14:45,899 --> 00:15:15,899
+[unclear — Sinhala / crosstalk]
+
+182
+00:15:15,899 --> 00:15:16,899
+to the MF.
+
+183
+00:15:16,899 --> 00:15:18,600
+I have a really good thing, I have a really good thing, I have a really good thing, I have
+
+184
+00:15:18,600 --> 00:15:19,419
+[unclear — Sinhala / crosstalk]
+
+185
+00:15:19,419 --> 00:15:19,940
+thing, I have a really good thing, I have a really good thing, I have a really good thing,
+
+186
+00:15:19,940 --> 00:15:20,580
+I have a really good thing, I have a really good thing, I have a really good thing, I have
+
+187
+00:15:20,580 --> 00:15:20,940
+a really good thing, I have a really good thing, I have a really good thing, I have a really
+
+188
+00:15:20,940 --> 00:15:21,340
+good thing, I have a really good thing, I have a really good thing, I have a really good thing,
+
+189
+00:15:21,340 --> 00:15:21,539
+[unclear — Sinhala / crosstalk]
+
+190
+00:15:21,539 --> 00:15:22,019
+I have a really good thing, I have a really good thing, I have a really good thing,
+
+191
+00:15:22,019 --> 00:15:28,019
+If you want to use the WGM, you can use the Waveform Generation mode.
+
+192
+00:15:28,019 --> 00:15:32,019
+You can't even know what that means.
+
+193
+00:15:32,019 --> 00:15:36,019
+You can't even know what that means.
+
+194
+00:15:36,019 --> 00:15:41,019
+If you want to use the WEDS, the BITS, the Registers, and the PAHVICS,
+
+195
+00:15:41,019 --> 00:15:44,019
+you can't even know what that means.
+
+196
+00:15:44,019 --> 00:15:47,019
+You can't even know what that means.
+
+197
+00:15:47,019 --> 00:15:58,019
+I will show you a small program.
+
+198
+00:15:58,019 --> 00:16:02,019
+Right, small program written using Arduino wrapper function.
+
+199
+00:16:02,019 --> 00:16:10,019
+Pin number 9 which is PWM supported, configured as an output pin.
+
+200
+00:16:10,019 --> 00:16:20,659
+then in the loop function out the we generate a pulse with the pulse with 250 which is more closer
+
+201
+00:16:20,659 --> 00:16:30,659
+to 5 volts right then now i'll show you the waveform now let's go up again so let me turn on
+
+202
+00:16:30,659 --> 00:16:46,820
+the video camera right right right they know the one pulse right five volts
+
+203
+00:16:46,820 --> 00:17:16,819
+[unclear — Sinhala / crosstalk]
+
+204
+00:17:16,819 --> 00:17:19,099
+I plug it.
+
+205
+00:17:20,680 --> 00:17:21,680
+I plug it.
+
+206
+00:17:22,079 --> 00:17:22,240
+Right.
+
+207
+00:17:22,400 --> 00:17:23,160
+One pulse width.
+
+208
+00:17:23,359 --> 00:17:25,759
+250.
+
+209
+00:17:27,160 --> 00:17:28,119
+What's the voltage?
+
+210
+00:17:28,599 --> 00:17:29,359
+What's the voltage?
+
+211
+00:17:30,019 --> 00:17:32,960
+4.72.
+
+212
+00:17:33,279 --> 00:17:34,619
+4.72.
+
+213
+00:17:35,039 --> 00:17:35,740
+Not 5.
+
+214
+00:17:35,920 --> 00:17:37,000
+Very close to 5.
+
+215
+00:17:37,579 --> 00:17:37,819
+Right.
+
+216
+00:17:37,900 --> 00:17:38,700
+4.72.
+
+217
+00:17:39,880 --> 00:17:40,119
+Right.
+
+218
+00:17:40,579 --> 00:17:45,079
+Then let's change this to 200.
+
+219
+00:17:45,680 --> 00:17:45,920
+Right.
+
+220
+00:17:45,920 --> 00:18:15,920
+[unclear — Sinhala / crosstalk]
+
+221
+00:18:15,920 --> 00:18:20,220
+or take up what man right or good the heck to do
+
+222
+00:18:21,259 --> 00:18:23,259
+in a way of forming can you see
+
+223
+00:18:23,920 --> 00:18:25,920
+then go Dracula the end of low
+
+224
+00:18:26,779 --> 00:18:34,640
+Spike it up again what five already he'll I know and gallery you know again a percentage of time that the pulse is high is very less
+
+225
+00:18:35,660 --> 00:18:37,660
+He will have a voltage
+
+226
+00:18:39,019 --> 00:18:43,180
+Men a will have voltage it millivolt them pen and a millivolt
+
+227
+00:18:43,180 --> 00:19:13,180
+[unclear — Sinhala / crosstalk]
+
+228
+00:19:13,180 --> 00:19:14,180
+We have to do it.
+
+229
+00:19:14,180 --> 00:19:19,180
+We have to do it by means of digital.
+
+230
+00:19:19,180 --> 00:19:21,180
+Multitasking is not the same.
+
+231
+00:19:21,180 --> 00:19:22,180
+We have to do it.
+
+232
+00:19:22,180 --> 00:19:23,180
+Right?
+
+233
+00:19:23,180 --> 00:19:24,180
+Is that clear?
+
+234
+00:19:24,180 --> 00:19:25,180
+Yes sir.
+
+235
+00:19:25,180 --> 00:19:28,180
+Any question?
+
+236
+00:19:28,180 --> 00:19:29,180
+Right.
+
+237
+00:19:29,180 --> 00:19:34,180
+Then let's move into the last slide.
+
+238
+00:19:34,180 --> 00:19:36,180
+How to get true analog output.
+
+239
+00:19:36,180 --> 00:19:38,180
+So we discussed PWM.
+
+240
+00:19:38,180 --> 00:19:39,180
+Right.
+
+241
+00:19:39,180 --> 00:19:42,180
+Our discussion is almost over.
+
+242
+00:19:42,180 --> 00:19:43,619
+It's almost over.
+
+243
+00:19:44,700 --> 00:19:49,700
+We know how to get analog like output by means of digital.
+
+244
+00:19:50,299 --> 00:19:52,420
+But how to get true analog output?
+
+245
+00:19:52,420 --> 00:19:56,920
+For example, what is the purpose of getting true analog output?
+
+246
+00:19:57,059 --> 00:19:59,779
+Let's say you want to create some music.
+
+247
+00:20:00,359 --> 00:20:01,859
+You want to create some audio.
+
+248
+00:20:02,660 --> 00:20:04,460
+Computer generated audio.
+
+249
+00:20:04,980 --> 00:20:06,619
+Computer generated music.
+
+250
+00:20:07,119 --> 00:20:09,359
+Using PWM you can generate.
+
+251
+00:20:10,000 --> 00:20:11,400
+Because you know audio is analog.
+
+252
+00:20:12,180 --> 00:20:13,160
+Right, audio is analog.
+
+253
+00:20:13,380 --> 00:20:14,319
+Audio signals are analog.
+
+254
+00:20:14,440 --> 00:20:18,259
+You can generate analog audio signal, analog light signal.
+
+255
+00:20:18,819 --> 00:20:21,220
+Using PWM, then the quality is not good.
+
+256
+00:20:21,220 --> 00:20:29,339
+But if you could generate true audio, true analog, that means continuous, the quality would be high.
+
+257
+00:20:29,700 --> 00:20:36,180
+For that kind of job, can't we generate true analog outputs?
+
+258
+00:20:36,359 --> 00:20:37,440
+Yes, we can.
+
+259
+00:20:37,660 --> 00:20:37,839
+How?
+
+260
+00:20:38,380 --> 00:20:39,579
+There are three options.
+
+261
+00:20:39,579 --> 00:20:49,599
+First one, you can switch to a microcontroller with built-in DAC, digital to analog converter.
+
+262
+00:20:50,140 --> 00:20:56,200
+So the Arduino Uno board with ATmega 328P microcontroller, we don't have that facility.
+
+263
+00:20:56,680 --> 00:21:01,480
+We don't have DAC, digital to analog converter we don't have.
+
+264
+00:21:01,559 --> 00:21:05,819
+But some microcontrollers, we have DAC facility.
+
+265
+00:21:05,819 --> 00:21:34,819
+For example, AT91. Let me write it. AT91 SAM3X8E microcontroller has 10 bit. It has 10 bit DAC. It has 10 bit DAC built in.
+
+266
+00:21:34,819 --> 00:21:45,500
+using that we can generate true analog output this microcontroller comes on Arduino dew board
+
+267
+00:21:45,500 --> 00:21:51,759
+there's an Arduino board called dew with that dew board you can get this microcontroller so true
+
+268
+00:21:51,759 --> 00:21:58,619
+analog output you can write Arduino dew board is very expensive even the Chinese version is about
+
+269
+00:21:58,619 --> 00:22:01,019
+4000 rupees. The original
+
+270
+00:22:01,019 --> 00:22:03,039
+one is about 12000 rupees.
+
+271
+00:22:03,480 --> 00:22:04,960
+Compared to Arduino Uno
+
+272
+00:22:04,960 --> 00:22:07,000
+this is very expensive. But you can get
+
+273
+00:22:07,000 --> 00:22:09,119
+true analog output. 10 bit DAC
+
+274
+00:22:09,119 --> 00:22:10,920
+it has. 10 bit DAC.
+
+275
+00:22:11,099 --> 00:22:12,279
+10 bit DAC means
+
+276
+00:22:12,279 --> 00:22:15,240
+the value
+
+277
+00:22:15,240 --> 00:22:17,339
+range is 0 to 1023.
+
+278
+00:22:17,599 --> 00:22:18,960
+If you give 1023
+
+279
+00:22:18,960 --> 00:22:19,960
+you get 5 volts.
+
+280
+00:22:20,960 --> 00:22:22,640
+If you give 511
+
+281
+00:22:22,640 --> 00:22:24,539
+you get 2.5 volts.
+
+282
+00:22:25,140 --> 00:22:26,819
+Likewise you can
+
+283
+00:22:26,819 --> 00:22:35,000
+get different voltages by giving different numbers. The second option, you can use digital
+
+284
+00:22:35,000 --> 00:22:43,960
+to analog breakout board. This is a cheap option, right? DAZ breakout board. It's about 300 rupees,
+
+285
+00:22:44,099 --> 00:22:52,579
+350 rupees. But you need to use four microcontroller pins to communicate with this board.
+
+286
+00:22:52,579 --> 00:23:00,240
+You have to sacrifice 4 IO pins of the microcontroller to communicate with this board.
+
+287
+00:23:00,740 --> 00:23:01,460
+That's a downside.
+
+288
+00:23:01,960 --> 00:23:03,420
+But that's a cheap option.
+
+289
+00:23:04,019 --> 00:23:10,880
+And the third option, using RC filter, you get the PWM generated signal.
+
+290
+00:23:10,880 --> 00:23:13,539
+You get the PWM generated signal.
+
+291
+00:23:14,220 --> 00:23:21,660
+And then you pass through this signal, a RC filter, resistor capacitor filter.
+
+292
+00:23:21,660 --> 00:23:26,680
+So PWM signal input, output is analog output.
+
+293
+00:23:27,039 --> 00:23:28,859
+Digital in, analog output.
+
+294
+00:23:29,180 --> 00:23:39,539
+Now these values of R and C, resistor value and the capacitor value, depends on the PWM frequency that you use.
+
+295
+00:23:39,880 --> 00:23:41,720
+It depends on the PWM frequency.
+
+296
+00:23:41,720 --> 00:23:51,559
+And for example, you could use larger capacitor and a small resistor if you want to get larger current from this connection.
+
+297
+00:23:51,660 --> 00:23:55,619
+And this is the input digital signal, pulse width modulated signal.
+
+298
+00:23:55,740 --> 00:23:58,660
+You can see the pulse width varying pulse width.
+
+299
+00:23:59,319 --> 00:24:04,220
+And other side you can get analog output, continuous analog output.
+
+300
+00:24:04,640 --> 00:24:10,180
+Now there is a mathematical formula for calculating R and C for this kind of situation, RC filters.
+
+301
+00:24:11,299 --> 00:24:13,880
+And which is beyond the scope of this list.
+
+302
+00:24:14,200 --> 00:24:18,519
+But if you are really interested, RC filters, you can read about it.
+
+303
+00:24:18,519 --> 00:24:22,799
+In physics electronics there is a mathematical formula for this.
+
+304
+00:24:22,920 --> 00:24:25,880
+Calculating R and C in RC filters.
+
+305
+00:24:26,259 --> 00:24:27,200
+Resistor capacitor.
+
+306
+00:24:27,640 --> 00:24:27,819
+Right.
+
+307
+00:24:28,299 --> 00:24:32,480
+So these are the three options available to get true analog out.
+
+308
+00:24:32,900 --> 00:24:36,839
+With that we come to the end of pulse width modulation.
+
+309
+00:24:37,359 --> 00:24:38,000
+Any questions?
+
+310
+00:24:40,759 --> 00:24:41,359
+Right.
+
+311
+00:24:42,359 --> 00:24:43,380
+You can ask any question.
+
+312
+00:24:43,380 --> 00:24:50,380
+Now at least now you know the three options available to get the true analog output.
+
+313
+00:24:50,380 --> 00:24:51,380
+Right.
+
+314
+00:24:51,380 --> 00:24:58,680
+So if you are interested in audio generation, music generation, computer base, microcontroller
+
+315
+00:24:58,680 --> 00:25:04,380
+base embedded system base, then you can at least read about these different microcontrollers,
+
+316
+00:25:04,380 --> 00:25:06,380
+breakout boards or RC filters.
+
+317
+00:25:06,380 --> 00:25:07,380
+Right.
+
+318
+00:25:07,380 --> 00:25:10,380
+So I'm not going to do those things.
+
+319
+00:25:10,380 --> 00:25:32,700
+They are somewhat beyond the topic that we discussed. But at least, now you know the path, we have to find out more information. We cannot cover everything, but at least you know the path, then you can refer some books, some material.
+
+320
+00:25:32,700 --> 00:25:39,259
+For example, if you want to get the true analog output using RC filter,
+
+321
+00:25:39,380 --> 00:25:45,299
+you can read some electronic books for the equation to calculate R and C values.
+
+322
+00:25:45,779 --> 00:25:46,359
+Any questions?
+
+323
+00:25:47,400 --> 00:25:48,640
+Excuse me, sir.
+
+324
+00:25:48,640 --> 00:25:48,859
+Yeah.
+
+325
+00:25:49,099 --> 00:25:57,740
+In the reaction time question, what is the use of S-Ren and REN?
+
+326
+00:25:58,640 --> 00:26:00,480
+I did that.
+
+327
+00:26:00,799 --> 00:26:02,240
+The question is not clear.
+
+328
+00:26:02,700 --> 00:26:13,700
+some disturbance. Can you ask again? Sir, how can we use a timer for sRAN function and in the reaction timer?
+
+329
+00:26:13,700 --> 00:26:26,700
+Random number generation? Yes, sir. Right. Now, random number generation in the typical general purpose programming,
+
+330
+00:26:26,700 --> 00:26:32,940
+Before we call random number generator, we need to seed the random number generator.
+
+331
+00:26:33,599 --> 00:26:41,000
+Before we use the random number generator, we seed the random number generator using a random seed.
+
+332
+00:26:41,940 --> 00:26:46,579
+The random seed normally we use is the type from the system clock type.
+
+333
+00:26:47,240 --> 00:26:50,059
+Then only the random number generator becomes pure random.
+
+334
+00:26:50,059 --> 00:26:54,480
+Otherwise, if somebody knows the random number generator algorithm,
+
+335
+00:26:55,480 --> 00:26:57,880
+so he can predict the next value very easily.
+
+336
+00:26:58,420 --> 00:27:00,299
+If you know the algorithm, he can predict the next value.
+
+337
+00:27:00,380 --> 00:27:01,259
+Then it is not random.
+
+338
+00:27:02,079 --> 00:27:04,319
+But you can make it random, pure random,
+
+339
+00:27:04,640 --> 00:27:10,160
+by providing a random seed to the random number generator.
+
+340
+00:27:10,400 --> 00:27:14,539
+Typically, we use the system time because system time varies.
+
+341
+00:27:14,920 --> 00:27:16,059
+It is not a fixed value.
+
+342
+00:27:16,259 --> 00:27:19,960
+So if you seed the random number generator using system time,
+
+343
+00:27:20,059 --> 00:27:22,480
+right? It's very difficult
+
+344
+00:27:22,480 --> 00:27:24,359
+to predict the next value
+
+345
+00:27:24,359 --> 00:27:26,380
+generated by the random number generator
+
+346
+00:27:26,380 --> 00:27:28,880
+but when it comes to microcontrollers
+
+347
+00:27:28,880 --> 00:27:30,599
+we don't have system plug
+
+348
+00:27:30,599 --> 00:27:32,700
+system time we don't have
+
+349
+00:27:32,700 --> 00:27:34,619
+right? So we can
+
+350
+00:27:34,619 --> 00:27:36,700
+use something related
+
+351
+00:27:36,700 --> 00:27:38,519
+to that to see if the
+
+352
+00:27:38,519 --> 00:27:40,460
+random number generator. Some
+
+353
+00:27:40,460 --> 00:27:42,539
+random seed we can use
+
+354
+00:27:42,539 --> 00:27:44,299
+right? One way is
+
+355
+00:27:44,299 --> 00:27:46,180
+we can using a timer
+
+356
+00:27:46,180 --> 00:27:47,940
+we can measure
+
+357
+00:27:47,940 --> 00:27:56,940
+the time elapses since we started the board, since we supplied the power to board, time elapses.
+
+358
+00:27:56,940 --> 00:28:08,940
+And that time is a random time. When you trigger the reaction timer to calculate the time,
+
+359
+00:28:08,940 --> 00:28:16,940
+from the time you power up the board to the time that you used the reaction timer.
+
+360
+00:28:16,940 --> 00:28:24,700
+number. That elapsed time is a random amount of time. That time you can use to seed the
+
+361
+00:28:24,700 --> 00:28:31,579
+random number generator. That's one way. There's another way. Using a random analog
+
+362
+00:28:31,579 --> 00:28:40,299
+input, you can seed the random number generator. I think in the second or third part of the
+
+363
+00:28:40,299 --> 00:28:48,859
+exercise you have that using a floating analog input because floating analog input means analog
+
+364
+00:28:48,859 --> 00:28:55,420
+pin you have not connected to any sensor but that pin generates a random voltage
+
+365
+00:28:56,460 --> 00:29:02,220
+random analog voltage because of the electromagnetic interferences around the system
+
+366
+00:29:02,220 --> 00:29:29,519
+There are a lot of electromagnetic signals. So any pin, right, which you have not connected to any sensor is called a floating pin. That pin acts as an antenna. So it generates a small voltage. That's voltage you can convert into a number using ADC. And that voltage we don't know. That's a purely random voltage. You can use that to see the random number generally.
+
+367
+00:29:29,519 --> 00:29:33,440
+So that is in the second or third part of the exercise.
+
+368
+00:29:33,440 --> 00:29:37,539
+In the first part, it asks you to use a timer.
+
+369
+00:29:37,779 --> 00:29:39,940
+That means elapsed time you have to use.
+
+370
+00:29:40,619 --> 00:29:53,980
+Elapsed time is a purely random time because the point that you power up the board and the point that you first going to use the reaction time.
+
+371
+00:29:54,680 --> 00:29:58,759
+That elapsed time is a purely random value for different users.
+
+372
+00:29:58,759 --> 00:30:03,839
+and that value you can use to seed the random number generator.
+
+373
+00:30:04,380 --> 00:30:08,759
+Thereafter, all the random numbers you generate would be pure random.
+
+374
+00:30:08,900 --> 00:30:10,660
+Otherwise, it is not pure random.
+
+375
+00:30:11,400 --> 00:30:14,819
+Without seeding the random number generator with a random seed,
+
+376
+00:30:14,920 --> 00:30:18,980
+if you try to generate random numbers and if you know the algorithm,
+
+377
+00:30:19,180 --> 00:30:20,660
+you can predict the value very easily.
+
+378
+00:30:21,200 --> 00:30:21,839
+You got the answer?
+
+379
+00:30:22,500 --> 00:30:23,220
+Yes, sir.
+
+380
+00:30:23,220 --> 00:30:27,299
+Do we have to use two timers?
+
+381
+00:30:28,339 --> 00:30:32,200
+Eight to sixteen, three timers.
+
+382
+00:30:33,019 --> 00:30:33,920
+Yeah, yeah, yeah.
+
+383
+00:30:34,680 --> 00:30:35,299
+Yes, yes.
+
+384
+00:30:35,720 --> 00:30:36,299
+Thank you.
+
+385
+00:30:36,839 --> 00:30:41,460
+So I would like to guide you to the answer rather than giving you the answer.
+
+386
+00:30:42,619 --> 00:30:45,779
+So keep asking questions.
+
+387
+00:30:46,400 --> 00:30:49,559
+Then I'll guide you to the answer.
+
+388
+00:30:49,559 --> 00:30:51,339
+I will tell you the answer.
+
+389
+00:30:53,220 --> 00:30:58,220
+If you have any questions, you can guide us.
+
+390
+00:30:58,220 --> 00:31:03,220
+If you have any questions, you can answer your questions.
+
+391
+00:31:03,220 --> 00:31:07,220
+So, I have a few hints, tips I can give you.
+
+392
+00:31:07,220 --> 00:31:10,220
+Not the direct answer. No.
+
+393
+00:31:10,220 --> 00:31:14,220
+There is no point. You should be able to find out your own answer.
+
+394
+00:31:14,220 --> 00:31:17,220
+But I know these questions are really tough.
+
+395
+00:31:17,220 --> 00:31:21,220
+Therefore, right? So I am happy to help you.
+
+396
+00:31:21,220 --> 00:31:26,740
+help me so if you are keen in solving these questions i'm ready to help you not direct
+
+397
+00:31:26,740 --> 00:31:46,660
+answers but i'll guide you right what else you want to know right if no more questions that's all
+
+398
+00:31:46,660 --> 00:31:53,180
+for today and next week we'll start data communication right the last topic probably
+
+399
+00:31:53,180 --> 00:32:00,220
+we may have to spend two weeks to complete that two or more not one week it's a little bit lengthy
+
+400
+00:32:00,220 --> 00:32:07,240
+subject so data communication how micro controllers or embedded systems communicate with other
+
+401
+00:32:07,240 --> 00:32:13,799
+systems right data communication serial communication parallel communication synchronous communication
+
+402
+00:32:13,799 --> 00:32:21,960
+a synchronous communication right and ultimately using the easiest way Arduino using serial
+
+403
+00:32:22,680 --> 00:32:33,559
+that biggie serial print those are like very easy but what happens behind the scene first we'll learn
+
+404
+00:32:34,599 --> 00:32:40,680
+then we'll come to Arduino okay so that's it thank you thank you sir
+

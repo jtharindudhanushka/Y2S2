@@ -1,0 +1,106 @@
+[0:00] Then what is the purpose of having transmit complete flag bit and transmit complete interrupt.
+[0:09] Maximum throw puttaka humway nothing, it is a bambu.
+[0:14] So they can act like a person.
+[0:16] I get a gun.
+[0:17] I'm not a practical example.
+[0:20] Okay.
+[0:21] I'll give you an example.
+[0:26] Good.
+[0:27] In half duplex communication.
+[0:32] So what is half duplex communication?
+[0:35] Can you give me an example for half duplex communication?
+[0:41] Data can be transferred through only one side at a time?
+[0:45] Example?
+[0:47] I need to ask you to explain.
+[0:50] Walk it off.
+[0:52] Walk it off.
+[0:53] Walk it off.
+[0:55] Walk it off.
+[0:58] So when one person talks, other person has to listen.
+[1:02] When that person talks, the first person has to listen.
+[1:06] One-way communication.
+[1:08] In that kind of half duplex communication, we need to know whether the transmit is complete before releasing the channel for the other party to communicate.
+[1:22] So that's why when you are using walkie talkies, when you have finished talking, you say over.
+[1:29] That is to indicate the other party that you are over.
+[1:34] So, the other party can use the communication channel to transmit.
+[1:40] And again, the other party comes to the end of whatever his message, then he will say over.
+[1:51] That indicates the other party is over and you can communicate.
+[1:55] So, likewise, when we are using half-duplex communication,
+[2:00] You want to know, you need to know whether the transmit is complete or then only you can give the channel to the other party.
+[2:12] That means we need to know we have transmitted everything and nothing is left in the buffer before we releasing the channel.
+[2:23] In that case, TXC flag is very useful.
+[2:29] Because TXC flag indicates transmit shift register empty, UDR data register empty, both empty.
+[2:38] Nothing is left.
+[2:39] Nothing is left in the buffer.
+[2:41] Nothing is left in the middle.
+[2:43] Everything shifted out.
+[2:45] So you can give the channel to the other part.
+[2:48] It's like the overwork in the walkie-talkie communication.
+[2:54] Is that clear?
+[2:56] Yes, sir.
+[2:56] Another example.
+[2:59] Right.
+[3:00] A power saving application.
+[3:02] Let's say you develop a system.
+[3:05] That system has a mode, power saving mode.
+[3:09] So in the power saving mode, all the peripheral devices are disabled to save power, including usite.
+[3:17] Sometimes you develop an embedded system which has a power saving.
+[3:22] Sometimes some embedded systems you have to run using battery power.
+[3:27] Using a small battery you have to run the system many hours, sometimes many days, many
+[3:32] months and sometimes it is difficult to replace the battery when the battery is run out of
+[3:37] power.
+[3:38] Think about the military systems.
+[3:41] You have some spy device.
+[3:44] You have installed that device behind the enemy lines.
+[3:48] Using a tiny battery, the device transmits enemy movements.
+[3:53] It's a spy device.
+[3:55] Right?
+[3:56] Now, when the battery is run out of power, can you go behind the enemy lines and replace
+[4:02] the battery?
+[4:03] No, that is not possible.
+[4:05] Therefore, you need a power saving mode.
+[4:08] So when the transmission is over, you need to switch the device to the battery saving
+[4:14] mode, power saving.
+[4:16] When the transmission is over, you need to switch to the power saving mode.
+[4:20] In the power saving mode, all the peripheral devices are disabled to save power.
+[4:26] But before we switch into the power saving mode, we need to make sure transmission is
+[4:33] complete.
+[4:34] All the data shifted out.
+[4:37] Nothing is left.
+[4:38] All the data in the shift register shifted out.
+[4:45] Nothing is in the UDR data register.
+[4:48] We need to make sure before we turn off the USART peripheral to save power.
+[4:56] Another application of TXC flag.
+[5:00] Because TXC flag indicates, both TXC flag as well as transmit complete interrupt, they
+[5:09] indicate all the data transmitted, nothing is left.
+[5:14] So using that indication, you can turn off the user to save the power.
+[5:21] Can you do that with UDRE?
+[5:24] UDRE indicates UDRE register, USART data register is in, but that doesn't guarantee transmit
+[5:34] shift register is in. There may be data in the transmit shift register. If you turn off
+[5:40] the USART peripheral, while some data in the transmit shift register, those data will not
+[5:47] be transmitted. Therefore, you can't use such situations UDRE flag with O, user data registered
+[5:56] empty interrupt. Is that clear? Is that clear? Right?
+[6:02] There is no flag.
+[6:05] There is no flag.
+[6:08] Oh, that's right.
+[6:10] You said that you were in the lab and you were in the program.
+[6:16] You were in the program and you were in the program.
+[6:20] You said you were in the saving and you were in the alert.
+[6:25] You were in the alert.
+[6:28] [unclear — Sinhala / crosstalk]
+[6:58] There may be data in the transmit shipping. Now if you turn off the user to the referral,
+[7:16] then you would lose whatever data in the transmission. So that's why we have TXC flag
+[7:24] and transmit complete interrupt. So, in the appropriate, the suitable situation, suitable
+[7:31] applications, we have to use correct flag with correct input. The maximum throughput you can
+[7:38] get with UDRA flag with O, use our data register empty input, you can get maximum throughput. But
+[7:46] In fact, some situations, TXC flag transmit complete implant.
+[7:53] They become useful.
+[7:54] Is it clear?
+[7:55] Yes.
+[7:56] Right.
+[7:58] Now, you can see here the CPU.
+[8:03] CPU loads entire character to UDR.
+[8:07] CPU loads entire character to UDR.
+[8:11] UDR transfers entire character to transmit shippers.
+[8:15] Transmit shift register transmits bit by bit from TXV. So input is multiple data, 8 bit character input. Input is 8 bit character. Output is bit by bit. Input parallel, output same.
+[8:37] Can you understand? Input parallel, output 0. So, 8-bit character you load to UDR. UDR processes 8-bit character to transmit ship register. Transmit ship register transmits bit by. So, 8-bit means parallel means. Input parallel, output 0.

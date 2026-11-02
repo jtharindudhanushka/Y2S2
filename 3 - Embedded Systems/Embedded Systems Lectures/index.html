@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex, nofollow">
+<title>Embedded Systems Lectures</title>
+<style>
+:root{--bg:#fff;--panel:#fff;--ink:#000;--mute:#5e5e5e;--line:#e8e8e8;--soft:#f3f3f3;--acc:#000;--on-acc:#fff;--hl:#eeeeee;--good:#06c167;--shade:rgba(0,0,0,.6)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#000;--panel:#141414;--ink:#fff;--mute:#a6a6a6;--line:#2a2a2a;--soft:#1f1f1f;--acc:#fff;--on-acc:#000;--hl:#262626;--shade:rgba(0,0,0,.75)}}
+:root[data-theme=dark]{--bg:#000;--panel:#141414;--ink:#fff;--mute:#a6a6a6;--line:#2a2a2a;--soft:#1f1f1f;--acc:#fff;--on-acc:#000;--hl:#262626;--shade:rgba(0,0,0,.75)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.app{display:grid;grid-template-columns:340px 1fr;height:100vh}
+aside{border-right:1px solid var(--line);overflow:auto;padding:20px 16px}
+main{overflow:auto;padding:24px 32px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:2px}
+h1{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0}
+.sub{color:var(--mute);font-size:13.5px;margin:4px 0 14px}
+.btn,.links a,.tog,.card button{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;
+  border:0;border-radius:999px;padding:9px 14px;line-height:1.2;background:var(--soft);color:var(--ink)}
+.links a.pri,.card button{background:var(--acc);color:var(--on-acc)}
+.btn:hover,.links a:hover,.tog:hover{filter:brightness(.92)}
+.btn.sm{padding:7px 12px;font-size:13px}
+input[type=search]{width:100%;padding:11px 14px;border:0;border-radius:12px;background:var(--soft);color:var(--ink);font:inherit;margin-bottom:12px;outline:none}
+input[type=search]:focus{box-shadow:0 0 0 2px var(--acc)}
+.lec{border-top:1px solid var(--line);padding:10px 0}
+.lec>button{all:unset;cursor:pointer;display:block;width:100%;padding:6px 8px;border-radius:10px;box-sizing:border-box}
+.lec>button:hover{background:var(--soft)}
+.lec .t{font-weight:700;font-size:15px;letter-spacing:-.01em}.lec .m{color:var(--mute);font-size:13px}
+.lec.pending{opacity:.5;padding-left:8px}.lec.pending .t{font-weight:600}
+.secs{margin:6px 0 2px;padding:0;list-style:none}
+.secs li{display:flex;gap:10px;align-items:center;padding:6px 8px;font-size:14px;border-radius:10px}
+.secs li:hover{background:var(--soft)}
+.secs li.on{background:var(--acc);color:var(--on-acc)}.secs li.on .d{color:inherit;opacity:.75}
+.lec>button.on{background:var(--soft)}
+.ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.note{display:flex;gap:10px;align-items:flex-start}.note .ic{margin-top:2px}
+.secs li a{color:inherit;text-decoration:none;cursor:pointer;flex:1}
+.secs li .d{color:var(--mute);font-size:12.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.player{position:relative;border-radius:14px;overflow:hidden;background:#000}
+.player:fullscreen{border-radius:0;display:flex;align-items:center}
+video{display:block;width:100%;max-height:62vh;background:#000}
+.player:fullscreen video{max-height:100vh;height:100%}
+audio{width:100%;display:block}
+.player.audio{background:none;overflow:visible}
+.wm{position:absolute;top:6px;right:8px;text-align:right;pointer-events:none;color:#fff;opacity:.55;white-space:pre;
+  font-size:10.5px;line-height:1.35;text-shadow:0 1px 2px #000,0 0 6px #000}
+.player:fullscreen .wm{font-size:14px;top:12px;right:16px}
+@media (max-width:560px){.wm{font-size:9px}}
+.player.audio .wm{position:static;color:var(--mute);text-shadow:none;max-width:none;opacity:1;margin-top:6px}
+.slide{margin-top:10px;border-radius:14px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+.slide img{display:block;width:100%;height:auto}
+.slide[hidden]{display:none}
+.tog{margin-top:12px}
+.head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.head h2{font-size:21px;font-weight:800;letter-spacing:-.02em;margin:0}
+.links{display:flex;gap:8px;flex-wrap:wrap}
+.note{font-size:14px;color:var(--ink);background:var(--soft);border-radius:12px;padding:12px 14px;margin:10px 0}
+.tr{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.tr p{margin:0;padding:7px 10px;border-radius:10px;cursor:pointer}
+.tr p:hover{background:var(--soft)}.tr p.cur{background:var(--hl);font-weight:500}
+.tr span{color:var(--mute);font-variant-numeric:tabular-nums;margin-right:12px;font-size:13px;font-weight:600}
+.hits p b{background:var(--acc);color:var(--on-acc);border-radius:4px;padding:0 3px}
+.empty{color:var(--mute);margin-top:30vh;text-align:center;font-size:17px}
+.modal{position:fixed;inset:0;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.modal[hidden]{display:none}
+.card{background:var(--panel);color:var(--ink);max-width:520px;border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.card h3{margin:0 0 12px;font-size:21px;font-weight:800;letter-spacing:-.02em}
+.card p{margin:0 0 12px;font-size:15px}
+.card button{margin-top:8px;width:100%;justify-content:center;padding:14px}
+.foot{color:var(--mute);font-size:12.5px;margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.foot a{color:inherit}
+@media (max-width:800px){.app{grid-template-columns:1fr;height:auto}aside{border-right:0;border-bottom:1px solid var(--line);max-height:55vh}main{padding:16px}.head h2{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="top"><h1>Embedded Systems</h1><button class="btn sm" id="theme" aria-label="Switch colour theme"></button></div>
+  <div class="sub" id="stats"></div>
+  <input type="search" id="q" placeholder="Search all transcripts…">
+  <div id="list"></div>
+  <div class="foot">For educational use only · do not share outside the batch · <a id="notice-link" href="#">notice</a></div>
+</aside>
+<main id="main"><div class="empty">Pick a lecture or section on the left.</div></main>
+</div>
+<div class="modal" id="notice" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="nt">
+    <h3 id="nt">Before you start</h3>
+    <p>These are recordings of the previous year's Embedded Systems lectures that were already shared in our batch WhatsApp groups. We have only structured and organised them so they are easier to find and study.</p>
+    <p><b>Please keep them within the batch — do not share the recordings or this link with outsiders.</b></p>
+    <p>We hold no responsibility for the content. This is purely an educational effort to make revision easier.</p>
+    <p>Happy learning!</p>
+    <button id="ack">I understand</button>
+  </div>
+</div>
+<script src="index-data.js"></script>
+<script>
+const L = window.LECTURES || [];
+const WM = window.WATERMARK || "";
+const $ = s => document.querySelector(s);
+const fmt = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60;
+  return (h ? h + ":" + String(m).padStart(2,"0") : m) + ":" + String(x).padStart(2,"0"); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const href = p => /^https?:/.test(p) ? p : encodeURI(p);
+const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+let cur = null, stopAt = null, showSlides = store("slides") !== "0";
+
+const svg = d => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+const I = {
+  dl: svg('<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>'),
+  doc: svg('<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/>'),
+  zip: svg('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M10 13h4"/>'),
+  play: svg('<path d="m8 5 11 7-11 7z"/>'),
+  info: svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>'),
+  auto: svg('<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>'),
+  light: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  dark: svg('<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>'),
+  slides: svg('<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>'),
+};
+const themes = ["auto", "light", "dark"], tlabel = { auto: I.auto + "Auto", light: I.light + "Light", dark: I.dark + "Dark" };
+let theme = store("theme") || "auto";
+const applyTheme = () => { if (theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.dataset.theme = theme; $("#theme").innerHTML = tlabel[theme]; };
+$("#theme").onclick = () => { theme = themes[(themes.indexOf(theme) + 1) % 3]; store("theme", theme); applyTheme(); };
+applyTheme();
+const notice = $("#notice");
+if (store("ack-notice") !== "1") notice.hidden = false;
+$("#ack").onclick = () => { store("ack-notice", "1"); notice.hidden = true; };
+$("#notice-link").onclick = e => { e.preventDefault(); notice.hidden = false; };
+
+function renderList() {
+  const ready = L.filter(l => !l.pending);
+  const hrs = ready.reduce((a, l) => a + l.duration, 0) / 3600;
+  $("#stats").textContent = `${ready.length}/${L.length} lectures ready · ${hrs.toFixed(1)} hours`;
+  $("#list").innerHTML = L.map((l, i) => {
+    if (l.pending) return `<div class="lec pending"><div class="t">${String(l.n).padStart(2,"0")}. Lecture of ${esc(l.date)}</div><div class="m">Being processed — check back soon</div></div>`;
+    return `<div class="lec"><button data-l="${i}" class="${cur && cur.l === i && cur.s == null ? "on" : ""}">
+      <div class="t">${String(l.n).padStart(2,"0")}. ${esc(l.title)}</div>
+      <div class="m">${esc(l.date)} · ${fmt(l.duration)}${l.audio ? " · audio" : ""} · ${l.sections.length} sections</div></button>
+      <ul class="secs">${l.sections.map((s, j) => `<li class="${cur && cur.l === i && cur.s === j ? "on" : ""}">
+        <a data-l="${i}" data-s="${j}">${j+1}. ${esc(s.title)}</a><span class="d">${fmt(s.end - s.start)}</span></li>`).join("")}</ul></div>`;
+  }).join("");
+}
+
+function open(li, si, at) {
+  const l = L[li], s = si == null ? null : l.sections[si];
+  if (!l || l.pending) return;
+  cur = { l: li, s: si };
+  // A local section clip exists only in the full local library; online and in offline packs we play the range of the full recording.
+  const clip = s && s.file && !l.url, off = clip ? s.start : 0;
+  const src = href(clip ? s.file : (l.url || l.file));
+  const lines = l.segs.filter(g => !s || (g[0] >= s.start - 1 && g[0] < s.end));
+  if (s && !clip && at == null) at = s.start;
+  stopAt = s && !clip ? s.end : null;
+  const media = l.audio ? `<audio id="v" controls preload="metadata" src="${src}"></audio>` : `<video id="v" controls preload="metadata" playsinline src="${src}"></video>`;
+  const dl = [];
+  dl.push(`<a class="pri" href="${href(l.url || l.file)}" download>${I.dl}Download ${l.audio ? "audio" : "video"}</a>`);
+  dl.push(`<a href="${href(s ? s.text : l.transcript)}" download>${I.doc}Download transcript</a>`);
+  if (l.zip) dl.push(`<a href="${href(l.zip)}">${I.zip}Offline pack${l.zip_mb ? " · " + l.zip_mb + " MB" : ""}</a>`);
+  if (s) dl.unshift(`<a data-l="${li}">${I.play}Full lecture</a>`);
+  $("#main").innerHTML = `${l.audio ? `<div class="note">${I.info}<span>This lecture was a voice recording. The relevant slides were added later at the matching points, so the audio quality is lower than the video lectures.</span></div>` : ""}<div class="player${l.audio ? " audio" : ""}" id="pl">${media}${WM ? `<div class="wm">${esc(WM)}</div>` : ""}</div>
+    ${l.slides && l.slides.length ? `<button class="tog" id="tog">${I.slides}<span>${showSlides ? "Hide slides" : "Show slides"}</span></button>
+    <div class="slide" id="slide" ${showSlides ? "" : "hidden"}><img id="slideimg" alt="Lecture slide"></div>` : ""}
+    <div class="head"><h2>${s ? `${l.n}.${si+1} ${esc(s.title)}` : `${l.n}. ${esc(l.title)}`}</h2><div class="links">${dl.join("")}</div></div>
+    <div class="sub">${l.audio ? "Audio-only recording (no video was recorded) · " : ""}${esc(l.date)}${l.summary ? " · " + esc(l.summary) : ""}</div>
+    ${s && !clip ? `<div class="note">Playing ${fmt(s.start)}–${fmt(s.end)} of the full lecture; it pauses at the end of this section.</div>` : ""}
+    <div class="tr">${lines.map(g => `<p data-t="${g[0] - off}"><span>${fmt(g[0] - off)}</span>${esc(g[1])}</p>`).join("")}</div>`;
+  const v = $("#v");
+  v.addEventListener("error", () => {
+    if (!$("#err")) $("#pl").insertAdjacentHTML("afterend", `<div class="note" id="err">This recording can't be loaded right now. If you opened an offline pack, keep index.html next to the lecture folder.</div>`);
+  });
+  if (at != null) v.addEventListener("loadedmetadata", () => { v.currentTime = at; v.play().catch(() => {}); }, { once: true });
+  const slideAt = t => { let p = null; for (const [a, f] of l.slides || []) if (a <= t + 0.5) p = f; return p; };
+  const showSlide = () => { const im = $("#slideimg"), f = slideAt(v.currentTime || at || 0); if (im && f && im.dataset.f !== f) { im.dataset.f = f; im.src = href(f); } };
+  showSlide();
+  v.addEventListener("seeked", showSlide);
+  v.addEventListener("timeupdate", () => {
+    showSlide();
+    if (stopAt != null && v.currentTime >= stopAt) { v.pause(); stopAt = null; }
+    const ps = [...document.querySelectorAll(".tr p")]; let k = -1;
+    for (let i = 0; i < ps.length && +ps[i].dataset.t <= v.currentTime; i++) k = i;
+    const old = $(".tr p.cur"); if (old && old !== ps[k]) old.classList.remove("cur");
+    if (k >= 0) ps[k].classList.add("cur");
+  });
+  renderList(); $("main").scrollTop = 0;
+}
+
+// keep the watermark visible in fullscreen: fullscreen the wrapper instead of the bare <video>
+document.addEventListener("fullscreenchange", () => {
+  const v = $("#v"), pl = $("#pl");
+  if (v && pl && document.fullscreenElement === v) document.exitFullscreen().then(() => pl.requestFullscreen()).catch(() => {});
+});
+
+function search(q) {
+  q = q.trim().toLowerCase(); if (q.length < 3) return;
+  const hits = [];
+  L.forEach((l, li) => !l.pending && l.segs.forEach(g => { if (g[1].toLowerCase().includes(q)) hits.push([li, g]); }));
+  const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig");
+  $("#main").innerHTML = `<div class="head"><h2>${hits.length} matches for “${esc(q)}”</h2></div><div class="tr hits">` +
+    hits.slice(0, 400).map(([li, g]) => `<p data-l="${li}" data-at="${g[0]}"><span>${L[li].n} · ${fmt(g[0])}</span>${esc(g[1]).replace(re, m => `<b>${m}</b>`)}</p>`).join("") + "</div>";
+}
+
+document.addEventListener("click", e => {
+  const tg = e.target.closest("#tog");
+  if (tg) { showSlides = !showSlides; store("slides", showSlides ? "1" : "0"); $("#slide").hidden = !showSlides; tg.querySelector("span").textContent = showSlides ? "Hide slides" : "Show slides"; return; }
+  const p = e.target.closest(".tr p"), a = e.target.closest("[data-l]");
+  if (p && p.dataset.at != null) return open(+p.dataset.l, null, +p.dataset.at);
+  if (p) { const v = $("#v"); stopAt = null; v.currentTime = +p.dataset.t; v.play().catch(() => {}); return; }
+  if (a) open(+a.dataset.l, a.dataset.s == null ? null : +a.dataset.s);
+});
+let tm; $("#q").addEventListener("input", e => { clearTimeout(tm); tm = setTimeout(() => search(e.target.value), 250); });
+renderList();
+if (!L.length) $("#main").innerHTML = `<div class="empty">No lectures found. Keep index.html and index-data.js together.</div>`;
+</script>
+</body>
+</html>

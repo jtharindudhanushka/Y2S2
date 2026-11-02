@@ -1,0 +1,2488 @@
+10 - Polling and Interrupts 2 - Interrupt Handling & ISRs  (20 Oct 2020 (afternoon))
+
+[0:00] Right. So can you see the slides? No, sir. No? No. No. All right. Now can you see the slides? Yes, sir. Right. Right. Now, did you develop that application? So what kind of experience you got when you increase the time interval or decrease the time interval? Who developed that application? Yes. Hirasha, you developed? Yes.
+[0:29] Yes sir. When we input the time, the button is not, the response is not shown by the button.
+[0:42] That means always you don't get the response, so sometimes.
+[0:47] Sometimes, slowly, when you...
+[0:54] Sometimes your input is not detected.
+[0:57] Sometimes it is detected.
+[1:00] How about others experience?
+[1:04] Quick response.
+[1:09] When you keep on pressing,
+[1:13] both LEDs
+[1:14] work in the same.
+[1:18] That means you have to give many inputs.
+[1:21] You have to hold the button
+[1:23] press. Yes sir. How about if you give a quick button press? If the delay is small, if the
+[1:35] delay is about 200 milliseconds, then a quick push is enough. But even in 200 milliseconds
+[1:45] sometimes the input is not recognized. Not detected. Sometimes. Right. Right. Okay. This
+[1:52] This is the experience that you should have.
+[1:55] Right.
+[1:56] The reason is this.
+[1:58] Now let's go back to our lesson.
+[2:01] Problems of polling.
+[2:04] If the state of a device.
+[2:06] Changes too fast.
+[2:08] The device state.
+[2:10] That is the peripheral device.
+[2:11] In this case your button.
+[2:13] State change of the button is too fast.
+[2:16] That's what you mentioned.
+[2:18] Quick press.
+[2:19] And press and hold.
+[2:21] is a long press.
+[2:24] That is the device, the state change is not that fast.
+[2:28] So you press and hold the button sometime.
+[2:32] That means it's a long press and the device,
+[2:37] the state change is not that fast.
+[2:39] The state was high.
+[2:41] When you press, it became low and it remains low, right?
+[2:47] certain amount of time because you press and hold the button. Now that is not the case.
+[2:54] The situation is you press and release. The state change, high, low. It was high initially.
+[3:02] You press the button. The state became low. State change happened. But it happened very quickly.
+[3:09] If the state change is too fast or processors, CPUs, device monitoring interval is too long.
+[3:20] Now, if you use 2 seconds, 2000 milliseconds device monitoring interval, that is a long interval, right?
+[3:30] If you use 200 millisecond interval, right, as Srinjit told, 200 millisecond, then it's a small interval, right?
+[3:44] So if the device monitoring interval is too long, the state change may go undetected.
+[3:53] Now two situations. One is state change is very fast. State change is very fast so state change may go undetected. The device state change may go undetected if the device state change is too fast.
+[4:11] The second situation, the device state change is not that fast.
+[4:17] But device monitoring, state change monitoring interval is too long.
+[4:24] Right?
+[4:24] So even if you use a long press, if the device monitoring interval is let's say 5 seconds or 10 seconds,
+[4:32] then it may go undetected.
+[4:35] That state change, the button press may go undetected.
+[4:39] This is a serious problem.
+[4:40] You press the button, but the system would not recognize that because you did a quick button press.
+[4:48] Or you press the button.
+[4:50] It's not a quick button press.
+[4:52] It's a normal button press.
+[4:55] Right.
+[4:56] But the monitoring interval is too long.
+[5:00] So your button press may go undetected.
+[5:04] Right.
+[5:04] Now think about a situation like ABS, Antilock Braking System.
+[5:11] The system monitors the rotational speed of each and every wheel.
+[5:17] It monitors the first wheel.
+[5:19] It monitors the rotational speed of the second wheel.
+[5:23] It monitors the rotational speed of the third wheel.
+[5:26] Then it monitors the rotational speed of the fourth wheel.
+[5:29] and it comes back to the monitoring of rotational speed of the first wheel again.
+[5:35] Likewise, repeatedly it monitors the rotational speed of all wheels one by one.
+[5:42] Right. Now, while you are monitoring the rotational speed of the second wheel,
+[5:50] listen carefully, while you are monitoring the rotational speed of the second wheel,
+[5:59] the first wheel
+[6:00] rotational speed
+[6:02] goes down for a moment.
+[6:06] After monitoring
+[6:07] the rotational speed
+[6:09] of the second wheel you move to the
+[6:10] third wheel. Then you move to the
+[6:13] fourth wheel and then you come back to the
+[6:15] first wheel. At that time
+[6:17] first wheel is again
+[6:18] rotating normally. But it
+[6:21] was somewhat slow
+[6:23] right?
+[6:25] Just a moment ago.
+[6:27] But we couldn't detect
+[6:28] that. Why? We were monitoring the rotational speed of the second wheel. After that, we go to the third
+[6:36] wheel, fourth wheel and come back to the first wheel. There's a certain time. During that time,
+[6:42] the first wheel rotational speed go down and then it come back to the normal state. That speed
+[6:51] change we couldn't detect. As a result, during that small moment, the car can go off direction.
+[7:00] A very serious problem, especially a system like ABS, safety critical system, right? Let me do
+[7:09] explain it again. Let's say anti-lock braking system. Now there are four wheels in the car.
+[7:17] We need to monitor the rotational speed of each and every wheel one after another.
+[7:24] And if one wheel is slower than others, we need to release the brake of that wheel to bring the rotational speed of that wheel back to the speed of the other wheels.
+[7:35] So that we can prevent the car going any off direction.
+[7:41] Now this is the way.
+[7:42] we monitor the first wheel rotational speed, then we go to the second wheel, we monitor the second
+[7:49] wheel rotational speed, we go to the third wheel, we monitor the third wheel rotational speed, we go
+[7:54] to the fourth wheel, we monitor the fourth wheel rotational speed, we go to the first wheel again,
+[7:59] this is the way we rotate, now we monitored the first wheel, it is okay, it is rotting normally
+[8:08] and then we move to the second wheel.
+[8:10] While we were monitoring
+[8:12] the second wheel
+[8:13] rotational speed
+[8:16] the first wheel rotational
+[8:18] speed, right, went out.
+[8:20] But we can't detect that.
+[8:22] Why? We are monitoring
+[8:24] the second wheel. Then we
+[8:26] go to the third wheel, monitoring
+[8:28] the third wheel, we go to the
+[8:30] fourth wheel, monitoring the fourth wheel
+[8:32] then we come back to the first wheel
+[8:34] monitoring. When we come
+[8:36] back to the first wheel monitoring
+[8:37] the rotational speed of the first wheel has come back to the normal.
+[8:41] So that speed change in the first wheel went undetected.
+[8:49] During that small brief time period, due to the speed change of the first wheel,
+[8:56] the vehicle can go some off direction.
+[9:00] Depending on the speed of the vehicle, you may face a very critical accident.
+[9:07] So very serious problem.
+[9:09] Input, right, may go undetected.
+[9:13] That's the situation.
+[9:14] That's the problem.
+[9:16] The input may go undetected because the input is too fast.
+[9:22] Either input is too fast.
+[9:24] One possible situation.
+[9:26] The state change of the input is too fast.
+[9:29] Or your monitoring interval is too long.
+[9:33] You take a lot of time to monitor.
+[9:35] Then during that time, the input may go undetected.
+[9:40] So this is a critical problem of polling.
+[9:44] There is another problem of polling.
+[9:46] No support for the concept of priority as CPU repeatedly perform all tasks in the same order.
+[9:56] Now we know that if there are multiple tasks to perform, some tasks are more important than others.
+[10:04] But unfortunately, if he was polling, all tasks are treated equally.
+[10:12] Why?
+[10:13] The CPU performs all tasks in the same manner, same sequence.
+[10:22] Now in the application that we developed.
+[10:24] So what is the order?
+[10:26] Blink the onboard LED, then monitor the switch.
+[10:32] If the switch has been pressed, toggle the external LED, then again blink the onboard LED.
+[10:43] Monitor the switch.
+[10:44] If pressed, toggle the external LED, monitor the onboard LED.
+[10:49] That is the sequence.
+[10:51] Now, can we prioritize button press over blinking LED?
+[10:58] Onboard blinking LED, less priority.
+[11:00] button press monitoring more priority. Can we change the priority? No. Because things happen in the same order. So no way to implement the concept of priority. But we know that if there are multiple tasks to perform, some tasks are more important. So we should give more priority than others.
+[11:25] But unfortunately, if you use polling, you can't implement concept of priority because all tasks are treated in the same manner.
+[11:36] The tasks are executed, tasks are performed by the CPU in the same order.
+[11:43] No priority.
+[11:44] That's another problem of polling.
+[11:47] One problem is input may go undetected.
+[11:50] That could happen because input is too fast.
+[11:53] O, the monitoring interval is too long.
+[11:57] The second problem, no support for the priority.
+[12:00] Can you understand the problems?
+[12:03] Any question?
+[12:04] Right.
+[12:05] If the questions are clear, the problems of polling, what is the solution?
+[12:11] Solution is interrupts.
+[12:13] Now, polling has problems.
+[12:15] To solve those problems, we use interrupts.
+[12:19] Interrupt is a hardware mechanism.
+[12:21] Interrupts is a hardware mechanism.
+[12:24] Right.
+[12:25] Now in interrupts, peripheral devices interrupt the CPU when they need CPU service while CPU is busy with another task.
+[12:38] Right.
+[12:40] CPU is busy with another task.
+[12:42] In our example, blinking the LED.
+[12:45] CPU is busy.
+[12:46] CPU is busy with blinking the onboard LED.
+[12:49] The switch is the external peripheral device.
+[12:53] The switch will interrupt the CPU when somebody press the switch.
+[12:58] When somebody press the switch, switch will interrupt the CPU.
+[13:01] The peripheral device interrupts the CPU when they need CPU service while CPU is busy with another task.
+[13:10] Then what happens?
+[13:11] CPU suspends the currently performing task and provides its service to the interrupted device.
+[13:20] CPU suspends the currently performing task, currently performing task blinking the onboard LED.
+[13:27] So CPU suspends that, temporarily suspends that.
+[13:32] Then CPU provides its service to interrupted device.
+[13:36] Interrupted device is the switch.
+[13:38] Now we have to attend to that device.
+[13:41] So, atten to that device means we need to toggle the external LED.
+[13:46] Thereafter, CPU resumes the task it was doing.
+[13:52] CPU resumes the task it was doing.
+[13:55] That means CPU resumes blinking the LED again.
+[13:59] If again switch press, the switch will notify the CPU.
+[14:05] Switch will interrupt the CPU.
+[14:06] right and then cpu is cpu has to suspend the suspend the task it is doing currently doing
+[14:17] and it has to attend to the switch right now this mechanism frees cpu from monitoring the
+[14:27] state of peripheral devices ah now we are not going to monitor the peripheral devices right
+[14:34] Why? If the
+[14:36] peripheral device needs CPU
+[14:38] service, peripheral
+[14:40] device will interrupt CPU.
+[14:42] So CPU is not going to
+[14:44] monitor.
+[14:45] Now CPU is free
+[14:48] from that burden.
+[14:50] I forgot to tell you that this is
+[14:52] another problem of polling.
+[14:55] Periodically
+[14:56] monitoring. If you are using
+[14:58] polling, you have to periodically
+[15:00] monitor your peripheral
+[15:02] devices. It's a burden.
+[15:04] And it's unnecessary workload.
+[15:06] Unnecessary workload.
+[15:08] Now while reading your newspaper.
+[15:10] Time to time you have to touch the small fellow's nappy.
+[15:15] And see whether it's wet or not.
+[15:17] It's unnecessary work.
+[15:19] Monitoring workload.
+[15:21] That's another problem of polling.
+[15:24] But with interrupts.
+[15:26] Now you don't need to do that.
+[15:27] Now you read the newspaper.
+[15:29] You continuously read the newspaper.
+[15:32] You keep reading the newspaper.
+[15:35] If small fellow wants your attention to get changed the nappy,
+[15:42] the small fellow will interrupt you.
+[15:45] Small fellow will cry.
+[15:46] Then you know that you have to change the nappy.
+[15:49] You are not going to check whether nappy is wet or not.
+[15:52] No, you are not going to do that.
+[15:54] Right?
+[15:55] The small fellow, right?
+[15:57] The baby will interrupt you.
+[15:59] You are keep reading the newspaper.
+[16:02] You even don't see whether the nappy is wet or not.
+[16:05] You don't check.
+[16:07] You keep reading the newspaper.
+[16:08] The small fellow, the baby will let you know when the baby requires your service to get changed the nappy.
+[16:19] How?
+[16:19] The baby, the small fellow will interrupt you.
+[16:23] So small fellow will cry.
+[16:25] Right?
+[16:26] When small fellow starts crying, you know that.
+[16:29] arm so his nappy must be wet so i need to change it right so you are free from monitoring the
+[16:39] peripheral devices again and again you are free now that burden from that burden you are free why
+[16:47] if the if the peripheral device requires your service it will let you know it will interrupt
+[16:54] to you. So you don't need to check. You are not going to monitor. The advantages are now you are
+[17:02] free from monitoring workload, polling work. You are free. The second thing, it doesn't matter the
+[17:10] state change of the peripheral device is too fast or too slow. It doesn't matter. When the peripheral
+[17:16] device requires CPU's attention, the
+[17:20] peripheral device will interrupt the CPU. No matter the state
+[17:24] changes, fast or slow, no problem. The device
+[17:28] will interrupt the CPU. So the state changes
+[17:32] will not go undetected, will not
+[17:37] go, right? State changes will not go undetected,
+[17:40] right? Now because there is no monitoring, right?
+[17:44] You don't need to worry about the monitoring interval.
+[17:48] Whether the monitoring interval is long or short, you don't need to worry.
+[17:52] Why? No monitoring.
+[17:54] You keep reading the newspaper.
+[17:57] When the nappy is wet, the small fellow will cry.
+[18:02] And he will interrupt you.
+[18:04] Then you change his nappy and then again continue the work that was doing.
+[18:11] That is reading the newspaper.
+[18:12] again. If again the nappy becomes wet, the small fellow
+[18:16] will cry. Again change the nappy and continue reading the newspaper.
+[18:20] Very simple. And another advantage,
+[18:24] interrupt supports concept of priority.
+[18:28] Now if there are couple of peripheral devices, several peripheral devices,
+[18:33] you can prioritize one device over
+[18:36] others. If there are multiple sensors connected,
+[18:39] you can give priority for one sensor over others.
+[18:44] Now if you have, let's say, few kids
+[18:48] on the floor playing with their toys,
+[18:52] you are reading the newspaper, you have two kids,
+[18:57] you can give priority for one kid over other kid
+[19:00] because you are not going to monitor. If they won't
+[19:04] interrupt you, the one with the priority will
+[19:08] interrupt you first. If both
+[19:10] need to interrupt you
+[19:11] at the same time
+[19:13] the device
+[19:16] that with the highest priority will
+[19:18] interrupt the CPU first.
+[19:20] So you can implement the concept
+[19:22] of priority also.
+[19:24] Can you understand?
+[19:26] Any question? No.
+[19:28] Steps. Interrupt
+[19:30] handling. Now when
+[19:31] the CPU is
+[19:33] interrupted, CPU
+[19:35] has to handle
+[19:37] the interrupt. When CPU is interrupted by a device, CPU has to handle the interrupt. Now,
+[19:44] what are the steps of interrupt handling? Right, steps. Now, this is your memory, RAM. In the RAM,
+[19:55] you have your instructions. This is the program, instructions. At the beginning of the RAM,
+[20:02] you have the interrupt
+[20:04] vector table. At the
+[20:06] beginning you have the interrupt vector table.
+[20:09] Then you have
+[20:10] the program,
+[20:12] instructions of your firmware.
+[20:14] Then you have interrupt
+[20:16] service routine.
+[20:18] Right. All these things are in the
+[20:20] RAM. Right.
+[20:22] So RAM has address
+[20:24] and instruction. Address, instruction.
+[20:26] Every instruction has an address.
+[20:29] Right.
+[20:30] Now when you run your
+[20:32] firmware the execution begins from address 0 execution begins from address 0 right so address
+[20:42] 0 the first instruction of your firmware from that we begin the execution however then we have
+[20:52] interrupt vector table right if the interrupts are used interrupt vector table is at the top of the
+[21:00] wrap. If interrupts
+[21:03] are used, if interrupts
+[21:05] are not used, this vector table is
+[21:06] not there. If interrupts are
+[21:08] used, the vector table
+[21:10] will be at
+[21:12] the top of the wrap,
+[21:14] at the beginning of the wrap. So
+[21:16] CPU jumps
+[21:18] over the interrupt
+[21:20] vector table and
+[21:22] continue the execution
+[21:24] of your firmware.
+[21:27] So CPU starts execution
+[21:28] from the address 0
+[21:30] the first instruction in address 0
+[21:32] then CPU jumps
+[21:34] over the interrupt vector table
+[21:37] and continues
+[21:38] the execution
+[21:39] of your firmware.
+[21:43] Here you can see
+[21:45] that started
+[21:47] the execution from
+[21:48] address 0
+[21:49] first instruction
+[21:51] then interrupts
+[21:53] we are using interrupt so interrupt
+[21:55] vector table is there
+[21:56] so we jump over the vector table
+[21:59] to next instruction and next instruction, the next instruction. Likewise, instructions are
+[22:07] executed one by one. Right. Now let's assume while you are executing this particular instruction,
+[22:16] while you are executing this particular instruction, a peripheral device interrupts
+[22:23] you. Here you mean CPU. While the CPU is executing this particular instruction,
+[22:31] a peripheral device interrupts the CPU. Right. While you are reading a particular article in the
+[22:38] newspaper, small fellow interrupts you. So small fellow starts crying. Right. Interrupt. Right.
+[22:46] You got the interrupt.
+[22:48] Then what happens?
+[22:49] The CPU then saves address of the next instruction to execute.
+[22:57] What is the next instruction?
+[22:58] This is the next instruction.
+[23:00] This is the instruction currently in execution.
+[23:02] Currently in execution.
+[23:04] While this is in execution, interrupt happened.
+[23:08] The CPU interrupted.
+[23:10] So this is the next instruction.
+[23:12] Address of the next instruction.
+[23:13] CPU saves on stack. Address of next instruction saves on stack. Right. Right. That address is in the program counter. So what is that? Whatever the address in program counter is saved on a stack. Right.
+[23:31] then cpu turns off interrupts cpu turns off interrupts to prevent any more interrupts while
+[23:42] handling one interrupts so all interrupts are turned off because now we are going to handle
+[23:49] one interrupt while we are handling one interrupt we can't attend to another interrupt so we turn
+[23:55] after interrupts, right?
+[23:57] Something like this.
+[23:59] You were reading the newspaper.
+[24:01] While you were reading
+[24:03] this particular article,
+[24:05] right? Let's say
+[24:07] you have two kids,
+[24:09] right? The big
+[24:10] brother
+[24:11] started crying,
+[24:14] interrupt, right?
+[24:17] Then what do you,
+[24:18] now there's a small fellow also, a small brother
+[24:20] also there. The
+[24:22] Ayya started crying and Mali is also
+[24:24] there. Now what would happen if Mali also starts crying? You can't attend to two kids at the same
+[24:33] time. So what you do is you put the teeth on the Mali's mouth. So he can't cry. So you disable
+[24:46] interrupts when you are trying to handle one interrupt because you want to prevent
+[24:51] right any more interrupts while handling one interrupt now that's why cpu disables cpu turns
+[25:01] off interrupts right so when interrupted the address is saved on the stack and then turns
+[25:09] off interrupts because now we are going to handle one interrupt while we are handling one interrupt
+[25:15] We cannot handle another interrupt.
+[25:17] So we disable interrupts.
+[25:19] Right.
+[25:20] Then CPU execution.
+[25:22] The CPU jumps to the interrupt vector table.
+[25:25] CPU jumps to the interrupt vector table.
+[25:28] Interrupt vector table contains addresses of interrupt service routines.
+[25:35] Addresses of interrupt service routines.
+[25:38] The interrupt vector table contains addresses of interrupt service routines.
+[25:46] In other words, where the relevant ISR is.
+[25:51] Interrupt service routine means ISR.
+[25:53] Where the relevant ISR is.
+[25:56] You can find out from the interrupt vector table.
+[25:59] So execution jumps to the interrupt vector table.
+[26:02] And we can find out where the relevant ISR is.
+[26:07] And with that address, right, the CPU can jump to the relevant ISR.
+[26:14] The CPU can jump to the relevant ISR, interrupt service routine.
+[26:18] From the vector table, we pick the address and then we jump to the relevant ISR, interrupt service routine.
+[26:25] Now each and every interrupt has interrupt service routine.
+[26:30] Each and every interrupt has relevant associated ISR, interrupt service routine, right.
+[26:36] Now the ISR contains instructions to handle the interrupt.
+[26:44] So ISR contains instructions to handle the interrupt.
+[26:48] ISR contains instructions to handle the interrupt.
+[26:51] So when you got the address of the relevant ISR, you jump to the ISR and you execute the ISR.
+[26:58] Now, as programmers, we have to write the instructions in the ISR to handle the interrupt.
+[27:07] So, instructions to handle the interrupt, we have to write within the ISR.
+[27:12] In our example, when the button is pressed, we jump to the particular ISR.
+[27:18] Inside the ISR, we have written code to toggle the state of external LED.
+[27:25] So code in the ISR is to toggle the state of external LDD.
+[27:31] So that is, as programmers, we have to write it.
+[27:35] The relevant instructions for the ISR.
+[27:38] The CPU will pick the address of relevant ISR from the interrupt vector table and jump to the ISR.
+[27:46] And then CPU will execute the ISR.
+[27:48] At the completion of the execution of ISR, at the completion of the execution of ISR,
+[27:57] this is what happened, right?
+[27:59] From the vector table, we get the address.
+[28:02] We come to the ISR and we execute ISR line by line, right?
+[28:07] CP will jump to the vector table, get the address, come to the ISR and instructions
+[28:14] with ISR are executed line by line.
+[28:16] Now at the end of the execution of ISR, right, the CPU will turn on interrupts again, right?
+[28:26] Before handling the interrupt, CPU turned off interrupts.
+[28:30] And now after handling the interrupt, CPU will turn on the interrupts again.
+[28:36] So after changing the nappy of the big brother, we remove the teeth from the small fellow.
+[28:43] So that small fellow can also cry.
+[28:45] But while we are changing the nappy of the big brother, we have put the teeth in the mouth of small brother, Mally's mouth, we have put the teeth so that Mally can't cry.
+[29:02] While we change the nappy of Aya, once you finish changing the nappy, Aya's nappy, we remove the teeth, Supur, from Mally's mouth so he also can now cry.
+[29:14] You also can interrupt. So CPU will turn on the interrupts again and CPU will get the address
+[29:26] saved on the stack. CPU will get the address saved on the stack. Get the address. There is a return
+[29:34] address from the stack. And then we can the execution jumps back to the statement where
+[29:42] the interrupt happened. Using that address you go back to the instruction where the interrupt happened.
+[29:49] And from there we resume the execution that we were doing. Then from there we resumes the execution.
+[29:59] The CPU resumes the execution from where it was suspended. Using the address we go back to the
+[30:06] place where we were interrupted
+[30:08] and from there we continue
+[30:11] the execution. Right.
+[30:12] Any question? Can you
+[30:14] understand this?
+[30:16] Monadath, you can get along?
+[30:18] Yes, sir.
+[30:19] Yes, sir.
+[30:20] Sir, when
+[30:21] we get more than one interrupt,
+[30:24] the CPU
+[30:25] disables one and
+[30:27] prioritizes the other.
+[30:29] So if both are critical,
+[30:32] then there is a problem in the system.
+[30:34] Yes. Now, if
+[30:36] there are multiple interrupts now we have two kids so both are important
+[30:41] both ayya and malli both are important so as a father so we have to take care of both
+[30:51] but we cannot do two tasks parallely at the same time so we have to prioritize one over other
+[31:03] So that's why when you are about to handle one interrupt, you disable other interrupts until you finish handling the interrupt.
+[31:14] Once you finish handling the interrupt, then you again enable the interrupt so that the other devices also can interrupt you.
+[31:23] Right.
+[31:23] When Aya starts crying, you have to attend to Aya.
+[31:28] Change his nappy.
+[31:30] Right.
+[31:30] While you are doing all these things, what would happen if Mali also starts crying?
+[31:35] Can you attend to Mali at the same time? No.
+[31:39] So you disable the Mali's interrupt. How?
+[31:45] Then Mali turned under there.
+[31:49] So once you finish changing the nappy, Ayya's nappy,
+[31:54] then you remove the teeth from Mali's mouth.
+[31:59] So he can also interrupt you.
+[32:02] The reason is we cannot do multiple tasks truly at the same time because we have one CPU.
+[32:12] If you really want to handle multiple tasks at the same time, truly, if you want to do that, you need multiple CPUs, multi-co-processors.
+[32:25] Is that clear?
+[32:26] Shandhi?
+[32:28] Yes, sir.
+[32:28] Anything else? Any other question?
+[32:31] No, no.
+[32:32] Whatever the question you have.
+[32:35] I know some people, they
+[32:36] have questions, but they don't ask.
+[32:39] Right?
+[32:40] So, only few people, they ask
+[32:42] questions and get the things sorted out.
+[32:45] So, others keep quiet.
+[32:46] But they have questions. I know.
+[32:49] Because when I was a student, when I
+[32:50] learned all these things, I had thousands of
+[32:52] questions. Even today, I have
+[32:54] questions. Though I have taught this
+[32:56] Mulder several years.
+[32:59] Right. If I think
+[33:01] about this more deeply,
+[33:03] I get a lot of questions.
+[33:05] Right. Now,
+[33:07] let's try to understand
+[33:08] this model with our real world
+[33:10] example.
+[33:12] You start reading the newspaper.
+[33:15] At the top of the newspaper,
+[33:18] you have
+[33:19] this interrupt vector table, so you
+[33:21] skip that and you
+[33:23] continue your reading.
+[33:25] While you are reading the let's say first line, second line, first paragraph, second paragraph, third paragraph, fourth paragraph.
+[33:36] While you are reading the fourth paragraph, Ayya started crying.
+[33:42] Then you know that you have to attend to Ayya.
+[33:45] Right.
+[33:46] Now what?
+[33:47] So let's say you are reading a book, not a newspaper.
+[33:50] You are reading a book.
+[33:51] You start reading the book.
+[33:53] the first chapter, the first paragraph.
+[33:56] After the first paragraph,
+[33:57] you have the interrupt vector table.
+[34:00] So you skip that
+[34:01] and then you second paragraph, third paragraph,
+[34:03] fourth paragraph. While you are reading
+[34:05] the fourth paragraph,
+[34:08] I interrupted you.
+[34:10] Now you know that you have to
+[34:11] attend, right?
+[34:13] Sorry, sorry, again, not paragraphs.
+[34:15] Say pages.
+[34:17] You started reading from first page.
+[34:19] The second page interrupt vector table,
+[34:21] you skip third page,
+[34:23] fourth page, fifth page.
+[34:25] Now while you are reading the fifth page,
+[34:28] Ayya interrupted you.
+[34:30] He started crying.
+[34:31] You know that you have to attend to Ayya.
+[34:33] What you do is
+[34:35] you put a bookmark in the
+[34:37] fifth page, address
+[34:39] of the fifth page.
+[34:42] Ideally, in the
+[34:43] computer, you save that
+[34:45] address on a stack. Same way, you
+[34:47] put a bookmark in the
+[34:49] fifth page, close the
+[34:51] book right close the book go to the place where the the diapers are from that you find the location
+[35:03] where the diapers are go to that place and get a get a diaper the wet one right throw it out put
+[35:13] the new diaper, right? Now you change his nappy, the diaper you change. Then, right,
+[35:22] you using the bookmark, you go to the page where you were reading and from that page
+[35:29] you continue reading, right? While you are reading, again if you got an interrupt, you
+[35:34] do the same. Very simple. Very simple. That is what you do in your normal day-to-day life.
+[35:40] So, sir, in the interrupt vector table, what we have?
+[35:46] Where the interrupt service routine is?
+[35:50] The address.
+[35:51] Address of the interrupt service routine.
+[35:54] So, when it comes to the blinking one, that push button.
+[36:04] The push button is not going to be.
+[36:06] hammer. Now, when you
+[36:08] press the push button,
+[36:10] interrupt the push button,
+[36:12] the button interrupts
+[36:14] the CPU.
+[36:15] When button interrupted the
+[36:18] CPU, the state change
+[36:20] interrupted the CPU.
+[36:22] Now, you should do something.
+[36:25] Ideally,
+[36:27] what you have to do is
+[36:28] toggle the
+[36:29] external LED.
+[36:32] You have written some code to
+[36:34] toggle the external LED.
+[36:36] Where that code is? That is the ISR, interrupt service routine. When interrupt happened, you have to provide the service. That service is the interrupt service routine. Where that service is? Address is in the interrupt vector table.
+[37:06] Oh, a suspect item properly, put a bookmark?
+[37:09] Yes, I'm going to do a bookmark.
+[37:13] So, I don't have to do a bookmark.
+[37:18] I don't have to do a bookmark.
+[37:22] I don't have to do a blink.
+[37:26] Oh, I don't know.
+[37:28] If you're a ISR, Interrupt Service Routine is a very lengthy ISR,
+[37:35] ISR.
+[37:36] It takes a lot of time.
+[37:42] Right?
+[37:47] But if the ISR is a small
+[37:49] short one, you can quickly
+[37:51] come back and start the
+[37:53] work that was what
+[37:55] you were doing.
+[38:01] Right?
+[38:02] So,
+[38:03] in programming,
+[38:04] The programmers are advised when they handle interrupts, right?
+[38:11] The programmers must try to write the interrupt service routines as much as smaller.
+[38:20] As smaller, so it should be small routine, not lengthy one, very short.
+[38:28] You have to try to write the interrupt service routine as shorter as possible.
+[38:32] Then only there will be no effect to the main task.
+[38:38] If the ISR, Interrupt Service Routine, is a very lengthy service routine,
+[38:43] then there will be a delay for the main task.
+[38:47] The advantage is now there are no monitoring.
+[38:52] We don't monitor with the button press or not.
+[38:56] So the monitoring workload is not a problem.
+[39:00] Second thing, the state change of the device may not go undetected.
+[39:05] Now all the state changes, all the device interrupts, right?
+[39:10] We have to handle it.
+[39:12] Nothing will go undetected, right?
+[39:14] And the priority comes.
+[39:16] We can give priority for one interrupt over other interrupts.
+[39:21] Those are the advantages.
+[39:22] however if the ISR
+[39:25] is very lengthy
+[39:26] right that will affect
+[39:28] to the main
+[39:31] task that you were doing
+[39:32] for example you were reading
+[39:35] the new book
+[39:36] and then you attend to a different
+[39:38] task if the different task
+[39:41] is a very lengthy task if it takes
+[39:43] one hour after one
+[39:45] hour you can resume the book reading
+[39:47] again but if the
+[39:48] second task is a quick task
+[39:51] just couple of seconds,
+[39:53] you can quickly come back and start reading.
+[39:56] So therefore,
+[39:57] when you are writing the ISR,
+[39:59] it should be,
+[40:01] it must be, right,
+[40:04] very short.
+[40:05] That's the responsibility of the programmer.
+[40:07] I told you now you don't have
+[40:10] the luxury of operating system.
+[40:12] As the programmer,
+[40:13] you have to do everything.
+[40:16] So you are in the full control.
+[40:18] If you want, you can
+[40:19] misuse interrupts if you if you want you can properly use interrupts that's totally under your control
+[40:30] sir
+[40:38] time out
+[40:41] hardware will in the operating system
+[40:43] Can you understand?
+[41:09] the time to in a M4C?
+[41:13] the M2B.
+[41:13] theim2.
+[41:13] theF.
+[41:13] the.
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] the.
+[41:13] the.
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] 
+[41:13] m8
+[41:14] the
+[41:15] the
+[41:15] the
+[41:16] the
+[41:16] the
+[41:16] the
+[41:16] the
+[41:16] 
+[41:16] 
+[41:16] the
+[41:16] 
+[41:16] 
+[41:16] the
+[41:16] the
+[41:16] 
+[41:16] the
+[41:16] the
+[41:16] the
+[41:16] 
+[41:16] the
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] the
+[41:16] the
+[41:16] 
+[41:16] the
+[41:16] the
+[41:16] the
+[41:16] the
+[41:16] the
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] 
+[41:16] the
+[41:16] the
+[41:16] the
+[41:16] 
+[41:16] the
+[41:43] Is that just a function?
+[41:53] Is that just a function?
+[41:56] Is that a facility that has a break?
+[42:03] Is that a statement?
+[42:07] I have a time.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] 
+[42:08] 
+[42:08] 
+[42:08] 
+[42:08] 
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:08] I have a time-gall.
+[42:09] I have a time-gall.
+[42:09] I have a time-gall.
+[42:09] I have a time-gall.
+[42:09] I have a time-gall.
+[42:09] I is a re-bacat akei
+[42:11] the
+[42:11] the
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] 
+[42:12] the
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] the
+[42:12] the
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] 
+[42:12] the
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] the
+[42:12] the
+[42:12] the
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] 
+[42:12] hist
+[42:13] the
+[42:39] [unclear — Sinhala / crosstalk]
+[43:09] the you know plat for the the
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] 
+[43:11] the
+[43:13] interrupt
+[43:15] accurately
+[43:17] delay
+[43:19] timing
+[43:21] the
+[43:23] milis
+[43:25] the
+[43:27] timing
+[43:29] interrupt
+[43:31] interrupt
+[43:33] count
+[43:35] this
+[43:37] [unclear — Sinhala / crosstalk]
+[44:07] the
+[44:08] the
+[44:09] the
+[44:10] the
+[44:10] the
+[44:10] the
+[44:10] the
+[44:10] the
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] the
+[44:10] the
+[44:10] the
+[44:10] 
+[44:10] the
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] 
+[44:10] the
+[44:10] 
+[44:10] the
+[44:10] 
+[44:10] the
+[44:11] 
+[44:11] 
+[44:11] 
+[44:11] 
+[44:11] 
+[44:11] 
+[44:11] the
+[44:11] 
+[44:37] When you are handling one interrupt, we disable all other interrupts.
+[44:53] Because we cannot handle any more interrupts while handling one interrupt.
+[44:59] Because we have one CPU.
+[45:00] So we disable other interrupts.
+[45:02] That's why we have to quickly finish interrupt handling.
+[45:05] If you take a lot of time to handle one interrupt, during that time there will be many other interrupts may go undetected.
+[45:13] If you take a lot of interrupts, you can quickly handle it.
+[45:17] If you have a problem with the problem, you can't tell me.
+[45:23] You can't tell me.
+[45:25] You can't tell me.
+[45:27] You can't tell me.
+[45:29] You can't tell me.
+[45:30] You can't tell me.
+[45:31] You can't tell me.
+[45:32] I have a really right.
+[45:33] [unclear — Sinhala / crosstalk]
+[46:03] you have to monitor. But now you are not doing that. That means that burden, you are free
+[46:09] from that burden. You can continuously read your newspaper or the book, right, until you
+[46:15] are interrupted.
+[46:16] But in the polling situation, what is the problem? What is the problem? What is the problem?
+[46:31] bbbB
+[46:33] the
+[46:33] the
+[46:33] the
+[46:34] the
+[46:34] the
+[46:34] the
+[46:34] the
+[46:34] the
+[46:34] 
+[46:34] the
+[46:34] 
+[46:34] 
+[46:34] the
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[46:34] 
+[47:01] That's a burn.
+[47:09] Now you don't have that burn.
+[47:11] You are free from that.
+[47:12] Right?
+[47:13] When the device requires your service,
+[47:14] device will interrupt you.
+[47:16] When device is interrupted,
+[47:18] you can attend to the device.
+[47:20] When you are attending to the device,
+[47:22] you disable the interrupts.
+[47:23] And you have to quickly handle the interrupt
+[47:25] and come back.
+[47:26] Otherwise, other interrupts may go undetected.
+[47:30] So when interrupts,
+[47:31] [unclear — Sinhala / crosstalk]
+[48:01] I'm going to check the polling.
+[48:03] Check the polling.
+[48:05] Check the polling.
+[48:07] Check the polling.
+[48:09] I'm continuously checking the polling.
+[48:13] I'm not sure.
+[48:15] We are not sure.
+[48:17] We are not sure.
+[48:19] We are not sure.
+[48:21] We are not sure.
+[48:23] That is a hardware mechanism.
+[48:25] That is part of the device.
+[48:29] [unclear — Sinhala / crosstalk]
+[48:59] now you are now now you have been informed that i am going to visit your home
+[49:08] and then
+[49:16] mama
+[49:29] come then you have to come and open the door that is polling you are wasting to check whether
+[49:51] I am coming or not.
+[49:52] But you don't do that.
+[49:59] You do whatever the task you have.
+[50:02] Then you know that I have.
+[50:11] Polling mechanism is used.
+[50:16] The event may go undetected.
+[50:35] But now this doesn't happen.
+[50:37] Even may not go undetected. Why?
+[50:40] If you come, you will be able to do it.
+[50:42] You will be able to do it.
+[50:44] One thing is hardware.
+[50:48] One thing is hardware mechanism.
+[50:50] A hardware mechanism will interrupt the CPU.
+[50:53] This hardware mechanism will use calling?
+[50:57] Is it polling?
+[50:58] Oh.
+[50:59] It is polling.
+[51:00] It is pollinable.
+[51:02] It is software protocol.
+[51:04] pooling software protocol CPU run with the CPU again time to time check
+[51:09] then we are not going to check periodically using software the hardware
+[51:29] will interrupt us.
+[51:30] I will let us know.
+[51:32] You are not
+[51:37] going to monitor it again
+[51:39] and again.
+[51:41] But if you are using polling,
+[51:43] you have to monitor. You have to open
+[51:45] the door, check whether someone's standing
+[51:47] in front of the door. Then close.
+[51:49] Again, after sometime, you again
+[51:51] open the door, check whether someone's standing
+[51:53] in front of the door. That's a waste
+[51:55] of time. Your resources you waste
+[51:57] just for checking.
+[51:59] whether someone is standing in front of the door. That's a waste of resources. And on the other hand,
+[52:07] if you take long time to check whether someone is standing in front of the door during that time,
+[52:15] I can come and I can go also because door was closed.
+[52:19] If I am very quick, quickly you cannot detect whether I came or not. Because when you open
+[52:30] the door, nobody standing in front of the door. But I came and I went. That can happen.
+[52:38] But with interrupts that doesn't happen. Why? If I come, then I knock the door. And then
+[52:45] that knock will interrupt you. So you have to then handle the interrupt. That means you
+[52:50] have to handle the interrupt means you have to open the door and welcome me into your
+[52:56] home. While you are doing that, you cannot attend to another interrupt. So you disable
+[53:03] all interrupts.
+[53:04] You can't do anything else. So you have to turn off all your other interrupts. Interrupt
+[53:15] devices like you have to turn off the phone you have to turn off whatever the devices you have
+[53:20] you have to turn off why if you get another interrupt you can't handle it why because you
+[53:25] are handling one interrupt so you have to quickly handle the interrupt and then only you can start
+[53:33] handling other interrupt is that clear is it is it clear what happened to you is it so how about
+[53:43] others any other questions so then if we have different interrupts is that different isr for
+[53:50] each oh yes yes yes different isr for each interrupt and each isr there's a different address
+[53:59] from the vector table we find out that address thank you so how the prioritizing works right
+[54:06] some interrupts, right,
+[54:08] have more priority over other interrupts.
+[54:10] Right. Some interrupts have more
+[54:12] priority. So that is well
+[54:14] defined. So if you want
+[54:16] to do an important
+[54:18] task, then you have to
+[54:20] handle that important task
+[54:22] under a high priority interrupt
+[54:24] service routine. Right.
+[54:26] In the next slide.
+[54:28] Yes, Telina. Yes.
+[54:29] Sir, let's say we are now
+[54:32] handling a low priority one.
+[54:33] when we are handling a low priority one
+[54:38] the other interrupts also are
+[54:40] disabled.
+[54:42] The situation is this. If two
+[54:45] interrupts interrupt
+[54:47] at the same time. If two
+[54:50] devices, let's assume
+[54:52] two peripheral devices interrupt
+[54:54] the CPU at the same time
+[54:56] then the high priority
+[54:58] interrupt will interrupt the CPU
+[55:00] and other one is disabled.
+[55:01] Okay.
+[55:02] If you see the interrupt, you can see the high priority.
+[55:06] If you handle the low priority, you can see the high priority or disable.
+[55:11] Yes, sir.
+[55:12] Okay.
+[55:13] Then, interrupt vector table.
+[55:16] Now, here you can see some widely used interrupt vectors.
+[55:20] Widely used interrupt vectors.
+[55:23] You can see the address, interrupt, and the vector.
+[55:27] Right?
+[55:27] now external interrupt on int0 pin, external interrupt on int1 pin, pin change interrupt,
+[55:36] that is a state change, ah, pin change interrupt on port b pin, pin change interrupt on port c pin,
+[55:43] pin change interrupt on port d pin, time2 over-flow interrupt, time1 over-flow interrupt,
+[55:52] interrupt. Time zero
+[55:54] overflow interrupt. Universal
+[55:56] synchronous, asynchronous
+[55:58] receiver, transmitter,
+[56:01] receive complete interrupt.
+[56:03] Data receive. Data
+[56:04] transmit complete interrupt.
+[56:07] Analog to digital
+[56:08] conversion complete interrupt.
+[56:11] Then these are commonly used. There are
+[56:12] many interrupts but here
+[56:14] I have
+[56:15] I am showing you only the commonly
+[56:18] used one. But if you refer a book
+[56:20] you will find out many interrupts.
+[56:22] And these are the interrupt vectors.
+[56:26] Or the name of relevant ISR.
+[56:30] For example, ADC completion interrupt.
+[56:34] When the analog to digital conversion is over,
+[56:38] the ADC peripheral device, internal peripheral device, ADC will interrupt the CPU.
+[56:44] At that time, the CPU has to execute a particular ISR, interrupt service routine.
+[56:51] That service routine address is this.
+[56:54] And that service routine name is this.
+[56:58] Maybe that ISR name.
+[57:00] ADC underscore VECT.
+[57:02] So each and every interrupt has an associated interrupt service routine.
+[57:06] Now interrupt vector table can direct the CPU to relevant ISR.
+[57:11] Interrupt vector table can direct the CPU to relevant ISR for handling.
+[57:17] Now priority is related to the interrupt address.
+[57:20] in the vector table.
+[57:22] Priority is related to the interrupt address
+[57:24] in the vector table. Lower
+[57:26] the address, higher
+[57:28] the priority. That means
+[57:30] this is the highest
+[57:32] priority interval.
+[57:34] According to this table, this is the lowest
+[57:36] priority interval. This is the highest
+[57:38] priority. Right? If two
+[57:40] interrupts interrupt the same time,
+[57:43] let's say
+[57:43] int 0 vect
+[57:45] and
+[57:46] adc vect, both
+[57:50] interrupt at the same time this is given the priority so cpu will handle this right in your
+[57:57] microcontroller at mega 328p there are pins in zero pin in one pin there are two pins in zero
+[58:06] pin in one pin right if you connect two switches to in zero and in one when you press the in zero
+[58:14] pin connected switch this is the interrupt you have to handle if you press the switch connected
+[58:20] to int 1 pin then this is the interrupt that you have to handle int 0 has high priority than int 1
+[58:26] same way the port there are three ports in the microcontroller port b port c port d they have
+[58:34] pin change interrupts and the microcontroller has three timers timer 0 timer 1 timer 2 they have
+[58:41] their overflow interrupts. Overflow interrupt means timer count to its maximum possible value.
+[58:49] For example, let's say timer is 8 bit timer. Then the maximum possible value that the timer can count
+[58:56] is 255. Because using 8 bits, you can specify between 0 to 255. So if the 8 bit timer, the
+[59:04] maximum value that a timer can count is 255.
+[59:08] After counting to 255,
+[59:12] timer overflows to 0.
+[59:16] At that time, when timer overflows, the timer interrupts
+[59:20] the CPU. And this is the interrupt, then CPU has
+[59:24] to handle. This interrupt vector routine, this service
+[59:28] routine, CPU has to handle. When timer interrupts
+[59:32] on overflow. Then the serial communication
+[59:36] peripheral received some data.
+[59:40] Received some data over serial port. If that
+[59:44] data received is complete, the serial
+[59:48] communication peripheral will interrupt the CPU. Then CPU
+[59:52] is to handle this particular interrupt service. So likewise
+[59:56] there are many peripheral devices. Some are external
+[1:00:00] some are internal. They have their own interrupts. They have their own interrupt service routines,
+[1:00:08] associated interrupt service routines. Each and every interrupt service routine has an address.
+[1:00:14] Those addresses are in the interrupt vector table. Lower the address, higher the priority.
+[1:00:21] Any question? Sorry sir. No, no, really. What about the correction problem, man?
+[1:00:27] [unclear — Sinhala / crosstalk]
+[1:01:27] the of a Trin.
+[1:01:28] I have a lot to do.
+[1:01:29] I have a good 1, to be a...
+[1:01:30] to be a.
+[1:01:30] to be a.
+[1:01:31] to be a.
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] to be a.
+[1:01:31] to be a.
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] 
+[1:01:31] call a function that function call the return the function
+[1:01:38] a b c main function function a call function a welling function b call function b welling function c call
+[1:01:47] call.
+[1:01:47] C return.
+[1:01:49] C return when you go ahead of the B.
+[1:01:51] B return when you go ahead of the A.
+[1:01:53] A return when you go ahead of the main function.
+[1:01:57] And call on order.
+[1:01:58] Main A B C return.
+[1:02:02] C B A main.
+[1:02:04] Right.
+[1:02:05] Last in.
+[1:02:07] First out.
+[1:02:08] And stack.
+[1:02:11] Stack.
+[1:02:11] Stack is clear.
+[1:02:14] Stack is clear.
+[1:02:15] [unclear — Sinhala / crosstalk]
+[1:02:45] local variables values
+[1:02:48] return address
+[1:02:49] function
+[1:02:53] function
+[1:02:53] function
+[1:02:56] local variables
+[1:02:59] values
+[1:03:01] function
+[1:03:04] return address
+[1:03:06] the b1.
+[1:03:07] 
+[1:03:07] 
+[1:03:07] 
+[1:03:07] 
+[1:03:07] the a.
+[1:03:07] the a.
+[1:03:07] the a.
+[1:03:07] the a.
+[1:03:07] the a.
+[1:03:07] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] the a.
+[1:03:08] 
+[1:03:08] the a.
+[1:03:08] 
+[1:03:08] the a.
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] the a.
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] 
+[1:03:08] the
+[1:03:10] the
+[1:03:10] the
+[1:03:10] the
+[1:03:11] the
+[1:03:11] the
+[1:03:11] the
+[1:03:11] 
+[1:03:11] the
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] 
+[1:03:11] the the
+[1:03:13] the
+[1:03:13] the
+[1:03:13] the
+[1:03:13] the
+[1:03:13] the
+[1:03:13] the
+[1:03:13] the
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] the
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] the
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] the
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] 
+[1:03:13] the
+[1:03:13] the
+[1:03:13] 
+[1:03:13] the
+[1:03:13] the
+[1:03:13] the
+[1:03:13] the
+[1:03:14] 
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:14] 
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:14] the
+[1:03:41] If you have a stocker, you can get a B return.
+[1:03:45] If you have a B return, you can get a B return address.
+[1:03:49] What is the return?
+[1:03:51] A, it is not a problem.
+[1:03:53] A, it is not a stocker.
+[1:03:55] A return, then A complete.
+[1:03:57] A execution is complete.
+[1:03:59] A execution is complete,
+[1:04:01] then the stocker will be a value stick.
+[1:04:05] But A complete, then A return.
+[1:04:09] the M8.
+[1:04:10] 
+[1:04:10] the at-mr.
+[1:04:10] the at-mr.
+[1:04:10] the to-mr.
+[1:04:10] the the.
+[1:04:10] th-mr.
+[1:04:10] the co-pest.
+[1:04:11] 
+[1:04:11] [unclear — Sinhala / crosstalk]
+[1:04:41] If you return the C, you can't stack it.
+[1:04:45] You can't do it.
+[1:04:47] If you return the C, you can stack it.
+[1:04:50] You can't do it.
+[1:04:52] If you return the C, you can stack it.
+[1:04:55] It's the main function.
+[1:04:56] Right? Last in, first out.
+[1:04:59] Stacking up.
+[1:05:00] That's it. Thank you.
+[1:05:01] Right.
+[1:05:02] What is the question?
+[1:05:06] It is to create a computer science related data.
+[1:05:11] If you call recursive function, you can stack it.
+[1:05:15] If you call recursive function, you can call recursive function.
+[1:05:21] The function calls itself again and again. That is called recursive function.
+[1:05:25] If you have a recursive function, you can call a return address in the local variable.
+[1:05:36] If you have a recursive function, you can call a stack.
+[1:05:42] If you have a stack, you can call a memory runout.
+[1:05:49] So, I would advise that the performance path is better to use iterative functions, not recursive functions.
+[1:05:59] If it is a performance, it doesn't matter if it is iterative or recursive.
+[1:06:04] If you have recursion, you can call the function.
+[1:06:11] If you have the stack, you can run out of memory.
+[1:06:16] [unclear — Sinhala / crosstalk]
+[1:06:46] If you have a return address, you can call it.
+[1:06:53] If you have a return address, you can call it.
+[1:06:57] Ultimately, you run out of memory.
+[1:07:02] A system can be crashed by hacking a recursive function.
+[1:07:10] function right the way that they could take a loophole so hackers sometimes exploit right
+[1:07:26] the algorithm is much clear right if you want to solve a problem right the recursive approach is
+[1:07:33] very straightforward. It's very understandable, very clear and some there are some problems,
+[1:07:44] right? Using recursion very easily solved, very easily. I'll tell you one example.
+[1:07:53] There's a problem called towers of anol. The computer science problem called towers of anol.
+[1:08:03] Towers of Hanoi can have connected in our.
+[1:08:05] Just raise your hand.
+[1:08:07] If you have heard that.
+[1:08:09] It's a classical computer science problem.
+[1:08:12] Which is called Towers of Hanoi.
+[1:08:14] That Towers of Hanoi problem can be solved using recursion very easily.
+[1:08:19] Right.
+[1:08:19] Right.
+[1:08:20] Okay.
+[1:08:21] You have heard that.
+[1:08:22] Good.
+[1:08:22] Right.
+[1:08:23] And if you try to solve the problem, Towers of Hanoi problem iteratively, it is nearly impossible.
+[1:08:32] I don't say impossible but very difficult. Iterative solution. But recursive solution is very easy. That's one of the examples classically used in computer science to highlight the importance of recursion.
+[1:08:51] In computer science, if you are studying high studies, you will use a recursion to learn about the recursion.
+[1:08:59] In the example, Towers of Hanoi.
+[1:09:03] According to that problem, Towers of Hanoi, it's a very classical problem according to the legend in the Hanoi.
+[1:09:14] Where is Hanoi? Hanoi is a question.
+[1:09:17] It's a city. In which country? Hanoi. China? No. Close to China. Hanoi. Vietnam. Yes. Hanoi is Vietnam. Right? According to the legend, in the city of Hanoi, Vietnam, there was a temple. Vietnam is a Buddhist country.
+[1:09:44] There was a temple.
+[1:09:47] In that temple
+[1:09:48] there were three diamond
+[1:09:50] pillars.
+[1:09:52] Diamond building had to be kanu tunatti.
+[1:09:54] It's a nice story.
+[1:09:55] In the first pillar filled with
+[1:09:58] 64
+[1:10:00] gold rings.
+[1:10:02] In the first one
+[1:10:04] there are gold, 64
+[1:10:06] gold rings. Then
+[1:10:08] there's a task given for the
+[1:10:10] monks of that temple.
+[1:10:12] The task is to shift
+[1:10:14] those 64 gold rings
+[1:10:16] from tower 1
+[1:10:18] to the tower 3.
+[1:10:20] That's why we call it towers of Hanon.
+[1:10:23] Right?
+[1:10:23] Three gold
+[1:10:26] diamond towers
+[1:10:28] and the first tower
+[1:10:30] there are 64 gold rings.
+[1:10:32] Right? Now
+[1:10:33] these monks they have
+[1:10:36] to transfer
+[1:10:38] these 64 gold rings
+[1:10:40] from tower 1 to tower 3.
+[1:10:42] they can use tower 2
+[1:10:45] as a temporary tower
+[1:10:48] to do their job.
+[1:10:50] Right.
+[1:10:51] Now these rings are not
+[1:10:53] in the same size.
+[1:10:55] Some rings are large, some are small.
+[1:10:58] There are conditions.
+[1:11:00] You can't put a large
+[1:11:02] ring on a top of
+[1:11:03] smaller ring. When you transfer
+[1:11:06] rings from one tower to another tower
+[1:11:08] you can't put a
+[1:11:10] larger ring on top of
+[1:11:11] smaller ring. And also
+[1:11:14] when you trans the rings from
+[1:11:16] between towers,
+[1:11:18] you can trans only one ring
+[1:11:20] at a time. You can't move
+[1:11:22] multiple rings at a time.
+[1:11:24] Only one at a time.
+[1:11:26] Now the task is to move
+[1:11:28] all the 64 rings from tower
+[1:11:30] 1 to tower 3.
+[1:11:32] So at first
+[1:11:34] glance you may see this is
+[1:11:36] very simple but that is not very simple.
+[1:11:38] It's a complicated problem.
+[1:11:40] using recursive
+[1:11:42] algorithm we can solve this.
+[1:11:45] Fairly easily we can solve
+[1:11:46] this and according to this
+[1:11:48] is very interesting read about this Towers of
+[1:11:50] Anon. Right. According to
+[1:11:52] the legend when monks
+[1:11:54] completed this task
+[1:11:56] that means when they moved
+[1:11:58] all the rings from
+[1:12:00] Tower 1 to Tower 3 when they completed
+[1:12:02] that would be the
+[1:12:04] end of the world.
+[1:12:05] That means it takes lot of time.
+[1:12:12] So that problem very easily you can solve using recursion.
+[1:12:18] If you are interested, read about that.
+[1:12:20] Likewise, there are many interesting computer science classical examples.
+[1:12:26] One is Towers of Anoy.
+[1:12:28] There is another one called Sleeping Barber's Problem.
+[1:12:31] Sleeping Barber's Problem.
+[1:12:33] There is another classical computer science problem called dining philosophers problem.
+[1:12:40] Dining philosophers problem.
+[1:12:43] This is why you enjoy it.
+[1:12:47] Computer science is studying.
+[1:12:50] Dining philosophers problem, sleeping barbers problem, towers of phanom.
+[1:12:55] You can keep that word.
+[1:12:56] I was doing my masters in computer science.
+[1:13:10] Okay, then interrupt routines.
+[1:13:15] First one, interrupt service routine.
+[1:13:18] Another name for ISR is interrupt handler.
+[1:13:22] Some books, this ISR, they call interrupt handler.
+[1:13:26] Right. This is the ISR. Typical ISR.
+[1:13:31] Starts. So we start with the keyword ISR.
+[1:13:35] Right. We start with the keyword ISR.
+[1:13:38] And then within bracket you have to specify the interrupt vector.
+[1:13:42] Now vectors you have to take from the previous table.
+[1:13:45] Now if you put ADC underscore VECT for example.
+[1:13:50] If you put ADC underscore VECT here.
+[1:13:53] this ISR is called automatically when ADC completed the conversion.
+[1:14:04] Right.
+[1:14:04] Now this interrupt happens when ADC completed the conversion.
+[1:14:12] Analog to digital conversion completed.
+[1:14:16] This interrupt is, the CPU is interrupted.
+[1:14:19] The ADC is an internal peripheral device.
+[1:14:24] When it completed the conversion, the ADC interrupts the CPU.
+[1:14:31] When ADC interrupts the CPU, CPU has to handle the relevant ISR.
+[1:14:39] Then this is the ISR.
+[1:14:42] CPU has to handle.
+[1:14:45] So here you have to put ADC underscore weight.
+[1:14:47] Now if you put here some other IS vector, for example, if you put timer 0 overflow vector,
+[1:14:56] if you put here timer 0 overflow vector, when the timer 0 overflows from 255 to 0,
+[1:15:07] the timer 0 will interrupt the CPU.
+[1:15:11] And then CPU has to handle the ISR, the relevant.
+[1:15:15] Our CPU will call this ISR automatically, right?
+[1:15:21] If you put timer zero overflow vector here, this is the code that as programmers you have
+[1:15:29] to write to handle the interrupt.
+[1:15:34] Can you understand?
+[1:15:36] For example, right?
+[1:15:38] Let's take a simple example.
+[1:15:40] Now ISR within bracket ADC Vect.
+[1:15:47] Opening curly bracket.
+[1:15:49] Closing curly bracket.
+[1:15:51] Then inside the ISR, let's say we have a couple of LEDs.
+[1:15:57] Turn.
+[1:15:58] It's very difficult to write.
+[1:16:01] Turn on red LED.
+[1:16:05] Then there's another ISR.
+[1:16:07] within bracket
+[1:16:11] timer 0
+[1:16:13] overflow vector
+[1:16:15] opening curly bracket
+[1:16:17] closing curly bracket
+[1:16:19] within that
+[1:16:21] turn on
+[1:16:23] green
+[1:16:25] LED
+[1:16:26] right
+[1:16:28] now let's assume
+[1:16:32] we have
+[1:16:33] 2 ISR
+[1:16:35] ADC
+[1:16:37] analog to digital conversion
+[1:16:39] if analog to digital conversion
+[1:16:41] is over
+[1:16:42] we want to turn on red LED
+[1:16:45] when the timer 0
+[1:16:47] overflow from
+[1:16:48] 255 to 0
+[1:16:50] we want to turn on green LED
+[1:16:53] so we have written 2 ISR
+[1:16:56] then we can ask
+[1:16:57] CPU to do something else
+[1:16:59] CPU will blinking
+[1:17:01] let's say
+[1:17:03] yellow LED
+[1:17:04] CPU will do blinking the yellow LED
+[1:17:07] LED. The third task.
+[1:17:09] Right.
+[1:17:11] While CPU blinking
+[1:17:12] the yellow LED
+[1:17:15] ADC
+[1:17:17] completes the conversion.
+[1:17:19] ADC is a separate
+[1:17:21] peripheral device.
+[1:17:23] So ADC can complete the conversion
+[1:17:25] from analog to digital.
+[1:17:28] While CPU
+[1:17:29] blinking yellow LED.
+[1:17:31] When ADC completed
+[1:17:33] the conversion, analog to
+[1:17:35] digital conversion,
+[1:17:37] ADC will interrupt the CPU.
+[1:17:40] Then CPU will automatically call the first ISR.
+[1:17:45] This particular ISR.
+[1:17:46] This one is automatically called.
+[1:17:48] And you will see red LED turn on.
+[1:17:52] After that, CPU will again resume the work it was doing.
+[1:17:58] That is blinking yellow LED.
+[1:18:00] While CPU blinking LED, the timer 0 will overflow.
+[1:18:05] from 255 to 0.
+[1:18:08] When timer 0
+[1:18:10] overflows, the timer
+[1:18:12] will interrupt the CPU.
+[1:18:14] Then CPU will
+[1:18:15] call this ISR
+[1:18:18] automatically. And
+[1:18:19] this ISR will turn on
+[1:18:22] green LED. You will see green
+[1:18:24] LED turn on.
+[1:18:25] The CPU doesn't require
+[1:18:28] to monitor the timer 0
+[1:18:30] whether it's
+[1:18:31] overflowing or not.
+[1:18:32] CPU doesn't require to monitor
+[1:18:35] CPU doesn't
+[1:18:37] require to monitor whether ADC
+[1:18:39] completed the conversion or not
+[1:18:41] CPU will do its
+[1:18:43] job separately
+[1:18:45] when this peripheral ADC
+[1:18:48] requires CPU
+[1:18:50] service the ADC
+[1:18:52] will interrupt the CPU
+[1:18:53] then CPU will handle this
+[1:18:55] routine
+[1:18:56] CPU will execute this routine
+[1:18:59] when timer requires CPU
+[1:19:01] service
+[1:19:02] the timer will interrupt the CPU
+[1:19:05] and then CPU will handle this routine.
+[1:19:08] Right? Therefore, no need to monitor
+[1:19:11] the peripheral device. If peripheral device
+[1:19:14] requires CPU service, the peripheral
+[1:19:17] device will interrupt the CPU. Then CPU
+[1:19:20] has to attend to the peripheral device and
+[1:19:23] provide the service. That is, run the relevant
+[1:19:26] ISR. Run the relevant interrupt
+[1:19:29] service routine. Running the relevant interrupt service routine means attending to the interrupt,
+[1:19:35] handling the interrupt. Can you understand? Right. Now, interrupt service routine is like a function.
+[1:19:43] It is like a normal function, but it is drastically different from a normal function,
+[1:19:51] though it looks like a function. ISR looks like a function, but it is different.
+[1:19:56] Right. One is
+[1:19:58] the ISR
+[1:20:00] has no return value.
+[1:20:02] Normal functions you need
+[1:20:04] a return value. At least void.
+[1:20:06] You need return type
+[1:20:08] void at least. But
+[1:20:10] ISR no return value.
+[1:20:12] No return value. And
+[1:20:14] ISR
+[1:20:15] has only one parameter.
+[1:20:18] That is the interrupt vector.
+[1:20:20] Only one parameter.
+[1:20:22] That is the interrupt vector. That means
+[1:20:24] you can't pass
+[1:20:26] any argument, any other
+[1:20:27] argument to ISR.
+[1:20:29] You can't pass any other
+[1:20:31] arguments to ISR.
+[1:20:33] Because interrupt vector is the only
+[1:20:35] parameter that it accepts.
+[1:20:37] So you can't pass any parameters
+[1:20:39] to ISR.
+[1:20:41] Any arguments to ISR you can't pass.
+[1:20:44] The ISR accepts
+[1:20:45] only the interrupt vector
+[1:20:47] argument. Because it has only
+[1:20:50] one parameter. And it has no return
+[1:20:52] value. So you
+[1:20:53] can't get any value returned
+[1:20:55] from ISR. Why? The reason is this. Interrupt service routines are called automatically,
+[1:21:02] right? They are called automatically when interrupt happens. We don't know when interrupt
+[1:21:08] would happen, right? At the time of writing the program, at the time of compiling the
+[1:21:15] program, we don't know when interrupt would happen. Interrupt can happen at the beginning
+[1:21:21] of the execution, it can happen at the middle of the execution.
+[1:21:25] It can happen at the end of the execution. We don't know.
+[1:21:29] At the time of writing the code or at the time of compiling the code.
+[1:21:34] We don't know when interrupt would happen.
+[1:21:37] When interrupt happens, ISR is called automatically.
+[1:21:41] Therefore, if it is not called explicitly,
+[1:21:48] if the ISR is not called explicitly, it is called implicitly, then we are to return the value.
+[1:21:56] If it is called implicitly, we are to return the value. So no return value.
+[1:22:03] ISR call automatically automatically, we don't know what we are going to return.
+[1:22:09] We don't know how to return value. We know when we are going to call a statement,
+[1:22:14] pass say,
+[1:22:15] but if you don't,
+[1:22:23] if you don't know
+[1:22:25] when the ISR would be
+[1:22:27] called, how can you
+[1:22:29] return a value? Can you understand?
+[1:22:32] Again,
+[1:22:33] if interrupt service
+[1:22:35] routines are called implicitly,
+[1:22:38] we don't know where
+[1:22:39] they will be called, then
+[1:22:41] how can we pass a value to ISR?
+[1:22:44] as an argument. If you don't know when it will be cool, then how can we pass a parameter
+[1:22:53] to an ISR. We don't know it will be when it will be cool, then how can we get a return
+[1:22:58] value from ISR. ISR is a call, we have to know. We have to pass the value. We have to
+[1:23:05] pass the value. We have to know ISR, the call, the return value. We have to know the value
+[1:23:10] We don't know when it will be called.
+[1:23:18] It is called when an interrupt happens.
+[1:23:21] Can you understand this?
+[1:23:22] Now if you are asked why interrupt service routines are interrupt service routines looks like.
+[1:23:29] They look like functions but they have no return data type.
+[1:23:34] and they cannot accept any arguments other than interrupt vector.
+[1:23:41] Why?
+[1:23:43] Can you explain?
+[1:23:45] Overlooking how is the ISR function?
+[1:23:51] Is the ISR return value?
+[1:23:54] Is the ISR parameter passed?
+[1:23:58] Can you ask?
+[1:24:02] Is it called ISR?
+[1:24:03] Is it called ISR?
+[1:24:05] No.
+[1:24:06] It is outside the loop.
+[1:24:08] It is in outside the loop.
+[1:24:10] If it comes to the loop,
+[1:24:11] then it will be called.
+[1:24:13] We don't know when it will be called.
+[1:24:14] It comes outside the loop.
+[1:24:17] It comes even outside the main function.
+[1:24:20] Then it comes to the main function.
+[1:24:22] If it comes to the main function,
+[1:24:24] we cannot pass a value.
+[1:24:26] We cannot get a value return.
+[1:24:28] So ISR is called automatically.
+[1:24:31] So from where we pass a parameter, no, we can't, we don't know.
+[1:24:36] And also where to return a return value, we don't know.
+[1:24:41] Therefore, no return value, no parameter passing, except interrupt vector.
+[1:24:47] Right.
+[1:24:49] But if you really need to pass some data to an ISR, how can we do that?
+[1:24:57] If you want to process some data inside the ISR, that means you need to pass some data into the ISR.
+[1:25:06] But we can't pass arguments because no parameter is accepted except interrupt vector.
+[1:25:12] And we can't get any process data out from the ISR because no return value.
+[1:25:18] But we want to pass some data into the ISR and we want to get some data returned from the ISR.
+[1:25:27] Global? Yeah, very good. Very good. Using global variables you can do that. Because global variables are accessible from any function. Using global variables you can do that. You can pass values into the ISR as well as you can get the values out from the ISR. Right.
+[1:25:49] But when you use global variables, you have to declare them as volatile global variable, not simple global variables.
+[1:26:01] You have to use the keyword volatile, volatile global variables.
+[1:26:06] Using volatile global variables, you can pass values data into the ISR and also you can get data out from the ISR.
+[1:26:16] Now the question is why do we need to specify the word volatile?
+[1:26:22] Right.
+[1:26:23] We need to specify the word volatile when you declare global variables that are to be used within ISR.
+[1:26:31] Any global variable to be used within ISR you have to declare them as volatile.
+[1:26:37] Why?
+[1:26:38] Right.
+[1:26:38] What is the meaning of the term volatile?
+[1:26:41] We say run is volatile.
+[1:26:43] What does that mean?
+[1:26:44] It's changing.
+[1:26:45] Yes.
+[1:26:45] volatile means the value can change.
+[1:26:50] It can change that means volatile.
+[1:26:53] Now using the keyword volatile
+[1:26:57] we tell the compiler the global variable
+[1:27:02] value can change. When you declare global variable
+[1:27:06] we use the volatile keyword and using the
+[1:27:10] keyword we tell the compiler the value of this global
+[1:27:14] variable can change.
+[1:27:16] Why do we tell that to the compiler?
+[1:27:18] Because, let's assume
+[1:27:20] you declare global variable.
+[1:27:23] And the global variable,
+[1:27:24] the value of the global variable would
+[1:27:26] be changed within the ISR.
+[1:27:29] Inside the ISR
+[1:27:30] we change the value of the global variable.
+[1:27:32] Right. At the time
+[1:27:34] of compilation,
+[1:27:36] we don't know when the
+[1:27:38] ISR would be called.
+[1:27:40] We don't know. So the compiler
+[1:27:42] doesn't know. When ISR
+[1:27:44] would be called.
+[1:27:46] Compiler doesn't know at the time of compilation.
+[1:27:48] The compiler will
+[1:27:49] consider ISR as
+[1:27:52] a function
+[1:27:54] that would
+[1:27:56] never execute it. At the time
+[1:27:58] of compilation, compiler will
+[1:28:00] consider ISR as
+[1:28:01] a function which
+[1:28:04] is never executed.
+[1:28:06] Why? There is no calling statement.
+[1:28:08] There is no calling statement.
+[1:28:10] If there is a function, there should be a calling statement.
+[1:28:12] but no calling statement
+[1:28:14] the ISR is called automatically.
+[1:28:17] So compiler doesn't know when it will be called.
+[1:28:19] So compiler will recognize
+[1:28:21] ISR
+[1:28:22] will consider ISR as
+[1:28:25] a function that is
+[1:28:27] never called. Then your
+[1:28:29] global variable is
+[1:28:30] accessed and changed
+[1:28:33] the value of the global variable is
+[1:28:35] changed within the ISR.
+[1:28:37] So compiler will think
+[1:28:39] this global
+[1:28:41] variable value would never
+[1:28:42] be changed because
+[1:28:44] ISR is never executed.
+[1:28:46] So the global variable value would never be
+[1:28:49] changed. So compiler
+[1:28:50] will replace that global
+[1:28:53] variable value with
+[1:28:54] a constant. If it is not going
+[1:28:56] to change, compiler
+[1:28:58] will optimize the code
+[1:29:00] by replacing the variable
+[1:29:03] value with a constant.
+[1:29:05] So it set to
+[1:29:07] default value as constant.
+[1:29:08] Now let's say you have a global variable,
+[1:29:11] integer global variable
+[1:29:12] and you have a default value
+[1:29:15] initialized with value 5.
+[1:29:17] And inside the ISR,
+[1:29:19] you increment the global variable
+[1:29:21] value by 1. That means value
+[1:29:23] becomes 6 inside the ISR.
+[1:29:25] But the compiler,
+[1:29:27] at the compilation time,
+[1:29:29] compiler sees,
+[1:29:30] ISR is a function
+[1:29:33] that is never called. So inside
+[1:29:35] the ISR, global variable is
+[1:29:37] incremented but compiler
+[1:29:39] right compiler
+[1:29:41] thinks this
+[1:29:42] increment will never
+[1:29:45] happen. So the global
+[1:29:47] variable value 5
+[1:29:48] it will remain as 5
+[1:29:51] forever if it is
+[1:29:53] not incremented inside
+[1:29:55] the ISR and if
+[1:29:57] ISR is not executed
+[1:29:59] the value of the global variable
+[1:30:01] will remain 5 forever.
+[1:30:04] So
+[1:30:04] the compiler will
+[1:30:06] replace the global variable with constant fun.
+[1:30:10] That is called compiler optimization.
+[1:30:13] Why? Why do we need a variable?
+[1:30:15] If it is not going to change,
+[1:30:18] so use a constant.
+[1:30:20] Why do we reserve memory for a variable,
+[1:30:23] for a value that is not going to be changed?
+[1:30:29] That is the argument of the compiler.
+[1:30:31] That will result wrong answers in our code.
+[1:30:36] So how can we a constant variable is optimized than the normal variable?
+[1:30:43] Not a constant variable, it's a literal constant.
+[1:30:47] Constant, yeah.
+[1:30:48] Literal constant.
+[1:30:49] Constant variable and a normal variable, they both require memory.
+[1:30:56] But literal constants, literal constants are associated with the source code.
+[1:31:00] Literal constants means, right.
+[1:31:06] int x 5. This is a variable.
+[1:31:10] Const, const int y 5.
+[1:31:15] This is a constant. Right. Just 5.
+[1:31:19] Literal constant. Now in your code, let's say you have
+[1:31:23] equation. X assignment operator.
+[1:31:28] Right. Let's say you have this kind of expression.
+[1:31:31] x, x plus
+[1:31:33] y plus
+[1:31:35] 5. This is literal
+[1:31:37] constant. This is variable
+[1:31:39] constant. This is a variable.
+[1:31:41] Variable,
+[1:31:43] variable constant.
+[1:31:46] This is literal.
+[1:31:48] Literal constant.
+[1:31:49] Literal constant is just a number.
+[1:31:51] So now memory reserved.
+[1:31:53] Is it clear?
+[1:31:55] Yes sir.
+[1:31:57] The compiler will replace
+[1:31:59] the entire global variable
+[1:32:01] with a literal constant.
+[1:32:03] If it is not going to be changed
+[1:32:05] so the result of our
+[1:32:07] program would be wrong
+[1:32:09] then. To prevent that
+[1:32:11] we have to tell the compiler
+[1:32:12] this variable
+[1:32:15] can be changed
+[1:32:17] even though there is no
+[1:32:19] calling statement for the routine
+[1:32:21] even though at the
+[1:32:23] compilation time we don't know
+[1:32:25] when it will be changed
+[1:32:26] when the ISR will be called
+[1:32:29] we don't know at the compilation time.
+[1:32:31] We don't know at the
+[1:32:33] compilation time when the value
+[1:32:35] of the global variable would be changed.
+[1:32:37] We don't know. However,
+[1:32:39] the value of the global variable will be
+[1:32:41] changed. It can be
+[1:32:43] changed. Therefore, don't
+[1:32:44] optimize it. We need to tell
+[1:32:47] the compiler. So how do we
+[1:32:49] tell it to the compiler?
+[1:32:50] We use volatile keyword.
+[1:32:53] We declare the variable
+[1:32:55] as volatile global
+[1:32:57] variable, then compile
+[1:32:58] knows somewhere in the program sometimes at somewhere the value of the global variable will
+[1:33:07] be changed so compiler will not optimize the variable with a constant can you understand
+[1:33:13] I don't know if you are talking about the monke.
+[1:33:17] Is it a reference type or study?
+[1:33:23] No, I don't know.
+[1:33:26] It's a global variable.
+[1:33:28] Isr is not a value of the values.
+[1:33:31] If you have arguments passed,
+[1:33:34] if you have a parameter,
+[1:33:36] if you have a parameter,
+[1:33:38] if you have a value of ISR,
+[1:33:41] If you want to add value to the ISR, there is no return value.
+[1:33:45] If you want to add value to the ISR,
+[1:33:48] if you want to add value to the ISR,
+[1:33:52] then you will use global variables.
+[1:33:54] As you will use global variables,
+[1:33:57] it will be declared as a global variable.
+[1:34:01] At the time of compilation,
+[1:34:03] there is no ISR calling statement in the compiler.
+[1:34:08] in the code, there is no calling state, I have a time to go.
+[1:34:11] I have a time to go, to the first to the 2-0, the one to the one-pun.
+[1:34:14] to the right-ish, the more the there-sit-e-call, the one-hur, the all-futat, the that-e-call, the
+[1:34:17] the to-e-call, the thet,e-call, the a-call, the
+[1:34:17] I have a very good thing, to be out.
+[1:34:20] I have a very good thing, to be out, to be in a very contiging, to be in a very very very very intre mh,
+[1:34:24] I have a very good thing, to be in a very good thing, the one I have a very good thing,
+[1:34:28] the one I have a very good thing, the one I have a very good thing,
+[1:34:30] the one I have a very good thing, the one I have a very good thing,
+[1:34:31] the one I have a very good thing, the one I have a very good thing,
+[1:34:32] the one I have a very good thing, the one I have a thing,
+[1:34:32] the one I have a really good thing, the one I have a really good thing,
+[1:34:33] the one I have a really good thing, the one I have a really good thing,
+[1:34:33] the one I have a really good thing, the one I have a really good thing,
+[1:34:34] the one I have a really good thing, the one I have a really good thing,
+[1:34:34] the one I have a really good thing, the one I have a really good thing,
+[1:34:35] the one I have a really good thing, the one I have a really good thing,
+[1:34:54] If you want to call it, you can optimize it.
+[1:35:00] If you want to compile it, you can use the memory of the program.
+[1:35:06] Try to optimize the execution time and try to optimize the memory consumption.
+[1:35:13] This is the compile optimization.
+[1:35:15] I have a now-gall.
+[1:35:16] to theher.
+[1:35:17] I have a say, to theher, the ct, the in-cg, the t,p,
+[1:35:19] [unclear — Sinhala / crosstalk]
+[1:35:22] the of the iso, the the the.
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:23] 
+[1:35:49] It can be change.
+[1:35:56] We use the volatile key.
+[1:36:03] Can you understand?
+[1:36:08] Is that clear?
+[1:36:11] [unclear — Sinhala / crosstalk]
+[1:36:41] complete it is our cp
+[1:36:43] around time
+[1:36:45] of low
+[1:36:47] it is our cp
+[1:36:49] it is our
+[1:36:51] code
+[1:36:53] it is
+[1:36:55] complete
+[1:36:57] we will
+[1:36:59] pop up
+[1:37:01] adc
+[1:37:03] cp
+[1:37:05] cp
+[1:37:07] cp
+[1:37:09] the isaqa
+[1:37:10] the I mekoui
+[1:37:10] the I mEaG
+[1:37:11] sHG
+[1:37:11] a
+[1:37:10] a
+[1:37:10] 
+[1:37:10] a
+[1:37:10] a
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] a
+[1:37:11] a
+[1:37:11] 
+[1:37:11] a
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] a
+[1:37:11] a
+[1:37:11] a
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] 
+[1:37:11] to the Tm.
+[1:37:12] [unclear — Sinhala / crosstalk]
+[1:37:45] when the sudden interrupt happens
+[1:37:47] over right
+[1:37:49] over right
+[1:37:51] over right
+[1:37:53] over right
+[1:37:55] over right
+[1:37:57] object oriented
+[1:37:59] function over id
+[1:38:01] oh
+[1:38:03] oh
+[1:38:05] vector
+[1:38:07] the return value
+[1:38:09] Other thing is these are not only for the embedded systems are these are hard computer science
+[1:38:32] even in a general purpose
+[1:38:35] PC
+[1:38:35] if you are going to write an OS
+[1:38:38] if you are a system
+[1:38:42] program, if you are going to write an
+[1:38:44] operating system, you should have
+[1:38:46] this knowledge
+[1:38:47] what else?
+[1:38:54] what are the other questions you have?
+[1:38:56] Thilina, Sri Anjit
+[1:38:57] any questions?
+[1:38:59] no sir
+[1:39:00] Right. Then that is about ISR. When ISR is in execution, interrupts are disabled to prevent any more interrupts while handling one interrupt.
+[1:39:14] Therefore, ISR must be short to prevent another interrupt passed without detecting. ISR must be short to prevent another event passed without interrupting.
+[1:39:30] Now if this ADC vector ISR is very lengthy, while running this ISR, timer may overflow.
+[1:39:41] But that time overflow event may pass without interrupting the CPU because interrupts you have disabled to run the ADC ISR.
+[1:39:54] To prevent that, you have to write ISR, very short ISR.
+[1:40:01] So therefore, it is programmer's responsibility to write short ISR.
+[1:40:07] Don't write long ISR.
+[1:40:09] So short ISR.
+[1:40:10] Then another function we have related to another routine related to interrupts.
+[1:40:16] We have set interrupt routine.
+[1:40:18] That is SEI, set interrupt routine.
+[1:40:24] If you want to enable all interrupts in the system, you can use this routine.
+[1:40:32] Globally enable interrupts. If you want to globally enable interrupts, all interrupts in the system.
+[1:40:39] You want to enable. This is the function that you should use. Globally enable interrupts.
+[1:40:45] The same way if you want to disable interrupts. Clear interrupt function CLI.
+[1:40:51] you can disable all interrupts in the system by default all interrupts are disabled to save power
+[1:41:00] right because this interrupt is a hardware mechanism it consumes power to save power
+[1:41:06] by default interrupts are disabled whenever you want to enable interrupts you enable them
+[1:41:13] right for that you can use set interrupt routine to disable interrupts you can use
+[1:41:19] clear interrupt CLI routine. And these routines, SCI, CLI and also interrupt vectors, ISR vectors
+[1:41:31] for ISR, they are defined in a header file called interrupt.h. That means if you are using interrupts
+[1:41:42] In your firmware, you have to include interrupt.h header file.
+[1:41:49] Interrupt.h header file.
+[1:41:51] Right.
+[1:41:52] You have to use interrupt.h header file.
+[1:41:55] Any question?
+[1:41:56] Right.
+[1:41:57] Now next we have to talk about interrupt registers.
+[1:42:02] Before we do that, I think it's better you go through what we have discussed so far.
+[1:42:09] and understand
+[1:42:10] how these interrupts work.
+[1:42:14] Thereafter we can talk about
+[1:42:15] interrupt related register.
+[1:42:17] Therefore, I am
+[1:42:19] going to stop now.
+[1:42:21] Any question you have?
+[1:42:23] One of the questions you have?
+[1:42:25] Interrupt registers are
+[1:42:26] all over, all over, all over.
+[1:42:28] I want you
+[1:42:30] to go through
+[1:42:31] what we have discussed so far.
+[1:42:35] Then read the recommended
+[1:42:36] reference textbook
+[1:42:38] and get the things cleared related to interrupts and then come so we can discuss interrupt register
+[1:42:45] right these things are not straightforward these things are not very simple this is actually hard
+[1:42:53] computer science computer science we have a sugar-coded version of computing
+[1:43:03] the mycall the the real computer program a
+[1:43:09] the therein a yourc
+[1:43:10] the real computer programy thadh of a
+[1:43:12] the o-c-bkddh a
+[1:43:12] So, we use the OSG, we use the libraries, we use the sugar-coated version.
+[1:43:21] We use the same as the other people who use it, we use the same as the other people.
+[1:43:27] We use the same as the other people.
+[1:43:32] We use the same as the other people we use.
+[1:43:35] You think sometimes beyond what we have discussed.
+[1:43:39] That's really good sign.
+[1:43:41] If you are planning a computer science career in the future,
+[1:43:52] you will need to do this in the future.
+[1:43:55] Not IT, IT is the sugar coated version.
+[1:43:58] If you are planning a computer science career,
+[1:44:04] you will need to make your knowledge.
+[1:44:09] There is no need to access the register, the interrupts, the performance, the code, the
+[1:44:20] compiler optimization, the data types misuse, the volatile variables.
+[1:44:30] Actually hackers are good programmers.
+[1:44:45] They exploit recursive functions to crash systems.
+[1:44:53] But you must know these things are possible.
+[1:45:01] There are two schools.
+[1:45:04] The white hat hackers and black hat hackers.
+[1:45:10] The white hat.
+[1:45:12] Black hat.
+[1:45:16] If you are really interested about these
+[1:45:22] hardcore computer science
+[1:45:24] read about the classical
+[1:45:26] computer science problems that I mentioned
+[1:45:29] earlier.
+[1:45:31] Towers of Hanoi,
+[1:45:32] Sleeping Barbers problem,
+[1:45:34] Dining Philosopher's problem.
+[1:45:36] What are they?
+[1:45:37] They are algorithms.
+[1:45:40] They are code.
+[1:45:43] They are study.
+[1:45:44] They are study.
+[1:45:47] Unfortunately,
+[1:45:48] our degree program is management
+[1:45:50] and IT, the computing
+[1:45:52] emphasis is not that much.
+[1:45:55] Right. But when
+[1:45:56] you pass out, when you go to the industry,
+[1:45:58] if you have that computing
+[1:46:00] hardcore background,
+[1:46:02] then you have the edge. You can
+[1:46:04] compete with people coming from UCSC,
+[1:46:06] people coming from Monotone.
+[1:46:08] If you have that edge, that is
+[1:46:10] the edge
+[1:46:12] that they use
+[1:46:13] in the industry.
+[1:46:16] They have that hardcore computer science background.
+[1:46:19] Right. Therefore,
+[1:46:20] Go through what we have discussed so far.
+[1:46:24] Read the relevant chapters in the recommended textbook.
+[1:46:28] There's a relevant chapter interrupt.
+[1:46:30] There's a chapter for interrupts.
+[1:46:34] Read that chapter.
+[1:46:36] Try to understand how interrupts work.
+[1:46:40] And come the next week, we'll discuss about interrupt registers
+[1:46:45] and try to write a couple of firmware using interrupts.
+[1:46:50] Any question, anything you want to know?
+[1:46:53] Sir, how do we check the PIN register in the assembly?
+[1:47:00] PIN register?
+[1:47:03] Ah, PIN.
+[1:47:04] Right, okay.
+[1:47:06] You are talking about the second assignment.
+[1:47:10] Yes, sir.
+[1:47:11] Right, okay.
+[1:47:13] Now, I have given you a recommended textbook.
+[1:47:19] in that textbook is
+[1:47:21] M-B-R-E-P system programming
+[1:47:23] using assembly and C.
+[1:47:25] Could you find a time to go through
+[1:47:27] that? I can simply give
+[1:47:29] you the answer. Then you
+[1:47:31] won't learn. I want you to learn.
+[1:47:35] Yes, sir. I will.
+[1:47:38] Right. Go through that.
+[1:47:40] Excuse me, sir.
+[1:47:42] Yes. For that,
+[1:47:43] sir, can't we
+[1:47:45] use compare immediate?
+[1:47:47] It's like a compare immediate zero and the pin register zero and you want to see whether
+[1:48:05] a particular
+[1:48:06] pin is low or high.
+[1:48:10] Right.
+[1:48:13] One
+[1:48:14] option is
+[1:48:15] yes
+[1:48:16] you can
+[1:48:19] there's an instruction
+[1:48:22] called
+[1:48:23] SBIC.
+[1:48:26] SBIC.
+[1:48:28] Assembly instruction called
+[1:48:29] SBIC.
+[1:48:32] Now with that
+[1:48:33] If you use pin register and a bit, particular bit, you can skip the execution of next line, right?
+[1:48:45] If the specified bit is clear.
+[1:48:49] For example, let's say now your switch, push button switch is connected to PD2.
+[1:48:58] Am I right?
+[1:48:59] Yes, sir.
+[1:49:00] Yeah, PD2.
+[1:49:00] That means the number 2 bit of PIN D register.
+[1:49:06] So if you use SDIC PIN D comma 2.
+[1:49:14] This instruction, this assembly instruction.
+[1:49:17] This means skip the next if bit 0 is clear.
+[1:49:24] Skip the next instruction.
+[1:49:28] if the bit 0 is clear.
+[1:49:32] If the bit is clear, sorry.
+[1:49:34] Next, skip the next instruction.
+[1:49:37] If the bit
+[1:49:39] is clear, I can't exactly
+[1:49:44] remember the correct meaning, right?
+[1:49:46] You have to read the relevant book
+[1:49:50] then you can get the exact meaning of this SPIC.
+[1:49:53] Right? So simply the idea is
+[1:49:56] skip the next instruction.
+[1:49:58] If the particular specified bit in this case bit number 2 of this register is clear.
+[1:50:05] Now if you have pressed the button the bit number 2 is clear.
+[1:50:10] Zero.
+[1:50:12] So if it is zero skip the next line.
+[1:50:16] Next line could be called delay.
+[1:50:20] Your delay subroutine.
+[1:50:21] now the question ask you to delay the blink the LED in to 400 milliseconds
+[1:50:34] yeah 400 milliseconds if the button is released if the button is pressed 200
+[1:50:41] milliseconds right now if the button is pressed the bit number two is clear so
+[1:50:48] So if the bit number 2 is clear, skip this.
+[1:50:52] So you can write a function to delay 200 milliseconds.
+[1:50:56] And you can call that function twice to get the 400 millisecond delay.
+[1:51:02] And if the button is pressed, skip one delay.
+[1:51:06] Then your blinking rate would be 200 milliseconds.
+[1:51:09] Can you understand what I explained?
+[1:51:13] Good.
+[1:51:14] Right.
+[1:51:14] You can have a routine function called delay which delays the execution for 200 milliseconds.
+[1:51:24] If you call that function twice, you get the 400 milliseconds delay.
+[1:51:30] But if the button is pressed using this SBIC instruction, you can skip the next instruction and skip one delay.
+[1:51:39] So, your blinking rate will be 200 milliseconds.
+[1:51:41] I think that would be enough for you to move further.
+[1:51:47] If I can give you the source code and everything, then what happens is you will be good type, not good programmers, you can be good typists.
+[1:52:08] You have to be programmers.
+[1:52:20] You have to be programmers.
+[1:52:29] Nirasha, this is the instruction that you need.
+[1:52:33] Thank you.
+[1:52:34] right.
+[1:52:37] What else you want to know?
+[1:52:42] Now if you want to toggle an LED,
+[1:52:46] toggle a pin, you have to use
+[1:52:48] exclusive O operator.
+[1:52:52] Exclusive O operator in assembly is EOR.
+[1:52:55] EOR is the
+[1:52:58] assembly instruction for exclusive O.
+[1:53:01] EOR. So other than that
+[1:53:04] other instructions you already know.
+[1:53:07] You know SBI,
+[1:53:09] CBI,
+[1:53:10] LDI, BRNE,
+[1:53:13] DEC,
+[1:53:15] JMP,
+[1:53:17] call, then
+[1:53:18] RET, return.
+[1:53:21] Other instructions you know.
+[1:53:23] These are the two critical instructions
+[1:53:24] you should know. One is
+[1:53:26] if you want to toggle the
+[1:53:28] state of a particular pin, you have to use
+[1:53:30] exclusive O operator.
+[1:53:32] the assembly instruction is EOR.
+[1:53:35] And
+[1:53:36] if a particular
+[1:53:38] register bit is clear,
+[1:53:41] if you want to skip the next
+[1:53:42] instruction, you can use
+[1:53:44] SBIC instruction.
+[1:53:46] SBIC instruction. So, using
+[1:53:48] that instruction, you can skip the
+[1:53:50] next instruction if
+[1:53:52] a particular bit of a register
+[1:53:54] is clear. Clear means
+[1:53:56] zero. What else?
+[1:53:58] How to
+[1:54:00] get the 400 millisecond delay
+[1:54:02] without calling two times delay.
+[1:54:06] Then if you are going to use,
+[1:54:09] if you are going to have a delay loop
+[1:54:11] with 400 milliseconds delay, right?
+[1:54:15] And then when the button press,
+[1:54:19] you want to get 200 milliseconds delay,
+[1:54:21] you need to write two loops, two delay loops.
+[1:54:24] That's not very efficient way, right?
+[1:54:27] Better to write two delay loops for 200 milliseconds
+[1:54:30] and call it twice
+[1:54:32] to get 400 milliseconds.
+[1:54:35] If you want
+[1:54:35] 400 milliseconds,
+[1:54:38] that's no point.
+[1:54:41] Then your program would be very lengthy.
+[1:54:43] Not even
+[1:54:44] 400.
+[1:54:45] If you want one second delay,
+[1:54:48] you can achieve. You need to
+[1:54:49] nested many loops.
+[1:54:52] Then you can get
+[1:54:58] the delay, whatever the delay you require.
+[1:55:00] Probably you may need two more assembly instructions.
+[1:55:05] In instruction and out instruction.
+[1:55:08] In instruction in assembly if you want to assign a value of a register, port register to a general purpose register.
+[1:55:17] Like R17, R16 like general purpose register.
+[1:55:21] If you want to assign a value of a port register.
+[1:55:24] Like port BO, pin BO, DDRB that kind of register value.
+[1:55:30] if you want to assign to a general purpose register you can use in instruction and if you want to
+[1:55:37] out right the value of a general purpose register to a port register you can use out instruction
+[1:55:46] probably you may need those two instructions as well in and out mainly you need this sbic
+[1:55:54] and EOR. EOR you need to
+[1:55:57] toggle. SBIC you need
+[1:55:59] to skip the delay function.
+[1:56:01] Delay
+[1:56:01] calling of delay function.
+[1:56:05] Right. So that you can have
+[1:56:07] 200 milliseconds delay.
+[1:56:09] If you don't skip the
+[1:56:10] 200 milliseconds delay then you get the
+[1:56:13] 400 milliseconds delay.
+[1:56:14] Two times you call the delay.
+[1:56:17] What else?
+[1:56:19] Thank you.
+[1:56:21] Others? Any question?
+[1:56:22] right if so that's all for today yeah thank you thank you sir thank you thank you

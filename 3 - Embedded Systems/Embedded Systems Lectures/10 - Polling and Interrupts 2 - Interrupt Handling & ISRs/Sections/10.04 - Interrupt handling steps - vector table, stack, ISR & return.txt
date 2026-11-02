@@ -1,0 +1,174 @@
+[0:02] you have the interrupt
+[0:04] vector table. At the
+[0:06] beginning you have the interrupt vector table.
+[0:09] Then you have
+[0:10] the program,
+[0:12] instructions of your firmware.
+[0:14] Then you have interrupt
+[0:16] service routine.
+[0:18] Right. All these things are in the
+[0:20] RAM. Right.
+[0:22] So RAM has address
+[0:24] and instruction. Address, instruction.
+[0:26] Every instruction has an address.
+[0:29] Right.
+[0:30] Now when you run your
+[0:32] firmware the execution begins from address 0 execution begins from address 0 right so address
+[0:42] 0 the first instruction of your firmware from that we begin the execution however then we have
+[0:52] interrupt vector table right if the interrupts are used interrupt vector table is at the top of the
+[1:00] wrap. If interrupts
+[1:03] are used, if interrupts
+[1:05] are not used, this vector table is
+[1:06] not there. If interrupts are
+[1:08] used, the vector table
+[1:10] will be at
+[1:12] the top of the wrap,
+[1:14] at the beginning of the wrap. So
+[1:16] CPU jumps
+[1:18] over the interrupt
+[1:20] vector table and
+[1:22] continue the execution
+[1:24] of your firmware.
+[1:27] So CPU starts execution
+[1:28] from the address 0
+[1:30] the first instruction in address 0
+[1:32] then CPU jumps
+[1:34] over the interrupt vector table
+[1:37] and continues
+[1:38] the execution
+[1:39] of your firmware.
+[1:43] Here you can see
+[1:45] that started
+[1:47] the execution from
+[1:48] address 0
+[1:49] first instruction
+[1:51] then interrupts
+[1:53] we are using interrupt so interrupt
+[1:55] vector table is there
+[1:56] so we jump over the vector table
+[1:59] to next instruction and next instruction, the next instruction. Likewise, instructions are
+[2:07] executed one by one. Right. Now let's assume while you are executing this particular instruction,
+[2:16] while you are executing this particular instruction, a peripheral device interrupts
+[2:23] you. Here you mean CPU. While the CPU is executing this particular instruction,
+[2:31] a peripheral device interrupts the CPU. Right. While you are reading a particular article in the
+[2:38] newspaper, small fellow interrupts you. So small fellow starts crying. Right. Interrupt. Right.
+[2:46] You got the interrupt.
+[2:48] Then what happens?
+[2:49] The CPU then saves address of the next instruction to execute.
+[2:57] What is the next instruction?
+[2:58] This is the next instruction.
+[3:00] This is the instruction currently in execution.
+[3:02] Currently in execution.
+[3:04] While this is in execution, interrupt happened.
+[3:08] The CPU interrupted.
+[3:10] So this is the next instruction.
+[3:12] Address of the next instruction.
+[3:13] CPU saves on stack. Address of next instruction saves on stack. Right. Right. That address is in the program counter. So what is that? Whatever the address in program counter is saved on a stack. Right.
+[3:31] then cpu turns off interrupts cpu turns off interrupts to prevent any more interrupts while
+[3:42] handling one interrupts so all interrupts are turned off because now we are going to handle
+[3:49] one interrupt while we are handling one interrupt we can't attend to another interrupt so we turn
+[3:55] after interrupts, right?
+[3:57] Something like this.
+[3:59] You were reading the newspaper.
+[4:01] While you were reading
+[4:03] this particular article,
+[4:05] right? Let's say
+[4:07] you have two kids,
+[4:09] right? The big
+[4:10] brother
+[4:11] started crying,
+[4:14] interrupt, right?
+[4:17] Then what do you,
+[4:18] now there's a small fellow also, a small brother
+[4:20] also there. The
+[4:22] Ayya started crying and Mali is also
+[4:24] there. Now what would happen if Mali also starts crying? You can't attend to two kids at the same
+[4:33] time. So what you do is you put the teeth on the Mali's mouth. So he can't cry. So you disable
+[4:46] interrupts when you are trying to handle one interrupt because you want to prevent
+[4:51] right any more interrupts while handling one interrupt now that's why cpu disables cpu turns
+[5:01] off interrupts right so when interrupted the address is saved on the stack and then turns
+[5:09] off interrupts because now we are going to handle one interrupt while we are handling one interrupt
+[5:15] We cannot handle another interrupt.
+[5:17] So we disable interrupts.
+[5:19] Right.
+[5:20] Then CPU execution.
+[5:22] The CPU jumps to the interrupt vector table.
+[5:25] CPU jumps to the interrupt vector table.
+[5:28] Interrupt vector table contains addresses of interrupt service routines.
+[5:35] Addresses of interrupt service routines.
+[5:38] The interrupt vector table contains addresses of interrupt service routines.
+[5:46] In other words, where the relevant ISR is.
+[5:51] Interrupt service routine means ISR.
+[5:53] Where the relevant ISR is.
+[5:56] You can find out from the interrupt vector table.
+[5:59] So execution jumps to the interrupt vector table.
+[6:02] And we can find out where the relevant ISR is.
+[6:07] And with that address, right, the CPU can jump to the relevant ISR.
+[6:14] The CPU can jump to the relevant ISR, interrupt service routine.
+[6:18] From the vector table, we pick the address and then we jump to the relevant ISR, interrupt service routine.
+[6:25] Now each and every interrupt has interrupt service routine.
+[6:30] Each and every interrupt has relevant associated ISR, interrupt service routine, right.
+[6:36] Now the ISR contains instructions to handle the interrupt.
+[6:44] So ISR contains instructions to handle the interrupt.
+[6:48] ISR contains instructions to handle the interrupt.
+[6:51] So when you got the address of the relevant ISR, you jump to the ISR and you execute the ISR.
+[6:58] Now, as programmers, we have to write the instructions in the ISR to handle the interrupt.
+[7:07] So, instructions to handle the interrupt, we have to write within the ISR.
+[7:12] In our example, when the button is pressed, we jump to the particular ISR.
+[7:18] Inside the ISR, we have written code to toggle the state of external LED.
+[7:25] So code in the ISR is to toggle the state of external LDD.
+[7:31] So that is, as programmers, we have to write it.
+[7:35] The relevant instructions for the ISR.
+[7:38] The CPU will pick the address of relevant ISR from the interrupt vector table and jump to the ISR.
+[7:46] And then CPU will execute the ISR.
+[7:48] At the completion of the execution of ISR, at the completion of the execution of ISR,
+[7:57] this is what happened, right?
+[7:59] From the vector table, we get the address.
+[8:02] We come to the ISR and we execute ISR line by line, right?
+[8:07] CP will jump to the vector table, get the address, come to the ISR and instructions
+[8:14] with ISR are executed line by line.
+[8:16] Now at the end of the execution of ISR, right, the CPU will turn on interrupts again, right?
+[8:26] Before handling the interrupt, CPU turned off interrupts.
+[8:30] And now after handling the interrupt, CPU will turn on the interrupts again.
+[8:36] So after changing the nappy of the big brother, we remove the teeth from the small fellow.
+[8:43] So that small fellow can also cry.
+[8:45] But while we are changing the nappy of the big brother, we have put the teeth in the mouth of small brother, Mally's mouth, we have put the teeth so that Mally can't cry.
+[9:02] While we change the nappy of Aya, once you finish changing the nappy, Aya's nappy, we remove the teeth, Supur, from Mally's mouth so he also can now cry.
+[9:14] You also can interrupt. So CPU will turn on the interrupts again and CPU will get the address
+[9:26] saved on the stack. CPU will get the address saved on the stack. Get the address. There is a return
+[9:34] address from the stack. And then we can the execution jumps back to the statement where
+[9:42] the interrupt happened. Using that address you go back to the instruction where the interrupt happened.
+[9:49] And from there we resume the execution that we were doing. Then from there we resumes the execution.
+[9:59] The CPU resumes the execution from where it was suspended. Using the address we go back to the
+[10:06] place where we were interrupted
+[10:08] and from there we continue
+[10:11] the execution. Right.
+[10:12] Any question? Can you
+[10:14] understand this?
+[10:16] Monadath, you can get along?
+[10:18] Yes, sir.
+[10:19] Yes, sir.
+[10:20] Sir, when
+[10:21] we get more than one interrupt,
+[10:24] the CPU
+[10:25] disables one and
+[10:27] prioritizes the other.
+[10:29] So if both are critical,
+[10:32] then there is a problem in the system.
+[10:34] Yes. Now, if
+[10:36] there are multiple interrupts now we have two kids so both are important
+[10:41] both ayya and malli both are important so as a father so we have to take care of both
+[10:51] but we cannot do two tasks parallely at the same time so we have to prioritize one over other
+[11:03] So that's why when you are about to handle one interrupt, you disable other interrupts until you finish handling the interrupt.
+[11:14] Once you finish handling the interrupt, then you again enable the interrupt so that the other devices also can interrupt you.
+[11:23] Right.
+[11:23] When Aya starts crying, you have to attend to Aya.
+[11:28] Change his nappy.
+[11:30] Right.
+[11:30] While you are doing all these things, what would happen if Mali also starts crying?
+[11:35] Can you attend to Mali at the same time? No.
+[11:39] So you disable the Mali's interrupt. How?
+[11:45] Then Mali turned under there.
+[11:49] So once you finish changing the nappy, Ayya's nappy,
+[11:54] then you remove the teeth from Mali's mouth.
+[11:59] So he can also interrupt you.

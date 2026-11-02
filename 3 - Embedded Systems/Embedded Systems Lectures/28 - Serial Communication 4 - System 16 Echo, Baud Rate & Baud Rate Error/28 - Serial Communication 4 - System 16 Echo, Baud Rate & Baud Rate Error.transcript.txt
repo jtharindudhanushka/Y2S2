@@ -1,0 +1,1251 @@
+28 - Serial Communication 4 - System 16 Echo, Baud Rate & Baud Rate Error  (8 Dec 2020 (morning))
+
+[0:00] This is the place where we stopped last week. We discussed about serial communication, asynchronous serial communication we discussed. Then we discussed about the asynchronous transmitter, asynchronous receiver, and UART registers. Universal, synchronous, asynchronous receiver and transmitter.
+[0:30] So use our registers we discussed and now we are going to develop small embedded system based on a microcontroller to understand how serial communication both the receiving part and the transmission part works.
+[0:53] Right. So this system we call char enclosure, character enclosure.
+[1:00] Right. This system receives characters from PC.
+[1:05] So this microcontroller based system is connected to a PC, personal computer.
+[1:11] From the personal computer, the microcontroller receives characters.
+[1:17] Sorry.
+[1:18] receives characters and then encloses these characters with square buckets and transmits
+[1:27] enclosed characters back to the PC. What does that mean? Now let's say let me to drop right
+[1:36] this is the PC and this is the microcontroller. So PC sends characters to microcontroller. Let's
+[1:44] say PC, let's assume PC sent simply.
+[1:49] The microcontroller, what the microcontroller does is,
+[1:52] microcontroller receives simple A,
+[1:55] encloses simple A with square brackets
+[1:58] and transmits enclosed character back to PC.
+[2:03] This is what transmitted back to the PC.
+[2:07] If you send A, you get A enclosed with square brackets.
+[2:11] If you send B, you get B enclosed with scrap records.
+[2:16] Right.
+[2:16] So very simple system.
+[2:21] There is no practical usefulness of this kind of system.
+[2:25] But using this kind of system, we can learn how serial communication works very easily.
+[2:31] Without, I mean, making the things more complicated.
+[2:37] Very simply, we can learn how serial communication works.
+[2:40] because the microcontroller has to receive characters sent by the PC.
+[2:47] So the receiving part we can learn.
+[2:50] Then the received character we enclose with square brackets
+[2:54] and we transmit back to the PC.
+[2:57] The transmission part also we can learn.
+[3:00] Both synchronous receiving part,
+[3:03] synchronous transmission part we can learn by developing this system.
+[3:08] So once you have the knowledge, how an embedded system receives characters using serial communication and how embedded system can transmit characters using serial communication, thereafter you can use those knowledge for some useful applications.
+[3:32] something like data logging application right which i have which i have uh asked you to develop
+[3:39] for your exercise number seven a data logger right so then it's a very useful application
+[3:46] using a sensors we we capture data then those data we log in a pc right a computer when you
+[3:54] can log data in a pc there are then you can save data in a database you can save them in a file
+[4:00] You can even upload them into a web page, a cloud platform, whatever you want, you can do.
+[4:07] If you can transmit data, you capture from sensors to a PC, right?
+[4:13] So by developing this application is not useful, right?
+[4:17] Practically, this is not useful.
+[4:19] But using this, we can learn how you can receive data and how you can transmit data.
+[4:26] An embedded system, this is the embedded system.
+[4:29] This is the external world.
+[4:30] some other system. A communication, serial communication between an embedded system and some other system.
+[4:38] So that's the idea of developing this system. Is it clear? Yes, sir. Right.
+[4:47] First of all, we should learn about USART pinout of ATmega328B microcontroller.
+[4:55] Whatever the microcontroller you use, you can download the data sheet.
+[4:59] And from the data sheet, you can learn universal synchronous, asynchronous receiver and transmitter pinout.
+[5:08] Now, this is the microcontroller.
+[5:10] In this microcontroller, there are 28 pins.
+[5:13] Out of these 28 pins, these two are the pins we use for serial communication.
+[5:20] Pin number 2 and 3.
+[5:21] Actually, they are input-output pins of port D.
+[5:25] PD0 and PD1.
+[5:28] They are two IO pins.
+[5:31] General purpose IO.
+[5:32] GPIO pins of port D.
+[5:35] But we can
+[5:36] multiplex them.
+[5:37] We can multiplex them
+[5:39] as receive
+[5:42] data pin and transmit
+[5:44] data pin. Receive data
+[5:46] T. RxD, transmit
+[5:48] data. Txt.
+[5:50] Right.
+[5:51] So we can tell the
+[5:52] microcontroller
+[5:53] right, override the function I.O. functionality of these two pins and make them data communication
+[6:03] pins. We can tell the microcontroller. So we need to give instruction to the microcontroller
+[6:09] to override the I.O. functionality, GP I.O. functionality of these two pins right as
+[6:16] data communication pins. Now in the Arduino Uno board these two pins are numbered as 0 and 1.
+[6:23] 0 pin for receive data.
+[6:27] Then number 1 pin is for transmit data.
+[6:31] Now we discussed last week how to enable receiver using a bit in a register.
+[6:40] Now when you enable the receiver of this microcontroller, USART receiver,
+[6:45] when you enable using a bit in a control register, USART control and status register,
+[6:51] if you enable the receiver,
+[6:54] then this pin, the PD0 becomes receive data pin.
+[6:59] When you enable the transmitter, right,
+[7:04] in the control register,
+[7:05] a bit in the control register,
+[7:08] PD1 pin becomes transmit data pin, right.
+[7:13] When you are using these two pins for data communication,
+[7:16] you can't use them for general purpose input output.
+[7:20] That means if you have connected any actuator or sensor to these two pins while you are trying to communicate data, those sensors and actuators may interfere with the communication.
+[7:36] So therefore, don't connect any actuator, any sensor to these two pins if you are planning to use these two pins for data communication.
+[7:47] Otherwise, those actuators, sensors, they may interfere the data communication operation, right?
+[7:55] If there's a data communication problem in your system, the first thing you should look, these two pins.
+[8:04] Whether these two pins, right, whether some sensors, some actuators connected to these two pins.
+[8:12] first check. If there's a data
+[8:14] communication problem, check these two
+[8:16] pins are free.
+[8:18] Nothing connected.
+[8:20] If any sensor actuator
+[8:22] connected, then you may not
+[8:24] be able to do data communication.
+[8:26] But in some systems, you don't need
+[8:28] to do data communication.
+[8:30] In such systems, you can use
+[8:32] these two pins as general
+[8:34] purpose IO pins, input-output
+[8:36] pin. Is it clear? Any question?
+[8:39] Now the time is 9.16.
+[8:40] Still internet is available.
+[8:42] Let's see.
+[8:44] Then schematic diagram.
+[8:47] This is our ATmega328P microcontroller.
+[8:51] The crystal oscillator to provide clock pulses to the processor.
+[8:56] CPU.
+[8:58] Reset button.
+[9:00] 10K resistor to keep the reset pin high.
+[9:03] Right.
+[9:04] And power supply to the microcontroller through pin number 7.
+[9:09] And the ground power supply to pin number 8.
+[9:12] Ground power supply to ADC, 5V power supply to ADC.
+[9:19] Then, this is the USAR to USB interface controller.
+[9:26] So, USAR to USB interface controller, this could be FT232 chip or some other microcontroller.
+[9:35] We discussed two possible options to communicate over USB port.
+[9:41] one option is you can use
+[9:43] FT232 chip
+[9:45] then the problem is
+[9:47] you need to
+[9:48] install the device driver
+[9:51] or else
+[9:52] as used in Arduino
+[9:54] Uno revision 3 board
+[9:57] you can use some other micro
+[9:59] controller
+[10:00] to implement USAT
+[10:03] to USB interface controller
+[10:05] so whatever it is
+[10:07] this is the USB
+[10:08] interface controller and this is the usb port we we draw power from the usb port for the micro
+[10:16] controllers power supply we draw from the usb port and this is the usr2 usb interface controller
+[10:25] right now in the usr2 usb interface controller we have transmiss data feed receive data feed
+[10:34] one important thing is, when you connect the microcontroller to U-Sart2 USB interface controller,
+[10:42] the transmit data pin of the U-Sart2 USB interface controller, we connect to received data pin of the microcontroller,
+[10:51] and then received data pin of the U-Sart2 USB interface controller, we connect to transmit data pin of microcontroller,
+[11:02] controller so receiver is connected to the transmitter transmitter is connected to the
+[11:08] receiver right that's obvious now when you let's say you communicate over telephone right when you
+[11:15] speak to the mic microphone of the telephone the other party the receiving party right
+[11:23] should listen to that and when that party communicates you have to listen you have to
+[11:30] then you can't use microphone.
+[11:32] Then you have to use the headphone
+[11:34] or whatever the speaker in your mobile phone.
+[11:39] So when you communicate to the microphone of your mobile phone,
+[11:43] the other party, they need to use the speaker.
+[11:46] Then when the other party communicates
+[11:48] to their microphone in the mobile phone,
+[11:51] then you have to use the speaker.
+[11:53] So same thing.
+[11:54] When we transmit data from the microcontroller,
+[11:59] those transmitted data must be received by the USAR to USB interface controller.
+[12:07] That's why transmit data pin connected to receive data pin.
+[12:12] Again, when the USAR to USB controller transmit data,
+[12:17] the microcontroller should receive data.
+[12:21] That's why the transmit data pin of USAR to USB interface controller
+[12:26] connected to the received data pin of microcontroller.
+[12:32] These are the four pins of USB connection,
+[12:35] two pins for the power supply, two pins for data.
+[12:39] Can you understand this schematic diagram?
+[12:42] Right.
+[12:44] Now what happens is,
+[12:46] now from PC side,
+[12:49] you send a character
+[12:51] and that character is received by that microcontroller.
+[12:57] And then microcontroller encloses that character with square bracket.
+[13:03] And microcontroller, right, this is A,
+[13:07] microcontroller transmits enclosed character to the PC.
+[13:13] So whatever character you send to the microcontroller,
+[13:16] microcontroller will enclose that character with square brackets
+[13:21] and transmits it back to the PC.
+[13:24] So that's the functionality of char and closer.
+[13:29] Is it clear?
+[13:30] Yes, sir.
+[13:31] Wiring diagram.
+[13:32] So nothing to wire.
+[13:34] Everything has already been wired on this boot.
+[13:39] Arduino Uno boot.
+[13:40] You have the microcontroller.
+[13:42] You have the microcontroller.
+[13:44] You have the USART USB interface controller.
+[13:49] You have the USB port.
+[13:51] Just connect the USB port through a USB cable to your PC.
+[13:57] That's it.
+[13:58] Everything you need, hardware you need for the char enclosure already on this board.
+[14:04] Already connected on this board.
+[14:07] Right.
+[14:08] So what we do is from the PC.
+[14:12] Let's say this is the PC.
+[14:14] So you connect the PC to USB port.
+[14:17] Right.
+[14:17] You send.
+[14:18] That's the connection.
+[14:19] To the microcontroller side you send a character simple label.
+[14:24] And then you will receive the PC will receive N close capital A.
+[14:30] Sorry N close simple right.
+[14:33] First we need to develop an algorithm for the firmware.
+[14:38] Algorithm for the firmware.
+[14:42] Now this is the firmware algorithm.
+[14:44] main function, char and closer start, char and closer stop.
+[14:51] Then the main function algorithm.
+[14:54] First in the main function, we set the board rate for the data communication.
+[15:00] Data transfer rate we set as 9600 BPS, 9600 bits per second.
+[15:10] That is the data transfer rate we set.
+[15:14] The communication happens between the microcontroller and the connected PC at this rate.
+[15:22] 9600 bits per second.
+[15:25] Then you need to specify the character size.
+[15:27] So we use 8 bit ASCII characters.
+[15:31] So we specify character size as 8.
+[15:35] Then we need to enable the receiver and transmitter.
+[15:40] Enable the receiver and transmitter.
+[15:44] To enable receiver and transmitter to set the character size, we have to use USART, control and status registers.
+[15:55] Then we enter into the endless loop.
+[15:58] Inside the endless loop, we repeatedly check, right?
+[16:03] If receive is completed, is complete, whether the character, whether you have received the receive operation is complete, receive complete.
+[16:17] If receive is not complete, we check whether receive is not complete.
+[16:23] That means if the receive is not complete means no unbreed character in UDR.
+[16:30] If the receive is not complete, that indicates no unread character in the USART data register OUDR.
+[16:41] Receive is not complete.
+[16:43] No new character, no unread character in the UDR USART data register.
+[16:49] Right.
+[16:50] If receive is complete, how do we know whether receive is complete or not?
+[16:55] We can use receive complete flag bit.
+[16:59] receive complete flag bit or xc flag bit you can use because when the receive is complete
+[17:06] this flag bit is set automatically so you can use this flag bit to repeatedly check
+[17:13] whether the receive operation is over if receive is complete if receive operation is complete
+[17:22] That means there is an unread character in the UDR.
+[17:30] If the receive is complete, that means there is an unread character in the UDR.
+[17:38] So this condition becomes false.
+[17:42] If receive is complete, this condition becomes false.
+[17:45] This is actually a polling situation.
+[17:48] We poll receive complete bit.
+[17:52] flag bit again and again to check whether the receive operation is over. If receive operation
+[18:00] is over that means receive is complete then this condition becomes false so we go to the
+[18:08] next step. If the receive complete is over if the receive complete is done read the character in UDR
+[18:18] read the character in UDR.
+[18:22] Whatever the character sent by the PC
+[18:24] you can read from UDR.
+[18:28] Use that data register.
+[18:30] Then you call a function called
+[18:33] transmit chart.
+[18:35] This is a subroutine.
+[18:37] Right?
+[18:38] A subroutine symbol of a flowchart.
+[18:42] So we call transmit chart function.
+[18:46] and we transmit
+[18:48] openSq.
+[18:50] R.
+[18:50] C.
+[18:50] we have
+[18:50] a
+[18:51] m.
+[18:51] c.
+[18:51] c.
+[18:51] 
+[18:51] 
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] 
+[18:51] 
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] 
+[18:51] 
+[18:51] c.
+[18:51] 
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] c.
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] c.
+[18:51] c.
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] 
+[18:51] Then again we call transmit-cha function with the received character.
+[19:00] If the received character is simple A, with that character we again call transmit-cha
+[19:06] function to transmit the character.
+[19:09] Then again we call transmit-cha function, transmit character function with the closing
+[19:16] square bracket.
+[19:17] After transmitting the enclosed character, opening square bracket, the character and closing square bracket, that is enclosed character.
+[19:27] After transmitting enclosed character, we go back to the endless loop again.
+[19:34] Go back to the top of endless loop.
+[19:35] So we do the same thing again and again.
+[19:40] So, whenever we receive a character from the PC, we transmit enclosed character back to the PC.
+[19:49] Receive a character and transmit enclosed character back to the PC.
+[19:54] Now, question is, what is the algorithm of transmit-cha subroutine?
+[20:04] Algorithm of transmit-cha subroutine.
+[20:07] This is the transmit cha subroutine.
+[20:10] The transmit cha subroutine has a parameter.
+[20:15] So that parameter we need to pass what is the character that we want to transmit.
+[20:21] In the first instance, it is an opening square bracket.
+[20:26] Then the character that we receive and finally the closing square bracket.
+[20:32] So as an argument we pass whatever the character we want to transmit.
+[20:38] Then in the function we check whether data register is not empty.
+[20:46] Whether data register is not empty.
+[20:49] Data register means UDR.
+[20:51] Whether UDR is not empty.
+[20:54] Usar data register is not empty.
+[20:56] Why?
+[20:57] If the Usar data register is not empty we can't load a character.
+[21:00] because it already contains a character.
+[21:04] If you try to overload,
+[21:06] if you try to load a character to UDR,
+[21:09] when it is not empty,
+[21:11] that means we are going to overwrite
+[21:13] existing character in the UDR.
+[21:16] So before we load a character to UDR,
+[21:20] we need to check whether UDR is empty.
+[21:23] We do that repeatedly.
+[21:25] Again, polling.
+[21:27] Right?
+[21:27] We pull UDRE flag bit.
+[21:32] USART data register empty flag bit.
+[21:35] Why?
+[21:36] When the UDR becomes empty,
+[21:39] this flag bit is set.
+[21:44] UDRE becomes empty.
+[21:46] UDRE flag bit.
+[21:48] USART data register empty flag bit is set
+[21:51] when UDR becomes empty.
+[21:53] So we check the UDRE flag bit again and again
+[21:56] to see whether UDR is empty.
+[21:59] If UDR is not empty,
+[22:01] we again check.
+[22:02] So when we are polling the UDRE flag bit,
+[22:06] then UDR becomes,
+[22:08] in some time,
+[22:09] UDR becomes empty.
+[22:11] So UDRE flag bit is set.
+[22:14] That means we know that UDR is empty.
+[22:17] We write the character
+[22:19] that we want to transmit to UDR.
+[22:22] Write the character to transmit to UDR.
+[22:26] Return.
+[22:26] So in the first instance, opening square bracket is written.
+[22:31] Then we check again and again.
+[22:33] UDR becomes empty.
+[22:35] The received character is written.
+[22:38] Then again we check whether UDR is empty.
+[22:41] If UDR is empty, closing square bracket is.
+[22:45] So the entire enclosed character we transmit back to the PC over serial port.
+[22:54] PCO whatever the connected system we send the enclosed character over the serial port.
+[23:04] Now can you understand this algorithm?
+[23:08] Any question?
+[23:10] Now without polling whether receive is complete or not.
+[23:17] If you read the character then what would happen?
+[23:20] the same character
+[23:22] you would read again and again
+[23:24] without doing this
+[23:26] polling part to know
+[23:29] whether
+[23:30] we have received a new character.
+[23:33] Receive
+[23:33] operation is over. That means
+[23:36] we have received a new character.
+[23:38] A new character is in the UDR.
+[23:41] Without doing
+[23:42] that, if you read characters
+[23:44] in the UDR, that means
+[23:46] we are going to read the same character
+[23:48] in the UDR again and again.
+[23:51] And also, without
+[23:52] checking whether UDR is
+[23:54] empty, before
+[23:56] loading a character to the UDR
+[23:59] for transmission,
+[24:01] without checking UDR empty,
+[24:03] if you load character to
+[24:04] UDR for transmission,
+[24:06] that means you are going to overwrite
+[24:08] the existing character before
+[24:10] it is transmitted. Now let's say
+[24:13] you have loaded some
+[24:14] character, let's say character
+[24:17] X to UDR.
+[24:18] Before X is transmitted, you are going to load another character Y to UDR.
+[24:25] Then X will be over it.
+[24:27] Y, Y.
+[24:27] So X will not be transmitted as a result.
+[24:31] That's why we check whether UDR is empty before we write a character to UDR.
+[24:39] Can you understand this algorithm?
+[24:41] If you have any question, please ask.
+[24:44] Any question?
+[24:45] No.
+[24:46] Right.
+[24:46] The next part is how to set the board rate.
+[24:50] We need to calculate a value to be assigned to the UBRR register.
+[24:58] UBRR means USAT board rate register.
+[25:02] What is the value we need to assign to UBRR register to get 9600 BPS?
+[25:10] You can't assign 9600 to UBRR register.
+[25:17] UBRR register, you have to assign some other value to get 9600 data transfer rate.
+[25:24] So how do we do that?
+[25:26] Let's see.
+[25:26] Sitting board rate.
+[25:28] Right.
+[25:29] Now first we have to select a standard board rate from these values.
+[25:35] These are the standard board rates.
+[25:37] 2400 BPS, 4800 BPS, 9600 BPS, 14400 BPS.
+[25:48] Likewise, these are the standard data transfer rates.
+[25:54] Right.
+[25:55] They are in BPS, bits per second.
+[25:59] Now, the question is, why not other values?
+[26:04] Any answer?
+[26:05] Why only these values?
+[26:06] Why not otherwise? Why 4,800? Why not 5,000? Why 9,600? Why not 10,000? Any idea? Now I have highlighted the 9,600 board rate because it is the most common data transfer rate used. 9,600 BPS is the most common one and it is the Arduino's default.
+[26:31] right in the Arduino environment that is the default board rate 9600 because it is the most
+[26:39] common widely used board rate my question is why not other values any idea is any idea
+[26:47] and
+[26:48] the
+[26:49] the
+[26:49] the
+[26:49] the
+[26:49] the
+[26:50] the
+[26:50] the
+[26:50] the
+[26:50] the
+[26:50] the
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] the
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] the
+[26:50] the
+[26:50] the
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] 
+[26:50] the
+[26:50] 
+[26:50] the
+[26:50] 
+[26:50] 
+[26:50] the
+[26:50] the
+[26:50] the
+[26:50] 
+[26:50] the
+[26:50] the
+[26:50] 
+[27:17] I have a very part.
+[27:19] I have a more and a more.
+[27:19] I have a really.
+[27:20] I have a really.
+[27:20] I have a really.
+[27:20] I have a really.
+[27:21] I have.
+[27:21] I have.
+[27:21] I have.
+[27:21] I have.
+[27:21] I have.
+[27:21] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:22] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] I have.
+[27:23] Then 16-bit 32-bit microcontrollers use
+[27:27] and then use it on board-rate.
+[27:30] No, no, no.
+[27:32] I'm going to say that
+[27:34] I'm going to say
+[27:37] I'm going to say
+[27:42] I'm going to say
+[27:44] I'm going to say
+[27:47] I have a time a thing, to be more and more, to the...
+[27:51] I can't even process the attack.
+[28:00] Attack?
+[28:01] I don't know if I'm going to get the kit.
+[28:04] I don't know.
+[28:05] I don't know.
+[28:06] I don't know if I'm going to get the system.
+[28:09] I don't know if I'm going to get the clock speed.
+[28:15] I don't know if I'm going to get the standard board rates.
+[28:19] I have a 2% in the 2% to the 1%?
+[28:21] I have a 1%?
+[28:21] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:22] I have a 1%?
+[28:23] I have a 1%?
+[28:23] I have a 1%?
+[28:23] I have a 1%?
+[28:23] I have a 1%?
+[28:23] I have a 1%?
+[28:23] I have a 1%?
+[28:23] I have a 1%?
+[28:23] I have a 1%?
+[28:24] I have a 1%?
+[28:24] I have a 1%?
+[28:24] I have a 1%?
+[28:24] I have a 1%?
+[28:24] I have a 1%?
+[28:24] I have a 1%?
+[28:24] I have a 1%?
+[28:49] Write 9600 kyanne
+[28:52] Banner
+[28:55] Write
+[28:56] Let's write
+[28:58] 9600 kyanne
+[29:04] 9600 bits per second
+[29:11] We know that in the serial communication
+[29:14] A frame size is 10 bits
+[29:18] One frame.
+[29:20] Ten bits.
+[29:21] I start bit plus eight bits plus stop bit.
+[29:29] That's a frame.
+[29:31] Ten bits.
+[29:32] A key means 9600 BPS means 960 frames.
+[29:43] Why? One frame is 10 bit. Each frame you have a character. That means 960 characters. 9600 BPS means 960 characters, 8 bit characters.
+[30:05] Right. Now serial communication was introduced during the mainframe era in 1960s. Right. So in 1960s the mainframes were connected with terminals, dump terminals. Right.
+[30:23] The terminal screen can display 80 characters in a line.
+[30:30] A terminal can display, screen of a terminal can display 80 characters in a line.
+[30:43] One line on the terminal display, you can display 80 characters.
+[30:48] 960 characters means, right, how many lines you need?
+[30:52] 12 lines on display.
+[30:55] If one line is 80 characters
+[30:58] 960 characters per second means
+[31:02] 12 lines per second on the display.
+[31:06] The display height
+[31:08] the screen can display
+[31:12] 80 character lines
+[31:14] the width is 80 characters
+[31:16] that kind of 24 lines.
+[31:20] So in one second, half of the screen you can print.
+[31:24] That's how this 9600K, the 1960s monitor, the character width, the line width is 80 characters.
+[31:38] The height of the monitor is 12 lights.
+[31:41] Sorry, 24 lights.
+[31:42] If you use 9600 BPS data transfer rate per second, you can print 12 lights, 1280 character lights on the monitor.
+[31:54] 1280 character lights on the monitor.
+[31:56] That means half of the monitor you can print per second.
+[32:00] That's how 9600 came.
+[32:05] And if you look at all these data standard board rates, they are multiples of 80.
+[32:11] Why? One line is in the terminal screen, dump terminal screen, one line is AD characters.
+[32:23] There is no relationship to word size of the microprocessor or the CPU. So it depends on the screen, the terminal window screen.
+[32:37] In the text terminal, one line is 80 characters.
+[32:43] So all the board rates are multiples of 8.
+[32:47] Is that clear?
+[32:48] Haritha?
+[32:49] Any question?
+[32:53] Yes.
+[32:58] Okay.
+[33:00] Then, set board rate.
+[33:02] How do we set board rate?
+[33:04] Right.
+[33:05] First we need to determine the value we need to assign to UBRR.
+[33:13] Value we need to assign to UBRR we need to determine.
+[33:19] Right.
+[33:20] For that we can use this equation.
+[33:23] We discussed this equation earlier.
+[33:26] The value of UBRR, USAT Bound Rate Register.
+[33:30] we can calculate
+[33:32] FCPU divided by
+[33:34] 16 multiplied by
+[33:36] board rate minus 1.
+[33:38] Using this equation
+[33:40] we can calculate what is the value
+[33:42] we need to assign to
+[33:44] UBRR to get
+[33:46] the required
+[33:48] board rate. To get the required
+[33:50] board rate, what is the value
+[33:52] you need to assign to UBRR?
+[33:55] Right.
+[33:56] FCPU is
+[33:57] 16 MHz.
+[33:59] So we convert that into hertz.
+[34:02] This is in hertz.
+[34:04] FCP.
+[34:05] Divided by 60.
+[34:08] Multiplied by 9600.
+[34:11] That is the bode rate that we need.
+[34:13] Minus 1.
+[34:14] Right.
+[34:15] So when you do this calculation.
+[34:18] Right.
+[34:19] 60.
+[34:21] 9600.
+[34:22] Minus 1.
+[34:23] That will give you.
+[34:26] 103.165.
+[34:29] Can you assign this kind of value to UBRR register?
+[34:36] 103.167.
+[34:39] Can you assign to UBRR?
+[34:41] No.
+[34:42] Why not?
+[34:45] Floating point.
+[34:47] The register is, right, register can accept only integers, not floating point values.
+[34:55] This is not a floating point register.
+[34:57] Floating point registers are different.
+[34:58] This register you can't assign any decimal part.
+[35:03] So what happens is when you try to assign this to register, the register will get only 103.
+[35:12] Register will get only 103.
+[35:16] And approximation happens.
+[35:19] You lose this decimal part.
+[35:22] Only the 103 is assigned to UBRR.
+[35:28] Right.
+[35:30] This results.
+[35:32] An approximation error.
+[35:34] Right.
+[35:35] I will come to that later.
+[35:37] So this.
+[35:38] As a result you get.
+[35:40] A board rate error.
+[35:43] Because the required board rate.
+[35:45] For the required board rate.
+[35:47] This is the value you need to assign to UBRR.
+[35:51] But you are assigning.
+[35:53] Little bit less than.
+[35:55] A value little bit less than.
+[35:57] To that.
+[35:57] as a result there can be
+[36:02] a baud rate error. We will discuss that later
+[36:06] in the next slide. Now what is the purpose
+[36:10] of ul in this equation? I discussed
+[36:14] this earlier the ul
+[36:17] suffix in some other example.
+[36:23] Now can you tell me what is the purpose of
+[36:26] UL in this calculation.
+[36:28] When we define
+[36:29] FCPU4 delay
+[36:32] functions, we use
+[36:34] UL suffix. At that
+[36:36] time I explain the purpose of UL.
+[36:38] Right.
+[36:39] So what is the meaning, what is the purpose
+[36:42] of adding UL
+[36:44] suffix to this equation?
+[36:46] These are the types of questions
+[36:48] you should expect
+[36:50] at the exam.
+[36:52] A UL only.
+[36:53] Exam.
+[36:54] then how do you ask?
+[36:57] I don't ask in the exam
+[36:58] what is board rate?
+[37:00] Which unit board rate is measured?
+[37:03] What do you mean by UBRR?
+[37:05] What do you mean by
+[37:06] FCPU?
+[37:08] No, I don't ask those questions.
+[37:10] Anybody can answer.
+[37:11] But I would ask,
+[37:13] for example,
+[37:14] why all board rates
+[37:16] are multiples of 80?
+[37:19] When you calculate
+[37:20] the value to be assigned
+[37:22] to the UBU,
+[37:24] rr register ubr i but within bracket i will give you the name of the ubrr use art bordered register
+[37:30] when you do that calculation why do we need to add ul suffix to the equation
+[37:39] any idea why do we need to add ul suffix you show a question using a suitable example explain
+[37:51] the purpose of
+[37:53] adding ul suffix
+[37:55] to the equation
+[37:58] given below.
+[37:59] Example.
+[38:01] Example.
+[38:02] Example.
+[38:07] If you have learned
+[38:10] the concepts well,
+[38:12] you can answer very well.
+[38:14] Any idea?
+[38:19] Ul?
+[38:20] Shri Anji?
+[38:21] Come on.
+[38:24] You can't give at least
+[38:25] some idea the purpose
+[38:27] of UL.
+[38:29] What do you mean by UL?
+[38:31] The meaning of the UL?
+[38:33] Unsigned law.
+[38:35] Unsigned law. Why do we need
+[38:37] to add unsigned law suffix
+[38:39] to this equation?
+[38:42] To avoid the errors.
+[38:44] Avoid what?
+[38:46] The error.
+[38:47] Which error? Calculation errors?
+[38:49] or the floating point error.
+[38:54] Unsigned long is an integer.
+[38:55] Unsigned long is an integer.
+[38:57] With that, how can you avoid floating point error?
+[38:59] Because the default value point
+[39:06] is not unsigned long.
+[39:12] Can you say that again?
+[39:15] Because the default
+[39:18] integer type
+[39:21] is not
+[39:22] untying
+[39:22] Yes, correct. The default
+[39:26] data type is integer.
+[39:28] Default numeric data type
+[39:29] default numeric data type is integer.
+[39:33] Right, so
+[39:33] the compiler will treat
+[39:36] 16
+[39:38] and 9600
+[39:40] as integer.
+[39:41] Because default
+[39:43] numeric data type is integer. So 16 will be treated as integer. 9600 will be treated as integer.
+[39:52] An operation between two integer operands result and integer. So 16 and 9600 multiplication
+[40:01] will give you an integer result because the operands are integer. 16 is integer. 9600 is
+[40:09] integer. Two integer operands
+[40:12] if you
+[40:12] make an
+[40:16] operation between two integer operands
+[40:18] that operation would result
+[40:20] an integer. Integer is
+[40:22] 16 bits.
+[40:23] But when you for example
+[40:26] now let's get right
+[40:27] now 16
+[40:29] multiplied by
+[40:31] 9600. Answer
+[40:34] is
+[40:35] 15,000
+[40:37] 153,000
+[40:39] Now this is a 20 bit value.
+[40:46] 20 bit value.
+[40:48] If you convert this into binary you get
+[40:52] 0010
+[40:55] 00101
+[40:59] 0000
+[41:02] 0000
+[41:05] 0000
+[41:07] 1, 2, 3, 4, 5
+[41:10] This is the 20 bit value
+[41:11] But integer is 16 bit
+[41:13] Integer data type is 16 bit
+[41:16] This is integer
+[41:18] This is integer
+[41:19] So result is integer
+[41:21] So the compiler will count
+[41:24] Only the lower 16 bits
+[41:26] 1, 2, 3, 4
+[41:29] Compiler will
+[41:30] Out of this answer
+[41:32] Compiler will count
+[41:34] Only lower 16 bits
+[41:36] [unclear — Sinhala / crosstalk]
+[41:50] That is 16 bits.
+[41:52] Now this will give you 22,528.
+[42:00] This is the actual result of the multiplication but the compiler will use this as the result.
+[42:11] At the result.
+[42:13] This result is a result.
+[42:27] This result is a 20 bit result
+[42:31] But compiler thinks
+[42:33] This is integer
+[42:34] 16 integer
+[42:35] 9600 integer
+[42:38] When you multiply 2 integers
+[42:40] You get integer
+[42:41] Integer is 16 bit
+[42:43] Only the lower 16 bit of the result
+[42:47] Is taken by the compiler
+[42:49] 20 bit result
+[42:51] Lower 16 bit
+[42:54] With the compiler
+[42:55] Now what happens is, if you divide this by 22,528 minus 1, this will give you 709 and
+[43:21] you assign that to UBRR. Ideally to get the 9600 BPS board rate you need to assign 103.
+[43:34] But now you assign 709. If you put 709 to UBRR you won't get 9600 board rate. So we tell the
+[43:47] compiler no treat this
+[43:50] multiplication as unsigned long
+[43:55] not integer the multiplication is unsigned long
+[43:59] we force the compiler how do we force the compiler
+[44:03] to treat it as unsigned long we
+[44:07] convert one of the operands to unsigned long
+[44:11] if one of the operand is unsigned long the result would be
+[44:15] unsigned long. Right. Unsigned long is a 32 bit
+[44:19] data type. A 32 bit data type can
+[44:23] count 20 bit result. So the compiler
+[44:27] will use the correct result of the
+[44:31] multiplication. As a result, this is the
+[44:35] value we assign to UBRR register.
+[44:38] Not 709. If you remove UL,
+[44:42] 709 will be assigned to UBRR.
+[44:46] Then you can't get the required board rate.
+[44:49] This is a big error. But if you force the compiler
+[44:53] to treat the multiplication as unsigned
+[44:57] long. Unsigned long is a 32-bit data type.
+[45:02] So 20-bit result
+[45:04] can accommodate
+[45:09] in the 32-bit unsigned law.
+[45:13] So the compiler will use the correct result of the multiplication
+[45:17] for the equation and will assign
+[45:20] the correct answer 103 to UBRR.
+[45:26] Is that clear?
+[45:29] If not, please tell me. I can explain again.
+[45:34] What did you say?
+[45:35] If you have a new URL, you can use the suffix to use the UL.
+[45:41] Yes, sir.
+[45:43] If you have a new programming, you can use the suffix to use the compiler.
+[45:49] If you have a compiler, you can treat the operation in the same type.
+[45:54] Otherwise, compiler will treat the operation based on the default type.
+[45:59] If the operation is let's say 20 bit, default data type is 16 bit, the upper 4 bits are
+[46:10] discarded.
+[46:11] Only the lower 16 bit will be considered, which will give you entirely wrong answer.
+[46:17] So these are logical errors.
+[46:20] They are not compile errors.
+[46:23] Very difficult to find these errors.
+[46:26] unless if you know the subject well the name of the equation
+[46:30] in a lot of the
+[46:32] the
+[46:34] the
+[46:36] the
+[46:38] the
+[46:40] the
+[46:42] the
+[46:44] the
+[46:46] the
+[46:48] the
+[46:50] the
+[46:52] the
+[46:54] These are logical errors.
+[47:06] Unless you know the subject very well, you can't write, find and answer for these logical
+[47:15] errors.
+[47:16] You can't debug these errors.
+[47:17] So compiler errors is nothing because compiler will detect those errors.
+[47:23] logical errors detecting logical errors to do that you have to be a very good programmer who knows
+[47:30] everything very well right body code that dala the end of pull up exam sort of the end of the
+[47:37] problem person suffix saka dala kakoda adhano suffix second atro thau code you know
+[47:41] Now you saw that even with the suffix you can't assign the exact value to UBRR register.
+[48:01] You assign only approximated value 103 and you lose the decimal part because the calculation results
+[48:11] a floating point value.
+[48:14] The register can
+[48:15] capable, register is capable
+[48:18] of holding an
+[48:20] integer value. As a result
+[48:22] only the integer part of the
+[48:24] result is assigned.
+[48:26] So this is, this
+[48:28] may
+[48:29] cause for a board
+[48:31] rate error. Now let's
+[48:34] talk about board rate error.
+[48:36] Right. Now the same
+[48:37] equation,
+[48:38] how you saw this equation.
+[48:42] Now I am going to
+[48:43] get the
+[48:45] board rate. I am going to
+[48:47] determine the board rate from this
+[48:49] equation. From this equation
+[48:51] I am going to determine the board rate.
+[48:53] Board rate means
+[48:55] FCPU divided by 16
+[48:57] multiplied by UBRR
+[48:59] plus 1. This is the actual
+[49:02] board rate. Actual
+[49:03] board rate. Let's calculate our actual
+[49:05] board rate. Actual board
+[49:07] rate let's calculate this is the value we assigned we lost the decimal part now when you do this
+[49:14] calculation the actual as the actual board rate you will get 9615.38 you want 9600 but you get
+[49:27] 9615.38 as the actual
+[49:32] board rate. So let's calculate board rate error.
+[49:36] Actual board rate 9615.38
+[49:41] desired board rate 9600
+[49:45] divided by desired board rate. So you will get the
+[49:49] board rate error. So your board rate error would be
+[49:53] 0.16%
+[49:56] 0.16%
+[49:58] That means which is
+[50:00] More or less equal to
+[50:02] 0.2%
+[50:04] 0.2%
+[50:05] Right
+[50:06] This is how we calculate
+[50:08] Bord rate error
+[50:09] We calculate the actual Bord rate
+[50:12] Using the value of
+[50:14] UBRR register
+[50:15] We calculate the actual Bord rate
+[50:19] Then
+[50:20] We calculate the Bord rate error
+[50:23] percentage. Actual
+[50:25] board rate minus desired
+[50:27] board rate divided by desired. Desired
+[50:29] board rate is 9600. That is what
+[50:31] we want. But we got
+[50:33] 9615.38.
+[50:36] Why? The board rate
+[50:37] register we assign 103.
+[50:39] The decimal part we
+[50:41] dropped. As a result
+[50:43] it's about 0.2%
+[50:45] error. Board rate
+[50:47] error we have. Right.
+[50:49] So what is the importance of
+[50:51] board rate error? If
+[50:53] If the board rate error is a higher percentage, the receiver will not be able to recognize
+[51:05] what the transmitter says.
+[51:08] If the board rate percentage is a higher board rate percentage, the receiver would not be
+[51:19] able to recognize what transmitter said let's take simple example what would happen if board
+[51:28] rate with higher error percentage is used let's take simple example let's assume board rate is 1
+[51:38] bps right let's assume board rate is 1 bps if board rate is 1 bps transmitter takes 10 seconds
+[51:53] to send one character why what 10 seconds because 10 bits one character is 8 bit start bit and stop
+[52:05] bit 10 bits, 1 bit per second. So transmitter takes 10 seconds to send one character, one frame that
+[52:13] means one character. Now if transmitter, if Tx is 10% slow, then one second delay between Tx and Rx,
+[52:29] for every
+[52:33] 10 seconds.
+[52:35] If transmitter is slower than 10%,
+[52:39] that means 10%
+[52:40] board rate.
+[52:41] Board rate error.
+[52:43] 10% between transmitter and receiver
+[52:46] there is a 10% board rate
+[52:48] error. That means
+[52:49] every 10 seconds,
+[52:52] 1 second delay.
+[52:53] Every 10 seconds, 1 second delay.
+[52:56] Right.
+[52:57] So as a result,
+[52:58] Receiver at the 10th second
+[53:01] Receiver will not receive the stop bit
+[53:05] Receiver will receive
+[53:07] More significant bit of the character
+[53:11] At the 10th second
+[53:12] Because transmitter is slow
+[53:15] 10% board rate error
+[53:17] Right
+[53:18] The board rate
+[53:19] Agreed board rate is 1 BPS
+[53:23] 1 bit per second
+[53:24] So receiver expect
+[53:26] to receive the stop bit at the 10th second.
+[53:31] But transmit is slow.
+[53:32] Every 10 second, 1 second delay.
+[53:35] Therefore, although receiver expects to receive
+[53:39] stop bit at the 10th second,
+[53:41] receiver will not be able to receive the stop bit at the 10th second.
+[53:46] Instead of that, receiver will receive
+[53:48] most significant bit of the character at the 10th second.
+[53:52] Can you understand this?
+[53:54] Receiver and transmitter agree.
+[53:58] Data transfer is 1 bit per second.
+[54:03] To send 1 frame from transmitter to receiver, you need 10 seconds.
+[54:09] 1 frame means 10 bits.
+[54:11] Start bit, stop bit, 8 bit character.
+[54:14] 10 bits.
+[54:15] 1 bit per second, that means 10 bits in 10 seconds.
+[54:19] That means you agree.
+[54:19] the receiver is a 10% error. 10% error means there is a one second delay for every 10 seconds
+[54:44] between the receiver and transmit.
+[54:47] So, see, the border is a transmitter.
+[54:51] The receiver is a delay.
+[54:53] So, the receiver is a delay.
+[54:56] The stop bit is a stop bit.
+[54:57] The most significant bit of the character.
+[55:06] Can you understand this?
+[55:08] Make you talk about it.
+[55:10] Okay?
+[55:10] Okay, sir.
+[55:11] Is it?
+[55:12] Yes.
+[55:13] Nirasha?
+[55:14] Yes, sir.
+[55:14] Now what is the consequence? Now stop bit is what? Stop bit is 1. So receiver expects to receive value 1 at the 10th second. Receiver is waiting for value 1 at the 10th second because stop bit is 1.
+[55:40] Right. If the MSB, most significant bit of the character is one, receiver will consider it as a stop bit.
+[55:50] The receiver will consider it as a stop bit.
+[55:54] Most significant bit of the character.
+[56:00] Most significant bit of the character is one.
+[56:04] One is one. Receiver will consider it as stop bit.
+[56:08] Receiver will consider it as stop bit and receiver will recognize a wrong character.
+[56:19] In case, if the most significant bit of the character is zero, character's most significant bit is zero.
+[56:29] Receiver is one of the top bits.
+[56:32] The receiver will go mad and the receiver will print weird characters on the screen.
+[56:52] When you are using Arduino,
+[56:56] there are no board rate.
+[56:58] There are no characters.
+[57:01] Have you seen that?
+[57:06] In the serial monitor of the Arduino,
+[57:08] there are no board rate.
+[57:10] What kind of characters printed on your screen?
+[57:16] Have you seen that?
+[57:17] Have you seen that?
+[57:19] Yes.
+[57:19] Receiver will go mad and print weird characters on your screen.
+[57:38] Therefore, board rate error is very important.
+[57:42] If the board rate error is high, a higher percentage,
+[57:45] receiver will not be able to recognize
+[57:49] what the transmitter say
+[57:52] if the board rate error is a higher percentage.
+[57:55] Right.
+[57:56] So what is the upper limit?
+[57:58] Some board rate errors we can accept.
+[58:01] But if the board rate error percentage is higher
+[58:04] then there will be problems.
+[58:07] How much higher?
+[58:09] So typically, right,
+[58:12] the generally acceptable limit is 2.5%.
+[58:17] If the board rate error percentage is above 2.5%,
+[58:23] we cannot accept that board rate error
+[58:25] because receiver will not be able to recognize
+[58:29] what the transmitter say.
+[58:32] In some cases, receiver will be able to recognize
+[58:35] but some cases, no.
+[58:39] Now, we discussed example 10% board rate error.
+[58:42] At the 10% board rate error, never.
+[58:45] Receiver cannot recognize what the transmitter said.
+[58:47] But 2.5% board rate error,
+[58:52] receiver may be able to recognize some characters transmitter said.
+[58:57] Some characters, no.
+[58:59] Receiver may not be able to recognize.
+[59:01] Therefore, the generally accepted upper limit is 2.5%.
+[59:08] So therefore, when you are developing systems,
+[59:12] you must make sure the board rate error should be less than 2.5 percent right for a reliable
+[59:21] communication if you want to have a reliable communication board rate error percentage
+[59:27] must be less than 2.5 percent right is that clear right then then some critical applications
+[59:38] you know that embedded systems are used in many critical applications like military applications
+[59:43] like medical applications like automotive applications like amonic systems right many
+[59:49] critical applications embedded systems are used right critical applications means a failure could
+[59:55] result loss of human life in such applications critical applications even 2.5 percent baud rate
+[1:00:04] error you cannot accept you cannot allow because the application is a critical application right
+[1:00:12] the error board rate error percentage must be zero for communication otherwise you cannot rely
+[1:00:18] on the communication at least a 0.1 percent board rate error is there you can't rely on the
+[1:00:26] communication because the the the application is a critical application now let's assume right some
+[1:00:36] a guided missile you are controlling remotely remotely controlling a guided missile
+[1:00:44] so data communication between the controller and the missile missile is on the air that data
+[1:00:51] communication must be 100% accurate. You can't leave 1% error in the communication. 0.1%
+[1:01:01] no. 0.01% no. 0% errors in the communication because it's a very critical application.
+[1:01:11] A small error in the communication right would result a friendly fire. You would hit the
+[1:01:19] friendly forces, not the enemy. So how do we achieve 0% communication error,
+[1:01:29] baud rate error for critical application? Possible. How? In such cases, how to minimize
+[1:01:37] baud rate error? Use precision crystals. You have seen some crystals have very precise
+[1:01:47] frequencies. Now this is an example. 18.432. 18.432 megahertz. That is the frequency of the crystal.
+[1:02:00] Now we have used 16 megahertz crystal. Now instead of a 16 megahertz crystal, if you use this kind
+[1:02:06] of precision crystal, then what would happen? Right. Let's calculate the bode rate again.
+[1:02:11] Board rate register value.
+[1:02:14] So to calculate the board rate register value.
+[1:02:17] You have to divide.
+[1:02:18] F CPU.
+[1:02:21] You have to divide by.
+[1:02:24] 16.
+[1:02:25] Multiplied by the.
+[1:02:28] Board rate.
+[1:02:30] Then minus 1.
+[1:02:32] Right.
+[1:02:33] F CPU is now.
+[1:02:35] 18.
+[1:02:37] Megahertz.
+[1:02:38] 18.432.
+[1:02:40] Megahertz.
+[1:02:41] 4, 3, 2 hertz.
+[1:02:45] Right.
+[1:02:47] Divided by 16 into 9,600.
+[1:02:52] This is the baud rate we need.
+[1:02:54] Minus 1.
+[1:02:55] Which will give you exact value.
+[1:02:58] 119.
+[1:03:00] No decimal parts.
+[1:03:02] So exact 119 you can assign to UBRR register.
+[1:03:07] No baud rate error.
+[1:03:08] 0% baud rate error.
+[1:03:10] If you want 0% bode rate error for communication, for a critical application, use precision crystals for FCPU. Use precision crystals for FCPU. That's why this kind of precision crystals are available in the market.
+[1:03:40] That is clear.
+[1:03:48] Is that clear?
+[1:03:49] Yes.
+[1:03:50] Any question?
+[1:03:51] You?
+[1:03:52] Clear?
+[1:03:53] Yes.
+[1:03:54] Yes.
+[1:03:55] Yes.
+[1:03:56] Yes.
+[1:03:57] I have a question.
+[1:03:58] I mean, precision, very accurate crystals, now you should be able to answer.
+[1:04:06] There are precision crystals.
+[1:04:10] There are critical applications.
+[1:04:15] There are no communication errors.
+[1:04:19] Now you know.
+[1:04:21] Because this is a university program you must know.
+[1:04:25] If you know all the bits and bytes, everything.
+[1:04:33] [unclear — Sinhala / crosstalk]
+[1:05:03] The reason behind purpose of this precision crystal.
+[1:05:08] Now in the Arduino Uno board, the crystal that you are using is not a precision crystal.
+[1:05:12] Because Arduino Uno board we don't use for critical applications.
+[1:05:16] Now when you are designing critical applications, then you have to think about this factor.
+[1:05:21] If the application is a critical application.
+[1:05:24] If you want 0% communication error.
+[1:05:27] So if you can't tolerate any error.
+[1:05:31] Some applications, yes.
+[1:05:32] Now you don't need to think about the military applications.
+[1:05:36] Let's say you are developing a flight controller for a drone.
+[1:05:39] Then the data communication between the flight controller in the drone
+[1:05:44] and the embedded system in your remote controller.
+[1:05:50] There are two embedded systems.
+[1:05:52] One is the flight controller on the drone.
+[1:05:57] The other one is the embedded system in the remote controller.
+[1:06:00] They communicate.
+[1:06:02] right now then it's a critical application it's not a military application but it's a
+[1:06:07] critical application even it's a toy uh a great drone critical application one and error a
+[1:06:16] communication and error could result the drone to crash now think about if it crash onto a crowded
+[1:06:25] place some event you are going to video record using a drone
+[1:06:45] there are a lot of people in on the ground so drone is flying with a video camera over those
+[1:06:53] people. Now due to some communication error, suddenly, right, you lose the control of the drone
+[1:07:03] and it crash. Drones are plastic propellers, the issue will not be very serious. But some drones,
+[1:07:15] there are carbon fiber propellers because carbon fiber is less, the weight is less,
+[1:07:23] and also very strong right plastic quality about a very high carbon fiber carbon fiber
+[1:07:45] so it's a critical application it's a critical application so such applications right when you
+[1:07:52] you are developing but many people develop such applications but they don't consider
+[1:07:57] the critical critical part the the the how serious this application they don't consider
+[1:08:03] they just want the functionality they don't think about the possibility of errors worst case scenarios
+[1:08:11] they don't consider but now when you are developing you must consider because you know
+[1:08:18] how to solve these issues.
+[1:08:21] You have to consider
+[1:08:22] worst case scenarios.
+[1:08:25] How to minimize the errors.
+[1:08:27] How to make the communication
+[1:08:28] the board rate error
+[1:08:30] percentage zero.
+[1:08:32] Because you know now how to
+[1:08:34] handle these
+[1:08:36] problems. Any question?
+[1:08:39] Excuse me sir.
+[1:08:40] Yes.
+[1:08:41] The timer
+[1:08:43] also being changed
+[1:08:46] by the change of the fcpu yes yes correct what can we do about that yes then you have to when
+[1:08:54] you calculate the timer frequency right you have to use the fcpu frequency of cpu if you if you
+[1:09:03] change the crystal fcpu would be changed then timers then the pwm then adc frequency pulse
+[1:09:16] with modulation pwm frequency timer frequency everything will be changed you have to do the
+[1:09:24] the calculations proper.
+[1:09:26] What if they also have
+[1:09:28] a floating point
+[1:09:29] number or something?
+[1:09:32] Yeah, that can happen.
+[1:09:34] So these values
+[1:09:35] would result a floating point.
+[1:09:38] Now one option
+[1:09:40] is you can multiply the
+[1:09:42] frequency or divide the
+[1:09:44] frequency by a prescaler
+[1:09:46] and then convert
+[1:09:48] this into an integer value.
+[1:09:50] That is one option.
+[1:09:52] If you multiply or divide this
+[1:09:54] 18.43 to
+[1:09:56] by some prescaler,
+[1:09:58] then you get an integer value.
+[1:10:01] Then you can feed
+[1:10:02] that integer value to timer,
+[1:10:05] ADC or PWM.
+[1:10:07] Then you can avoid floating
+[1:10:08] point part.
+[1:10:10] So these are the things you have to think
+[1:10:12] about.
+[1:10:13] Communication is
+[1:10:14] a problem.
+[1:10:18] So how do we handle it?
+[1:10:20] So for that you can use prescalers.
+[1:10:23] What else?
+[1:10:24] What are the other questions you have?
+[1:10:26] Now for example, as she asked,
+[1:10:29] now let's say you are using this 18.432 crystal.
+[1:10:33] 18.432 means 18.432.
+[1:10:40] Right, this is megahertz.
+[1:10:41] It means 18.432 30 hertz.
+[1:10:49] Now if you divide this by 1024 prescaler,
+[1:10:52] you will get 18000. This is the integer value and this integer value you can use for as time of frequency.
+[1:11:02] So 18, this is 18kHz as time of frequency. ADC frequency, PWM calculations you can use. This is integer.
+[1:11:16] So that's why you have prescalers.
+[1:11:18] And if you have 432 values, you can match with the prescalers.
+[1:11:24] You can't do that.
+[1:11:26] If you have the value of the crystal, you can match with the prescalers.
+[1:11:32] Is that clear?
+[1:11:33] Okay, right.
+[1:11:34] Then we need to talk about the source code.
+[1:11:37] Right?
+[1:11:38] But I have a meeting at 11 o'clock.
+[1:11:42] Right?
+[1:11:43] So I have the department.
+[1:11:44] So therefore now I am going to stop and we'll meet at one o'clock.
+[1:11:51] Okay.
+[1:11:52] Right.
+[1:11:52] Okay.
+[1:11:53] Thank you.
+[1:11:54] Thank you.
+[1:11:54] Thank you.

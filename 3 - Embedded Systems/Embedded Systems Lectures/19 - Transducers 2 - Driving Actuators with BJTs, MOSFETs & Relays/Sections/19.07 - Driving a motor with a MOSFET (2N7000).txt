@@ -1,0 +1,67 @@
+[0:00] Now, we know that the microcontroller IO port pin can deliver maximum 40 mA.
+[0:04] but the motor that we have requires 75 mA.
+[0:10] Right.
+[0:10] So that we cannot directly connect motor to the micro control.
+[0:13] Right.
+[0:14] Now this is the interfacing circuit.
+[0:17] Now this time there is no resistor between micro control and the transistor.
+[0:23] No resistor.
+[0:24] No current limiting resistor.
+[0:26] Because no current flow.
+[0:28] If there is no current flow, what to limit?
+[0:31] Nothing to limit.
+[0:32] Right.
+[0:33] So, different connection. Now, using the code you are firmware, you set the microcontroller pin high. Then the pin voltage becomes 5 volts. As a result, you provide a positive voltage, 5 volt is positive, to the n channel MOSFET, gate of n channel MOSFET.
+[0:55] When you provide a positive voltage to the gate of the N-channel MOSFET,
+[1:02] then the transistor flows a larger current in the drain source circuit.
+[1:09] Let's say this is 9 volt.
+[1:10] That current goes through the motor.
+[1:14] The motor starts rotating.
+[1:16] And then you change the logic state of the pin to low.
+[1:20] And the voltage at the pin becomes 0 volts.
+[1:24] That means you have removed the positive voltage at the gate.
+[1:30] You have removed.
+[1:31] You have removed now the positive voltage at the gate of N channel MOSC.
+[1:38] No positive voltage at the gate.
+[1:41] Transistor will immediately stops.
+[1:44] Transistor immediately stops the current flow through the drain source.
+[1:49] Current flow through the drain source.
+[1:51] But due to self-induction, motor generates a current and a high voltage, probably high voltage spikes.
+[1:59] But due to self-induction generated current, we can flow through the diode to the other way around and protect the traces.
+[2:10] So we have used a flyback diode.
+[2:12] Now the circuit is very straightforward, right?
+[2:15] We can use flyback diode something like 1N4001 and motor 9 volt motor and transistor 2N7000.
+[2:33] Again, if you look at the data sheet of the 2N7000, yes, 2N7000 data sheet.
+[2:42] Now this is how the pins are, grain, gate, source, middle pin gate, right?
+[2:51] Grain and source, how the pins and this is the important factor.
+[3:01] The maximum drain continuous current, 200 million, ah, 2 and 7,000 can handle 200 million.
+[3:11] Our motor requires only 75 milliampere, so more than enough.
+[3:19] And the drain source voltage, 16.
+[3:24] We are using 9 volt, well below that.
+[3:28] Drain source voltage, 16, the transistor can handle.
+[3:33] Maximum drain current continuous, 200.
+[3:37] Continuous current 200 milliampere.
+[3:39] Right. Now in our circuit, we use between the drain and source 9 volts and we flow only 75 milliampere. Transistor can handle quite easily the voltage and the current.
+[3:55] Right, that's how we decide which transistor we have to use.
+[4:01] Depending on the current and the voltage requirement, looking at the data sheets, we pick the relevant
+[4:08] transistor, most suitable transistor, right.
+[4:12] Now you can pick a larger transistor which is capable of flowing 5 ampere and can handle
+[4:21] 200 volts, but then it would be very expensive. So, we pick the transistor which is fairly
+[4:29] large enough to handle whatever the voltage or the current that we require, right? And
+[4:35] it should be inexpensive. So, therefore, we don't go for very powerful transistor. We
+[4:44] select the transistor which is appropriate for the situation, right? That is okay for the situation.
+[4:51] 27000 is okay for this situation, right? Because it can handle 200 milliampere continuous current
+[4:58] in the drain source circuit and between drain source, the voltage difference it can handle up
+[5:03] to 60 volts. We are using 9 volts, much below 60. And we are using 75 milliampere to run the motor.
+[5:12] Again, much below the 200 millivolts, a milliampere that the transistor can handle.
+[5:19] Right.
+[5:19] And the transistor is also fairly relatively inexpensive, 10 rupees, 12 rupees.
+[5:24] That's how we select transistors.
+[5:28] Is that clear?
+[5:29] Any question?
+[5:32] Right.
+[5:33] No questions.
+[5:35] Then sometimes we have to handle, we have to drive actuators that require.
+[5:42] very large voltages that grow very high current like the AC motors. You need 230 volts power
+[5:51] summit and probably they require very large currents like 5 ampere, 10 ampere, right?
+[5:57] Let's say in an industrial system, you are developing an embedded system to control a

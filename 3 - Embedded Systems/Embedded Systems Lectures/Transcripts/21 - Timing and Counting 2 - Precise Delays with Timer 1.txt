@@ -1,0 +1,413 @@
+21 - Timing and Counting 2 - Precise Delays with Timer 1  (17 Nov 2020 (afternoon))
+
+[0:00] Okay, this is where we stop in the morning session. We completed our discussion on counting. Next one, timing. To learn about timing, how to use timers to measure time.
+[0:20] We develop a system.
+[0:21] The system is a simple blinker.
+[0:24] To blink an LED every 200 milliseconds.
+[0:27] But this time, the difference is,
+[0:29] we are not going to use delay loop.
+[0:33] We don't use delay loop.
+[0:35] Is it all that?
+[0:36] To measure the 200 milliseconds,
+[0:39] we use a timer, hardware timer.
+[0:41] That means,
+[0:43] while during that 200 milliseconds,
+[0:46] you could use CPU for doing something else.
+[0:52] Right?
+[0:52] We blink the LED every 200 milliseconds.
+[0:55] So, between the toggling,
+[1:00] let's say the LED is on,
+[1:05] then after 200 milliseconds, LED is off.
+[1:08] Now, there's a 200 milliseconds duration.
+[1:10] During that duration,
+[1:12] CPU is free for doing something else.
+[1:16] why we don't tie up cpu to do busy wait running the loop cpu is free we use separate
+[1:27] hardware for a timer to measure 200 milliseconds is that clear right if so okay let's see the
+[1:38] schematic diagram right just the board why a ladies already they are connected to pin number 30
+[1:45] reset button and this pull-up resistor, the crystal
+[1:49] already connected on the board, just the board, just the UNO board.
+[1:53] Using UNO board, now we are going to write a program,
+[1:57] a firmware for the microcontroller, right? That firmware would use
+[2:01] timers to measure 200 milliseconds. We are going to
+[2:05] blink this LED every 200 milliseconds. The advantage, one
+[2:09] advantage of using timers over software
+[2:13] delay functions is while you are measuring the time or during the 200 milliseconds delay
+[2:21] you could use cpu to do something else that's one advantage the second advantage the time
+[2:29] measurements using hardware is highly precise compared to time measurement using software
+[2:37] Compared to using delay loops or other software time functions, the hardware time measurements are very precise.
+[2:46] So if you are worried about the precision of your time measurements, if the system is a critical system, which depends on the time measurements, you better use hardware time.
+[2:59] Because compared to software timers, hardware timers are very precise.
+[3:04] That's another advice.
+[3:05] And also you can delegate the job for the hardware timers to measure time and use the CPU for something else at the same time.
+[3:15] So get that right.
+[3:16] Right.
+[3:16] Now how do we calculate 200 milliseconds delay?
+[3:21] Let's see.
+[3:22] Calculating time register value.
+[3:25] Right.
+[3:26] We know that time for one clock cycle is 1 divided by frequency of CPU divided by prescale.
+[3:39] What does that mean?
+[3:40] How did we get this equation?
+[3:43] Let's see.
+[3:43] We know that frequency is 1 divided by time.
+[3:49] That means time equals 1 divided by frequency.
+[3:54] If you reduce the frequency using a prescaler, the time for one clock cycle is frequency divided by the prescaler.
+[4:07] We have slashed out the CPU frequency using a prescaler.
+[4:11] This is the time for one clock cycle.
+[4:14] Now can you understand this equation?
+[4:16] Shani, can you understand?
+[4:19] Yes, sir.
+[4:20] Shani?
+[4:21] Yes, sir.
+[4:22] Okay.
+[4:23] Right.
+[4:24] So that gives us this equation.
+[4:28] Time for one clock cycle equals prescale divided by frequency of the CPU.
+[4:35] Frequency divided by prescale means prescale divided by frequency because this is one over.
+[4:42] Right.
+[4:42] If required delay can be achieved with n clock cycles.
+[4:48] This is for one clock cycle time for one clock cycle.
+[4:52] [unclear — Sinhala / crosstalk]
+[5:22] For example, we don't know the time for one clock cycle.
+[5:27] The time for one clock cycle depends on pre-scale divided by fcp.
+[5:31] And if the required delay you can achieve with n clock cycle, this is the equation.
+[5:38] Now let's replace time with this pre-scale divided by fcp.
+[5:44] So the required delay you can achieve with this equation.
+[5:48] equation. Prescale divided by FCPU multiplied by number of clock cycles required. Can you
+[5:55] understand this equation? Aruni? Yes, sir. It is clear to me. How about others? Right.
+[6:02] Now, from this equation, we can derive N. N equals FCPU divided by prescale multiplied
+[6:13] by delay. Now you know
+[6:15] FCPU. You know the
+[6:17] pre-scale you have used.
+[6:19] You know the required delay.
+[6:21] So you can calculate number
+[6:23] of clock cycles that you need.
+[6:25] You know the frequency.
+[6:27] You know the pre-scale.
+[6:28] You know the delay required.
+[6:31] So number of clock cycles
+[6:33] required to achieve the delay.
+[6:36] You can calculate.
+[6:37] Then you can initialize
+[6:39] the timer with
+[6:41] this equation which we discussed earlier. The initial value of the timer counter register
+[6:48] equals maximum value that the register can handle minus number of clock cycles in plus
+[6:56] one for the overflow. Right. Can you understand these equations? Any question? Right. Now
+[7:05] our example we need 200 milliseconds really 200 milliseconds delay we can't achieve with
+[7:11] 8 bit time so we select 16 bit time that means we we use timer 1 timer 1 is a 16 bit time so a 16 bit
+[7:25] timer can count 0 to 65,535. Right. Now let's calculate the time for one clock cycle. Time.
+[7:40] Prescale. I'm using this equation. Prescale. Let's say I am using 64 as the prescale.
+[7:46] Divided by FCPU.
+[7:49] Frequency of CPU in hertz.
+[7:53] 16 kilohertz.
+[7:56] Then megahertz.
+[7:58] Right.
+[7:58] Then N.
+[8:00] I am using this equation.
+[8:01] N.
+[8:02] 16 kilohertz megahertz.
+[8:06] Divided by 60.
+[8:08] Multiplied by 200 milliseconds.
+[8:12] Now the delay you have to give in seconds.
+[8:14] that means 200 multiplied by 10 to the power minus 3.
+[8:21] Then the delay is in seconds.
+[8:23] 200 milliseconds you have to convert into seconds.
+[8:27] So if CPU is in hertz and this is in seconds.
+[8:31] Delay is in seconds.
+[8:33] Right.
+[8:34] Now when you calculate this you get initial value N as 50,000.
+[8:43] So 50,000 initial value.
+[8:47] Can you put it into 8 bit timer?
+[8:50] No.
+[8:51] You need 16 bit timer.
+[8:54] Right.
+[8:54] You need a 16 bit timer.
+[8:56] A 16 bit timer.
+[8:57] Initial value.
+[8:58] Not the initial value.
+[8:59] This is the end.
+[9:00] Number of clock cycles you need.
+[9:02] Sorry.
+[9:03] Number of clock cycles you need.
+[9:05] 50,000.
+[9:06] 50,000 clock cycles you can't count with 8 bit timer.
+[9:10] Right.
+[9:11] not possible
+[9:13] to count
+[9:16] with 8 bit
+[9:19] timer. So you have to go
+[9:21] for 16 bit timer. No
+[9:22] choice. Then initial
+[9:25] value of the 16 bit
+[9:27] timer that is
+[9:27] TCNT1
+[9:30] Why? We are using
+[9:32] T1 timer. Timer 1
+[9:34] We use timer 1. 16 bit
+[9:37] timer 1.
+[9:39] TCNT1 equals
+[9:40] Maximum value that the timer can count.
+[9:44] 65,535 minus number of clock cycles needed.
+[9:50] 50,000 plus one for the overflow.
+[9:54] You get 15,536.
+[10:00] This is the initial value you have to set for TCNT1 register of timer 1.
+[10:07] If you set this value to TCNT 1 register of timer 1, when timer overflows, 200 milliseconds has elapsed.
+[10:18] So, time overflow you can detect using TOV, time overflow flag.
+[10:24] When timer overflows, that means 200 milliseconds, right, milliseconds gone, elapsed.
+[10:34] that's how we measure 200 milliseconds time we set the initial value to 15,536
+[10:42] and every clock cycle time accounts and we need 50,000 clock cycles to get the 200 milliseconds
+[10:50] delay then after 50,000 clock cycles the time overflows the time overflow we can detect using
+[10:57] Tov flat bit. At that moment, timer has counted 50,000 clock cycles and 200 milliseconds elapsed.
+[11:10] Can you understand? If not, let me know. I can explain again.
+[11:16] Yes sir. How about others?
+[11:18] I have a look.
+[11:19] [unclear — Sinhala / crosstalk]
+[11:26] I can't calculate the flow.
+[11:28] Yes, that is, you can maintain the flow of the flow.
+[11:34] That is, you can do it.
+[11:36] If you have 50,000 clock cycles, you can use the flow of the flow.
+[11:42] You can use the flow of the flow.
+[11:46] It is used in 16-bit time.
+[11:48] You can do it.
+[11:50] Now this is also possible for 200 milliseconds delay.
+[11:59] How about it is, let's say 400 milliseconds delay.
+[12:05] 400 milliseconds delay, to get the 400 milliseconds delay, how many clock cycles do you need?
+[12:10] You need 100,000 clock cycles.
+[12:12] 200 milliseconds, you need 50,000 clock cycles.
+[12:16] 400 milliseconds delay, you need 100,000 clock cycles.
+[12:18] 100,000 you can't count with a 16-bit timer because 16-bit timer can go up to 65,535.
+[12:29] That is the maximum value it can count.
+[12:32] So, 100,000 it cannot count.
+[12:34] Then we have to use the method that Nirasa suggested.
+[12:38] So, you have to keep a variable to track how many times the timer overflowed from maximum value to zero.
+[12:48] And then you can calculate the delay.
+[12:52] Sir, can't we handle with increase the pre-scale?
+[12:57] Yes, another way.
+[12:59] That's good.
+[12:59] Good, good.
+[13:00] Very good.
+[13:01] I'm very happy.
+[13:02] Yes.
+[13:03] Rather than dividing by 64, you divide by a larger pre-scale, 2560, 1024, larger pre-scale.
+[13:12] But even with that, you come to a certain limit.
+[13:17] Right?
+[13:18] Let's say you need a big delay,
+[13:20] a big time measurement you need to calculate.
+[13:23] Even the largest prescale available,
+[13:25] that is 1024, as I remember.
+[13:29] The number of clock cycles that you need,
+[13:31] you may not be able to count that number of clock cycles
+[13:35] with a 16-bit time.
+[13:38] Then you have to go for that method again.
+[13:41] Is that clear, Dilma?
+[13:42] Yes, sir.
+[13:43] Yes, of course.
+[13:44] we can we can using a different scale we can handle the situation but up to a certain limit
+[13:54] these are the things you have to think about right again if you are building hardware from scratch
+[13:59] you can use a slow crystal for the clock frequency you can reduce fcpu then then you
+[14:09] have to modify hardware without using 16 megahertz clock you can use 8 megahertz clock or 4 megahertz
+[14:16] clock another option right then you have to adjust hardware likewise there are various ways to
+[14:24] right do the adjustments one is the pre-scale another one is the fcpu
+[14:31] another one is using a variable to keep the track of number of times time overflow
+[14:39] So using these various methods, you can measure the time that you need.
+[14:46] Right.
+[14:46] Anything else?
+[14:47] Any other question?
+[14:49] Right.
+[14:50] Firmware.
+[14:51] Timer-based blinker.
+[14:53] Configure PB5 as an output pin because LED connected, onboard LED connected to PB5.
+[15:00] Set the clock source as FCPU divided by 64.
+[15:05] That is the free scale.
+[15:06] Set the clock source.
+[15:07] Set the timer to 15,536 initial value.
+[15:15] We calculated in the previous slide.
+[15:17] Endless loop.
+[15:19] Then monitor whether time overflows.
+[15:23] Tov flag.
+[15:24] Monitor the Tov flag.
+[15:25] If the bit is set, Tov bit is set.
+[15:28] Toggle the LED.
+[15:30] Reset the timer to original value.
+[15:33] That is 15,536.
+[15:37] Clear the TOV flag, repeat.
+[15:41] So you can blink the LED every 200 milliseconds.
+[15:45] Very accurately, very precise.
+[15:49] Your measurements, why?
+[15:50] Now time measurements is done by a timer, hardware timer, not a software based timer.
+[15:56] And also during that 200 milliseconds time, you can use CPU to do some other task.
+[16:03] Because now the CPU is not tied up with running a busy loop.
+[16:08] Can you understand the algorithm?
+[16:10] Any question?
+[16:11] No.
+[16:12] Right.
+[16:13] Source code.
+[16:14] Main function.
+[16:15] Configure PB5 as an output.
+[16:18] Can set the clock source using the timer counter control register B but timer 1.
+[16:25] This time timer 1.
+[16:26] 16 bit timer.
+[16:27] Set the clock source as FCPU divided by 64.
+[16:31] The clock select bits, these 3 bits
+[16:34] CS0, CS1, CS2
+[16:36] Using these 3 bits
+[16:38] Select the clock source as
+[16:40] FCPU
+[16:42] Divided by 64
+[16:43] This is the setting
+[16:46] We are going to use
+[16:47] So for that you need
+[16:49] 011
+[16:50] CS2 0, CS1 1
+[16:53] CS0 1
+[16:54] 011 clock select bit
+[16:57] Now the clock source is internal
+[16:59] Now timer
+[17:00] works as a timer.
+[17:04] It doesn't become a
+[17:06] counter because clock source
+[17:08] entered. Then initial value
+[17:10] earlier we calculated.
+[17:12] Set the TCT
+[17:13] timer counter register 1
+[17:15] because timer 1 to
+[17:17] 15,506. Endless loop.
+[17:21] Inside the loop we check
+[17:22] the TOV flag.
+[17:24] In the timer interrupt flag
+[17:26] register with 0 is the
+[17:28] TOV flag. We check that
+[17:30] flag. Whether the flag, the value is 1, that particular bit is 1. If it is 1, that means
+[17:37] an overflow, that means 200 milliseconds elapse. Chuggle the LED. Set the initial value to
+[17:46] the timer again. Reset the timer. Clear the DOV flag. To clear the DOV flag, you have
+[17:53] to set it. You have to set it. To clear the TOE flag, you have to set it. Very important.
+[18:00] Because the next time when time overflows, again the hardware sets TOE flag. To enable
+[18:07] hardware to set TOE flag, we need to clear it. Can you understand this also? Any question?
+[18:13] Sir, can you explain the part inside the if condition?
+[18:17] Right. Let's assume ti, you say ti fr1 and operator 00000001. Let's assume the value of ti fr, I might interrupt flag register is xxxxx.
+[18:40] [unclear — Sinhala / crosstalk]
+[18:57] operation bitwise and x and 0 one operand is 0 no matter the value of other operand if you take
+[19:06] end operation, outcome would be 0. X and 0.
+[19:11] One operand is 0. So no matter the value of other
+[19:14] operand, when you take end operation, outcome is 0.
+[19:18] Likewise, then the last bit. X and 1.
+[19:23] Now if X is 1, 1 and 1, outcome is
+[19:26] 1. If X is 0, 0 and 1
+[19:30] outcome is 0. So the outcome depends on
+[19:34] x because this operand is already 1. So the outcome of the end operation depends on x.
+[19:40] Now this is the if condition expression we evaluate. x means here x means tov1 flag
+[19:51] flag bit. This bit is set
+[19:54] when time overflows. That means
+[19:57] right when
+[20:00] timer 1 overflows
+[20:03] if condition is something like this. If
+[20:06] 00000001
+[20:11] that means condition true
+[20:13] if time overflows. When timer 1
+[20:17] does not overflow.
+[20:20] If condition is something like this.
+[20:22] If 1, 2,
+[20:24] 3, 4,
+[20:25] then if condition falls,
+[20:28] so this part is not executed.
+[20:30] This part is executed only when
+[20:32] time overflows.
+[20:34] While x becomes 1.
+[20:36] If x is 0,
+[20:37] this part is not executed.
+[20:39] Is that clear?
+[20:41] What else?
+[20:42] Any other question? Ask.
+[20:44] If you have any question, simply ask.
+[20:47] Don't worry. Even if it is a simple question, you may probably think that that's a stupid question.
+[20:54] Doesn't matter because you all are here to learn. So you can ask any question.
+[21:00] Right. In this system, we poll time overflow bit.
+[21:06] We check time overflow bit repeatedly to see whether timer is overflowing.
+[21:12] So that's not a good approach. Why we know that?
+[21:16] polling consumes CPU type that could have been used for some some other purpose and also right
+[21:25] so while you are polling certain things may go undetected so the best way is to handle this kind
+[21:33] of situation is using intervibs. So before we move into that let's try to write the same firmware
+[21:41] using labeled constants.
+[21:45] The same firmware using label constants
+[21:47] and with shift operators.
+[21:49] Now more understandable,
+[21:51] the code is more understandable.
+[21:53] And you don't need to write lengthy
+[21:55] binary strings.
+[21:57] Right.
+[21:57] The same system using interrupts
+[22:01] instead of using polling, a better way
+[22:03] using interrupts.
+[22:04] Same hardware
+[22:05] but different firmware.
+[22:08] So different algorithm.
+[22:09] Main function.
+[22:11] Main function algorithm.
+[22:13] Set PB5 as an output.
+[22:16] Set the clock source as FCPU divided by 64.
+[22:20] Set the time initial value 15,536.
+[22:25] Enable time overflow interrupt.
+[22:28] Time overflow interrupt enable.
+[22:30] Enable global interrupt.
+[22:31] In the endless loop, there is nothing.
+[22:35] But you can use this to do some other task.
+[22:39] but in this example we don't have any other data so we keep it empty then when time overflows
+[22:46] the timer interrupt cpu so we have to handle that interrupt this is the intro toggle pb5 that is
+[22:55] toggle the led reset the timer to initial value this is 500 50 536. can you understand this
+[23:04] algorithm.
+[23:07] Okay.
+[23:08] Then let's go more into source code.
+[23:11] Now we are going to use interrupt.
+[23:12] So you're doing interrupt.h.
+[23:14] Set PB5 as an output.
+[23:16] Set the clock source as
+[23:18] FCPU divided by 64.
+[23:21] Right. Using clock select
+[23:22] bits of timer counter
+[23:24] control register B.
+[23:27] Timer 1 via UOC.
+[23:28] 16 bit timer.
+[23:30] Initial value
+[23:31] 15,536.
+[23:34] enable time overflow interrupt
+[23:37] set this bit of time interrupt mask
+[23:41] register 1 timer 1 so enable the time
+[23:46] overflow interrupts enable global interrupts set interrupts
+[23:49] function endless loop you can use it to perform
+[23:53] another task but in this example we don't have any other task
+[23:57] but you can use it to perform some other task because we are not
+[24:01] going to use CPU for timing. Timing is done by the timer, independent peripheral device.
+[24:09] Then handle the time overflow interrupt. When time overflows, this interrupt service routine
+[24:16] is automatically called. Right. So the vector is timer1. We are using timer1 overflow vector.
+[24:24] Inside this, right, then we set, reset the timer to its initial value.
+[24:32] Can you understand this code?
+[24:33] Any question?
+[24:35] Yes, sir.
+[24:36] Right.
+[24:38] Same program using label constants and bit shift operators.
+[24:43] Okay, with that, we come to end of timing and counting.
+[24:48] Any questions?
+[24:50] Sir?
+[24:51] Yes.
+[24:51] Yes, sir.
+[24:52] About pre-scaling, is the 1 over 64 is the optimal value for the pre-scaling of CPU?
+[25:04] No.
+[25:06] I just use that.
+[25:07] You can use any pre-scale value.
+[25:09] In this example, I just use 64.
+[25:13] Because I like 64.
+[25:15] Is there any optimal value?
+[25:16] No, there is no such optimal value.
+[25:18] Because I use it because I like 64.
+[25:20] because you guys can play 64 tricks.
+[25:24] I don't know.
+[25:31] Any pre-scale value you can use.
+[25:34] The idea of the pre-scale is we scale down the clock frequency
+[25:38] to suit our requirements.
+[25:41] The CPU frequency is very high
+[25:44] because CPU running at very high speed.
+[25:47] right some some peripheral devices cannot work at that speed for example adc we have to scale down
+[25:53] the speed so we use a prescaler and in this timer this with timers if you connect the clock the cpu
+[26:03] clock source directly to timer the timer will quickly fill up a count to its maximum value
+[26:11] an overflow if you want to slow down the counting so we scale down the frequency of cpu using a
+[26:20] non-factor that is the pre-scale any other question okay right that's enough time timing and counting

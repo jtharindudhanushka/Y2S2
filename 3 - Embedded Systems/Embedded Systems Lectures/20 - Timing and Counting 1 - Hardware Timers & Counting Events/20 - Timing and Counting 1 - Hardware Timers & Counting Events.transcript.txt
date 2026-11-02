@@ -1,0 +1,1885 @@
+20 - Timing and Counting 1 - Hardware Timers & Counting Events  (17 Nov 2020 (morning))
+
+[0:00] Right. Now today's lesson is on timing and counting. Now we discuss about IO port programming, then analog to digital conversion and thereafter, transducers, sensors and actuators.
+[0:21] Now we know, we have learned how to capture an input from analog or digital sensor.
+[0:31] Now we have discussed both analog and digital sensors under transducers and also we have
+[0:36] discussed ADC and under IO port programming we discuss how to capture digital inputs.
+[0:44] Under ADC we discuss how to capture analog inputs. Therefore now we know how to capture
+[0:51] any kind of input it could be either analog or digital there is no intermediate some something
+[0:58] between analog and digital either it is continuous or discrete right so any digital or analog sensor
+[1:06] using you now you should be able to capture the state of real world the physical world
+[1:14] you should be able to do that and also we know use driving digital actuators as well as
+[1:23] so so far we have not discussed how to drive analog actuators and we are going to discuss that
+[1:29] very soon right after this slide set we are going to discuss pulse width modulation
+[1:34] under that we are we are planning to discuss how to drive analog actuators but so far we know how
+[1:44] to drive digital actuators, how to produce an output to drive digital actuators. And we discussed
+[1:51] some actuators and some actuators, we found that they consume a lot of power. That means they need
+[2:03] higher voltages, higher currents than an IO port pin of a microcontroller can deliver.
+[2:10] So in that case, how to interface such high power actuators to low power tiny microcontrollers we discussed using either using bipolar junction transistors or in the modern way using a MOS midlock side semiconductor field effect transistors or MOSFET or using a relays.
+[2:38] and the relay breakout modules right now we have that knowledge so except how to driving
+[2:50] analog actuators you should be able to deal with any other sensor and actuator now
+[3:00] Is that clear? Right. Now, the next step is talk about other internal peripheral devices inside the microcontroller.
+[3:12] Microcontroller is not just a processor. Processor and some peripheral devices in one single chip.
+[3:20] That's why we call it single chip computer. All the components that you need for a computer is in one single chip computer.
+[3:33] Now we discuss one peripheral device inside the microcontroller called ADC.
+[3:39] We discuss another peripheral device called ports inside the microcontroller.
+[3:45] Now we are going to discuss another peripheral device inside the microcontroller called timer.
+[3:53] Timers we use for timing and counting.
+[3:57] Okay.
+[3:57] Now first let's see our learning outcomes as usual.
+[4:02] Right.
+[4:04] On completion of this session, you should be able to explain the need of timers and counters.
+[4:13] Why we need timers?
+[4:15] why we need counters. These are hardware timers, hardware counters, why we need them.
+[4:21] Then describe how timers measure time. Yes, of course, it's obvious. Certain situations we need
+[4:31] to measure the time, right? Time elapses between two events. We sometimes we need to measure,
+[4:39] right and to calculate delays we need time measurement so timers used to measure time
+[4:49] then counters counters we use to count events count events so what is an event for example
+[4:58] number of items passed on an assembly line right in an assembly line number of items passed on a
+[5:09] conveyor belt. We have been asked, let's say we are asked to develop a system to count, right?
+[5:17] The items are passed, number of items passed on an assembly line or conveyor belt.
+[5:28] So let's say we have, let's imagine there's a conveyor belt and on the belt,
+[5:34] there are items passing, let's say
+[5:38] munchies, super cream, caca packets.
+[5:41] Now you want to count
+[5:43] how many of them produce
+[5:46] and pass for the delivery.
+[5:51] That's one
+[5:52] application of counter.
+[5:57] Another application.
+[5:59] How many people entered into a hall?
+[6:02] Let's say lecture hall.
+[6:04] So I want to know how many we are asked to develop a system to count how many people entered into the multimedia auditorium.
+[6:16] Now we can simply do that.
+[6:19] For example, we can set up some IRO whatever beam at the entrance and using a sensor we can capture that beam.
+[6:30] and when a person enters into the multimedia room,
+[6:34] he or she crosses the beam, right?
+[6:37] When that person crosses the beam,
+[6:41] sensor gets blackout, no signal.
+[6:44] And when the beam is there, right,
+[6:47] sensor gets the signal.
+[6:50] Now, likewise, we can capture
+[6:52] how many times using a sensor,
+[6:55] an IR beam, right,
+[6:58] In forward beam, we can capture how many times that beam is crossed.
+[7:04] Then that number of crosses we need to count.
+[7:10] Another example for a count.
+[7:12] Count an event.
+[7:15] Is that clear?
+[7:16] Any question?
+[7:17] No.
+[7:17] Right.
+[7:18] Then explain the functionality of time account registers.
+[7:22] Yes.
+[7:23] We use low level programming.
+[7:25] Not very low level like assembly.
+[7:28] right not very high level like uh wrapper functions in available in the arduino platform
+[7:37] so we are going through the middle path as lord buddha said we are following the middle path c
+[7:46] so in the c language we have to deal with the registers they have to use registers right
+[7:52] another thing i should mention if you are using arduino platform with wrapper functions right
+[8:00] you don't have a direct access to timers counters in the micro control the platform arduino
+[8:10] platform doesn't provide any direct accessibility to these internal peripheral devices that is
+[8:17] another limitation of Arduino platform right indirectly some sometimes some Arduino libraries
+[8:25] use timers and counters but as a program as a firmware developers the platform doesn't provide
+[8:33] you direct accessibility to these internal hardware uh peripherals that means the platform
+[8:42] doesn't provide you wrapper functions to access timers counters indirectly the Arduino library is
+[8:49] used right but as a firmware developer you cannot access them in the platform because the platform
+[8:57] doesn't provide you any wrapper functions to directly access them another limitation of Arduino
+[9:03] platform but if you are using co assembly whatever then you have the direct access you have the direct
+[9:10] access to hardware so you can do whatever you like right now another reason to justify
+[9:20] the use of low level programming right then construct a microcontroller based system
+[9:29] and program it to count an event right to count an event construct a microcontroller based system
+[9:38] now we are going to count anyway and we are going to learn how to use a microcontroller to do that
+[9:44] construct a microcontroller based system to and program it to measure time then to measure the
+[9:52] time how to develop a system those are the things we are going to learn under this uh under this
+[10:02] session right any question right time now here you can see timers available in the microcontroller
+[10:16] some microcontrollers you have only one timer then we call it t0 some microcontrollers you
+[10:22] have multiple timers then we call them t0 t1 t2 t3 t4 likewise it depends right on the micro
+[10:32] controller that you use some have small tiny micro controllers like 80 tiny rig series you have one
+[10:40] or two timers but larger micro controllers like mega series 80 mega you have three four timers
+[10:49] 3, 4, 5 sometimes.
+[10:51] And X mega, extremely large microcontrollers, right?
+[10:55] Then you have even more than 4, 5 timers, right?
+[11:01] A lot of timers you have, right?
+[11:04] And here the large microcontrollers means not their physical size,
+[11:09] their capability.
+[11:10] Sometimes there are large microcontrollers
+[11:13] which are physically smaller than the AT mega 328B that we use.
+[11:19] There are microcontrollers which provides hundreds of pins and they are surface SMD microcontrollers, surface mount device, hundreds of pins but smaller than the one that we use.
+[11:37] Right. So such microcontrollers are difficult to use because even construct circuits, you need special equipment because they are surface mount devices.
+[11:48] They are not breadboard friendly. Right. The timer is used to measure time.
+[11:56] Right. If you want to measure time. Right. You have to use a time. Right.
+[12:01] The timer counts at every clock pulse when oscillator is connected.
+[12:08] When the oscillator is connected to the timer, right?
+[12:13] We know that there is an oscillator in the microcontroller, right?
+[12:19] When the oscillator is connected, the timer counts at every clock pulse.
+[12:25] Oscillator provide clock pulses.
+[12:26] At every clock pulse, timer counts, right?
+[12:30] every clock pulse timer counts.
+[12:34] Now
+[12:35] we know the frequency
+[12:37] of the oscillator. We know the frequency
+[12:39] of the oscillator. And
+[12:41] timer gives you the pulse count.
+[12:44] Because at every clock
+[12:45] pulse timer counts.
+[12:47] So timer will give you pulse
+[12:49] count. How many pulses?
+[12:52] We know the frequency.
+[12:53] Frequency means number of
+[12:55] pulses per second.
+[12:57] Frequency means number of pulses
+[12:59] per second. The timer gives pulse count. Now if you know the number of pulses per second
+[13:10] and the pulse count, you can calculate elapsed time. Can you understand that?
+[13:16] Can you determine the elapsed type?
+[13:28] If not, please tell me.
+[13:29] If not clear.
+[13:31] Sir, can you explain it again?
+[13:33] Sure.
+[13:34] Now, this is the timer.
+[13:36] For the timer, we connect.
+[13:39] Let me draw it properly.
+[13:43] Timer.
+[13:44] To timer, we connect clock.
+[13:46] right the clock provides pulses such pulses clock provides to the time the timer counts pulses and
+[13:57] we know the frequency frequency means right number of pulses per second the timer gives
+[14:10] number of pulses counted. Let's assume frequency is 1. The timer gives pulse count. Pulse count
+[14:28] is 100. The timer gives pulse count. The oscillator provides. Then what is the time elapse?
+[14:40] one multiplied by hundred. Is that clear Sri Anji? Who asked that question?
+[14:58] Yes sir.
+[14:59] Yes sir.
+[15:00] Ah clear, right, good. Right. How about others? Is that clear?
+[15:05] Yes.
+[15:06] Right. Now the timer becomes a counter when an external pulse source is connected.
+[15:17] If you connect the timer, not the clock, clock is internal pulse.
+[15:22] If external pulse source connected to the timer, timer becomes a counter.
+[15:29] Timer becomes a counter.
+[15:30] Now if you are providing pulses from external source, for example, you are providing pulses from a sensor.
+[15:40] Sensor measures whether there is an IR beam or not.
+[15:46] That beam we have fixed at the entrance of a particular room.
+[15:52] If people enter into the room, they cross the beam.
+[15:56] the sensor captures
+[15:59] whether the beam is there or not.
+[16:03] So then sensor generate pulses.
+[16:06] If the beam is there, high.
+[16:09] If the beam is not there, low.
+[16:12] The sensor input is out.
+[16:15] Sensor input to the microcontroller is digital.
+[16:18] High low signal.
+[16:19] That means pulses.
+[16:21] That is external pulse source.
+[16:23] Now if you connect external pulse source to the timer, timer becomes a counter.
+[16:30] Then the counter can count number of external pulses.
+[16:35] Number of external pulses means number of people entered into the room.
+[16:41] Number of external pulses means number of times the beam was crossed.
+[16:47] That means number of people entered into the room.
+[16:50] Is that clear?
+[16:50] Right.
+[16:51] We have fixed IR beam at the entrance of a room.
+[16:57] Now people enter into the room, they have to cross the beam.
+[17:01] And whether the beam is there or not, we measure, we detect using a sensor.
+[17:06] When people cross the beam, the sensor says no beam.
+[17:10] And if nobody is crossing the beam, then there is a direct IR beam to the sensor.
+[17:16] Then the sensor says yes, there is a beam.
+[17:19] So sensor is a digital sensor which provides, if the beam is there, which provides high.
+[17:24] If the beam is not there, it provides low.
+[17:27] That means the sensor provides high, low, high, low.
+[17:30] That means square wave pulse.
+[17:33] Series of square wave pulses sensor provides.
+[17:37] Now that pulse source we connect to the timer.
+[17:39] So the timer becomes a counter.
+[17:41] Right?
+[17:41] Each and every pulse, the timer counts.
+[17:44] The counter, now we call it counter, it counts.
+[17:46] and it gives us number of
+[17:48] pulses. Number of pulses
+[17:51] means number of
+[17:52] beam crosses.
+[17:55] That means number of people
+[17:56] entered into the room. Is that clear?
+[17:59] If not, please tell me.
+[18:01] I can explain again
+[18:02] using a different example. Clear?
+[18:05] Yes, sir.
+[18:07] Yes.
+[18:09] Right.
+[18:10] Now, rather
+[18:12] than using
+[18:13] timers and counters,
+[18:16] instead of using timers and counters, we can do the same functionalities like measuring the time
+[18:25] and counting and event with software. Using software we can do this. You don't need hardware
+[18:31] timers, hardware counters. Now for example, if you want to measure the time, you can use a delay loop,
+[18:37] You want to know, for example, one minute past elapsed time whether it is a one minute.
+[18:48] You want to know.
+[18:50] You use the delay loop.
+[18:52] You use a delay loop like delay function.
+[18:55] And you set the delay to one second.
+[18:59] And every time when you run the delay function you increment a counter.
+[19:03] A variable.
+[19:06] Every time when you run the delay function, delay function you have set for one second.
+[19:13] That means 1000 milliseconds.
+[19:15] Normally you have to specify in the milliseconds for the delay function.
+[19:18] 1000 you specify as the argument.
+[19:21] And every time you run the function, delay function, you increment a variable called i.
+[19:27] A counter variable.
+[19:29] You increment it.
+[19:30] And then using an if condition you check whether count equals 60.
+[19:37] Whether i equals 60.
+[19:39] If i equals 60 means the delay function we have executed 60 times.
+[19:46] Delay function we run using a loop.
+[19:49] Right.
+[19:49] We have executed delay function 60 times.
+[19:52] We know that we have set the delay function to delay the execution 1 second.
+[19:57] That means one minute elapsed.
+[20:01] Can you understand?
+[20:03] For example, right, let's say using a loop, right, delay I plus plus.
+[20:15] If I equals 60, one minute elapsed.
+[20:22] End if, end loop.
+[20:24] Sudha good, huh?
+[20:25] Can you understand?
+[20:26] Yes sir.
+[20:28] Right? Using a soft air you can measure time. The delay loop is a function. It uses busy
+[20:40] [unclear — Sinhala / crosstalk]
+[21:10] CPU to run a loop. If you call delay function that uses busy wait. That means we tie up
+[21:20] the CPU to run a loop but doing nothing.
+[21:25] Because we want to consume time. Just to consume time we tell the CPU to run a loop without
+[21:36] doing anything. That's what the functionality of delay loop. We tie up the CPU. That's a waste. Why?
+[21:45] That CPU time, that CPU power we could have used for something else. We could have used the CPU to
+[21:58] do something else during that time. That's the downside of using software timers. If
+[22:07] you use software for timing that means you use CPU. But if you are using hardware timer,
+[22:14] hardware timer is separate peripheral device independent from CPU. So we can ask the hardware
+[22:24] timer to do timing and we can ask CPU to do something else at the same time. So timer can
+[22:32] do timing while CPU is doing some other task, more efficient way of measuring time. If you
+[22:41] tie the CPU, if you assign the timing job to the CPU, CPU can't do some other work during that time.
+[22:51] But if you have a peripheral device for timing, you can ask CPU to do something else at the same time.
+[23:02] While timer is doing timing, CPU can do something else.
+[23:07] That's the advantage of using hardware timers over software timing.
+[23:16] So far in our programs, we have used software timing.
+[23:20] That is not the efficient way.
+[23:23] Right.
+[23:25] Even in our business application developments.
+[23:29] Now you have learned C++, Java, C Sharp.
+[23:33] And you have developed mini projects.
+[23:36] All these applications.
+[23:39] The general purpose computing.
+[23:42] Whenever you need to measure time, you use the time function.
+[23:46] That means you use software for measuring time.
+[23:49] Right.
+[23:50] That is not the efficient way.
+[23:52] This is the first time you are going to use a hardware time.
+[23:57] And you can let the CPU to do something else during that time.
+[24:00] And the same thing for counting, right?
+[24:05] Using software, you can count number of people entered into a room.
+[24:10] How?
+[24:11] If sensor goes low, that means a person entered into the room, the beam cross.
+[24:20] If the beam is, if beam can fall upon the sensor, sensor gives I.
+[24:27] If no beam, sensor gives low.
+[24:29] If beam low, sensor low, I++ count.
+[24:35] And if, and low.
+[24:37] Now I gives you how many beam crossers.
+[24:41] How many beam crossers means, how many infrared beam crossers means,
+[24:45] number of people entered into the room.
+[24:48] Can you understand this pseudocode?
+[24:50] Yes, sir.
+[24:51] Good.
+[24:52] That means using software we can do counting.
+[24:55] That's the way of counting we have done so far.
+[25:00] From the first year to today, we counted many things.
+[25:05] How many times loop counters we use?
+[25:08] Endless.
+[25:09] You can't count.
+[25:11] How many times even you can't imagine the number of times you can use the counters in programming.
+[25:17] You know, use counters, but software.
+[25:20] counters. Software counters means you tied up the CPU to do that job. While CPU is doing the counting,
+[25:28] CPU can't do something else unless you have a multi-core processor. Now that's why in general
+[25:34] purpose computing, you don't feel these efficiency problems because you have multi-core processors.
+[25:41] You have quad-core processors. Most of your laptops, you have quad-core processors.
+[25:47] One processor is counting while other cores are doing something else.
+[25:54] That's why you don't feel these issues in general purpose computing.
+[25:58] But anyway, you have wasted your computing power just for counting.
+[26:04] But this is the first time you are going to use hardware counters.
+[26:07] If you assign that counting job for a hardware counter, you can leave the software.
+[26:17] CPU to do something else during that time.
+[26:21] Now we have just one CPU.
+[26:24] We have just one core, not multi-core microcontroller.
+[26:28] Just one core.
+[26:30] One CPU.
+[26:32] Right?
+[26:32] If you ask the CPU to do counting, during that time, see if you can't do something else.
+[26:38] So that's why we use hardware counter.
+[26:41] The counting job we assign for the counter.
+[26:45] Actually, counter is a timer.
+[26:47] When you connect external pulse source to the timer, timer becomes a counter.
+[26:52] And while counter is counting, CPU can do something else.
+[26:58] Because these are independent peripheral devices.
+[27:02] Now if somebody asks why we need hardware, timers, counters.
+[27:07] Now can you explain?
+[27:09] Aruni?
+[27:10] Yes.
+[27:11] Right.
+[27:13] Any question?
+[27:15] No.
+[27:15] Right.
+[27:15] How timers work?
+[27:18] Using an 8-bit timer, let's discuss the internal working of a timer.
+[27:24] If somebody asks you to explain how these hardware timers work, you should be able to do that.
+[27:33] Many people know how to use timers.
+[27:36] But if you ask them to explain their internal working, they don't know.
+[27:41] But you are university students, this is an embedded system development course in a university degree program. So you should know A to Z everything, all bits and bytes, you should know, right?
+[27:56] Because at the end you can't say, no, no, we had no time to do these things. It was very lightly we covered the things because things were very complicated. So we didn't go for complicated things. We covered everything lightly. You can't say like that because you are graduating from a university.
+[28:16] The highest level of educational institute in the path of education.
+[28:26] You start with Montessori, then the primary, secondary and the tertiary.
+[28:30] There is no other institute above university.
+[28:34] Keep that in mind.
+[28:36] And you are going to get the bachelor's degree.
+[28:39] You can get only two more degrees.
+[28:43] Masters and doctoral.
+[28:45] That's it.
+[28:46] No any other degree higher than that.
+[28:49] Once you got the bachelor's, you are just short of two other degrees.
+[28:55] Master's and doctoral, that's it.
+[28:57] Nothing else.
+[28:59] If you have master's and doctoral in a particular area,
+[29:02] then no other qualification you can get in that area.
+[29:05] That's it.
+[29:07] So therefore, in the university degree programs, you can't say,
+[29:11] no, I don't know that.
+[29:12] If that is, if particular thing has not been explained, let's say some concept nobody has explained, then you should be able to explain first time.
+[29:25] That's a research thing.
+[29:26] Right.
+[29:28] Now let's see how an 8-bit timer works.
+[29:32] Right.
+[29:32] Now in this diagram, you can see the CPU.
+[29:38] Right.
+[29:38] And then oscillator, the clock pulses, internal oscillator, it provides clock pulses.
+[29:46] Right.
+[29:47] And a bit called CS bit.
+[29:50] CS means clock select.
+[29:53] You can using this bit, CS bit, clock select bit, you can select either internal clock pulses or external clock pulses.
+[30:02] These are the external clock pulses.
+[30:05] External clock pulses coming through a sensor.
+[30:07] This TCCR means timer counter control register.
+[30:14] Timer counter control register.
+[30:16] The simple end means there can be multiple timers.
+[30:20] Timer 0, timer 1, timer 2 likewise.
+[30:23] So that's why TCC timer counter control register 0.
+[30:28] That means timer counter control register of timer 0.
+[30:34] Timer counter register of timer 1.
+[30:36] Now, simple length to indicate the timer because you can have multiple timers.
+[30:44] And this is the timer pin. T0 means timer pin of timer 0. T1 means timer pin of timer 1 pin.
+[30:57] Likewise, Tn. N means the number of the timer. That is to provide external clock pulses.
+[31:05] oscillator to provide internal clock pulses.
+[31:09] Using clock select bit, you can select whether you are going to get internal clock pulses.
+[31:17] So external clock pulses.
+[31:19] Right.
+[31:19] Now we are going to talk about the timer.
+[31:22] So we have connected to internal clock pulses.
+[31:27] So using clock select bit, we have selected internal clock pulses.
+[31:32] Right.
+[31:32] So the clock source is the oscillator.
+[31:35] Clock source is the oscillator.
+[31:37] So timer works as a timer.
+[31:40] But if you select the clock source as external,
+[31:44] using clock select bits,
+[31:46] if you select the clock source as external,
+[31:50] then timer becomes a counter.
+[31:53] Because then the clock source is external.
+[31:55] Timer becomes a counter.
+[31:57] Right.
+[31:58] Now for each clock pulse from the oscillator,
+[32:02] the timer increments
+[32:04] this register
+[32:06] for each clock pulses
+[32:08] from the oscillator
+[32:10] the timer from the internal
+[32:12] oscillator or external clock source
+[32:14] whatever right it depends
+[32:16] on the clock select bits you have
+[32:18] used with the internal
+[32:20] the internal clock source or external clock
+[32:22] source whatever you get the
+[32:24] you get pulses every clock
+[32:26] pulse the timer increments
+[32:29] t c and
+[32:30] register. Time counter register.
+[32:34] TCNT means time counter register.
+[32:37] Time increments. Time counter register.
+[32:39] Right. Now that register
+[32:42] is incremented from 0 to
+[32:46] 255. Why? It's 8 bit register.
+[32:50] In an 8 bit register you can have values from 0 to
+[32:53] 255. So the maximum value
+[32:58] that the TCNT register can hold is 255.
+[33:02] For each clock pulse,
+[33:04] the timer increments TCNT register.
+[33:07] The register is incremented from 0 to 255.
+[33:11] And then the next clock pulse,
+[33:16] the TCNT register overflows
+[33:18] because now its value is 255.
+[33:21] If you get another clock pulse,
+[33:23] the register overflows from 255 to 0.
+[33:26] it overflows from 255 to 0.
+[33:30] Now in this picture you can see 0 to 255
+[33:34] then overflows back to 0. Again it
+[33:37] counts from 0 to 255. Every clock pulse
+[33:40] the register is incremented from 0 to 255 then overflows to 0.
+[33:46] When the register overflows from
+[33:49] 255 to 0 the timer sets
+[33:53] TOV flag.
+[33:57] Time overflow flag.
+[33:59] Time overflow flag bit of
+[34:01] TIFR register.
+[34:04] Time interrupt flag register.
+[34:07] When the register overflows from 255 to 0,
+[34:12] this particular bit is set.
+[34:14] What is this bit?
+[34:15] Time overflow bit of
+[34:17] time interrupt flag register.
+[34:22] This bit is set.
+[34:23] So this bit indicates, this bit indicates the time has counted up to 255 and now overflowing.
+[34:33] Time has counted from 0 to 255 and now overflows to 0.
+[34:38] This bit indicates, right.
+[34:41] Now let's say, right, then that signal we can use, the CPU can use that bit to know
+[34:50] how many clock pulses the timer counted.
+[34:54] The first time this bit is set, that means
+[34:57] timer counted 255, 0 to 255.
+[35:00] 0 to 255 means including 0.
+[35:02] How many counts? 256.
+[35:06] And then again start from 0.
+[35:09] Another 256, again the bit is set.
+[35:12] Using that, we can count the number of clock pulses.
+[35:17] If you want to stop the timer,
+[35:19] You can disconnect the clock source from the time.
+[35:24] For that you can use clock select bit.
+[35:27] Both internal and external clock sources we can disconnect using CSV.
+[35:33] When you disconnect the clock sources, the register stops getting incremented.
+[35:40] No more increments.
+[35:42] Then, you can read the register value and know how many clock pulses count.
+[35:51] Now let's say before 255 you want to stop.
+[35:55] Okay, disconnect the clock source and read the register value.
+[35:58] Let's say register value says 100.
+[36:01] That means 101 clock pulses.
+[36:04] Can you understand?
+[36:05] Any questions?
+[36:06] Sir, are you talking about time count register?
+[36:09] Would you explain what?
+[36:10] I was the one nd.
+[36:12] I have a more time-couple, and the one-couple, the one-couple, the one-couple, the one-couple,
+[36:14] [unclear — Sinhala / crosstalk]
+[36:47] So, if we have a TOV, we will set the TOV.
+[36:54] So, do you want to count?
+[36:56] Yes, do you want to count?
+[36:58] So, if we have a TOV, we will count the TOV, and we will count the TOV.
+[37:08] [unclear — Sinhala / crosstalk]
+[38:08] the you a s2
+[38:09] the s1
+[38:10] the s1
+[38:11] s1
+[38:11] 
+[38:11] s1
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] s1
+[38:11] 
+[38:11] 
+[38:11] 
+[38:11] s1
+[38:11] s1
+[38:11] If you count the SPAR, there is a overflow.
+[38:14] So, what do you think about the SPAR in the room?
+[38:18] Yes sir, sir.
+[38:19] But the SPAR is not in the room.
+[38:23] It is not in the room.
+[38:25] It is not in the room.
+[38:27] It is not in the room.
+[38:29] It is not in the room.
+[38:32] If you have a clock source, you can disconnect the clock source.
+[38:37] I'm not sure if you have a time to count.
+[38:41] No.
+[38:42] What do you think about TCNT register?
+[38:45] What do you think about TCNT register?
+[38:47] What do you think about TCNT register?
+[38:49] Do you understand?
+[38:51] Do you have any connection with TOV?
+[38:54] Do you have any connection with TOV?
+[38:57] Time overflow bit.
+[38:59] ToV. Time overflow bit.
+[39:02] Overflow bit is set.
+[39:05] the
+[39:06] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] 
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] the
+[39:07] 
+[39:07] the
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] 
+[39:07] the
+[39:07] hist
+[39:35] [unclear — Sinhala / crosstalk]
+[40:05] o
+[40:06] a
+[40:06] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] a
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] a
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] a
+[40:07] a
+[40:07] 
+[40:07] a
+[40:07] a
+[40:07] 
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] a
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] 
+[40:07] tov btg a kbhgʰaKT.
+[40:08] a w2.
+[40:09] to the TNC-D.
+[40:10] to the in-cdG
+[40:13] 
+[40:13] the
+[40:14] the
+[40:14] the
+[40:14] the
+[40:14] the
+[40:14] the
+[40:14] the
+[40:14] 
+[40:14] 
+[40:14] the
+[40:14] the
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:14] 
+[40:40] Do you have to use the CPU?
+[40:42] Yes, it's a CPU.
+[40:44] You can use the CPU.
+[40:46] No, you don't have to use the CPU.
+[40:48] Yes, I think we have to use the CPU.
+[40:52] We can use the interrupt flag.
+[40:54] We can use the interrupt flag.
+[40:56] We can use the interrupt flag.
+[40:58] We can use the poll.
+[41:00] Okay.
+[41:02] Tov time over flow bit of TIFR.
+[41:06] Time interrupt flag register.
+[41:08] Can you use interrupt flag?
+[41:12] Right.
+[41:14] What else?
+[41:16] Excuse me sir,
+[41:18] what do you need to use the variable to code the CPU?
+[41:24] Oh,
+[41:26] if you set the TOV bit to that count,
+[41:30] that's not the variable.
+[41:32] You can use the polling and interrupts.
+[41:36] So, you have a look, the one- we have a look, the one- the all- the the the.
+[41:40] Let's talk about timing.
+[42:08] Now this is the way we calculate the elapsed time.
+[42:13] The oscillator provides clock pulses.
+[42:16] TNCT register counts the clock pulses.
+[42:19] It is incremented from 0 to 255.
+[42:24] Let's assume before it overflows, you stop the clock.
+[42:30] You disconnect the clock source.
+[42:32] Before the register overflows, you stop the, disconnect the clock source.
+[42:39] Then starting number of the register, which is 0 usually.
+[42:45] And the end number, end value of the register.
+[42:48] Now you measure the, you check the value of the register.
+[42:51] It says 100.
+[42:52] 100 minus 0, 100.
+[42:55] Divided by frequency.
+[42:58] You get the ellipse time.
+[42:59] You get the ellipse time.
+[43:00] Now if the register overflows, Tov bit is set.
+[43:06] Now you have to keep a separate count of how many times Tov bit is set.
+[43:13] And then finally when you disconnect the clock source, you get the stop number and the start number.
+[43:22] And you have separated, you have separate count of number of times Tov bit is set.
+[43:28] And using that and the frequency, you can determine the ellipse time.
+[43:36] Is that clear?
+[43:37] Right.
+[43:38] But one problem of this method is the frequency of the oscillator is very fast.
+[43:44] Oscillator is very fast.
+[43:45] So you get a higher frequencies.
+[43:48] And the TCNT register is a small register.
+[43:50] Register would be over.
+[43:53] It can count up to maximum and then it overflows.
+[43:57] Now what is the solution? You can use a prescaler and cut down the frequency by a factor, some number. Now the increment is slow. Look at it. So very fast. Now it's slow. The increment is slow because you have cut down the frequency by a prescaler.
+[44:17] Then you can, the TCNT register counts and when you disconnect the clock source, the counting stops.
+[44:28] Then you get the end number, starting number multiplied by the prescaler divided by the frequency.
+[44:38] You get the elapsed.
+[44:39] Is that clear?
+[44:39] Now, for example, let's say frequency is 1 hertz.
+[44:44] Every one second you get a clock pulse.
+[44:48] Starting value 0.
+[44:50] End value 60.
+[44:53] 60 minus 0 divided by 1.
+[44:58] Elapsed time is 60 seconds.
+[45:01] That means 1 minute.
+[45:03] The second example.
+[45:04] Frequency let's say 10 hertz.
+[45:07] That means every second you get 10 pulses.
+[45:11] And the prescaler is, let's say, n is 10.
+[45:17] You divide by 10.
+[45:19] 0, n times 60.
+[45:22] 60.
+[45:23] You don't get, yes, 60, 0.
+[45:28] That is 10 multiplied.
+[45:31] Divided by frequency, 10.
+[45:34] Again, 1 minute.
+[45:36] Right?
+[45:36] Now if the frequency is high, if the frequency is high, this register would be filled very soon.
+[45:48] To avoid that, we can use a prescaler and divide the frequency by a fixed number.
+[45:56] And then we can use that number for the calculation.
+[45:59] That's how we determine the elapsed type, measuring type.
+[46:03] Is that clear?
+[46:04] Any question?
+[46:07] Can you understand this?
+[46:10] Measuring elapsed time?
+[46:11] Is it?
+[46:13] Right. That's how we measure elapsed time.
+[46:16] Now let's talk about time counter registers.
+[46:20] The first register TCCRNB.
+[46:25] Time counter control register NB.
+[46:30] Right.
+[46:31] And simple N indicates the timer.
+[46:35] Timer 0, timer 1, timer 2, likewise the number of the time.
+[46:41] The B indicates, B means there are multiple TCCR registers.
+[46:50] Timer counter control register A, timer counter control register B, timer counter control register C, likewise multiple timer counter registers.
+[46:59] for a given timer.
+[47:02] Timer 0, timer 1,
+[47:04] timer 2.
+[47:05] Right.
+[47:06] And in the TCCRB register,
+[47:10] there are three important bits.
+[47:13] Bit 0, bit 1, bit 2.
+[47:15] Those are called CS bits
+[47:18] or clock select bits.
+[47:21] Clock select bits.
+[47:23] Now using these clock select bits,
+[47:25] we can select the clock source
+[47:27] and also the pre-scale.
+[47:31] If you set all three bits to zero,
+[47:33] that means you disconnect the timer from any clock source.
+[47:38] This value is very important if you want to stop counting.
+[47:41] You immediately set these three bits to zero
+[47:44] and stop counting,
+[47:46] then you can get the existing value of the TCNT register.
+[47:51] If you set 1 internal oscillator at the full speed frequency of CPU, full speed you connect the internal oscillator to the timer.
+[48:04] If you set 2 internal oscillator CPU frequency you divide by 8, the prescaler is 8, then you connect to the timer.
+[48:14] If it is 3, you divide by 64.
+[48:18] If it is 4, divide by 256.
+[48:22] 5024.
+[48:24] All these settings, you connect the internal clock to the timer.
+[48:34] Internal clock zone.
+[48:36] And last two are for external clock zone.
+[48:39] If these are the settings you set for the CS bits,
+[48:41] use the clock source is external
+[48:45] on the TN pin. T0 for timer 0,
+[48:50] T1 for timer 1, T2 for timer 2. Whatever the clock source
+[48:54] connected to TN pin, timer pin. And the
+[48:58] timer counts on the falling edge of
+[49:02] the pulse. The timer counts on the falling edge of the pulse. That means
+[49:06] if this is the pulse on the falling edge timer counts.
+[49:10] And the next setting, right, external clock source connected to the end pin time accounts on the rising edge.
+[49:20] On the rising edge.
+[49:21] Rising edge of the pulse.
+[49:23] Is that clear?
+[49:24] Now what is the importance of this falling edge, rising edge?
+[49:28] Now let's say you want to call.
+[49:30] Yes.
+[49:31] Yeah.
+[49:32] Yes.
+[49:33] That's your question.
+[49:34] Sir, don't we want to slow down the external thing?
+[49:39] Slow down what? Slow down what?
+[49:42] Clock source from the external.
+[49:44] No. There is no
+[49:46] prescaler for slow downing
+[49:48] external clock source.
+[49:50] Normally,
+[49:51] compared to the frequency
+[49:54] of CPU,
+[49:56] all external clock sources are very slow.
+[49:59] All external clock sources
+[50:00] are very slow.
+[50:02] Right? Compared to the frequency
+[50:04] of CPU. So there is no need.
+[50:06] Right. Now let's say
+[50:08] you want to count
+[50:11] number of button pressers.
+[50:13] When you press the button
+[50:15] every time you want to count.
+[50:17] You can use
+[50:18] Falling Edge. Press
+[50:20] High to Low.
+[50:22] You have pull up the pin
+[50:24] and when you press the button, the pin
+[50:27] becomes low.
+[50:28] Falling Edge. And you want
+[50:31] to count number of
+[50:33] button releases.
+[50:35] Not the pressers, button releases.
+[50:37] How many button releases?
+[50:38] Then, when you press the button, the pin becomes low.
+[50:42] But when you release the button, the pin becomes high.
+[50:45] Because you have pulled up the pin.
+[50:48] Rising H.
+[50:49] Based on that, you can count whether the number of button presses or releases.
+[50:55] That's one example.
+[50:57] Any more questions?
+[50:59] All right.
+[50:59] TC and T register.
+[51:02] Increments at every clock pulse.
+[51:04] This register is increments at every clock pulse.
+[51:07] If the timer is an 8 bit timer, this register can count from 0 to 255 then overflows.
+[51:14] Overflows to 0 and starts again.
+[51:17] If the timer is an 8 bit timer, this register can count from 0 to 255.
+[51:22] Then it overflows to 0 and starts again.
+[51:25] If the timer is a 16 bit timer, right.
+[51:28] If it is a 16 bit timer, this register can count from 0 to what is the maximum value?
+[51:36] 0 to 2 to the power 16 minus 1.
+[51:42] That means 0 to 65,535.
+[51:48] And then overflows and starts again.
+[51:51] If the timer is a 16 bit timer.
+[51:56] If the timer is a 16 bit timer.
+[51:59] The register can count from 0 to 65,535.
+[52:04] and then overflows and starts again.
+[52:08] Right. Counts to maximum, overflows and starts again.
+[52:12] Use to set the start count and also to get the end count.
+[52:17] Now so far we discussed about the end count.
+[52:21] But this register we can use to set the start count as well.
+[52:26] Now for example if you want to count 5 types,
+[52:30] timer 0, let's say you want to count 5 types
+[52:33] and you use timer 0.
+[52:35] Timer 0 is 8 bit.
+[52:37] So what you do is
+[52:39] you set the
+[52:40] TCNT register to
+[52:43] 251.
+[52:46] Right. Then you
+[52:47] start counting. Then start.
+[52:50] Every clock pulse
+[52:51] the timer counter register increments.
+[52:54] It increments to
+[52:55] 252.
+[52:58] Then it increments to
+[52:59] 253. The next clock
+[53:02] pulse. Then it is to
+[53:03] 2, 5, 4.
+[53:06] And then
+[53:07] 2, 5, 5.
+[53:09] High money clock pulses. 1, 2,
+[53:12] 3, 4. We want to
+[53:13] 5 times count. Then it
+[53:16] overflows to 0.
+[53:17] When it overflows,
+[53:19] right, when it overflows,
+[53:21] TOV bit
+[53:23] is set. Right.
+[53:26] So we keep
+[53:27] eye on this bit. If the
+[53:29] bit is set,
+[53:30] That means how many pulses?
+[53:33] 5 pulses.
+[53:35] 5 times count.
+[53:36] So by setting initial value,
+[53:40] the number of times you want to count,
+[53:45] you can specify.
+[53:47] Is that clear?
+[53:48] Right?
+[53:49] You want to count 5 times.
+[53:51] You set the initial value of the register 251.
+[53:55] Then you connect the clock source.
+[53:57] Start means, right?
+[53:59] Connect clock source to T0.
+[54:05] Then every clock pass.
+[54:07] The T0 counts.
+[54:08] 252, 253, 254, 255.
+[54:13] Then 0 overflow.
+[54:15] When overflow happens, this bit is set.
+[54:17] That means how many times counted?
+[54:21] Five times count.
+[54:23] Now if you want to stop the timer,
+[54:25] disconnect clock source.
+[54:27] Disconnect clock source.
+[54:28] When this bit is set, when the TOV bit is set, disconnect the clock source.
+[54:34] 5 times counter, disconnected.
+[54:36] You want to let 5 people to enter into the room, only 5.
+[54:41] This is the way you set, you set the TNCD register 251.
+[54:47] The first person entered into the room, the beam, crossing the beam, IR beam, the counter becomes 252.
+[54:55] Second person entered crossing the beam
+[54:58] TCNT register counts
+[55:00] 253
+[55:01] The third person entered into the room crossing the IR beam
+[55:04] TCNT register counts
+[55:06] 254
+[55:07] The fourth person enters into the room crossing the IR beam
+[55:11] The count is 255
+[55:13] Then the fifth person entered into the room
+[55:16] TCNT overflows to 0
+[55:18] Right
+[55:19] Tov
+[55:20] Time overflow bit is set
+[55:23] As soon as TOEBIT is set, we disconnect the plug source to the timer and lock the door.
+[55:30] Maximum 5 people entered into the room.
+[55:33] Is that clear?
+[55:35] When the TOEBIT is set, you lock the door.
+[55:38] Thelina?
+[55:38] Yes, sir.
+[55:39] Any question?
+[55:41] Right.
+[55:41] That is about TC and T register.
+[55:44] If you want to count more, you can use a 16-bit timer.
+[55:48] Then your age is 0 to 65,535.
+[55:52] 5. TIFR register, time interrupt
+[55:56] flag register of timer n.
+[56:00] n could be 0, 1, 2, 3. It depends on the microcontroller
+[56:04] that you use. One important bit of this register
+[56:08] is TOV bit, timer overflow bit. When the
+[56:12] TCNT, timer counter register, overflows from its maximum
+[56:16] value to 0, this TOV, timer overflow
+[56:20] bit is set. Right.
+[56:22] This bit is set. That indicates
+[56:24] timer has
+[56:26] counted up to its maximum
+[56:28] and starts again
+[56:30] from zero. When the
+[56:32] TOV bit is set
+[56:34] that indicates
+[56:35] timer has counted up to
+[56:38] its maximum and starts again
+[56:40] from zero. Right.
+[56:42] Then we need to clear the TOV
+[56:44] bit because the next
+[56:46] time the time overflows
+[56:48] when time overflows
+[56:50] again timer sets this bit
+[56:52] TOV bit. To set it
+[56:54] it must be clear. It must
+[56:56] be 0. Then only the timer
+[56:58] can set it. Now when
+[57:00] the TOV bit is set
+[57:02] it indicates
+[57:04] timer has counted
+[57:06] up to its maximum and starts
+[57:08] again from 0. So we need to
+[57:10] clear the bit. So the next time
+[57:12] when again
+[57:14] the timer overflows
+[57:16] this bit is set. Therefore
+[57:18] we have to make sure that bit is
+[57:20] 0. Then only the time again.
+[57:24] Right.
+[57:24] Value 1 in that bit. Right.
+[57:27] Set that EOV bit
+[57:28] to clear it.
+[57:30] This is very important.
+[57:32] Set. Flag.
+[57:34] These bits are called flag bits.
+[57:37] There are many flag bits
+[57:38] you will learn. Right.
+[57:41] In the future.
+[57:42] There are several flag bits. This is one of the
+[57:44] flag bits. Flag bit means
+[57:46] If something happens, you raise the flag to indicate, right?
+[57:51] We raise the flags to indicate others.
+[57:53] Now you raise a white flag to indicate that you are ready to surrender.
+[58:00] Same way, the flag bits are to indicate.
+[58:04] Now this TOV bit indicates timer counted up to its maximum.
+[58:11] And now it is overflowing to start from zero.
+[58:15] So it's a flag bit.
+[58:17] Now flag bits are
+[58:19] little bit different to other bits.
+[58:22] If you want to set a flag bit
+[58:26] if you want to clear a flag bit
+[58:28] to clear
+[58:30] a flag bit
+[58:35] set it.
+[58:36] Assign value 1 to the flag bit
+[58:39] to clear it.
+[58:41] Then it becomes 0.
+[58:42] Other bits if you assign 1 to the bit
+[58:45] the bit becomes 1.
+[58:47] You have to assign 0 to the bit to clear it.
+[58:50] But the flag bits are different.
+[58:53] Why?
+[58:53] The flag bits are set automatically by the hardware.
+[58:57] What we can do is we can clear them.
+[59:00] They are set by the hardware.
+[59:03] Only thing we can do is we can clear them.
+[59:06] To clear them we have to set them.
+[59:09] If you assign 1 to the flag bit,
+[59:12] the flag bit becomes 0.
+[59:15] If you, we are not going to assign 0 to the flag bits.
+[59:19] Assigning 0 to a flag bit, it won't be 0.
+[59:23] You have to assign 1 to the flag bit to make the bit 0.
+[59:28] And the flag bit is set to 1 by the hardware.
+[59:32] We are not going to write value 1 to the, set the flag bits.
+[59:39] We set the flag bit to clear it.
+[59:41] This is different from other bits.
+[59:45] This is the standard practice of not only AVR architecture, but many other architectures.
+[59:52] For example, even Motorola, Intel, they also follow this practice in their hardware.
+[1:00:00] If there's a flat bit, you have to set it to clear.
+[1:00:03] Clear means zero.
+[1:00:04] To clear it, you have to set.
+[1:00:06] Set means put value one.
+[1:00:08] When you put value one, it becomes zero.
+[1:00:10] Write value 1 to the flag bit to make it 0.
+[1:00:16] Is that clear?
+[1:00:17] And keep this in mind.
+[1:00:19] This is different from other bits.
+[1:00:22] Special type of bit called flag bit.
+[1:00:25] Any question?
+[1:00:25] Sir, is ADSCR is also like that?
+[1:00:32] Sorry?
+[1:00:36] ADSCR is also similar to that?
+[1:00:40] That is a register.
+[1:00:41] That's not a bit.
+[1:00:43] Here I am talking about a bit.
+[1:00:45] T-O-V bit.
+[1:00:46] Not the register.
+[1:00:47] Any flag bit.
+[1:00:49] Any flag bit if you want to clear.
+[1:00:51] You have to set it.
+[1:00:53] Whether you want to know a particular bit is a flag bit or not.
+[1:00:57] You have to check the data sheet.
+[1:00:59] So in this example T-O-V is a flag bit.
+[1:01:02] To clear it.
+[1:01:04] Write value 1.
+[1:01:05] Then it will be 0.
+[1:01:07] The bit value will be 0.
+[1:01:08] when you write value 1 to the bit.
+[1:01:10] The other bits, if you write
+[1:01:12] value 1, the bit
+[1:01:14] value would be 1. If you write 0,
+[1:01:17] bit value would be 0.
+[1:01:19] But the flag bits are different.
+[1:01:20] If you write value 1, the flag
+[1:01:23] bit value would be 0.
+[1:01:25] That means to clear the flag bit,
+[1:01:27] set the bit. Any flag
+[1:01:29] bit. Right? This
+[1:01:30] is the standard practice across many
+[1:01:33] different architectures. Not only
+[1:01:35] AVR. I have seen
+[1:01:37] this under Intel architecture.
+[1:01:39] I have seen this under Motorola.
+[1:01:41] Motorola microprocessor. I think
+[1:01:43] now it is called NXP.
+[1:01:44] The Motorola
+[1:01:45] NXP, another company, acquired
+[1:01:49] Motorola. Freescale acquired
+[1:01:51] Motorola. Then NXP
+[1:01:53] acquired Freescale. Now it is called
+[1:01:55] NXP architecture. But earlier
+[1:01:57] when I was learning
+[1:01:59] it was Motorola architecture.
+[1:02:01] Right. Now let's develop
+[1:02:03] a system
+[1:02:04] to learn about counters.
+[1:02:07] Counter base trigger counts five button presses and toggles and LED.
+[1:02:13] This time, number of button presses we are going to count using a counter, hardware counter, not using software.
+[1:02:22] We are not going to use software to count the number of button presses, but we use a hardware counter for that.
+[1:02:29] Right.
+[1:02:30] Time pinout of microcontroller.
+[1:02:33] Now here you can see, this is the T0 pin.
+[1:02:38] So timer 0, timer pin.
+[1:02:42] If you are connecting external clock source for the timer 0, this is the pin you have to use.
+[1:02:48] PD4.
+[1:02:49] If you are connecting external clock source to the timer 0, timer 0 is an 8 bit timer.
+[1:02:55] Right?
+[1:02:56] This is the pin you have to use.
+[1:02:57] And if you are connecting external clock source to timer 1, this is the pin you have to use, PD5, timer 1.
+[1:03:08] Timer 1 is a 16-bit timer.
+[1:03:10] External clock source you can connect to this pin, timer 1 pin.
+[1:03:14] And then these two pins for timer 2, these are for timer 2.
+[1:03:21] But now we have connected an external crystal oscillator to these two pins.
+[1:03:27] so we can't use them.
+[1:03:29] TOSC means
+[1:03:31] timer count oscillator.
+[1:03:33] Timer count oscillator.
+[1:03:35] Right? Those they are for timer
+[1:03:37] 2. Timer 2 is
+[1:03:39] also 8 bit timer.
+[1:03:41] If you want to use timer
+[1:03:43] 2, you have
+[1:03:45] you can't use external oscillator.
+[1:03:48] Then you have to use
+[1:03:49] internal oscillator of the micrometron.
+[1:03:51] Because already we have connected
+[1:03:53] external oscillator to this
+[1:03:54] these two pins. Right?
+[1:03:57] Therefore, we cannot use timer 2.
+[1:04:01] But we can use timer 0 and timer 1 for connecting external clock source.
+[1:04:07] Clear?
+[1:04:08] Schematic diagram.
+[1:04:10] Right.
+[1:04:10] This is our schematic diagram.
+[1:04:13] The microcontroller we have.
+[1:04:15] Reset button.
+[1:04:17] We have pull up the reset pin using 10 kilo ohm resistor.
+[1:04:22] And this is the onboard LED connected to Arduino pin number 13.
+[1:04:26] that is pv5 right one kilo ohm current limiting resistor to onboard smd led right smd led requires
+[1:04:38] very little current that's why a large resistor not 220 ohm but thousand ohm resistor and the
+[1:04:45] external clock source right sorry this oscillator crystal oscillator connected to these two pins
+[1:04:52] power supply right using these two pins to the microcontroller power supply to
+[1:04:58] adc using these two pins and external pulse source external pulse source is a button now we are going
+[1:05:06] to count the button presses right we have connected the button to t0 pin t0 pin is the
+[1:05:16] external timer pin.
+[1:05:19] Timer pin of timer 0.
+[1:05:22] So external clock source you can connect to T0 pin.
+[1:05:25] That is Arduino pin number 4.
+[1:05:28] AVR terms PD4.
+[1:05:30] Port D, right?
+[1:05:32] The pin number 4.
+[1:05:34] PD4.
+[1:05:35] T0 pin, the timer 0 pin.
+[1:05:39] And to debounce the
+[1:05:41] button, the button presses,
+[1:05:46] we have used 100 nanofarad
+[1:05:48] capacitor in parallel
+[1:05:50] to the button.
+[1:05:52] This is for input debouse.
+[1:05:54] Debouse the input.
+[1:05:55] Now microcontroller counts
+[1:05:58] how many button presses.
+[1:06:00] And if the button presses are 5
+[1:06:02] LED is turned on.
+[1:06:05] To turn off the LED again
+[1:06:06] 5 button presses.
+[1:06:08] Then LED will be turned off.
+[1:06:10] Again to turn on
+[1:06:11] 5 button presses
+[1:06:13] LED turn on.
+[1:06:16] Again, five button presses, LED turn off. So, by giving five button presses, you can toggle the LED.
+[1:06:24] Now, in developing this system, we are going to learn how to capture an external clock source.
+[1:06:34] Now, in this example, we use button presses. If the button is connected to the door frame,
+[1:06:40] When somebody opens the door, the door is released.
+[1:06:51] How many times a door is opened, you can detect, you can count.
+[1:06:58] How many people entered into the room opening the door and you have put a door closer, automatic
+[1:07:05] door closer to close the door.
+[1:07:07] But when you open the door, the button is released.
+[1:07:17] Close the door, button is pressed.
+[1:07:19] Based on that, you get pulses.
+[1:07:22] Very simple one.
+[1:07:23] You don't need IR sensors, blah, blah, blah.
+[1:07:26] No, not very fancy attachment.
+[1:07:31] Just a push button.
+[1:07:33] Fix to the door, between door and the frame.
+[1:07:36] and based on that you can count how many times
+[1:07:39] the door is open.
+[1:07:42] If you want to let only 5 people to enter into the room
+[1:07:45] you can count 5 times and then lock the door.
+[1:07:50] You can use the
+[1:07:52] instead of this LED using a solenoid we discussed
+[1:07:55] you can lock the door. You can drive a solenoid
+[1:07:58] using a transistor you can drive a solenoid and lock the door
+[1:08:01] after 5 counts.
+[1:08:03] that means we allowed only five people to open the door and enter that's it a
+[1:08:09] practical exam is that clear any question right then wiring diagram very
+[1:08:16] simple only the button because LED is already on board only the button
+[1:08:22] connected now this is the D0 pin R0 pin number four only the button
+[1:08:26] connected so when we use the buttons we use them diagonally yeah and this is the
+[1:08:32] what do you call, capacitor to input debousing.
+[1:08:38] Right, 100 nanofarad capacitor.
+[1:08:40] Right.
+[1:08:40] Now let's talk about the firmware design.
+[1:08:44] First the algorithm.
+[1:08:45] Main function and main function algorithm.
+[1:08:49] First we configure PB5,
+[1:08:52] Arduino pin number 13,
+[1:08:54] as an output because LED connected to that pin.
+[1:08:57] PB5 as an output, pin number 13.
+[1:09:00] Then we configure PD4 which is the timer 0 pin as an input.
+[1:09:07] Actually you don't need to do this because by default this pin is an input pin.
+[1:09:12] Right.
+[1:09:13] Because you know that by default the register value is 0.
+[1:09:19] Pin register value.
+[1:09:20] Port input register value is 0.
+[1:09:23] Sorry the DDR.
+[1:09:26] DDR data direction register value is 0.
+[1:09:29] So this pin is by default
+[1:09:32] An input pin
+[1:09:33] No need this step
+[1:09:35] But adding this step
+[1:09:36] Makes your algorithm more clear
+[1:09:39] Then pull up
+[1:09:41] P default
+[1:09:42] The button connected pin pull up
+[1:09:44] So it's default value high
+[1:09:47] When you press the button
+[1:09:49] It will go low
+[1:09:50] Clear state change
+[1:09:52] The default state of the pin is high
+[1:09:55] But when you press the button
+[1:09:57] It will go low
+[1:09:59] So clear state change. The microcontroller can detect that state change.
+[1:10:04] Right. Then select the clock source as T0.
+[1:10:08] The timer clock source as T0. T0 is the external pin.
+[1:10:12] The button connected. So the clock source is now external.
+[1:10:17] That means timer becomes a counter. Set the counter to 0.
+[1:10:22] Initial value of the counter set to 0. Again no need to do this.
+[1:10:25] because already it is 0.
+[1:10:28] By default it is 0.
+[1:10:29] But again you can make your algorithm
+[1:10:32] more clear by initializing
+[1:10:34] the TCNT register
+[1:10:36] to 0.
+[1:10:37] Then enter into the endless loop.
+[1:10:39] Check the count.
+[1:10:41] Count that count.
+[1:10:43] If it is greater than 0, no.
+[1:10:46] Greater than, sorry, greater than
+[1:10:47] or equal 5, no.
+[1:10:49] If so, again check.
+[1:10:51] So you check the count
+[1:10:53] again and again.
+[1:10:55] While you are running the loop, the counter can count.
+[1:11:01] Every clock pulse coming through T0P, the counter counts.
+[1:11:07] So, while you are monitoring the counter, the counter counts.
+[1:11:13] At some point of time, the counter count becomes either greater than or equal 5.
+[1:11:21] 5 or greater than or equal 5.
+[1:11:23] If so, toggle the LED. Toggle the LED, reset the counter to zero and keep monitoring the
+[1:11:33] counter. Polling, keep monitoring the counter. Again, counter counts while you are monitoring
+[1:11:40] the counter, counter counts for every clock pass. If the count greater than or equal five,
+[1:11:47] toggle the led reset the counter to zero keep monitoring can you understand this algorithm
+[1:11:54] any question if not let me know i can explain again right let's see the source code main
+[1:12:01] function io.h right first we configure pb5 as an output pin pb5 is the led connected pin
+[1:12:11] onboard LED pin 13
+[1:12:13] Arduino pin 13.
+[1:12:15] Then we configure PD4
+[1:12:17] as an input.
+[1:12:19] This line is not necessary
+[1:12:21] because already
+[1:12:23] this bit is 0.
+[1:12:25] But this line makes
+[1:12:27] your code
+[1:12:28] more understandable.
+[1:12:31] However, it consumes one
+[1:12:33] extra clock cycle.
+[1:12:34] Then pull up PD4.
+[1:12:37] Pull up the PD4.
+[1:12:39] Activate internal
+[1:12:40] pull up resistor. Activate internal pull up resistor. So PD4
+[1:12:44] default state high. PD4 default state high.
+[1:12:49] Then set the clock source. Time counter
+[1:12:52] control register B. Using clock select bits
+[1:12:56] set the clock source as T0 pin.
+[1:13:00] External T0 pin clock source. Set the clock source.
+[1:13:04] This is C
+[1:13:05] clock select cs bit 2
+[1:13:08] clock select bit 1
+[1:13:10] clock select bit 0
+[1:13:12] 1 1 0. Set the external
+[1:13:15] clock source as external.
+[1:13:16] Now timer becomes a counter.
+[1:13:19] Now it's not a
+[1:13:20] timer. Now it's a counter.
+[1:13:23] Set the initial value
+[1:13:25] of timer counter register.
+[1:13:26] Again this line is not necessary.
+[1:13:28] By default this is 0.
+[1:13:30] But again
+[1:13:31] by writing this line you can make
+[1:13:34] your code more understandable.
+[1:13:36] But unnecessary
+[1:13:38] one clock cycle.
+[1:13:40] Then we enter into the loop.
+[1:13:43] Endless loop.
+[1:13:44] Right. And inside the
+[1:13:46] endless loop, we check the
+[1:13:48] counter value. Whether
+[1:13:50] it is greater than or equal 5.
+[1:13:52] Using polling, we repeatedly
+[1:13:54] check the counter value.
+[1:13:56] While we are checking the counter value,
+[1:13:58] counter can increment
+[1:14:00] the TCNT
+[1:14:02] register
+[1:14:03] at every clock's pulse on T0P.
+[1:14:09] The timer can increment the DCNT register,
+[1:14:12] counter can increment the DCNT register
+[1:14:14] on every clock pulse.
+[1:14:17] If the count is greater than O equal 5,
+[1:14:21] toggle the state of PB5.
+[1:14:24] Toggle the state of PB5.
+[1:14:27] That means either you turn on LED or turn off.
+[1:14:30] If the LED is turned off, you turn it on.
+[1:14:33] If it is turn it on, you turn it off.
+[1:14:37] Then reset the counter.
+[1:14:39] The counter counts on every button press.
+[1:14:43] Why?
+[1:14:44] We have set the counter clock source as T0, falling edge.
+[1:14:50] T0, falling edge.
+[1:14:53] 110 means falling edge.
+[1:14:54] That means every button press.
+[1:14:56] Can you understand this also?
+[1:14:58] If not, let me know.
+[1:15:00] Excuse me, sir.
+[1:15:01] Yeah.
+[1:15:01] Sir, the same method can be used to implement exercise 3.
+[1:15:06] Yes, but at that time we have not discussed counters, timers.
+[1:15:11] Yes, I mean now.
+[1:15:13] Now you can.
+[1:15:15] But my expectation is you do that exercise without using timers and counters.
+[1:15:24] But because after we are discussing timers and counters, I will give you another exercise which is related to timers and counters.
+[1:15:31] You can try using timers and counters also.
+[1:15:35] Yes, that is possible.
+[1:15:36] Any other question?
+[1:15:38] Can you understand the source code?
+[1:15:40] Right.
+[1:15:41] Now, the LED is toggled if the number of button pressers are greater than or equal 5.
+[1:15:52] But we want to, let's say, toggle the LED when the number of button pressers are exactly 5.
+[1:15:58] Now according to the source code, LED is toggled when the number of button presses are greater than or equal 5.
+[1:16:08] But let's say we want to toggle the LED when the number of button presses are exactly equal 5.
+[1:16:17] Can you do that change?
+[1:16:19] What you should do?
+[1:16:20] Any suggestion?
+[1:16:21] I want to toggle
+[1:16:23] the LED
+[1:16:25] exactly
+[1:16:27] when the number of button
+[1:16:30] presses are 5. Can you do
+[1:16:32] that change? What about
+[1:16:33] right? What about instead of
+[1:16:35] this if you write
+[1:16:37] T C
+[1:16:38] and T 0
+[1:16:41] equals 5.
+[1:16:43] Then when the number of button presses
+[1:16:45] if the count is exactly
+[1:16:47] equal 5 right?
+[1:16:49] We toggle the LED.
+[1:16:51] Without writing the condition.
+[1:16:54] Using equality operator.
+[1:16:57] Why did I use.
+[1:16:59] Greater than no equal.
+[1:17:01] Because this option.
+[1:17:04] Could be.
+[1:17:06] Could be.
+[1:17:07] Problematic.
+[1:17:09] Why?
+[1:17:10] That's why I use greater than no equal.
+[1:17:12] Without using equality operator.
+[1:17:15] If you use equality operator.
+[1:17:18] To.
+[1:17:19] Check whether the count is.
+[1:17:20] exactly 5-0, whatever
+[1:17:22] value, that could
+[1:17:24] be problematic.
+[1:17:27] Sometimes it would work,
+[1:17:28] sometimes it would not work.
+[1:17:31] Why? Any idea?
+[1:17:33] Sir, condition
+[1:17:34] checkeran nathi vila
+[1:17:36] vaka ar pathing increment
+[1:17:38] kakunotti?
+[1:17:39] Condition naga checkeran nathi vila
+[1:17:42] vaka?
+[1:17:44] Anahari.
+[1:17:49] Anahari.
+[1:17:50] right
+[1:17:51] if you want to get that condition true again
+[1:18:20] You have to press the button continuously to 255, then overflow and then come to the 5 again.
+[1:18:28] Can you understand?
+[1:18:31] In case if you miss the condition, while you are doing something else,
+[1:18:37] if the counter countered the pulse while the code is doing something else,
+[1:18:44] not be either before either after checking or before checking the condition that then the count
+[1:18:54] would be six right the condition would be now would not be true as a result you would have to
+[1:19:03] press the button continuously to increment the counter to 255 and overflow to zero and then
+[1:19:10] again come to 5. That
+[1:19:12] can happen. Right?
+[1:19:14] We press the button.
+[1:19:16] Normally our button pressers
+[1:19:18] are very slow compared to the
+[1:19:20] execution
+[1:19:22] of endless
+[1:19:24] loop. So
+[1:19:26] every button press
+[1:19:28] the endless loop should be
+[1:19:30] able to monitor
+[1:19:32] because our button pressers
+[1:19:34] are slow. Right?
+[1:19:36] So our people
+[1:19:37] when they do actions, they are very slow compared to the processor.
+[1:19:43] So using the processor, we pull,
+[1:19:46] we check, we monitor the counter,
+[1:19:49] TCN, T0 register, right? So CPU is very fast.
+[1:19:54] So because we are slow, button pressers are slow,
+[1:19:58] ideally, all button pressers should be
+[1:20:01] detected. And the chances
+[1:20:05] to have two button pressers
+[1:20:08] one after another
+[1:20:09] and then increment the counter
+[1:20:12] to six before monitoring
+[1:20:14] is very
+[1:20:16] slim. That charge
+[1:20:18] is very slim. Very unlikely
+[1:20:20] that would happen because we are
+[1:20:22] very slow. But still
+[1:20:24] the count can exceed
+[1:20:26] five and move to six.
+[1:20:28] Right. We have used
+[1:20:30] a capacitor to debounce
+[1:20:32] the input. But in
+[1:20:34] case if a pulse generated spike generated at the input and capacitor couldn't debounce all the
+[1:20:44] spikes if one is missed as a result there will be two counts and there's a chance that the counter
+[1:20:53] would exceed five and more to six then the condition would not be true tcnt equals five
+[1:21:01] condition would not be true.
+[1:21:03] Right? Then
+[1:21:05] you have to toggle the LED. You have
+[1:21:07] to press the button up to 255
+[1:21:09] and then 0. Again
+[1:21:11] 5 to toggle the LED.
+[1:21:13] Can you understand that
+[1:21:15] problem? To avoid that
+[1:21:17] I have used greater
+[1:21:19] than no equal. In case
+[1:21:20] if you miss the count 5
+[1:21:22] and go to 6, still
+[1:21:24] you can detect that and toggle
+[1:21:26] the LED. The chances are very slim.
+[1:21:30] But
+[1:21:30] But that can happen.
+[1:21:32] So this is one of the good examples.
+[1:21:36] For the programmers, when you are writing programs,
+[1:21:39] you have to consider all possible situations.
+[1:21:42] The chances are very slim.
+[1:21:44] Because we have used a capacitor to devouse the input.
+[1:21:48] So very unlikely you will get a spike at the input.
+[1:21:53] Because the capacitor will suppress all these spikes, voltage spikes.
+[1:21:56] But in case if there is a spike and capacitor couldn't suppress it, then there will be two button pressers.
+[1:22:05] The microcontroller will detect that spike as another button press.
+[1:22:08] The counter will detect it as another button press and count.
+[1:22:12] And also normally human inputs are very slow.
+[1:22:16] But in case somehow you press the button quickly two times, very unlikely, then counter will count two button pressers.
+[1:22:25] If the count is 4 and 2 button presses then it will be 6.
+[1:22:32] And then you check the condition whether the count is 5.
+[1:22:37] No.
+[1:22:39] The chances are very slim but still possible.
+[1:22:43] So this is a very good example.
+[1:22:44] As programmers you have to think about all possible situations.
+[1:22:50] In majority of cases your system would work perfectly.
+[1:22:54] but exceptions
+[1:22:56] there can be exceptional situations
+[1:22:58] your program, your system
+[1:23:00] would behave
+[1:23:02] strangely and even
+[1:23:04] not only users even you
+[1:23:06] would not be able to understand
+[1:23:08] what has happened and if the system
+[1:23:11] is a very critical system
+[1:23:13] mission critical, safety critical
+[1:23:14] system
+[1:23:15] if the application is a medical
+[1:23:18] application or military application
+[1:23:20] or
+[1:23:21] aerospace
+[1:23:23] then the consequences would be
+[1:23:26] very severe.
+[1:23:28] So as embedded systems
+[1:23:31] programmers, you should be
+[1:23:32] very careful. You have to
+[1:23:34] think about all possible situations.
+[1:23:37] That's why I use greater than
+[1:23:39] or equal without using
+[1:23:40] equality of power. I just wanted
+[1:23:43] to show you
+[1:23:44] this situation. Can you understand?
+[1:23:47] This is a very good example.
+[1:23:49] Very important lesson you
+[1:23:51] learn. Is that clear?
+[1:23:52] the reasons we are using greater than
+[1:23:55] equality operator
+[1:23:56] instead of equality operator
+[1:23:59] is that clear
+[1:24:00] any question
+[1:24:02] right but the requirement
+[1:24:05] of the system's requirement
+[1:24:07] is the client says
+[1:24:09] we want to toggle the LED
+[1:24:11] exactly on 500 pesos
+[1:24:13] not greater than
+[1:24:15] or equal 500 pesos that is the system
+[1:24:17] requirement then how can we
+[1:24:19] address that if the system requirement
+[1:24:21] says requirement specification of the system says the led should be toggled exactly on five button
+[1:24:29] presses not less than five button presses not more than five button presses but exactly on five
+[1:24:35] button presses then what that's the next system five button count five button presses using an
+[1:24:41] alternate approach and toggles and led exactly by five button presser not less than not more than
+[1:24:48] how do we do that you can't use equality operator simply right i mean configure pb5 as an output pb4
+[1:24:57] that is t0 as an input pull up t0 select the clock source as external connected to t0 pin
+[1:25:04] set the counter to 251 set the counter to 251 every clock pulse counter counts first clock
+[1:25:12] pulse 252 second clock pulse 253 third clock pulse 254 fourth clock pulse 255 fifth clock
+[1:25:24] pulse overflow now we monitor whether there is an overflow if there is an overflow toggle the led
+[1:25:32] reset the counter clear the tov flag now it doesn't matter due to a voltage spike at the input
+[1:25:41] due to input bouncing or whether the user pressed the button very quickly two times,
+[1:25:47] whatever it is.
+[1:25:49] If the five, if the overflow happens after five button, five pulses,
+[1:25:55] when overflow happens, the TOE flag is raised and we monitor that flag.
+[1:26:03] As soon as that flag raised, we double the LED.
+[1:26:06] Now, we are not going to look at the count, the value of the count,
+[1:26:10] the value of the counter variable.
+[1:26:12] No.
+[1:26:13] Tov flag.
+[1:26:14] We look at the Tov flag.
+[1:26:15] We know that the Tov flag would be raised
+[1:26:18] after five pulses,
+[1:26:21] five external pulses.
+[1:26:23] Why?
+[1:26:23] Initial value of the TC and D register is 251.
+[1:26:28] The first pulse 252.
+[1:26:30] Second pulse 253.
+[1:26:32] Third pulse 254.
+[1:26:34] Fourth pulse 255.
+[1:26:37] Fifth pulse overflow.
+[1:26:39] So then flag is raised.
+[1:26:41] Toe flag is raised.
+[1:26:42] We are looking at the flag.
+[1:26:44] As soon as flag raised, we toggle the LVD.
+[1:26:47] Can you understand this?
+[1:26:49] Exactly 5 button.
+[1:26:50] Any question?
+[1:26:52] Here reset counter means we again set the counter to 251.
+[1:26:57] Resetting to original value 251.
+[1:27:00] Not to 0.
+[1:27:02] Any question?
+[1:27:03] Right.
+[1:27:04] Then C program.
+[1:27:05] Up to this point, it is similar to the previous program.
+[1:27:10] First, we set the PB5 as line number 7, PB5 as an output.
+[1:27:16] Then we configure PD4 as an input.
+[1:27:22] That line is not necessary, line number 8.
+[1:27:25] Then we pull up PD4.
+[1:27:27] Then we use the clock select bits of timer counter control register B.
+[1:27:35] We set the clock source as T0, external clock source, on falling edge.
+[1:27:40] Then timer becomes a counter.
+[1:27:42] And it will count the external clock pulses on the falling edge.
+[1:27:48] Then set the counter to 251, initial value, 251.
+[1:27:54] Endless loop.
+[1:27:55] Inside the loop, we check whether this flag, Tov flag race, the Tov flag bit set, right?
+[1:28:05] We check whether Tov flag bit is set.
+[1:28:07] For example, let's say TIFR means time interrupt flag register.
+[1:28:16] [unclear — Sinhala / crosstalk]
+[1:28:25] With that, we take the end operation of this value.
+[1:28:29] [unclear — Sinhala / crosstalk]
+[1:28:33] x and 0, 0.
+[1:28:37] [unclear — Sinhala / crosstalk]
+[1:28:43] x and 1, x.
+[1:28:45] If the x is 1, this is a positive value, condition true.
+[1:28:50] If x is 0, condition false.
+[1:28:54] So depending on the value of x, that is,
+[1:28:58] Tov bit, this condition either becomes false or true.
+[1:29:03] We look at the TOV bit.
+[1:29:06] If TOV bit is set, condition true, then we toggle the LED.
+[1:29:12] Reset the counter to original value.
+[1:29:15] Reset the counter.
+[1:29:16] And then clear the TOV bit.
+[1:29:19] To clear the TOV bit, we set it.
+[1:29:22] This is very important.
+[1:29:24] We use the operator and value 1.
+[1:29:26] That means we are going to set.
+[1:29:28] We set the TOV bit to clear it.
+[1:29:31] Clear the TOV flag.
+[1:29:33] to set it right this is very important this is a flag bit now led will be tugged exactly on five
+[1:29:42] button presser not less than five not greater than five right now how do we determine this
+[1:29:48] initial value how do we determine this initial right tcnt register right tcnt register could be
+[1:29:58] either Tc and T0
+[1:30:00] 1 over 2 so I put in
+[1:30:02] maximum value
+[1:30:04] minus whatever the value
+[1:30:06] you want to count plus 1
+[1:30:08] in our example
+[1:30:10] Tc and
+[1:30:12] T0 maximum
+[1:30:14] value 255
+[1:30:16] minus we want to count 5
+[1:30:18] 5 times
+[1:30:20] plus 1
+[1:30:21] that means 251
+[1:30:24] that's how we determine
+[1:30:26] this value
+[1:30:27] Why plus 1? Because flag is set when overflow happens. 255 to 0 overflow happens, then only the flag is set. The TOV bit is set. That's why we use another one to count the overflow.
+[1:30:47] maximum value the register can have minus
+[1:30:51] the count that you want plus 1. Plus 1 is
+[1:30:55] the value that you need you account for the overflow.
+[1:31:00] Then you get the initial value. Based on this equation
+[1:31:03] you can determine the initial value for the register
+[1:31:07] depending on the count that you want to write.
+[1:31:12] Is that clear? Any question?
+[1:31:15] If this is not clear, please let me know.
+[1:31:18] Oh, if you have any question, you can ask now.
+[1:31:21] Yes, Thirinan.
+[1:31:23] The calling system,
+[1:31:25] is that the condition of the condition of the condition?
+[1:31:32] The condition of the condition of the condition is not the condition of the condition.
+[1:31:40] Oh, that's not the condition.
+[1:31:41] the
+[1:31:43] the
+[1:31:44] the
+[1:31:44] the
+[1:31:45] the
+[1:31:45] the
+[1:31:45] the
+[1:31:45] the
+[1:31:45] the
+[1:31:45] the
+[1:31:45] 
+[1:31:45] the
+[1:31:45] 
+[1:31:45] the
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:31:45] 
+[1:32:11] [unclear — Sinhala / crosstalk]
+[1:33:11] So, we can use polling.
+[1:33:14] So, we can interrupt the flag to race.
+[1:33:17] Oh, that's right.
+[1:33:19] So, we can use polling to race.
+[1:33:23] So, we can use polling to race.
+[1:33:26] So, we can practically use that question.
+[1:33:30] Logically, we can use algorithm to make a mistake.
+[1:33:35] It's like we are equal to the same condition, logically we are not in the algorithm.
+[1:33:43] If we can't miss it, we can't miss it.
+[1:33:47] Then we can't do the algorithm logically.
+[1:33:51] Then we can't do the algorithm logically.
+[1:33:54] Practically, we use polling.
+[1:34:01] We use the polling event.
+[1:34:05] We use the interrupt.
+[1:34:08] If we use the flag, we interrupt.
+[1:34:12] If we use the polling, we waste it.
+[1:34:16] Because you are repeatedly checking TOV bit.
+[1:34:20] repeatedly checking right so repeatedly checking to obt is a waste so the the next example is
+[1:34:29] how to do the same using interrupts very good question you raise can others also understand
+[1:34:35] his question actually this is what you should do you have to think beyond what we have discussed
+[1:34:42] right if you talk to the seniors i'm sure they have told you this subject is difficult and
+[1:34:50] And it's very difficult to get a good grade.
+[1:34:53] That's the normal perception among the students.
+[1:34:56] The reason is in the exam, right, when I sent the papers, some questions I put to check whether you have, you are thinking beyond the concepts that we have discussed.
+[1:35:12] To make sure that I put to several questions.
+[1:35:16] That's why this has become somewhat difficult for many students.
+[1:35:23] So therefore, during this semester, you must start thinking beyond what we have discussed.
+[1:35:32] That practice is very important.
+[1:35:34] That is very important as an IT student.
+[1:35:38] So as an IT student, that is very important for you.
+[1:35:41] And also as a university student, very important.
+[1:35:45] So in my exams I put several questions to check whether you have that ability. Not the entire paper but few questions. That's why people say it's very difficult to go for at A. And the other issue is the marks are calculated 50% from the exam paper 50% from the practical.
+[1:36:12] That's the second obstacle, the practical exam. In the practical exam, within three hours, you have to design hardware, you have to assemble hardware, design firmware, implement the firmware, run and show.
+[1:36:28] that's challenging
+[1:36:31] if you have not done practicals.
+[1:36:34] It would be very challenging
+[1:36:35] if you have not done practicals.
+[1:36:36] If you have done the practicals, if you have done the exercises,
+[1:36:39] when you are doing the exercises,
+[1:36:40] if you have thought about
+[1:36:42] the other ways of doing the same exercise,
+[1:36:45] then that would not be challenging.
+[1:36:47] Within three hours you can finish the job.
+[1:36:49] Now the question is,
+[1:36:50] if you couldn't successfully
+[1:36:54] finish the practical exam,
+[1:36:56] then you lose a lot of marks.
+[1:36:57] 50% marks.
+[1:36:58] Then that the portion that you lost during the practical, it's very difficult to cover
+[1:37:07] using the theory paper because theory paper has another 50% only.
+[1:37:11] Very difficult.
+[1:37:12] Now, for example, if you get 25 marks for the practical, it's very challenging even
+[1:37:18] getting 25 marks for the practical.
+[1:37:22] there, you have to get 45 marks for out of 50 for the theory paper. 45 marks out of 50
+[1:37:29] means 90% to go for an A. That's the second challenge. 50% marks for the practicals, 50%
+[1:37:37] marks for the written exam. And normally in other, all other modules you have 70% for
+[1:37:43] the final exam, 25% for the project, 25% for the practical. So even if you, if you do some
+[1:37:52] a blunder at the practical, that would not be a big issue for your grading at the exam.
+[1:38:01] But this module, if you make a blunder at the practical, that's it. It's very difficult
+[1:38:07] to cover at the exam. That's why I have seen some students, they sit for the practical,
+[1:38:12] but they don't sit for the final theory exam. Because if they make a blunder at the practical
+[1:38:17] exam they know no point of sitting for the final exam because they can't cover up so the therefore
+[1:38:25] you should be you should know all these things and you have to prepare yourself well in that
+[1:38:34] box because i have put 50 percent marks for the practical because this is a practical subject now
+[1:38:41] you can't go out and can you say i know embedded systems but i i don't know how to assemble hardware
+[1:38:47] I don't know how to write a firmware.
+[1:38:51] But I have done embedded system.
+[1:38:52] I have at A.
+[1:38:54] All the theories I know.
+[1:38:56] What's the point?
+[1:38:58] Can you go outside and see?
+[1:39:00] I know all the theories about swimming.
+[1:39:02] But I can't swim.
+[1:39:04] When you push me into water,
+[1:39:07] even I can't float.
+[1:39:09] But I know theory.
+[1:39:10] I will explain you all the theories behind swimming.
+[1:39:13] What's the point?
+[1:39:15] That's why I ask you to buy a kit.
+[1:39:17] for yourself. Now see, right? That has become very useful for you. Because if you relied on the
+[1:39:27] resources available at the lab, now can you access that? No. Now, because now you have the kit,
+[1:39:34] you can do practicals even at your home. Anything else? Any other question? No. Yes.
+[1:39:40] Can I ask a question about the exercise 3?
+[1:39:47] In the afternoon? Once we finish the lecture?
+[1:39:52] Is that okay?
+[1:39:54] Yes sir.
+[1:39:55] Using interrupts.
+[1:39:57] Count 5 button presses and toggles and LED using interrupts.
+[1:40:02] Same hardware but different firmware.
+[1:40:05] main function
+[1:40:06] main function
+[1:40:07] algorithm
+[1:40:09] configure PB5, PB5 is
+[1:40:12] Arduino pin number 13 where LED
+[1:40:14] connected, onboard LED connected
+[1:40:17] as an output
+[1:40:18] configure PD4 as an input
+[1:40:20] not necessary because already input
+[1:40:22] pull up PD4 which is the timer
+[1:40:24] pin, right timer 0
+[1:40:26] pin, pull up, select
+[1:40:28] the clock source as timer 0
+[1:40:30] then set the counter
+[1:40:32] to do 5.1 initial value
+[1:40:34] Enable the count overflow interrupt. Enable interrupts. Enable global interrupts. Endless loop. Now inside the endless loop you could do something else. But in this example we don't have any other task so it is just an endless loop.
+[1:40:57] Right, when the counter counts 5 clock pulses and overflows, when counter counts 5 clock
+[1:41:08] pulses and overflows, Tov flag is raised, Toebit is set and the timer or the counter interrupts
+[1:41:18] CP.
+[1:41:19] So we have to handle that interrupt.
+[1:41:21] count the overflow interrupt handle it. Tuggle the LED reset the counter to 251. That's it. Very simple. Can you understand this algorithm? Right. Then source code. Before we move into source code, let's talk about this register.
+[1:41:38] timer interrupt mass register which has toie bit timer overflow interrupt enable bit
+[1:41:47] using this bit you can enable or disable timer overflow interrupt right if you enable then the
+[1:41:55] cpu will be enabled when timer overflows by default this is disabled zero therefore
+[1:42:02] interrupts are disabled.
+[1:42:05] You can enable it. Now we are going to use
+[1:42:08] interrupts instead of
+[1:42:09] polling the TOV bit.
+[1:42:12] Polling TOV bit is a waste.
+[1:42:14] Right. So score.
+[1:42:16] Now we are going to use interrupts.
+[1:42:17] So we need to include interrupt.h.
+[1:42:20] Right. Similar to the
+[1:42:21] previous example.
+[1:42:24] Configure PD5
+[1:42:25] as an output. Configure
+[1:42:27] PD4 as an input. Not necessary.
+[1:42:30] Pull up PD4.
+[1:42:31] PD4 is the type T0
+[1:42:34] that is the type external
+[1:42:35] timer pin for the timer
+[1:42:38] 0 then
+[1:42:39] timer counter control
+[1:42:42] register B
+[1:42:42] clock select bits set the clock
+[1:42:46] source as T0
+[1:42:47] where the button is connected
+[1:42:49] timer counter register initial value
+[1:42:52] 251
+[1:42:53] enable
+[1:42:54] timer counter overflow interrupt
+[1:42:58] using timer
+[1:43:00] interrupt mask register, right, enable the interrupts, time overflow interrupts.
+[1:43:05] Enable global interrupts, SCI function which is a set interrupt function defined in interrupt.h.
+[1:43:12] Endless loop. You can use this loop to do something else. But in this example,
+[1:43:17] we don't have any other task, therefore it's empty. But if you have some other task, you can use it.
+[1:43:23] Right. Then, this is the ISR. When timer overflows from 255 to 0, this interrupt service routine is executed. This is called automatically. And this is the vector you have to use. Timer 0. You are using timer 0. Overflow vector. OVF vector.
+[1:43:44] If you are using timer 1, timer 1 overflow vector, the correct vector you have to use.
+[1:43:51] Then inside the vector, toggle the LED and reset the counter to 251.
+[1:44:01] But now we are not going to clear the TOV flag.
+[1:44:04] Why?
+[1:44:05] When you are using the ISR, when you are using interrupts, TOV flag is automatically cleared
+[1:44:12] by the hardware.
+[1:44:13] So we don't need to worry about it.
+[1:44:15] But if you are not using interrupts, then you have to explicitly clear the TOE flag.
+[1:44:22] But now you don't need to clear the TOE flag, flag bit because you are using interrupts,
+[1:44:28] hardware will clear it.
+[1:44:30] Only thing you have to do is you have to handle the correct ISR.
+[1:44:36] That's it.
+[1:44:37] This is the most efficient way of using counters.
+[1:44:41] If you are using Arduino platform, you don't have access to these facilities.
+[1:44:46] You don't have access to ISR because there is no, because the attach interrupt wrapper
+[1:44:54] function is for external interrupts.
+[1:44:57] But for timer interrupts, no wrapper function.
+[1:45:01] And the timers, there is no direct access to timers.
+[1:45:06] Some Arduino libraries use timers.
+[1:45:08] That's a different story.
+[1:45:09] as a firmware developer, you don't have direct access. There are no wrapper functions to give
+[1:45:15] you direct access to timers. A limitation of Arduino platform. But if you are using C,
+[1:45:21] you have full access to hardware. These are hardware timers, hardware counters. This is
+[1:45:28] the most efficient way. Exactly on five button presses, LED will be toggle. Not less than five,
+[1:45:35] not more than five. Exactly. Can you understand this code? Any question? Yes, any question?
+[1:45:45] Right. Now with that we have come to the end of counters. But still we have not talked about timing,
+[1:45:52] measuring time. That's the next part. So now we know how to use timers as counters to count an
+[1:46:00] event the next part is how to use timers for measuring time counting part is over any question
+[1:46:08] no if no questions right so now i'll stop the morning session and we'll see you at one o'clock
+[1:46:17] okay thank you thank you thank you sir

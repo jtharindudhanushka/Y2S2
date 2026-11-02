@@ -1,0 +1,1662 @@
+22 - PWM 1 - Duty Cycle, Average Voltage & Generating PWM  (24 Nov 2020 (morning))
+
+[0:00] Right. Now, today we are going to discuss a new topic, pulse width modulation. Right. Last week we discussed about timers and the pulse width modulation is related to timers. So with that knowledge we can proceed.
+[0:22] Now, so far we have discussed how to get digital input from a sensor, how to capture a digital input from a sensor.
+[0:35] In other words, state of real world, state of physical world, how to capture using a digital sensor, we discussed.
+[0:45] Then we discussed how to change the state of physical world with a digital actuator.
+[0:52] We turn on a light, turn off a light.
+[0:56] So we illuminate the physical world, then we turn the physical world into dark.
+[1:02] So it's a change of state of the physical world using a digital actuate.
+[1:10] Now capture the state of physical world.
+[1:14] For example, push button.
+[1:16] When you press the button, one state.
+[1:19] When you release the button, a different state.
+[1:21] We can capture the state of physical world.
+[1:25] And we discuss about some sensors, transducers, to capture state of physical world.
+[1:35] The flame sensor, it's a digital sensor.
+[1:39] So which using that we can capture whether there's a flame or not in the physical world.
+[1:44] Then we discuss about how to capture state of physical world, the variation of the state of physical world.
+[1:53] Continuous variation of the state of physical world using analog sensors.
+[1:58] The variation of light, variation of temperature.
+[2:02] So likewise, the state of physical world state is a variation.
+[2:09] It's a continuous variation, not a discrete.
+[2:11] Now, how to capture them using analog sensors?
+[2:16] For example, using a light dependent resistor or LDR or using LM35 like temperature sensors, right?
+[2:25] And also under transducers, we discuss about soil moisture sensor, water level sensor, gas sensor, MQ2 gas sensor for LPG, right?
+[2:39] So the gas concentration, the variation of the gas concentration, it's not discrete, it's a continuous.
+[2:46] How to capture using analog cells.
+[2:49] But so far, we couldn't touch, we couldn't discuss how to change the state of physical world using analog actuator.
+[3:00] Now we know how to turn on a light, turn off a light.
+[3:03] Doing that, we can change the state of physical world.
+[3:05] When you turn off the light, physical world is dark.
+[3:09] When you turn on the light, physical world, you can illuminate.
+[3:12] Change of state.
+[3:14] But can't you do that gradually, continuously?
+[3:19] For example, can't we dim a light?
+[3:23] Not to turn off, not to turn on, but to dim.
+[3:29] If the actuator is a motor,
+[3:32] right we know how to turn off the motor we know how to couple a motor interface a high power
+[3:40] actuator to a microcontroller using a BJT transistor bipolar junction transistor MOSFET
+[3:49] metal oxide semiconductor field effect transistors or relays we have discussed and we know how to
+[3:56] turn on the transistor. We know how to turn, sorry, we know how to turn on the motor. We know
+[4:02] how to turn off the motor. When you turn on the motor, motor runs at its full speed. When you turn
+[4:09] off the motor, motor stops. But can't we reduce the speed, right? Can't we gradually slow down
+[4:16] the motor, gradually increase the speed? Now, these things are very important in certain
+[4:23] applications for example let's say you are planning to develop you are going to develop
+[4:29] an autonomous vehicle a small autonomous vehicle not not like the vehicles that google
+[4:39] or tesla develop but a small one for a hacker right a line following car right kind of one
+[4:46] Now you want to, when your car, small that car, line following car, when it comes to a bend or junction, now you need to turn it to either right side or left side.
+[5:03] But then you need to slow down it, right?
+[5:06] Otherwise, if you try to, with the same high speed, if you try to take the bend, right, it would be toppled.
+[5:15] So we need to slow down.
+[5:17] Now how to slow down the motors?
+[5:19] Then after you took the turn,
+[5:22] then you want to again increase the speed of the motors.
+[5:25] How to gradually increase the speed of the motor?
+[5:28] Now let's say you are developing a drone,
+[5:31] a flight controller for a drone, right?
+[5:34] A codcopter.
+[5:35] So we call it a codcopter because it has four propellers.
+[5:41] Cod, cod means four.
+[5:42] copters, four propellers.
+[5:46] These four propellers
+[5:47] you drive using four motors.
+[5:50] Now you want to gradually
+[5:51] land the
+[5:53] codcopter. If you suddenly land
+[5:55] the codcopter, it will be destroyed.
+[5:58] That's a crash landing.
+[6:00] If you turn off
+[6:01] the motors, then it will
+[6:03] crash.
+[6:05] But you want to gradually, smoothly
+[6:07] land it. Gradually
+[6:09] take off it. Gradually
+[6:11] move forward, gradually move backward so that you have to adjust the speed of the motors
+[6:18] gradually. It's not just a turn on, just a turn off. A gradual increase of power, gradual
+[6:26] decrease of power, a continuous analog, not digital. Now the question is how to drive
+[6:34] analog actuators using a digital computer.
+[6:40] Microcontroller is a computer, single chip computer.
+[6:43] It's a digital computer.
+[6:45] It has a CPU.
+[6:46] The CPU can work on ones and zeros.
+[6:50] Process of electricity, absence of electricity.
+[6:52] That is the only thing that CPU can understand.
+[6:55] But the output we need, analog output, to drive analog actuators.
+[6:59] Slow down a motor.
+[7:01] Increase the speed of a motor.
+[7:03] Dim a light.
+[7:04] So how to drive analog actuators using digital computers, right?
+[7:12] So that's what we are going to discuss under pulse width modulation.
+[7:17] Is that clear?
+[7:19] Pulse width modulation is a concept.
+[7:22] Using that concept, we are going to get an analog-like output, right?
+[7:31] Okay, let's first discuss our learning outcomes.
+[7:38] On completion of this session, you should be able to explain the need of PWM.
+[7:45] I have already discussed that.
+[7:47] Why we need PWM?
+[7:49] We need PWM to get analog output.
+[7:52] Then we can drive analog actuators using a digital computer.
+[7:57] We have a digital computer, right?
+[7:59] We have a digital computer, we want to drive analog actuators.
+[8:03] So that's why we need PWM.
+[8:05] PWM is a technique that we use to get analog outputs from a digital computer.
+[8:12] Compare duty cycle, sorry compute, duty cycle, frequency and frequency for PWM outputs.
+[8:21] For pulse with modulated outputs, there are two properties.
+[8:27] Any PWM output, any pulse with modulated output
+[8:30] There are two properties
+[8:31] We need to pay our attention
+[8:34] One is the duty cycle
+[8:36] The other one is the frequency
+[8:39] Frequency of the output
+[8:41] Duty cycle of the output
+[8:43] How to compute them
+[8:45] Right
+[8:45] We need to determine, we need to calculate them
+[8:48] Before generating the output
+[8:50] How to calculate them
+[8:52] Third, learning outcome
+[8:54] Describe how time must generate
+[8:56] PWM outputs. We discussed timers last week.
+[9:01] Now using timers we can generate
+[9:04] pulse with modulated outputs. How?
+[9:08] The next learning outcome. Explain the functionality
+[9:12] of timer counter registers used for
+[9:17] PWM. Now if you are going to use timers
+[9:20] to generate PWM outputs, you have to use timer
+[9:24] count registers. Then what are the registers we need to use for PWM output? Construct a microcontroller
+[9:32] based system and program it to generate a PWM output with varying duty cycle. And finally,
+[9:41] we are going to put everything into practice. We are going to construct a microcontroller
+[9:47] system and programming to generate a PWN pulse with modulated output with a varying duty cycle
+[9:55] duty cycle we vary in that output okay let's start pulse with modulation now this pulse with
+[10:04] modulation is a technique right the mathematics behind this but without going into mathematics
+[10:11] Right. In very simple terms, I will explain you this concept.
+[10:18] Right. Let's see what is this concept.
+[10:21] First, it's a technique for getting analog like output by means of digital.
+[10:29] This word analog like is very important.
+[10:32] It is not analog, but analog like.
+[10:36] Not true analog. PWM is not true analog.
+[10:40] It gives analog like output.
+[10:44] Then what is PWM?
+[10:45] PWM is digital.
+[10:47] Pulse with modulation is a digital technique.
+[10:51] Using digital we can get analog like output.
+[10:55] Like.
+[10:55] Analog like.
+[10:57] The users see.
+[10:59] Users feel analog like output.
+[11:03] But the output is not true analog.
+[11:06] Kind of illusion.
+[11:08] As bad.
+[11:09] But that is not analog. It's truly digital.
+[11:15] But it's analog-like.
+[11:17] So at least if we can see it like analog, that's okay.
+[11:21] We don't care whether it's true or not.
+[11:26] It could be true or something else.
+[11:29] We don't care about that.
+[11:31] If we can feel it like analog, that's it.
+[11:34] If we can reduce the speed of a motor gradually, that's it.
+[11:39] If we can dim a light, that's it.
+[11:43] We don't care whether it's true analog or not.
+[11:45] But you should know PWM is not analog.
+[11:51] It's digital.
+[11:52] But it will give you analog-like effect.
+[11:56] Right.
+[11:57] Now let's see how it works.
+[11:59] It toggles.
+[12:01] Right.
+[12:01] We toggle a digital output.
+[12:04] A digital output fast enough.
+[12:06] we toggle a digital output pin, right, the state of a digital output pin fast enough,
+[12:14] making any attached device to that pin, making any attached device to that pin to react
+[12:23] not to the individual pulse, but to the percentage of time that the output is high in one cycle,
+[12:33] PWM toggles a digital output, digital IOP fast enough, making any attached device to that pin to react not to the individual pulses, but to the percentage of time that the output is high in one cycle.
+[12:58] Right. A digital output we toggle high, low, high, low.
+[13:04] So digital output is, digital outputs can have two values, either high or low.
+[13:10] So we change the digital output state of the digital output very fast.
+[13:14] High, low, high, low, high, low.
+[13:16] Then what happens is the attached device to that output,
+[13:21] It reacts not to the individual pulse but to the percentage of time that the output is high in one cycle.
+[13:32] Now the situation is this.
+[13:34] Computers are digital device.
+[13:36] It's a digital device.
+[13:37] Computer is a digital device.
+[13:39] So it cannot provide analog output.
+[13:42] Now we are going to get analog-like output by means of digital.
+[13:46] So to get analog-like output by means of digital, what we do is a digital output,
+[13:53] we state of a digital output, we toggle.
+[13:56] We change the state high, low, high, low, very fast.
+[14:01] Then what happens is the attach, any attach device to that output.
+[14:06] Let's say a bulb or motor, whatever, attach device to that output.
+[14:11] It reacts not to the individual pulses, right?
+[14:16] but to the percentage of time that the output is high in one clock cycle.
+[14:23] Now let me give you a very simple example.
+[14:28] Rather than going into mathematics or physics,
+[14:31] using a very simple example, let me explain you this concept.
+[14:37] Let's imagine in your room,
+[14:39] you, right, in the ceiling, there is a pit, there is a bulb, right, a typical filament bulb,
+[14:50] not a fluorescent bulb, not a CFL, not LED, a typical filament bulb is in the room,
+[14:58] hanging from the ceiling. Let's imagine. Probably you actually have that kind of one in your room.
+[15:05] Right. Now when you turn on the wall switch, you have learned from the school, the electricity you supply to the bulb.
+[15:17] Then the electricity, the current goes through the filament.
+[15:21] When current goes through the filament, right, the current heats up the filament.
+[15:28] As a result, the filament starts emitting light and the heat.
+[15:32] I don't know whether you remember the O level of the small grades lessons.
+[15:39] I can still remember.
+[16:02] Can you remember?
+[16:05] Then only it emits the light and the heat.
+[16:25] Right.
+[16:27] Now, let's do a simple experiment.
+[16:30] Now you have a filament bulb hanging from the ceiling.
+[16:35] You have a wall switch.
+[16:38] You turn on the switch.
+[16:40] Then we supply electrical current to the bulb.
+[16:46] You turn on the bulb using the switch.
+[16:49] But these filament bulbs take very small time to fully turn on.
+[16:57] Fully turn on means fully illuminate.
+[17:00] The light. It takes small time. It takes small time. It takes small time. It takes time to heat up the filament. It takes time. That's not a big time.
+[17:26] A fraction of seconds or couple of seconds very quickly.
+[17:32] Right?
+[17:32] That happens but it takes some time.
+[17:34] Small time.
+[17:36] Now our experiment is we turn on the light.
+[17:38] Then light takes more time to fully illuminate or fully turn on.
+[17:45] So then what we do is before bulb becomes fully turned on.
+[17:50] Before bulb becomes fully turned on.
+[17:54] We turn off the bulb.
+[17:55] We turn off the bulb.
+[17:56] using the switch right again bulb takes small time to fully turn off right
+[18:17] it takes small amount of time to fully turn off but before it becomes fully turned off
+[18:25] Before it becomes fully turned off, we turn on the bulb again.
+[18:30] Then it takes little time to fully turn on.
+[18:34] But before it becomes fully turned on, we turn off the light again.
+[18:39] Then bulb takes more time to fully turn off.
+[18:43] But before it becomes fully turned off, we turn on the light again.
+[18:48] Now if you do this again very rapidly, switch on off, on off, on off.
+[18:55] Very rapidly.
+[18:56] Now can you tell me the brightness of the bulb?
+[19:01] Is that full brightness?
+[19:04] Or no brightness at all?
+[19:07] What is the brightness of the bulb?
+[19:09] Any answer?
+[19:10] You turn on the bulb.
+[19:12] Before it becomes fully turned on.
+[19:15] That means full bright.
+[19:17] Before it comes to that state.
+[19:19] We turn off.
+[19:20] Then it takes some small time to fully turn off.
+[19:24] full dark. But before it comes to that state, we again turn on. And before it comes to full
+[19:31] bright state, we turn off. And before it comes fully dark state, we turn on. And we do this
+[19:39] again and again very rapidly, turn on, turn off. Now my question is, then what would be the
+[19:46] brightness of the bulb? Full brightness, no brightness or something in between? What is
+[19:53] your answer? Something in between? Yes. Here you can see that. Turn on, turn off, turn on, turn off,
+[20:03] turn on, turn off. Now these are pulses. On, off pulses. You turn on and you keep the switch on
+[20:13] small time before bulb comes to the full brightness you turn off. Then you keep the switch off small
+[20:21] amount of time. Before bulb comes to the fully turn off state, you turn on. Then you keep the
+[20:27] switch on small time. Before bulb comes to the fully turn on, we turn off. And again we keep the
+[20:35] switch turn off. Before bulb comes fully turn off, we turn it on. This is the bright. Then we
+[20:43] turn on the bulb. Keep the bulb
+[20:46] turn on little bit more time.
+[20:50] Keep the bulb turn on little bit more time. But
+[20:52] before it comes to the fully turn on state we turn it off.
+[20:57] Then we keep the switch turn off.
+[21:00] But before it comes fully turn off we turn it on.
+[21:05] And then we keep the switch turn on little bit more time
+[21:08] compared to the previous example.
+[21:10] but before it comes to fully turn on
+[21:14] we turn it off and keep the light turn off
+[21:18] and before it comes fully turn off we turn it on.
+[21:22] You can see the brightness. Brightness is little bit more
+[21:26] compared to the previous example. Why?
+[21:30] The turn on time is more. Now earlier
+[21:34] turn on time is less. Now turn on time is
+[21:38] more and the third example you can see much brighter the bulb is illuminating much brighter
+[21:48] why the turn on time is more and turn off time is less what does that mean when you toggle
+[21:58] a digital output very fast the attached device that is the bulb it reacts not to the individual
+[22:06] pulses. It doesn't react to individual
+[22:08] pulses. If it reacts to the
+[22:10] individual pulses, bulb should be
+[22:12] on-off. But no,
+[22:14] that doesn't happen. What happens
+[22:16] is, it reacts to the
+[22:18] percentage of time.
+[22:20] Amount of time, the output
+[22:22] is high in one cycle.
+[22:24] Output is high in one
+[22:26] cycle. Percentage of time,
+[22:28] output is high in one
+[22:30] cycle. When you take one cycle,
+[22:33] one cycle,
+[22:34] the first one,
+[22:36] Let's say it's about 20% of time high.
+[22:41] The second example 40% of time high.
+[22:45] Third one 90% of time high in one cycle.
+[22:50] One cycle means you need to start from here.
+[22:53] The cycle starts from here.
+[22:56] And this is one cycle.
+[22:59] Let me draw it.
+[23:02] That's a one cycle.
+[23:03] This square wave, in the square wave, one cycle.
+[23:07] Percentage of time, output is high in one cycle.
+[23:11] So 90%, roughly 90% of time, output is high.
+[23:15] So the brightness also 90%.
+[23:17] 40% of time, output is high.
+[23:20] Brightness 40%, roughly about 40% brightness.
+[23:24] 20% of time, output is high.
+[23:26] 80% of time, output is low.
+[23:30] Brightness is proportional to that.
+[23:31] Now, when you look at these signals, what are these signals? These are digital signals. On-off. We turn on the switch, we turn off the switch. On-off, digital. But when you look at the bulb, you see a gradual adjustment of the light, the illumination or the brightness, gradual adjustment.
+[23:54] That means you have dimmed the light.
+[23:58] You have brightened the light.
+[24:00] When you look at the bulb, it's like analog.
+[24:05] It looks like analog.
+[24:07] But actually the output is digital.
+[24:12] We got analog-like output by means of digital.
+[24:17] We got analog-like output by means of digital.
+[24:21] Is that clear?
+[24:22] Can you understand?
+[24:23] Any question?
+[24:24] If not, please let me know.
+[24:26] I'm ready to explain again.
+[24:29] Isuru?
+[24:30] Yes, sir.
+[24:31] Binuri?
+[24:32] I'm Kisan.
+[24:33] Good.
+[24:35] Right.
+[24:35] This is PWM.
+[24:37] You don't need any rocket science to understand PWM.
+[24:41] Right.
+[24:42] But if you try to read a book on PWM, you would see a lot of mathematics, blah, blah, blah.
+[24:48] But using this simple example, very easily you can understand.
+[24:53] It's a digital output.
+[24:55] It's a digital technique.
+[24:57] But we can get analog-like output.
+[25:00] Not true analog, but analog-like.
+[25:02] Now to get that kind of analog-like output,
+[25:06] we have to toggle the output, digital output very fast.
+[25:11] Very fast.
+[25:12] Fast enough.
+[25:14] How fast?
+[25:15] The next question.
+[25:16] How fast?
+[25:17] You have to toggle the output fast enough.
+[25:19] You have to turn on off the wall switch.
+[25:22] Very fast.
+[25:23] If you turn on the switch lazily and then turn off the switch again,
+[25:29] you would see light turn on, light turn off.
+[25:32] Then it's digital.
+[25:34] You have to do it very fast.
+[25:36] Then only the light would react to the percentage of time that the output is high in one cycle.
+[25:43] To get that effect, you have to do it very fast.
+[25:47] The question is how fast?
+[25:49] Right.
+[25:49] faster than human eye can see any flicker. It should be faster than human eye can see any flicker.
+[26:00] We have a guess in the middle of a big waging window.
+[26:06] We have a light that goes off and on.
+[26:09] Off and on.
+[26:10] So we have a guess in the middle of a blink.
+[26:13] We have a guess in the middle of a big waging window.
+[26:15] We have a headache.
+[26:17] accurate now so we have to toggle the output faster than a human eye can see any flicker
+[26:26] flicker what does that mean that means let's say for leds the frequency on off frequency
+[26:38] must be greater than 100 hertz must be greater than 100 hertz for leds 100 hertz
+[26:45] or whatever adukaluk, you would see that flickering effect.
+[26:50] That flashing effect you would see. You are going to dim
+[26:53] the LED but you would see the flashing effect.
+[26:57] Flickering effect. But if you increase the frequency,
+[27:01] on off frequency greater than 100 hertz,
+[27:05] then you would not see the flickering effect. You would see
+[27:09] a gradually fading LED. You can dim the LED.
+[27:13] You can brighten the LED without showing any flickering effect.
+[27:20] So for LED, right, the frequency, right, the speed you turn on, turn off must be greater than 100 Hz.
+[27:33] That is for LEDs.
+[27:35] How about some other device?
+[27:37] The same theory, greater than 100 Hz?
+[27:40] No.
+[27:41] The frequency depends on the device that we use.
+[27:45] For some devices, if you toggle the output very fast, the device cannot react to the change.
+[27:54] If you toggle the output very fast, device would not be able to react to the change.
+[28:00] There are some devices, they are very slow.
+[28:04] A good example is a motor.
+[28:06] Now you know that when you start a motor, when you supply the power to start a motor, the motor would take small time to start.
+[28:19] It takes small time to start.
+[28:21] Because it's slow.
+[28:22] The reaction is very slow.
+[28:24] Right.
+[28:25] So as soon as you connect the power to the motor, motor doesn't run at the full speed.
+[28:31] It takes small time to start.
+[28:33] then it takes more time to increase the speed
+[28:38] because the motor's reaction time is comparatively large.
+[28:43] So it's slow, slow.
+[28:44] Start.
+[28:45] Take some time to start.
+[28:47] So such a device, slow device, right?
+[28:51] If you supply a PWM signal
+[28:58] by toggling the output very fast,
+[29:01] the motor would not react to the change.
+[29:05] Motor would not start.
+[29:07] It would not start.
+[29:08] Because you turn on and quickly turn off.
+[29:11] Turn on, quickly turn on.
+[29:13] Then it would, it doesn't get the time to start.
+[29:17] Because you turn on and immediately you turn off.
+[29:20] Because it needs some time to start.
+[29:23] For such devices, you have to toggle the output not very fast.
+[29:30] That means the toggled output slower than the maximum speed that the device can react to a change.
+[29:39] Right. Toggle the output slower than the maximum speed that the device can react to a change.
+[29:47] If the output is toggled too fast, device may not start at all.
+[29:53] if the output is toggled too fast device may not start at all because these devices slow devices
+[30:03] they take time to start small time to start in such situations when you are toggling the output
+[30:10] for PWM outputs you need to toggle them slower than the maximum speed that the device can react
+[30:17] to a change. Then how do we know
+[30:20] these maximum speed
+[30:21] or the PWM
+[30:23] supported frequency?
+[30:26] How do we know?
+[30:28] Datasheet. Each and every
+[30:30] electronic device, there's
+[30:31] a datasheet. Unfortunately,
+[30:34] the devices that we buy from
+[30:35] the local market, manufactured
+[30:38] in China, you
+[30:39] can't find the datasheet.
+[30:41] But a reliable,
+[30:43] good electronic
+[30:45] components available
+[30:47] from reliable suppliers.
+[30:50] Each and every, even
+[30:51] for a resistor, there's a
+[30:53] data sheet. The data sheet explains
+[30:55] all the
+[30:56] entire specification of the component.
+[31:00] Now, I remember
+[31:01] the other day I
+[31:02] gave you that kind of website
+[31:05] Sparkfun, right?
+[31:07] Reliable suppliers, Sparkfun.
+[31:09] Online supplier, right?
+[31:12] There each and
+[31:13] every device they have in
+[31:15] their website there's a data sheet from the manufacturer that data sheet explains everything
+[31:23] that you need physical dimension of the device operating current operating voltage the how much
+[31:31] heat emitted by the device the pwm supported frequency everything with the some hazardous
+[31:40] materials used to manufacture the device right like mercury or cadmium kind of materials used
+[31:47] in the device everything explained in the data sheet right now what we can do is when we buy
+[31:55] the cheap components without data sheet from the local market you can find this the the identical
+[32:04] the component that we bought from the local market, you can find an identical clone of that component
+[32:12] from that SparkFun website. Because normally what the China, the Chinese manufacturers, what they do
+[32:20] is they manufacture all these components in bulk. And for the low cost for Asian countries like
+[32:29] Sri Lanka, they send only the device. No packing, no data sheets, nothing. But developed countries
+[32:39] like US, Australia, Europe, then they send the device with the package, the packing and the
+[32:48] data sheet. Same device. Now what we can do is we can find the identical clone in the SparkFun
+[32:56] site and from that we can download the data sheet. Get the cheap device from the PETA,
+[33:03] get the data sheet from the Spark one, then learn about the device. Right. So using the data sheet,
+[33:09] you can find out different devices that you use. What is the suitable PWM supported frequency?
+[33:19] Based on that, you can adjust the PWM frequency in your system, right?
+[33:26] So therefore, without any trouble, you can operate your devices.
+[33:32] For example, if you operate your device very fast, right?
+[33:38] If the device is a slow device, it would not react, right?
+[33:43] It would not start at all.
+[33:45] If the device is a fast device like LED and if you try to operate it using a slow feed up lever frequency, then you would see that flickering effect.
+[34:01] So it should not be slow.
+[34:03] It should not be very fast.
+[34:05] The proper speed we can find from the data sheet of the device that we are going to use.
+[34:12] Is that clear?
+[34:13] Any question?
+[34:14] Any question?
+[34:16] Sir, how do we find the reaction time by the maximum?
+[34:22] From the data sheet.
+[34:24] The data sheet provides you.
+[34:26] So what is the minimum frequency?
+[34:29] What is the maximum frequency?
+[34:31] That the PWM frequency, this device can react from the data sheet.
+[34:38] The rough idea we can give based on our experience.
+[34:41] For example, LEDs, the frequency must be greater than 100 Hz, right?
+[34:48] And normally for LEDs, we use a frequency between 500 kHz to 1 kHz, right?
+[35:00] Normally, sometimes we use 1 kHz frequency, sometimes we use 500 Hz frequency, right?
+[35:07] 1 kilohertz means 1000 hertz.
+[35:09] 500 to 1000 hertz we use for LEDs, right, usually, right,
+[35:15] practically that's how we use.
+[35:17] But for a given LED, so what is the minimum PWM supported frequency?
+[35:22] What is the maximum PWM supported frequency?
+[35:25] Sometimes there is no maximum one.
+[35:27] So upper bound is not a problem.
+[35:29] Then all these things you can find from the data sheet, right,
+[35:34] of that LED. The manufacturer of the LED releases the data sheet.
+[35:39] Different manufacturers, if you take a red LED, different manufacturers,
+[35:44] right, when they manufacture, they do slight
+[35:47] changes and their data sheet should be a little bit different. But rough idea
+[35:50] you can have with a data sheet.
+[35:53] What else? Anything else? Right.
+[35:58] Now let's talk about duty cycle. Duty cycle
+[36:01] means percentage of time that output
+[36:05] is high in one cycle. Now we know that the device
+[36:09] reacts to the percentage of time
+[36:13] that the output is high in one cycle. Here you saw the device
+[36:17] attached device react not to the individual pulses
+[36:20] but to the percentage of time that the output is high in one
+[36:25] cycle, the last line. Now for that last line we have
+[36:29] a term. The term is duty cycle. Percentage of time that the output is high in one cycle
+[36:36] we call that is the to that the device reacts. Percentage of time that the output is high
+[36:42] in one cycle. Right. For that we have a term called duty cycle. Now here you can see a
+[36:50] couple of pulses. The cycle time you can see you start from here and one cycle is over
+[36:57] end from here. This is one cycle.
+[37:00] Start from the top, go down,
+[37:02] down, go up,
+[37:04] go up. Keep
+[37:06] right, the
+[37:07] output high. Then
+[37:10] before you go down, you
+[37:12] come to the end of one cycle.
+[37:14] This is one cycle. And that cycle
+[37:16] time, the time you need
+[37:18] for one cycle, we call cycle
+[37:20] time. Another term, period.
+[37:23] Period of the
+[37:24] wave. This is a
+[37:26] square wave period. And this is the time where the pulse is low. This is the time where the pulse is high. Now the attached device reacts to the percentage of time that the output is high.
+[37:46] Now in one clock cycle, this is one clock cycle, in this clock cycle roughly 30% of time output is high, 70% of time output is low.
+[37:59] This is roughly, now in one clock cycle roughly 30% of time output is high, 70% of time output is low.
+[38:07] That percentage of time that the output is high, we call duty cycle.
+[38:12] Duty cycle is percentage of time that the output is high.
+[38:18] How do we calculate that?
+[38:20] Time output is high.
+[38:22] Time output is high.
+[38:23] Time output is high plus time output is low.
+[38:28] High time, low time.
+[38:30] Both.
+[38:32] Divide the high time by total time.
+[38:36] Multiplied by 100.
+[38:37] Then you get percentage of time that the output is high.
+[38:42] Percentage of time that the output is high, that is to what the device reacts, we call duty cycle.
+[38:51] And high time plus low time.
+[38:54] High time, low time.
+[38:56] When you add them together, that is the cycle time.
+[38:59] Time, the output is high.
+[39:02] Time, the output is low.
+[39:04] When you add them together, that is cycle time.
+[39:06] Cycle time means period.
+[39:08] So high time divided by period multiplied by 100 you get the duty cycle.
+[39:14] High time means pulse width.
+[39:18] This pulse width, width of the pulse that is the high time which is called pulse width.
+[39:24] So duty cycle means pulse width divided by cycle time period multiplied by 100.
+[39:32] Pulse width divided by period multiplied by 100.
+[39:35] For a given frequency, cycle time, that is period, is fixed.
+[39:41] For a given frequency, the period is fixed.
+[39:45] Why?
+[39:46] Frequency equals 1 divided by time.
+[39:51] If the frequency is fixed, time is fixed.
+[39:55] For a given frequency, the cycle time for period, another word, period is fixed.
+[40:01] Right.
+[40:01] Therefore if this is fixed
+[40:04] When you adjust the pulse width
+[40:06] When you can increase the pulse width
+[40:09] Or decrease when you adjust the pulse width
+[40:11] You can adjust
+[40:12] The percentage of time
+[40:14] That the output is high
+[40:16] In one cycle
+[40:17] When you adjust the pulse width
+[40:19] Either increase or decrease
+[40:21] That means you adjust
+[40:23] The percentage of time
+[40:25] That the output is high in one cycle
+[40:28] That means
+[40:29] You are changing
+[40:31] duty cycle. So by varying the pulse width, you can vary the duty cycle accordingly, right?
+[40:41] You can vary the reaction of the attached device. Why? Attached device reacts to the percentage of
+[40:49] time that the output is high. Attached device reacts to the percentage of time that the output
+[40:54] is high in one cycle. Percentage of time that the output is high in one cycle is the pulse width.
+[41:01] By adjusting the pulse width, you can adjust the percentage of time that the output is high in one cycle because period is fixed for a given frequency.
+[41:11] That means by changing, by varying the pulse width, you can vary the percentage of time that the output is high in one cycle.
+[41:20] That means you can vary the duty cycle.
+[41:23] Doing that, you can vary the reaction of the attached device.
+[41:28] If the attached device is a bulb, whether to brighten the bulb or dim the bulb.
+[41:35] If it is attached device is a motor, slow down the motor or increase the speed.
+[41:40] You can do by varying the pulse, right?
+[41:44] Changing the pulse or modulating the pulse.
+[41:48] That's why we call it pulse with modulation.
+[41:51] Is that clear?
+[41:52] If not, let me know.
+[41:54] I can explain it.
+[41:55] Any question?
+[41:56] No.
+[41:58] [unclear — Sinhala / crosstalk]
+[42:28] modulation.
+[42:29] Right. Good.
+[42:34] Then, let's talk about
+[42:36] average voltage.
+[42:39] Now, to
+[42:40] measure the voltage,
+[42:42] we can use two
+[42:44] instruments. One is well
+[42:46] known voltmeter.
+[42:48] Right. One instrument is well
+[42:50] known. It's called voltmeter.
+[42:52] And it is a part of the multimeters.
+[42:55] Probably you have
+[42:56] used or you have seen multimeters. The multimeter means it can measure three things. It can measure
+[43:02] volt. It has a voltmeter. It has a meter using that you can measure current and it has a ohm
+[43:12] meter or it can measure the resistance. It has ohm meter, a meter and a voltmeter. When you put
+[43:20] them together you get multimeter. So using a multimeter you can select either voltmeter,
+[43:26] emmeter or ohm meter. So you can measure voltage, current and the resistance. Now in the modern
+[43:33] multimeters there are other functionalities as well. In addition to these three basic
+[43:40] functionalities the modern multimeters can measure capacitance of a capacitor. They can
+[43:49] measure inductance of inductor coil. They can
+[43:53] measure frequency. Various other
+[43:57] functionalities they provide. But to call them
+[44:01] as a multimeter, they must provide those
+[44:05] three basic functionalities. Voltmeter functionality,
+[44:10] emeter functionality and ohmmeter functionality.
+[44:13] And also there are separate voltmeters.
+[44:16] But we usually use multimeters because, right, they are very useful because we can use them to measure different properties of an electronic circuit.
+[44:32] Current, voltage, resistance, we can measure.
+[44:37] And there's another device.
+[44:39] Using that, we can visualize the voltage change against the time, right?
+[44:45] Sometimes voltage is fixed against the time, no change.
+[44:50] But in most cases, voltage varies against the time, right?
+[44:55] The variation of voltage against the time, we can visualize using an instrument called oscilloscope.
+[45:06] The oscilloscope shows voltage versus time.
+[45:10] A graph. The x-axis is the time. Y-axis is the voltage. It shows how voltage varies against the time. Oscilloscope. Oscilloscope is expensive instrument. Right. A good multimeter you can buy less than 10,000 rupees. Good multimeter means very accurate. Right. Reliable one. Right.
+[45:36] For example, Japanese made, not Chinese, Japanese made very reliable, right?
+[45:44] An accurate multimeter you can buy for 7,000, 8,000, less than 10,000 rupees.
+[45:52] The Chinese ones you can buy for even 1,000 rupees or less than 1,000.
+[45:56] They are not very accurate and not very reliable.
+[45:59] But compared to multimeter, if you are trying to buy an oscilloscope, even a cheap Chinese oscilloscope is about 40,000, 50,000 rupees.
+[46:12] Cheap Chinese one.
+[46:14] A good Japanese one, if you try to buy, right, you may have to spend a lot of money.
+[46:21] Probably 500,000 Lakshapahakwitha.
+[46:24] So it's a very expensive equipment.
+[46:27] Right.
+[46:29] Now, I am going to show you few voltages, actually not few voltages, few PWM outputs measured using an oscilloscope as well as multimeter.
+[46:46] Right, look at this one.
+[46:48] The oscilloscope shows you the voltage against the time, x-axis time, y-axis voltage.
+[46:56] The voltage is zero against the time.
+[47:00] No variation of the voltage.
+[47:02] Against the time it is zero.
+[47:05] And the multimeter, I have selected multimeter volt.
+[47:09] There are three things multimeter can measure.
+[47:11] Ampere, volt and resistance.
+[47:13] But here voltage selected.
+[47:15] Voltmeter also says zero volts.
+[47:19] So both instruments say zero volts.
+[47:23] Right.
+[47:23] That means the output we get from the embedded system, the voltage of the output we get from the embedded system is 0.
+[47:34] Against the time, it is 0. Fix.
+[47:38] The oscilloscope shows voltage against the time is 5 volts.
+[47:45] The multimeter voltmeter also shows 5 volts.
+[47:49] That means the output we get from the embedded system, the voltage of the output is 5.
+[47:56] Oscilloscope shows the variation of the voltage against the type.
+[48:02] The voltage 0 then goes to 5, remains 5, then goes to 0 again and remains at 0, goes to 5,
+[48:13] remains at 5
+[48:15] goes to 0
+[48:17] remains at 0
+[48:19] goes to 5
+[48:20] remains at 5
+[48:22] goes to 0
+[48:23] remains at 0
+[48:25] how voltage variation
+[48:27] happens against the time
+[48:30] oscilloscope shows
+[48:31] square wave
+[48:32] now there is that same output
+[48:34] that you can see on the
+[48:37] oscilloscope
+[48:39] if you measure the same output
+[48:41] using a volt meter. What would be the reading of volt meter? Now if you, this is one clock cycle.
+[48:49] Start, this is one clock cycle. One cycle. One cycle. In a one cycle, how much time output is high?
+[48:58] How much time output is low? Right? Using this grid, you can count how many grid points high,
+[49:08] two grid points high, two grid points low. That means percentage of 50% of time, this is the time
+[49:17] axis, 50% of time output is high, 50% of time output is low in one clock cycle. In one clock
+[49:25] cycle, 50% of output high, 50% of output low. That means duty cycle is 50%. If the 50% of
+[49:36] out time cycle is high.
+[49:40] Right. What is the voltage at that output?
+[49:44] Now here you can see in this example
+[49:46] 50% of time output is high.
+[49:51] Another 50% of time output is low.
+[49:54] Right. Now in one clock cycle.
+[49:58] Right. In one cycle. In one cycle. Right.
+[50:01] 50% of time high. 50% of time low.
+[50:06] right in one clock side now the question is voltage at output how do we calculate
+[50:13] voltage at height multiplied by percentage of time output is high voltage at high is 5 volts
+[50:24] percentage of time output is high is 50 so what is the voltage at this output 2.5 volts because
+[50:35] percentage 50 of time voltage is 5 other 50 of time voltage is 0.50 of time voltage is 5.50
+[50:46] percent of time voltage is 0. so what is the voltage at output 50 of voltage at high voltage
+[50:55] at high is 5 how long you get that output 50 of time then what is the voltage 2.5 if you measure
+[51:04] using a multimeter, you get this 2.5. Can you understand? The output is digital. You get 5050
+[51:13] voltage. But we rapidly toggle that output. High, low, high, low. 5 volt, 0 volt. 5 volt, 0 volt.
+[51:21] Rapidly. As a result, even multimeter cannot recognize it as a digital output. The voltmeter
+[51:29] as 2.5 but oscilloscope if you connect oscilloscope oscilloscope will tell you the truth
+[51:37] it won't show you 2.5 volt output it will tell you this is 50 of time this is 5 volt
+[51:45] 50 of time this is zero volts this is digital oscilloscope shows you the truth
+[51:52] but multimeter or the voltmeter cannot recognize the true situation.
+[51:59] The multimeter or the voltmeter is like human beings, right?
+[52:03] We see that voltage has reduced to 2.5.
+[52:08] That's why the connected bulb got dimmed.
+[52:11] We feel like that is analog output.
+[52:14] Even the multimeter or the voltmeter says it's 2.5.
+[52:18] But that's not the truth.
+[52:19] the the real the truth the true situation the true output is it's a digital output it's high
+[52:29] and low 50 of time only the oscilloscope can tell us the truth can you understand any question no
+[52:38] right then now let's say you want to get not 2.5 you want to get 1.25 volts then what is the duty
+[52:48] cycle that you sent. Now in this example your duty cycle is 50. 50% duty cycle. You got 2.5.
+[52:56] If you want to get 1.25 volts what should be your duty cycle or what should be the percentage of
+[53:03] time that the output is high to get 1.25. 25% very good. If you want to get if the duty cycle
+[53:14] Oh, if the due cycle is 75% and if you measure the output using a voltmeter, what would be the voltage?
+[53:24] 3.75.
+[53:26] 3.75.
+[53:27] Can others understand?
+[53:31] If not, please tell me.
+[53:32] Don't hesitate.
+[53:33] That's your end.
+[53:34] Aruni, is that okay?
+[53:37] Aruni, I couldn't hear you.
+[53:40] No, sorry, I don't hear you.
+[53:44] And now I just now heard your sound, right?
+[53:48] But still not clear whether you can understand this or not.
+[53:53] Can you understand this?
+[53:55] Yes, sir.
+[53:56] All right.
+[53:56] Okay.
+[53:57] So how about others?
+[53:58] Excuse me, sir.
+[53:59] Yeah.
+[53:59] Sir, I have a multimeter.
+[54:04] I have a voltage.
+[54:07] I have a very claser, the would the only one?
+[54:11] I have a very go-kid, the hec-ball,
+[54:13] the on-fac-ball,
+[54:14] the in-c-ball,
+[54:14] the in-c-ball,
+[54:14] 
+[54:14] the the.
+[54:14] the.
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] 
+[54:14] [unclear — Sinhala / crosstalk]
+[54:44] Sir, what do you mean?
+[54:46] The output voltage is LED, so you can supply the voltage.
+[54:52] No, sir.
+[54:54] If you use the diffuser and LED bulbs, you can supply the main supply.
+[55:01] So, if you use the output voltage, you can use the voltage.
+[55:12] I have a say, the right wot�
+[55:13] to the shat, the rs, the mame, sot, a t
+[55:13] I have a look.
+[55:14] I have a look.
+[55:14] I have a look.
+[55:14] I have a look.
+[55:15] I have a look.
+[55:15] I have a look.
+[55:15] I have a look.
+[55:15] I have a look.
+[55:15] I have a look.
+[55:15] I have a look.
+[55:16] I have a look.
+[55:16] I have a look.
+[55:16] I have a look.
+[55:16] I have a look.
+[55:16] I have a look.
+[55:16] I have a look.
+[55:16] I have a look.
+[55:16] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:17] I have a look.
+[55:18] I have a look.
+[55:18] I have a look.
+[55:18] I have a look.
+[55:18] I have a look.
+[55:43] If you don't have a problem, you can't get it.
+[55:46] This is what it is.
+[55:48] The average, percentage of time that the output is high in one clock cycle, not to individual pulses.
+[55:56] Not to the individual pulses but to the percentage of time that the output is high in one cycle.
+[56:05] If you don't have a cycle, you can't get it high.
+[56:10] I said this is an illusion.
+[56:37] Anything else? Any other question? Right. Then how PWM outputs are generated? The next question.
+[56:50] Now we know what is PWM. We know how to get the average voltage calculated. If you know the duty
+[56:58] cycle, if you know the percentage of time that the output is high in one clock cycle, you can
+[57:03] multiply that with the voltage when the output is high. If the voltage when the
+[57:09] output is high is 5 and the percentage of time that the output is high is 50%
+[57:15] then the voltage if you measure using a volt meter you get 2.5. If the voltage
+[57:23] when output is high is 5 and the percentage of time that the
+[57:30] output is high in one clock cycle is 25%. That means if you measure the output using a multimeter
+[57:37] voltage, output would be 1.25. If the voltage when the output is high is 5 volts and the
+[57:45] percentage of time that the output is high in one clock cycle is 75%, that is duty cycle,
+[57:50] if you multiply them, you get 3.75 volts. We know that. Now the next question,
+[57:57] how these PWM outputs are generated.
+[58:02] How the PWM outputs are generated.
+[58:06] Let's see.
+[58:07] We use timers to generate PWM outputs.
+[58:11] We use, let's say we use 8-bit time.
+[58:15] And this is the 8-bit time.
+[58:17] Right?
+[58:18] It's the 8-bit time.
+[58:19] Now we know that the oscillator generates clock pulses.
+[58:25] Oscillator generates clock pulses.
+[58:26] internal oscillator generates clock pulse and that oscillator frequency we can reduce using a
+[58:34] prescaler so this is the oscillator oscillator generates clock pulses the oscillate output
+[58:39] frequency we can scale down using a prescaler and then we feed that scale down pulses clock pulses
+[58:49] to the timer.
+[58:51] TCNT register.
+[58:53] Timer counter register.
+[58:56] TCNT register.
+[58:57] We know that for each clock pulse
+[58:59] TCNT register
+[59:01] increments.
+[59:03] Each clock pulse TCNT register
+[59:05] increments. TCNT
+[59:07] register counts for each
+[59:09] clock pulse from
+[59:11] 0 to 255
+[59:13] because 8 bit time.
+[59:15] This is 8 bit register.
+[59:17] Maximum value the register can hold 255.
+[59:21] It counts from 0 to 255.
+[59:24] And then it overflows back to 0 and again starts counting from 0.
+[59:30] That's how timers work.
+[59:33] Now depending on the duty cycle you require.
+[59:36] Duty cycle means percentage of time that output is high in one clock cycle.
+[59:44] Depending on the duty cycle you need, you assign a value to this register, OCR register.
+[59:52] OCR register.
+[59:54] OCR means output compare register.
+[59:57] Output compare register.
+[59:59] Here I have used the simple N to indicate the timer number.
+[1:00:04] If it is timer 0, OCR 0.
+[1:00:08] TCNT 0.
+[1:00:09] If it is timer 1, OCR 1.
+[1:00:12] T, C and T1.
+[1:00:15] Timer number. OCR A
+[1:00:17] means there is another OCR
+[1:00:19] register called OCR B.
+[1:00:21] Every timer
+[1:00:22] there are two OCR registers.
+[1:00:25] Output compare registers.
+[1:00:27] OCR A, OCR
+[1:00:29] B. Right. In this example
+[1:00:31] I have used only OCR
+[1:00:33] A. Output compare
+[1:00:35] register A of timer
+[1:00:37] N. Timer N means timer number.
+[1:00:39] So the depending on
+[1:00:41] the duty cycle required.
+[1:00:43] We assign a value to OCR.
+[1:00:46] For example, if you need 50% duty cycle,
+[1:00:49] that means you want to get 2.5 volts from the output pin.
+[1:00:54] 50% duty cycle means 2.5 volts.
+[1:00:57] Because normally when the output is high, it is 5 volts.
+[1:01:00] 50% of time output is high means 2.5 volts.
+[1:01:03] So if you want to get 2.5 volts output or 50% duty cycle,
+[1:01:09] we load 127 to the OCR.
+[1:01:13] The maximum value OCR register can hold is
+[1:01:16] 255 because 8 bit register.
+[1:01:22] 255. 50% of that
+[1:01:25] 127. If you want to get 50% UD cycle
+[1:01:29] we load 127 to OCR register. If you want to get
+[1:01:33] 25% UD cycle, 1.25
+[1:01:37] volts output. 25%
+[1:01:40] duty cycle low.
+[1:01:41] 1.25 volts output.
+[1:01:44] Then we elude
+[1:01:45] 63 to OCR.
+[1:01:48] 25% means
+[1:01:49] one quad.
+[1:01:51] One quad of 255 means
+[1:01:53] 63.
+[1:01:55] So what is the formula?
+[1:01:57] Let me write it.
+[1:01:59] Duty cycle
+[1:02:00] equals OCR value
+[1:02:03] plus 1
+[1:02:04] multiplied by 100
+[1:02:06] divided by n plus 1 where n means maximum value timer can count.
+[1:02:17] This is the formula.
+[1:02:19] So if it is 80 time, what is the maximum value timer can count?
+[1:02:24] 251.
+[1:02:24] So if you want to get a required duty cycle,
+[1:02:29] what you have to do is OCR value plus 1 multiplied by 100
+[1:02:35] divided by n plus 1.
+[1:02:38] n is the maximum value that the timer can count.
+[1:02:43] Let's do a simple calculation.
+[1:02:45] POT.
+[1:02:47] OCR value, let's say 127 plus 1.
+[1:02:51] Maximum timer can count up to 255 plus 1 multiplied by 100.
+[1:02:58] 128, 256, 50%.
+[1:03:01] If you put 127 for OCR, you get 50% UD cycle.
+[1:03:05] If you put 63 to OCR, you get 25% duty cycle.
+[1:03:09] So likewise, depending on the duty cycle you need, you have to put a value.
+[1:03:17] You have to assign a value to OCR, output compare register.
+[1:03:21] Right.
+[1:03:22] Then there's a comparator.
+[1:03:24] Comparator can compare.
+[1:03:26] That's why we call it comparative.
+[1:03:28] Right.
+[1:03:29] Now here you can see the comparator.
+[1:03:31] Comparator can compare.
+[1:03:33] Compare what?
+[1:03:34] TCNT register value
+[1:03:37] and the OCR register value.
+[1:03:39] It can compare.
+[1:03:41] These two values,
+[1:03:43] the comparator
+[1:03:44] compares. Whenever
+[1:03:46] a compare match occurs,
+[1:03:49] when the comparator compares
+[1:03:51] OCR value and the TCNT
+[1:03:53] value, now you know
+[1:03:55] that OCR value is fixed.
+[1:03:58] We put 187
+[1:03:59] if we need 50%,
+[1:04:01] we resign.
+[1:04:02] we put 63 if you need
+[1:04:05] 25% unit cycle. Likewise, you put some
+[1:04:08] value into OCR which is fixed. But the
+[1:04:11] TCNT register value is not fixed.
+[1:04:14] Because every clock cycle TCNT counts.
+[1:04:18] TCNT in three months. And the
+[1:04:20] comparator compares the two registers. When
+[1:04:22] comparator compares two registers, in one
+[1:04:26] moment, the value of the OCR
+[1:04:29] register and the TCNT register
+[1:04:31] they match. For example,
+[1:04:34] if you put 127 to OCR,
+[1:04:36] let's assume a TCNT
+[1:04:38] counts from 0, 1, 2,
+[1:04:40] 3, it counts for every clock cycle.
+[1:04:42] When it comes to 127,
+[1:04:45] TCNT
+[1:04:46] comes to the 127,
+[1:04:48] a compare match occurs.
+[1:04:50] A match occurs.
+[1:04:52] The comparator
+[1:04:53] compares two registers
+[1:04:55] and whenever a match occurs,
+[1:04:59] comparator sets
+[1:05:00] OCF bit.
+[1:05:03] OCF bit of
+[1:05:04] TIFR register.
+[1:05:07] When there's a match occurs
+[1:05:09] between two registers,
+[1:05:11] comparator sets
+[1:05:12] OCF bit.
+[1:05:15] OCF bit means
+[1:05:16] output compare
+[1:05:18] match flag.
+[1:05:21] OCF means output
+[1:05:22] compare match flag.
+[1:05:25] Output compare
+[1:05:26] match flag.
+[1:05:28] That flag bit is set.
+[1:05:30] Where is that flag bit?
+[1:05:32] That flag is in TIFR register.
+[1:05:38] Interrupt, time interrupt flag register.
+[1:05:42] TIFR means time interrupt flag register.
+[1:05:45] We have used that register earlier.
+[1:05:46] The TIFR register, time interrupt flag register contains a special flag bit,
+[1:05:52] which is called OCF, output compare match flag.
+[1:05:56] That bit is set.
+[1:05:58] That bit tells the CPU a compare match occurred.
+[1:06:04] It tells the CPU a compare match occurred.
+[1:06:06] And not only that, comparator sets this bit and triggers waveform generator.
+[1:06:14] And comparator sets the bit and also it triggers waveform generator.
+[1:06:21] Waveform generator generates pulses with the required pulse.
+[1:06:28] Waveform generator generates pulses with required pulse.
+[1:06:33] That means required due recycle.
+[1:06:35] And the generated PWM output is available through OCP.
+[1:06:43] OCP.
+[1:06:44] Output compare pin of the microcontroller.
+[1:06:48] OCP.
+[1:06:48] So here I have used simple N to indicate the timer number.
+[1:06:53] If the timer is 0, this is 0.
+[1:06:55] If the timer is 1, simple N is 1.
+[1:06:58] Likewise, A means there are two pins, OC pins.
+[1:07:03] OC A, OC B for each time.
+[1:07:07] For example, timer 0 has OC 0 A, OC 0 B.
+[1:07:13] Timer 1 has OC 1 A, OC 1 B.
+[1:07:17] Likewise, two pins, OC pins, output compare pins for each time.
+[1:07:23] So the PWM, generated PWM output is available through OC pin.
+[1:07:29] Now if the OCR value is 127 and if you measure the voltage at OC pin, OC pin voltage if you measure using a voltmeter, it would show you 2.5 volts.
+[1:07:44] Why? This is 127.
+[1:07:46] 127 means 50% duty cycle.
+[1:07:49] 50% duty cycle means 50% of time output is high in one clock cycle.
+[1:07:55] When output is high, voltage is 5.
+[1:07:58] 5 into 50%, 2.5.
+[1:08:01] So when you measure the voltage, if you measure the voltage of OCP, you would get 2.5 volts.
+[1:08:07] If you put 63 to OCR, then when you measure the voltage at OCP, you get 1.25 volts.
+[1:08:15] Because if you put 63 to OCR, that means you get 25% duty cycle.
+[1:08:21] 25% duty cycle means 1.25 volts.
+[1:08:25] Because when output is high, it's 5 volts.
+[1:08:28] 5 into 25%, 1.25.
+[1:08:31] So the comparator compares two registers.
+[1:08:35] When a match occurs, it sets this bit OCF,
+[1:08:40] output compare match flag bit of timer interrupt flag register.
+[1:08:44] and also it triggers
+[1:08:46] waveform generator.
+[1:08:48] The waveform generator generates
+[1:08:50] pulses with required
+[1:08:52] pulse width and the
+[1:08:54] generated PWM
+[1:08:56] output is available through
+[1:08:58] output compare pin
+[1:09:00] OCP.
+[1:09:02] Every time
+[1:09:02] there are two OCR
+[1:09:06] registers, OCR A
+[1:09:08] OCR B.
+[1:09:09] Therefore, every time I can
+[1:09:12] compare two
+[1:09:14] compare values. Every timer can compare two values
+[1:09:18] with the TC and T register. Because there are two
+[1:09:22] OCR registers. OCR A, OCR B. So every timer
+[1:09:26] can compare two values against TC and T register.
+[1:09:31] And then every timer can generate
+[1:09:34] two pulse width modulated outputs. And those two pulse width
+[1:09:38] modulated outputs the timer can make available
+[1:09:42] through OCA and OCD pins.
+[1:09:46] Because there are two OCA and OCD pins.
+[1:09:49] So through them, the two PWM outputs,
+[1:09:53] the timer can make available.
+[1:09:55] Now we know that ATmega328P microcontroller
+[1:09:59] has three timers.
+[1:10:01] Timer 0, timer 1, timer 2.
+[1:10:03] Every timer, two OCR registers,
+[1:10:07] two waveform generators, two OC pins.
+[1:10:10] That means every timer can generate two PWM outputs.
+[1:10:14] ATmega 328p microcontroller has three timers.
+[1:10:17] That means ATmega 328p microcontroller can generate six PWM outputs.
+[1:10:27] Three timers.
+[1:10:28] Each timer, two PWM outputs you can get.
+[1:10:31] That means ATmega 328p microcontroller can provide six PWM outputs.
+[1:10:37] That's right.
+[1:10:38] Arduino UNO board has six PWM supported pins.
+[1:10:43] On the UNO board, the PWM supported pins are
+[1:10:46] denoted using a
+[1:10:50] small symbol, the tilt character, Panwa character
+[1:10:54] using, it is denoted on the board.
+[1:10:58] If you check the board, you would see there are six PWM supported pins
+[1:11:02] on the board. Why? The chip, the microcontroller
+[1:11:06] can support six PWM outputs. Why? The microcontroller has three timers. Each timer can provide two PWM outputs.
+[1:11:18] So altogether six. Because each timer has two OCR registers, two OC pins, two waveform generators.
+[1:11:25] Is that clear? Any question?
+[1:11:36] Yes, it is the time to calculate the formula.
+[1:11:43] Excuse me sir.
+[1:11:46] Why there is time account control registers too?
+[1:11:52] Why there is two of them?
+[1:11:54] Not related to this.
+[1:11:57] Can you ask question again?
+[1:11:59] In the previous, the time account control register,
+[1:12:05] Only one time account register.
+[1:12:10] Only one TCNT register.
+[1:12:13] But you have two OCR registers.
+[1:12:15] Two comparators.
+[1:12:17] Two waveform generators.
+[1:12:19] Two OCRs.
+[1:12:20] For each time.
+[1:12:21] But time has only one time account register.
+[1:12:25] So what's your question?
+[1:12:26] Sir, time account controller register?
+[1:12:29] Why there are two?
+[1:12:30] No.
+[1:12:31] There's no two time account registers.
+[1:12:33] Oh, you are talking about?
+[1:12:35] TCCR, timer counter controller register. TCCR A, TCCR B. The reason is there are a lot
+[1:12:48] of bits, different bits for different purposes. There are a lot of control bits. To keep them,
+[1:12:55] one 8-bit register is not enough. Waveform generation bits, clock select bits. Likewise,
+[1:13:03] Likewise, there are a number of the interrupt enable bits.
+[1:13:09] So different bits, control bits.
+[1:13:12] To keep them, one 8-bit register is not enough.
+[1:13:14] So they have used two 8-bit registers.
+[1:13:18] TCCR A, TCCR B.
+[1:13:21] What else?
+[1:13:22] Right.
+[1:13:23] Now, we learned that we put a value to OCR.
+[1:13:27] TCNT counts.
+[1:13:29] Comparator compares.
+[1:13:30] When there's a compare match, comparator sets this bit, OCF bit, right, to tell the CPU that match occurred.
+[1:13:42] And also comparator generates, triggers waveform generator.
+[1:13:48] And the waveform generator generates the pulses with required bit.
+[1:13:53] How waveform generator generates pulses with required?
+[1:13:57] We didn't discuss.
+[1:13:59] Up to this point, we discussed very in detail and then I said simply,
+[1:14:06] comparator triggers waveform generator.
+[1:14:09] Waveform generator generates pulses with required width or PWM output in other words.
+[1:14:16] How waveform generator generates pulses with required width?
+[1:14:21] Let's see, right?
+[1:14:23] To use PWM, you don't need to know all these things, right?
+[1:14:27] You can simply use PWM.
+[1:14:30] But as university students, you should know how timers are used to generate pulse width modulated output.
+[1:14:37] What is the need of OCR register?
+[1:14:40] And when the waveform generator is triggered, how waveform generator generates PWM output.
+[1:14:46] You should know all bits and bytes.
+[1:14:50] Everything you should know.
+[1:14:51] Then only we can say we followed Embering Systems at the University.
+[1:14:57] If you follow a diploma or certificate course, you can see it.
+[1:15:10] But when it comes to graduate course, bachelor's degree, you should know the subject from A
+[1:15:21] to Z. At least you should be able to learn the subject by yourself from A to Z. At least
+[1:15:35] You should have that ability, caliber.
+[1:15:39] Caliber is not a problem.
+[1:15:41] It is a problem.
+[1:15:42] Let's say you couldn't find time to discuss everything from A to Z.
+[1:15:47] We stopped from A to S.
+[1:15:50] Now after S, T, U, V, W, X, Y, Z,
+[1:15:53] there are many things we couldn't discuss because of the time limitation.
+[1:15:58] But at least when you graduate,
+[1:16:00] You should have the capability, caliber, capacity to self-learn the things that we couldn't
+[1:16:10] discuss.
+[1:16:11] Then only we can say we have successfully completed the curriculum.
+[1:16:16] how waveform generation is done let's see right look at this tag two oscilloscope screens you can
+[1:16:42] see. OCR
+[1:16:44] NX. N means
+[1:16:46] the timer number.
+[1:16:49] If the timer is
+[1:16:50] 0, OCR N.
+[1:16:53] OCR 0X.
+[1:16:55] If the timer is 1,
+[1:16:57] OCR 1X.
+[1:16:59] Output compare register.
+[1:17:01] OCR.
+[1:17:02] Simple N means the timer number.
+[1:17:05] X.
+[1:17:06] X could be either AOB.
+[1:17:08] We know there are two OCR
+[1:17:10] registers. X could be either
+[1:17:12] AOB. So I have used the generic term X. It could be OCR A, it could be OCR B. Right.
+[1:17:19] Some timers can count from 0 to 255. Some timers can count from 0 to 65,535. 16 bit timer.
+[1:17:32] And probably when you go to industry, when you are working with a 32 bit microcontroller,
+[1:17:37] your timer would count much higher than because then timer register is 32 if it is 8 bit 255
+[1:17:45] maximum value timer can count if it is 16 bit 6 uh 16 535 sorry if it is 16 bit uh 32 535
+[1:17:58] 35, no, no, 32 is 65,000.
+[1:18:03] Sorry. If it is 16-bit timer, 65,535.
+[1:18:08] If it is 32-bit timer, much higher than big value.
+[1:18:12] You can calculate it. It's not a big problem.
+[1:18:16] Therefore, I use generic term.
+[1:18:20] The maximum value the timer can count.
+[1:18:24] The minimum value of the timer,
+[1:18:27] button. TC and T register. Here I show you the TC and T register. For each clock pulse,
+[1:18:35] timer increments TC and T register. Timer increments TC and T register for each clock
+[1:18:41] pulse. From bottom to top, increment is bottom to top. For simplicity, let's take 8-bit time.
+[1:18:49] For each clock pulse, the 8-bit timer increments, TCNP register from 0 to 255.
+[1:18:58] 0 bottom, 255 top, 0 to 255.
+[1:19:02] Then overflows to 0.
+[1:19:05] When overflows? Overflows to 0.
+[1:19:08] Starts again from 0 and counts to 255.
+[1:19:12] When it is at 255, next clock pulse, overflows to 0.
+[1:19:17] counts again from 0 to 255.
+[1:19:22] Overflows to 0, counts again from
+[1:19:26] 0 to 255. That's how timer works.
+[1:19:30] Now, depending on the duty cycle that you need,
+[1:19:34] you assign a value to OCR register.
+[1:19:38] OCR register is again 8-bit register according to our example.
+[1:19:42] So, your value would be between 0 and 255.
+[1:19:46] So OCR register value is between bottom and top.
+[1:19:50] Output compare register, you assign a value.
+[1:19:52] Comparator compares the value of OCR register and value of TZ entry register.
+[1:20:00] Comparator compare.
+[1:20:01] Now we are going to learn about how waveform generator generates the pulse with modulated wave.
+[1:20:09] When a compare match occurs, this is the place where a compare match occurs.
+[1:20:13] timer increments the
+[1:20:15] register one by one
+[1:20:16] 1, 2, 3, 4 likewise
+[1:20:18] let's say OCR is 127
+[1:20:21] right? This is
+[1:20:23] the place where compare match occurs
+[1:20:25] TCNT register value
+[1:20:27] and OCR register value
+[1:20:29] they match. Whenever a
+[1:20:31] compare match occurs
+[1:20:32] waveform generator
+[1:20:34] clears OCP
+[1:20:37] clears OCP
+[1:20:39] clears OCP means
+[1:20:40] waveform generator
+[1:20:43] sets OC pin low. Clear means low.
+[1:20:47] In the second graph you can see OC pin.
+[1:20:51] Output compare P. It could be AOB.
+[1:20:55] X could be AOB. OC pin is high.
+[1:20:58] But when a compare match occurs, as soon as
+[1:21:02] a compare match occurs, waveform generator sets
+[1:21:06] OC pin low.
+[1:21:08] OCP. And it clears
+[1:21:12] OCP low. And then it sets OCP.
+[1:21:15] It sets OCP when
+[1:21:19] TCNT overflows to zero. When
+[1:21:23] TCNT register overflows to bottom, OCP
+[1:21:27] is set. That means high. Who does that waveform
+[1:21:31] generate? Right. Draw it and show
+[1:21:35] you. Right? Time counts, counts, counts, increments. Kampaya match occurs. As soon as a Kampaya
+[1:21:43] match occurs, this is the place. OC pin is cleared. That means it becomes low. And then
+[1:21:50] OC pin is set. That means it becomes high. When time overflows to bottom. Right. Then
+[1:22:02] again timer increments
+[1:22:03] for each clock pass.
+[1:22:06] Again a compare match
+[1:22:08] occurs. OC pin
+[1:22:09] clears
+[1:22:11] zero low.
+[1:22:14] And then timer counts to maximum
+[1:22:16] overflow. OC pin
+[1:22:18] is set. Again
+[1:22:19] timer increments from zero.
+[1:22:22] Compare match occurs.
+[1:22:24] Power form generator clears OC pin
+[1:22:26] low. Timer continues.
+[1:22:28] Go to 255
+[1:22:30] and overflow.
+[1:22:32] When it overflows to bottom, waveform generator sets OCP in high. So this is the waveform you get from OCP, a digital waveform. This waveform, the percentage of time that the pulse is high, you can adjust.
+[1:22:52] How? When you increase OCR or decrease OCR between top and bottom, you can adjust the pulse.
+[1:23:02] By increasing or decreasing the value of OCR register, you can adjust the pulse.
+[1:23:13] Pulsate adjustment means you are changing the percentage of time that the output is high in one flux.
+[1:23:22] In other words, you get pulse width modulated output from output compatibility. Is that clear?
+[1:23:31] If not, don't hesitate. Please let me know. I know many people doesn't know about these things.
+[1:23:39] There are many good embedded system programmers. They know how to use
+[1:23:44] PWM, but they don't know how waveform generator works, how pulse width modulated output is
+[1:23:52] generated they don't know now you should know that but still if this is not clear please let me know
+[1:23:59] i'll explain okay let's start again ocr register tc and d register now the top part of the graph
+[1:24:12] you can see the increment of the tc and d register from bottom usually this value zero
+[1:24:22] If the 8-bit time, top is 255, TCND register increments to 255.
+[1:24:30] For each clock pulse, it increments.
+[1:24:34] And then it overflows to zero and increments again one by one to 255.
+[1:24:42] Overflows to zero.
+[1:24:44] Increments again.
+[1:24:47] Overflows to zero.
+[1:24:48] Increments again.
+[1:24:50] That's how time works.
+[1:24:51] Last week we discussed. Then depending on the duty cycle
+[1:24:55] you need, you assign a value
+[1:24:59] to OCR register. A value is between
+[1:25:02] bottom and top. In 8 bit timer between 0 and 255.
+[1:25:08] A value you assign to OCR. Now for example
+[1:25:11] if you assign 127 to OCR, you get
+[1:25:14] 50% duty cycle. If you assign 63 to OCR,
+[1:25:18] you get
+[1:25:19] 25% due design
+[1:25:22] with 8 bit time.
+[1:25:25] So some value
+[1:25:26] between bottom and top
+[1:25:28] you assign to OCR.
+[1:25:30] Timer increments. TCNT register
+[1:25:32] increments. Comparator
+[1:25:34] compares. Comparator compares
+[1:25:36] what? Value of
+[1:25:38] TCNT register against
+[1:25:40] value of
+[1:25:42] OCR register. OCR means
+[1:25:44] output compare register. Those two
+[1:25:46] values are compared. Who?
+[1:25:48] And if a compare match occurs, comparator triggers waveform generator. That's the job of comparator. Now you can see in this graph, in this particular place, you can see a compare match occurs, where I put the red dot.
+[1:26:07] The two values of the two registers, they match.
+[1:26:12] The comparator compares and a match occurs at this moment.
+[1:26:18] So comparator triggers waveform.
+[1:26:21] Then what the waveform degenerate does is, it clears OCP.
+[1:26:28] It clears OCP.
+[1:26:29] OCP was high, 5 volts.
+[1:26:33] It was high.
+[1:26:34] and waveform generator clears
+[1:26:36] that at that
+[1:26:38] moment it clears.
+[1:26:40] So OC pin becomes low, 0.
+[1:26:42] Who does that?
+[1:26:44] Waveform generator. The timer continues.
+[1:26:47] Timer continues,
+[1:26:48] it's counting.
+[1:26:50] Timer continues, it's counting
+[1:26:52] to 255, top value.
+[1:26:55] And then timer
+[1:26:56] overflows.
+[1:26:57] When timer overflows to 0,
+[1:27:00] TCNT register overflows
+[1:27:02] to zero, waveform generator sets OCP. Sets means high. Clear means low. Set means high. OCP,
+[1:27:13] right, waveform generator sets when timer overflows. Then timer again starts counting from zero.
+[1:27:22] For every clock pulse, timer increases. Another compare match occurs. As soon as a compare match
+[1:27:29] occurs, waveform generator clears
+[1:27:33] OCP. OCP becomes low.
+[1:27:37] Timer continues its counting to
+[1:27:41] 255, top value. Then time overflows. When time
+[1:27:45] overflows, waveform generator sets OCP.
+[1:27:49] OCP becomes high. Timer increments again
+[1:27:53] from zero and Kampaya match occurs. As soon as
+[1:27:57] the crumb damage occurs.
+[1:27:59] Waveform generator clears
+[1:28:01] OC pin. OC pin goes low.
+[1:28:04] And timer continues
+[1:28:05] increment.
+[1:28:07] It increments to 255.
+[1:28:09] It continues its job.
+[1:28:11] And when it comes to top 255,
+[1:28:14] it overflows. When time
+[1:28:15] overflows, OC pin,
+[1:28:18] the waveform generator
+[1:28:19] sets OC pin.
+[1:28:21] Sets means high.
+[1:28:23] So when you look at the
+[1:28:25] OC pin in the
+[1:28:27] At the OC pin you get a waveform.
+[1:28:29] You get a square wave.
+[1:28:31] That square wave, the percentage of time that one clock cycle is high.
+[1:28:39] One cycle is high.
+[1:28:41] Percentage of time that the output is high in one cycle.
+[1:28:45] That percentage of time that the output is high.
+[1:28:47] You can adjust.
+[1:28:49] How?
+[1:28:49] When you adjust the OCR.
+[1:28:51] Right?
+[1:28:52] When you adjust the OCR, the percentage of time that the OC pin is high, you can adjust.
+[1:28:59] For example, if the OCR is at the bottom, OCR is at the bottom, when timer starts counting,
+[1:29:06] the compound H occurs.
+[1:29:08] Then waveform generator clears the OC pin.
+[1:29:13] OC pin becomes low.
+[1:29:15] Timer goes to the maximum value and overflows.
+[1:29:18] When O flows, waveform generator sets OCPIN but at the same time timer becomes 0.
+[1:29:26] Then OCR was 0 so compare match occurs.
+[1:29:30] So OCPIN is again clear.
+[1:29:32] So that means OCPIN would maintain 0 volts throughout the time if OCR is at bottom.
+[1:29:44] If OCR is at top, OCP maintains 5 volts throughout the time.
+[1:29:52] If OCR is between top and bottom, you get this kind of scale.
+[1:30:00] The percentage of time that one pulse is high, you can adjust by varying the value of OCR.
+[1:30:09] This is your pulse modulator.
+[1:30:12] Can you understand?
+[1:30:12] still if it is not no issue at all not feeling is that okay okay how about others oh okay okay
+[1:30:32] I have a look.
+[1:30:34] I have a look.
+[1:30:34] I have a look.
+[1:30:35] I have a look.
+[1:30:35] I have a look.
+[1:30:35] I have a look.
+[1:30:35] I have a look.
+[1:30:35] I have a look.
+[1:30:35] I have a look.
+[1:30:35] I have a look.
+[1:30:36] I have a look.
+[1:30:36] I have a look.
+[1:30:36] I have a look.
+[1:30:36] I have a look.
+[1:30:36] I have a look.
+[1:30:36] I have a look.
+[1:30:36] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:37] I have a look.
+[1:30:38] I have a look.
+[1:30:38] I have a look.
+[1:30:38] I have a look.
+[1:30:38] I have a look.
+[1:30:38] I have a look.
+[1:31:02] [unclear — Sinhala / crosstalk]
+[1:31:32] I'm not going to be a low.
+[1:31:34] OCR value is not going to be a low.
+[1:31:36] Time is going to be a high time.
+[1:31:40] If you have a low and high time,
+[1:31:44] you will have a low and high time.
+[1:31:48] That's high.
+[1:31:50] Low and high time is high.
+[1:31:52] That's high.
+[1:31:54] That's high.
+[1:31:56] Low and high time is high.
+[1:31:58] That's high.
+[1:32:00] you will get this kind of
+[1:32:08] OCR value.
+[1:32:13] The percentage of time that the pulse is high is more.
+[1:32:19] If the OCR value is more towards bottom, percentage of time that the pulse is high is less.
+[1:32:28] So, depending on the value you assign to the OCR, you can get the pulse with modulated output with required due result.
+[1:32:36] Is that clear?
+[1:32:37] Right.
+[1:32:38] In any waveform generator, there are two modes.
+[1:32:43] Non-inverted mode and inverted mode.
+[1:32:46] Now, we discussed the non-inverted mode.
+[1:32:49] But there is another mode called inverted.
+[1:32:52] Inverted mode, the opposite of the non-inverted mode happens.
+[1:32:56] Right.
+[1:32:57] In the inverted mode, the opposite of the non-inverted mode happens.
+[1:33:03] What does that mean?
+[1:33:04] Let's see.
+[1:33:05] Now, in the inverted mode, the difference is very simple.
+[1:33:10] The timer increments and when a compare match occurred, waveform generator sets OCD.
+[1:33:19] In the non-inverted mode, waveform generator cleared OCD.
+[1:33:22] But in the inverted mode, waveform generator sets.
+[1:33:27] and when overflow when the waveform generator overflows then right when the
+[1:33:35] time overflows sorry when the time overflows waveform generator clears OC
+[1:33:41] then OC pin is lower. It is still a lot of flow when OC pin is higher. Then OC pin is lower and then it is clear.
+[1:33:51] That's it. Same. All other things are.
+[1:33:54] That is the only difference. When there's a compare match
+[1:33:58] in the non-inverted mode, OC pin is
+[1:34:02] clear, low. And when there's an overflow,
+[1:34:06] OC pin is set, high. In the non-inverted.
+[1:34:10] In the inverted mode, when there's a compare match,
+[1:34:14] OC pin is set, high, opposite. And in the
+[1:34:18] inverted mode. When there's an
+[1:34:20] O flow, O C
+[1:34:22] pin is clear. Low.
+[1:34:24] That's the difference.
+[1:34:26] Is that clear? Inverted
+[1:34:28] mode than non-inverted.
+[1:34:30] Any question?
+[1:34:32] Excuse me. Yes.
+[1:34:34] How to change
+[1:34:36] between non-inverted
+[1:34:38] and inverted mode? Sorry.
+[1:34:40] I couldn't get your question.
+[1:34:42] How to change between
+[1:34:43] non-inverted and inverted
+[1:34:46] mode? Yeah.
+[1:34:46] Yeah, right. We are going to discuss that. There are some control bits using them. You can change from non-inverted to inverted or inverted to non-inverted. Some control bits we have to use. We are going to discuss.
+[1:35:00] Right. Now we have discussed the duty cycle. We have discussed how PWM outputs are generated, right, using timers. Now we have that. So far, we didn't discuss PWM, how to compute PWM frequency.
+[1:35:20] We know that PWM frequency is very important.
+[1:35:24] If the frequency is low, it's a low, low frequency.
+[1:35:28] PWM frequencies, if it is low, too much low, then there will be some flickering effects.
+[1:35:37] But if it is too high, devices may not react to the change.
+[1:35:43] So it should not be low, it should not be high.
+[1:35:46] that depends on the device that we are going to use.
+[1:35:50] And using the data sheet of the device,
+[1:35:53] we can find out the PWM supported frequency range.
+[1:35:58] What is the minimum PWM supported frequency?
+[1:36:01] What is the maximum PWM supported frequency?
+[1:36:04] For a given device, we can find out from the device data sheet.
+[1:36:10] Then accordingly we need to adjust the PWM frequency of our embedded system.
+[1:36:20] Let's say a particular data sheet of a particular device says, let's say, minimum PWM frequency is 100 Hz and the maximum PWM frequency is 300 Hz.
+[1:36:35] Then you have to set the pulsed modulated output frequency of your system,
+[1:36:44] of the output pin that is connected to the device.
+[1:36:48] You have to set the frequency between 100 to 300 Hz,
+[1:36:53] probably 200 or 250.
+[1:36:55] You have to set.
+[1:36:56] So you can properly operate the connected device.
+[1:36:59] To do that, you should know how to change the PWM frequency.
+[1:37:05] Now, that is what we are going to discuss.
+[1:37:09] P, W, N, Frequent.
+[1:37:11] Right.
+[1:37:11] So, I use non-inverted mode because it is easier to understand.
+[1:37:17] Later, the same concept you can apply for the inverted mode.
+[1:37:23] And then you can get the opposite of the non-inverted mode.
+[1:37:26] Right.
+[1:37:27] So, for this example, I use non-inverted mode.
+[1:37:30] In the non-inverted mode, you can see while time counts from zero to maximum value.
+[1:37:42] Right?
+[1:37:43] Zero to maximum value.
+[1:37:44] From bottom to top, while time counts.
+[1:37:47] If a compare match occurs, you can see this is the place where compare match occurs.
+[1:37:52] Waveform generator clears the output compare up in.
+[1:37:57] Waveform generator clears output compare up in.
+[1:38:00] and sets output compare pin when timer overflows.
+[1:38:06] So, timer starts from 0 and increments to 2550, whatever the top value.
+[1:38:12] It could be 65,535 if it is a 16-bit timer.
+[1:38:16] And in between, a compare match can occur depending on the value of OCR.
+[1:38:22] When a compare match occurs, as soon as a compare match occurs,
+[1:38:27] waveform generator
+[1:38:29] clears OCP.
+[1:38:32] OCP becomes
+[1:38:34] low. And again
+[1:38:35] OCP is set.
+[1:38:38] It goes to high.
+[1:38:40] When time
+[1:38:41] overcomes.
+[1:38:43] We discussed that in the previous
+[1:38:46] slide. By doing that
+[1:38:48] waveform generator
+[1:38:50] generates
+[1:38:51] one PWM cycle.
+[1:38:53] By doing that
+[1:38:55] waveform generator generates
+[1:38:57] 1 PWM pulse with modulated cycle.
+[1:39:01] Now here you can see 1 PWM cycle.
+[1:39:04] 1 PWM cycle.
+[1:39:06] Now what is frequency?
+[1:39:10] Frequency means number of cycles
+[1:39:14] per second. That is frequency.
+[1:39:17] Time for 1 clock cycle.
+[1:39:19] 1 clock cycle. Time for 1 cycle.
+[1:39:22] 1 divided by 4.
+[1:39:24] Time for one clock cycle is 1 divided by 2. Now I need some white space. Let me get some white space. Now time accounts from bottom. So which is 0 to top and overflows to bottom. That is 0.
+[1:39:44] Overflow to zero. Zero to top and again overflow to zero. How many timer cycles? How many timer cycles? Zero to top and then overflow to zero. How many timer cycles? Let's say top piece three. For simplicity let's say top piece three. How many timer cycles there?
+[1:40:08] 0 to 1, 1 to 2, 2 to 3, 3 to again overflow 0.
+[1:40:15] How many time cycles? 4.
+[1:40:17] If top is 3, how many time cycles? 4 cycles.
+[1:40:20] Why? 0 to 1, 1 cycle.
+[1:40:23] 1 to 2, another cycle.
+[1:40:25] 2 to 3, another cycle.
+[1:40:27] And 3 to 0, another cycle. 4 cycles.
+[1:40:30] That means if timer comes from 0 to top and overflows to 0 again, number of timer cycles is top plus 1.
+[1:40:45] Now when timer goes from 0 to top and again overflows to 0, during that time, how many PWM cycles you get?
+[1:40:59] Timer goes from 0 to top.
+[1:41:03] Overflows again to 0.
+[1:41:07] And during that time.
+[1:41:09] You get 1 PWM cycle.
+[1:41:12] That means.
+[1:41:13] Top plus 1 timer cycles.
+[1:41:18] Give 1 PWM cycle.
+[1:41:22] Top plus 1 timer cycles.
+[1:41:24] Give 1 PWM cycle.
+[1:41:26] Can you understand this line?
+[1:41:29] Right.
+[1:41:29] Even in this picture you can see that.
+[1:41:32] The timer goes from bottom to top and then again overflow to bottom.
+[1:41:37] How many cycles?
+[1:41:38] Top plus one cycles.
+[1:41:40] During the top one plus cycles, the PWM you get one PWM cycle.
+[1:41:47] Top plus one timer cycles give you one PWM cycle.
+[1:41:52] Is that clear?
+[1:41:53] If not, let me know.
+[1:41:55] Before we proceed.
+[1:41:56] So we can form an equation.
+[1:42:02] Time for top plus 1 timer cycles equals time 1 PWM cycle.
+[1:42:12] If top plus 1 timer cycles give you 1 PWM cycle,
+[1:42:19] time for top plus 1 timer cycles equals 2.
+[1:42:24] time for one PWM cycle.
+[1:42:28] So, time for
+[1:42:30] one timer cycle equals
+[1:42:34] time for one PWM
+[1:42:38] cycle divided by
+[1:42:42] top plus one. Can you understand?
+[1:42:46] Time for top plus one timer cycles equals
+[1:42:50] time for one PWM cycle.
+[1:42:53] So, that figure if you divide by top plus one, when you get time for one timer cycle,
+[1:43:01] timer cycles top plus one pramaana, PWM cycle is not going to be the PWM cycle.
+[1:43:08] If you have a PWM cycle, top plus one will be the timer cycle, you can get it.
+[1:43:17] Right.
+[1:43:23] Right.
+[1:43:25] Then
+[1:43:26] time for one timer cycle equals
+[1:43:30] time for one PWM cycle divided by the plus one.
+[1:43:34] Right.
+[1:43:36] Now time for one timer cycle.
+[1:43:39] Time for one cycle means one divided by frequency.
+[1:43:44] So we can
+[1:43:45] introduce frequency here.
+[1:43:47] Right. That means time for one timer cycle means one divided by one divided by timer frequency.
+[1:44:02] Timer frequency means F timer.
+[1:44:06] Because we know that time for one cycle equals one divided by frequency.
+[1:44:12] If so, time for one timer cycle, we can replace with 1 divided by timer frequency.
+[1:44:23] 1 divided by timer frequency means 1 divided by the other side of the equation, top plus 1 multiplied by time for 1 PWM cycle.
+[1:44:38] Time for 1 PWM cycle means again cycle type we can relate to frequency.
+[1:44:46] Time for 1 PWM cycle means 1 divided by PWM frequency.
+[1:44:54] F PWM.
+[1:44:56] So we can replace time for 1 PWM cycle with 1 divided by PWM frequency.
+[1:45:03] Can you understand this part up to this point?
+[1:45:06] If not, don't hesitate. Please tell me.
+[1:45:11] So last line, not understanding.
+[1:45:15] This equation part?
+[1:45:18] Yes.
+[1:45:19] Right. Now, look at here.
+[1:45:23] Time for one clock cycle means one divided by frequency.
+[1:45:26] Time for one time clock cycle.
+[1:45:35] Time for one time cycle means then 1 divided by time of frequency.
+[1:45:43] Time for one cycle equals 1 divided by frequency.
+[1:45:48] If so, time for one time cycle means 1 divided by time of frequency.
+[1:45:55] Then other side of the equation.
+[1:45:57] 1 divided by top plus 1 multiplied by time for one PWM cycle.
+[1:46:03] Time for 1 PWM cycle means 1 divided by frequency of PWM.
+[1:46:11] Because here we have found that time for 1 cycle equals 1 divided by frequency.
+[1:46:22] 1 cycle is equal to 2 times.
+[1:46:26] How about now?
+[1:46:35] Okay, sir.
+[1:46:36] Right.
+[1:46:37] Then from this equation, we can get FPWM.
+[1:46:44] Frequency of PWM.
+[1:46:47] Pulse with modulation frequency equals timer frequency.
+[1:46:53] F timer.
+[1:46:54] I use F timer because we are familiar with F CPU.
+[1:47:00] F timer divided by top plus 1.
+[1:47:06] PWM frequency equals timer frequency divided by top plus 1.
+[1:47:11] Is that clear?
+[1:47:13] Right.
+[1:47:13] If clear, now I am going to erase all these things.
+[1:47:18] Right.
+[1:47:20] This is the equation.
+[1:47:22] Look at this equation.
+[1:47:23] We know that time of frequency equals fCPU divided by prescaler.
+[1:47:30] We know that.
+[1:47:32] CPU frequency we scale down using a prescaler and feed to the timer.
+[1:47:38] That is the time of frequency.
+[1:47:40] And on the other hand, we just derived this equation.
+[1:47:45] PWM frequency equals time of frequency divided by top plus 1.
+[1:47:50] If it is 8 bit timer, top could be 255.
+[1:47:55] If it is a 16 bit timer, top could be 65,535.
+[1:48:00] This equation we just derived.
+[1:48:04] We previously know this equation.
+[1:48:08] Right?
+[1:48:09] Make a culling that now.
+[1:48:11] Because if CPU frequency will scale down and feed to the timer.
+[1:48:16] So time of frequency is CPU frequency divided by prescale.
+[1:48:22] PWM frequency equals time of frequency divided by top plus 1.
+[1:48:26] We just derived that equation.
+[1:48:28] When you combine these two equations, the time of frequency you can replace with this part.
+[1:48:35] FCPU divided by prescale.
+[1:48:37] You can replace time of frequency with this part.
+[1:48:40] Then you get this.
+[1:48:42] PWM frequency equals FCPU.
+[1:48:46] CPU frequency divided by top plus 1 multiplied by prescale.
+[1:48:52] So whatever the PWM frequency you need, now you can calculate.
+[1:48:58] You know FCPU.
+[1:48:59] That is your clock speed of the processor.
+[1:49:04] And based on the timer that you are using, you know that the top.
+[1:49:09] If the timer is 8 bit, this is 255.
+[1:49:12] Then top plus 1 is 256.
+[1:49:14] If the timer is 16 bit, this is 65,535.
+[1:49:20] Then top plus one is 65,536.
+[1:49:24] And the pre-scale, you know what is the pre-scale that you use.
+[1:49:29] You know whether it's 64, whether 128, whatever the pre-scale you use, you know.
+[1:49:35] Based on that, you can calculate the required PWM frequency.
+[1:49:40] So PWM frequency should be high enough to minimize any flicker.
+[1:49:49] Should be high enough to minimize any flicker.
+[1:49:52] And also PWM frequency should be low enough to device to react for a change.
+[1:50:00] The proper range of the PWM frequency that the device supports, you can find out from the data sheet.
+[1:50:07] And then you can determine what is the prescaler that you have to use to get that frequency.
+[1:50:18] For example, let's say you want 200 hertz as the PWM frequency.
+[1:50:23] And if your CPU frequency is 16 megahertz and the timer is 8-bit timer, then this part is 256.
+[1:50:33] six to get 200
+[1:50:35] around 200 to 300
+[1:50:37] between 100 to 300 frequency
+[1:50:40] around 200
+[1:50:42] if you want to get what is
+[1:50:43] the prescaler you should use
+[1:50:45] you can calculate
+[1:50:47] any question
+[1:50:55] right if this is clear
+[1:50:57] that's all for the
+[1:51:00] morning session right
+[1:51:01] so we'll continue this
+[1:51:03] in the afternoon right so see you at one o'clock thank you thank you

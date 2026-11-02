@@ -1,0 +1,506 @@
+[0:00] So he can also interrupt you.
+[0:02] The reason is we cannot do multiple tasks truly at the same time because we have one CPU.
+[0:12] If you really want to handle multiple tasks at the same time, truly, if you want to do that, you need multiple CPUs, multi-co-processors.
+[0:25] Is that clear?
+[0:26] Shandhi?
+[0:28] Yes, sir.
+[0:28] Anything else? Any other question?
+[0:31] No, no.
+[0:32] Whatever the question you have.
+[0:35] I know some people, they
+[0:36] have questions, but they don't ask.
+[0:39] Right?
+[0:40] So, only few people, they ask
+[0:42] questions and get the things sorted out.
+[0:45] So, others keep quiet.
+[0:46] But they have questions. I know.
+[0:49] Because when I was a student, when I
+[0:50] learned all these things, I had thousands of
+[0:52] questions. Even today, I have
+[0:54] questions. Though I have taught this
+[0:56] Mulder several years.
+[0:59] Right. If I think
+[1:01] about this more deeply,
+[1:03] I get a lot of questions.
+[1:05] Right. Now,
+[1:07] let's try to understand
+[1:08] this model with our real world
+[1:10] example.
+[1:12] You start reading the newspaper.
+[1:15] At the top of the newspaper,
+[1:18] you have
+[1:19] this interrupt vector table, so you
+[1:21] skip that and you
+[1:23] continue your reading.
+[1:25] While you are reading the let's say first line, second line, first paragraph, second paragraph, third paragraph, fourth paragraph.
+[1:36] While you are reading the fourth paragraph, Ayya started crying.
+[1:42] Then you know that you have to attend to Ayya.
+[1:45] Right.
+[1:46] Now what?
+[1:47] So let's say you are reading a book, not a newspaper.
+[1:50] You are reading a book.
+[1:51] You start reading the book.
+[1:53] the first chapter, the first paragraph.
+[1:56] After the first paragraph,
+[1:57] you have the interrupt vector table.
+[2:00] So you skip that
+[2:01] and then you second paragraph, third paragraph,
+[2:03] fourth paragraph. While you are reading
+[2:05] the fourth paragraph,
+[2:08] I interrupted you.
+[2:10] Now you know that you have to
+[2:11] attend, right?
+[2:13] Sorry, sorry, again, not paragraphs.
+[2:15] Say pages.
+[2:17] You started reading from first page.
+[2:19] The second page interrupt vector table,
+[2:21] you skip third page,
+[2:23] fourth page, fifth page.
+[2:25] Now while you are reading the fifth page,
+[2:28] Ayya interrupted you.
+[2:30] He started crying.
+[2:31] You know that you have to attend to Ayya.
+[2:33] What you do is
+[2:35] you put a bookmark in the
+[2:37] fifth page, address
+[2:39] of the fifth page.
+[2:42] Ideally, in the
+[2:43] computer, you save that
+[2:45] address on a stack. Same way, you
+[2:47] put a bookmark in the
+[2:49] fifth page, close the
+[2:51] book right close the book go to the place where the the diapers are from that you find the location
+[3:03] where the diapers are go to that place and get a get a diaper the wet one right throw it out put
+[3:13] the new diaper, right? Now you change his nappy, the diaper you change. Then, right,
+[3:22] you using the bookmark, you go to the page where you were reading and from that page
+[3:29] you continue reading, right? While you are reading, again if you got an interrupt, you
+[3:34] do the same. Very simple. Very simple. That is what you do in your normal day-to-day life.
+[3:40] So, sir, in the interrupt vector table, what we have?
+[3:46] Where the interrupt service routine is?
+[3:50] The address.
+[3:51] Address of the interrupt service routine.
+[3:54] So, when it comes to the blinking one, that push button.
+[4:04] The push button is not going to be.
+[4:06] hammer. Now, when you
+[4:08] press the push button,
+[4:10] interrupt the push button,
+[4:12] the button interrupts
+[4:14] the CPU.
+[4:15] When button interrupted the
+[4:18] CPU, the state change
+[4:20] interrupted the CPU.
+[4:22] Now, you should do something.
+[4:25] Ideally,
+[4:27] what you have to do is
+[4:28] toggle the
+[4:29] external LED.
+[4:32] You have written some code to
+[4:34] toggle the external LED.
+[4:36] Where that code is? That is the ISR, interrupt service routine. When interrupt happened, you have to provide the service. That service is the interrupt service routine. Where that service is? Address is in the interrupt vector table.
+[5:06] Oh, a suspect item properly, put a bookmark?
+[5:09] Yes, I'm going to do a bookmark.
+[5:13] So, I don't have to do a bookmark.
+[5:18] I don't have to do a bookmark.
+[5:22] I don't have to do a blink.
+[5:26] Oh, I don't know.
+[5:28] If you're a ISR, Interrupt Service Routine is a very lengthy ISR,
+[5:35] ISR.
+[5:36] It takes a lot of time.
+[5:42] Right?
+[5:47] But if the ISR is a small
+[5:49] short one, you can quickly
+[5:51] come back and start the
+[5:53] work that was what
+[5:55] you were doing.
+[6:01] Right?
+[6:02] So,
+[6:03] in programming,
+[6:04] The programmers are advised when they handle interrupts, right?
+[6:11] The programmers must try to write the interrupt service routines as much as smaller.
+[6:20] As smaller, so it should be small routine, not lengthy one, very short.
+[6:28] You have to try to write the interrupt service routine as shorter as possible.
+[6:32] Then only there will be no effect to the main task.
+[6:38] If the ISR, Interrupt Service Routine, is a very lengthy service routine,
+[6:43] then there will be a delay for the main task.
+[6:47] The advantage is now there are no monitoring.
+[6:52] We don't monitor with the button press or not.
+[6:56] So the monitoring workload is not a problem.
+[7:00] Second thing, the state change of the device may not go undetected.
+[7:05] Now all the state changes, all the device interrupts, right?
+[7:10] We have to handle it.
+[7:12] Nothing will go undetected, right?
+[7:14] And the priority comes.
+[7:16] We can give priority for one interrupt over other interrupts.
+[7:21] Those are the advantages.
+[7:22] however if the ISR
+[7:25] is very lengthy
+[7:26] right that will affect
+[7:28] to the main
+[7:31] task that you were doing
+[7:32] for example you were reading
+[7:35] the new book
+[7:36] and then you attend to a different
+[7:38] task if the different task
+[7:41] is a very lengthy task if it takes
+[7:43] one hour after one
+[7:45] hour you can resume the book reading
+[7:47] again but if the
+[7:48] second task is a quick task
+[7:51] just couple of seconds,
+[7:53] you can quickly come back and start reading.
+[7:56] So therefore,
+[7:57] when you are writing the ISR,
+[7:59] it should be,
+[8:01] it must be, right,
+[8:04] very short.
+[8:05] That's the responsibility of the programmer.
+[8:07] I told you now you don't have
+[8:10] the luxury of operating system.
+[8:12] As the programmer,
+[8:13] you have to do everything.
+[8:16] So you are in the full control.
+[8:18] If you want, you can
+[8:19] misuse interrupts if you if you want you can properly use interrupts that's totally under your control
+[8:30] sir
+[8:38] time out
+[8:41] hardware will in the operating system
+[8:43] Can you understand?
+[9:09] the time to in a M4C?
+[9:13] the M2B.
+[9:13] theim2.
+[9:13] theF.
+[9:13] the.
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] the.
+[9:13] the.
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] 
+[9:13] m8
+[9:14] the
+[9:15] the
+[9:15] the
+[9:16] the
+[9:16] the
+[9:16] the
+[9:16] the
+[9:16] 
+[9:16] 
+[9:16] the
+[9:16] 
+[9:16] 
+[9:16] the
+[9:16] the
+[9:16] 
+[9:16] the
+[9:16] the
+[9:16] the
+[9:16] 
+[9:16] the
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] the
+[9:16] the
+[9:16] 
+[9:16] the
+[9:16] the
+[9:16] the
+[9:16] the
+[9:16] the
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] 
+[9:16] the
+[9:16] the
+[9:16] the
+[9:16] 
+[9:16] the
+[9:43] Is that just a function?
+[9:53] Is that just a function?
+[9:56] Is that a facility that has a break?
+[10:03] Is that a statement?
+[10:07] I have a time.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] 
+[10:08] 
+[10:08] 
+[10:08] 
+[10:08] 
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:08] I have a time-gall.
+[10:09] I have a time-gall.
+[10:09] I have a time-gall.
+[10:09] I have a time-gall.
+[10:09] I have a time-gall.
+[10:09] I is a re-bacat akei
+[10:11] the
+[10:11] the
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] 
+[10:12] the
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] the
+[10:12] the
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] 
+[10:12] the
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] the
+[10:12] the
+[10:12] the
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] 
+[10:12] hist
+[10:13] the
+[10:39] [unclear — Sinhala / crosstalk]
+[11:09] the you know plat for the the
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] 
+[11:11] the
+[11:13] interrupt
+[11:15] accurately
+[11:17] delay
+[11:19] timing
+[11:21] the
+[11:23] milis
+[11:25] the
+[11:27] timing
+[11:29] interrupt
+[11:31] interrupt
+[11:33] count
+[11:35] this
+[11:37] [unclear — Sinhala / crosstalk]
+[12:07] the
+[12:08] the
+[12:09] the
+[12:10] the
+[12:10] the
+[12:10] the
+[12:10] the
+[12:10] the
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] the
+[12:10] the
+[12:10] the
+[12:10] 
+[12:10] the
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] the
+[12:10] 
+[12:10] the
+[12:10] 
+[12:10] the
+[12:11] 
+[12:11] 
+[12:11] 
+[12:11] 
+[12:11] 
+[12:11] 
+[12:11] the
+[12:11] 
+[12:37] When you are handling one interrupt, we disable all other interrupts.
+[12:53] Because we cannot handle any more interrupts while handling one interrupt.
+[12:59] Because we have one CPU.
+[13:00] So we disable other interrupts.
+[13:02] That's why we have to quickly finish interrupt handling.
+[13:05] If you take a lot of time to handle one interrupt, during that time there will be many other interrupts may go undetected.
+[13:13] If you take a lot of interrupts, you can quickly handle it.
+[13:17] If you have a problem with the problem, you can't tell me.
+[13:23] You can't tell me.
+[13:25] You can't tell me.
+[13:27] You can't tell me.
+[13:29] You can't tell me.
+[13:30] You can't tell me.
+[13:31] You can't tell me.
+[13:32] I have a really right.
+[13:33] [unclear — Sinhala / crosstalk]

@@ -1,0 +1,1897 @@
+04 - IO Port Programming 2 - Breadboard, Assembly & Delay Loops  (22 Sep 2020)
+
+[0:00] Alright, so this is already started. Now, this is the bare minimum hardware required.
+[0:14] Bare minimum hardware that we need to develop this system. Now we need to assemble hardware according to this design.
+[0:24] This is the hardware designer. We need to assemble. How do we assemble? For that purpose we use a board called bed board. Right. So what's a bed board? Here you can see a bed board. It's a plastic board with a grid of holes. You can see a grid of holes.
+[0:44] and there are metal contacts underneath
+[0:48] the plastic board with grid of holes and there are metal contacts underneath
+[0:54] now in electronic components the leads we insert into these holes
+[1:01] right, plastic board with grid of holes and underneath metal contacts
+[1:07] underneath metal contacts
+[1:09] Now we insert the leads of the electronic components into these holes.
+[1:15] When you insert them, the underneath metal contacts connect them electrically.
+[1:22] Right, when you insert a pin to one of these holes and underneath metal contacts connect them.
+[1:29] And the connections you can see in the other picture, right, where
+[1:38] You can see how the underneath metal cutbacks, the layout of the underneath metal cutbacks. The first two rows are horizontal connected and the bottom two rows are horizontal connected.
+[1:56] And these columns are vertically connected and there is a break in the middle. These are not one column. Right. There is a break. Separation in the middle. The middle part column wise connected.
+[2:12] top 2 rows vertically, bottom 2 rows vertically, right, the middle part, sorry, top 2 rows horizontally, bottom 2 rows horizontally, middle part vertically, but even the middle part not completely connected, there is a separation.
+[2:32] This is how underneath metal contacts, right, the layout of underneath metal contacts. Now when you insert a lead of an electronic component that is connected to these underneath metal contacts. So they complete the circuit electrically.
+[2:52] Now rest of the connections
+[2:55] Now let's say you insert a component somewhere here
+[2:59] Another component somewhere there
+[3:01] They are connected over this metal conveyor
+[3:06] Now you insert one lead here, another lead there
+[3:10] Then both are connected electronically
+[3:13] But if you want, let's say you want to connect a lead
+[3:17] One electronic component here and another electronic component there
+[3:21] Then you have to use a breadboard jumper wire. You can plug the wire to two holes and you can electrically connect it. Breadboard jumper wire. So this type of wires we call male to male breadboard jumper wire.
+[3:37] Right, you can connect electrically using the Georgia powers. Right. And the top and bottom rows, these horizontally connected top and bottom rows, generally we use to supply power to the side.
+[3:55] So we use them as power rails. So that's why here you can see this rail generally we use to supply positive power supply. And this rail we use for the negative power supply. And again this one for negative power supply and this one for positive power supply.
+[4:15] They are generally used to supply power with the same or essential power with the same
+[4:20] and rest of the circuit we assemble in the middle of the bed board
+[4:26] we assemble in the middle of the bed board
+[4:28] Right
+[4:29] and when you supply power to the bed board
+[4:32] Right, for example in the Ardino Munda board you have 5-word pin
+[4:37] From the 5-word pin you can draw 5-word from the board
+[4:40] and you can connect that 5 volt wire to this positive power rail
+[4:47] then the entire rail you have 5 volts
+[4:50] again from the ground pin in the artitigo board you can have a wire and connect the wire to this negative power rail
+[4:58] so the entire power rail then ground
+[5:01] to supply positive power and ground
+[5:05] We, as a standard, we use red colour and black colour wires. Positive power supply, red. Negative power supply, your ground, black. That's the standard. Black and red power. Right.
+[5:21] It is very important to use black and red jumper wires to supply power.
+[5:26] You can use any other color, then the current will flow.
+[5:31] But the problem is, if you encounter an issue, if there is an error,
+[5:37] it is very difficult to debug your hardware if you have not followed the standards.
+[5:42] Now if you have followed the standards, as soon as we locate a red color wire, we know it is positive positive.
+[5:49] That means negative power supply. So we don't need to check because you have followed statics. Right? But unfortunately, I have seen many stores, they don't follow statics. Whatever the wire they grab, they use to supply power.
+[6:04] For small circuits that won't be a problem because you have only a handful of wires you can find which one for the positive power supply which one is the ground you can find that. But think about very complicated hardware design with hundreds of thousands of wires.
+[6:21] Then to debug the system, diagnose the system, you need to know supply values. If you have followed the standard colors, red, black, then you can easily locate the wires among hundreds of wires.
+[6:36] But unfortunately students they don't follow
+[6:40] But to force them to follow standards
+[6:43] During a practical examination
+[6:45] It doesn't matter how successfully your system works
+[6:49] If you have not followed the standard, I cut my
+[6:52] The system runs perfectly, everything is working
+[6:55] But if you have not followed the standards, you lose things
+[6:58] To force you, I do this
+[6:59] Even in your source code, firmware
+[7:02] If you have, when you are using variables, if you have not followed the standard name, whatever naming convention, there are different naming conventions. If you have not followed the naming convention, if you have used any garbage names of the variables, you lose marks.
+[7:17] And in your code, if you have not properly indented the code, you lose marks.
+[7:21] It doesn't matter how efficient your algorithm, it doesn't matter how successfully execute your code, it doesn't matter.
+[7:29] You lose marks if not properly indented.
+[7:33] If not standard name intervention, you have useful variables.
+[7:37] Right? If not, you have commented. You lose marks.
+[7:40] Because these things are small systems, you don't feel they are important.
+[7:46] But for large systems, they are very important. So how can you go for large systems when you start with small systems if you don't follow these standards?
+[7:56] That's what we have experienced in this country. People don't know how to drive from their left hand side. So when you go to the road you can see how people drive.
+[8:09] they don't follow, there is no discipline. People don't know how to be in a queue.
+[8:14] That's what we have experience everyday life. There are standards, there are rules and regulations.
+[8:21] We must follow. So that's why when you have an HGA in a club, how many of you come at a club?
+[8:27] Now when you organize a trip, a batch trip, and you set the time, you say all the batch
+[8:36] Bus will leave at 6.30. How many of you come at 6.30?
+[8:41] How many of you come at 6.30?
+[8:43] If you come at 6.30, we will go.
+[8:46] Think about this.
+[8:48] So if you are invited for a wedding, how many of you go to the wedding before the proposal?
+[8:56] Do you know what you are doing?
+[8:58] Do you know what you are doing?
+[9:01] It is not a problem.
+[9:03] If you are a human being, you are a human being.
+[9:07] If you are a human being, you are a human being.
+[9:11] You are a human being.
+[9:16] You are the cream of our national education system.
+[9:20] At least if you don't follow these things,
+[9:23] you may be a human being and you may be a human being.
+[9:26] You may be a human being.
+[9:28] At the past time, our head and pressure system is a cream.
+[9:32] But what will happen to our next generation?
+[9:37] It's time to change. At least try to change.
+[9:45] That's why, at least for my subject, I force you to follow proper standards.
+[9:54] [unclear — Sinhala / crosstalk]
+[10:24] calling them it here
+[10:26] these are very important good practices
+[10:28] these are our best practices
+[10:30] right
+[10:32] therefore always to supply power use red and black
+[10:36] right
+[10:38] now what are the advantages of using a bread board
+[10:42] for assembling this system
+[10:44] easy to assemble
+[10:46] easy for prototyping
+[10:48] and the components you can reuse
+[10:50] because you don't solder the components
+[10:52] You don't solder the components. You don't twist the leads. Ambar Adnanai. Ambarut, that was bigger. Not yet.
+[10:59] Now you just plug the components into these holes. Right? So you don't solder, you don't twist them. Right?
+[11:08] So components are reusable. Soldless. Soldless. Soldless. Components are reusable.
+[11:16] are usable, quickly and easily you can assemble the systems. That means ideal for prototype.
+[11:25] Ideal for prototype. So bedboards are ideal for prototype. Then why do we call this as
+[11:31] a bedboard? Why don't you call it as a caveboard? You should ask these questions. Why can't
+[11:39] Why can't we call this as a cake board?
+[11:42] Why do we call it as a bread board?
+[11:44] And can we slice bread on this?
+[11:46] You can also slice bread on this?
+[11:48] It's a small board, you can slice it on the board
+[11:53] So why do we call it?
+[11:55] Now you go outside and you say we did a patent system in our university to go home
+[12:01] and now there are a level ICD students
+[12:05] Now even there is ICD syllabus, now the internet of things and IOD in the syllabus.
+[12:11] Then the other one is the breadboard.
+[12:17] If you want to make a breadboard, you can't make a breadboard.
+[12:22] You can't make a breadboard.
+[12:27] Why do we call this as a breadboard?
+[12:31] I don't know what to do.
+[12:33] I don't know what to do.
+[12:35] I'm going to put breadboard.
+[12:37] I'm going to put breadboard.
+[12:39] I'm going to put a little bit of bread.
+[12:41] Any idea?
+[12:43] Vertical lights. How can you relate the vertical lights to bed?
+[12:46] Slicers.
+[12:48] Slicers.
+[12:50] You know what?
+[12:52] Slicers.
+[12:54] Butter.
+[12:56] Butter.
+[12:58] I will show you.
+[13:01] Hmm.
+[13:02] Hmm.
+[13:03] Pondali Moola Kruthi.
+[13:05] Prototype.
+[13:06] Singhala and then,
+[13:07] one prototype Moola Kruthi.
+[13:09] Redboard,
+[13:10] Pong Moola.
+[13:11] That's right.
+[13:12] I am a Ketha.
+[13:13] But you have to translate it.
+[13:16] Right?
+[13:17] Ketha is a Ketlaali Moola Kruthi.
+[13:21] That's right.
+[13:22] It's a lesson.
+[13:23] You have to follow it.
+[13:25] What is this?
+[13:26] What is this? In the early days of electronics, this is very old, you can see, there are vacuum tubes in the system.
+[13:35] Right, this is a small radio circuit developed using vacuum tubes.
+[13:39] Right, you know vacuum tubes using early days of electronics.
+[13:43] In the early days of electronics, right, so what the people develop systems, right, first you need to do prototyping, then only you can go for,
+[13:54] Once you fine tune everything then you can go for commercial development
+[13:58] But when you are designing a system then you have to do prototyping
+[14:02] When you do prototyping in the early days what the people did was
+[14:06] They soldered components
+[14:10] Component leads to each other using some soldering iron and lead
+[14:14] Young, Palshara, they sold it
+[14:18] And they prototyped the system and tried it
+[14:20] and try then if there is a problem then they again had to use the soldering iron to remove
+[14:26] the component desolder the component and put another one change and then it became a very
+[14:33] headache because it take lot of time to solder the prototype and when you make changes you
+[14:40] have to desold again solder right that is what is so the early days engineers wanted
+[14:48] a quick way to do prototypes, a quick method for prototyping. One day, one engineer, right,
+[14:56] got his mother's breadboard, Papa Malayala, put some nails, and it is like that one. So
+[15:04] put the components and connect up the components to these nails using wires and quickly constructed
+[15:09] the prototype. Then his friends saw this and they also started prototyping using the breadboards.
+[15:17] They also got their mother's breadboard and started prototype and that's how this concept
+[15:23] started. So it started with a real breadboard. Now we can see a real breadboard radio but
+[15:30] today we don't use that wooden breadboard we use a plastic board with holes and underneath
+[15:36] little paper but it evolved from a real breadboard. It's a breadboard. It's a chopping board.
+[15:46] Is that clear?
+[15:48] Now you get it out of the car.
+[15:52] Sir, is that a name in Slovenia and Vero board?
+[15:56] Vero board. Vero is a brand.
+[15:59] The current name is strip board or dot board.
+[16:04] You have either strips or dots.
+[16:07] Vero is a brand, a particular brand.
+[16:10] There is a company. They market stripboards and dotboards using the name Vero.
+[16:18] Vero get a brand.
+[16:20] Your company is good?
+[16:22] Vero Boots.
+[16:25] Vero Boots.
+[16:26] Vero Boots is a brand.
+[16:28] Brand name?
+[16:29] Vero Boots is a brand name?
+[16:31] Vero Boots is a brand name.
+[16:32] Vero Boots is a brand name.
+[16:34] Google for it.
+[16:36] Click the image and click it.
+[16:38] Then you will get aerobuels from Ben and Aputri.
+[16:42] You have to insert the component from the other side.
+[16:47] And this side you can put a small solder joint using a solder ringer.
+[16:54] And again you may have to use wires to do the connections.
+[16:58] This is not a PCB but it is a heatboard.
+[17:01] But this is the one version before the PCB.
+[17:06] Right, it could be dot boards or it could be strip boards.
+[17:09] Okay?
+[17:10] Okay.
+[17:11] Right, connections.
+[17:13] How you can lay the components and do the connections.
+[17:15] So you put the component and then you solder them.
+[17:18] Right.
+[17:19] This is the top side, this is the underside.
+[17:21] Underneath.
+[17:22] So underneath you have to solder it.
+[17:24] You have to solder it.
+[17:25] Right.
+[17:26] Then, right, now we know how, what is the breadboard.
+[17:30] Now we have to assemble the system hardware part
+[17:34] according to our schematic diagram on a breadboard.
+[17:38] Now this is the violin diagram.
+[17:40] Right, you have the Arduino Uno board and this is the LED, right, LED.
+[17:47] The cathode, sorry, anode connected to ground, sorry, cathode connected to ground
+[17:55] and anore through 220 of resistor goes to pin number 8 of the Arduino Uno port.
+[18:04] Pin number 8 is PB0, first pin of port B.
+[18:09] We discussed the pins of micro control.
+[18:14] So according to our schematic diagram, if you go to the schematic diagram again,
+[18:19] Right, so here you can see the LED through a resistor connected to PB0 which is pin number 8. Right. And when you insert an LED here, a resistor there, how they got connected behind the scene?
+[18:38] Let's see, this is the underneath contacts of the bread bowl and this is what happens when you insert the copper.
+[18:50] And you see, right, the cathode through this metal strip connected to black wire and through the back wire the connection comes here.
+[19:03] Then again electrically connected to this black wire and it goes to ground and on the other hand from pin number 8 you get the yellow color wire it comes here and through this copper strip it goes to the resistor.
+[19:22] and through the resistor the limited current, we use the resistor to limit the current
+[19:29] that limited current goes to the other side and again through this purpose strip it goes to the amount
+[19:37] now can you see how connection, right, how all the connection took place, can you understand
+[19:45] This is very important to understand the underneath the pattern of the breadboard, the underneath metal breadboard pattern. Without that you can't assemble yourself. Unfortunately when you get the breadboard this is what you see. Make a pain in it.
+[20:03] But that design should be in your mind.
+[20:07] It's all within.
+[20:08] First two rows horizontally, last bottom two rows horizontally, others are vertically and there is a break in between.
+[20:17] You need to go all the way to end.
+[20:20] You can't make it.
+[20:22] Make all the way nothing but you need to make it.
+[20:25] You can make it.
+[20:26] You can make it.
+[20:27] Is that clear?
+[20:28] Okay?
+[20:29] Right.
+[20:30] Then the hardware design part is open. That part is open. The next part is to design a firmware to operate the microcontroller. Now we have to tell the microcontroller what to do and how to do it.
+[20:49] So what is the task? We need to blink this LED every half a second. That means we have to tell the microcontroller to set this particular field high for a half a second, then low for another half a second, again high for a half a second, again low for another half a second, repeat and repeat.
+[21:13] Now we have to tell that to the microbeam. How do we tell that to the microbeam? We have to give instructions. That means we have to give a firmware. So now we have to design the firmware. Before we write the firmware we have to design. As usual to design the firmware we need to develop the algorithm.
+[21:33] firmware design, algorithm.
+[21:36] So algorithms we can design either using flowcharts or pseudoconics.
+[21:42] But generally consider, generally the programmers consider,
+[21:46] flowcharts are more easier to understand because the picture is worth than 1000 waves.
+[21:53] So let's use a flowchart.
+[21:55] So let's start.
+[21:56] Blink ASN that is the name of our firmware. Start node flowchart. Right. Configure first step. Configure PB0. PB0 means port P first pin. Which is in Arduino terms. In number 8. Configure PB0 as an output. Configure that particular pin as an output.
+[22:23] Then what is the thing you should do? You have to set DDRB first bit. Because this is the 4B first bit. What is the corresponding DDR bit? First bit of DDRB.
+[22:42] You have to set that
+[22:44] Then only this becomes an output
+[22:47] Otherwise by default this is input
+[22:50] Because the entire DDR register contains 0s
+[22:53] This is input
+[22:55] Now you have to configure it as an output
+[22:57] That is the first part
+[22:59] Then
+[23:00] Now we configure the pin as an output
+[23:03] Then we have to change the state of pin height
+[23:07] Change the state of the pin height
+[23:09] By default state of the pin low
+[23:11] bit low why the port register contains 0s port register contains 0 so we need to change the bit
+[23:20] change the bit 0 of port register bit 0 why bit 0? ed0 means first pin of port b first pin of port
+[23:32] so bit 0 of port B register
+[23:35] now we have to change to 1
+[23:37] then
+[23:38] the pin becomes
+[23:41] logic high
+[23:42] pin logic high means
+[23:44] we deliver output
+[23:47] to the external world
+[23:48] we deliver an output to the external world
+[23:51] because if you connect an LED to that pin
+[23:53] when pin becomes high
+[23:55] you turn on the LED
+[23:57] that means you deliver an output
+[23:58] so
+[23:59] this is an output
+[24:02] we use the output signal
+[24:04] make PB0 Hull
+[24:06] make PB0 Hull
+[24:08] so the connected LED
+[24:10] now you turn off
+[24:12] the connected LED out
+[24:14] now you turn off
+[24:16] then if you immediately turn off
+[24:18] the LED then would you
+[24:20] see any change? No
+[24:22] you need the LED
+[24:24] to remain turn off
+[24:26] how much of time?
+[24:28] half a second
+[24:30] you need to keep the LED turn off. Delay, you call a subroutine to delay the execution. Delay half a second. You call another function to delay. This is the symbol for a subroutine call.
+[24:46] Matagathe pro-chart signals, subroutine call
+[24:48] then you need to turn off the lead
+[24:52] how do you turn off the lead?
+[24:54] right, you need to set the logic state of PB0 low
+[25:00] how do you set the logic state of PB0 low?
+[25:04] PB0 means port B first bit
+[25:08] that means port B register
+[25:10] first bit
+[25:12] you have to set 0
+[25:14] You have to clear that. Then again you have to wait half a second. You have to wait another half a second. Then LED will remain turn off half a second. Then you need to do this again and again. On off. On off. Then you can call it blink.
+[25:34] Then these four steps you have to do again and again.
+[25:39] Right.
+[25:40] Okay, let's do that.
+[25:41] Again and again.
+[25:42] Right.
+[25:43] Now I have a question.
+[25:45] Is this flow chart correct?
+[25:48] You have learned flow charts, algorithms in the first year.
+[25:52] Yes, flow, no.
+[25:53] No.
+[25:55] Why?
+[25:55] There's no end node.
+[25:57] Ah, very good.
+[25:58] There is no end node.
+[26:01] Only the start node is there.
+[26:03] there is no end node. So in the first year you were told that the flow chart must have
+[26:11] start node, any flow chart must have start node and end node. Otherwise your flow chart
+[26:18] is wrong. That is what you were told in the first year.
+[26:22] You can start with flowcharts, start and end. Otherwise it is wrong.
+[26:27] You can do it.
+[26:29] No, you can do anything.
+[26:31] There can be flowcharts with no end node.
+[26:35] Firstly, have you drawn any flowchart without end node?
+[26:43] You can do flowchart with no end node.
+[26:45] So anybody did ICD for A levels?
+[26:48] Yeah, right.
+[26:50] Do you know what I'm doing?
+[26:52] What's the teacher?
+[26:54] Ender team.
+[26:56] Ender team.
+[26:58] No, I'm not going to go to the same thing.
+[27:02] I'm going to go to the same thing.
+[27:04] And then, I'm going to go to the same thing.
+[27:06] I'm going to go to the same thing.
+[27:08] I'm going to go to the same thing.
+[27:10] Pass papers.
+[27:12] You know, start note, end note, deduct, I am trying to get a minus.
+[27:19] Then, I think, I will have to get a little bit of deduct.
+[27:23] Where is the end note?
+[27:25] Right.
+[27:26] That means, although you learn in that way, right, it is not 100% correct.
+[27:34] Not this way.
+[27:35] The way you learn, the things you learn are not 100% correct.
+[27:39] I don't say it's wrong, not 100%
+[27:43] In computing, some culture
+[27:46] You got help in one
+[27:49] The reason is this
+[27:51] In general purpose computing
+[27:53] That means programs running in our pieces
+[27:55] You run your program
+[27:57] Then the program is executed line by line
+[28:01] Line by line
+[28:02] And finally it comes to the end
+[28:05] The execution flows
+[28:07] execution flows from line to line
+[28:10] first line to second line
+[28:12] there is execution flow
+[28:13] second line to third line execution flow
+[28:16] likewise execution flows
+[28:18] through the program
+[28:20] line by line and finally
+[28:22] it comes to the end
+[28:24] last statement of the program
+[28:26] that is the end note
+[28:28] last statement we represent using end note
+[28:30] after that
+[28:31] after executing the last statement
+[28:33] what happens to the execution
+[28:36] After executing the last statement what happens to the execution?
+[28:40] Execution is passed to operating system.
+[28:44] Execution is passed to operating system. In your PC's you have operating system.
+[28:48] When you run the program, actually execution passed from operating system to your program.
+[28:54] Operating system was in execution. Operating system was run with it.
+[29:00] It was in execution. Then you double click the icon of your program
+[29:04] your program and execution passed from operating system to your program and then your program
+[29:11] line by line executed and your program came to the end and then again execution again
+[29:17] passed back to the operating system. Is that it? Execution is not operating system is not
+[29:22] under with you. You have all your program that you are under, all your program that
+[29:26] you are under, not all execution is under with you, operating system. So you have a last
+[29:31] You have a last thing, you have a last thing but in temperance this Adina, Udapur, Microcontroller there is no operating system, no operating system.
+[29:42] You execute line by line line by line line by line and you come to the end, last line. Thereafter we have to cook.
+[29:50] The execution, to execute, for execution there is no place to cook.
+[29:55] The under it, the harknaya for the execution.
+[29:57] Then what should we do?
+[29:59] We stop the processor.
+[30:00] No, we can't stop the processor.
+[30:02] We learn last semester.
+[30:03] You can start a processor, but you can't stop a processor.
+[30:07] The fetch execute cycle, we have to keep running.
+[30:11] What is the other thing?
+[30:12] You have to run the fetch execute cycle, right, without stopping time.
+[30:17] You have to keep running the fetch execute.
+[30:20] That means you can't stop the processor.
+[30:22] So when you come to the last line, then what happens?
+[30:25] There is no place to pass the execution. No operating system to pass the execution. So we have no choice. Only thing we can do is run the same code again and again when you come to the end.
+[30:40] that's what we have done. Right, because we can't stop the processor, we can't stop the
+[30:44] VH execution cycle, so we have to keep it running. So when you come to the end of the
+[30:50] last, you have reached to the last statement, then there is no other choice. You have to
+[30:55] run the statements, set up statements again and again. So we embedded systems programming,
+[31:02] Right. We get flow charts without end. Endless loop. We need endless loop. To do this we need endless loop. No end and endless loop. And in the general PC programming, in your program has an endless loop, your program is good or bad? Bad.
+[31:24] But in Embrared system programming, Endless loop, you know, good. You must have Endless loop. Good, not must have. Now can you understand the difference between general PC programming and Embrared system.
+[31:39] General purpose systems you need in end line, end node, last line of your program you need. And we are not allowed to use endless loops. But in embedded systems programming no end node in the algorithm, no end node in the flowchart, no last statement in the program and endless loop is a must.
+[32:06] Endless loop is a must because we want to keep the French execute cycle running. When you come to the last statement, there is no place for the execution to go. We cannot pass the execution to an operating system because there is no operating system.
+[32:23] When you take the washing machine, there is no soft machine so...
+[32:28] Yes. But you can switch off the machine. But till that time, right, so you are programmed.
+[32:36] You do the same thing again and again in the washing machine here. Right?
+[32:40] You get the fresh water, right? You wash cycle one time, then you get the detergent and the water, again wash cycle,
+[32:50] then you get the again fresh water then you drain the grey water same thing again and again
+[32:59] so your program you have the same thing again and again you do until you switch off even in a pc
+[33:07] you can when you disconnect the power right and when you turn off the system then you shut down
+[33:14] the processor but until then you don't stop the processor you let the processor to run
+[33:22] right fetch execute cycle you don't stop my question is this program to program to you stop
+[33:28] the fetch execute cycle program to program you run microsoft word and then end of the word you
+[33:33] stop fetch execute cycle then again you start fetch execute cycle with xl you keep running you
+[33:40] you keep the fetch execute cycle running until you shut down the system.
+[33:44] Many programs during that time you execute.
+[33:48] In one program many functions are executed.
+[33:50] But you don't stop fetch execute.
+[33:52] The reason is in a general purpose system you have OS where you come to the last line
+[33:58] control or pass to the operating system.
+[34:01] Then operating system will pass control back to Excel.
+[34:05] When it comes to end of the Excel control again pass to OS.
+[34:08] OS pass execution to PowerPoint then PowerPoint is executed.
+[34:12] Now OS is there but here when you come to the last line we have to move execution.
+[34:20] Either you have to stop the system or you have to run the same statements again and again.
+[34:26] Nothing else you can do. It could have happened.
+[34:30] Last line there was.
+[34:31] Himanatta, the same statements you have to do, execute again and again.
+[34:37] The exit point is the mission.
+[34:39] Huh?
+[34:40] The exit point doesn't...
+[34:43] This is the exit point.
+[34:45] You turn on the light, turn off the light and then execute.
+[34:49] Then this is the last light.
+[34:50] Then what should we do?
+[34:52] We can't stop.
+[34:54] And we can't pass the execution to OS.
+[34:57] There is no OS.
+[34:58] So you need to run the same code again and again.
+[35:04] That's why in Embedded Systems Programming you have endless loop.
+[35:08] That's why in Arduino you have a function called loop which runs forever.
+[35:13] You have setup and loop. Setup runs once, loop runs many times.
+[35:18] Right, never ending. The loop function runs many times.
+[35:23] and in microbeats, I don't know whether you have used microbeats, small bits use, with
+[35:29] [unclear — Sinhala / crosstalk]
+[35:31] microbeats, small group, right, you have set up and forever, forever has a DNA, never
+[35:39] ending, because it's a must, because there is no OS to take the tempo, right, if you don't
+[35:47] have, if you remove this looping part then what would happen is after the last line execution
+[35:57] will fall out, the correct term, because no way are to go execution will fall out. To
+[36:05] prevent execution fallout, because no way are to go then execution will fall out. To
+[36:11] To prevent the execution fallout, we need to run the same program again and again, again and again
+[36:19] to prevent the execution fallout.
+[36:21] Now can you understand the differences between general purpose systems development programming and
+[36:26] Embrance systems programming?
+[36:28] That's why I told you in the first day, it's like living in another planet, entirely developed.
+[36:34] You have to work with endless loops and there are no ends.
+[36:38] In normal general purpose programming if you use endless loop your program is wrong.
+[36:43] Endless loop is the terminal of river.
+[36:45] But in the embedded systems programming you must have it.
+[36:49] Then the delay. You need to delay the execution.
+[36:54] How do we delay the execution?
+[36:56] Can we ask the processor to stop for a while?
+[37:01] No you can't do that. You have to keep running fetch execution search.
+[37:05] Even the knock, fetching cycle cycle goes on.
+[37:09] Yes, I am sorry.
+[37:11] Yeah, but fetching cycle cycle goes on, that's why NOP, NOP instruction takes 1 clock cycle.
+[37:21] For what type of cycle? For the fetching cycle cycle.
+[37:24] It takes 1 clock cycle, that means fetching cycle cycle goes on.
+[37:29] Now how do we write delay rate selection?
+[37:33] simple you call a function what is that function that function runs a loop for 500 mil seconds
+[37:42] a loop you run the execution right without doing anything you run a loop
+[37:48] without doing anything you run a loop fetch execute fetch execute fetch execute how long
+[37:54] 500 mil seconds half a second but do you do anything no any computation no just run a loop
+[37:59] How long? 520 seconds.
+[38:02] You can't loop it.
+[38:05] That's it.
+[38:08] Inside the loop? No.
+[38:13] Even you don't need to use no. Why?
+[38:19] Because every time you have to check whether the loop condition is true.
+[38:24] Then you have to go inside the loop.
+[38:27] right and then again you have to go to the top of the loop and check the condition
+[38:31] those things take time if you run the loop for let's say 100,000 cycles
+[38:36] iterations considerable delay you can generate if you run the loop 1 million times
+[38:44] considerable delay you can generate because you have to spend clock cycles to check the condition
+[38:52] then enter into the loop
+[38:54] you have to
+[38:56] spend some clock cycles
+[38:57] then again jump back from the bottom of the loop
+[39:01] to top of the loop to check the condition
+[39:02] again jump back
+[39:04] some clock cycles
+[39:06] now how many clock cycles
+[39:09] are one eye dimension
+[39:10] several clock cycles are one eye dimension
+[39:12] then you run the loop
+[39:14] for what million times
+[39:16] go ten million whatever the time you need
+[39:18] then you get the delay
+[39:20] Actually that is how delay functions are.
+[39:24] How many delay functions are?
+[39:26] Even in the Arduino you have the delay.
+[39:28] Delay you have, one is delay, the other one is micro delay.
+[39:32] Delay is.
+[39:34] There are two functions for the delay Arduino.
+[39:38] One is delay, delay, delay, there are two functions, right?
+[39:44] So whatever, one is delay, of course one function is called delay.
+[39:48] Actual delay, if you go to the implementation of the relay function, ultimately it achieves delay using, that is called, this one doesn't correct delay loops, using a relay loop.
+[40:02] There is another way using timers you can achieve a delay, we will discuss later.
+[40:06] But one very simple way to achieve the delay is running a loop but doing nothing.
+[40:13] Run a loop but do nothing.
+[40:14] Just consume the time, that is the only thing, just consume the time.
+[40:19] Without doing anything, just run a loop to consume the time.
+[40:23] Right.
+[40:24] Now, we have the algorithm.
+[40:27] Then we need to go for source code.
+[40:29] Right.
+[40:29] Now first thing in the algorithm is to configure PB0 pin and PB0 as output pin.
+[40:38] Now let's see how to configure PB0.
+[40:42] Configuring IO pin and input output pin.
+[40:47] Right.
+[40:47] So configure pin 0, pin 0 is PB0, code B, code B pin 0 that is PB0 as an output pin.
+[40:56] Right.
+[40:57] we use this instruction
+[41:00] set bit in
+[41:02] IEO register instruction
+[41:04] set bit in IEO register instruction
+[41:07] we use because we need to
+[41:08] set a bit which register
+[41:10] DDRB register
+[41:12] because we are working with port B
+[41:15] port B bit
+[41:16] port B bit 0
+[41:17] port B bit 0 means we need to use
+[41:20] DDRB register
+[41:22] data reduction register B
+[41:24] which bit we need to set
+[41:26] bit 0 because we are working with we want to configure pin 0 what is the corresponding
+[41:32] bit bit 0 can you understand pin 0 is not corresponding bit bit 0 is not the corresponding bit bit 0
+[41:40] pin 7 is not the same as the corresponding bit bit 7 right we need to set ddr b0 set means write 1
+[41:52] we need to put value 1
+[41:54] so then we use this instruction
+[41:56] set bit
+[41:57] set bit in IO register
+[42:00] so this is the instruction
+[42:03] SBI
+[42:04] set bit in IO register
+[42:06] SBI what is the register
+[42:08] DDRV
+[42:10] which bit
+[42:12] 0V
+[42:13] set that bit
+[42:16] set bit 0 of DDR
+[42:19] DDRV
+[42:20] DDRB can register again bit 0 at the current right
+[42:26] set bit in IOR register which register DDRB which bit 0
+[42:32] if you want to set the if you want to configure the last pin of the port B register as output pin
+[42:38] then this should be SBI DDRB 7
+[42:43] port B is the output pin and output pin not current or not
+[42:47] Right. Then what is this green color? This is a comment line. Comment line started with a semicolon. In AVR assembly, comments started with semicolon.
+[43:04] Right. This is the port B, port BIO pins. This is the first pin. This is the port B register, port output register. This is the data direction register. Now we need to, if you want to configure this pin as output pin, you need to set this pin. Set this pin, it means you need to write value 1.
+[43:25] Make it a value 1 here.
+[43:27] Make it a value 1 here.
+[43:29] When you run this line, what happens is,
+[43:32] see,
+[43:33] now this pin is output.
+[43:38] This is now an output.
+[43:40] Now if you set this pin,
+[43:43] you turn on the LED,
+[43:44] you clear this pin,
+[43:46] you turn off the LED.
+[43:47] Now port output register bits,
+[43:49] you can use to, this particular bit,
+[43:51] you can use to turn on and turn off the pin.
+[43:53] Now we have configured this pin as output.
+[43:57] Clear?
+[43:59] Right.
+[44:00] Again, if you want to know about this instruction more,
+[44:05] 400 page number 433.
+[44:09] Let us see 433.
+[44:11] More details about SPI.
+[44:14] Send built-in IEO register.
+[44:16] 433.
+[44:18] Now look at here.
+[44:18] This is output.
+[44:20] These are operas.
+[44:21] Two operas and output.
+[44:23] 2 operands and golden operands assembly
+[44:26] right
+[44:27] then we want to turn on the LED
+[44:31] right
+[44:32] if you want to turn on the LED
+[44:35] change the state of PB0
+[44:37] that is pin 0 of code B high
+[44:40] change the state high
+[44:42] when you change the state of PB0 high
+[44:44] PB0 becomes 5 volts
+[44:47] LED will turn on
+[44:48] right
+[44:49] the same instruction we use
+[44:52] set B
+[44:53] in IO register
+[44:55] set bit in IO register
+[44:56] same instruction we use
+[44:58] and now this time
+[45:00] code P we use
+[45:02] not DDRP code P
+[45:04] which bit you want to set
+[45:06] bit 0
+[45:07] you set the bit 0
+[45:09] right now this is the situation
+[45:13] now we have already configured
+[45:15] the pin as output pin
+[45:16] now when you run this statement
+[45:19] we are going to set this bit
+[45:21] this is the V we are going to set
+[45:23] right see what happens
+[45:25] so when you set the V
+[45:27] the pin work state becomes high
+[45:29] voltage becomes 5 volts
+[45:31] you turn on the energy
+[45:33] then
+[45:35] now what is the next step
+[45:37] turn off delaying
+[45:39] no delay half a second
+[45:41] according to algorithm next step is
+[45:43] delay half a second
+[45:45] now how do we do that
+[45:47] delaying
+[45:49] Engage CPU by running a loop and delay halves.
+[45:54] Simply engage the CPU by running a loop.
+[45:58] For that we are going to use these instructions.
+[46:02] Load immediate, LDI, decrement, DEC, branch if not equal, BR and E.
+[46:13] Those are the instructions we are going to use.
+[46:15] Load immediate, decrement and branch if not equal.
+[46:22] Right. Now we want to run a loop. Right. And delay.
+[46:30] A certain amount of time we need to run a loop.
+[46:33] So when you run a loop you need to keep the track of number of eye directions.
+[46:38] That means you need a count.
+[46:40] Now with this microbeamble is 8 bit microbeamble.
+[46:44] And all the registers are in it.
+[46:47] Now if you use 8 bit register, 8 bit register,
+[46:53] 5 register, for loop count.
+[46:56] So what are the values you can keep in 8 bit register?
+[46:59] What is the rate of values?
+[47:01] Huh?
+[47:02] Look, 2 to the power, 2 to the power 8 bit,
+[47:06] 10 to 126 in 8 bit register.
+[47:08] What is the rate?
+[47:09] What is the rate?
+[47:10] Huh?
+[47:11] 0 to 255
+[47:13] 0 to 255
+[47:14] That means how many values?
+[47:17] 256 values
+[47:19] 256 including
+[47:21] 256 values you can keep in a register
+[47:24] Right?
+[47:25] Now if you use the register as the loop column
+[47:28] How many alternations you can put?
+[47:31] 256 alternations
+[47:33] So what is the block speed?
+[47:36] 60 MHz
+[47:38] Right, this is the philosophy
+[47:40] 1 MHz
+[47:42] Frequency equals 1 divided by time
+[47:46] So time equals 1 divided by frequency
+[47:50] Now I want to know the cycle time
+[47:56] Cycle time of this microgravity
+[48:00] So I can calculate it. 1 divided by 60 MHz but I don't count on it to Hz.
+[48:08] What is the answer? You calculate it. I tell you.
+[48:12] Right? Because now it is Hz. KHz, MHz.
+[48:18] I will get the high value.
+[48:23] What is the cycle?
+[48:25] 2.0
+[48:27] 6 multiplied by just 6.0
+[48:30] 6.25
+[48:32] 6.25
+[48:34] 2.5 multiplied by
+[48:36] 10
+[48:38] 10 to the power minus
+[48:40] 8
+[48:41] seconds
+[48:42] This is the cycle right?
+[48:44] That means the processor takes
+[48:46] takes this much of time, this amount of time for 1 clock side.
+[48:53] Now, if you use the register as loop ground, you can go maximum of 256 iterations.
+[49:04] This is this iteration.
+[49:06] Now, if you multiply this by 256, you get the time for 256 iterations.
+[49:14] Would that be enough for half a second?
+[49:16] I got a medical update now
+[49:18] How do you try by two 5 6?
+[49:20] Here
+[49:26] 1
+[49:28] Half by 6
+[49:30] 1.6
+[49:32] 10 to the power
+[49:34] Minus 5 seconds
+[49:36] Not half a second, very small time
+[49:38] So you are running a loop
+[49:40] You can't actually
+[49:42] one loop you can't achieve. So run nested loops. Loop inside loop. Go another loop inside
+[49:50] it. Nested loops. Then you can achieve any. Just running one loop and register as a loop
+[50:00] counter you can't achieve whatever the delay you need. You have to run nested loops. Loop
+[50:07] inside loop. Can you understand?
+[50:11] Right. Now this is the loop that we are going to run.
+[50:14] Right. Three nested loops.
+[50:17] What is it? What is it?
+[50:19] Three nested loops. Right. I'll explain it. Don't worry.
+[50:22] Now here we have used three different instructions.
+[50:26] The first one is LDI.
+[50:29] Load immediate.
+[50:31] The job of the load immediate...
+[50:33] Sorry.
+[50:35] The, the, the, the, what do you call it?
+[50:39] The meaning of the MDI instruction is load the immediate value to the register.
+[50:45] R16 is the register 16.
+[50:48] Load the immediate value to register 16.
+[50:51] That is the mean.
+[50:53] Load immediate.
+[50:54] Load the immediate value.
+[50:56] Then you don't need to refer the value from memory.
+[51:00] Value is with the instruction.
+[51:02] So immediate.
+[51:03] to the register 16 that is the mean
+[51:06] right
+[51:07] then
+[51:08] right
+[51:09] and load immediate instruction takes 1 clock cycle
+[51:13] it takes 1 clock cycle
+[51:15] L B I
+[51:17] register, comma, immediate value
+[51:21] meaning is to the register your site, immediate value
+[51:25] it takes 1 clock cycle
+[51:29] it consumes 1 clock cycle
+[51:31] Then the decrement, decrement instruction, register decrement sub register. The meaning is deduct one from the register and put the result into the register decrement.
+[51:47] In C++ you write minus minus. One clock cycle. Again one clock cycle. It consumes one clock cycle.
+[51:57] B or N. Branch if not equal. Branch if not equal. The meaning is, right, the value of the previous instruction, the value of the previous instruction is not equal to zero.
+[52:12] it is not equal to 0
+[52:15] is the right?
+[52:15] to the right, the right, the right
+[52:16] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:17] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:18] the right, the right
+[52:19] the right, the right
+[52:19] the right, the right
+[52:19] the right, the right
+[52:19] Do this if not equal to 0. If equal to 0, fall through. If equal to 0, fall through. If not equal to 0, jump. Branch.
+[52:43] okay
+[52:44] it checks whether
+[52:47] if it is not equal to 0
+[52:48] the result of the previous instruction
+[52:50] if it is not equal to 0
+[52:52] branch
+[52:54] branch to the label
+[52:55] whatever the label you are supposed to want
+[52:58] if the result is 0
+[53:00] 4
+[53:01] right
+[53:02] this branching part takes 2 clock cycles
+[53:07] this part takes
+[53:09] 2
+[53:10] clock cycles
+[53:12] and 4 through part takes 1 clock cycle
+[53:19] 4 through is about 1 clock cycle
+[53:22] cycle time equals 6.25 multiplied by 10 to the power minus 8 seconds
+[53:30] right
+[53:31] not just what people need to do with the student?
+[53:36] I need a calling statement to get a check.
+[53:38] I need a calling statement to get a sign.
+[53:43] It's not a sign.
+[53:45] If not a sign.
+[53:46] What is the sign?
+[53:48] I need to get a sign.
+[53:51] I need to get instructions.
+[53:54] I need to get instructions.
+[53:58] So, you can't make the instructions for the result of the instructions.
+[54:05] It's not the instructions.
+[54:08] You can't do it.
+[54:13] You can't do it.
+[54:17] Now, in assembly, you don't have lift conditions, you don't have loops, but you get them constructed.
+[54:25] You have to use whatever is available to assemble.
+[54:43] If you want to know about these instructions move, LDI
+[55:11] decrement and branch if not equal
+[55:16] pages 432, 433, 434
+[55:21] 432, 433, 434
+[55:27] right
+[55:27] now I will explain to you how to calculate
+[55:31] the delay of this loop
+[55:33] delay calculation
+[55:35] first you need to calculate the cycle time
+[55:38] we have already done that
+[55:39] 6.25 into 10 to the power minus 8
+[55:42] we have got it
+[55:43] we have already done it
+[55:45] then
+[55:46] calculate the number of clock cycles
+[55:50] now you know
+[55:52] cycle time for 1 clock cycle
+[55:54] if you know the number of clock cycles
+[55:56] spent by the loop
+[55:58] then you can calculate the deal
+[56:00] because you know
+[56:02] cycle time for 1 clock cycle
+[56:04] if you know the number of clock cycles
+[56:05] multiply the number of clock cycles
+[56:07] by cycle time you will get the deal
+[56:09] calculate number of clock cycles starting from the most inner loop
+[56:15] we go to the most inner loop
+[56:19] this is the most inner loop
+[56:23] in the most inner loop, loop 3
+[56:28] that is the label
+[56:30] Pick R80
+[56:33] We have any value if not equal to 3
+[56:38] Let's assume R13 is Z
+[56:44] Let's assume
+[56:46] Some register R13 means Z
+[56:49] And the value of Z
+[56:53] Value of Z can vary between 0 to 55
+[56:58] Z is a register which can have 0 to 255 any value because 8 bit
+[57:05] 8 bit register
+[57:06] so let's assume
+[57:10] let's assume
+[57:16] R 18 initialized with Z
+[57:19] we put Z to R 18
+[57:23] right
+[57:24] so
+[57:25] R18 can have
+[57:29] any value between
+[57:31] 0 to Z
+[57:32] when you decrement
+[57:35] the value of R18
+[57:37] R18 can get
+[57:39] any value between
+[57:41] 0 and Z
+[57:43] initially this is Z
+[57:45] first time when you decrement
+[57:47] it becomes Z minus 1
+[57:49] second time it becomes Z minus 2
+[57:51] [unclear — Sinhala / crosstalk]
+[58:21] 0 then? Nah. Ok. Decrement? 0. 0 then? Yes. 4.
+[58:30] Do you think the values are common? 2, then, then, then, then. Any value between 0 and 0.
+[58:39] you get it to run out. Now if the value is 3, let's assume value is 3, increment it becomes 2, 2 is not equal to 0, look.
+[58:53] Decrement 1, 1 is not equal to 0
+[58:56] Look
+[58:57] Decrement 0, 0 equals 0
+[59:01] 4
+[59:03] How many i directions?
+[59:05] If this is 3
+[59:07] If the register value is 3
+[59:09] How many i directions?
+[59:12] Decrement 3
+[59:13] This is 3
+[59:15] Decrement 2, 2 not equal to 0
+[59:19] 1 i direction
+[59:21] 1 aggregation
+[59:23] Then 2 decrement 1
+[59:26] 1 is not equal to 0
+[59:28] 2nd aggregation
+[59:30] 1 decrement 0
+[59:33] 0 equals to 0
+[59:35] 4 through
+[59:36] How many aggregations?
+[59:38] If the value of register is 3
+[59:41] 2 aggregations
+[59:42] If the value of register is 4
+[59:44] 3 aggregations
+[59:46] If the value of register is 5
+[59:49] 4 aggregations
+[59:51] If the value of register is Z, how many iterations?
+[59:56] Z minus 1 iterations
+[59:59] Z minus 1 iterations
+[1:00:02] Z minus 1 iterations
+[1:00:03] Each iteration, how many clock cycles are consumed?
+[1:00:10] 1 clock cycle for decrement, 2 clock cycles for branch
+[1:00:14] 1 clock cycle for decrement, 2 clock cycles for branch
+[1:00:19] that means
+[1:00:21] 1 plus 2
+[1:00:23] from cycles
+[1:00:24] multiplied by z minus 1
+[1:00:28] time for the
+[1:00:29] iterations
+[1:00:30] there is not only time for the iterations
+[1:00:33] 1 fourth
+[1:00:35] 1 fourth
+[1:00:37] for that how many of cycles
+[1:00:39] 1 for the increment
+[1:00:41] 1 for the branch
+[1:00:43] 4 through 1
+[1:00:44] plus
+[1:00:47] 1 plus 1
+[1:00:49] How many fold-throughs? One.
+[1:00:53] Fold-through Vyakro, Vyakro, Vyakro.
+[1:00:55] That's the equation we want.
+[1:00:57] Me loop pekatiya nabila.
+[1:00:59] Me loop pekatiya nabila.
+[1:01:01] Ekka dana dekka vending karatroni zh.
+[1:01:04] Minus one plus one plus one multiplied by one.
+[1:01:09] Can you understand?
+[1:01:10] There is nothing here.
+[1:01:12] Now you can put anywhere in Loo, is it?
+[1:01:15] and get the time delay for this loop
+[1:01:20] What loop is going on?
+[1:01:23] Is that clear?
+[1:01:25] No, no, no.
+[1:01:26] You can see it all of your time.
+[1:01:28] You can see it all decremented or decremented.
+[1:01:30] Now, this is the same as the address.
+[1:01:34] Already addresses.
+[1:01:36] Now, this is decremented or here.
+[1:01:39] This is the same as the address.
+[1:01:42] There is no further addresses.
+[1:01:44] Then, what is the decrement of B?
+[1:01:47] The two of us are 4 through.
+[1:01:50] If we are decrement of a clock cycle,
+[1:01:54] we are going to take a branch of a clock cycle,
+[1:01:57] we are going to have a Z-1.
+[1:02:01] We are going to have a iteration of Z-1.
+[1:02:05] What is this?
+[1:02:07] This is 4 through.
+[1:02:09] We are going to have a decrement of a 4 through.
+[1:02:13] What is the difference between the two and the two?
+[1:02:16] There are many people who have completed complete life.
+[1:02:19] No? No? No?
+[1:02:21] No? No?
+[1:02:22] No?
+[1:02:23] If nothing be known, this is a very important calculation.
+[1:02:27] Anybody can use delay function.
+[1:02:30] But if somebody asks to implement delay function, you should know this.
+[1:02:34] How do you delay function?
+[1:02:36] I don't want to get it done.
+[1:02:38] How do you delay this?
+[1:02:40] Ideally you should be able to develop libraries
+[1:02:43] Now even as a Arduino user you can contribute to the community
+[1:02:49] Like videos, you can contribute to the community
+[1:02:52] All of our students most of them are investors
+[1:02:55] Young investors, they give up libraries
+[1:02:58] For purchase libraries
+[1:03:00] You give up libraries, you should not
+[1:03:03] 1 plus 1
+[1:03:04] 1 plus 1
+[1:03:05] You make a 4th row
+[1:03:06] You can see the clock cycle.
+[1:03:11] You can see the clock cycle.
+[1:03:15] What do you do?
+[1:03:18] 1 plus 2, make it a clock cycle.
+[1:03:22] Make it a clock cycle.
+[1:03:26] Make it a clock cycle.
+[1:03:30] I have a very good time, I have a right- let you go, I have a really good time, I have
+[1:03:32] a really good time, I have a really good time, I have a really good time, I have a really
+[1:03:32] good time, I have a really good time, I have a really good time, I have a really good time,
+[1:03:33] I have a really good time, I have a really good time, I have a really good time, I have
+[1:03:33] a really good time, I have a really good time, I have a really good time, I have a really
+[1:03:33] [unclear — Sinhala / crosstalk]
+[1:04:04] I do.
+[1:04:05] I have a more for a more.
+[1:04:06] I have a more.
+[1:04:06] I have a more.
+[1:04:06] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:07] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a more.
+[1:04:08] I have a very good time, to be that, the right.
+[1:04:10] I have a more of a morejy-dly,
+[1:04:11] the one to the one,
+[1:04:12] the one.
+[1:04:12] I have a really good time,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:13] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:14] the one,
+[1:04:15] the one,
+[1:04:15] the one,
+[1:04:15] the one,
+[1:04:15] 
+[1:04:15] the one,
+[1:04:15] 
+[1:04:15] 
+[1:04:15] You have the full keyboard, you add the light.
+[1:04:27] Try to include the delay.h.
+[1:04:30] Delay.h.
+[1:04:32] The delay.h.
+[1:04:35] The delay.h.
+[1:04:36] The delay.h.
+[1:04:37] The delay.h.
+[1:04:39] The fcpu is a new car.
+[1:04:41] It is a 2.5mm delay, so the CPU is 1.0 MHz
+[1:04:49] It is a frequency of CPU, it is 1 MHz
+[1:04:56] It is a frequency of CPU, so it is 1 MHz
+[1:04:58] It is a frequency of CPU, so it is 1 MHz
+[1:05:00] It is a frequency of CPU, so it is 1 MHz
+[1:05:02] You have to give that 20 MHz to the CPU
+[1:05:04] So then the library uses the tarabita, right, FCDU and accordingly it does the calculations.
+[1:05:12] Then work, oh is there in Arduino you can't see.
+[1:05:15] They have no, you don't know, you are in a library, Carvali, or the Arduino.
+[1:05:21] Right, because they have developed ecosystem very friendly and very perfectly.
+[1:05:26] As a result you get the result.
+[1:05:29] But if you really want to contribute to them, things like the library kind of, you don't have to, you don't know the knowledge.
+[1:05:37] Now when you start with sea, because even after it is about the 60, if you go to the library you can see all the sea boats.
+[1:05:47] I have a 2-0, the one I have.
+[1:05:48] I have a don.
+[1:05:48] I have a v�, a s.e.b.
+[1:05:48] I have a s.e.b.
+[1:05:49] I have a s.e.b.
+[1:05:49] I have a s.e.b.
+[1:05:49] I have a s.e.b.
+[1:05:50] to a s.e.b.
+[1:05:50] to a s.e.b.
+[1:05:50] to a s.e.b.
+[1:05:50] to a s.e.b.
+[1:05:50] the s.e.b.
+[1:05:50] the s.e.b.
+[1:05:50] s.e.b.
+[1:05:50] s.e.b.
+[1:05:50] ww.
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] 
+[1:05:50] I have a very good one, to be you.
+[1:05:51] I have a very good one, to be a very good one, to be a very good one, to be a very good one,
+[1:05:52] [unclear — Sinhala / crosstalk]
+[1:05:55] to be a very good one, to be a more that, to be a very good one, to be a look,
+[1:05:56] [unclear — Sinhala / crosstalk]
+[1:06:26] actual implementation in C.
+[1:06:30] Then you will realize, ah, C is what's going behind the C.
+[1:06:38] [unclear — Sinhala / crosstalk]
+[1:06:44] You can't see it, you can't see it.
+[1:06:46] You can't see it, you can't see it.
+[1:06:49] You have to render the CPU scheme
+[1:06:53] Nothing to name a library function cannot drop
+[1:06:56] What else?
+[1:06:57] Then I'm going to
+[1:06:58] I don't want to get a program
+[1:07:00] Right
+[1:07:01] If the inner loop is clear
+[1:07:03] Then let's go to the next outer loop
+[1:07:06] This is the most inner
+[1:07:08] Then let's go to the next outer loop
+[1:07:10] Right
+[1:07:11] Now inner loop delay we calculate C
+[1:07:14] Right this is here
+[1:07:16] This means number of iterations
+[1:07:18] This is number of fold-through
+[1:07:21] Fold-through a type
+[1:07:23] Number of iterations is at minus 1
+[1:07:26] One iteration
+[1:07:28] One decrement statement
+[1:07:30] One decrement instruction
+[1:07:33] One BRME instruction
+[1:07:35] BRME instruction takes 2 clock cycles
+[1:07:37] Decrement takes 1 clock cycle
+[1:07:39] So number of iterations is at minus 1
+[1:07:42] Then the fold-through part
+[1:07:45] One decrement, one fold-through
+[1:07:48] to DRI right then all together C now this is the next outer loop now we use C now I have
+[1:07:58] hidden the code of the C because we don't need because we have already calculated the
+[1:08:02] C then this is the outer loop right then DI R18Z we assign Z to R18 then C times of delay
+[1:08:16] decrement R17 and loop 2
+[1:08:20] V R N E loop 2
+[1:08:22] right
+[1:08:23] let's assume
+[1:08:25] the value in this R17 is Y
+[1:08:29] let's assume
+[1:08:31] the value in R17 is Y
+[1:08:33] now the equation
+[1:08:35] 1 for LDI this instruction 1
+[1:08:38] 1 clock cycle
+[1:08:39] right this instruction 1 clock cycle
+[1:08:41] 1 clock cycle for LDI
+[1:08:43] low db2
+[1:08:44] Then C, C means delay for the inner loop, C
+[1:08:50] 1 for decrement, 1 for decrement, 1 for branch, 2 for branch, sorry, 2 for branch
+[1:08:58] How many offset iterations? Y minus 1 plus final 4th row, final 4th row, 1 for LDI, 1 for C
+[1:09:10] C types of delay for the inner loop
+[1:09:15] one for decrement, one for fold
+[1:09:19] how many such fold rules?
+[1:09:21] one
+[1:09:22] can you understand?
+[1:09:23] there is nothing right?
+[1:09:25] just there
+[1:09:26] right
+[1:09:27] right
+[1:09:28] now
+[1:09:30] we are going to calculate the outer loop
+[1:09:33] next outer loop
+[1:09:34] now delay for this inner loop C
+[1:09:37] Now for this LDI is structured 1 clock cycle. Then linear loop is executed C amount of time. Then decreable statement is executed using equals 1 clock cycle.
+[1:09:52] and the branch if not equal branch in part loop 2 plus i.
+[1:09:59] How many such iterations?
+[1:10:03] If R is in assigned with Y, Y minus 1 times plus.
+[1:10:11] One for the ideal, one for C for inner loop, one for decrement and one for fall through.
+[1:10:20] How many such co-throughs? One. Okay? So last three years I gave a delay calculation for the exam.
+[1:10:30] I have delayed calculation for the exam. I have delayed calculation for the exam.
+[1:10:34] I have to say that it is not easy. This is not easy. You have to be very careful.
+[1:10:41] Now this is the thing, at the university level the idea is not to use somebody else's life.
+[1:10:50] You should be able to develop pure own life.
+[1:10:53] How can you live a life?
+[1:10:55] You can't call it in your own life.
+[1:10:57] You can't call it in your own life.
+[1:10:59] So life may develop, tool may develop.
+[1:11:03] I think they are too loose anyway.
+[1:11:06] Even small children are tools users.
+[1:11:11] So, you should be able to develop a library, you should be able to contribute to the open source community.
+[1:11:24] That's why I am not doing it.
+[1:11:26] No, there are library tool developers, library developers, they are not developing.
+[1:11:30] Even the Arduino platform developed by your master's students.
+[1:11:34] A Mexican, a Mexican I think better than his name.
+[1:11:37] Even today if you go to the installation folder, there are some libraries, Wire, Wire, Wire Digi... Wire library.
+[1:11:46] Right, it's called, Wire, Wire, it's called, I can't say, some Wire, oh Wire.
+[1:11:52] There's a library, the original library is still with the installation.
+[1:11:56] a master student
+[1:11:57] even if you are not familiar
+[1:12:00] you have to have this knowledge
+[1:12:01] at the lowest level it works
+[1:12:07] right
+[1:12:09] so here I use Z, H, Y
+[1:12:12] like letters
+[1:12:13] then you can use this as a generic
+[1:12:16] so you can put anywhere you should say that Y you can do the calculations
+[1:12:20] right
+[1:12:21] then the most outer loop
+[1:12:23] We started with most inner loop then we came to the outer loop then most outer loop.
+[1:12:29] Right. Now this is the inner loop B and this is the most outer loop.
+[1:12:35] The time for that A we are going to calculate.
+[1:12:39] Right let's start. 1 for LDI, 1 clock cycle for LDI.
+[1:12:44] Then for the inner loop time consumption B and 1 clock cycle for decrement.
+[1:12:52] increment, 2 clock cycles for branch, how many such iterations? x minus 1, x means the
+[1:13:01] value initialized to r60, x means the value initialized to r60. Then the fall through
+[1:13:09] part, 1 clock cycle for LDI, then time for inner loop D, then 1 clock cycle for decrement,
+[1:13:19] 1 clock cycle for 4 through
+[1:13:22] How many such 4 throughs? 1
+[1:13:25] Right. I am calculating the number of clock cycles
+[1:13:29] Number of clock cycles
+[1:13:31] Right. Then initialization statement of RCC
+[1:13:37] Right. Number of clock cycle for the entire loop
+[1:13:42] If you call it 10, N equals 1 plus A
+[1:13:47] A this should be N not A
+[1:13:49] There is A
+[1:13:51] There is A right loops
+[1:13:53] A one this one clock cycle
+[1:13:55] from this statement 1 plus A
+[1:13:57] is the number of clock cycles
+[1:13:59] 1 plus A is the number of clock cycles
+[1:14:01] If you know the number of clock cycles
+[1:14:03] you can calculate the delay
+[1:14:05] How?
+[1:14:07] Type for one clock cycle
+[1:14:09] multiplied by number of clock cycles
+[1:14:11] Type for one clock cycle multiplied by
+[1:14:13] number of clock cycles
+[1:14:15] Right. Now the question is x, y, z.
+[1:14:19] Question is x, y, z.
+[1:14:21] Right. Let's go back to our original code.
+[1:14:25] x is 41.
+[1:14:27] Right. No doubt. x is 41.
+[1:14:29] y is 255.
+[1:14:32] And z is 255.
+[1:14:34] x is 41.
+[1:14:36] y is 255.
+[1:14:37] z is 255.
+[1:14:39] Right. Then look. Let's go back to our calculation.
+[1:14:42] Right. According to our calculation,
+[1:14:44] Can you calculate C?
+[1:14:46] Z is 255
+[1:14:48] Z is 255
+[1:14:49] Can you calculate C?
+[1:14:51] Then can you calculate B?
+[1:14:53] Then can you calculate A?
+[1:14:56] And likewise can you finally come to delay?
+[1:14:59] T you know already
+[1:15:01] 6.25 multiplied by T to the power A
+[1:15:03] Can you calculate the delay?
+[1:15:06] X is 41
+[1:15:07] Y is 255
+[1:15:10] Z is 255
+[1:15:11] Y and Z
+[1:15:12] the maximum value that they can have 25
+[1:15:15] x is 41
+[1:15:16] what is the value
+[1:15:18] number of clock cycles for the c
+[1:15:20] how many clock cycles
+[1:15:21] 764
+[1:15:24] 764
+[1:15:26] c is 764
+[1:15:29] then b
+[1:15:29] what is the value
+[1:15:33] for b
+[1:15:33] 195000
+[1:15:39] 195000
+[1:15:40] in?
+[1:15:40] 
+[1:15:40] you.
+[1:15:40] I.
+[1:15:40] I.
+[1:15:40] 
+[1:15:40] I.
+[1:15:40] I.
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] I.
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] I.
+[1:15:40] 
+[1:15:40] I.
+[1:15:40] 
+[1:15:40] 
+[1:15:40] I.
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] I.
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:15:40] 
+[1:16:10] 29,562
+[1:16:12] 562, right
+[1:16:14] Then the ratio A
+[1:16:16] A plus 1 means 563
+[1:16:18] Right, that means
+[1:16:20] Number of clock cycles
+[1:16:21] 8,029,563
+[1:16:26] Number of clock cycles
+[1:16:27] If you know, type of clock cycle
+[1:16:30] 6.252
+[1:16:32] 10 to the power minus 8
+[1:16:33] Multiply
+[1:16:35] So exam you can
+[1:16:38] Do calculators, don't worry
+[1:16:39] You can have a tablet as soon.
+[1:16:41] You can have a tablet as soon.
+[1:16:43] I have a tablet as soon as you can.
+[1:16:45] I have to go to the house and you can go to the house.
+[1:16:47] 3 hours.
+[1:16:49] You can do it like that.
+[1:16:51] What is the time?
+[1:16:53] What is the time delay?
+[1:16:55] What is the time delay?
+[1:16:57] Almost half a second.
+[1:16:59] Right, almost half.
+[1:17:01] Right.
+[1:17:03] Now can you understand?
+[1:17:05] Right, how to get time delays?
+[1:17:07] legs. Right. Then, right. I hope you have downloaded this book. This book. Now, you
+[1:17:16] know what I have a hijack. No. No. No. Here we have. This one.
+[1:17:24] Chapter 3
+[1:17:29] Chapter 3
+[1:17:31] You can do that
+[1:17:36] If you have competing power
+[1:17:39] Now manually you feel this is
+[1:17:42] Actually what we do is
+[1:17:45] We write an algorithm that when you get the
+[1:17:48] Specified time all these values are
+[1:17:51] Calculated behind the scene
+[1:17:53] the scene there's a program for that without going to that that algorithm i explained to you
+[1:18:01] how this happens there's a algorithm function when you give the time
+[1:18:07] so what are the values for x and y and z and not only three x and y there may be more in a loops
+[1:18:14] if you need more time delay right and you if you need a precise time the algorithm is more complicated
+[1:18:21] This is a very simple delay loop but the actual delay loop is more complicated and there are
+[1:18:28] more invested loops. I just wanted to give you the idea and I will show you the path to
+[1:18:34] see all this source code, open source.
+[1:18:37] You can do it for the enjoyment of it.
+[1:18:40] You can do it for enjoyment.
+[1:18:45] You can do it for the cure.
+[1:18:49] Chapter 3. Branch, call and time.
+[1:18:55] For your leisure reading.
+[1:18:58] Chapter 3.
+[1:19:00] You know the examples.
+[1:19:02] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] I have a no-jad
+[1:19:03] 
+[1:19:03] I have a no-jad
+[1:19:02] I have a no-jad
+[1:19:02] I have a no-jad
+[1:19:02] 
+[1:19:02] I have a no-jad
+[1:19:02] 
+[1:19:02] 
+[1:19:02] 
+[1:19:02] 
+[1:19:02] 
+[1:19:02] 
+[1:19:02] 
+[1:19:02] 
+[1:19:02] If you have the same example, you can try to get a look at the exam.
+[1:19:10] If you have the same time, you can correct it.
+[1:19:15] You can do it with endless loops.
+[1:19:18] You know the examples.
+[1:19:20] What is it?
+[1:19:21] I have to ask you to ask you to ask me to ask you to ask me.
+[1:19:24] I will tell you to ask you to ask me.
+[1:19:25] This is a very good thing.
+[1:19:26] I will ask you to ask you to ask me.
+[1:19:28] Now in a 15 week semester, actually this time no 15 week, 10 weeks do we understand?
+[1:19:33] We can't do much. What we can do is we can only lay a foundation and show you the paths, directions and guide.
+[1:19:42] Because the university education is that capacity.
+[1:19:47] Because the day you pass out, there will be entirely different.
+[1:19:52] Now today you learn Java but when you pass up there will be no demand for Java.
+[1:19:58] That happened when we were students. We learned FoxPro.
+[1:20:02] Have you heard about that time? There was a language called FoxPro 5% for FoxPro.
+[1:20:08] So when we were in the second year like you, we checked the job advertisement in the newspapers
+[1:20:15] and there was a big demand for FoxPro programs.
+[1:20:18] I was telling at that time. So we immediately, now in the university we were taught only Pascal then
+[1:20:25] Yes only the only programming language is Pascal at that time we were taught.
+[1:20:30] That is the only programming language a lecturer or a teacher taught to me Pascal.
+[1:20:36] But I don't teach Pascal I teach other languages. Because I learnt Pascal very well. That's the reason.
+[1:20:41] We learned one language, we learned it. So we immediately realized the demand in the software industry and we wanted to learn from school.
+[1:20:53] Unlike today, there were no e-books. Internet was there but no e-books. Hard copy books were available only few places. One place was Robert Adjesus for ID books.
+[1:21:07] Now they don't do ID books but at that time they had a big collection of ID books.
+[1:21:13] Then Foxpro the book, I can still remember that book.
+[1:21:17] Teach yourself Foxpro in 21 days.
+[1:21:19] Sam's publication.
+[1:21:20] It was an expensive book even at that time it was 2000 rupees.
+[1:21:24] About 2000.
+[1:21:25] We had no money.
+[1:21:27] We had a collection.
+[1:21:29] But we all sent that collection at that.
+[1:21:32] To buy one book.
+[1:21:34] So I went there, got a book and started learning FoxPro. Then we learnt FoxPro. Unfortunately when we came to the fourth year, no demand for FoxPro. The demand was VisualPaste. So the department asked us to do the final year project using VisualPaste.
+[1:21:53] Come on.
+[1:21:54] I will be able to learn how to learn.
+[1:21:58] Then we again started learning Visual Basic.
+[1:22:01] Got another book and started learning Visual Basic and did our final project.
+[1:22:06] Then I, my project was the best project at that year, so I got the chance to join the department as an assistant lecturer the following year.
+[1:22:16] and then when I got joined to the department, the head of the department at that time was Professor Munasim.
+[1:22:23] So he asked me to teach visual programming for the students.
+[1:22:28] So I was very happy because I know visual basics very well, I need for my project very well.
+[1:22:34] So I said okay I will teach, I will do that much.
+[1:22:38] But two weeks or no actually one month, one month before the start of the semester he told me not Visual Basic now you have to teach visualbasic.net and I checked books, no books available. I told him I don't have any reference to it.
+[1:22:58] He said don't worry one of my friends coming from India, I'll ask him to bring a book for you.
+[1:23:03] Two weeks till I got a book, programmer to programmer, visual basic taught me.
+[1:23:10] Then he asked me to go through the book and teach. So I did that.
+[1:23:15] In that, languages or whatever the technology today you learn.
+[1:23:19] In Dhandapa when you pass out it will be there. Very hard life.
+[1:23:24] but the concept would remain same
+[1:23:27] now if you got programming what are the concepts?
+[1:23:30] Selection sorry sequence line after line execution
+[1:23:35] selection that means condition true now one thing false now another thing
+[1:23:41] repetition right precondition repetition you check the condition at the top
+[1:23:46] post condition repetition you check the condition at the bottom
+[1:23:51] multi-base election switch case multi-base election
+[1:23:55] function calls function returns parameter passing value parameters
+[1:24:02] reverence parameters right then static binding dynamic binding dynamic
+[1:24:09] library static libraries what were the language those things are
+[1:24:13] same you will get the same thing in different syntax
+[1:24:17] different flavors, you know, you can take it all, that's it.
+[1:24:21] If you know one language, then you can, it's just a matter of time to learn another language.
+[1:24:27] But unfortunately most students, they don't get this advice.
+[1:24:33] Now I have my experience, one student a couple of years ago, when he was in the internship,
+[1:24:40] I was the academic advisor, so I occasionally call my internship students
+[1:24:46] and check whether they are doing well or whether they have any problems in the industry.
+[1:24:50] And when they do internship. Now when I called that student, he was very unhappy. I asked why?
+[1:24:58] He said, so I am doing internship with another set of students from Moradu and UCSC.
+[1:25:06] They have done that language, this language, we have done this. We have done all the Java and blah blah blah.
+[1:25:14] They asked us to do this project and I am the one who doesn't know about this language.
+[1:25:19] I said okay, you know if you know programming just a couple of hours you can learn it.
+[1:25:24] But we were not taught. His answer is we were not taught at the university.
+[1:25:29] But if you know programming why can't you learn that language?
+[1:25:33] Can we teach everything in the university, three or four degree programs? No.
+[1:25:38] Even if we teach everything, the day you pass up there will be anything.
+[1:25:43] I'm going to put on the industry now, I'm going to put on the industry now, the industry is now.
+[1:25:46] No pass out, no, I'm going to get it.
+[1:25:49] You should be able to adapt. That means you need to develop your capacity, caliber.
+[1:25:55] Don't stick to that technology. You must learn concepts.
+[1:26:02] If you know the concepts, then you can adapt any time. You can adapt to anything.
+[1:26:08] Go ahead and cut from it.
+[1:26:11] I learnt big microcontrollers, I learnt embedded systems program with big microcontrollers,
+[1:26:16] but today I will teach the big microcontrollers, I didn't know why.
+[1:26:20] That is most popular and widely available.
+[1:26:23] I'm not a big one under the ground, much easier for me.
+[1:26:27] Because the big architecture, I am very familiar with that.
+[1:26:32] I can develop my water, my hair, my inner hair.
+[1:26:36] Now the demand is so different.
+[1:26:38] The same thing will happen the day you pass.
+[1:26:42] The pastor will tell you, hey, Vagim, you will take it.
+[1:26:46] Okay, right. Now is that clear?
+[1:26:50] Then, now we need to call this delay loop as a function in two places in our algorithm.
+[1:27:01] one after the turning on of the light and another time after turning off the light.
+[1:27:08] The same code. One option is you can put the same code in two different places.
+[1:27:14] But that's not a good way. You can have this as a subroutine and call it whenever you need.
+[1:27:22] Right. Call in subroutine. Exeguate the instruction for delaying half a second as a subroutine.
+[1:27:29] use call instruction call delay that is the function delay is the subroutine name call delay
+[1:27:39] right then use return instruction to return from subroutine right and this is your delay subroutine
+[1:27:50] Subroutine name that's a label, right? Your subroutine, the delay loop, final return.
+[1:27:58] Now when you call delay, the execution jumps to the label and all these are executed again and again and again for half a second.
+[1:28:08] After that, return, go back to the calling point. Can you understand?
+[1:28:14] They are not. They are not very happy. These are the strategies in together.
+[1:28:19] All these things are very clear to you.
+[1:28:23] Atta miyukkuma laya greek. Have a question.
+[1:28:27] So this is the return. Return back to the calling point. Right.
+[1:28:32] Right. If you go to 433 page in Rashiq, you can read about call and return.
+[1:28:40] Call and return. This question. Call and return.
+[1:28:42] What? That's the question.
+[1:28:46] What is the delay?
+[1:28:48] No, no, sir.
+[1:28:49] You're not going to get the delay.
+[1:28:51] It's not going to be a delay.
+[1:28:53] I have a loop.
+[1:28:55] No.
+[1:28:56] I have a loop.
+[1:28:58] I have a loop.
+[1:29:00] I have a loop.
+[1:29:01] I have a loop.
+[1:29:03] I have a loop.
+[1:29:05] I have a loop.
+[1:29:07] I have a loop.
+[1:29:09] I have a loop.
+[1:29:11] Now, what is the address of next instruction?
+[1:29:18] Address of next instruction.
+[1:29:21] What is the address of next instruction?
+[1:29:24] What is the address of next instruction?
+[1:29:27] Turn on.
+[1:29:29] Turn on, delay. Turn off.
+[1:29:33] I turn off.
+[1:29:35] This is a statement.
+[1:29:37] Take a loop.
+[1:29:39] Where set ticket everything was happening?
+[1:29:41] Right.
+[1:29:43] Now we need to turn off the LED.
+[1:29:45] Now we turned on the LED.
+[1:29:48] We delayed half a second.
+[1:29:50] Now turn off the LED.
+[1:29:51] Right.
+[1:29:52] So we use clear bit in IEO register instruction.
+[1:29:56] Not set bit.
+[1:29:58] Now clear bit.
+[1:29:59] Set means right value what?
+[1:30:01] Clear means right value C1.
+[1:30:03] CBI.
+[1:30:05] Clear bit.
+[1:30:07] In our EO register. Which port? Port B.
+[1:30:11] Port B. Which bit?
+[1:30:15] Bit 0. Clear the bit 0.
+[1:30:19] Clear the value of bit 0. This is what happens.
+[1:30:23] Now the value of port B bit 0 is 1.
+[1:30:27] That's why the LV data is not. The logic height 5 volts.
+[1:30:31] Now you clear this bit.
+[1:30:35] You clear this bit when you run this table.
+[1:30:37] Right, you clear the bit.
+[1:30:38] See what happens.
+[1:30:40] Turned off.
+[1:30:41] Then again, have a second delay.
+[1:30:43] Call the delay version.
+[1:30:45] Right.
+[1:30:46] And you want to perform the task indefinitely.
+[1:30:51] On delay off, delay not, delay off, delay indefinitely.
+[1:30:57] Right.
+[1:30:58] Perform the task such as change the state of pin 0, port B, Hull, turn on the LED.
+[1:31:04] delay 520 seconds, change the state of pin 0 of code below, turn off the LED and again delay 520 seconds indefinitely.
+[1:31:16] You need to do this indefinitely. Right, how do we do that? We use the JUMP instruction and this is the code.
+[1:31:27] Start. Turn on the LED delay. Turn off the LED delay. Then jump to start again. And this code runs again and again indefinite.
+[1:31:41] Right, infinite loop. We need infinite loop. Without infinite loop, we can't prevent execution fallout. Now we have prevented execution fallout. After you come to the last statement, you again go to the first statement. Because there is no operating system to pass the tempo.
+[1:32:03] Ok, right. Now I will show you the complete program. Can you understand this? This is the complete assembly program. So, the latter part you can see the delay loop. This is the delay loop. This is the loop, sorry, delay subroutine.
+[1:32:22] Delay subroutine, delay function, right?
+[1:32:25] And this is the return statement
+[1:32:27] And this is the main program
+[1:32:29] Start of the main program
+[1:32:31] Right, end of the main program
+[1:32:33] Again go to start
+[1:32:34] And this is the statement to configure
+[1:32:37] PB0 as output P
+[1:32:40] Can you understand this?
+[1:32:42] What do you mean?
+[1:32:44] We did not have to configure
+[1:32:46] We did not have to configure
+[1:32:48] Hmm, not right?
+[1:32:50] Is it a call current?
+[1:32:53] It's a work cycle.
+[1:32:55] You have a call statement clock cycle.
+[1:32:59] You have a return statement clock cycle.
+[1:33:02] We say that you have clock cycle 3 or 4.
+[1:33:05] So, what is the current?
+[1:33:08] Precisely calculate.
+[1:33:10] If you have a clock cycle,
+[1:33:12] 6.25 multiplied by 10 to power 8.
+[1:33:18] I have a time to make a time, I have a time.
+[1:33:20] If you have a mistake, you can use a misted loop.
+[1:33:27] If you have a full run, you can use a loop to make a loop.
+[1:33:33] It's a lace, a crude method. Easy to understand.
+[1:33:39] If you have small loops, you can use a misted loop.
+[1:33:45] How do you use it?
+[1:33:47] How do you use it?
+[1:33:49] Is it constant value?
+[1:33:51] Is it constant value?
+[1:33:53] How do you use it?
+[1:33:55] No, it's very accurate.
+[1:33:57] That's what you use.
+[1:33:59] That's what you use.
+[1:34:01] That's what you use.
+[1:34:03] Okay? Right.
+[1:34:05] Now, we have the source code.
+[1:34:07] Then we need to
+[1:34:09] we need a code editor
+[1:34:11] to type this code.
+[1:34:13] Then once you have the code editor, you need an assembler to assemble the code. Convert the code into hex file.
+[1:34:22] Then, if there are errors to debug, you need a debugger to debug your code.
+[1:34:29] Finally, once everything is ready, you need to upload the code to microcontrollers wrong.
+[1:34:36] So you need a code editor, you need an assembler, you need a debugger, you need an uploader. That means you need integrated development environment IDE. So there is an IDE from manufacturer of the microcontroller Atmel Studio.
+[1:34:55] Right, so in the Atmel Studio you can put the breakpoints. Atmel Studio is similar to Visual Studio. Why? They have used the Visual Studio shell to develop this.
+[1:35:09] Now you are familiar with issue of studio because you need C sharp proof. This must be very familiar. This is similar to issue of studio. You have the solution explorer, you have the properties window and all these things are available.
+[1:35:25] Right, right. This is free. Free tool. But this is little bit bulky. Yeah, this requires about 800 MHz hard disk space and this calcium is little bit more.
+[1:35:40] Don't try to run other bulky programs simultaneously with this
+[1:35:46] Like Photoshop kind of programs
+[1:35:48] I think it is very different
+[1:35:50] Ok
+[1:35:51] Then
+[1:35:52] How to use this tool?
+[1:35:54] This idea, this is the way
+[1:35:56] Creating an assembly project similar to Visual Studio
+[1:36:00] So you put new project
+[1:36:02] And then you get this familiar dialog box
+[1:36:06] New project dialogue works similar to show studio where you select
+[1:36:11] Right?
+[1:36:12] Assembler
+[1:36:14] And AVR Assembler project
+[1:36:18] And give a name for your project, this is the path
+[1:36:21] Where the project is created
+[1:36:23] And the solution name, same name
+[1:36:26] Okay
+[1:36:27] If you are going to use C, C++ then you have to select this
+[1:36:30] Right?
+[1:36:31] Even Arduino codes you can write in this editor
+[1:36:35] I'll come to that later
+[1:36:36] This is a professional development tool, not like Arduino IDE.
+[1:36:41] Professional development tool.
+[1:36:42] It has many features.
+[1:36:44] Then, when you click OK, you get this dialog box.
+[1:36:49] It asks you to select the device.
+[1:36:52] To generate the code, the required code, it means to know which microcontroller that you use.
+[1:37:00] So among the families, where is this AT tiny, AT mega, X mega, right, various families, select AT mega. And then from AT mega family, select AT mega 3 to AT. Your device.
+[1:37:18] Now my colleague
+[1:37:20] And click OBI
+[1:37:21] Right
+[1:37:22] Then you get this type the OBI
+[1:37:25] Right
+[1:37:26] Now
+[1:37:27] When you look at the solution explorer
+[1:37:29] And you will see
+[1:37:32] This is your main file
+[1:37:34] main.asm
+[1:37:35] And there is a
+[1:37:37] dependency file called
+[1:37:39] m328pdef
+[1:37:42] inc
+[1:37:42] That is a header file
+[1:37:45] That's a header
+[1:37:46] So it contains the definition of registers.
+[1:37:51] Now here you use port B, DDRB.
+[1:37:55] Their definition, what is DDRB?
+[1:37:58] DDRB, actually in the lowest level DDRB is specified using a memory address.
+[1:38:05] A register has a memory address.
+[1:38:07] Now for our convenience we use the label.
+[1:38:09] Label is a DDRB.
+[1:38:11] But lowest level DDRB is a memory address.
+[1:38:15] Register has a memory address.
+[1:38:16] That mapping, label and memory address, those mappings are in this file
+[1:38:23] So DDRB has many memory address, so map file and a file
+[1:38:27] So the file is to manually include, right?
+[1:38:29] We selected the correct device
+[1:38:32] In the device selection we selected the correct device, so to manually you got this file
+[1:38:36] That is the dependency file you have
+[1:38:39] So the device is going to be like syntax and going to be in a system
+[1:38:44] I have a very other one, the NM-A, a S-A, a A, a and a.
+[1:38:46] [unclear — Sinhala / crosstalk]
+[1:39:16] So that's why we need the device selection at the beginning.
+[1:39:19] Device selection in the lake.
+[1:39:21] Then the correct file is included.
+[1:39:24] Right.
+[1:39:25] Then we need to convert, assemble this source code into hex file.
+[1:39:32] Machine code.
+[1:39:34] Right.
+[1:39:34] For that building hex file, from the build menu select build solution.
+[1:39:41] Select the build solution.
+[1:39:42] When you build the solution, this is the output you get with the output window.
+[1:39:47] And with the output window you get, one build succeeded.
+[1:39:53] If there are errors, you get build not succeeded.
+[1:39:56] And errors are recorded.
+[1:39:57] If everything is okay, you get one build succeeded.
+[1:40:01] Write this message you will get.
+[1:40:04] And this.
+[1:40:06] Right.
+[1:40:07] This is the file you got.
+[1:40:09] and then if you go to the solution explorer and check output files
+[1:40:14] now in the output folder this is the dependency file include file
+[1:40:18] this is the source code file main.asm and in the output files folder you will see this file
+[1:40:25] blinkasm.x hexadecimal rotation
+[1:40:29] hex file this is the file you need to burn to ROM
+[1:40:34] This is the file you have to burn to flash to microcontroller's wrong.
+[1:40:39] This is the file you have to burn.
+[1:40:41] Up to this point, any question.
+[1:40:44] Assemblana method I know will succeed and one will fail.
+[1:40:49] Errors number zero.
+[1:40:51] Name a no nana. Assembl no nana.
+[1:40:55] Again, translation problem then run a method take.
+[1:40:58] But if the logic is wrong, you have to run and find it.
+[1:41:02] logical errors nobody can track
+[1:41:07] compile errors the software can track
+[1:41:11] if you have a software, you can use it
+[1:41:15] you can use it, you can use it
+[1:41:17] if everything is according to the syntax
+[1:41:22] if not, you will get errors
+[1:41:25] another thing is the size
+[1:41:28] out of 32 kilobytes
+[1:41:31] 32 kV
+[1:41:33] you have consumed
+[1:41:35] 38 bytes
+[1:41:37] the ROM microcontroller ROM
+[1:41:39] ATmega328P has
+[1:41:41] 32 kilobytes ROM
+[1:41:44] the ROM size is
+[1:41:45] 32 kilobytes
+[1:41:46] out of that this code takes
+[1:41:49] 38 bytes
+[1:41:50] bytes 38
+[1:41:51] you have 32 kilobytes
+[1:41:55] in the ROM so you can
+[1:41:57] and write large programs up to 32 kilobytes.
+[1:42:00] But this code has taken only 38 bytes.
+[1:42:04] Just to turn on an LED, turn off an LED every half a second.
+[1:42:08] Now, now you may have, those who are familiar with Arduino,
+[1:42:12] they have, they have a question.
+[1:42:15] Why do we bother about all these things with Arduino?
+[1:42:20] Digital write high, delay 500, digital write low, delay 500, done.
+[1:42:28] But when you compile the Arduino and you divide the hex file,
+[1:42:32] Arduino hex file takes about 936 files.
+[1:42:38] Now compare 38 and 936.
+[1:42:41] That's why in some situations, the only option is,
+[1:42:44] if you have a very tiny number,
+[1:42:47] I will show you even the performance.
+[1:42:49] I will have practical outcome to compare the performance
+[1:42:52] Performance achievement, Arduino versus other approaches
+[1:42:56] In some situations, if you have a very slow processor and tiny meter
+[1:43:03] but you want to do a big job
+[1:43:08] very humble hardware but you want to do a big job
+[1:43:12] If you have to do it, you will have to do it
+[1:43:14] and you will have to do it
+[1:43:16] then no other option, assembly is the same. If you have high performing hardware, then you can go for much friendly, convenient for hardware.
+[1:43:28] But if you don't have high performing hardware and you want to do a big job, then you have to achieve the performance from hardware.
+[1:43:39] Then assembly is the same.
+[1:43:41] Assembly is difficult, not very convenient, but look at it.
+[1:43:45] 38 points.
+[1:43:47] We will come to that comparison later.
+[1:43:51] Up to this point. Any question?
+[1:43:53] Do you think about it?
+[1:43:55] Do you think about it?
+[1:43:57] Do you think about it?
+[1:43:59] Stop it.
+[1:44:03] Do you think about it?
+[1:44:05] Do you think about it?
+[1:44:07] It's a delay.
+[1:44:08] Is it a card in order to see the card?
+[1:44:11] No, it's a serial money.
+[1:44:15] It's a serial money.
+[1:44:17] It's a serial money.
+[1:44:19] It's a serial money printer.
+[1:44:21] It's a time stamp.
+[1:44:23] It's a time stamp.
+[1:44:25] It's a time stamp.
+[1:44:27] It's a time stamp.
+[1:44:29] If you want to measure the time, then you have to use a oscilloscope.
+[1:44:33] There's a instrument called oscilloscope.
+[1:44:36] we have the LR
+[1:44:38] we have got to use it
+[1:44:40] A LR
+[1:44:42] A LR
+[1:44:44] checker
+[1:44:46] checker
+[1:44:48] checker
+[1:44:50] checker
+[1:44:52] checker
+[1:44:54] minimum
+[1:44:56] minimum
+[1:44:58] a hand
+[1:45:00] hand
+[1:45:02] 3
+[1:45:04] It's like a small TV, you can check the waveform.
+[1:45:08] It shows the voltage variation against the tie.
+[1:45:12] X axis is tie, Y axis is voltage.
+[1:45:16] So the voltage variation against the tie. We have it.
+[1:45:19] And we use it for this.
+[1:45:22] Example, we have to do this.
+[1:45:24] If you have a scope case, you can use it.
+[1:45:26] You can use it.
+[1:45:28] The waveform is not the same.
+[1:45:30] Right, then the next step is we need to flash this codex file into the ROM, the microcontroller's ROM.
+[1:45:44] That is called programming. Programming, it's hard day apologizing.
+[1:45:49] Right, we program, we have to program the microcontroller, not coding, hard day apologizing.
+[1:45:56] There are various options for hardware programming. Let's quickly discuss these various options available for hardware programming.
+[1:46:06] So one is you can use commercial off the shelf programmer from manufacture.
+[1:46:15] Commercial off the shelf. Commercial off the shelf programmer from manufacture.
+[1:46:21] Right, this one, commercial off the shelf program
+[1:46:25] This is called Atmel ISP
+[1:46:29] Atmel is the manufacturer, from manufacturer they have a program
+[1:46:33] Atmel ISP, ISP means
+[1:46:39] In system program
+[1:46:41] In system program
+[1:46:43] In system program, ISP, Atmel ISP
+[1:46:47] In system programmer means while the microcontroller in the circuit you can program it.
+[1:46:54] Because in the earlier days if you want to program the microcontroller you had to remove the microcontroller from the board.
+[1:47:02] Then you program and plug it again.
+[1:47:04] Now in the modern programmers you don't need to do that because they are in system programmers.
+[1:47:10] So while the microcontroller in the circuit board you can program it.
+[1:47:15] In the earlier days, in the 90s, you need to remove the microcontroller from board, program and then fix it again.
+[1:47:29] Right. Now this is a very convenient method at Mel ISP.
+[1:47:34] In the Arduino Uno board you can see this. There are 6 pins here.
+[1:47:39] whether you have seen, I don't know whether you have seen that
+[1:47:42] 6 pins are there in the Arino
+[1:47:44] which is called
+[1:47:46] ICSP
+[1:47:48] that didn't heard again ICSP
+[1:47:50] ICSP
+[1:47:52] ICSP
+[1:47:53] ICSP means in circuit
+[1:47:55] serial program
+[1:47:57] in circuit serial program
+[1:48:00] in circuit serial program
+[1:48:01] so that 6 pins
+[1:48:03] are to connect
+[1:48:05] this kind of
+[1:48:07] commercial off the shelf programmers. Now the commercial off the shelf programmer
+[1:48:12] connected to your computer using USB and you send the hex file from USB and the
+[1:48:20] USB and the hex file is programmed into the microcontroller through this ICSP
+[1:48:27] port. This is very convenient, reliable, USB supported, right? Everything is our
+[1:48:35] reliable, convenient, USB supported
+[1:48:38] only problem is expensive
+[1:48:41] little bit
+[1:48:42] it's about $60
+[1:48:43] not very expensive
+[1:48:47] but little bit expensive
+[1:48:48] alternative solutions
+[1:48:50] from aftermarket you can buy
+[1:48:53] or homemade
+[1:48:54] you can buy this kind of programs
+[1:48:57] aftermarket USB
+[1:48:58] from eBay
+[1:49:00] you can find this kind of
+[1:49:02] USB supported program
+[1:49:04] Then again using ICSP code you can program the hex pile into microbeamble.
+[1:49:11] So they are relatively cheap, convenient, not reliable as manufacturer's option but they are also good.
+[1:49:26] But if you try to make them at your home it's a little bit difficult because a lot of components
+[1:49:38] But you can at home you can have simple serial programmers
+[1:49:44] Serial programmer less components right you can program the microcontroller using serial
+[1:49:51] But unfortunately nowadays our computers don't have serial ports.
+[1:49:56] The other day I showed you a serial programmer, a programmer that I developed.
+[1:50:00] That is very easier to use. Serial programmers are very easier to use.
+[1:50:05] And very reliable and convenient to use.
+[1:50:08] They are all good points but unfortunately our laptops we don't have serial ports.
+[1:50:13] Sometimes they work, sometimes not reliable.
+[1:50:16] Because during the conversion, voltage conversions, they are many issues, not gathered.
+[1:50:22] But if you have serial port, some desktops you have, then you can use.
+[1:50:27] So that was my first program, serial port program.
+[1:50:30] I developed it. Right.
+[1:50:32] And the last option is, without using any of these hardware programmers, we can do self programming.
+[1:50:41] Self programming means the microcontroller programs itself.
+[1:50:48] Ya ya, which is called self programming.
+[1:50:52] You don't need any hardware, external hardware support.
+[1:50:55] The microcontroller programs itself.
+[1:50:58] It can communicate with the PC and programs itself.
+[1:51:02] That is what actually when you are using Arduino IDE happens.
+[1:51:06] Self programming. You may have heard about bootloaders.
+[1:51:09] Good loaders.
+[1:51:10] How are you going to boot loaders?
+[1:51:11] That's what you are going to do.
+[1:51:13] Right.
+[1:51:14] You copy?
+[1:51:15] In the next video.
+[1:51:16] You will do this.
+[1:51:17] Self programming we will discuss which is the easiest way of programming.
+[1:51:23] But it has also double size.
+[1:51:25] Nothing is perfect.
+[1:51:26] Now please send me an email.
+[1:51:29] Look.
+[1:51:30] One slice of the egg.
+[1:51:32] Here we go.
+[1:51:33] Next usually we can start practicals.
+[1:51:38] I have a look.

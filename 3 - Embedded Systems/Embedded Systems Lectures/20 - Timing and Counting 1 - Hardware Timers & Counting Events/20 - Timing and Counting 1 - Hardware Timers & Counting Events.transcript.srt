@@ -1,0 +1,7532 @@
+1
+00:00:00,000 --> 00:00:21,000
+Right. Now today's lesson is on timing and counting. Now we discuss about IO port programming, then analog to digital conversion and thereafter, transducers, sensors and actuators.
+
+2
+00:00:21,000 --> 00:00:30,920
+Now we know, we have learned how to capture an input from analog or digital sensor.
+
+3
+00:00:31,800 --> 00:00:36,439
+Now we have discussed both analog and digital sensors under transducers and also we have
+
+4
+00:00:36,439 --> 00:00:43,880
+discussed ADC and under IO port programming we discuss how to capture digital inputs.
+
+5
+00:00:44,520 --> 00:00:50,840
+Under ADC we discuss how to capture analog inputs. Therefore now we know how to capture
+
+6
+00:00:51,000 --> 00:00:58,539
+any kind of input it could be either analog or digital there is no intermediate some something
+
+7
+00:00:58,539 --> 00:01:06,719
+between analog and digital either it is continuous or discrete right so any digital or analog sensor
+
+8
+00:01:06,719 --> 00:01:14,180
+using you now you should be able to capture the state of real world the physical world
+
+9
+00:01:14,180 --> 00:01:23,519
+you should be able to do that and also we know use driving digital actuators as well as
+
+10
+00:01:23,519 --> 00:01:29,120
+so so far we have not discussed how to drive analog actuators and we are going to discuss that
+
+11
+00:01:29,120 --> 00:01:34,239
+very soon right after this slide set we are going to discuss pulse width modulation
+
+12
+00:01:34,239 --> 00:01:44,120
+under that we are we are planning to discuss how to drive analog actuators but so far we know how
+
+13
+00:01:44,120 --> 00:01:51,439
+to drive digital actuators, how to produce an output to drive digital actuators. And we discussed
+
+14
+00:01:51,439 --> 00:02:03,260
+some actuators and some actuators, we found that they consume a lot of power. That means they need
+
+15
+00:02:03,260 --> 00:02:10,060
+higher voltages, higher currents than an IO port pin of a microcontroller can deliver.
+
+16
+00:02:10,060 --> 00:02:38,180
+So in that case, how to interface such high power actuators to low power tiny microcontrollers we discussed using either using bipolar junction transistors or in the modern way using a MOS midlock side semiconductor field effect transistors or MOSFET or using a relays.
+
+17
+00:02:38,180 --> 00:02:50,919
+and the relay breakout modules right now we have that knowledge so except how to driving
+
+18
+00:02:50,919 --> 00:03:00,099
+analog actuators you should be able to deal with any other sensor and actuator now
+
+19
+00:03:00,099 --> 00:03:12,340
+Is that clear? Right. Now, the next step is talk about other internal peripheral devices inside the microcontroller.
+
+20
+00:03:12,419 --> 00:03:20,439
+Microcontroller is not just a processor. Processor and some peripheral devices in one single chip.
+
+21
+00:03:20,439 --> 00:03:33,439
+That's why we call it single chip computer. All the components that you need for a computer is in one single chip computer.
+
+22
+00:03:33,439 --> 00:03:39,439
+Now we discuss one peripheral device inside the microcontroller called ADC.
+
+23
+00:03:39,439 --> 00:03:45,439
+We discuss another peripheral device called ports inside the microcontroller.
+
+24
+00:03:45,439 --> 00:03:53,020
+Now we are going to discuss another peripheral device inside the microcontroller called timer.
+
+25
+00:03:53,580 --> 00:03:56,659
+Timers we use for timing and counting.
+
+26
+00:03:57,419 --> 00:03:57,539
+Okay.
+
+27
+00:03:57,900 --> 00:04:01,840
+Now first let's see our learning outcomes as usual.
+
+28
+00:04:02,900 --> 00:04:03,780
+Right.
+
+29
+00:04:04,780 --> 00:04:13,460
+On completion of this session, you should be able to explain the need of timers and counters.
+
+30
+00:04:13,460 --> 00:04:15,360
+Why we need timers?
+
+31
+00:04:15,439 --> 00:04:21,680
+why we need counters. These are hardware timers, hardware counters, why we need them.
+
+32
+00:04:21,680 --> 00:04:31,579
+Then describe how timers measure time. Yes, of course, it's obvious. Certain situations we need
+
+33
+00:04:31,579 --> 00:04:39,860
+to measure the time, right? Time elapses between two events. We sometimes we need to measure,
+
+34
+00:04:39,860 --> 00:04:49,100
+right and to calculate delays we need time measurement so timers used to measure time
+
+35
+00:04:49,100 --> 00:04:58,680
+then counters counters we use to count events count events so what is an event for example
+
+36
+00:04:58,680 --> 00:05:09,540
+number of items passed on an assembly line right in an assembly line number of items passed on a
+
+37
+00:05:09,540 --> 00:05:17,699
+conveyor belt. We have been asked, let's say we are asked to develop a system to count, right?
+
+38
+00:05:17,699 --> 00:05:28,040
+The items are passed, number of items passed on an assembly line or conveyor belt.
+
+39
+00:05:28,860 --> 00:05:34,740
+So let's say we have, let's imagine there's a conveyor belt and on the belt,
+
+40
+00:05:34,740 --> 00:05:38,019
+there are items passing, let's say
+
+41
+00:05:38,019 --> 00:05:40,319
+munchies, super cream, caca packets.
+
+42
+00:05:41,060 --> 00:05:43,639
+Now you want to count
+
+43
+00:05:43,639 --> 00:05:46,740
+how many of them produce
+
+44
+00:05:46,740 --> 00:05:50,339
+and pass for the delivery.
+
+45
+00:05:51,259 --> 00:05:52,620
+That's one
+
+46
+00:05:52,620 --> 00:05:56,980
+application of counter.
+
+47
+00:05:57,699 --> 00:05:58,980
+Another application.
+
+48
+00:05:59,600 --> 00:06:02,740
+How many people entered into a hall?
+
+49
+00:06:02,740 --> 00:06:04,420
+Let's say lecture hall.
+
+50
+00:06:04,740 --> 00:06:16,680
+So I want to know how many we are asked to develop a system to count how many people entered into the multimedia auditorium.
+
+51
+00:06:16,680 --> 00:06:18,699
+Now we can simply do that.
+
+52
+00:06:19,120 --> 00:06:30,519
+For example, we can set up some IRO whatever beam at the entrance and using a sensor we can capture that beam.
+
+53
+00:06:30,519 --> 00:06:34,540
+and when a person enters into the multimedia room,
+
+54
+00:06:34,920 --> 00:06:37,459
+he or she crosses the beam, right?
+
+55
+00:06:37,779 --> 00:06:40,579
+When that person crosses the beam,
+
+56
+00:06:41,379 --> 00:06:43,899
+sensor gets blackout, no signal.
+
+57
+00:06:44,579 --> 00:06:46,959
+And when the beam is there, right,
+
+58
+00:06:47,360 --> 00:06:49,379
+sensor gets the signal.
+
+59
+00:06:50,360 --> 00:06:52,459
+Now, likewise, we can capture
+
+60
+00:06:52,459 --> 00:06:55,420
+how many times using a sensor,
+
+61
+00:06:55,420 --> 00:06:58,500
+an IR beam, right,
+
+62
+00:06:58,500 --> 00:07:04,259
+In forward beam, we can capture how many times that beam is crossed.
+
+63
+00:07:04,920 --> 00:07:09,360
+Then that number of crosses we need to count.
+
+64
+00:07:10,000 --> 00:07:12,540
+Another example for a count.
+
+65
+00:07:12,959 --> 00:07:14,500
+Count an event.
+
+66
+00:07:15,040 --> 00:07:15,600
+Is that clear?
+
+67
+00:07:16,139 --> 00:07:16,720
+Any question?
+
+68
+00:07:17,339 --> 00:07:17,480
+No.
+
+69
+00:07:17,639 --> 00:07:17,899
+Right.
+
+70
+00:07:18,360 --> 00:07:22,740
+Then explain the functionality of time account registers.
+
+71
+00:07:22,920 --> 00:07:23,139
+Yes.
+
+72
+00:07:23,680 --> 00:07:25,339
+We use low level programming.
+
+73
+00:07:25,339 --> 00:07:27,899
+Not very low level like assembly.
+
+74
+00:07:28,500 --> 00:07:36,899
+right not very high level like uh wrapper functions in available in the arduino platform
+
+75
+00:07:37,699 --> 00:07:45,139
+so we are going through the middle path as lord buddha said we are following the middle path c
+
+76
+00:07:46,339 --> 00:07:52,420
+so in the c language we have to deal with the registers they have to use registers right
+
+77
+00:07:52,420 --> 00:07:59,540
+another thing i should mention if you are using arduino platform with wrapper functions right
+
+78
+00:08:00,259 --> 00:08:10,100
+you don't have a direct access to timers counters in the micro control the platform arduino
+
+79
+00:08:10,100 --> 00:08:17,860
+platform doesn't provide any direct accessibility to these internal peripheral devices that is
+
+80
+00:08:17,860 --> 00:08:24,899
+another limitation of Arduino platform right indirectly some sometimes some Arduino libraries
+
+81
+00:08:25,540 --> 00:08:33,620
+use timers and counters but as a program as a firmware developers the platform doesn't provide
+
+82
+00:08:33,620 --> 00:08:42,100
+you direct accessibility to these internal hardware uh peripherals that means the platform
+
+83
+00:08:42,100 --> 00:08:49,519
+doesn't provide you wrapper functions to access timers counters indirectly the Arduino library is
+
+84
+00:08:49,519 --> 00:08:57,179
+used right but as a firmware developer you cannot access them in the platform because the platform
+
+85
+00:08:57,179 --> 00:09:03,100
+doesn't provide you any wrapper functions to directly access them another limitation of Arduino
+
+86
+00:09:03,100 --> 00:09:10,340
+platform but if you are using co assembly whatever then you have the direct access you have the direct
+
+87
+00:09:10,340 --> 00:09:19,059
+access to hardware so you can do whatever you like right now another reason to justify
+
+88
+00:09:20,179 --> 00:09:28,340
+the use of low level programming right then construct a microcontroller based system
+
+89
+00:09:29,379 --> 00:09:38,179
+and program it to count an event right to count an event construct a microcontroller based system
+
+90
+00:09:38,179 --> 00:09:44,340
+now we are going to count anyway and we are going to learn how to use a microcontroller to do that
+
+91
+00:09:44,340 --> 00:09:52,980
+construct a microcontroller based system to and program it to measure time then to measure the
+
+92
+00:09:52,980 --> 00:10:02,659
+time how to develop a system those are the things we are going to learn under this uh under this
+
+93
+00:10:02,659 --> 00:10:16,019
+session right any question right time now here you can see timers available in the microcontroller
+
+94
+00:10:16,019 --> 00:10:22,820
+some microcontrollers you have only one timer then we call it t0 some microcontrollers you
+
+95
+00:10:22,820 --> 00:10:32,980
+have multiple timers then we call them t0 t1 t2 t3 t4 likewise it depends right on the micro
+
+96
+00:10:32,980 --> 00:10:40,200
+controller that you use some have small tiny micro controllers like 80 tiny rig series you have one
+
+97
+00:10:40,200 --> 00:10:49,000
+or two timers but larger micro controllers like mega series 80 mega you have three four timers
+
+98
+00:10:49,000 --> 00:10:50,620
+3, 4, 5 sometimes.
+
+99
+00:10:51,220 --> 00:10:55,139
+And X mega, extremely large microcontrollers, right?
+
+100
+00:10:55,860 --> 00:11:01,299
+Then you have even more than 4, 5 timers, right?
+
+101
+00:11:01,340 --> 00:11:03,259
+A lot of timers you have, right?
+
+102
+00:11:04,279 --> 00:11:09,059
+And here the large microcontrollers means not their physical size,
+
+103
+00:11:09,320 --> 00:11:10,460
+their capability.
+
+104
+00:11:10,639 --> 00:11:13,279
+Sometimes there are large microcontrollers
+
+105
+00:11:13,279 --> 00:11:18,980
+which are physically smaller than the AT mega 328B that we use.
+
+106
+00:11:19,000 --> 00:11:37,419
+There are microcontrollers which provides hundreds of pins and they are surface SMD microcontrollers, surface mount device, hundreds of pins but smaller than the one that we use.
+
+107
+00:11:37,419 --> 00:11:48,700
+Right. So such microcontrollers are difficult to use because even construct circuits, you need special equipment because they are surface mount devices.
+
+108
+00:11:48,899 --> 00:11:55,539
+They are not breadboard friendly. Right. The timer is used to measure time.
+
+109
+00:11:56,080 --> 00:12:01,519
+Right. If you want to measure time. Right. You have to use a time. Right.
+
+110
+00:12:01,519 --> 00:12:07,779
+The timer counts at every clock pulse when oscillator is connected.
+
+111
+00:12:08,279 --> 00:12:12,679
+When the oscillator is connected to the timer, right?
+
+112
+00:12:13,019 --> 00:12:18,960
+We know that there is an oscillator in the microcontroller, right?
+
+113
+00:12:19,019 --> 00:12:25,480
+When the oscillator is connected, the timer counts at every clock pulse.
+
+114
+00:12:25,639 --> 00:12:26,960
+Oscillator provide clock pulses.
+
+115
+00:12:26,960 --> 00:12:30,779
+At every clock pulse, timer counts, right?
+
+116
+00:12:30,779 --> 00:12:33,440
+every clock pulse timer counts.
+
+117
+00:12:34,720 --> 00:12:35,179
+Now
+
+118
+00:12:35,179 --> 00:12:37,460
+we know the frequency
+
+119
+00:12:37,460 --> 00:12:39,820
+of the oscillator. We know the frequency
+
+120
+00:12:39,820 --> 00:12:41,519
+of the oscillator. And
+
+121
+00:12:41,519 --> 00:12:43,740
+timer gives you the pulse count.
+
+122
+00:12:44,480 --> 00:12:45,700
+Because at every clock
+
+123
+00:12:45,700 --> 00:12:47,159
+pulse timer counts.
+
+124
+00:12:47,639 --> 00:12:49,679
+So timer will give you pulse
+
+125
+00:12:49,679 --> 00:12:51,480
+count. How many pulses?
+
+126
+00:12:52,259 --> 00:12:53,460
+We know the frequency.
+
+127
+00:12:53,580 --> 00:12:55,659
+Frequency means number of
+
+128
+00:12:55,659 --> 00:12:56,940
+pulses per second.
+
+129
+00:12:57,500 --> 00:12:59,360
+Frequency means number of pulses
+
+130
+00:12:59,360 --> 00:13:10,019
+per second. The timer gives pulse count. Now if you know the number of pulses per second
+
+131
+00:13:10,019 --> 00:13:16,740
+and the pulse count, you can calculate elapsed time. Can you understand that?
+
+132
+00:13:16,740 --> 00:13:28,259
+Can you determine the elapsed type?
+
+133
+00:13:28,720 --> 00:13:29,820
+If not, please tell me.
+
+134
+00:13:29,940 --> 00:13:30,539
+If not clear.
+
+135
+00:13:31,259 --> 00:13:32,860
+Sir, can you explain it again?
+
+136
+00:13:33,220 --> 00:13:33,460
+Sure.
+
+137
+00:13:34,039 --> 00:13:36,980
+Now, this is the timer.
+
+138
+00:13:36,980 --> 00:13:39,419
+For the timer, we connect.
+
+139
+00:13:39,720 --> 00:13:41,419
+Let me draw it properly.
+
+140
+00:13:43,039 --> 00:13:43,759
+Timer.
+
+141
+00:13:44,279 --> 00:13:46,340
+To timer, we connect clock.
+
+142
+00:13:46,740 --> 00:13:57,139
+right the clock provides pulses such pulses clock provides to the time the timer counts pulses and
+
+143
+00:13:57,139 --> 00:14:10,100
+we know the frequency frequency means right number of pulses per second the timer gives
+
+144
+00:14:10,100 --> 00:14:28,100
+number of pulses counted. Let's assume frequency is 1. The timer gives pulse count. Pulse count
+
+145
+00:14:28,100 --> 00:14:40,100
+is 100. The timer gives pulse count. The oscillator provides. Then what is the time elapse?
+
+146
+00:14:40,100 --> 00:14:57,139
+one multiplied by hundred. Is that clear Sri Anji? Who asked that question?
+
+147
+00:14:58,980 --> 00:14:59,299
+Yes sir.
+
+148
+00:14:59,299 --> 00:15:00,019
+Yes sir.
+
+149
+00:15:00,019 --> 00:15:04,740
+Ah clear, right, good. Right. How about others? Is that clear?
+
+150
+00:15:05,779 --> 00:15:06,019
+Yes.
+
+151
+00:15:06,019 --> 00:15:16,460
+Right. Now the timer becomes a counter when an external pulse source is connected.
+
+152
+00:15:17,139 --> 00:15:21,860
+If you connect the timer, not the clock, clock is internal pulse.
+
+153
+00:15:22,259 --> 00:15:28,639
+If external pulse source connected to the timer, timer becomes a counter.
+
+154
+00:15:29,139 --> 00:15:30,480
+Timer becomes a counter.
+
+155
+00:15:30,480 --> 00:15:39,399
+Now if you are providing pulses from external source, for example, you are providing pulses from a sensor.
+
+156
+00:15:40,080 --> 00:15:46,340
+Sensor measures whether there is an IR beam or not.
+
+157
+00:15:46,879 --> 00:15:51,840
+That beam we have fixed at the entrance of a particular room.
+
+158
+00:15:52,840 --> 00:15:56,500
+If people enter into the room, they cross the beam.
+
+159
+00:15:56,500 --> 00:15:59,500
+the sensor captures
+
+160
+00:15:59,500 --> 00:16:02,600
+whether the beam is there or not.
+
+161
+00:16:03,200 --> 00:16:06,000
+So then sensor generate pulses.
+
+162
+00:16:06,840 --> 00:16:09,159
+If the beam is there, high.
+
+163
+00:16:09,539 --> 00:16:11,340
+If the beam is not there, low.
+
+164
+00:16:12,940 --> 00:16:15,299
+The sensor input is out.
+
+165
+00:16:15,779 --> 00:16:18,600
+Sensor input to the microcontroller is digital.
+
+166
+00:16:18,779 --> 00:16:19,679
+High low signal.
+
+167
+00:16:19,919 --> 00:16:21,000
+That means pulses.
+
+168
+00:16:21,580 --> 00:16:23,360
+That is external pulse source.
+
+169
+00:16:23,360 --> 00:16:29,799
+Now if you connect external pulse source to the timer, timer becomes a counter.
+
+170
+00:16:30,220 --> 00:16:35,159
+Then the counter can count number of external pulses.
+
+171
+00:16:35,879 --> 00:16:40,840
+Number of external pulses means number of people entered into the room.
+
+172
+00:16:41,159 --> 00:16:46,379
+Number of external pulses means number of times the beam was crossed.
+
+173
+00:16:47,299 --> 00:16:49,700
+That means number of people entered into the room.
+
+174
+00:16:50,259 --> 00:16:50,940
+Is that clear?
+
+175
+00:16:50,940 --> 00:16:51,700
+Right.
+
+176
+00:16:51,700 --> 00:16:56,840
+We have fixed IR beam at the entrance of a room.
+
+177
+00:16:57,519 --> 00:16:59,879
+Now people enter into the room, they have to cross the beam.
+
+178
+00:17:01,240 --> 00:17:05,599
+And whether the beam is there or not, we measure, we detect using a sensor.
+
+179
+00:17:06,220 --> 00:17:09,339
+When people cross the beam, the sensor says no beam.
+
+180
+00:17:10,480 --> 00:17:16,440
+And if nobody is crossing the beam, then there is a direct IR beam to the sensor.
+
+181
+00:17:16,559 --> 00:17:18,180
+Then the sensor says yes, there is a beam.
+
+182
+00:17:19,160 --> 00:17:23,819
+So sensor is a digital sensor which provides, if the beam is there, which provides high.
+
+183
+00:17:24,619 --> 00:17:26,839
+If the beam is not there, it provides low.
+
+184
+00:17:27,099 --> 00:17:30,440
+That means the sensor provides high, low, high, low.
+
+185
+00:17:30,440 --> 00:17:33,059
+That means square wave pulse.
+
+186
+00:17:33,660 --> 00:17:36,460
+Series of square wave pulses sensor provides.
+
+187
+00:17:37,059 --> 00:17:39,359
+Now that pulse source we connect to the timer.
+
+188
+00:17:39,660 --> 00:17:41,019
+So the timer becomes a counter.
+
+189
+00:17:41,599 --> 00:17:41,779
+Right?
+
+190
+00:17:41,940 --> 00:17:44,099
+Each and every pulse, the timer counts.
+
+191
+00:17:44,339 --> 00:17:46,599
+The counter, now we call it counter, it counts.
+
+192
+00:17:46,599 --> 00:17:48,940
+and it gives us number of
+
+193
+00:17:48,940 --> 00:17:51,099
+pulses. Number of pulses
+
+194
+00:17:51,099 --> 00:17:52,839
+means number of
+
+195
+00:17:52,839 --> 00:17:54,319
+beam crosses.
+
+196
+00:17:55,000 --> 00:17:56,680
+That means number of people
+
+197
+00:17:56,680 --> 00:17:58,960
+entered into the room. Is that clear?
+
+198
+00:17:59,039 --> 00:18:00,759
+If not, please tell me.
+
+199
+00:18:01,220 --> 00:18:02,440
+I can explain again
+
+200
+00:18:02,440 --> 00:18:04,759
+using a different example. Clear?
+
+201
+00:18:05,440 --> 00:18:06,960
+Yes, sir.
+
+202
+00:18:07,319 --> 00:18:07,460
+Yes.
+
+203
+00:18:09,460 --> 00:18:10,180
+Right.
+
+204
+00:18:10,779 --> 00:18:12,700
+Now, rather
+
+205
+00:18:12,700 --> 00:18:13,980
+than using
+
+206
+00:18:13,980 --> 00:18:16,240
+timers and counters,
+
+207
+00:18:16,599 --> 00:18:25,400
+instead of using timers and counters, we can do the same functionalities like measuring the time
+
+208
+00:18:25,400 --> 00:18:31,960
+and counting and event with software. Using software we can do this. You don't need hardware
+
+209
+00:18:31,960 --> 00:18:37,559
+timers, hardware counters. Now for example, if you want to measure the time, you can use a delay loop,
+
+210
+00:18:37,559 --> 00:18:48,279
+You want to know, for example, one minute past elapsed time whether it is a one minute.
+
+211
+00:18:48,279 --> 00:18:50,740
+You want to know.
+
+212
+00:18:50,740 --> 00:18:52,880
+You use the delay loop.
+
+213
+00:18:52,880 --> 00:18:55,839
+You use a delay loop like delay function.
+
+214
+00:18:55,839 --> 00:18:59,180
+And you set the delay to one second.
+
+215
+00:18:59,180 --> 00:19:03,799
+And every time when you run the delay function you increment a counter.
+
+216
+00:19:03,799 --> 00:19:06,799
+A variable.
+
+217
+00:19:06,799 --> 00:19:12,420
+Every time when you run the delay function, delay function you have set for one second.
+
+218
+00:19:13,099 --> 00:19:14,680
+That means 1000 milliseconds.
+
+219
+00:19:15,359 --> 00:19:18,240
+Normally you have to specify in the milliseconds for the delay function.
+
+220
+00:19:18,619 --> 00:19:20,799
+1000 you specify as the argument.
+
+221
+00:19:21,519 --> 00:19:27,039
+And every time you run the function, delay function, you increment a variable called i.
+
+222
+00:19:27,759 --> 00:19:28,740
+A counter variable.
+
+223
+00:19:29,880 --> 00:19:30,660
+You increment it.
+
+224
+00:19:30,660 --> 00:19:36,839
+And then using an if condition you check whether count equals 60.
+
+225
+00:19:37,779 --> 00:19:39,200
+Whether i equals 60.
+
+226
+00:19:39,740 --> 00:19:46,299
+If i equals 60 means the delay function we have executed 60 times.
+
+227
+00:19:46,660 --> 00:19:48,359
+Delay function we run using a loop.
+
+228
+00:19:49,099 --> 00:19:49,359
+Right.
+
+229
+00:19:49,460 --> 00:19:51,480
+We have executed delay function 60 times.
+
+230
+00:19:52,680 --> 00:19:57,720
+We know that we have set the delay function to delay the execution 1 second.
+
+231
+00:19:57,720 --> 00:20:00,720
+That means one minute elapsed.
+
+232
+00:20:01,599 --> 00:20:02,359
+Can you understand?
+
+233
+00:20:03,039 --> 00:20:15,279
+For example, right, let's say using a loop, right, delay I plus plus.
+
+234
+00:20:15,759 --> 00:20:21,720
+If I equals 60, one minute elapsed.
+
+235
+00:20:22,640 --> 00:20:24,200
+End if, end loop.
+
+236
+00:20:24,740 --> 00:20:25,420
+Sudha good, huh?
+
+237
+00:20:25,940 --> 00:20:26,660
+Can you understand?
+
+238
+00:20:26,660 --> 00:20:28,660
+Yes sir.
+
+239
+00:20:28,660 --> 00:20:40,660
+Right? Using a soft air you can measure time. The delay loop is a function. It uses busy
+
+240
+00:20:40,660 --> 00:21:10,660
+[unclear — Sinhala / crosstalk]
+
+241
+00:21:10,660 --> 00:21:20,039
+CPU to run a loop. If you call delay function that uses busy wait. That means we tie up
+
+242
+00:21:20,039 --> 00:21:25,000
+the CPU to run a loop but doing nothing.
+
+243
+00:21:25,000 --> 00:21:36,359
+Because we want to consume time. Just to consume time we tell the CPU to run a loop without
+
+244
+00:21:36,359 --> 00:21:45,319
+doing anything. That's what the functionality of delay loop. We tie up the CPU. That's a waste. Why?
+
+245
+00:21:45,319 --> 00:21:58,440
+That CPU time, that CPU power we could have used for something else. We could have used the CPU to
+
+246
+00:21:58,440 --> 00:22:07,339
+do something else during that time. That's the downside of using software timers. If
+
+247
+00:22:07,339 --> 00:22:14,680
+you use software for timing that means you use CPU. But if you are using hardware timer,
+
+248
+00:22:14,680 --> 00:22:24,880
+hardware timer is separate peripheral device independent from CPU. So we can ask the hardware
+
+249
+00:22:24,880 --> 00:22:32,240
+timer to do timing and we can ask CPU to do something else at the same time. So timer can
+
+250
+00:22:32,240 --> 00:22:41,880
+do timing while CPU is doing some other task, more efficient way of measuring time. If you
+
+251
+00:22:41,880 --> 00:22:51,660
+tie the CPU, if you assign the timing job to the CPU, CPU can't do some other work during that time.
+
+252
+00:22:51,660 --> 00:23:01,259
+But if you have a peripheral device for timing, you can ask CPU to do something else at the same time.
+
+253
+00:23:02,460 --> 00:23:07,400
+While timer is doing timing, CPU can do something else.
+
+254
+00:23:07,940 --> 00:23:15,680
+That's the advantage of using hardware timers over software timing.
+
+255
+00:23:16,380 --> 00:23:20,619
+So far in our programs, we have used software timing.
+
+256
+00:23:20,619 --> 00:23:23,400
+That is not the efficient way.
+
+257
+00:23:23,980 --> 00:23:24,119
+Right.
+
+258
+00:23:25,119 --> 00:23:29,160
+Even in our business application developments.
+
+259
+00:23:29,940 --> 00:23:33,740
+Now you have learned C++, Java, C Sharp.
+
+260
+00:23:33,980 --> 00:23:35,740
+And you have developed mini projects.
+
+261
+00:23:36,200 --> 00:23:38,059
+All these applications.
+
+262
+00:23:39,240 --> 00:23:41,599
+The general purpose computing.
+
+263
+00:23:42,519 --> 00:23:46,180
+Whenever you need to measure time, you use the time function.
+
+264
+00:23:46,920 --> 00:23:49,460
+That means you use software for measuring time.
+
+265
+00:23:49,460 --> 00:23:50,119
+Right.
+
+266
+00:23:50,619 --> 00:23:52,380
+That is not the efficient way.
+
+267
+00:23:52,500 --> 00:23:56,640
+This is the first time you are going to use a hardware time.
+
+268
+00:23:57,000 --> 00:24:00,700
+And you can let the CPU to do something else during that time.
+
+269
+00:24:00,700 --> 00:24:04,480
+And the same thing for counting, right?
+
+270
+00:24:05,079 --> 00:24:09,980
+Using software, you can count number of people entered into a room.
+
+271
+00:24:10,440 --> 00:24:10,940
+How?
+
+272
+00:24:11,539 --> 00:24:19,799
+If sensor goes low, that means a person entered into the room, the beam cross.
+
+273
+00:24:20,619 --> 00:24:26,900
+If the beam is, if beam can fall upon the sensor, sensor gives I.
+
+274
+00:24:27,440 --> 00:24:29,740
+If no beam, sensor gives low.
+
+275
+00:24:29,880 --> 00:24:35,039
+If beam low, sensor low, I++ count.
+
+276
+00:24:35,539 --> 00:24:37,099
+And if, and low.
+
+277
+00:24:37,700 --> 00:24:40,859
+Now I gives you how many beam crossers.
+
+278
+00:24:41,319 --> 00:24:45,240
+How many beam crossers means, how many infrared beam crossers means,
+
+279
+00:24:45,859 --> 00:24:47,859
+number of people entered into the room.
+
+280
+00:24:48,420 --> 00:24:50,019
+Can you understand this pseudocode?
+
+281
+00:24:50,019 --> 00:24:51,019
+Yes, sir.
+
+282
+00:24:51,259 --> 00:24:51,559
+Good.
+
+283
+00:24:52,160 --> 00:24:54,819
+That means using software we can do counting.
+
+284
+00:24:55,519 --> 00:24:59,440
+That's the way of counting we have done so far.
+
+285
+00:25:00,319 --> 00:25:05,519
+From the first year to today, we counted many things.
+
+286
+00:25:05,819 --> 00:25:07,819
+How many times loop counters we use?
+
+287
+00:25:08,180 --> 00:25:08,859
+Endless.
+
+288
+00:25:09,779 --> 00:25:10,660
+You can't count.
+
+289
+00:25:11,339 --> 00:25:17,420
+How many times even you can't imagine the number of times you can use the counters in programming.
+
+290
+00:25:17,420 --> 00:25:19,920
+You know, use counters, but software.
+
+291
+00:25:20,019 --> 00:25:28,299
+counters. Software counters means you tied up the CPU to do that job. While CPU is doing the counting,
+
+292
+00:25:28,579 --> 00:25:34,160
+CPU can't do something else unless you have a multi-core processor. Now that's why in general
+
+293
+00:25:34,160 --> 00:25:41,400
+purpose computing, you don't feel these efficiency problems because you have multi-core processors.
+
+294
+00:25:41,400 --> 00:25:47,359
+You have quad-core processors. Most of your laptops, you have quad-core processors.
+
+295
+00:25:47,359 --> 00:25:53,599
+One processor is counting while other cores are doing something else.
+
+296
+00:25:54,599 --> 00:25:58,359
+That's why you don't feel these issues in general purpose computing.
+
+297
+00:25:58,900 --> 00:26:03,960
+But anyway, you have wasted your computing power just for counting.
+
+298
+00:26:04,619 --> 00:26:07,279
+But this is the first time you are going to use hardware counters.
+
+299
+00:26:07,279 --> 00:26:16,640
+If you assign that counting job for a hardware counter, you can leave the software.
+
+300
+00:26:17,359 --> 00:26:20,920
+CPU to do something else during that time.
+
+301
+00:26:21,460 --> 00:26:23,599
+Now we have just one CPU.
+
+302
+00:26:24,180 --> 00:26:27,759
+We have just one core, not multi-core microcontroller.
+
+303
+00:26:28,460 --> 00:26:29,539
+Just one core.
+
+304
+00:26:30,480 --> 00:26:31,400
+One CPU.
+
+305
+00:26:32,099 --> 00:26:32,299
+Right?
+
+306
+00:26:32,640 --> 00:26:37,480
+If you ask the CPU to do counting, during that time, see if you can't do something else.
+
+307
+00:26:38,140 --> 00:26:41,019
+So that's why we use hardware counter.
+
+308
+00:26:41,019 --> 00:26:44,660
+The counting job we assign for the counter.
+
+309
+00:26:45,160 --> 00:26:46,660
+Actually, counter is a timer.
+
+310
+00:26:47,359 --> 00:26:52,319
+When you connect external pulse source to the timer, timer becomes a counter.
+
+311
+00:26:52,319 --> 00:26:58,259
+And while counter is counting, CPU can do something else.
+
+312
+00:26:58,640 --> 00:27:02,079
+Because these are independent peripheral devices.
+
+313
+00:27:02,500 --> 00:27:06,940
+Now if somebody asks why we need hardware, timers, counters.
+
+314
+00:27:07,859 --> 00:27:09,099
+Now can you explain?
+
+315
+00:27:09,380 --> 00:27:09,660
+Aruni?
+
+316
+00:27:10,220 --> 00:27:10,519
+Yes.
+
+317
+00:27:11,339 --> 00:27:12,259
+Right.
+
+318
+00:27:13,240 --> 00:27:14,519
+Any question?
+
+319
+00:27:15,140 --> 00:27:15,339
+No.
+
+320
+00:27:15,539 --> 00:27:15,799
+Right.
+
+321
+00:27:15,799 --> 00:27:17,920
+How timers work?
+
+322
+00:27:18,480 --> 00:27:24,140
+Using an 8-bit timer, let's discuss the internal working of a timer.
+
+323
+00:27:24,819 --> 00:27:32,940
+If somebody asks you to explain how these hardware timers work, you should be able to do that.
+
+324
+00:27:33,619 --> 00:27:36,339
+Many people know how to use timers.
+
+325
+00:27:36,940 --> 00:27:41,079
+But if you ask them to explain their internal working, they don't know.
+
+326
+00:27:41,079 --> 00:27:56,099
+But you are university students, this is an embedded system development course in a university degree program. So you should know A to Z everything, all bits and bytes, you should know, right?
+
+327
+00:27:56,099 --> 00:28:16,220
+Because at the end you can't say, no, no, we had no time to do these things. It was very lightly we covered the things because things were very complicated. So we didn't go for complicated things. We covered everything lightly. You can't say like that because you are graduating from a university.
+
+328
+00:28:16,220 --> 00:28:26,319
+The highest level of educational institute in the path of education.
+
+329
+00:28:26,519 --> 00:28:30,180
+You start with Montessori, then the primary, secondary and the tertiary.
+
+330
+00:28:30,680 --> 00:28:33,859
+There is no other institute above university.
+
+331
+00:28:34,559 --> 00:28:35,900
+Keep that in mind.
+
+332
+00:28:36,380 --> 00:28:38,380
+And you are going to get the bachelor's degree.
+
+333
+00:28:39,599 --> 00:28:42,720
+You can get only two more degrees.
+
+334
+00:28:43,279 --> 00:28:45,319
+Masters and doctoral.
+
+335
+00:28:45,319 --> 00:28:45,960
+That's it.
+
+336
+00:28:46,220 --> 00:28:48,759
+No any other degree higher than that.
+
+337
+00:28:49,599 --> 00:28:54,539
+Once you got the bachelor's, you are just short of two other degrees.
+
+338
+00:28:55,559 --> 00:28:57,359
+Master's and doctoral, that's it.
+
+339
+00:28:57,839 --> 00:28:58,400
+Nothing else.
+
+340
+00:28:59,240 --> 00:29:01,619
+If you have master's and doctoral in a particular area,
+
+341
+00:29:02,279 --> 00:29:05,519
+then no other qualification you can get in that area.
+
+342
+00:29:05,980 --> 00:29:06,519
+That's it.
+
+343
+00:29:07,180 --> 00:29:11,059
+So therefore, in the university degree programs, you can't say,
+
+344
+00:29:11,680 --> 00:29:12,640
+no, I don't know that.
+
+345
+00:29:12,640 --> 00:29:25,079
+If that is, if particular thing has not been explained, let's say some concept nobody has explained, then you should be able to explain first time.
+
+346
+00:29:25,619 --> 00:29:26,599
+That's a research thing.
+
+347
+00:29:26,940 --> 00:29:27,079
+Right.
+
+348
+00:29:28,039 --> 00:29:31,920
+Now let's see how an 8-bit timer works.
+
+349
+00:29:32,279 --> 00:29:32,559
+Right.
+
+350
+00:29:32,559 --> 00:29:37,359
+Now in this diagram, you can see the CPU.
+
+351
+00:29:38,380 --> 00:29:38,559
+Right.
+
+352
+00:29:38,559 --> 00:29:45,420
+And then oscillator, the clock pulses, internal oscillator, it provides clock pulses.
+
+353
+00:29:46,299 --> 00:29:46,420
+Right.
+
+354
+00:29:47,059 --> 00:29:50,240
+And a bit called CS bit.
+
+355
+00:29:50,920 --> 00:29:52,339
+CS means clock select.
+
+356
+00:29:53,119 --> 00:30:01,859
+You can using this bit, CS bit, clock select bit, you can select either internal clock pulses or external clock pulses.
+
+357
+00:30:02,539 --> 00:30:04,619
+These are the external clock pulses.
+
+358
+00:30:05,099 --> 00:30:07,859
+External clock pulses coming through a sensor.
+
+359
+00:30:07,859 --> 00:30:14,079
+This TCCR means timer counter control register.
+
+360
+00:30:14,500 --> 00:30:16,279
+Timer counter control register.
+
+361
+00:30:16,440 --> 00:30:20,039
+The simple end means there can be multiple timers.
+
+362
+00:30:20,539 --> 00:30:23,240
+Timer 0, timer 1, timer 2 likewise.
+
+363
+00:30:23,920 --> 00:30:27,960
+So that's why TCC timer counter control register 0.
+
+364
+00:30:28,119 --> 00:30:33,440
+That means timer counter control register of timer 0.
+
+365
+00:30:34,359 --> 00:30:36,859
+Timer counter register of timer 1.
+
+366
+00:30:36,859 --> 00:30:44,720
+Now, simple length to indicate the timer because you can have multiple timers.
+
+367
+00:30:44,720 --> 00:30:57,339
+And this is the timer pin. T0 means timer pin of timer 0. T1 means timer pin of timer 1 pin.
+
+368
+00:30:57,779 --> 00:31:05,480
+Likewise, Tn. N means the number of the timer. That is to provide external clock pulses.
+
+369
+00:31:05,480 --> 00:31:08,819
+oscillator to provide internal clock pulses.
+
+370
+00:31:09,019 --> 00:31:16,960
+Using clock select bit, you can select whether you are going to get internal clock pulses.
+
+371
+00:31:17,279 --> 00:31:18,779
+So external clock pulses.
+
+372
+00:31:19,240 --> 00:31:19,440
+Right.
+
+373
+00:31:19,960 --> 00:31:22,079
+Now we are going to talk about the timer.
+
+374
+00:31:22,480 --> 00:31:26,799
+So we have connected to internal clock pulses.
+
+375
+00:31:27,720 --> 00:31:31,539
+So using clock select bit, we have selected internal clock pulses.
+
+376
+00:31:32,019 --> 00:31:32,200
+Right.
+
+377
+00:31:32,200 --> 00:31:34,799
+So the clock source is the oscillator.
+
+378
+00:31:35,480 --> 00:31:37,200
+Clock source is the oscillator.
+
+379
+00:31:37,640 --> 00:31:40,059
+So timer works as a timer.
+
+380
+00:31:40,720 --> 00:31:44,200
+But if you select the clock source as external,
+
+381
+00:31:44,900 --> 00:31:46,160
+using clock select bits,
+
+382
+00:31:46,259 --> 00:31:49,019
+if you select the clock source as external,
+
+383
+00:31:50,019 --> 00:31:52,740
+then timer becomes a counter.
+
+384
+00:31:53,259 --> 00:31:55,140
+Because then the clock source is external.
+
+385
+00:31:55,940 --> 00:31:57,279
+Timer becomes a counter.
+
+386
+00:31:57,779 --> 00:31:58,039
+Right.
+
+387
+00:31:58,539 --> 00:32:02,400
+Now for each clock pulse from the oscillator,
+
+388
+00:32:02,400 --> 00:32:04,799
+the timer increments
+
+389
+00:32:04,799 --> 00:32:06,200
+this register
+
+390
+00:32:06,200 --> 00:32:08,079
+for each clock pulses
+
+391
+00:32:08,079 --> 00:32:10,220
+from the oscillator
+
+392
+00:32:10,220 --> 00:32:12,599
+the timer from the internal
+
+393
+00:32:12,599 --> 00:32:14,680
+oscillator or external clock source
+
+394
+00:32:14,680 --> 00:32:16,759
+whatever right it depends
+
+395
+00:32:16,759 --> 00:32:18,700
+on the clock select bits you have
+
+396
+00:32:18,700 --> 00:32:20,400
+used with the internal
+
+397
+00:32:20,400 --> 00:32:22,599
+the internal clock source or external clock
+
+398
+00:32:22,599 --> 00:32:24,240
+source whatever you get the
+
+399
+00:32:24,240 --> 00:32:26,680
+you get pulses every clock
+
+400
+00:32:26,680 --> 00:32:29,059
+pulse the timer increments
+
+401
+00:32:29,059 --> 00:32:30,759
+t c and
+
+402
+00:32:30,759 --> 00:32:33,839
+register. Time counter register.
+
+403
+00:32:34,000 --> 00:32:36,119
+TCNT means time counter register.
+
+404
+00:32:37,180 --> 00:32:39,960
+Time increments. Time counter register.
+
+405
+00:32:39,960 --> 00:32:42,200
+Right. Now that register
+
+406
+00:32:42,200 --> 00:32:46,019
+is incremented from 0 to
+
+407
+00:32:46,019 --> 00:32:49,640
+255. Why? It's 8 bit register.
+
+408
+00:32:50,180 --> 00:32:53,880
+In an 8 bit register you can have values from 0 to
+
+409
+00:32:53,880 --> 00:32:58,140
+255. So the maximum value
+
+410
+00:32:58,140 --> 00:33:01,880
+that the TCNT register can hold is 255.
+
+411
+00:33:02,339 --> 00:33:03,779
+For each clock pulse,
+
+412
+00:33:04,500 --> 00:33:07,279
+the timer increments TCNT register.
+
+413
+00:33:07,660 --> 00:33:11,200
+The register is incremented from 0 to 255.
+
+414
+00:33:11,880 --> 00:33:15,500
+And then the next clock pulse,
+
+415
+00:33:16,059 --> 00:33:18,500
+the TCNT register overflows
+
+416
+00:33:18,500 --> 00:33:21,099
+because now its value is 255.
+
+417
+00:33:21,099 --> 00:33:22,980
+If you get another clock pulse,
+
+418
+00:33:23,579 --> 00:33:26,700
+the register overflows from 255 to 0.
+
+419
+00:33:26,700 --> 00:33:29,880
+it overflows from 255 to 0.
+
+420
+00:33:30,960 --> 00:33:34,099
+Now in this picture you can see 0 to 255
+
+421
+00:33:34,099 --> 00:33:37,900
+then overflows back to 0. Again it
+
+422
+00:33:37,900 --> 00:33:40,920
+counts from 0 to 255. Every clock pulse
+
+423
+00:33:40,920 --> 00:33:46,200
+the register is incremented from 0 to 255 then overflows to 0.
+
+424
+00:33:46,900 --> 00:33:49,799
+When the register overflows from
+
+425
+00:33:49,799 --> 00:33:53,799
+255 to 0 the timer sets
+
+426
+00:33:53,799 --> 00:33:56,700
+TOV flag.
+
+427
+00:33:57,160 --> 00:33:59,039
+Time overflow flag.
+
+428
+00:33:59,420 --> 00:34:01,519
+Time overflow flag bit of
+
+429
+00:34:01,519 --> 00:34:04,319
+TIFR register.
+
+430
+00:34:04,559 --> 00:34:06,859
+Time interrupt flag register.
+
+431
+00:34:07,559 --> 00:34:11,300
+When the register overflows from 255 to 0,
+
+432
+00:34:12,179 --> 00:34:14,079
+this particular bit is set.
+
+433
+00:34:14,079 --> 00:34:15,440
+What is this bit?
+
+434
+00:34:15,780 --> 00:34:17,559
+Time overflow bit of
+
+435
+00:34:17,559 --> 00:34:21,460
+time interrupt flag register.
+
+436
+00:34:22,079 --> 00:34:23,039
+This bit is set.
+
+437
+00:34:23,039 --> 00:34:32,420
+So this bit indicates, this bit indicates the time has counted up to 255 and now overflowing.
+
+438
+00:34:33,199 --> 00:34:38,920
+Time has counted from 0 to 255 and now overflows to 0.
+
+439
+00:34:38,920 --> 00:34:41,019
+This bit indicates, right.
+
+440
+00:34:41,539 --> 00:34:50,360
+Now let's say, right, then that signal we can use, the CPU can use that bit to know
+
+441
+00:34:50,360 --> 00:34:54,039
+how many clock pulses the timer counted.
+
+442
+00:34:54,639 --> 00:34:57,000
+The first time this bit is set, that means
+
+443
+00:34:57,000 --> 00:35:00,159
+timer counted 255, 0 to 255.
+
+444
+00:35:00,539 --> 00:35:02,980
+0 to 255 means including 0.
+
+445
+00:35:02,980 --> 00:35:05,800
+How many counts? 256.
+
+446
+00:35:06,539 --> 00:35:08,500
+And then again start from 0.
+
+447
+00:35:09,079 --> 00:35:12,260
+Another 256, again the bit is set.
+
+448
+00:35:12,820 --> 00:35:17,179
+Using that, we can count the number of clock pulses.
+
+449
+00:35:17,519 --> 00:35:19,059
+If you want to stop the timer,
+
+450
+00:35:19,059 --> 00:35:24,139
+You can disconnect the clock source from the time.
+
+451
+00:35:24,980 --> 00:35:27,059
+For that you can use clock select bit.
+
+452
+00:35:27,380 --> 00:35:32,960
+Both internal and external clock sources we can disconnect using CSV.
+
+453
+00:35:33,219 --> 00:35:40,039
+When you disconnect the clock sources, the register stops getting incremented.
+
+454
+00:35:40,820 --> 00:35:42,159
+No more increments.
+
+455
+00:35:42,159 --> 00:35:51,219
+Then, you can read the register value and know how many clock pulses count.
+
+456
+00:35:51,960 --> 00:35:54,860
+Now let's say before 255 you want to stop.
+
+457
+00:35:55,559 --> 00:35:58,719
+Okay, disconnect the clock source and read the register value.
+
+458
+00:35:58,980 --> 00:36:00,539
+Let's say register value says 100.
+
+459
+00:36:01,679 --> 00:36:03,760
+That means 101 clock pulses.
+
+460
+00:36:04,179 --> 00:36:05,059
+Can you understand?
+
+461
+00:36:05,519 --> 00:36:06,059
+Any questions?
+
+462
+00:36:06,059 --> 00:36:08,840
+Sir, are you talking about time count register?
+
+463
+00:36:09,079 --> 00:36:10,900
+Would you explain what?
+
+464
+00:36:10,900 --> 00:36:12,159
+I was the one nd.
+
+465
+00:36:12,159 --> 00:36:14,719
+I have a more time-couple, and the one-couple, the one-couple, the one-couple, the one-couple,
+
+466
+00:36:14,719 --> 00:36:47,039
+[unclear — Sinhala / crosstalk]
+
+467
+00:36:47,039 --> 00:36:54,039
+So, if we have a TOV, we will set the TOV.
+
+468
+00:36:54,039 --> 00:36:56,039
+So, do you want to count?
+
+469
+00:36:56,039 --> 00:36:58,039
+Yes, do you want to count?
+
+470
+00:36:58,039 --> 00:37:08,039
+So, if we have a TOV, we will count the TOV, and we will count the TOV.
+
+471
+00:37:08,039 --> 00:38:08,039
+[unclear — Sinhala / crosstalk]
+
+472
+00:38:08,039 --> 00:38:09,599
+the you a s2
+
+473
+00:38:09,599 --> 00:38:10,400
+the s1
+
+474
+00:38:10,400 --> 00:38:11,039
+the s1
+
+475
+00:38:11,039 --> 00:38:11,139
+s1
+
+476
+00:38:11,139 --> 00:38:11,139
+
+
+477
+00:38:11,139 --> 00:38:11,099
+s1
+
+478
+00:38:11,099 --> 00:38:11,099
+
+
+479
+00:38:11,099 --> 00:38:11,099
+
+
+480
+00:38:11,099 --> 00:38:11,099
+
+
+481
+00:38:11,099 --> 00:38:11,099
+
+
+482
+00:38:11,099 --> 00:38:11,099
+
+
+483
+00:38:11,099 --> 00:38:11,099
+
+
+484
+00:38:11,099 --> 00:38:11,099
+
+
+485
+00:38:11,099 --> 00:38:11,099
+
+
+486
+00:38:11,099 --> 00:38:11,099
+
+
+487
+00:38:11,099 --> 00:38:11,099
+
+
+488
+00:38:11,099 --> 00:38:11,099
+
+
+489
+00:38:11,099 --> 00:38:11,099
+
+
+490
+00:38:11,099 --> 00:38:11,099
+
+
+491
+00:38:11,099 --> 00:38:11,099
+
+
+492
+00:38:11,099 --> 00:38:11,099
+
+
+493
+00:38:11,099 --> 00:38:11,099
+
+
+494
+00:38:11,099 --> 00:38:11,099
+
+
+495
+00:38:11,099 --> 00:38:11,099
+
+
+496
+00:38:11,099 --> 00:38:11,099
+
+
+497
+00:38:11,099 --> 00:38:11,099
+
+
+498
+00:38:11,099 --> 00:38:11,099
+
+
+499
+00:38:11,099 --> 00:38:11,099
+
+
+500
+00:38:11,099 --> 00:38:11,099
+
+
+501
+00:38:11,099 --> 00:38:11,099
+
+
+502
+00:38:11,099 --> 00:38:11,099
+
+
+503
+00:38:11,099 --> 00:38:11,099
+
+
+504
+00:38:11,099 --> 00:38:11,099
+
+
+505
+00:38:11,099 --> 00:38:11,099
+
+
+506
+00:38:11,099 --> 00:38:11,099
+
+
+507
+00:38:11,099 --> 00:38:11,099
+
+
+508
+00:38:11,099 --> 00:38:11,099
+
+
+509
+00:38:11,099 --> 00:38:11,099
+
+
+510
+00:38:11,099 --> 00:38:11,099
+
+
+511
+00:38:11,099 --> 00:38:11,099
+
+
+512
+00:38:11,099 --> 00:38:11,099
+
+
+513
+00:38:11,099 --> 00:38:11,099
+
+
+514
+00:38:11,099 --> 00:38:11,099
+
+
+515
+00:38:11,099 --> 00:38:11,099
+
+
+516
+00:38:11,099 --> 00:38:11,099
+
+
+517
+00:38:11,099 --> 00:38:11,099
+
+
+518
+00:38:11,099 --> 00:38:11,099
+
+
+519
+00:38:11,099 --> 00:38:11,099
+
+
+520
+00:38:11,099 --> 00:38:11,079
+s1
+
+521
+00:38:11,079 --> 00:38:11,079
+
+
+522
+00:38:11,079 --> 00:38:11,079
+
+
+523
+00:38:11,079 --> 00:38:11,079
+
+
+524
+00:38:11,079 --> 00:38:11,059
+s1
+
+525
+00:38:11,059 --> 00:38:11,039
+s1
+
+526
+00:38:11,039 --> 00:38:14,039
+If you count the SPAR, there is a overflow.
+
+527
+00:38:14,039 --> 00:38:18,039
+So, what do you think about the SPAR in the room?
+
+528
+00:38:18,039 --> 00:38:19,039
+Yes sir, sir.
+
+529
+00:38:19,039 --> 00:38:23,039
+But the SPAR is not in the room.
+
+530
+00:38:23,039 --> 00:38:25,039
+It is not in the room.
+
+531
+00:38:25,039 --> 00:38:27,039
+It is not in the room.
+
+532
+00:38:27,039 --> 00:38:29,039
+It is not in the room.
+
+533
+00:38:29,039 --> 00:38:32,039
+It is not in the room.
+
+534
+00:38:32,039 --> 00:38:37,039
+If you have a clock source, you can disconnect the clock source.
+
+535
+00:38:37,039 --> 00:38:41,039
+I'm not sure if you have a time to count.
+
+536
+00:38:41,039 --> 00:38:42,039
+No.
+
+537
+00:38:42,039 --> 00:38:45,039
+What do you think about TCNT register?
+
+538
+00:38:45,039 --> 00:38:47,039
+What do you think about TCNT register?
+
+539
+00:38:47,039 --> 00:38:49,039
+What do you think about TCNT register?
+
+540
+00:38:49,039 --> 00:38:51,039
+Do you understand?
+
+541
+00:38:51,039 --> 00:38:54,039
+Do you have any connection with TOV?
+
+542
+00:38:54,039 --> 00:38:57,039
+Do you have any connection with TOV?
+
+543
+00:38:57,039 --> 00:38:59,039
+Time overflow bit.
+
+544
+00:38:59,039 --> 00:39:02,039
+ToV. Time overflow bit.
+
+545
+00:39:02,039 --> 00:39:05,039
+Overflow bit is set.
+
+546
+00:39:05,039 --> 00:39:06,300
+the
+
+547
+00:39:06,300 --> 00:39:07,059
+the
+
+548
+00:39:07,059 --> 00:39:07,400
+the
+
+549
+00:39:07,400 --> 00:39:07,579
+the
+
+550
+00:39:07,579 --> 00:39:07,639
+the
+
+551
+00:39:07,639 --> 00:39:07,639
+
+
+552
+00:39:07,639 --> 00:39:07,619
+the
+
+553
+00:39:07,619 --> 00:39:07,599
+the
+
+554
+00:39:07,599 --> 00:39:07,559
+the
+
+555
+00:39:07,559 --> 00:39:07,539
+the
+
+556
+00:39:07,539 --> 00:39:07,519
+the
+
+557
+00:39:07,519 --> 00:39:07,500
+the
+
+558
+00:39:07,500 --> 00:39:07,480
+the
+
+559
+00:39:07,480 --> 00:39:07,440
+the
+
+560
+00:39:07,440 --> 00:39:07,420
+the
+
+561
+00:39:07,420 --> 00:39:07,400
+the
+
+562
+00:39:07,400 --> 00:39:07,400
+
+
+563
+00:39:07,400 --> 00:39:07,380
+the
+
+564
+00:39:07,380 --> 00:39:07,380
+
+
+565
+00:39:07,380 --> 00:39:07,380
+
+
+566
+00:39:07,380 --> 00:39:07,380
+
+
+567
+00:39:07,380 --> 00:39:07,380
+
+
+568
+00:39:07,380 --> 00:39:07,380
+
+
+569
+00:39:07,380 --> 00:39:07,380
+
+
+570
+00:39:07,380 --> 00:39:07,380
+
+
+571
+00:39:07,380 --> 00:39:07,380
+
+
+572
+00:39:07,380 --> 00:39:07,380
+
+
+573
+00:39:07,380 --> 00:39:07,380
+
+
+574
+00:39:07,380 --> 00:39:07,380
+
+
+575
+00:39:07,380 --> 00:39:07,380
+
+
+576
+00:39:07,380 --> 00:39:07,380
+
+
+577
+00:39:07,380 --> 00:39:07,380
+
+
+578
+00:39:07,380 --> 00:39:07,380
+
+
+579
+00:39:07,380 --> 00:39:07,380
+
+
+580
+00:39:07,380 --> 00:39:07,380
+
+
+581
+00:39:07,380 --> 00:39:07,380
+
+
+582
+00:39:07,380 --> 00:39:07,380
+
+
+583
+00:39:07,380 --> 00:39:07,380
+
+
+584
+00:39:07,380 --> 00:39:07,380
+
+
+585
+00:39:07,380 --> 00:39:07,380
+
+
+586
+00:39:07,380 --> 00:39:07,380
+
+
+587
+00:39:07,380 --> 00:39:07,380
+
+
+588
+00:39:07,380 --> 00:39:07,380
+
+
+589
+00:39:07,380 --> 00:39:07,380
+
+
+590
+00:39:07,380 --> 00:39:07,380
+
+
+591
+00:39:07,380 --> 00:39:07,380
+
+
+592
+00:39:07,380 --> 00:39:07,380
+
+
+593
+00:39:07,380 --> 00:39:07,380
+
+
+594
+00:39:07,380 --> 00:39:07,380
+
+
+595
+00:39:07,380 --> 00:39:07,380
+
+
+596
+00:39:07,380 --> 00:39:07,380
+
+
+597
+00:39:07,380 --> 00:39:07,380
+
+
+598
+00:39:07,380 --> 00:39:07,380
+
+
+599
+00:39:07,380 --> 00:39:07,380
+
+
+600
+00:39:07,380 --> 00:39:07,380
+
+
+601
+00:39:07,380 --> 00:39:07,380
+
+
+602
+00:39:07,380 --> 00:39:07,380
+
+
+603
+00:39:07,380 --> 00:39:07,380
+
+
+604
+00:39:07,380 --> 00:39:07,360
+the
+
+605
+00:39:07,360 --> 00:39:07,940
+hist
+
+606
+00:39:35,039 --> 00:40:05,039
+[unclear — Sinhala / crosstalk]
+
+607
+00:40:05,039 --> 00:40:06,360
+o
+
+608
+00:40:06,360 --> 00:40:06,960
+a
+
+609
+00:40:06,960 --> 00:40:07,159
+a
+
+610
+00:40:07,159 --> 00:40:07,300
+a
+
+611
+00:40:07,300 --> 00:40:07,420
+a
+
+612
+00:40:07,420 --> 00:40:07,460
+a
+
+613
+00:40:07,460 --> 00:40:07,500
+a
+
+614
+00:40:07,500 --> 00:40:07,519
+a
+
+615
+00:40:07,519 --> 00:40:07,559
+a
+
+616
+00:40:07,559 --> 00:40:07,579
+a
+
+617
+00:40:07,579 --> 00:40:07,599
+a
+
+618
+00:40:07,599 --> 00:40:07,599
+
+
+619
+00:40:07,599 --> 00:40:07,599
+
+
+620
+00:40:07,599 --> 00:40:07,599
+
+
+621
+00:40:07,599 --> 00:40:07,599
+
+
+622
+00:40:07,599 --> 00:40:07,599
+
+
+623
+00:40:07,599 --> 00:40:07,599
+
+
+624
+00:40:07,599 --> 00:40:07,599
+
+
+625
+00:40:07,599 --> 00:40:07,599
+
+
+626
+00:40:07,599 --> 00:40:07,599
+
+
+627
+00:40:07,599 --> 00:40:07,619
+a
+
+628
+00:40:07,619 --> 00:40:07,619
+
+
+629
+00:40:07,619 --> 00:40:07,619
+
+
+630
+00:40:07,619 --> 00:40:07,619
+
+
+631
+00:40:07,619 --> 00:40:07,619
+
+
+632
+00:40:07,619 --> 00:40:07,639
+a
+
+633
+00:40:07,639 --> 00:40:07,639
+
+
+634
+00:40:07,639 --> 00:40:07,639
+
+
+635
+00:40:07,639 --> 00:40:07,639
+
+
+636
+00:40:07,639 --> 00:40:07,659
+a
+
+637
+00:40:07,659 --> 00:40:07,639
+a
+
+638
+00:40:07,639 --> 00:40:07,659
+a
+
+639
+00:40:07,659 --> 00:40:07,659
+
+
+640
+00:40:07,659 --> 00:40:07,659
+
+
+641
+00:40:07,659 --> 00:40:07,659
+
+
+642
+00:40:07,659 --> 00:40:07,659
+
+
+643
+00:40:07,659 --> 00:40:07,659
+
+
+644
+00:40:07,659 --> 00:40:07,659
+
+
+645
+00:40:07,659 --> 00:40:07,659
+
+
+646
+00:40:07,659 --> 00:40:07,659
+
+
+647
+00:40:07,659 --> 00:40:07,659
+
+
+648
+00:40:07,659 --> 00:40:07,659
+
+
+649
+00:40:07,659 --> 00:40:07,659
+
+
+650
+00:40:07,659 --> 00:40:07,659
+
+
+651
+00:40:07,659 --> 00:40:07,639
+a
+
+652
+00:40:07,639 --> 00:40:07,659
+a
+
+653
+00:40:07,659 --> 00:40:07,659
+
+
+654
+00:40:07,659 --> 00:40:07,639
+a
+
+655
+00:40:07,639 --> 00:40:07,659
+a
+
+656
+00:40:07,659 --> 00:40:07,659
+
+
+657
+00:40:07,659 --> 00:40:07,639
+a
+
+658
+00:40:07,639 --> 00:40:07,659
+a
+
+659
+00:40:07,659 --> 00:40:07,639
+a
+
+660
+00:40:07,639 --> 00:40:07,659
+a
+
+661
+00:40:07,659 --> 00:40:07,639
+a
+
+662
+00:40:07,639 --> 00:40:07,659
+a
+
+663
+00:40:07,659 --> 00:40:07,639
+a
+
+664
+00:40:07,639 --> 00:40:07,659
+a
+
+665
+00:40:07,659 --> 00:40:07,639
+a
+
+666
+00:40:07,639 --> 00:40:07,639
+
+
+667
+00:40:07,639 --> 00:40:07,639
+
+
+668
+00:40:07,639 --> 00:40:07,639
+
+
+669
+00:40:07,639 --> 00:40:07,639
+
+
+670
+00:40:07,639 --> 00:40:07,639
+
+
+671
+00:40:07,639 --> 00:40:07,639
+
+
+672
+00:40:07,639 --> 00:40:07,639
+
+
+673
+00:40:07,639 --> 00:40:07,639
+
+
+674
+00:40:07,639 --> 00:40:07,639
+
+
+675
+00:40:07,639 --> 00:40:07,639
+
+
+676
+00:40:07,639 --> 00:40:07,639
+
+
+677
+00:40:07,639 --> 00:40:07,639
+
+
+678
+00:40:07,639 --> 00:40:07,639
+
+
+679
+00:40:07,639 --> 00:40:07,639
+
+
+680
+00:40:07,639 --> 00:40:07,639
+
+
+681
+00:40:07,639 --> 00:40:08,900
+tov btg a kbhgʰaKT.
+
+682
+00:40:08,900 --> 00:40:09,000
+a w2.
+
+683
+00:40:09,000 --> 00:40:10,519
+to the TNC-D.
+
+684
+00:40:10,519 --> 00:40:13,539
+to the in-cdG
+
+685
+00:40:13,519 --> 00:40:13,519
+
+
+686
+00:40:13,519 --> 00:40:14,019
+the
+
+687
+00:40:14,019 --> 00:40:14,480
+the
+
+688
+00:40:14,480 --> 00:40:14,559
+the
+
+689
+00:40:14,559 --> 00:40:14,679
+the
+
+690
+00:40:14,679 --> 00:40:14,760
+the
+
+691
+00:40:14,760 --> 00:40:14,780
+the
+
+692
+00:40:14,780 --> 00:40:14,760
+the
+
+693
+00:40:14,760 --> 00:40:14,760
+
+
+694
+00:40:14,760 --> 00:40:14,760
+
+
+695
+00:40:14,760 --> 00:40:14,739
+the
+
+696
+00:40:14,739 --> 00:40:14,719
+the
+
+697
+00:40:14,719 --> 00:40:14,719
+
+
+698
+00:40:14,719 --> 00:40:14,719
+
+
+699
+00:40:14,719 --> 00:40:14,719
+
+
+700
+00:40:14,719 --> 00:40:14,719
+
+
+701
+00:40:14,719 --> 00:40:14,719
+
+
+702
+00:40:14,719 --> 00:40:14,719
+
+
+703
+00:40:14,719 --> 00:40:14,719
+
+
+704
+00:40:14,719 --> 00:40:14,719
+
+
+705
+00:40:14,719 --> 00:40:14,719
+
+
+706
+00:40:14,719 --> 00:40:14,719
+
+
+707
+00:40:14,719 --> 00:40:14,719
+
+
+708
+00:40:14,719 --> 00:40:14,719
+
+
+709
+00:40:14,719 --> 00:40:14,719
+
+
+710
+00:40:14,719 --> 00:40:14,719
+
+
+711
+00:40:14,719 --> 00:40:14,719
+
+
+712
+00:40:40,519 --> 00:40:42,519
+Do you have to use the CPU?
+
+713
+00:40:42,519 --> 00:40:44,519
+Yes, it's a CPU.
+
+714
+00:40:44,519 --> 00:40:46,519
+You can use the CPU.
+
+715
+00:40:46,519 --> 00:40:48,519
+No, you don't have to use the CPU.
+
+716
+00:40:48,519 --> 00:40:52,519
+Yes, I think we have to use the CPU.
+
+717
+00:40:52,519 --> 00:40:54,519
+We can use the interrupt flag.
+
+718
+00:40:54,519 --> 00:40:56,519
+We can use the interrupt flag.
+
+719
+00:40:56,519 --> 00:40:58,519
+We can use the interrupt flag.
+
+720
+00:40:58,519 --> 00:41:00,519
+We can use the poll.
+
+721
+00:41:00,519 --> 00:41:02,519
+Okay.
+
+722
+00:41:02,519 --> 00:41:06,519
+Tov time over flow bit of TIFR.
+
+723
+00:41:06,519 --> 00:41:08,519
+Time interrupt flag register.
+
+724
+00:41:08,519 --> 00:41:12,519
+Can you use interrupt flag?
+
+725
+00:41:12,519 --> 00:41:14,519
+Right.
+
+726
+00:41:14,519 --> 00:41:16,519
+What else?
+
+727
+00:41:16,519 --> 00:41:18,519
+Excuse me sir,
+
+728
+00:41:18,519 --> 00:41:24,519
+what do you need to use the variable to code the CPU?
+
+729
+00:41:24,519 --> 00:41:26,519
+Oh,
+
+730
+00:41:26,519 --> 00:41:30,519
+if you set the TOV bit to that count,
+
+731
+00:41:30,519 --> 00:41:32,519
+that's not the variable.
+
+732
+00:41:32,519 --> 00:41:36,519
+You can use the polling and interrupts.
+
+733
+00:41:36,519 --> 00:41:40,320
+So, you have a look, the one- we have a look, the one- the all- the the the.
+
+734
+00:41:40,320 --> 00:42:08,739
+Let's talk about timing.
+
+735
+00:42:08,739 --> 00:42:12,000
+Now this is the way we calculate the elapsed time.
+
+736
+00:42:13,679 --> 00:42:15,500
+The oscillator provides clock pulses.
+
+737
+00:42:16,300 --> 00:42:19,539
+TNCT register counts the clock pulses.
+
+738
+00:42:19,719 --> 00:42:23,039
+It is incremented from 0 to 255.
+
+739
+00:42:24,039 --> 00:42:30,139
+Let's assume before it overflows, you stop the clock.
+
+740
+00:42:30,780 --> 00:42:32,119
+You disconnect the clock source.
+
+741
+00:42:32,119 --> 00:42:38,780
+Before the register overflows, you stop the, disconnect the clock source.
+
+742
+00:42:39,519 --> 00:42:44,579
+Then starting number of the register, which is 0 usually.
+
+743
+00:42:45,280 --> 00:42:48,380
+And the end number, end value of the register.
+
+744
+00:42:48,480 --> 00:42:51,400
+Now you measure the, you check the value of the register.
+
+745
+00:42:51,519 --> 00:42:52,380
+It says 100.
+
+746
+00:42:52,940 --> 00:42:54,760
+100 minus 0, 100.
+
+747
+00:42:55,360 --> 00:42:57,340
+Divided by frequency.
+
+748
+00:42:58,159 --> 00:42:59,440
+You get the ellipse time.
+
+749
+00:42:59,659 --> 00:43:00,639
+You get the ellipse time.
+
+750
+00:43:00,639 --> 00:43:06,000
+Now if the register overflows, Tov bit is set.
+
+751
+00:43:06,539 --> 00:43:13,300
+Now you have to keep a separate count of how many times Tov bit is set.
+
+752
+00:43:13,300 --> 00:43:21,760
+And then finally when you disconnect the clock source, you get the stop number and the start number.
+
+753
+00:43:22,500 --> 00:43:28,679
+And you have separated, you have separate count of number of times Tov bit is set.
+
+754
+00:43:28,679 --> 00:43:35,760
+And using that and the frequency, you can determine the ellipse time.
+
+755
+00:43:36,239 --> 00:43:36,800
+Is that clear?
+
+756
+00:43:37,320 --> 00:43:37,559
+Right.
+
+757
+00:43:38,099 --> 00:43:44,300
+But one problem of this method is the frequency of the oscillator is very fast.
+
+758
+00:43:44,699 --> 00:43:45,480
+Oscillator is very fast.
+
+759
+00:43:45,539 --> 00:43:47,400
+So you get a higher frequencies.
+
+760
+00:43:48,239 --> 00:43:50,699
+And the TCNT register is a small register.
+
+761
+00:43:50,860 --> 00:43:52,500
+Register would be over.
+
+762
+00:43:53,360 --> 00:43:57,199
+It can count up to maximum and then it overflows.
+
+763
+00:43:57,199 --> 00:44:17,199
+Now what is the solution? You can use a prescaler and cut down the frequency by a factor, some number. Now the increment is slow. Look at it. So very fast. Now it's slow. The increment is slow because you have cut down the frequency by a prescaler.
+
+764
+00:44:17,199 --> 00:44:27,800
+Then you can, the TCNT register counts and when you disconnect the clock source, the counting stops.
+
+765
+00:44:28,840 --> 00:44:37,900
+Then you get the end number, starting number multiplied by the prescaler divided by the frequency.
+
+766
+00:44:38,119 --> 00:44:38,760
+You get the elapsed.
+
+767
+00:44:39,079 --> 00:44:39,760
+Is that clear?
+
+768
+00:44:39,760 --> 00:44:44,860
+Now, for example, let's say frequency is 1 hertz.
+
+769
+00:44:44,860 --> 00:44:48,300
+Every one second you get a clock pulse.
+
+770
+00:44:48,559 --> 00:44:50,219
+Starting value 0.
+
+771
+00:44:50,980 --> 00:44:53,059
+End value 60.
+
+772
+00:44:53,500 --> 00:44:58,239
+60 minus 0 divided by 1.
+
+773
+00:44:58,780 --> 00:45:01,579
+Elapsed time is 60 seconds.
+
+774
+00:45:01,719 --> 00:45:02,860
+That means 1 minute.
+
+775
+00:45:03,280 --> 00:45:04,380
+The second example.
+
+776
+00:45:04,539 --> 00:45:07,239
+Frequency let's say 10 hertz.
+
+777
+00:45:07,760 --> 00:45:11,300
+That means every second you get 10 pulses.
+
+778
+00:45:11,300 --> 00:45:16,579
+And the prescaler is, let's say, n is 10.
+
+779
+00:45:17,239 --> 00:45:18,460
+You divide by 10.
+
+780
+00:45:19,119 --> 00:45:21,800
+0, n times 60.
+
+781
+00:45:22,380 --> 00:45:23,099
+60.
+
+782
+00:45:23,980 --> 00:45:28,099
+You don't get, yes, 60, 0.
+
+783
+00:45:28,480 --> 00:45:30,400
+That is 10 multiplied.
+
+784
+00:45:31,000 --> 00:45:34,320
+Divided by frequency, 10.
+
+785
+00:45:34,880 --> 00:45:35,980
+Again, 1 minute.
+
+786
+00:45:36,360 --> 00:45:36,639
+Right?
+
+787
+00:45:36,639 --> 00:45:47,500
+Now if the frequency is high, if the frequency is high, this register would be filled very soon.
+
+788
+00:45:48,039 --> 00:45:56,340
+To avoid that, we can use a prescaler and divide the frequency by a fixed number.
+
+789
+00:45:56,519 --> 00:45:59,179
+And then we can use that number for the calculation.
+
+790
+00:45:59,739 --> 00:46:03,599
+That's how we determine the elapsed type, measuring type.
+
+791
+00:46:03,599 --> 00:46:04,820
+Is that clear?
+
+792
+00:46:04,820 --> 00:46:07,219
+Any question?
+
+793
+00:46:07,900 --> 00:46:09,159
+Can you understand this?
+
+794
+00:46:10,019 --> 00:46:11,099
+Measuring elapsed time?
+
+795
+00:46:11,719 --> 00:46:11,880
+Is it?
+
+796
+00:46:13,559 --> 00:46:16,400
+Right. That's how we measure elapsed time.
+
+797
+00:46:16,880 --> 00:46:19,739
+Now let's talk about time counter registers.
+
+798
+00:46:20,440 --> 00:46:25,179
+The first register TCCRNB.
+
+799
+00:46:25,920 --> 00:46:30,099
+Time counter control register NB.
+
+800
+00:46:30,860 --> 00:46:31,119
+Right.
+
+801
+00:46:31,119 --> 00:46:35,179
+And simple N indicates the timer.
+
+802
+00:46:35,500 --> 00:46:40,619
+Timer 0, timer 1, timer 2, likewise the number of the time.
+
+803
+00:46:41,360 --> 00:46:50,099
+The B indicates, B means there are multiple TCCR registers.
+
+804
+00:46:50,760 --> 00:46:59,619
+Timer counter control register A, timer counter control register B, timer counter control register C, likewise multiple timer counter registers.
+
+805
+00:46:59,619 --> 00:47:01,579
+for a given timer.
+
+806
+00:47:02,079 --> 00:47:04,000
+Timer 0, timer 1,
+
+807
+00:47:04,300 --> 00:47:04,980
+timer 2.
+
+808
+00:47:05,539 --> 00:47:05,820
+Right.
+
+809
+00:47:06,280 --> 00:47:09,699
+And in the TCCRB register,
+
+810
+00:47:10,539 --> 00:47:12,500
+there are three important bits.
+
+811
+00:47:13,059 --> 00:47:15,300
+Bit 0, bit 1, bit 2.
+
+812
+00:47:15,619 --> 00:47:18,000
+Those are called CS bits
+
+813
+00:47:18,000 --> 00:47:21,280
+or clock select bits.
+
+814
+00:47:21,800 --> 00:47:22,840
+Clock select bits.
+
+815
+00:47:23,119 --> 00:47:25,340
+Now using these clock select bits,
+
+816
+00:47:25,340 --> 00:47:27,539
+we can select the clock source
+
+817
+00:47:27,539 --> 00:47:30,519
+and also the pre-scale.
+
+818
+00:47:31,000 --> 00:47:33,539
+If you set all three bits to zero,
+
+819
+00:47:33,719 --> 00:47:37,659
+that means you disconnect the timer from any clock source.
+
+820
+00:47:38,039 --> 00:47:41,340
+This value is very important if you want to stop counting.
+
+821
+00:47:41,960 --> 00:47:44,659
+You immediately set these three bits to zero
+
+822
+00:47:44,659 --> 00:47:46,280
+and stop counting,
+
+823
+00:47:46,440 --> 00:47:51,920
+then you can get the existing value of the TCNT register.
+
+824
+00:47:51,920 --> 00:48:03,760
+If you set 1 internal oscillator at the full speed frequency of CPU, full speed you connect the internal oscillator to the timer.
+
+825
+00:48:04,199 --> 00:48:14,400
+If you set 2 internal oscillator CPU frequency you divide by 8, the prescaler is 8, then you connect to the timer.
+
+826
+00:48:14,400 --> 00:48:17,599
+If it is 3, you divide by 64.
+
+827
+00:48:18,340 --> 00:48:21,420
+If it is 4, divide by 256.
+
+828
+00:48:22,219 --> 00:48:24,340
+5024.
+
+829
+00:48:24,780 --> 00:48:33,699
+All these settings, you connect the internal clock to the timer.
+
+830
+00:48:34,659 --> 00:48:35,659
+Internal clock zone.
+
+831
+00:48:36,039 --> 00:48:38,780
+And last two are for external clock zone.
+
+832
+00:48:39,079 --> 00:48:41,940
+If these are the settings you set for the CS bits,
+
+833
+00:48:41,940 --> 00:48:45,960
+use the clock source is external
+
+834
+00:48:45,960 --> 00:48:50,179
+on the TN pin. T0 for timer 0,
+
+835
+00:48:50,320 --> 00:48:54,139
+T1 for timer 1, T2 for timer 2. Whatever the clock source
+
+836
+00:48:54,139 --> 00:48:58,219
+connected to TN pin, timer pin. And the
+
+837
+00:48:58,219 --> 00:49:02,179
+timer counts on the falling edge of
+
+838
+00:49:02,179 --> 00:49:06,239
+the pulse. The timer counts on the falling edge of the pulse. That means
+
+839
+00:49:06,239 --> 00:49:10,400
+if this is the pulse on the falling edge timer counts.
+
+840
+00:49:10,400 --> 00:49:19,440
+And the next setting, right, external clock source connected to the end pin time accounts on the rising edge.
+
+841
+00:49:20,000 --> 00:49:21,079
+On the rising edge.
+
+842
+00:49:21,239 --> 00:49:22,659
+Rising edge of the pulse.
+
+843
+00:49:23,019 --> 00:49:23,639
+Is that clear?
+
+844
+00:49:24,159 --> 00:49:28,500
+Now what is the importance of this falling edge, rising edge?
+
+845
+00:49:28,980 --> 00:49:30,619
+Now let's say you want to call.
+
+846
+00:49:30,739 --> 00:49:31,260
+Yes.
+
+847
+00:49:31,900 --> 00:49:32,179
+Yeah.
+
+848
+00:49:32,820 --> 00:49:33,119
+Yes.
+
+849
+00:49:33,639 --> 00:49:34,320
+That's your question.
+
+850
+00:49:34,519 --> 00:49:39,119
+Sir, don't we want to slow down the external thing?
+
+851
+00:49:39,119 --> 00:49:41,780
+Slow down what? Slow down what?
+
+852
+00:49:42,440 --> 00:49:44,400
+Clock source from the external.
+
+853
+00:49:44,960 --> 00:49:46,480
+No. There is no
+
+854
+00:49:46,480 --> 00:49:48,280
+prescaler for slow downing
+
+855
+00:49:48,280 --> 00:49:49,260
+external clock source.
+
+856
+00:49:50,000 --> 00:49:50,800
+Normally,
+
+857
+00:49:51,500 --> 00:49:54,619
+compared to the frequency
+
+858
+00:49:54,619 --> 00:49:55,460
+of CPU,
+
+859
+00:49:56,280 --> 00:49:58,699
+all external clock sources are very slow.
+
+860
+00:49:59,000 --> 00:50:00,440
+All external clock sources
+
+861
+00:50:00,440 --> 00:50:01,579
+are very slow.
+
+862
+00:50:02,539 --> 00:50:04,780
+Right? Compared to the frequency
+
+863
+00:50:04,780 --> 00:50:06,739
+of CPU. So there is no need.
+
+864
+00:50:06,739 --> 00:50:08,900
+Right. Now let's say
+
+865
+00:50:08,900 --> 00:50:11,019
+you want to count
+
+866
+00:50:11,019 --> 00:50:12,840
+number of button pressers.
+
+867
+00:50:13,260 --> 00:50:15,039
+When you press the button
+
+868
+00:50:15,039 --> 00:50:16,860
+every time you want to count.
+
+869
+00:50:17,320 --> 00:50:18,380
+You can use
+
+870
+00:50:18,380 --> 00:50:20,500
+Falling Edge. Press
+
+871
+00:50:20,500 --> 00:50:22,320
+High to Low.
+
+872
+00:50:22,880 --> 00:50:24,800
+You have pull up the pin
+
+873
+00:50:24,800 --> 00:50:27,019
+and when you press the button, the pin
+
+874
+00:50:27,019 --> 00:50:27,840
+becomes low.
+
+875
+00:50:28,880 --> 00:50:31,119
+Falling Edge. And you want
+
+876
+00:50:31,119 --> 00:50:33,000
+to count number of
+
+877
+00:50:33,000 --> 00:50:33,960
+button releases.
+
+878
+00:50:35,119 --> 00:50:36,840
+Not the pressers, button releases.
+
+879
+00:50:37,440 --> 00:50:38,599
+How many button releases?
+
+880
+00:50:38,900 --> 00:50:42,780
+Then, when you press the button, the pin becomes low.
+
+881
+00:50:42,880 --> 00:50:45,059
+But when you release the button, the pin becomes high.
+
+882
+00:50:45,559 --> 00:50:46,780
+Because you have pulled up the pin.
+
+883
+00:50:48,179 --> 00:50:49,280
+Rising H.
+
+884
+00:50:49,960 --> 00:50:55,320
+Based on that, you can count whether the number of button presses or releases.
+
+885
+00:50:55,960 --> 00:50:57,039
+That's one example.
+
+886
+00:50:57,599 --> 00:50:58,420
+Any more questions?
+
+887
+00:50:59,039 --> 00:50:59,380
+All right.
+
+888
+00:50:59,800 --> 00:51:01,420
+TC and T register.
+
+889
+00:51:02,219 --> 00:51:04,139
+Increments at every clock pulse.
+
+890
+00:51:04,559 --> 00:51:07,260
+This register is increments at every clock pulse.
+
+891
+00:51:07,260 --> 00:51:14,280
+If the timer is an 8 bit timer, this register can count from 0 to 255 then overflows.
+
+892
+00:51:14,719 --> 00:51:16,639
+Overflows to 0 and starts again.
+
+893
+00:51:17,059 --> 00:51:22,079
+If the timer is an 8 bit timer, this register can count from 0 to 255.
+
+894
+00:51:22,579 --> 00:51:24,980
+Then it overflows to 0 and starts again.
+
+895
+00:51:25,420 --> 00:51:28,699
+If the timer is a 16 bit timer, right.
+
+896
+00:51:28,900 --> 00:51:36,539
+If it is a 16 bit timer, this register can count from 0 to what is the maximum value?
+
+897
+00:51:36,539 --> 00:51:42,219
+0 to 2 to the power 16 minus 1.
+
+898
+00:51:42,219 --> 00:51:47,659
+That means 0 to 65,535.
+
+899
+00:51:48,239 --> 00:51:50,659
+And then overflows and starts again.
+
+900
+00:51:51,260 --> 00:51:55,219
+If the timer is a 16 bit timer.
+
+901
+00:51:56,139 --> 00:51:58,639
+If the timer is a 16 bit timer.
+
+902
+00:51:59,239 --> 00:52:04,579
+The register can count from 0 to 65,535.
+
+903
+00:52:04,579 --> 00:52:08,099
+and then overflows and starts again.
+
+904
+00:52:08,380 --> 00:52:11,679
+Right. Counts to maximum, overflows and starts again.
+
+905
+00:52:12,239 --> 00:52:16,980
+Use to set the start count and also to get the end count.
+
+906
+00:52:17,519 --> 00:52:20,760
+Now so far we discussed about the end count.
+
+907
+00:52:21,199 --> 00:52:26,179
+But this register we can use to set the start count as well.
+
+908
+00:52:26,960 --> 00:52:29,860
+Now for example if you want to count 5 types,
+
+909
+00:52:30,340 --> 00:52:33,519
+timer 0, let's say you want to count 5 types
+
+910
+00:52:33,519 --> 00:52:35,460
+and you use timer 0.
+
+911
+00:52:35,579 --> 00:52:37,320
+Timer 0 is 8 bit.
+
+912
+00:52:37,739 --> 00:52:39,019
+So what you do is
+
+913
+00:52:39,019 --> 00:52:40,880
+you set the
+
+914
+00:52:40,880 --> 00:52:43,619
+TCNT register to
+
+915
+00:52:43,619 --> 00:52:46,000
+251.
+
+916
+00:52:46,000 --> 00:52:47,840
+Right. Then you
+
+917
+00:52:47,840 --> 00:52:50,159
+start counting. Then start.
+
+918
+00:52:50,579 --> 00:52:51,599
+Every clock pulse
+
+919
+00:52:51,599 --> 00:52:54,280
+the timer counter register increments.
+
+920
+00:52:54,820 --> 00:52:55,880
+It increments to
+
+921
+00:52:55,880 --> 00:52:57,900
+252.
+
+922
+00:52:58,300 --> 00:52:59,719
+Then it increments to
+
+923
+00:52:59,719 --> 00:53:02,079
+253. The next clock
+
+924
+00:53:02,079 --> 00:53:03,940
+pulse. Then it is to
+
+925
+00:53:03,940 --> 00:53:06,119
+2, 5, 4.
+
+926
+00:53:06,860 --> 00:53:07,719
+And then
+
+927
+00:53:07,719 --> 00:53:09,360
+2, 5, 5.
+
+928
+00:53:09,820 --> 00:53:11,800
+High money clock pulses. 1, 2,
+
+929
+00:53:12,039 --> 00:53:13,960
+3, 4. We want to
+
+930
+00:53:13,960 --> 00:53:16,000
+5 times count. Then it
+
+931
+00:53:16,000 --> 00:53:17,239
+overflows to 0.
+
+932
+00:53:17,840 --> 00:53:19,260
+When it overflows,
+
+933
+00:53:19,860 --> 00:53:21,199
+right, when it overflows,
+
+934
+00:53:21,920 --> 00:53:23,400
+TOV bit
+
+935
+00:53:23,400 --> 00:53:25,780
+is set. Right.
+
+936
+00:53:26,599 --> 00:53:27,880
+So we keep
+
+937
+00:53:27,880 --> 00:53:29,980
+eye on this bit. If the
+
+938
+00:53:29,980 --> 00:53:30,840
+bit is set,
+
+939
+00:53:30,840 --> 00:53:33,440
+That means how many pulses?
+
+940
+00:53:33,880 --> 00:53:34,760
+5 pulses.
+
+941
+00:53:35,519 --> 00:53:36,480
+5 times count.
+
+942
+00:53:36,800 --> 00:53:40,000
+So by setting initial value,
+
+943
+00:53:40,579 --> 00:53:44,400
+the number of times you want to count,
+
+944
+00:53:45,039 --> 00:53:46,820
+you can specify.
+
+945
+00:53:47,260 --> 00:53:47,960
+Is that clear?
+
+946
+00:53:48,539 --> 00:53:48,760
+Right?
+
+947
+00:53:49,199 --> 00:53:50,699
+You want to count 5 times.
+
+948
+00:53:51,179 --> 00:53:55,000
+You set the initial value of the register 251.
+
+949
+00:53:55,000 --> 00:53:57,699
+Then you connect the clock source.
+
+950
+00:53:57,880 --> 00:53:59,480
+Start means, right?
+
+951
+00:53:59,480 --> 00:54:04,739
+Connect clock source to T0.
+
+952
+00:54:05,340 --> 00:54:06,860
+Then every clock pass.
+
+953
+00:54:07,480 --> 00:54:08,699
+The T0 counts.
+
+954
+00:54:08,920 --> 00:54:12,539
+252, 253, 254, 255.
+
+955
+00:54:13,099 --> 00:54:14,300
+Then 0 overflow.
+
+956
+00:54:15,159 --> 00:54:17,500
+When overflow happens, this bit is set.
+
+957
+00:54:17,920 --> 00:54:20,780
+That means how many times counted?
+
+958
+00:54:21,400 --> 00:54:22,440
+Five times count.
+
+959
+00:54:23,400 --> 00:54:24,780
+Now if you want to stop the timer,
+
+960
+00:54:25,639 --> 00:54:27,199
+disconnect clock source.
+
+961
+00:54:27,719 --> 00:54:28,599
+Disconnect clock source.
+
+962
+00:54:28,599 --> 00:54:33,760
+When this bit is set, when the TOV bit is set, disconnect the clock source.
+
+963
+00:54:34,139 --> 00:54:35,559
+5 times counter, disconnected.
+
+964
+00:54:36,239 --> 00:54:40,980
+You want to let 5 people to enter into the room, only 5.
+
+965
+00:54:41,539 --> 00:54:45,599
+This is the way you set, you set the TNCD register 251.
+
+966
+00:54:47,039 --> 00:54:55,400
+The first person entered into the room, the beam, crossing the beam, IR beam, the counter becomes 252.
+
+967
+00:54:55,400 --> 00:54:58,239
+Second person entered crossing the beam
+
+968
+00:54:58,239 --> 00:55:00,300
+TCNT register counts
+
+969
+00:55:00,300 --> 00:55:01,199
+253
+
+970
+00:55:01,199 --> 00:55:04,880
+The third person entered into the room crossing the IR beam
+
+971
+00:55:04,880 --> 00:55:06,420
+TCNT register counts
+
+972
+00:55:06,420 --> 00:55:07,280
+254
+
+973
+00:55:07,280 --> 00:55:11,460
+The fourth person enters into the room crossing the IR beam
+
+974
+00:55:11,460 --> 00:55:13,280
+The count is 255
+
+975
+00:55:13,280 --> 00:55:16,059
+Then the fifth person entered into the room
+
+976
+00:55:16,059 --> 00:55:18,679
+TCNT overflows to 0
+
+977
+00:55:18,679 --> 00:55:19,539
+Right
+
+978
+00:55:19,539 --> 00:55:20,780
+Tov
+
+979
+00:55:20,780 --> 00:55:23,380
+Time overflow bit is set
+
+980
+00:55:23,380 --> 00:55:29,940
+As soon as TOEBIT is set, we disconnect the plug source to the timer and lock the door.
+
+981
+00:55:30,639 --> 00:55:33,380
+Maximum 5 people entered into the room.
+
+982
+00:55:33,880 --> 00:55:34,539
+Is that clear?
+
+983
+00:55:35,059 --> 00:55:37,440
+When the TOEBIT is set, you lock the door.
+
+984
+00:55:38,059 --> 00:55:38,300
+Thelina?
+
+985
+00:55:38,980 --> 00:55:39,440
+Yes, sir.
+
+986
+00:55:39,900 --> 00:55:40,539
+Any question?
+
+987
+00:55:41,139 --> 00:55:41,519
+Right.
+
+988
+00:55:41,840 --> 00:55:44,000
+That is about TC and T register.
+
+989
+00:55:44,340 --> 00:55:48,059
+If you want to count more, you can use a 16-bit timer.
+
+990
+00:55:48,199 --> 00:55:52,079
+Then your age is 0 to 65,535.
+
+991
+00:55:52,079 --> 00:55:56,199
+5. TIFR register, time interrupt
+
+992
+00:55:56,199 --> 00:55:59,420
+flag register of timer n.
+
+993
+00:56:00,099 --> 00:56:04,460
+n could be 0, 1, 2, 3. It depends on the microcontroller
+
+994
+00:56:04,460 --> 00:56:08,179
+that you use. One important bit of this register
+
+995
+00:56:08,179 --> 00:56:12,159
+is TOV bit, timer overflow bit. When the
+
+996
+00:56:12,159 --> 00:56:16,380
+TCNT, timer counter register, overflows from its maximum
+
+997
+00:56:16,380 --> 00:56:20,199
+value to 0, this TOV, timer overflow
+
+998
+00:56:20,199 --> 00:56:21,900
+bit is set. Right.
+
+999
+00:56:22,380 --> 00:56:24,760
+This bit is set. That indicates
+
+1000
+00:56:24,760 --> 00:56:26,239
+timer has
+
+1001
+00:56:26,239 --> 00:56:28,500
+counted up to its maximum
+
+1002
+00:56:28,500 --> 00:56:30,380
+and starts again
+
+1003
+00:56:30,380 --> 00:56:32,260
+from zero. When the
+
+1004
+00:56:32,260 --> 00:56:34,059
+TOV bit is set
+
+1005
+00:56:34,059 --> 00:56:35,699
+that indicates
+
+1006
+00:56:35,699 --> 00:56:38,280
+timer has counted up to
+
+1007
+00:56:38,280 --> 00:56:40,360
+its maximum and starts again
+
+1008
+00:56:40,360 --> 00:56:41,639
+from zero. Right.
+
+1009
+00:56:42,159 --> 00:56:44,579
+Then we need to clear the TOV
+
+1010
+00:56:44,579 --> 00:56:46,440
+bit because the next
+
+1011
+00:56:46,440 --> 00:56:48,800
+time the time overflows
+
+1012
+00:56:48,800 --> 00:56:50,000
+when time overflows
+
+1013
+00:56:50,000 --> 00:56:52,659
+again timer sets this bit
+
+1014
+00:56:52,659 --> 00:56:54,440
+TOV bit. To set it
+
+1015
+00:56:54,440 --> 00:56:56,679
+it must be clear. It must
+
+1016
+00:56:56,679 --> 00:56:58,780
+be 0. Then only the timer
+
+1017
+00:56:58,780 --> 00:57:00,719
+can set it. Now when
+
+1018
+00:57:00,719 --> 00:57:02,719
+the TOV bit is set
+
+1019
+00:57:02,719 --> 00:57:04,500
+it indicates
+
+1020
+00:57:04,500 --> 00:57:06,000
+timer has counted
+
+1021
+00:57:06,000 --> 00:57:08,840
+up to its maximum and starts
+
+1022
+00:57:08,840 --> 00:57:10,659
+again from 0. So we need to
+
+1023
+00:57:10,659 --> 00:57:12,719
+clear the bit. So the next time
+
+1024
+00:57:12,719 --> 00:57:14,260
+when again
+
+1025
+00:57:14,260 --> 00:57:16,659
+the timer overflows
+
+1026
+00:57:16,659 --> 00:57:18,619
+this bit is set. Therefore
+
+1027
+00:57:18,619 --> 00:57:20,880
+we have to make sure that bit is
+
+1028
+00:57:20,880 --> 00:57:23,059
+0. Then only the time again.
+
+1029
+00:57:24,199 --> 00:57:24,519
+Right.
+
+1030
+00:57:24,679 --> 00:57:26,840
+Value 1 in that bit. Right.
+
+1031
+00:57:27,280 --> 00:57:28,900
+Set that EOV bit
+
+1032
+00:57:28,900 --> 00:57:30,139
+to clear it.
+
+1033
+00:57:30,679 --> 00:57:32,039
+This is very important.
+
+1034
+00:57:32,820 --> 00:57:34,099
+Set. Flag.
+
+1035
+00:57:34,719 --> 00:57:36,960
+These bits are called flag bits.
+
+1036
+00:57:37,199 --> 00:57:38,800
+There are many flag bits
+
+1037
+00:57:38,800 --> 00:57:40,559
+you will learn. Right.
+
+1038
+00:57:41,440 --> 00:57:42,199
+In the future.
+
+1039
+00:57:42,800 --> 00:57:44,760
+There are several flag bits. This is one of the
+
+1040
+00:57:44,760 --> 00:57:46,420
+flag bits. Flag bit means
+
+1041
+00:57:46,420 --> 00:57:51,139
+If something happens, you raise the flag to indicate, right?
+
+1042
+00:57:51,260 --> 00:57:53,139
+We raise the flags to indicate others.
+
+1043
+00:57:53,860 --> 00:57:59,860
+Now you raise a white flag to indicate that you are ready to surrender.
+
+1044
+00:58:00,400 --> 00:58:04,360
+Same way, the flag bits are to indicate.
+
+1045
+00:58:04,980 --> 00:58:10,420
+Now this TOV bit indicates timer counted up to its maximum.
+
+1046
+00:58:11,539 --> 00:58:15,500
+And now it is overflowing to start from zero.
+
+1047
+00:58:15,500 --> 00:58:17,199
+So it's a flag bit.
+
+1048
+00:58:17,519 --> 00:58:19,380
+Now flag bits are
+
+1049
+00:58:19,380 --> 00:58:22,280
+little bit different to other bits.
+
+1050
+00:58:22,880 --> 00:58:26,039
+If you want to set a flag bit
+
+1051
+00:58:26,039 --> 00:58:28,320
+if you want to clear a flag bit
+
+1052
+00:58:28,320 --> 00:58:30,880
+to clear
+
+1053
+00:58:30,880 --> 00:58:35,539
+a flag bit
+
+1054
+00:58:35,539 --> 00:58:36,480
+set it.
+
+1055
+00:58:36,920 --> 00:58:39,420
+Assign value 1 to the flag bit
+
+1056
+00:58:39,420 --> 00:58:40,480
+to clear it.
+
+1057
+00:58:41,000 --> 00:58:41,980
+Then it becomes 0.
+
+1058
+00:58:42,739 --> 00:58:45,300
+Other bits if you assign 1 to the bit
+
+1059
+00:58:45,300 --> 00:58:46,679
+the bit becomes 1.
+
+1060
+00:58:47,599 --> 00:58:50,059
+You have to assign 0 to the bit to clear it.
+
+1061
+00:58:50,900 --> 00:58:53,019
+But the flag bits are different.
+
+1062
+00:58:53,239 --> 00:58:53,440
+Why?
+
+1063
+00:58:53,980 --> 00:58:57,320
+The flag bits are set automatically by the hardware.
+
+1064
+00:58:57,980 --> 00:59:00,199
+What we can do is we can clear them.
+
+1065
+00:59:00,780 --> 00:59:02,400
+They are set by the hardware.
+
+1066
+00:59:03,599 --> 00:59:06,260
+Only thing we can do is we can clear them.
+
+1067
+00:59:06,860 --> 00:59:09,059
+To clear them we have to set them.
+
+1068
+00:59:09,519 --> 00:59:12,519
+If you assign 1 to the flag bit,
+
+1069
+00:59:12,519 --> 00:59:14,820
+the flag bit becomes 0.
+
+1070
+00:59:15,300 --> 00:59:18,920
+If you, we are not going to assign 0 to the flag bits.
+
+1071
+00:59:19,300 --> 00:59:23,019
+Assigning 0 to a flag bit, it won't be 0.
+
+1072
+00:59:23,519 --> 00:59:27,719
+You have to assign 1 to the flag bit to make the bit 0.
+
+1073
+00:59:28,300 --> 00:59:32,039
+And the flag bit is set to 1 by the hardware.
+
+1074
+00:59:32,039 --> 00:59:39,079
+We are not going to write value 1 to the, set the flag bits.
+
+1075
+00:59:39,440 --> 00:59:41,659
+We set the flag bit to clear it.
+
+1076
+00:59:41,659 --> 00:59:45,460
+This is different from other bits.
+
+1077
+00:59:45,940 --> 00:59:52,460
+This is the standard practice of not only AVR architecture, but many other architectures.
+
+1078
+00:59:52,559 --> 00:59:59,659
+For example, even Motorola, Intel, they also follow this practice in their hardware.
+
+1079
+01:00:00,139 --> 01:00:03,179
+If there's a flat bit, you have to set it to clear.
+
+1080
+01:00:03,699 --> 01:00:04,559
+Clear means zero.
+
+1081
+01:00:04,980 --> 01:00:06,360
+To clear it, you have to set.
+
+1082
+01:00:06,480 --> 01:00:08,000
+Set means put value one.
+
+1083
+01:00:08,599 --> 01:00:10,380
+When you put value one, it becomes zero.
+
+1084
+01:00:10,380 --> 01:00:15,699
+Write value 1 to the flag bit to make it 0.
+
+1085
+01:00:16,360 --> 01:00:17,019
+Is that clear?
+
+1086
+01:00:17,639 --> 01:00:18,900
+And keep this in mind.
+
+1087
+01:00:19,239 --> 01:00:22,179
+This is different from other bits.
+
+1088
+01:00:22,440 --> 01:00:24,760
+Special type of bit called flag bit.
+
+1089
+01:00:25,119 --> 01:00:25,760
+Any question?
+
+1090
+01:00:25,760 --> 01:00:32,039
+Sir, is ADSCR is also like that?
+
+1091
+01:00:32,960 --> 01:00:34,159
+Sorry?
+
+1092
+01:00:36,719 --> 01:00:39,820
+ADSCR is also similar to that?
+
+1093
+01:00:40,380 --> 01:00:41,380
+That is a register.
+
+1094
+01:00:41,539 --> 01:00:42,239
+That's not a bit.
+
+1095
+01:00:43,079 --> 01:00:44,539
+Here I am talking about a bit.
+
+1096
+01:00:45,519 --> 01:00:46,460
+T-O-V bit.
+
+1097
+01:00:46,559 --> 01:00:47,239
+Not the register.
+
+1098
+01:00:47,880 --> 01:00:48,880
+Any flag bit.
+
+1099
+01:00:49,260 --> 01:00:51,639
+Any flag bit if you want to clear.
+
+1100
+01:00:51,820 --> 01:00:52,579
+You have to set it.
+
+1101
+01:00:53,219 --> 01:00:57,019
+Whether you want to know a particular bit is a flag bit or not.
+
+1102
+01:00:57,199 --> 01:00:58,420
+You have to check the data sheet.
+
+1103
+01:00:59,219 --> 01:01:01,679
+So in this example T-O-V is a flag bit.
+
+1104
+01:01:02,340 --> 01:01:03,239
+To clear it.
+
+1105
+01:01:04,079 --> 01:01:04,980
+Write value 1.
+
+1106
+01:01:05,659 --> 01:01:06,599
+Then it will be 0.
+
+1107
+01:01:07,599 --> 01:01:08,780
+The bit value will be 0.
+
+1108
+01:01:08,780 --> 01:01:10,440
+when you write value 1 to the bit.
+
+1109
+01:01:10,900 --> 01:01:12,940
+The other bits, if you write
+
+1110
+01:01:12,940 --> 01:01:14,960
+value 1, the bit
+
+1111
+01:01:14,960 --> 01:01:17,059
+value would be 1. If you write 0,
+
+1112
+01:01:17,219 --> 01:01:18,400
+bit value would be 0.
+
+1113
+01:01:19,000 --> 01:01:20,360
+But the flag bits are different.
+
+1114
+01:01:20,940 --> 01:01:23,059
+If you write value 1, the flag
+
+1115
+01:01:23,059 --> 01:01:24,260
+bit value would be 0.
+
+1116
+01:01:25,219 --> 01:01:26,880
+That means to clear the flag bit,
+
+1117
+01:01:27,000 --> 01:01:29,059
+set the bit. Any flag
+
+1118
+01:01:29,059 --> 01:01:30,699
+bit. Right? This
+
+1119
+01:01:30,699 --> 01:01:33,079
+is the standard practice across many
+
+1120
+01:01:33,079 --> 01:01:35,139
+different architectures. Not only
+
+1121
+01:01:35,139 --> 01:01:37,159
+AVR. I have seen
+
+1122
+01:01:37,159 --> 01:01:39,320
+this under Intel architecture.
+
+1123
+01:01:39,500 --> 01:01:40,800
+I have seen this under Motorola.
+
+1124
+01:01:41,480 --> 01:01:43,139
+Motorola microprocessor. I think
+
+1125
+01:01:43,139 --> 01:01:44,619
+now it is called NXP.
+
+1126
+01:01:44,800 --> 01:01:45,260
+The Motorola
+
+1127
+01:01:45,260 --> 01:01:49,179
+NXP, another company, acquired
+
+1128
+01:01:49,179 --> 01:01:51,340
+Motorola. Freescale acquired
+
+1129
+01:01:51,340 --> 01:01:53,099
+Motorola. Then NXP
+
+1130
+01:01:53,099 --> 01:01:55,159
+acquired Freescale. Now it is called
+
+1131
+01:01:55,159 --> 01:01:57,079
+NXP architecture. But earlier
+
+1132
+01:01:57,079 --> 01:01:59,280
+when I was learning
+
+1133
+01:01:59,280 --> 01:02:01,260
+it was Motorola architecture.
+
+1134
+01:02:01,659 --> 01:02:03,300
+Right. Now let's develop
+
+1135
+01:02:03,300 --> 01:02:04,099
+a system
+
+1136
+01:02:04,099 --> 01:02:06,900
+to learn about counters.
+
+1137
+01:02:07,159 --> 01:02:13,280
+Counter base trigger counts five button presses and toggles and LED.
+
+1138
+01:02:13,760 --> 01:02:22,440
+This time, number of button presses we are going to count using a counter, hardware counter, not using software.
+
+1139
+01:02:22,760 --> 01:02:29,139
+We are not going to use software to count the number of button presses, but we use a hardware counter for that.
+
+1140
+01:02:29,539 --> 01:02:29,820
+Right.
+
+1141
+01:02:30,260 --> 01:02:33,079
+Time pinout of microcontroller.
+
+1142
+01:02:33,079 --> 01:02:38,260
+Now here you can see, this is the T0 pin.
+
+1143
+01:02:38,800 --> 01:02:41,139
+So timer 0, timer pin.
+
+1144
+01:02:42,019 --> 01:02:47,800
+If you are connecting external clock source for the timer 0, this is the pin you have to use.
+
+1145
+01:02:48,820 --> 01:02:49,460
+PD4.
+
+1146
+01:02:49,820 --> 01:02:54,659
+If you are connecting external clock source to the timer 0, timer 0 is an 8 bit timer.
+
+1147
+01:02:55,639 --> 01:02:55,940
+Right?
+
+1148
+01:02:56,500 --> 01:02:57,940
+This is the pin you have to use.
+
+1149
+01:02:57,940 --> 01:03:07,639
+And if you are connecting external clock source to timer 1, this is the pin you have to use, PD5, timer 1.
+
+1150
+01:03:08,079 --> 01:03:10,039
+Timer 1 is a 16-bit timer.
+
+1151
+01:03:10,539 --> 01:03:13,679
+External clock source you can connect to this pin, timer 1 pin.
+
+1152
+01:03:14,900 --> 01:03:21,119
+And then these two pins for timer 2, these are for timer 2.
+
+1153
+01:03:21,119 --> 01:03:27,260
+But now we have connected an external crystal oscillator to these two pins.
+
+1154
+01:03:27,260 --> 01:03:29,300
+so we can't use them.
+
+1155
+01:03:29,780 --> 01:03:31,079
+TOSC means
+
+1156
+01:03:31,079 --> 01:03:33,059
+timer count oscillator.
+
+1157
+01:03:33,500 --> 01:03:34,719
+Timer count oscillator.
+
+1158
+01:03:35,480 --> 01:03:37,260
+Right? Those they are for timer
+
+1159
+01:03:37,260 --> 01:03:39,320
+2. Timer 2 is
+
+1160
+01:03:39,320 --> 01:03:40,599
+also 8 bit timer.
+
+1161
+01:03:41,280 --> 01:03:43,440
+If you want to use timer
+
+1162
+01:03:43,440 --> 01:03:45,280
+2, you have
+
+1163
+01:03:45,280 --> 01:03:47,760
+you can't use external oscillator.
+
+1164
+01:03:48,320 --> 01:03:49,179
+Then you have to use
+
+1165
+01:03:49,179 --> 01:03:51,400
+internal oscillator of the micrometron.
+
+1166
+01:03:51,739 --> 01:03:53,320
+Because already we have connected
+
+1167
+01:03:53,320 --> 01:03:54,840
+external oscillator to this
+
+1168
+01:03:54,840 --> 01:03:57,019
+these two pins. Right?
+
+1169
+01:03:57,260 --> 01:04:00,099
+Therefore, we cannot use timer 2.
+
+1170
+01:04:01,039 --> 01:04:07,300
+But we can use timer 0 and timer 1 for connecting external clock source.
+
+1171
+01:04:07,659 --> 01:04:07,800
+Clear?
+
+1172
+01:04:08,340 --> 01:04:09,420
+Schematic diagram.
+
+1173
+01:04:10,019 --> 01:04:10,400
+Right.
+
+1174
+01:04:10,960 --> 01:04:12,599
+This is our schematic diagram.
+
+1175
+01:04:13,280 --> 01:04:14,880
+The microcontroller we have.
+
+1176
+01:04:15,579 --> 01:04:16,840
+Reset button.
+
+1177
+01:04:17,119 --> 01:04:21,019
+We have pull up the reset pin using 10 kilo ohm resistor.
+
+1178
+01:04:22,119 --> 01:04:26,840
+And this is the onboard LED connected to Arduino pin number 13.
+
+1179
+01:04:26,840 --> 01:04:38,360
+that is pv5 right one kilo ohm current limiting resistor to onboard smd led right smd led requires
+
+1180
+01:04:38,360 --> 01:04:45,159
+very little current that's why a large resistor not 220 ohm but thousand ohm resistor and the
+
+1181
+01:04:45,159 --> 01:04:52,280
+external clock source right sorry this oscillator crystal oscillator connected to these two pins
+
+1182
+01:04:52,280 --> 01:04:58,539
+power supply right using these two pins to the microcontroller power supply to
+
+1183
+01:04:58,539 --> 01:05:06,139
+adc using these two pins and external pulse source external pulse source is a button now we are going
+
+1184
+01:05:06,139 --> 01:05:16,860
+to count the button presses right we have connected the button to t0 pin t0 pin is the
+
+1185
+01:05:16,860 --> 01:05:19,460
+external timer pin.
+
+1186
+01:05:19,860 --> 01:05:22,019
+Timer pin of timer 0.
+
+1187
+01:05:22,360 --> 01:05:25,460
+So external clock source you can connect to T0 pin.
+
+1188
+01:05:25,780 --> 01:05:27,360
+That is Arduino pin number 4.
+
+1189
+01:05:28,039 --> 01:05:30,099
+AVR terms PD4.
+
+1190
+01:05:30,360 --> 01:05:32,039
+Port D, right?
+
+1191
+01:05:32,699 --> 01:05:34,340
+The pin number 4.
+
+1192
+01:05:34,619 --> 01:05:35,239
+PD4.
+
+1193
+01:05:35,980 --> 01:05:38,159
+T0 pin, the timer 0 pin.
+
+1194
+01:05:39,079 --> 01:05:41,420
+And to debounce the
+
+1195
+01:05:41,420 --> 01:05:46,099
+button, the button presses,
+
+1196
+01:05:46,099 --> 01:05:48,679
+we have used 100 nanofarad
+
+1197
+01:05:48,679 --> 01:05:50,719
+capacitor in parallel
+
+1198
+01:05:50,719 --> 01:05:51,500
+to the button.
+
+1199
+01:05:52,320 --> 01:05:53,739
+This is for input debouse.
+
+1200
+01:05:54,139 --> 01:05:55,019
+Debouse the input.
+
+1201
+01:05:55,480 --> 01:05:58,639
+Now microcontroller counts
+
+1202
+01:05:58,639 --> 01:06:00,199
+how many button presses.
+
+1203
+01:06:00,719 --> 01:06:02,800
+And if the button presses are 5
+
+1204
+01:06:02,800 --> 01:06:04,719
+LED is turned on.
+
+1205
+01:06:05,059 --> 01:06:06,820
+To turn off the LED again
+
+1206
+01:06:06,820 --> 01:06:07,739
+5 button presses.
+
+1207
+01:06:08,539 --> 01:06:10,039
+Then LED will be turned off.
+
+1208
+01:06:10,739 --> 01:06:11,880
+Again to turn on
+
+1209
+01:06:11,880 --> 01:06:13,840
+5 button presses
+
+1210
+01:06:13,840 --> 01:06:15,239
+LED turn on.
+
+1211
+01:06:16,099 --> 01:06:24,900
+Again, five button presses, LED turn off. So, by giving five button presses, you can toggle the LED.
+
+1212
+01:06:24,900 --> 01:06:34,019
+Now, in developing this system, we are going to learn how to capture an external clock source.
+
+1213
+01:06:34,019 --> 01:06:40,739
+Now, in this example, we use button presses. If the button is connected to the door frame,
+
+1214
+01:06:40,739 --> 01:06:51,860
+When somebody opens the door, the door is released.
+
+1215
+01:06:51,860 --> 01:06:58,500
+How many times a door is opened, you can detect, you can count.
+
+1216
+01:06:58,500 --> 01:07:05,599
+How many people entered into the room opening the door and you have put a door closer, automatic
+
+1217
+01:07:05,599 --> 01:07:07,599
+door closer to close the door.
+
+1218
+01:07:07,599 --> 01:07:17,019
+But when you open the door, the button is released.
+
+1219
+01:07:17,739 --> 01:07:19,280
+Close the door, button is pressed.
+
+1220
+01:07:19,639 --> 01:07:21,699
+Based on that, you get pulses.
+
+1221
+01:07:22,199 --> 01:07:23,300
+Very simple one.
+
+1222
+01:07:23,619 --> 01:07:26,320
+You don't need IR sensors, blah, blah, blah.
+
+1223
+01:07:26,320 --> 01:07:30,320
+No, not very fancy attachment.
+
+1224
+01:07:31,340 --> 01:07:32,739
+Just a push button.
+
+1225
+01:07:33,460 --> 01:07:36,360
+Fix to the door, between door and the frame.
+
+1226
+01:07:36,360 --> 01:07:39,880
+and based on that you can count how many times
+
+1227
+01:07:39,880 --> 01:07:40,900
+the door is open.
+
+1228
+01:07:42,199 --> 01:07:45,699
+If you want to let only 5 people to enter into the room
+
+1229
+01:07:45,699 --> 01:07:49,260
+you can count 5 times and then lock the door.
+
+1230
+01:07:50,519 --> 01:07:52,480
+You can use the
+
+1231
+01:07:52,480 --> 01:07:55,639
+instead of this LED using a solenoid we discussed
+
+1232
+01:07:55,639 --> 01:07:58,619
+you can lock the door. You can drive a solenoid
+
+1233
+01:07:58,619 --> 01:08:01,980
+using a transistor you can drive a solenoid and lock the door
+
+1234
+01:08:01,980 --> 01:08:03,800
+after 5 counts.
+
+1235
+01:08:03,800 --> 01:08:09,739
+that means we allowed only five people to open the door and enter that's it a
+
+1236
+01:08:09,739 --> 01:08:16,760
+practical exam is that clear any question right then wiring diagram very
+
+1237
+01:08:16,760 --> 01:08:22,220
+simple only the button because LED is already on board only the button
+
+1238
+01:08:22,220 --> 01:08:26,720
+connected now this is the D0 pin R0 pin number four only the button
+
+1239
+01:08:26,720 --> 01:08:32,739
+connected so when we use the buttons we use them diagonally yeah and this is the
+
+1240
+01:08:32,739 --> 01:08:37,579
+what do you call, capacitor to input debousing.
+
+1241
+01:08:38,119 --> 01:08:39,659
+Right, 100 nanofarad capacitor.
+
+1242
+01:08:40,000 --> 01:08:40,279
+Right.
+
+1243
+01:08:40,699 --> 01:08:43,920
+Now let's talk about the firmware design.
+
+1244
+01:08:44,460 --> 01:08:45,319
+First the algorithm.
+
+1245
+01:08:45,880 --> 01:08:48,960
+Main function and main function algorithm.
+
+1246
+01:08:49,380 --> 01:08:52,239
+First we configure PB5,
+
+1247
+01:08:52,939 --> 01:08:54,500
+Arduino pin number 13,
+
+1248
+01:08:54,500 --> 01:08:57,159
+as an output because LED connected to that pin.
+
+1249
+01:08:57,840 --> 01:09:00,500
+PB5 as an output, pin number 13.
+
+1250
+01:09:00,500 --> 01:09:06,859
+Then we configure PD4 which is the timer 0 pin as an input.
+
+1251
+01:09:07,260 --> 01:09:12,239
+Actually you don't need to do this because by default this pin is an input pin.
+
+1252
+01:09:12,840 --> 01:09:12,979
+Right.
+
+1253
+01:09:13,600 --> 01:09:18,439
+Because you know that by default the register value is 0.
+
+1254
+01:09:19,220 --> 01:09:20,199
+Pin register value.
+
+1255
+01:09:20,979 --> 01:09:22,779
+Port input register value is 0.
+
+1256
+01:09:23,680 --> 01:09:25,880
+Sorry the DDR.
+
+1257
+01:09:26,260 --> 01:09:29,460
+DDR data direction register value is 0.
+
+1258
+01:09:29,460 --> 01:09:32,479
+So this pin is by default
+
+1259
+01:09:32,479 --> 01:09:33,359
+An input pin
+
+1260
+01:09:33,359 --> 01:09:35,060
+No need this step
+
+1261
+01:09:35,060 --> 01:09:36,960
+But adding this step
+
+1262
+01:09:36,960 --> 01:09:39,619
+Makes your algorithm more clear
+
+1263
+01:09:39,619 --> 01:09:41,079
+Then pull up
+
+1264
+01:09:41,079 --> 01:09:42,340
+P default
+
+1265
+01:09:42,340 --> 01:09:44,979
+The button connected pin pull up
+
+1266
+01:09:44,979 --> 01:09:47,600
+So it's default value high
+
+1267
+01:09:47,600 --> 01:09:49,560
+When you press the button
+
+1268
+01:09:49,560 --> 01:09:50,420
+It will go low
+
+1269
+01:09:50,420 --> 01:09:52,819
+Clear state change
+
+1270
+01:09:52,819 --> 01:09:55,720
+The default state of the pin is high
+
+1271
+01:09:55,720 --> 01:09:57,939
+But when you press the button
+
+1272
+01:09:57,939 --> 01:09:59,140
+It will go low
+
+1273
+01:09:59,140 --> 01:10:03,659
+So clear state change. The microcontroller can detect that state change.
+
+1274
+01:10:04,079 --> 01:10:07,960
+Right. Then select the clock source as T0.
+
+1275
+01:10:08,840 --> 01:10:12,399
+The timer clock source as T0. T0 is the external pin.
+
+1276
+01:10:12,739 --> 01:10:16,460
+The button connected. So the clock source is now external.
+
+1277
+01:10:17,180 --> 01:10:21,739
+That means timer becomes a counter. Set the counter to 0.
+
+1278
+01:10:22,039 --> 01:10:25,939
+Initial value of the counter set to 0. Again no need to do this.
+
+1279
+01:10:25,939 --> 01:10:27,859
+because already it is 0.
+
+1280
+01:10:28,319 --> 01:10:29,539
+By default it is 0.
+
+1281
+01:10:29,819 --> 01:10:32,039
+But again you can make your algorithm
+
+1282
+01:10:32,039 --> 01:10:34,600
+more clear by initializing
+
+1283
+01:10:34,600 --> 01:10:36,159
+the TCNT register
+
+1284
+01:10:36,159 --> 01:10:36,680
+to 0.
+
+1285
+01:10:37,439 --> 01:10:39,300
+Then enter into the endless loop.
+
+1286
+01:10:39,840 --> 01:10:40,579
+Check the count.
+
+1287
+01:10:41,720 --> 01:10:42,659
+Count that count.
+
+1288
+01:10:43,340 --> 01:10:45,659
+If it is greater than 0, no.
+
+1289
+01:10:46,140 --> 01:10:47,920
+Greater than, sorry, greater than
+
+1290
+01:10:47,920 --> 01:10:48,979
+or equal 5, no.
+
+1291
+01:10:49,520 --> 01:10:51,659
+If so, again check.
+
+1292
+01:10:51,659 --> 01:10:53,840
+So you check the count
+
+1293
+01:10:53,840 --> 01:10:55,100
+again and again.
+
+1294
+01:10:55,100 --> 01:11:01,020
+While you are running the loop, the counter can count.
+
+1295
+01:11:01,539 --> 01:11:07,119
+Every clock pulse coming through T0P, the counter counts.
+
+1296
+01:11:07,619 --> 01:11:13,319
+So, while you are monitoring the counter, the counter counts.
+
+1297
+01:11:13,800 --> 01:11:20,880
+At some point of time, the counter count becomes either greater than or equal 5.
+
+1298
+01:11:21,319 --> 01:11:23,619
+5 or greater than or equal 5.
+
+1299
+01:11:23,619 --> 01:11:33,840
+If so, toggle the LED. Toggle the LED, reset the counter to zero and keep monitoring the
+
+1300
+01:11:33,840 --> 01:11:40,279
+counter. Polling, keep monitoring the counter. Again, counter counts while you are monitoring
+
+1301
+01:11:40,279 --> 01:11:47,260
+the counter, counter counts for every clock pass. If the count greater than or equal five,
+
+1302
+01:11:47,260 --> 01:11:54,520
+toggle the led reset the counter to zero keep monitoring can you understand this algorithm
+
+1303
+01:11:54,520 --> 01:12:01,340
+any question if not let me know i can explain again right let's see the source code main
+
+1304
+01:12:01,340 --> 01:12:11,779
+function io.h right first we configure pb5 as an output pin pb5 is the led connected pin
+
+1305
+01:12:11,779 --> 01:12:13,979
+onboard LED pin 13
+
+1306
+01:12:13,979 --> 01:12:15,119
+Arduino pin 13.
+
+1307
+01:12:15,520 --> 01:12:17,880
+Then we configure PD4
+
+1308
+01:12:17,880 --> 01:12:19,460
+as an input.
+
+1309
+01:12:19,619 --> 01:12:21,960
+This line is not necessary
+
+1310
+01:12:21,960 --> 01:12:23,779
+because already
+
+1311
+01:12:23,779 --> 01:12:25,239
+this bit is 0.
+
+1312
+01:12:25,800 --> 01:12:27,939
+But this line makes
+
+1313
+01:12:27,939 --> 01:12:28,779
+your code
+
+1314
+01:12:28,779 --> 01:12:30,739
+more understandable.
+
+1315
+01:12:31,460 --> 01:12:33,460
+However, it consumes one
+
+1316
+01:12:33,460 --> 01:12:34,720
+extra clock cycle.
+
+1317
+01:12:34,720 --> 01:12:36,960
+Then pull up PD4.
+
+1318
+01:12:37,560 --> 01:12:38,800
+Pull up the PD4.
+
+1319
+01:12:39,079 --> 01:12:40,619
+Activate internal
+
+1320
+01:12:40,619 --> 01:12:44,779
+pull up resistor. Activate internal pull up resistor. So PD4
+
+1321
+01:12:44,779 --> 01:12:48,600
+default state high. PD4 default state high.
+
+1322
+01:12:49,039 --> 01:12:52,380
+Then set the clock source. Time counter
+
+1323
+01:12:52,380 --> 01:12:56,739
+control register B. Using clock select bits
+
+1324
+01:12:56,739 --> 01:13:00,039
+set the clock source as T0 pin.
+
+1325
+01:13:00,659 --> 01:13:04,340
+External T0 pin clock source. Set the clock source.
+
+1326
+01:13:04,340 --> 01:13:05,579
+This is C
+
+1327
+01:13:05,579 --> 01:13:08,899
+clock select cs bit 2
+
+1328
+01:13:08,899 --> 01:13:10,960
+clock select bit 1
+
+1329
+01:13:10,960 --> 01:13:12,399
+clock select bit 0
+
+1330
+01:13:12,399 --> 01:13:15,119
+1 1 0. Set the external
+
+1331
+01:13:15,119 --> 01:13:16,460
+clock source as external.
+
+1332
+01:13:16,920 --> 01:13:18,979
+Now timer becomes a counter.
+
+1333
+01:13:19,859 --> 01:13:20,920
+Now it's not a
+
+1334
+01:13:20,920 --> 01:13:22,260
+timer. Now it's a counter.
+
+1335
+01:13:23,140 --> 01:13:25,020
+Set the initial value
+
+1336
+01:13:25,020 --> 01:13:26,539
+of timer counter register.
+
+1337
+01:13:26,720 --> 01:13:28,500
+Again this line is not necessary.
+
+1338
+01:13:28,619 --> 01:13:30,100
+By default this is 0.
+
+1339
+01:13:30,859 --> 01:13:31,579
+But again
+
+1340
+01:13:31,579 --> 01:13:34,460
+by writing this line you can make
+
+1341
+01:13:34,460 --> 01:13:36,180
+your code more understandable.
+
+1342
+01:13:36,899 --> 01:13:38,039
+But unnecessary
+
+1343
+01:13:38,039 --> 01:13:40,319
+one clock cycle.
+
+1344
+01:13:40,619 --> 01:13:42,500
+Then we enter into the loop.
+
+1345
+01:13:43,359 --> 01:13:44,079
+Endless loop.
+
+1346
+01:13:44,579 --> 01:13:46,399
+Right. And inside the
+
+1347
+01:13:46,399 --> 01:13:48,319
+endless loop, we check the
+
+1348
+01:13:48,319 --> 01:13:50,279
+counter value. Whether
+
+1349
+01:13:50,279 --> 01:13:52,420
+it is greater than or equal 5.
+
+1350
+01:13:52,880 --> 01:13:54,699
+Using polling, we repeatedly
+
+1351
+01:13:54,699 --> 01:13:55,819
+check the counter value.
+
+1352
+01:13:56,319 --> 01:13:58,680
+While we are checking the counter value,
+
+1353
+01:13:58,680 --> 01:14:00,500
+counter can increment
+
+1354
+01:14:00,500 --> 01:14:02,760
+the TCNT
+
+1355
+01:14:02,760 --> 01:14:03,520
+register
+
+1356
+01:14:03,520 --> 01:14:08,960
+at every clock's pulse on T0P.
+
+1357
+01:14:09,399 --> 01:14:12,300
+The timer can increment the DCNT register,
+
+1358
+01:14:12,460 --> 01:14:14,680
+counter can increment the DCNT register
+
+1359
+01:14:14,680 --> 01:14:16,739
+on every clock pulse.
+
+1360
+01:14:17,300 --> 01:14:20,779
+If the count is greater than O equal 5,
+
+1361
+01:14:21,460 --> 01:14:24,779
+toggle the state of PB5.
+
+1362
+01:14:24,960 --> 01:14:26,859
+Toggle the state of PB5.
+
+1363
+01:14:27,220 --> 01:14:30,300
+That means either you turn on LED or turn off.
+
+1364
+01:14:30,779 --> 01:14:33,479
+If the LED is turned off, you turn it on.
+
+1365
+01:14:33,520 --> 01:14:36,380
+If it is turn it on, you turn it off.
+
+1366
+01:14:37,159 --> 01:14:38,920
+Then reset the counter.
+
+1367
+01:14:39,340 --> 01:14:43,100
+The counter counts on every button press.
+
+1368
+01:14:43,659 --> 01:14:43,899
+Why?
+
+1369
+01:14:44,100 --> 01:14:50,479
+We have set the counter clock source as T0, falling edge.
+
+1370
+01:14:50,659 --> 01:14:52,039
+T0, falling edge.
+
+1371
+01:14:53,000 --> 01:14:54,640
+110 means falling edge.
+
+1372
+01:14:54,779 --> 01:14:56,140
+That means every button press.
+
+1373
+01:14:56,539 --> 01:14:57,859
+Can you understand this also?
+
+1374
+01:14:58,020 --> 01:14:59,619
+If not, let me know.
+
+1375
+01:15:00,140 --> 01:15:01,119
+Excuse me, sir.
+
+1376
+01:15:01,420 --> 01:15:01,659
+Yeah.
+
+1377
+01:15:01,659 --> 01:15:06,399
+Sir, the same method can be used to implement exercise 3.
+
+1378
+01:15:06,819 --> 01:15:10,779
+Yes, but at that time we have not discussed counters, timers.
+
+1379
+01:15:11,560 --> 01:15:12,979
+Yes, I mean now.
+
+1380
+01:15:13,380 --> 01:15:14,359
+Now you can.
+
+1381
+01:15:15,039 --> 01:15:24,899
+But my expectation is you do that exercise without using timers and counters.
+
+1382
+01:15:24,899 --> 01:15:31,640
+But because after we are discussing timers and counters, I will give you another exercise which is related to timers and counters.
+
+1383
+01:15:31,659 --> 01:15:34,479
+You can try using timers and counters also.
+
+1384
+01:15:35,060 --> 01:15:35,840
+Yes, that is possible.
+
+1385
+01:15:36,819 --> 01:15:37,680
+Any other question?
+
+1386
+01:15:38,359 --> 01:15:39,779
+Can you understand the source code?
+
+1387
+01:15:40,479 --> 01:15:40,760
+Right.
+
+1388
+01:15:41,359 --> 01:15:51,859
+Now, the LED is toggled if the number of button pressers are greater than or equal 5.
+
+1389
+01:15:52,420 --> 01:15:58,899
+But we want to, let's say, toggle the LED when the number of button pressers are exactly 5.
+
+1390
+01:15:58,899 --> 01:16:08,300
+Now according to the source code, LED is toggled when the number of button presses are greater than or equal 5.
+
+1391
+01:16:08,659 --> 01:16:16,800
+But let's say we want to toggle the LED when the number of button presses are exactly equal 5.
+
+1392
+01:16:17,260 --> 01:16:18,479
+Can you do that change?
+
+1393
+01:16:19,060 --> 01:16:19,859
+What you should do?
+
+1394
+01:16:20,159 --> 01:16:21,300
+Any suggestion?
+
+1395
+01:16:21,300 --> 01:16:23,399
+I want to toggle
+
+1396
+01:16:23,399 --> 01:16:25,319
+the LED
+
+1397
+01:16:25,319 --> 01:16:27,520
+exactly
+
+1398
+01:16:27,520 --> 01:16:30,039
+when the number of button
+
+1399
+01:16:30,039 --> 01:16:32,039
+presses are 5. Can you do
+
+1400
+01:16:32,039 --> 01:16:33,800
+that change? What about
+
+1401
+01:16:33,800 --> 01:16:35,960
+right? What about instead of
+
+1402
+01:16:35,960 --> 01:16:37,560
+this if you write
+
+1403
+01:16:37,560 --> 01:16:38,880
+T C
+
+1404
+01:16:38,880 --> 01:16:41,300
+and T 0
+
+1405
+01:16:41,300 --> 01:16:43,399
+equals 5.
+
+1406
+01:16:43,800 --> 01:16:45,500
+Then when the number of button presses
+
+1407
+01:16:45,500 --> 01:16:47,479
+if the count is exactly
+
+1408
+01:16:47,479 --> 01:16:49,399
+equal 5 right?
+
+1409
+01:16:49,399 --> 01:16:50,800
+We toggle the LED.
+
+1410
+01:16:51,300 --> 01:16:53,760
+Without writing the condition.
+
+1411
+01:16:54,500 --> 01:16:56,720
+Using equality operator.
+
+1412
+01:16:57,619 --> 01:16:59,039
+Why did I use.
+
+1413
+01:16:59,680 --> 01:17:01,279
+Greater than no equal.
+
+1414
+01:17:01,279 --> 01:17:03,920
+Because this option.
+
+1415
+01:17:04,600 --> 01:17:05,500
+Could be.
+
+1416
+01:17:06,039 --> 01:17:06,960
+Could be.
+
+1417
+01:17:07,760 --> 01:17:08,479
+Problematic.
+
+1418
+01:17:09,100 --> 01:17:09,340
+Why?
+
+1419
+01:17:10,060 --> 01:17:12,140
+That's why I use greater than no equal.
+
+1420
+01:17:12,760 --> 01:17:15,439
+Without using equality operator.
+
+1421
+01:17:15,859 --> 01:17:17,760
+If you use equality operator.
+
+1422
+01:17:18,100 --> 01:17:18,199
+To.
+
+1423
+01:17:19,119 --> 01:17:20,739
+Check whether the count is.
+
+1424
+01:17:20,739 --> 01:17:22,960
+exactly 5-0, whatever
+
+1425
+01:17:22,960 --> 01:17:24,960
+value, that could
+
+1426
+01:17:24,960 --> 01:17:26,380
+be problematic.
+
+1427
+01:17:27,100 --> 01:17:28,520
+Sometimes it would work,
+
+1428
+01:17:28,899 --> 01:17:30,619
+sometimes it would not work.
+
+1429
+01:17:31,159 --> 01:17:32,819
+Why? Any idea?
+
+1430
+01:17:33,619 --> 01:17:34,460
+Sir, condition
+
+1431
+01:17:34,460 --> 01:17:36,319
+checkeran nathi vila
+
+1432
+01:17:36,319 --> 01:17:38,180
+vaka ar pathing increment
+
+1433
+01:17:38,180 --> 01:17:39,079
+kakunotti?
+
+1434
+01:17:39,520 --> 01:17:42,500
+Condition naga checkeran nathi vila
+
+1435
+01:17:42,500 --> 01:17:43,319
+vaka?
+
+1436
+01:17:44,060 --> 01:17:49,399
+Anahari.
+
+1437
+01:17:49,600 --> 01:17:50,659
+Anahari.
+
+1438
+01:17:50,739 --> 01:17:51,899
+right
+
+1439
+01:17:51,899 --> 01:18:20,020
+if you want to get that condition true again
+
+1440
+01:18:20,739 --> 01:18:28,920
+You have to press the button continuously to 255, then overflow and then come to the 5 again.
+
+1441
+01:18:28,920 --> 01:18:30,340
+Can you understand?
+
+1442
+01:18:31,039 --> 01:18:36,920
+In case if you miss the condition, while you are doing something else,
+
+1443
+01:18:37,159 --> 01:18:44,340
+if the counter countered the pulse while the code is doing something else,
+
+1444
+01:18:44,340 --> 01:18:54,100
+not be either before either after checking or before checking the condition that then the count
+
+1445
+01:18:54,100 --> 01:19:03,300
+would be six right the condition would be now would not be true as a result you would have to
+
+1446
+01:19:03,300 --> 01:19:10,260
+press the button continuously to increment the counter to 255 and overflow to zero and then
+
+1447
+01:19:10,260 --> 01:19:12,260
+again come to 5. That
+
+1448
+01:19:12,260 --> 01:19:14,039
+can happen. Right?
+
+1449
+01:19:14,560 --> 01:19:15,760
+We press the button.
+
+1450
+01:19:16,859 --> 01:19:18,359
+Normally our button pressers
+
+1451
+01:19:18,359 --> 01:19:20,260
+are very slow compared to the
+
+1452
+01:19:20,939 --> 01:19:22,520
+execution
+
+1453
+01:19:22,520 --> 01:19:24,560
+of endless
+
+1454
+01:19:24,560 --> 01:19:26,239
+loop. So
+
+1455
+01:19:26,239 --> 01:19:28,479
+every button press
+
+1456
+01:19:28,479 --> 01:19:30,460
+the endless loop should be
+
+1457
+01:19:30,460 --> 01:19:32,619
+able to monitor
+
+1458
+01:19:32,619 --> 01:19:34,500
+because our button pressers
+
+1459
+01:19:34,500 --> 01:19:35,760
+are slow. Right?
+
+1460
+01:19:36,140 --> 01:19:37,340
+So our people
+
+1461
+01:19:37,340 --> 01:19:42,279
+when they do actions, they are very slow compared to the processor.
+
+1462
+01:19:43,159 --> 01:19:45,300
+So using the processor, we pull,
+
+1463
+01:19:46,500 --> 01:19:49,020
+we check, we monitor the counter,
+
+1464
+01:19:49,380 --> 01:19:53,979
+TCN, T0 register, right? So CPU is very fast.
+
+1465
+01:19:54,500 --> 01:19:56,960
+So because we are slow, button pressers are slow,
+
+1466
+01:19:58,180 --> 01:20:01,960
+ideally, all button pressers should be
+
+1467
+01:20:01,960 --> 01:20:05,020
+detected. And the chances
+
+1468
+01:20:05,020 --> 01:20:08,159
+to have two button pressers
+
+1469
+01:20:08,159 --> 01:20:09,720
+one after another
+
+1470
+01:20:09,720 --> 01:20:12,340
+and then increment the counter
+
+1471
+01:20:12,340 --> 01:20:14,460
+to six before monitoring
+
+1472
+01:20:14,460 --> 01:20:16,279
+is very
+
+1473
+01:20:16,279 --> 01:20:18,260
+slim. That charge
+
+1474
+01:20:18,260 --> 01:20:20,600
+is very slim. Very unlikely
+
+1475
+01:20:20,600 --> 01:20:22,300
+that would happen because we are
+
+1476
+01:20:22,300 --> 01:20:24,340
+very slow. But still
+
+1477
+01:20:24,340 --> 01:20:26,720
+the count can exceed
+
+1478
+01:20:26,720 --> 01:20:28,180
+five and move to six.
+
+1479
+01:20:28,659 --> 01:20:30,619
+Right. We have used
+
+1480
+01:20:30,619 --> 01:20:32,600
+a capacitor to debounce
+
+1481
+01:20:32,600 --> 01:20:34,399
+the input. But in
+
+1482
+01:20:34,399 --> 01:20:44,800
+case if a pulse generated spike generated at the input and capacitor couldn't debounce all the
+
+1483
+01:20:44,800 --> 01:20:53,800
+spikes if one is missed as a result there will be two counts and there's a chance that the counter
+
+1484
+01:20:53,800 --> 01:21:01,100
+would exceed five and more to six then the condition would not be true tcnt equals five
+
+1485
+01:21:01,100 --> 01:21:03,079
+condition would not be true.
+
+1486
+01:21:03,539 --> 01:21:05,039
+Right? Then
+
+1487
+01:21:05,039 --> 01:21:07,060
+you have to toggle the LED. You have
+
+1488
+01:21:07,060 --> 01:21:09,460
+to press the button up to 255
+
+1489
+01:21:09,460 --> 01:21:11,220
+and then 0. Again
+
+1490
+01:21:11,220 --> 01:21:13,020
+5 to toggle the LED.
+
+1491
+01:21:13,939 --> 01:21:15,220
+Can you understand that
+
+1492
+01:21:15,220 --> 01:21:17,060
+problem? To avoid that
+
+1493
+01:21:17,060 --> 01:21:19,000
+I have used greater
+
+1494
+01:21:19,000 --> 01:21:20,920
+than no equal. In case
+
+1495
+01:21:20,920 --> 01:21:22,960
+if you miss the count 5
+
+1496
+01:21:22,960 --> 01:21:24,899
+and go to 6, still
+
+1497
+01:21:24,899 --> 01:21:26,880
+you can detect that and toggle
+
+1498
+01:21:26,880 --> 01:21:29,079
+the LED. The chances are very slim.
+
+1499
+01:21:30,159 --> 01:21:30,800
+But
+
+1500
+01:21:30,800 --> 01:21:32,239
+But that can happen.
+
+1501
+01:21:32,939 --> 01:21:35,560
+So this is one of the good examples.
+
+1502
+01:21:36,220 --> 01:21:39,079
+For the programmers, when you are writing programs,
+
+1503
+01:21:39,460 --> 01:21:41,760
+you have to consider all possible situations.
+
+1504
+01:21:42,100 --> 01:21:43,779
+The chances are very slim.
+
+1505
+01:21:44,340 --> 01:21:47,739
+Because we have used a capacitor to devouse the input.
+
+1506
+01:21:48,300 --> 01:21:52,600
+So very unlikely you will get a spike at the input.
+
+1507
+01:21:53,020 --> 01:21:56,819
+Because the capacitor will suppress all these spikes, voltage spikes.
+
+1508
+01:21:56,819 --> 01:22:04,640
+But in case if there is a spike and capacitor couldn't suppress it, then there will be two button pressers.
+
+1509
+01:22:05,039 --> 01:22:08,479
+The microcontroller will detect that spike as another button press.
+
+1510
+01:22:08,760 --> 01:22:11,640
+The counter will detect it as another button press and count.
+
+1511
+01:22:12,159 --> 01:22:15,760
+And also normally human inputs are very slow.
+
+1512
+01:22:16,640 --> 01:22:25,439
+But in case somehow you press the button quickly two times, very unlikely, then counter will count two button pressers.
+
+1513
+01:22:25,439 --> 01:22:31,380
+If the count is 4 and 2 button presses then it will be 6.
+
+1514
+01:22:32,380 --> 01:22:37,279
+And then you check the condition whether the count is 5.
+
+1515
+01:22:37,399 --> 01:22:37,600
+No.
+
+1516
+01:22:39,060 --> 01:22:42,699
+The chances are very slim but still possible.
+
+1517
+01:22:43,100 --> 01:22:44,600
+So this is a very good example.
+
+1518
+01:22:44,939 --> 01:22:50,000
+As programmers you have to think about all possible situations.
+
+1519
+01:22:50,520 --> 01:22:54,300
+In majority of cases your system would work perfectly.
+
+1520
+01:22:54,300 --> 01:22:56,600
+but exceptions
+
+1521
+01:22:56,600 --> 01:22:58,920
+there can be exceptional situations
+
+1522
+01:22:58,920 --> 01:23:00,960
+your program, your system
+
+1523
+01:23:00,960 --> 01:23:02,020
+would behave
+
+1524
+01:23:02,020 --> 01:23:04,840
+strangely and even
+
+1525
+01:23:04,840 --> 01:23:06,899
+not only users even you
+
+1526
+01:23:06,899 --> 01:23:08,800
+would not be able to understand
+
+1527
+01:23:08,800 --> 01:23:11,060
+what has happened and if the system
+
+1528
+01:23:11,060 --> 01:23:13,000
+is a very critical system
+
+1529
+01:23:13,000 --> 01:23:14,739
+mission critical, safety critical
+
+1530
+01:23:14,739 --> 01:23:15,960
+system
+
+1531
+01:23:15,960 --> 01:23:18,659
+if the application is a medical
+
+1532
+01:23:18,659 --> 01:23:20,960
+application or military application
+
+1533
+01:23:20,960 --> 01:23:21,819
+or
+
+1534
+01:23:21,819 --> 01:23:23,600
+aerospace
+
+1535
+01:23:23,600 --> 01:23:26,680
+then the consequences would be
+
+1536
+01:23:26,680 --> 01:23:27,920
+very severe.
+
+1537
+01:23:28,779 --> 01:23:31,039
+So as embedded systems
+
+1538
+01:23:31,039 --> 01:23:32,720
+programmers, you should be
+
+1539
+01:23:32,720 --> 01:23:34,920
+very careful. You have to
+
+1540
+01:23:34,920 --> 01:23:37,100
+think about all possible situations.
+
+1541
+01:23:37,420 --> 01:23:39,159
+That's why I use greater than
+
+1542
+01:23:39,159 --> 01:23:40,520
+or equal without using
+
+1543
+01:23:40,520 --> 01:23:43,100
+equality of power. I just wanted
+
+1544
+01:23:43,100 --> 01:23:44,220
+to show you
+
+1545
+01:23:44,220 --> 01:23:46,979
+this situation. Can you understand?
+
+1546
+01:23:47,300 --> 01:23:48,460
+This is a very good example.
+
+1547
+01:23:49,220 --> 01:23:51,000
+Very important lesson you
+
+1548
+01:23:51,000 --> 01:23:52,380
+learn. Is that clear?
+
+1549
+01:23:52,380 --> 01:23:55,479
+the reasons we are using greater than
+
+1550
+01:23:55,479 --> 01:23:56,979
+equality operator
+
+1551
+01:23:56,979 --> 01:23:59,680
+instead of equality operator
+
+1552
+01:23:59,680 --> 01:24:00,880
+is that clear
+
+1553
+01:24:00,880 --> 01:24:02,039
+any question
+
+1554
+01:24:02,039 --> 01:24:05,520
+right but the requirement
+
+1555
+01:24:05,520 --> 01:24:07,600
+of the system's requirement
+
+1556
+01:24:07,600 --> 01:24:09,520
+is the client says
+
+1557
+01:24:09,520 --> 01:24:11,460
+we want to toggle the LED
+
+1558
+01:24:11,460 --> 01:24:13,439
+exactly on 500 pesos
+
+1559
+01:24:13,439 --> 01:24:15,279
+not greater than
+
+1560
+01:24:15,279 --> 01:24:17,399
+or equal 500 pesos that is the system
+
+1561
+01:24:17,399 --> 01:24:19,340
+requirement then how can we
+
+1562
+01:24:19,340 --> 01:24:21,680
+address that if the system requirement
+
+1563
+01:24:21,680 --> 01:24:29,319
+says requirement specification of the system says the led should be toggled exactly on five button
+
+1564
+01:24:29,319 --> 01:24:35,399
+presses not less than five button presses not more than five button presses but exactly on five
+
+1565
+01:24:35,399 --> 01:24:41,539
+button presses then what that's the next system five button count five button presses using an
+
+1566
+01:24:41,539 --> 01:24:48,079
+alternate approach and toggles and led exactly by five button presser not less than not more than
+
+1567
+01:24:48,079 --> 01:24:57,420
+how do we do that you can't use equality operator simply right i mean configure pb5 as an output pb4
+
+1568
+01:24:57,420 --> 01:25:04,579
+that is t0 as an input pull up t0 select the clock source as external connected to t0 pin
+
+1569
+01:25:04,579 --> 01:25:12,819
+set the counter to 251 set the counter to 251 every clock pulse counter counts first clock
+
+1570
+01:25:12,819 --> 01:25:24,279
+pulse 252 second clock pulse 253 third clock pulse 254 fourth clock pulse 255 fifth clock
+
+1571
+01:25:24,279 --> 01:25:32,979
+pulse overflow now we monitor whether there is an overflow if there is an overflow toggle the led
+
+1572
+01:25:32,979 --> 01:25:41,500
+reset the counter clear the tov flag now it doesn't matter due to a voltage spike at the input
+
+1573
+01:25:41,500 --> 01:25:47,640
+due to input bouncing or whether the user pressed the button very quickly two times,
+
+1574
+01:25:47,979 --> 01:25:48,819
+whatever it is.
+
+1575
+01:25:49,260 --> 01:25:55,159
+If the five, if the overflow happens after five button, five pulses,
+
+1576
+01:25:55,159 --> 01:26:03,260
+when overflow happens, the TOE flag is raised and we monitor that flag.
+
+1577
+01:26:03,699 --> 01:26:06,340
+As soon as that flag raised, we double the LED.
+
+1578
+01:26:06,779 --> 01:26:10,720
+Now, we are not going to look at the count, the value of the count,
+
+1579
+01:26:10,720 --> 01:26:12,359
+the value of the counter variable.
+
+1580
+01:26:12,640 --> 01:26:12,739
+No.
+
+1581
+01:26:13,319 --> 01:26:14,260
+Tov flag.
+
+1582
+01:26:14,500 --> 01:26:15,800
+We look at the Tov flag.
+
+1583
+01:26:15,880 --> 01:26:18,279
+We know that the Tov flag would be raised
+
+1584
+01:26:18,279 --> 01:26:20,819
+after five pulses,
+
+1585
+01:26:21,680 --> 01:26:22,899
+five external pulses.
+
+1586
+01:26:23,100 --> 01:26:23,319
+Why?
+
+1587
+01:26:23,779 --> 01:26:27,760
+Initial value of the TC and D register is 251.
+
+1588
+01:26:28,300 --> 01:26:29,960
+The first pulse 252.
+
+1589
+01:26:30,340 --> 01:26:32,380
+Second pulse 253.
+
+1590
+01:26:32,819 --> 01:26:34,199
+Third pulse 254.
+
+1591
+01:26:34,939 --> 01:26:36,399
+Fourth pulse 255.
+
+1592
+01:26:37,159 --> 01:26:39,300
+Fifth pulse overflow.
+
+1593
+01:26:39,300 --> 01:26:41,180
+So then flag is raised.
+
+1594
+01:26:41,479 --> 01:26:42,560
+Toe flag is raised.
+
+1595
+01:26:42,880 --> 01:26:44,020
+We are looking at the flag.
+
+1596
+01:26:44,399 --> 01:26:46,920
+As soon as flag raised, we toggle the LVD.
+
+1597
+01:26:47,319 --> 01:26:48,739
+Can you understand this?
+
+1598
+01:26:49,279 --> 01:26:50,420
+Exactly 5 button.
+
+1599
+01:26:50,640 --> 01:26:51,539
+Any question?
+
+1600
+01:26:52,199 --> 01:26:56,039
+Here reset counter means we again set the counter to 251.
+
+1601
+01:26:57,800 --> 01:27:00,539
+Resetting to original value 251.
+
+1602
+01:27:00,699 --> 01:27:01,359
+Not to 0.
+
+1603
+01:27:02,020 --> 01:27:02,720
+Any question?
+
+1604
+01:27:03,199 --> 01:27:03,520
+Right.
+
+1605
+01:27:04,479 --> 01:27:05,399
+Then C program.
+
+1606
+01:27:05,399 --> 01:27:09,699
+Up to this point, it is similar to the previous program.
+
+1607
+01:27:10,039 --> 01:27:16,220
+First, we set the PB5 as line number 7, PB5 as an output.
+
+1608
+01:27:16,859 --> 01:27:22,039
+Then we configure PD4 as an input.
+
+1609
+01:27:22,380 --> 01:27:24,899
+That line is not necessary, line number 8.
+
+1610
+01:27:25,300 --> 01:27:27,039
+Then we pull up PD4.
+
+1611
+01:27:27,039 --> 01:27:34,319
+Then we use the clock select bits of timer counter control register B.
+
+1612
+01:27:35,399 --> 01:27:40,220
+We set the clock source as T0, external clock source, on falling edge.
+
+1613
+01:27:40,819 --> 01:27:42,619
+Then timer becomes a counter.
+
+1614
+01:27:42,619 --> 01:27:48,020
+And it will count the external clock pulses on the falling edge.
+
+1615
+01:27:48,659 --> 01:27:53,680
+Then set the counter to 251, initial value, 251.
+
+1616
+01:27:54,140 --> 01:27:55,039
+Endless loop.
+
+1617
+01:27:55,539 --> 01:28:05,020
+Inside the loop, we check whether this flag, Tov flag race, the Tov flag bit set, right?
+
+1618
+01:28:05,020 --> 01:28:07,880
+We check whether Tov flag bit is set.
+
+1619
+01:28:07,880 --> 01:28:15,939
+For example, let's say TIFR means time interrupt flag register.
+
+1620
+01:28:16,899 --> 01:28:24,800
+[unclear — Sinhala / crosstalk]
+
+1621
+01:28:25,140 --> 01:28:28,840
+With that, we take the end operation of this value.
+
+1622
+01:28:29,079 --> 01:28:33,300
+[unclear — Sinhala / crosstalk]
+
+1623
+01:28:33,300 --> 01:28:37,079
+x and 0, 0.
+
+1624
+01:28:37,439 --> 01:28:42,800
+[unclear — Sinhala / crosstalk]
+
+1625
+01:28:43,340 --> 01:28:45,180
+x and 1, x.
+
+1626
+01:28:45,539 --> 01:28:50,359
+If the x is 1, this is a positive value, condition true.
+
+1627
+01:28:50,939 --> 01:28:53,840
+If x is 0, condition false.
+
+1628
+01:28:54,680 --> 01:28:57,600
+So depending on the value of x, that is,
+
+1629
+01:28:58,140 --> 01:29:02,600
+Tov bit, this condition either becomes false or true.
+
+1630
+01:29:03,300 --> 01:29:05,560
+We look at the TOV bit.
+
+1631
+01:29:06,000 --> 01:29:11,640
+If TOV bit is set, condition true, then we toggle the LED.
+
+1632
+01:29:12,239 --> 01:29:14,779
+Reset the counter to original value.
+
+1633
+01:29:15,359 --> 01:29:16,340
+Reset the counter.
+
+1634
+01:29:16,720 --> 01:29:19,140
+And then clear the TOV bit.
+
+1635
+01:29:19,960 --> 01:29:22,460
+To clear the TOV bit, we set it.
+
+1636
+01:29:22,899 --> 01:29:23,899
+This is very important.
+
+1637
+01:29:24,079 --> 01:29:26,300
+We use the operator and value 1.
+
+1638
+01:29:26,399 --> 01:29:27,859
+That means we are going to set.
+
+1639
+01:29:28,479 --> 01:29:31,079
+We set the TOV bit to clear it.
+
+1640
+01:29:31,079 --> 01:29:32,979
+Clear the TOV flag.
+
+1641
+01:29:33,300 --> 01:29:42,100
+to set it right this is very important this is a flag bit now led will be tugged exactly on five
+
+1642
+01:29:42,100 --> 01:29:48,340
+button presser not less than five not greater than five right now how do we determine this
+
+1643
+01:29:48,340 --> 01:29:58,420
+initial value how do we determine this initial right tcnt register right tcnt register could be
+
+1644
+01:29:58,420 --> 01:30:00,600
+either Tc and T0
+
+1645
+01:30:00,600 --> 01:30:02,340
+1 over 2 so I put in
+
+1646
+01:30:02,340 --> 01:30:04,220
+maximum value
+
+1647
+01:30:04,220 --> 01:30:06,560
+minus whatever the value
+
+1648
+01:30:06,560 --> 01:30:08,840
+you want to count plus 1
+
+1649
+01:30:08,840 --> 01:30:10,279
+in our example
+
+1650
+01:30:10,279 --> 01:30:12,699
+Tc and
+
+1651
+01:30:12,699 --> 01:30:14,680
+T0 maximum
+
+1652
+01:30:14,680 --> 01:30:16,119
+value 255
+
+1653
+01:30:16,119 --> 01:30:18,779
+minus we want to count 5
+
+1654
+01:30:18,779 --> 01:30:20,319
+5 times
+
+1655
+01:30:20,319 --> 01:30:21,720
+plus 1
+
+1656
+01:30:21,720 --> 01:30:24,439
+that means 251
+
+1657
+01:30:24,439 --> 01:30:26,420
+that's how we determine
+
+1658
+01:30:26,420 --> 01:30:27,140
+this value
+
+1659
+01:30:27,140 --> 01:30:47,600
+Why plus 1? Because flag is set when overflow happens. 255 to 0 overflow happens, then only the flag is set. The TOV bit is set. That's why we use another one to count the overflow.
+
+1660
+01:30:47,600 --> 01:30:51,800
+maximum value the register can have minus
+
+1661
+01:30:51,800 --> 01:30:55,739
+the count that you want plus 1. Plus 1 is
+
+1662
+01:30:55,739 --> 01:30:59,640
+the value that you need you account for the overflow.
+
+1663
+01:31:00,180 --> 01:31:03,520
+Then you get the initial value. Based on this equation
+
+1664
+01:31:03,520 --> 01:31:07,260
+you can determine the initial value for the register
+
+1665
+01:31:07,260 --> 01:31:11,039
+depending on the count that you want to write.
+
+1666
+01:31:12,239 --> 01:31:15,439
+Is that clear? Any question?
+
+1667
+01:31:15,439 --> 01:31:17,779
+If this is not clear, please let me know.
+
+1668
+01:31:18,439 --> 01:31:20,619
+Oh, if you have any question, you can ask now.
+
+1669
+01:31:21,140 --> 01:31:21,680
+Yes, Thirinan.
+
+1670
+01:31:23,060 --> 01:31:24,260
+The calling system,
+
+1671
+01:31:25,159 --> 01:31:30,699
+is that the condition of the condition of the condition?
+
+1672
+01:31:32,840 --> 01:31:38,439
+The condition of the condition of the condition is not the condition of the condition.
+
+1673
+01:31:40,439 --> 01:31:41,939
+Oh, that's not the condition.
+
+1674
+01:31:41,939 --> 01:31:43,319
+the
+
+1675
+01:31:43,319 --> 01:31:44,239
+the
+
+1676
+01:31:44,239 --> 01:31:44,720
+the
+
+1677
+01:31:44,720 --> 01:31:45,000
+the
+
+1678
+01:31:45,000 --> 01:31:45,199
+the
+
+1679
+01:31:45,199 --> 01:31:45,399
+the
+
+1680
+01:31:45,399 --> 01:31:45,600
+the
+
+1681
+01:31:45,600 --> 01:31:45,699
+the
+
+1682
+01:31:45,699 --> 01:31:45,739
+the
+
+1683
+01:31:45,739 --> 01:31:45,760
+the
+
+1684
+01:31:45,760 --> 01:31:45,760
+
+
+1685
+01:31:45,760 --> 01:31:45,779
+the
+
+1686
+01:31:45,779 --> 01:31:45,779
+
+
+1687
+01:31:45,779 --> 01:31:45,800
+the
+
+1688
+01:31:45,800 --> 01:31:45,800
+
+
+1689
+01:31:45,800 --> 01:31:45,800
+
+
+1690
+01:31:45,800 --> 01:31:45,800
+
+
+1691
+01:31:45,800 --> 01:31:45,800
+
+
+1692
+01:31:45,800 --> 01:31:45,800
+
+
+1693
+01:31:45,800 --> 01:31:45,800
+
+
+1694
+01:31:45,800 --> 01:31:45,800
+
+
+1695
+01:31:45,800 --> 01:31:45,800
+
+
+1696
+01:31:45,800 --> 01:31:45,800
+
+
+1697
+01:31:45,800 --> 01:31:45,800
+
+
+1698
+01:31:45,800 --> 01:31:45,800
+
+
+1699
+01:31:45,800 --> 01:31:45,800
+
+
+1700
+01:31:45,800 --> 01:31:45,800
+
+
+1701
+01:31:45,800 --> 01:31:45,800
+
+
+1702
+01:31:45,800 --> 01:31:45,800
+
+
+1703
+01:31:45,800 --> 01:31:45,800
+
+
+1704
+01:31:45,800 --> 01:31:45,800
+
+
+1705
+01:31:45,800 --> 01:31:45,800
+
+
+1706
+01:31:45,800 --> 01:31:45,800
+
+
+1707
+01:32:11,939 --> 01:33:11,939
+[unclear — Sinhala / crosstalk]
+
+1708
+01:33:11,939 --> 01:33:14,939
+So, we can use polling.
+
+1709
+01:33:14,939 --> 01:33:17,939
+So, we can interrupt the flag to race.
+
+1710
+01:33:17,939 --> 01:33:19,939
+Oh, that's right.
+
+1711
+01:33:19,939 --> 01:33:23,939
+So, we can use polling to race.
+
+1712
+01:33:23,939 --> 01:33:26,939
+So, we can use polling to race.
+
+1713
+01:33:26,939 --> 01:33:30,939
+So, we can practically use that question.
+
+1714
+01:33:30,939 --> 01:33:35,939
+Logically, we can use algorithm to make a mistake.
+
+1715
+01:33:35,939 --> 01:33:43,939
+It's like we are equal to the same condition, logically we are not in the algorithm.
+
+1716
+01:33:43,939 --> 01:33:47,939
+If we can't miss it, we can't miss it.
+
+1717
+01:33:47,939 --> 01:33:51,939
+Then we can't do the algorithm logically.
+
+1718
+01:33:51,939 --> 01:33:54,939
+Then we can't do the algorithm logically.
+
+1719
+01:33:54,939 --> 01:34:01,939
+Practically, we use polling.
+
+1720
+01:34:01,939 --> 01:34:05,939
+We use the polling event.
+
+1721
+01:34:05,939 --> 01:34:08,939
+We use the interrupt.
+
+1722
+01:34:08,939 --> 01:34:12,939
+If we use the flag, we interrupt.
+
+1723
+01:34:12,939 --> 01:34:16,939
+If we use the polling, we waste it.
+
+1724
+01:34:16,939 --> 01:34:20,939
+Because you are repeatedly checking TOV bit.
+
+1725
+01:34:20,939 --> 01:34:28,380
+repeatedly checking right so repeatedly checking to obt is a waste so the the next example is
+
+1726
+01:34:29,020 --> 01:34:35,420
+how to do the same using interrupts very good question you raise can others also understand
+
+1727
+01:34:35,420 --> 01:34:42,779
+his question actually this is what you should do you have to think beyond what we have discussed
+
+1728
+01:34:42,779 --> 01:34:50,140
+right if you talk to the seniors i'm sure they have told you this subject is difficult and
+
+1729
+01:34:50,140 --> 01:34:52,779
+And it's very difficult to get a good grade.
+
+1730
+01:34:53,539 --> 01:34:56,720
+That's the normal perception among the students.
+
+1731
+01:34:56,720 --> 01:35:11,899
+The reason is in the exam, right, when I sent the papers, some questions I put to check whether you have, you are thinking beyond the concepts that we have discussed.
+
+1732
+01:35:12,640 --> 01:35:16,840
+To make sure that I put to several questions.
+
+1733
+01:35:16,840 --> 01:35:22,800
+That's why this has become somewhat difficult for many students.
+
+1734
+01:35:23,220 --> 01:35:31,760
+So therefore, during this semester, you must start thinking beyond what we have discussed.
+
+1735
+01:35:32,500 --> 01:35:34,140
+That practice is very important.
+
+1736
+01:35:34,680 --> 01:35:37,739
+That is very important as an IT student.
+
+1737
+01:35:38,159 --> 01:35:40,579
+So as an IT student, that is very important for you.
+
+1738
+01:35:41,399 --> 01:35:45,159
+And also as a university student, very important.
+
+1739
+01:35:45,159 --> 01:36:12,239
+So in my exams I put several questions to check whether you have that ability. Not the entire paper but few questions. That's why people say it's very difficult to go for at A. And the other issue is the marks are calculated 50% from the exam paper 50% from the practical.
+
+1740
+01:36:12,239 --> 01:36:28,979
+That's the second obstacle, the practical exam. In the practical exam, within three hours, you have to design hardware, you have to assemble hardware, design firmware, implement the firmware, run and show.
+
+1741
+01:36:28,979 --> 01:36:31,460
+that's challenging
+
+1742
+01:36:31,460 --> 01:36:33,699
+if you have not done practicals.
+
+1743
+01:36:34,079 --> 01:36:35,140
+It would be very challenging
+
+1744
+01:36:35,140 --> 01:36:36,220
+if you have not done practicals.
+
+1745
+01:36:36,220 --> 01:36:38,779
+If you have done the practicals, if you have done the exercises,
+
+1746
+01:36:39,260 --> 01:36:40,539
+when you are doing the exercises,
+
+1747
+01:36:40,760 --> 01:36:42,500
+if you have thought about
+
+1748
+01:36:42,500 --> 01:36:45,119
+the other ways of doing the same exercise,
+
+1749
+01:36:45,779 --> 01:36:47,619
+then that would not be challenging.
+
+1750
+01:36:47,760 --> 01:36:49,340
+Within three hours you can finish the job.
+
+1751
+01:36:49,579 --> 01:36:50,479
+Now the question is,
+
+1752
+01:36:50,479 --> 01:36:53,479
+if you couldn't successfully
+
+1753
+01:36:54,060 --> 01:36:55,479
+finish the practical exam,
+
+1754
+01:36:56,100 --> 01:36:57,520
+then you lose a lot of marks.
+
+1755
+01:36:57,720 --> 01:36:58,800
+50% marks.
+
+1756
+01:36:58,979 --> 01:37:07,840
+Then that the portion that you lost during the practical, it's very difficult to cover
+
+1757
+01:37:07,840 --> 01:37:11,220
+using the theory paper because theory paper has another 50% only.
+
+1758
+01:37:11,220 --> 01:37:12,220
+Very difficult.
+
+1759
+01:37:12,220 --> 01:37:18,220
+Now, for example, if you get 25 marks for the practical, it's very challenging even
+
+1760
+01:37:18,220 --> 01:37:22,279
+getting 25 marks for the practical.
+
+1761
+01:37:22,279 --> 01:37:29,279
+there, you have to get 45 marks for out of 50 for the theory paper. 45 marks out of 50
+
+1762
+01:37:29,279 --> 01:37:37,279
+means 90% to go for an A. That's the second challenge. 50% marks for the practicals, 50%
+
+1763
+01:37:37,279 --> 01:37:43,479
+marks for the written exam. And normally in other, all other modules you have 70% for
+
+1764
+01:37:43,479 --> 01:37:52,279
+the final exam, 25% for the project, 25% for the practical. So even if you, if you do some
+
+1765
+01:37:52,279 --> 01:38:01,619
+a blunder at the practical, that would not be a big issue for your grading at the exam.
+
+1766
+01:38:01,619 --> 01:38:07,600
+But this module, if you make a blunder at the practical, that's it. It's very difficult
+
+1767
+01:38:07,600 --> 01:38:12,260
+to cover at the exam. That's why I have seen some students, they sit for the practical,
+
+1768
+01:38:12,260 --> 01:38:17,720
+but they don't sit for the final theory exam. Because if they make a blunder at the practical
+
+1769
+01:38:17,720 --> 01:38:25,479
+exam they know no point of sitting for the final exam because they can't cover up so the therefore
+
+1770
+01:38:25,479 --> 01:38:34,680
+you should be you should know all these things and you have to prepare yourself well in that
+
+1771
+01:38:34,680 --> 01:38:41,159
+box because i have put 50 percent marks for the practical because this is a practical subject now
+
+1772
+01:38:41,159 --> 01:38:47,399
+you can't go out and can you say i know embedded systems but i i don't know how to assemble hardware
+
+1773
+01:38:47,720 --> 01:38:50,680
+I don't know how to write a firmware.
+
+1774
+01:38:51,180 --> 01:38:52,720
+But I have done embedded system.
+
+1775
+01:38:52,880 --> 01:38:53,800
+I have at A.
+
+1776
+01:38:54,380 --> 01:38:55,880
+All the theories I know.
+
+1777
+01:38:56,520 --> 01:38:57,199
+What's the point?
+
+1778
+01:38:58,100 --> 01:38:59,899
+Can you go outside and see?
+
+1779
+01:39:00,020 --> 01:39:01,840
+I know all the theories about swimming.
+
+1780
+01:39:02,319 --> 01:39:04,020
+But I can't swim.
+
+1781
+01:39:04,380 --> 01:39:05,899
+When you push me into water,
+
+1782
+01:39:07,180 --> 01:39:08,600
+even I can't float.
+
+1783
+01:39:09,439 --> 01:39:10,460
+But I know theory.
+
+1784
+01:39:10,460 --> 01:39:12,880
+I will explain you all the theories behind swimming.
+
+1785
+01:39:13,479 --> 01:39:14,119
+What's the point?
+
+1786
+01:39:15,000 --> 01:39:17,420
+That's why I ask you to buy a kit.
+
+1787
+01:39:17,720 --> 01:39:27,239
+for yourself. Now see, right? That has become very useful for you. Because if you relied on the
+
+1788
+01:39:27,960 --> 01:39:33,479
+resources available at the lab, now can you access that? No. Now, because now you have the kit,
+
+1789
+01:39:34,359 --> 01:39:40,119
+you can do practicals even at your home. Anything else? Any other question? No. Yes.
+
+1790
+01:39:40,119 --> 01:39:47,119
+Can I ask a question about the exercise 3?
+
+1791
+01:39:47,119 --> 01:39:52,119
+In the afternoon? Once we finish the lecture?
+
+1792
+01:39:52,119 --> 01:39:54,119
+Is that okay?
+
+1793
+01:39:54,119 --> 01:39:55,119
+Yes sir.
+
+1794
+01:39:55,119 --> 01:39:57,119
+Using interrupts.
+
+1795
+01:39:57,119 --> 01:40:02,119
+Count 5 button presses and toggles and LED using interrupts.
+
+1796
+01:40:02,119 --> 01:40:05,119
+Same hardware but different firmware.
+
+1797
+01:40:05,119 --> 01:40:06,359
+main function
+
+1798
+01:40:06,359 --> 01:40:07,899
+main function
+
+1799
+01:40:07,899 --> 01:40:09,699
+algorithm
+
+1800
+01:40:09,699 --> 01:40:12,819
+configure PB5, PB5 is
+
+1801
+01:40:12,819 --> 01:40:14,880
+Arduino pin number 13 where LED
+
+1802
+01:40:14,880 --> 01:40:17,000
+connected, onboard LED connected
+
+1803
+01:40:17,000 --> 01:40:18,279
+as an output
+
+1804
+01:40:18,279 --> 01:40:20,539
+configure PD4 as an input
+
+1805
+01:40:20,539 --> 01:40:22,619
+not necessary because already input
+
+1806
+01:40:22,619 --> 01:40:24,800
+pull up PD4 which is the timer
+
+1807
+01:40:24,800 --> 01:40:26,739
+pin, right timer 0
+
+1808
+01:40:26,739 --> 01:40:28,699
+pin, pull up, select
+
+1809
+01:40:28,699 --> 01:40:30,340
+the clock source as timer 0
+
+1810
+01:40:30,340 --> 01:40:32,619
+then set the counter
+
+1811
+01:40:32,619 --> 01:40:34,619
+to do 5.1 initial value
+
+1812
+01:40:34,619 --> 01:40:57,619
+Enable the count overflow interrupt. Enable interrupts. Enable global interrupts. Endless loop. Now inside the endless loop you could do something else. But in this example we don't have any other task so it is just an endless loop.
+
+1813
+01:40:57,619 --> 01:41:08,119
+Right, when the counter counts 5 clock pulses and overflows, when counter counts 5 clock
+
+1814
+01:41:08,119 --> 01:41:18,119
+pulses and overflows, Tov flag is raised, Toebit is set and the timer or the counter interrupts
+
+1815
+01:41:18,119 --> 01:41:19,119
+CP.
+
+1816
+01:41:19,119 --> 01:41:21,119
+So we have to handle that interrupt.
+
+1817
+01:41:21,119 --> 01:41:38,819
+count the overflow interrupt handle it. Tuggle the LED reset the counter to 251. That's it. Very simple. Can you understand this algorithm? Right. Then source code. Before we move into source code, let's talk about this register.
+
+1818
+01:41:38,819 --> 01:41:47,119
+timer interrupt mass register which has toie bit timer overflow interrupt enable bit
+
+1819
+01:41:47,119 --> 01:41:55,000
+using this bit you can enable or disable timer overflow interrupt right if you enable then the
+
+1820
+01:41:55,000 --> 01:42:02,859
+cpu will be enabled when timer overflows by default this is disabled zero therefore
+
+1821
+01:42:02,859 --> 01:42:05,079
+interrupts are disabled.
+
+1822
+01:42:05,579 --> 01:42:08,020
+You can enable it. Now we are going to use
+
+1823
+01:42:08,020 --> 01:42:09,800
+interrupts instead of
+
+1824
+01:42:09,800 --> 01:42:11,579
+polling the TOV bit.
+
+1825
+01:42:12,239 --> 01:42:14,039
+Polling TOV bit is a waste.
+
+1826
+01:42:14,600 --> 01:42:15,760
+Right. So score.
+
+1827
+01:42:16,300 --> 01:42:17,779
+Now we are going to use interrupts.
+
+1828
+01:42:17,779 --> 01:42:19,720
+So we need to include interrupt.h.
+
+1829
+01:42:20,340 --> 01:42:21,720
+Right. Similar to the
+
+1830
+01:42:21,720 --> 01:42:23,479
+previous example.
+
+1831
+01:42:24,579 --> 01:42:25,920
+Configure PD5
+
+1832
+01:42:25,920 --> 01:42:27,479
+as an output. Configure
+
+1833
+01:42:27,479 --> 01:42:29,720
+PD4 as an input. Not necessary.
+
+1834
+01:42:30,520 --> 01:42:31,600
+Pull up PD4.
+
+1835
+01:42:31,600 --> 01:42:34,239
+PD4 is the type T0
+
+1836
+01:42:34,239 --> 01:42:35,680
+that is the type external
+
+1837
+01:42:35,680 --> 01:42:38,260
+timer pin for the timer
+
+1838
+01:42:38,260 --> 01:42:39,680
+0 then
+
+1839
+01:42:39,680 --> 01:42:42,180
+timer counter control
+
+1840
+01:42:42,180 --> 01:42:42,939
+register B
+
+1841
+01:42:42,939 --> 01:42:46,159
+clock select bits set the clock
+
+1842
+01:42:46,159 --> 01:42:47,199
+source as T0
+
+1843
+01:42:47,199 --> 01:42:49,220
+where the button is connected
+
+1844
+01:42:49,220 --> 01:42:52,260
+timer counter register initial value
+
+1845
+01:42:52,260 --> 01:42:53,239
+251
+
+1846
+01:42:53,239 --> 01:42:54,479
+enable
+
+1847
+01:42:54,479 --> 01:42:58,279
+timer counter overflow interrupt
+
+1848
+01:42:58,279 --> 01:43:00,159
+using timer
+
+1849
+01:43:00,159 --> 01:43:05,840
+interrupt mask register, right, enable the interrupts, time overflow interrupts.
+
+1850
+01:43:05,840 --> 01:43:12,000
+Enable global interrupts, SCI function which is a set interrupt function defined in interrupt.h.
+
+1851
+01:43:12,640 --> 01:43:17,600
+Endless loop. You can use this loop to do something else. But in this example,
+
+1852
+01:43:17,600 --> 01:43:23,520
+we don't have any other task, therefore it's empty. But if you have some other task, you can use it.
+
+1853
+01:43:23,520 --> 01:43:44,520
+Right. Then, this is the ISR. When timer overflows from 255 to 0, this interrupt service routine is executed. This is called automatically. And this is the vector you have to use. Timer 0. You are using timer 0. Overflow vector. OVF vector.
+
+1854
+01:43:44,520 --> 01:43:51,399
+If you are using timer 1, timer 1 overflow vector, the correct vector you have to use.
+
+1855
+01:43:51,399 --> 01:44:01,140
+Then inside the vector, toggle the LED and reset the counter to 251.
+
+1856
+01:44:01,140 --> 01:44:04,520
+But now we are not going to clear the TOV flag.
+
+1857
+01:44:04,520 --> 01:44:05,520
+Why?
+
+1858
+01:44:05,520 --> 01:44:12,140
+When you are using the ISR, when you are using interrupts, TOV flag is automatically cleared
+
+1859
+01:44:12,140 --> 01:44:13,659
+by the hardware.
+
+1860
+01:44:13,659 --> 01:44:15,100
+So we don't need to worry about it.
+
+1861
+01:44:15,100 --> 01:44:22,579
+But if you are not using interrupts, then you have to explicitly clear the TOE flag.
+
+1862
+01:44:22,579 --> 01:44:28,260
+But now you don't need to clear the TOE flag, flag bit because you are using interrupts,
+
+1863
+01:44:28,260 --> 01:44:30,739
+hardware will clear it.
+
+1864
+01:44:30,739 --> 01:44:36,220
+Only thing you have to do is you have to handle the correct ISR.
+
+1865
+01:44:36,220 --> 01:44:37,220
+That's it.
+
+1866
+01:44:37,220 --> 01:44:41,640
+This is the most efficient way of using counters.
+
+1867
+01:44:41,640 --> 01:44:46,399
+If you are using Arduino platform, you don't have access to these facilities.
+
+1868
+01:44:46,399 --> 01:44:54,640
+You don't have access to ISR because there is no, because the attach interrupt wrapper
+
+1869
+01:44:54,640 --> 01:44:57,979
+function is for external interrupts.
+
+1870
+01:44:57,979 --> 01:45:01,920
+But for timer interrupts, no wrapper function.
+
+1871
+01:45:01,920 --> 01:45:06,699
+And the timers, there is no direct access to timers.
+
+1872
+01:45:06,699 --> 01:45:08,819
+Some Arduino libraries use timers.
+
+1873
+01:45:08,819 --> 01:45:09,819
+That's a different story.
+
+1874
+01:45:09,819 --> 01:45:15,100
+as a firmware developer, you don't have direct access. There are no wrapper functions to give
+
+1875
+01:45:15,100 --> 01:45:21,319
+you direct access to timers. A limitation of Arduino platform. But if you are using C,
+
+1876
+01:45:21,319 --> 01:45:28,039
+you have full access to hardware. These are hardware timers, hardware counters. This is
+
+1877
+01:45:28,039 --> 01:45:35,319
+the most efficient way. Exactly on five button presses, LED will be toggle. Not less than five,
+
+1878
+01:45:35,319 --> 01:45:43,560
+not more than five. Exactly. Can you understand this code? Any question? Yes, any question?
+
+1879
+01:45:45,079 --> 01:45:52,920
+Right. Now with that we have come to the end of counters. But still we have not talked about timing,
+
+1880
+01:45:52,920 --> 01:46:00,520
+measuring time. That's the next part. So now we know how to use timers as counters to count an
+
+1881
+01:46:00,520 --> 01:46:08,520
+event the next part is how to use timers for measuring time counting part is over any question
+
+1882
+01:46:08,520 --> 01:46:17,159
+no if no questions right so now i'll stop the morning session and we'll see you at one o'clock
+
+1883
+01:46:17,159 --> 01:46:28,520
+okay thank you thank you thank you sir
+

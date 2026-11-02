@@ -1,0 +1,49 @@
+[0:00] Right, okay, we were talking about the algorithm. So each iteration, right, we decrement the pulse width by 5, starting from 255. And that pulse width we set to output compare register. And doing that, we reduce the voltage at OC pin gradually.
+[0:21] This 30 millisecond delay is very important, right?
+[0:26] Because we, otherwise, if this delay, if you don't put this delay,
+[0:31] it would be very difficult to see the fading.
+[0:35] So small delay makes fading visible because our eyes are not very accurate.
+[0:41] So that's why we introduce a small delay so that we can see
+[0:44] the fading of the brightness of LED clear.
+[0:50] So we start with 255. 255 means if you put 255 to OCR, you get 5 volts from the OCP. Then we decrement 5 from the OCR value. It goes to 250. Then it goes to 245, 240. Likewise, gradually it drops.
+[1:12] When it comes to somewhere around 125, you get 50% of the supply voltage.
+[1:20] That means 2.5.
+[1:22] If the OCR value comes somewhere around 60 or 65, you get 25% of the voltage.
+[1:31] That is 1.25 somewhere around.
+[1:35] So likewise we drop the voltage from 5 volt to 0 volts gradually with the step size of 5, right, decrement step size of 5 every 30 milliseconds.
+[1:50] By doing that, we reduce the voltage supply to the LED gradually.
+[1:57] So we would see a fading LED with the full brightness to 0.
+[2:04] Then again full brightness to gradually see.
+[2:07] Can you understand?
+[2:09] Can you understand this algorithm?
+[2:10] Okay, sir.
+[2:11] Right.
+[2:12] Let's see the program.
+[2:13] Right.
+[2:14] So we are going to use delay function for the delay, 30 milliseconds delay.
+[2:19] That's why I have used this header file.
+[2:22] And this header file requires the speed of the CPU.
+[2:26] That's why I have defined fCPU.
+[2:29] First, configure this particular pin, PD6,
+[2:32] which is OCAP.
+[2:35] We have LED connected as an output.
+[2:38] Then specify the fast PWM
+[2:41] waveform generation mode.
+[2:45] You know that waveform generation
+[2:46] WGM bits, two bits are in
+[2:50] TCCR A register and one bit
+[2:54] is in TCCR B register.
+[2:56] The bit in the TCCR B register
+[3:00] we need to clear
+[3:01] and the 2 bits in the TCC are A register
+[3:05] we need to set. By doing that we can specify
+[3:09] fast PWM mode.
+[3:12] See fast PWM mode 0 1 1
+[3:16] waveform generation mode 2 bit 0
+[3:20] waveform generation mode 1 bit 1
+[3:22] waveform generation mode 0 bit 1
+[3:25] we specify fast PWM mode
+[3:30] Then the compare output mode non-inverted we specify using combits of TCCRA register.
+[3:43] Timer control, timer counter control register A.
+[3:47] Using the bits of that register we specify using the combits of that register we specify non-inverted mode.
+[3:57] Using the combits we can specify non-inverted mode.

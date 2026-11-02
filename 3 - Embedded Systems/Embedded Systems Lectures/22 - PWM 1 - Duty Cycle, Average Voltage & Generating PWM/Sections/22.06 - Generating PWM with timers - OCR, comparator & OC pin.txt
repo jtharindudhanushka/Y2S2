@@ -1,0 +1,366 @@
+[0:02] How the PWM outputs are generated.
+[0:06] Let's see.
+[0:07] We use timers to generate PWM outputs.
+[0:11] We use, let's say we use 8-bit time.
+[0:15] And this is the 8-bit time.
+[0:17] Right?
+[0:18] It's the 8-bit time.
+[0:19] Now we know that the oscillator generates clock pulses.
+[0:25] Oscillator generates clock pulses.
+[0:26] internal oscillator generates clock pulse and that oscillator frequency we can reduce using a
+[0:34] prescaler so this is the oscillator oscillator generates clock pulses the oscillate output
+[0:39] frequency we can scale down using a prescaler and then we feed that scale down pulses clock pulses
+[0:49] to the timer.
+[0:51] TCNT register.
+[0:53] Timer counter register.
+[0:56] TCNT register.
+[0:57] We know that for each clock pulse
+[0:59] TCNT register
+[1:01] increments.
+[1:03] Each clock pulse TCNT register
+[1:05] increments. TCNT
+[1:07] register counts for each
+[1:09] clock pulse from
+[1:11] 0 to 255
+[1:13] because 8 bit time.
+[1:15] This is 8 bit register.
+[1:17] Maximum value the register can hold 255.
+[1:21] It counts from 0 to 255.
+[1:24] And then it overflows back to 0 and again starts counting from 0.
+[1:30] That's how timers work.
+[1:33] Now depending on the duty cycle you require.
+[1:36] Duty cycle means percentage of time that output is high in one clock cycle.
+[1:44] Depending on the duty cycle you need, you assign a value to this register, OCR register.
+[1:52] OCR register.
+[1:54] OCR means output compare register.
+[1:57] Output compare register.
+[1:59] Here I have used the simple N to indicate the timer number.
+[2:04] If it is timer 0, OCR 0.
+[2:08] TCNT 0.
+[2:09] If it is timer 1, OCR 1.
+[2:12] T, C and T1.
+[2:15] Timer number. OCR A
+[2:17] means there is another OCR
+[2:19] register called OCR B.
+[2:21] Every timer
+[2:22] there are two OCR registers.
+[2:25] Output compare registers.
+[2:27] OCR A, OCR
+[2:29] B. Right. In this example
+[2:31] I have used only OCR
+[2:33] A. Output compare
+[2:35] register A of timer
+[2:37] N. Timer N means timer number.
+[2:39] So the depending on
+[2:41] the duty cycle required.
+[2:43] We assign a value to OCR.
+[2:46] For example, if you need 50% duty cycle,
+[2:49] that means you want to get 2.5 volts from the output pin.
+[2:54] 50% duty cycle means 2.5 volts.
+[2:57] Because normally when the output is high, it is 5 volts.
+[3:00] 50% of time output is high means 2.5 volts.
+[3:03] So if you want to get 2.5 volts output or 50% duty cycle,
+[3:09] we load 127 to the OCR.
+[3:13] The maximum value OCR register can hold is
+[3:16] 255 because 8 bit register.
+[3:22] 255. 50% of that
+[3:25] 127. If you want to get 50% UD cycle
+[3:29] we load 127 to OCR register. If you want to get
+[3:33] 25% UD cycle, 1.25
+[3:37] volts output. 25%
+[3:40] duty cycle low.
+[3:41] 1.25 volts output.
+[3:44] Then we elude
+[3:45] 63 to OCR.
+[3:48] 25% means
+[3:49] one quad.
+[3:51] One quad of 255 means
+[3:53] 63.
+[3:55] So what is the formula?
+[3:57] Let me write it.
+[3:59] Duty cycle
+[4:00] equals OCR value
+[4:03] plus 1
+[4:04] multiplied by 100
+[4:06] divided by n plus 1 where n means maximum value timer can count.
+[4:17] This is the formula.
+[4:19] So if it is 80 time, what is the maximum value timer can count?
+[4:24] 251.
+[4:24] So if you want to get a required duty cycle,
+[4:29] what you have to do is OCR value plus 1 multiplied by 100
+[4:35] divided by n plus 1.
+[4:38] n is the maximum value that the timer can count.
+[4:43] Let's do a simple calculation.
+[4:45] POT.
+[4:47] OCR value, let's say 127 plus 1.
+[4:51] Maximum timer can count up to 255 plus 1 multiplied by 100.
+[4:58] 128, 256, 50%.
+[5:01] If you put 127 for OCR, you get 50% UD cycle.
+[5:05] If you put 63 to OCR, you get 25% duty cycle.
+[5:09] So likewise, depending on the duty cycle you need, you have to put a value.
+[5:17] You have to assign a value to OCR, output compare register.
+[5:21] Right.
+[5:22] Then there's a comparator.
+[5:24] Comparator can compare.
+[5:26] That's why we call it comparative.
+[5:28] Right.
+[5:29] Now here you can see the comparator.
+[5:31] Comparator can compare.
+[5:33] Compare what?
+[5:34] TCNT register value
+[5:37] and the OCR register value.
+[5:39] It can compare.
+[5:41] These two values,
+[5:43] the comparator
+[5:44] compares. Whenever
+[5:46] a compare match occurs,
+[5:49] when the comparator compares
+[5:51] OCR value and the TCNT
+[5:53] value, now you know
+[5:55] that OCR value is fixed.
+[5:58] We put 187
+[5:59] if we need 50%,
+[6:01] we resign.
+[6:02] we put 63 if you need
+[6:05] 25% unit cycle. Likewise, you put some
+[6:08] value into OCR which is fixed. But the
+[6:11] TCNT register value is not fixed.
+[6:14] Because every clock cycle TCNT counts.
+[6:18] TCNT in three months. And the
+[6:20] comparator compares the two registers. When
+[6:22] comparator compares two registers, in one
+[6:26] moment, the value of the OCR
+[6:29] register and the TCNT register
+[6:31] they match. For example,
+[6:34] if you put 127 to OCR,
+[6:36] let's assume a TCNT
+[6:38] counts from 0, 1, 2,
+[6:40] 3, it counts for every clock cycle.
+[6:42] When it comes to 127,
+[6:45] TCNT
+[6:46] comes to the 127,
+[6:48] a compare match occurs.
+[6:50] A match occurs.
+[6:52] The comparator
+[6:53] compares two registers
+[6:55] and whenever a match occurs,
+[6:59] comparator sets
+[7:00] OCF bit.
+[7:03] OCF bit of
+[7:04] TIFR register.
+[7:07] When there's a match occurs
+[7:09] between two registers,
+[7:11] comparator sets
+[7:12] OCF bit.
+[7:15] OCF bit means
+[7:16] output compare
+[7:18] match flag.
+[7:21] OCF means output
+[7:22] compare match flag.
+[7:25] Output compare
+[7:26] match flag.
+[7:28] That flag bit is set.
+[7:30] Where is that flag bit?
+[7:32] That flag is in TIFR register.
+[7:38] Interrupt, time interrupt flag register.
+[7:42] TIFR means time interrupt flag register.
+[7:45] We have used that register earlier.
+[7:46] The TIFR register, time interrupt flag register contains a special flag bit,
+[7:52] which is called OCF, output compare match flag.
+[7:56] That bit is set.
+[7:58] That bit tells the CPU a compare match occurred.
+[8:04] It tells the CPU a compare match occurred.
+[8:06] And not only that, comparator sets this bit and triggers waveform generator.
+[8:14] And comparator sets the bit and also it triggers waveform generator.
+[8:21] Waveform generator generates pulses with the required pulse.
+[8:28] Waveform generator generates pulses with required pulse.
+[8:33] That means required due recycle.
+[8:35] And the generated PWM output is available through OCP.
+[8:43] OCP.
+[8:44] Output compare pin of the microcontroller.
+[8:48] OCP.
+[8:48] So here I have used simple N to indicate the timer number.
+[8:53] If the timer is 0, this is 0.
+[8:55] If the timer is 1, simple N is 1.
+[8:58] Likewise, A means there are two pins, OC pins.
+[9:03] OC A, OC B for each time.
+[9:07] For example, timer 0 has OC 0 A, OC 0 B.
+[9:13] Timer 1 has OC 1 A, OC 1 B.
+[9:17] Likewise, two pins, OC pins, output compare pins for each time.
+[9:23] So the PWM, generated PWM output is available through OC pin.
+[9:29] Now if the OCR value is 127 and if you measure the voltage at OC pin, OC pin voltage if you measure using a voltmeter, it would show you 2.5 volts.
+[9:44] Why? This is 127.
+[9:46] 127 means 50% duty cycle.
+[9:49] 50% duty cycle means 50% of time output is high in one clock cycle.
+[9:55] When output is high, voltage is 5.
+[9:58] 5 into 50%, 2.5.
+[10:01] So when you measure the voltage, if you measure the voltage of OCP, you would get 2.5 volts.
+[10:07] If you put 63 to OCR, then when you measure the voltage at OCP, you get 1.25 volts.
+[10:15] Because if you put 63 to OCR, that means you get 25% duty cycle.
+[10:21] 25% duty cycle means 1.25 volts.
+[10:25] Because when output is high, it's 5 volts.
+[10:28] 5 into 25%, 1.25.
+[10:31] So the comparator compares two registers.
+[10:35] When a match occurs, it sets this bit OCF,
+[10:40] output compare match flag bit of timer interrupt flag register.
+[10:44] and also it triggers
+[10:46] waveform generator.
+[10:48] The waveform generator generates
+[10:50] pulses with required
+[10:52] pulse width and the
+[10:54] generated PWM
+[10:56] output is available through
+[10:58] output compare pin
+[11:00] OCP.
+[11:02] Every time
+[11:02] there are two OCR
+[11:06] registers, OCR A
+[11:08] OCR B.
+[11:09] Therefore, every time I can
+[11:12] compare two
+[11:14] compare values. Every timer can compare two values
+[11:18] with the TC and T register. Because there are two
+[11:22] OCR registers. OCR A, OCR B. So every timer
+[11:26] can compare two values against TC and T register.
+[11:31] And then every timer can generate
+[11:34] two pulse width modulated outputs. And those two pulse width
+[11:38] modulated outputs the timer can make available
+[11:42] through OCA and OCD pins.
+[11:46] Because there are two OCA and OCD pins.
+[11:49] So through them, the two PWM outputs,
+[11:53] the timer can make available.
+[11:55] Now we know that ATmega328P microcontroller
+[11:59] has three timers.
+[12:01] Timer 0, timer 1, timer 2.
+[12:03] Every timer, two OCR registers,
+[12:07] two waveform generators, two OC pins.
+[12:10] That means every timer can generate two PWM outputs.
+[12:14] ATmega 328p microcontroller has three timers.
+[12:17] That means ATmega 328p microcontroller can generate six PWM outputs.
+[12:27] Three timers.
+[12:28] Each timer, two PWM outputs you can get.
+[12:31] That means ATmega 328p microcontroller can provide six PWM outputs.
+[12:37] That's right.
+[12:38] Arduino UNO board has six PWM supported pins.
+[12:43] On the UNO board, the PWM supported pins are
+[12:46] denoted using a
+[12:50] small symbol, the tilt character, Panwa character
+[12:54] using, it is denoted on the board.
+[12:58] If you check the board, you would see there are six PWM supported pins
+[13:02] on the board. Why? The chip, the microcontroller
+[13:06] can support six PWM outputs. Why? The microcontroller has three timers. Each timer can provide two PWM outputs.
+[13:18] So altogether six. Because each timer has two OCR registers, two OC pins, two waveform generators.
+[13:25] Is that clear? Any question?
+[13:36] Yes, it is the time to calculate the formula.
+[13:43] Excuse me sir.
+[13:46] Why there is time account control registers too?
+[13:52] Why there is two of them?
+[13:54] Not related to this.
+[13:57] Can you ask question again?
+[13:59] In the previous, the time account control register,
+[14:05] Only one time account register.
+[14:10] Only one TCNT register.
+[14:13] But you have two OCR registers.
+[14:15] Two comparators.
+[14:17] Two waveform generators.
+[14:19] Two OCRs.
+[14:20] For each time.
+[14:21] But time has only one time account register.
+[14:25] So what's your question?
+[14:26] Sir, time account controller register?
+[14:29] Why there are two?
+[14:30] No.
+[14:31] There's no two time account registers.
+[14:33] Oh, you are talking about?
+[14:35] TCCR, timer counter controller register. TCCR A, TCCR B. The reason is there are a lot
+[14:48] of bits, different bits for different purposes. There are a lot of control bits. To keep them,
+[14:55] one 8-bit register is not enough. Waveform generation bits, clock select bits. Likewise,
+[15:03] Likewise, there are a number of the interrupt enable bits.
+[15:09] So different bits, control bits.
+[15:12] To keep them, one 8-bit register is not enough.
+[15:14] So they have used two 8-bit registers.
+[15:18] TCCR A, TCCR B.
+[15:21] What else?
+[15:22] Right.
+[15:23] Now, we learned that we put a value to OCR.
+[15:27] TCNT counts.
+[15:29] Comparator compares.
+[15:30] When there's a compare match, comparator sets this bit, OCF bit, right, to tell the CPU that match occurred.
+[15:42] And also comparator generates, triggers waveform generator.
+[15:48] And the waveform generator generates the pulses with required bit.
+[15:53] How waveform generator generates pulses with required?
+[15:57] We didn't discuss.
+[15:59] Up to this point, we discussed very in detail and then I said simply,
+[16:06] comparator triggers waveform generator.
+[16:09] Waveform generator generates pulses with required width or PWM output in other words.
+[16:16] How waveform generator generates pulses with required width?
+[16:21] Let's see, right?
+[16:23] To use PWM, you don't need to know all these things, right?
+[16:27] You can simply use PWM.
+[16:30] But as university students, you should know how timers are used to generate pulse width modulated output.
+[16:37] What is the need of OCR register?
+[16:40] And when the waveform generator is triggered, how waveform generator generates PWM output.
+[16:46] You should know all bits and bytes.
+[16:50] Everything you should know.
+[16:51] Then only we can say we followed Embering Systems at the University.
+[16:57] If you follow a diploma or certificate course, you can see it.
+[17:10] But when it comes to graduate course, bachelor's degree, you should know the subject from A
+[17:21] to Z. At least you should be able to learn the subject by yourself from A to Z. At least
+[17:35] You should have that ability, caliber.
+[17:39] Caliber is not a problem.
+[17:41] It is a problem.
+[17:42] Let's say you couldn't find time to discuss everything from A to Z.
+[17:47] We stopped from A to S.
+[17:50] Now after S, T, U, V, W, X, Y, Z,
+[17:53] there are many things we couldn't discuss because of the time limitation.
+[17:58] But at least when you graduate,
+[18:00] You should have the capability, caliber, capacity to self-learn the things that we couldn't
+[18:10] discuss.
+[18:11] Then only we can say we have successfully completed the curriculum.
+[18:16] how waveform generation is done let's see right look at this tag two oscilloscope screens you can
+[18:42] see. OCR
+[18:44] NX. N means
+[18:46] the timer number.
+[18:49] If the timer is
+[18:50] 0, OCR N.
+[18:53] OCR 0X.
+[18:55] If the timer is 1,
+[18:57] OCR 1X.
+[18:59] Output compare register.
+[19:01] OCR.
+[19:02] Simple N means the timer number.
+[19:05] X.
+[19:06] X could be either AOB.
+[19:08] We know there are two OCR
+[19:10] registers. X could be either
+[19:12] AOB. So I have used the generic term X. It could be OCR A, it could be OCR B. Right.
+[19:19] Some timers can count from 0 to 255. Some timers can count from 0 to 65,535. 16 bit timer.
+[19:32] And probably when you go to industry, when you are working with a 32 bit microcontroller,
+[19:37] your timer would count much higher than because then timer register is 32 if it is 8 bit 255
+[19:45] maximum value timer can count if it is 16 bit 6 uh 16 535 sorry if it is 16 bit uh 32 535
+[19:58] 35, no, no, 32 is 65,000.
+[20:03] Sorry. If it is 16-bit timer, 65,535.
+[20:08] If it is 32-bit timer, much higher than big value.
+[20:12] You can calculate it. It's not a big problem.
+[20:16] Therefore, I use generic term.
+[20:20] The maximum value the timer can count.
+[20:24] The minimum value of the timer,
+[20:27] button. TC and T register. Here I show you the TC and T register. For each clock pulse,
+[20:35] timer increments TC and T register. Timer increments TC and T register for each clock
+[20:41] pulse. From bottom to top, increment is bottom to top. For simplicity, let's take 8-bit time.
+[20:49] For each clock pulse, the 8-bit timer increments, TCNP register from 0 to 255.
+[20:58] 0 bottom, 255 top, 0 to 255.
+[21:02] Then overflows to 0.
+[21:05] When overflows? Overflows to 0.
+[21:08] Starts again from 0 and counts to 255.
+[21:12] When it is at 255, next clock pulse, overflows to 0.
+[21:17] counts again from 0 to 255.
+[21:22] Overflows to 0, counts again from
+[21:26] 0 to 255. That's how timer works.
+[21:30] Now, depending on the duty cycle that you need,
+[21:34] you assign a value to OCR register.
+[21:38] OCR register is again 8-bit register according to our example.
+[21:42] So, your value would be between 0 and 255.
+[21:46] So OCR register value is between bottom and top.
+[21:50] Output compare register, you assign a value.
+[21:52] Comparator compares the value of OCR register and value of TZ entry register.

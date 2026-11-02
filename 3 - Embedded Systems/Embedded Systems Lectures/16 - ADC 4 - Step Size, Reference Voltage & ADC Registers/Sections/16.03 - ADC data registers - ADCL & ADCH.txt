@@ -1,0 +1,83 @@
+[0:00] Those digits, sorry, those bits we accumulate in the data register and that value represents discrete number.
+[0:11] Is it clear?
+[0:12] Any question?
+[0:13] No questions.
+[0:17] Let's move on.
+[0:19] ADC registers.
+[0:21] That's two analog to digital conversion.
+[0:24] We have to deal with several registers.
+[0:25] Now, these are called ADC data registers.
+[0:29] ADCL and ADCH.
+[0:32] ADC low, ADC high.
+[0:35] The meaning.
+[0:36] They hold the conversion result.
+[0:39] So data register.
+[0:40] Now in the previous diagram you saw that register.
+[0:43] Data register.
+[0:44] Right.
+[0:45] Data register made up with two registers.
+[0:49] ADCH and ADCL.
+[0:51] The reason is our result 10 bits.
+[0:55] But our architecture 8 bits.
+[0:56] So with one register you can't hold the result.
+[1:00] So you need at least two registers.
+[1:02] Now ADCL holds lower 8 bits of the result.
+[1:08] And ADCH holds upper 2 bits of the result with leading 6 zeros.
+[1:16] Because the result is 10 bit, registers are 8 bit.
+[1:20] So we have to use two registers to hold the result.
+[1:24] Lower 6 bits, lower 8 bits in ADCL, upper 2 bits of the result in ADCH with leading 6 zeros.
+[1:36] Now when you access this conversion result, you have to access 2 registers.
+[1:42] That means it is not straightforward.
+[1:45] In one line you can't do that, right?
+[1:47] the first 6 bits, 8 bits
+[1:50] you have to get from
+[1:51] ADCL register
+[1:53] and the next
+[1:56] 2 bits you have to get from ADCH
+[1:58] and then you have to
+[2:00] combine both to get
+[2:02] the 10 bit result.
+[2:04] That's not convenient.
+[2:06] So, we have another register
+[2:08] which is called
+[2:09] ADCW, ADC Word Register
+[2:12] which is a 16 bit register.
+[2:14] However, it's not a hardware
+[2:16] register. So you can't find this
+[2:18] register in the datasheet.
+[2:20] Because you can't have
+[2:22] 16-bit register in the 8-bit
+[2:23] architecture. This is a
+[2:26] virtual register
+[2:27] defined by the compiler for
+[2:29] our conveyor. So what the
+[2:31] C compiler does is, C
+[2:33] compiler behind the scene,
+[2:36] right, compiler
+[2:38] can access these two registers
+[2:40] and put the result into
+[2:41] this virtual 16-bit register.
+[2:44] So we can
+[2:45] directly get the 10-bit result with leading six zeros from this register.
+[2:52] So it is very convenient for us, right?
+[2:55] So if you want to access the conversion result,
+[2:58] very easily you can access it using ADCW.
+[3:02] You don't need to access two registers,
+[3:04] get the first part from one register,
+[3:07] second part of the result from another register,
+[3:09] combine them together.
+[3:11] You don't need to do all these things.
+[3:13] All these things happen behind the scene.
+[3:16] So you can simply access ADCW, which is a virtual 16-bit register.
+[3:21] It is not a hardware register.
+[3:23] You can't find it in the data sheet.
+[3:25] That's a compiler-defined register for our convening.
+[3:28] Clear?
+[3:29] Any question?
+[3:30] Right.
+[3:31] Then, reference voltage.
+[3:33] We discussed the reference voltage.
+[3:36] Now let's talk about the importance of reference voltage.
+[3:40] ADC converts any analog input voltage between 0 and reference voltage to a number of discrete steps between 0 and 2 to the power resolution minus 1.
+[3:55] Right.
+[3:55] So this is a very generic statement not specific to any microcontroller.

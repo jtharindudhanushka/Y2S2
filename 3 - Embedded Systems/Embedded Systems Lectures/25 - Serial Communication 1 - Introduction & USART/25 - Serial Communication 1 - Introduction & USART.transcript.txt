@@ -1,0 +1,157 @@
+25 - Serial Communication 1 - Introduction & USART  (1 Dec 2020 (morning, part 1))
+
+[0:00] Right. Serial communication. Topic is serial communication. Right. Let's see the learning outcomes first.
+[0:09] On completion of this session, you should be able to discuss serial versus parallel communications.
+[0:17] We have already discussed this when we were talking about computer architecture and operating
+[0:25] systems in the last semester.
+[0:28] Serial versus parallel communication, we have already discussed.
+[0:31] But now we are going to discuss, we are going to have a discussion, serial versus parallel
+[0:38] communications in the context of embedded system.
+[0:42] That's little bit different.
+[0:43] Right.
+[0:44] Now, last semester we discussed serial communication versus parallel communication.
+[0:51] Right.
+[0:53] So generally in the field of computing, in the field of data communication, how serial
+[1:00] communication versus parallel communication.
+[1:04] We did a comparison, we did a discussion.
+[1:07] But now we are going to have a different discussion.
+[1:12] Serial communication versus parallel communication in the context of embedded systems.
+[1:17] Right.
+[1:17] That is our first learning outcome.
+[1:21] At the end you should be able to have that kind of discussion.
+[1:25] contrast
+[1:27] a synchronous versus
+[1:29] a synchronous communications
+[1:31] when it comes to data communication
+[1:34] network
+[1:35] communication
+[1:36] basically there are two
+[1:38] categories a synchronous communication
+[1:40] synchronous communication
+[1:42] contrast
+[1:43] you should be able to do that
+[1:45] Then explain asynchronous data transfer protocol. Out of these two communication methods, asynchronous
+[1:54] and synchronous, we focus on asynchronous because that is the basic communication protocol
+[2:05] used in embedded systems that doesn't mean synchronous not used in embedded systems
+[2:11] synchronous communication also uh using embedded system but most widely used communication protocol
+[2:20] in in the context of embedded systems is a synchronous communication
+[2:27] right that protocol we need to discuss
+[2:30] then we need to uh talk about explain
+[2:37] line drivers oh usart to use usb interfaces this word we call usart usarta that is how we pronounce
+[2:50] usart right explain the need of line drivers oh usart to usb interfaces
+[3:02] right then
+[3:03] explain how Tx and Rx transmit and receive data.
+[3:12] So this is Tx is the standard symbol for the transmitter
+[3:16] and Rx is the standard symbol for the receiver.
+[3:22] Now you should be able to at the end, you should be able to explain how transmitter
+[3:27] transmitter transmits data and receiver receives data.
+[3:34] Explain the functionality of USART registers.
+[3:39] USART is actually a peripheral device inside the microcontroller.
+[3:45] the microcontroller we have this usart peripheral device and it has registers what are their
+[3:51] functionality you should be able to explain and finally you should be able to construct
+[3:58] a microcontroller based system and program it to communicate with another system
+[4:04] Program it to communicate with another system.
+[4:07] Right.
+[4:09] Here USART means Universal Synchronous Receiver Transmitter.
+[4:19] synchronous, asynchronous receiver transmitter. Right. And the protocol means set of rules
+[4:29] we use for communication. For example, the rules we use for encoding data into voltages
+[4:37] at the transmitter end.
+[4:39] At the transmitter end,
+[4:42] the data we encode into voltage pulses.
+[4:47] Then at the receiver end,
+[4:49] we decode voltage pulses back into data.
+[4:54] at the receiver end we decode voltage pulses back into data for that we need some rules
+[5:04] those rules we call
+[5:06] protocol right these are our learning outcomes
+[5:10] of this particular session, Serial Communication.
+[5:14] Any question before we start?
+[5:17] No, right.
+[5:18] Serial communication. Serial communication used by embedded systems to communicate with
+[5:25] other systems. When embedded systems communicate with other systems, they use serial communication.
+[5:34] So what are the other systems? Embedded system communicates with a PC, personal computer.
+[5:40] The PC is another system. Now in this diagram you can see a microcontroller which is a part
+[5:47] the embedded system communicates with the pc personal computer over serial communication
+[5:56] you can see the serial port
+[5:58] right over the serial port microcontroller communicates with
+[6:03] personal computer you can see rx and tx that means receiving and transmitting data
+[6:10] So that's one example for other systems that microcontrollers communicate with.
+[6:18] Right?
+[6:19] Microcontroller communicates, embedded system communicates with other system, another PC,
+[6:24] personal computer. Then another example. Right? RC aircraft, remote controlled aircraft.
+[6:33] The remote controlled aircraft communicates with the remote controller. The remote controller
+[6:39] is on the ground remote controlled aircraft is in the air right
+[6:45] so rc flying remote controlled aircraft flying is a very popular hobby not in sri lanka because of
+[6:54] various reasons one is this is expensive hobby and the second thing is the rules and regulations
+[7:03] but in other countries this is a very popular hobby right
+[7:09] the the kids start flying a remote controlled aircraft at about age 12.
+[7:16] right so even they fly some aircrafts in the parks so they call them park flyers
+[7:25] so in this kind of this is a toy yeah this is a hobby a toy aircraft you can fly in the air
+[7:32] using a remote controller.
+[7:35] Now, the remote controller,
+[7:38] inside the remote controller,
+[7:40] there's a microcontroller.
+[7:42] Inside the remote controller,
+[7:44] you have a microcontroller.
+[7:46] So this is embedded system.
+[7:48] Remote controller is an embedded system.
+[7:50] And the aircraft in the air,
+[7:53] it has a microcontroller.
+[7:55] So, one embedded system, another embedded system. Now you can see two embedded systems.
+[8:01] They communicate. The remote controller embedded system sends commands to the embedded system
+[8:10] in the aircraft, the embedded system in the aircraft receives the command sent by the
+[8:17] remote controller and performs accordingly. The aircraft performs according to the commands
+[8:25] sent by the remote controller. Remote controller is a one embedded system. Aircraft is, RC aircraft
+[8:33] craft is another embedded system they communicate when they communicate they use serial communication
+[8:40] right this is a wireless communication in the previous example your microcontroller
+[8:45] communicates with the pc it's a wired communication now it's wireless the medium is different
+[8:50] communication medium is now wireless but the protocol use is the serial protocol
+[8:57] the rules that we use for the communication is the serial communication rules
+[9:03] right although these rc aircrafts are not very popular in sri lanka right remote control costs
+[9:11] remote control trucks they are popular in sri lanka i'm sure in the small age you have also
+[9:20] driven some remote control toys in those toys remote control toys the remote controller is
+[9:29] one embedded system the toy is another embedded system two embedded systems communicate using
+[9:36] serial communication right so embedded system communicates with other systems
+[9:44] other system could be a pc or another embedded system
+[9:48] is that clear any question
+[9:50] right in the last semester
+[9:53] When we talked about computer architecture and operating systems, we discussed about
+[10:00] serial communication.
+[10:02] And we know that serial communication sends one bit at a time.
+[10:08] That's why we call it serial.
+[10:10] Bits are sent one after another.
+[10:13] So one bit at a time.
+[10:15] Therefore serial communication is slow because it cannot in the serial communication we cannot
+[10:23] send multiple bits parallely at the same time.
+[10:28] We send bits one after another, one after another.
+[10:33] That means one bit at a time.
+[10:36] So serial communication is slow.
+[10:38] But on the other hand, we know that parallel communication, in the parallel communication
+[10:44] we can send multiple bits parallely at the same time.
+[10:52] Multiple bits parallely at the same time.
+[10:55] That means parallel communication is fast.
+[10:58] When we have fast parallel communication, why do we use slow serial communication?
+[11:06] Why not we use parallel?
+[11:08] Any answer?
+[11:09] Now it's obvious serial is slow, parallel is fast.
+[11:14] But in the embedded systems we use serial communication, we don't use parallel communication.
+[11:19] Why?
+[11:20] Why do we use slow serial communication when we have fast parallel communication?
+[11:26] In the general purpose computing, we widely use parallel communication.
+[11:30] Any idea, any answer?
+[11:32] Yes, Mirasha, yes.
+[11:34] Maybe because the processor is too slow?
+[11:39] No, that's not the reason.
+[11:41] Only one bit?
+[11:43] Yeah, only one bit serial communication can send at a time.
+[11:47] That doesn't mean one bit.
+[11:50] The serial communication can send multiple bits but one after another, not parallel.
+[11:55] not parallel that's why it's slow now my question is why do we use slow serial communication
+[12:04] when we have fast parallel communication why not parallel ideally you should get this
+[12:10] question when we talk about serial communication why not parallel any idea
+[12:15] Shavatka?
+[12:17] Any idea?
+[12:18] No idea, sir.
+[12:20] Come on.
+[12:23] Microphone.
+[12:26] Sorry?
+[12:27] Thank you.

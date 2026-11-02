@@ -1,0 +1,1145 @@
+16 - ADC 4 - Step Size, Reference Voltage & ADC Registers  (4 Nov 2020 (morning))
+
+[0:00] Right. This is where we stopped last time. Yesterday, right. Now, yesterday, I don't know whether you clearly got the idea of analog to digital conversion due to the technical issues we experienced.
+[0:21] Now, if you could get that idea, I think you saw how ADC gradually came closer to the input voltage using a reference voltage.
+[0:41] The reference voltage, the ADC knows. The input voltage, the VIN, ADC doesn't know. So, using the reference voltage, ADC could gradually come closer to input voltage and every time it tries to come closer to the input voltage using a comparison, the comparator returned either 1 or 0.
+[1:11] those data accumulated in the data register.
+[1:17] And if it is a 10-bit ADC,
+[1:20] the ADC performs 10 comparisons
+[1:25] and ultimately you get 10-bit result in the data register
+[1:32] which represents the discrete value of the analog input voltage.
+[1:39] So, could you get that idea yesterday or you want me to explain it again?
+[1:46] You let me know.
+[1:49] So, what's your answer?
+[1:51] Do you want me to explain how ADC happens again or whether I want to know you could get that idea yesterday clearly?
+[2:03] Sir, some of our members didn't understand clearly, sir.
+[2:10] Okay. In that case, I'll explain it again.
+[2:14] Okay. Thank you, sir.
+[2:16] Now, let's say, let's take an example.
+[2:22] Not 10-bit example.
+[2:24] Let's say our ADC is a 4-bit ADC.
+[2:28] Right. So, input voltage could be between 0 to 5 volts and it will be converted into any number, any discrete number between 0 to, 4 bit means a maximum value 16 to 15.
+[2:49] 0 to 5 voltage would be converted into a discrete number between 0 to 15.
+[2:56] That means if you input 0, you get 0.
+[3:00] If you input 5, input voltage is 5, the output is 15.
+[3:07] If the input voltage is 2.5, output voltage is 8.
+[3:13] if the input voltage is 1.25 output voltage is 4 so output discrete number not voltage
+[3:23] discrete number this is the discrete number this is the voltage so for our convenience let's
+[3:29] consider 4 bit ADC because then we have to do this process only four times otherwise you have
+[3:37] to do it 10 times if you consider a 10-bit ADC. So same process you can extend once you got the
+[3:46] idea. Let's assume your input voltage is 3 volts and we set the reference voltage as 5 volts. Now
+[3:57] we feed 3 volts to the comparator and 5 volt reference voltage comes to DAC, digital to
+[4:06] analog converter and DASC generates a result. The result is 5 volt divided by 2 which is 2.5.
+[4:18] Then we compare it to compares. If the comparison is if V in input voltage greater than result
+[4:31] If so, return 1.
+[4:35] Else, return 0.
+[4:37] That is the comparison.
+[4:39] Now, when you look at this, you can see, yes, V in is greater than the result.
+[4:43] This is the result.
+[4:45] So, it returns 1.
+[4:47] Return value is 1.
+[4:48] So, in the data register, we accumulate this value 1.
+[4:53] And that return value, we feed back to the DAC.
+[4:59] We feed it back to the DAC.
+[5:00] If the return value is 1, DAC generates another result.
+[5:06] Then the formula is previous result, that is 2.5 volts plus Vref, which is 5 volt, divided by 4.
+[5:18] If the result is 1, return value is 1.
+[5:21] If the return value is 0, the new result BAC generates would be previous result minus Vref divided by 4.
+[5:34] Now when you calculate this, you get 3.75.
+[5:39] Now compare, the comparator compares result and input voltage.
+[5:45] Now the result is greater than input voltage.
+[5:49] So comparator return 0.
+[5:51] So we accumulate that value at the data register.
+[5:55] And that return value we feed back to the comparator.
+[5:59] Sorry to the DAC.
+[6:01] Now DAC generates another result.
+[6:04] Right.
+[6:05] The new result is previous result which is 3.75 minus y return value is 0.
+[6:13] V ref that is 5 volt divided by 8.
+[6:18] Right.
+[6:19] 5 divided by 8.
+[6:21] That is 0.625.
+[6:24] 3.75 minus 0.625.
+[6:29] Answer is 3.125.
+[6:33] Then we do the comparison.
+[6:35] Result is greater than input value.
+[6:39] So condition false.
+[6:40] Return 0.
+[6:42] return 0. We accumulate that result.
+[6:46] We accumulate that result in the data register, return 0.
+[6:50] This return value again we feed to the DAC.
+[6:54] That is the fourth circle. The process, three times
+[6:58] we have done. This is the fourth time. This time again 0.
+[7:02] So, the DAC return value is 0.
+[7:05] So, DAC generates another result. Previous result
+[7:10] which is 3.125 minus, because return value is 0.
+[7:16] You get plus if the return value is 1.
+[7:19] V ref, which is 5 volt, divided by 16.
+[7:25] Right.
+[7:25] Now, 5 divided by 16, which is 0.3125.
+[7:32] 0.3125.
+[7:34] Right.
+[7:35] 3.125 minus 0.3125.
+[7:42] So the answer is 2.8125.
+[7:47] We do the comparison.
+[7:49] Now VIN is greater than result.
+[7:53] Return 1.
+[7:55] That result is accumulated in the data register.
+[8:00] 4 times we did the comparison.
+[8:02] 4 times we did the process because it is a 4 bit ADC and this is the final result.
+[8:09] 1 0 0 1.
+[8:12] 1 0 0 1 means this is 1 2 4 8 9.
+[8:19] This is 9.
+[8:21] So 3 volts if you input the discrete number that you get 9.
+[8:27] If you input 5 volt, discrete number that you would get 15.
+[8:33] If you input 0, the discrete number that you get 0.
+[8:37] So, by doing this comparison again and again, we came closer to the input value.
+[8:46] We started with the reference voltage and then came closer.
+[8:50] Now input value is 3 volts, but we approximated that to 2.8125.
+[8:59] That is not exactly 3 volts, but closer to 3 volts.
+[9:05] To represent that, we generate, the ADC gives a discrete value.
+[9:14] Discrete value that the ADC represents is 9.
+[9:19] So, if the ADC is a 4-bit ADC, this is how it happens. Is it clear now?
+[9:27] Yes.
+[9:28] All right. Good. Now, you can see if it is a 4-bit ADC, four times you do this process.
+[9:36] If it is a 8-bit ADC, eight times you do this process. If it is a 10-bit ADC, 10 times you do this process.
+[9:45] If it is a 12-bit ADC, 12 times you do this process.
+[9:48] If you do this process more, you can come closer, more closer to the input voltage.
+[9:57] That means 12-bit ADC is more accurate compared to 8-bit ADC, 4-bit ADC.
+[10:06] The least accurate one, 4-bit ADC.
+[10:09] For example, our input voltage is 3 volt according to this example.
+[10:14] But our ADC is a 4-bit ADC.
+[10:17] 4 bit ADC could approximate the input voltage to 2.8125. But if you use 8 bit ADC, right,
+[10:26] this approximation would be much closer. If you use 10 bit, further you can go closer
+[10:34] to the input voltage. 12 bit, more accurate. But the problem is, if you increase the number
+[10:41] of bits of the ADC, you get a very accurate result, right? That means you can approximate
+[10:52] the input voltage very accurately. However, the number of times you have to do this process
+[11:00] is also increased. 4 bit ADC, 4 times you have to do this process. Comparison, the new
+[11:07] New result generation, right?
+[11:10] All these things.
+[11:10] DAZ generates a result.
+[11:12] Comparator has to compare that process.
+[11:15] You have to do four times if it is a four-bit ADC.
+[11:18] If it is eight-bit ADC, eight times you have to do.
+[11:21] Ten-bit, ten times.
+[11:22] Twelve-bit, twelve times.
+[11:24] So, twelve-bit ADC would be more accurate.
+[11:27] However, it takes long time to do the conversion.
+[11:31] Eight-bit ADC, less accurate.
+[11:33] But it can do the conversion quickly.
+[11:37] Why?
+[11:37] Only 8 processors it has to do.
+[11:40] 8 comparisons.
+[11:41] So, these things
+[11:43] you have to take into consideration.
+[11:45] If you want more accurate
+[11:47] analog to digital conversion,
+[11:50] it's better to go for
+[11:52] ADC with
+[11:54] Mobitz.
+[11:56] If you want to quickly
+[11:58] do the ADC,
+[12:00] you can select
+[12:02] a microcontroller with ADC.
+[12:04] That ADC
+[12:06] has lesser number of bits. So 8-bit ADC
+[12:10] for example. If you want to quickly do the conversion. If you want to do
+[12:14] if you want accurate conversion, go for
+[12:18] 12-bit ADC. So 80-megas 328p microcontroller we
+[12:22] have some mid-level ADC which is
+[12:26] 10-bit. So fairly accurate result
+[12:30] you can get. At the same time, it
+[12:34] consumes some time for the comparison. Not very
+[12:38] quickly, but it's mid-level. Is that clear?
+[12:43] Then, this comparison, this process
+[12:46] generating a result and then compare it
+[12:50] and again generate the result, compare it, you do it
+[12:54] again and again. This is called successive approximation.
+[12:58] This is technical term. Successive approximation.
+[13:01] Successively we approximate, we come closer to the input voltage. We try to approximate
+[13:11] the input voltage successively. Successive approximation.
+[13:16] Never the never the procedure. Processing. Approximating. Input voltage. Because we don't
+[13:26] know what is input quality. So, successively we try to come closer to that. Every comparison,
+[13:32] we get either 1 or 0. Those values we accumulate in the data register. So, this is called
+[13:38] successive approximation. Successive approximation takes time. So, if you do 10 cycles, more time.
+[13:47] Eight cycles, less time. But less time means less cycles, less approximations, cycles. That means
+[13:55] less accurate. Now here you show that, right? Now we tried to approximate 3 volts, but we could
+[14:04] come up to 8 point, sorry, 2.8125, which is closer to 3, but not very close. Right. Then
+[14:14] to study this further, I develop an Excel sheet. I'll show you that. Right. The successive
+[14:23] successive approximation simulated using Excel. So, 10 bit successive approximation. So, 10 bit ADC
+[14:33] we are going to use. So, this is a 10 bit one. Now, any input voltage you can put into V in,
+[14:39] reference voltage you put, the number of comparisons, 10 comparisons. These are the
+[14:45] results generated by the DAC. First, VREF divided by 2. Then, VREF divided by 4. VREF divided by 8.
+[14:53] Vref divided by 16, Vref divided by 32, Vref divided by 64, Vref divided by 128, Vref divided by 256, Vref divided by 512, Vref divided by 1024.
+[15:09] Then every comparison, the bit that you get from the comparator, final number.
+[15:16] So, when you convert into this binary value, when you convert into decimal, this is what you get.
+[15:26] Now, let's try.
+[15:27] Now, if you put 5 as the V in, right, the final result you get 1023.
+[15:34] If you put 0 as V in, the final result you would get 0.
+[15:39] If you put 2.5 volts as the input, 5 level you get as the discrete number.
+[15:48] If you put 1.25 as the input voltage, 255 you get as discrete number.
+[15:58] If you put 0.625 as the input voltage, discrete number 120.
+[16:05] Now, I have uploaded this into Cal.
+[16:08] you can study this and you can further, you can get a good idea. You can further study this and
+[16:17] get a good idea how this approximation, successive approximation happens behind the C. Any input
+[16:24] voltage is converted into a discrete number between 0 to 1023 because 10 bit ADC, right.
+[16:32] So, gradually we come close to the input value, right?
+[16:39] Input voltage, we gradually come close.
+[16:41] We don't know that, but we gradually come closer to that.
+[16:46] Successively, that's why we call it successive approximation.
+[16:49] When we could successively come closer to that,
+[16:54] every approximation cycle, we get either 1 or 2.
+[17:00] Those digits, sorry, those bits we accumulate in the data register and that value represents discrete number.
+[17:11] Is it clear?
+[17:12] Any question?
+[17:13] No questions.
+[17:17] Let's move on.
+[17:19] ADC registers.
+[17:21] That's two analog to digital conversion.
+[17:24] We have to deal with several registers.
+[17:25] Now, these are called ADC data registers.
+[17:29] ADCL and ADCH.
+[17:32] ADC low, ADC high.
+[17:35] The meaning.
+[17:36] They hold the conversion result.
+[17:39] So data register.
+[17:40] Now in the previous diagram you saw that register.
+[17:43] Data register.
+[17:44] Right.
+[17:45] Data register made up with two registers.
+[17:49] ADCH and ADCL.
+[17:51] The reason is our result 10 bits.
+[17:55] But our architecture 8 bits.
+[17:56] So with one register you can't hold the result.
+[18:00] So you need at least two registers.
+[18:02] Now ADCL holds lower 8 bits of the result.
+[18:08] And ADCH holds upper 2 bits of the result with leading 6 zeros.
+[18:16] Because the result is 10 bit, registers are 8 bit.
+[18:20] So we have to use two registers to hold the result.
+[18:24] Lower 6 bits, lower 8 bits in ADCL, upper 2 bits of the result in ADCH with leading 6 zeros.
+[18:36] Now when you access this conversion result, you have to access 2 registers.
+[18:42] That means it is not straightforward.
+[18:45] In one line you can't do that, right?
+[18:47] the first 6 bits, 8 bits
+[18:50] you have to get from
+[18:51] ADCL register
+[18:53] and the next
+[18:56] 2 bits you have to get from ADCH
+[18:58] and then you have to
+[19:00] combine both to get
+[19:02] the 10 bit result.
+[19:04] That's not convenient.
+[19:06] So, we have another register
+[19:08] which is called
+[19:09] ADCW, ADC Word Register
+[19:12] which is a 16 bit register.
+[19:14] However, it's not a hardware
+[19:16] register. So you can't find this
+[19:18] register in the datasheet.
+[19:20] Because you can't have
+[19:22] 16-bit register in the 8-bit
+[19:23] architecture. This is a
+[19:26] virtual register
+[19:27] defined by the compiler for
+[19:29] our conveyor. So what the
+[19:31] C compiler does is, C
+[19:33] compiler behind the scene,
+[19:36] right, compiler
+[19:38] can access these two registers
+[19:40] and put the result into
+[19:41] this virtual 16-bit register.
+[19:44] So we can
+[19:45] directly get the 10-bit result with leading six zeros from this register.
+[19:52] So it is very convenient for us, right?
+[19:55] So if you want to access the conversion result,
+[19:58] very easily you can access it using ADCW.
+[20:02] You don't need to access two registers,
+[20:04] get the first part from one register,
+[20:07] second part of the result from another register,
+[20:09] combine them together.
+[20:11] You don't need to do all these things.
+[20:13] All these things happen behind the scene.
+[20:16] So you can simply access ADCW, which is a virtual 16-bit register.
+[20:21] It is not a hardware register.
+[20:23] You can't find it in the data sheet.
+[20:25] That's a compiler-defined register for our convening.
+[20:28] Clear?
+[20:29] Any question?
+[20:30] Right.
+[20:31] Then, reference voltage.
+[20:33] We discussed the reference voltage.
+[20:36] Now let's talk about the importance of reference voltage.
+[20:40] ADC converts any analog input voltage between 0 and reference voltage to a number of discrete steps between 0 and 2 to the power resolution minus 1.
+[20:55] Right.
+[20:55] So this is a very generic statement not specific to any microcontroller.
+[21:00] Input voltage could be between 0 and the reference voltage.
+[21:04] If the reference voltage is 5, then input voltage could be between 0 and 5.
+[21:12] If the reference voltage is 1.1, input voltage could be between 0 and 1.1.
+[21:19] If the reference voltage is 3.3, input voltage could be between 0 and 3.3.
+[21:27] So by changing the reference voltage, we can adjust the input voltage range.
+[21:34] Right. Typically, the microcontroller that we use in Arduino Uno board, the reference voltage is 5 volts by default.
+[21:45] It is Arduino default setting. That's why we say our ADC can convert any input voltage between 0 to 5.
+[21:56] The reason is the default reference voltage of Arduino Uno is 5.
+[22:03] So this generic statement, this is applicable for any microvectro.
+[22:07] Right.
+[22:07] Now when you input a voltage between 0 and the reference voltage,
+[22:13] the ADC converts that voltage into discrete steps between 0 and 2 to the power resolution minus 1.
+[22:22] Again, very generic statement.
+[22:24] Resolution means number of bits used for ADC. If you use 10 bit ADC, resolution is 10. Then 2 to the power 10 minus 1 means 1023. I think now it makes sense.
+[22:39] In Arduino Uno, you have a microcontroller.
+[22:44] That microcontroller has a 10-bit ADC.
+[22:47] So the resolution is 10, right?
+[22:50] And default reference voltage is 5 volts.
+[22:53] So ADC can convert any input voltage between 0 to 5
+[23:00] to a discrete number between 0 and 1023.
+[23:05] 2 to the power 10 minus 1, right?
+[23:09] Now, if this is the discrete steps between 0 and 2 to the power 10 minus 1.
+[23:18] Resolution is 10, 2 to the power 10 minus 1.
+[23:21] Right.
+[23:21] 0 and 2 to the power 10 minus 1.
+[23:23] That means, let's take the pen again.
+[23:27] Right.
+[23:27] If the resolution, if resolution 10, then range is 0 to 2 to the power 10 minus 1.
+[23:41] That means 0 to 1023.
+[23:46] 0 to 1023, how many values?
+[23:51] 1024 values.
+[23:53] 0 to 1023, 1024 values.
+[23:59] Right?
+[23:59] 0 to 2, 3 values.
+[24:02] 0, 1, 2.
+[24:04] 0 to 4, 5 values.
+[24:07] 0, 1, 2, 3, 4.
+[24:10] Likewise, 0 to 1023, 1024 values.
+[24:15] So, total number of discrete steps equals to 2 to the power resolution.
+[24:21] if the resolution is 10,024.
+[24:24] Right.
+[24:25] Total number of discrete steps.
+[24:27] That means how many steps between 0 and 1023.
+[24:32] Steps between 0 and 1000, discrete steps.
+[24:36] Between 0 and 1023 is 1024.
+[24:39] How many discrete numbers between 0 and 1023?
+[24:43] That is 1024.
+[24:46] So which is the total number of discrete steps.
+[24:48] Right.
+[24:49] Now we want to calculate the size of one step.
+[24:54] Size of one step.
+[24:55] Now we know that there are 1024 steps.
+[24:59] What is the size of one step?
+[25:01] In volts.
+[25:02] In volts.
+[25:03] Right.
+[25:04] How do we do that?
+[25:05] Calculation.
+[25:06] Size of one step in volts.
+[25:12] Right.
+[25:13] Reference voltage minus zero.
+[25:17] Why?
+[25:18] The voltage is between zero and reference voltage.
+[25:21] So, voltage range we got.
+[25:23] This is the voltage range.
+[25:25] Divided by, right, total number of discrete steps between zero and 1023.
+[25:31] That is 1024.
+[25:34] That means V ref divided by 1024.
+[25:40] Can you understand this equation?
+[25:42] If not, let me know.
+[25:43] 0 to reference voltage is mapped with 0 to 1023.
+[25:51] 0 and 1023, there are 1024 values.
+[25:56] So I want to know the voltage of one value.
+[26:00] So the voltage range divided by the number of values.
+[26:04] That's the idea.
+[26:06] Can you understand?
+[26:07] If not, let me know.
+[26:08] Don't hesitate.
+[26:09] So the voltage range is 0 to Vref.
+[26:12] Let's assume V ref is 5 volts.
+[26:15] So 0 to 5.
+[26:16] And that is converted into a discrete number.
+[26:21] Ranging from 0 to 1023.
+[26:24] Right.
+[26:24] So input voltage converted into discrete steps between 0 to 1023.
+[26:30] 0 to 1023 there are 1024 steps.
+[26:34] What is the size of one step?
+[26:36] Voltage range we divide from number of steps.
+[26:39] voltage range is V ref minus
+[26:42] 0 then you get the voltage
+[26:44] range you divide that
+[26:45] by total number of
+[26:48] steps then you would get
+[26:50] the size of one step
+[26:52] in volts is that clear
+[26:54] make a theory now other
+[26:55] do you want me
+[26:58] to explain it again
+[26:59] oh is that clear
+[27:01] I can explain again a little bit
+[27:04] confusing like that
+[27:06] right now the
+[27:08] first statement says
+[27:09] ADC converts any input voltage between 0 and reference voltage to a discrete number between 0 and 2 to the power resolution minus 1.
+[27:19] Let's assume reference voltage is 5 and resolution is 10.
+[27:25] Number of bits used for the ADC.
+[27:27] So, in that case, input voltage 0 to 5 converted into a discrete steps between 0 to 1023.
+[27:40] Is that clear up to this point?
+[27:43] Yes.
+[27:44] Right.
+[27:45] Now, 0 to 5 volts are converted into discrete steps.
+[27:50] How many discrete steps between 0 and 1023?
+[27:53] You have 1024 steps.
+[27:57] 1024 steps.
+[27:59] Right.
+[27:59] Size of one step.
+[28:01] One step equals voltage range which is 5 minus 0 divided by 1024.
+[28:12] That means 5 divided by 1024.
+[28:17] 5 is V ref.
+[28:19] 1024 means 2 to the power resolution.
+[28:24] Is that clear now?
+[28:25] Okay, sir.
+[28:26] Right.
+[28:27] Now we know size of one step in volts.
+[28:30] This is in volts, right?
+[28:33] This part is voltage.
+[28:35] This part is just a number, right?
+[28:38] So step size, V ref divided by 2 to the power resolution.
+[28:43] This is how we got this equation, right?
+[28:46] Now I explain how we got this equation.
+[28:51] This is how we got.
+[28:52] Size of one step.
+[28:54] Step size.
+[28:56] Input voltage.
+[28:57] Reference voltage.
+[29:00] Voltage convert.
+[29:02] Bindu in the next step.
+[29:05] Total number of steps.
+[29:07] 1024.
+[29:09] Step size.
+[29:11] Voltage range.
+[29:12] Number of steps.
+[29:13] Step size.
+[29:16] Vref divided by 2 to the power resolution.
+[29:19] One step size.
+[29:21] So this is one step size.
+[29:23] Right.
+[29:23] If you know the step size.
+[29:26] Right.
+[29:27] One step size in volts.
+[29:28] Then the number of steps given by the ADC if you know.
+[29:35] You can calculate analog input voltage.
+[29:39] How?
+[29:40] Using this equation.
+[29:42] Using this equation you can calculate analog input voltage.
+[29:45] Right. Now this part is given by ADC. Number of discrete steps, size of one step. Right. If you know the number of discrete steps and size of one step, the input voltage you can calculate.
+[30:01] Now for example, if the number of steps given by the ADC, ADC some V in, some voltage V input and ADC gives 1023.
+[30:15] So, 1023 multiplied by Vref 5 volts divided by 1024 which will give you analog input voltage.
+[30:29] V in.
+[30:30] That is V in.
+[30:32] If ADC gives 5 level then what is V in?
+[30:37] 5 level multiplied by resolution sorry Vref divided by 2 to the power resolution.
+[30:44] Then you can calculate V in.
+[30:47] If ADC gives 255, what is the input voltage?
+[30:52] 255 multiplied by, right, V ref divided by 2 to the power resolution.
+[31:00] You can calculate V in.
+[31:01] This is how we calculate V in.
+[31:05] The ADC gives number of discrete steps.
+[31:09] When you input a voltage, it will give you number of discrete steps
+[31:12] that represents the input voltage.
+[31:16] If you input a voltage to ADC,
+[31:18] it will give you number of discrete steps
+[31:20] that represents input voltage.
+[31:23] You know step size, size of one step.
+[31:26] Number of steps multiplied by step size,
+[31:29] you get the voltage.
+[31:31] Can you understand?
+[31:32] If not, let me know.
+[31:33] I can explain again.
+[31:34] Sir, I'm not sure.
+[31:36] If you want to see this,
+[31:38] you can see this.
+[31:39] Do you have any input?
+[31:43] I have no idea about this.
+[31:47] We are in.
+[31:50] We are in.
+[31:52] We are in ADC.
+[31:54] Number of discrete steps.
+[31:57] That representing the V.
+[31:59] That represents V.
+[32:05] V1.
+[32:06] So multiply V ref divided by 2 to the power resolution.
+[32:12] This resolution is 10.
+[32:16] V ref 5.
+[32:18] V ref 5.
+[32:19] Reference voltage is 5.
+[32:21] This is the center.
+[32:23] ADC is 8 bit 256.
+[32:26] Reference voltage is 3.3.
+[32:30] ADC will represent the steps.
+[32:35] How about others?
+[32:59] Because many people, they don't know,
+[33:03] they can't understand this.
+[33:05] They use, they calculate,
+[33:07] some people
+[33:09] 5 divided by 1024
+[33:11] use,
+[33:12] 5 divided by 1023
+[33:15] use.
+[33:18] But they don't know
+[33:19] which one is correct, at least.
+[33:21] Whether you have to divide by 1023
+[33:23] or 1024, they don't know.
+[33:27] Exist me, sir?
+[33:28] Yes.
+[33:28] Is the number
+[33:30] overflowing when 5.1
+[33:33] volt is given as
+[33:34] V? 5.1
+[33:36] input voltage.
+[33:38] You can't input 5.1
+[33:41] voltage if your reference
+[33:42] voltage is 5. Why?
+[33:44] Look at the first statement. It
+[33:46] says ADC converts any
+[33:48] ion-hoc input voltage between 0
+[33:50] and VREF. If your
+[33:52] VREF is 5, how can
+[33:54] you input 5.1?
+[33:56] So input voltage
+[33:58] is always between
+[34:00] 0 and Vref.
+[34:02] If you want to input 5.1,
+[34:04] you have to adjust Vref.
+[34:05] You have to increase the range.
+[34:07] Without increase the range, you can't input
+[34:09] a larger voltage. Is that clear?
+[34:12] Yes.
+[34:13] What else? Ask, ask.
+[34:16] If you have any question, ask.
+[34:17] Right. Now,
+[34:19] now you should be able to
+[34:21] understand in Arduino,
+[34:24] if you are familiar with
+[34:25] Arduino, if you want to
+[34:27] calculate input voltage, you use an log read function, the pin multiplied by 5 divided by
+[34:39] 1024. Now can you understand this equation? This gives number of discrete steps. Number of
+[34:49] discrete steps. This is step size. This is input voltage. Now can you understand this equation?
+[35:00] I'm sure you have used this equation.
+[35:01] Sir, how do you use the LDR value of the serial monitor?
+[35:09] I don't have the value of the serial monitor. It's called number of discrete steps.
+[35:15] the
+[35:16] the
+[35:17] the
+[35:17] the
+[35:18] the
+[35:18] the
+[35:18] the
+[35:18] the
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] the
+[35:18] 
+[35:18] 
+[35:18] the
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] 
+[35:18] the
+[35:45] How about others?
+[35:56] Now step size is VREF divided by 2 to the power resolution.
+[36:07] But we assume VREF is 5, resolution is 10.
+[36:10] Then in C programming, if you want to calculate the input voltage, this is the equation.
+[36:19] So your result is in the ADCW register.
+[36:23] Conversion result.
+[36:24] That is the discrete number of steps.
+[36:27] Step size involves input voltage.
+[36:31] In Arduino, you have to use analog read function.
+[36:33] But in C, you directly access the register, ADC word register, which contains 10-bit result.
+[36:40] 10 bit results means number of discrete steps that represents input voltage.
+[36:46] Number of discrete steps that represents input voltage.
+[36:50] Number of discrete steps that represents input voltage multiplied by size of one step in volts.
+[36:58] You get input voltage.
+[37:00] Right.
+[37:01] Now this is very interesting equation.
+[37:03] Now let's assume the number of discrete steps, this part, is 1.
+[37:09] This is 1. Let us assume 1.
+[37:12] Then V in would be 1 multiplied by V ref divided by 2 to the power resolution.
+[37:21] That means V ref divided by 2 to the power resolution.
+[37:27] If number of discrete steps is 1, V in equals V ref divided by 2 to the power resolution.
+[37:34] What does that mean?
+[37:35] That means number of discrete steps equals what?
+[37:41] It can discrete step represent current input voltage.
+[37:44] Input voltage represent current discrete step.
+[37:47] Input voltage equals to V ref divided by 2 to the power resolution.
+[37:54] That is the smallest analog input voltage that the ADC can convert.
+[38:01] ADC will convert current analog voltage V ref divided by 2 to the power SL.
+[38:10] If the discrete number of steps is 1, input voltage represent a discrete number of steps.
+[38:18] Step size.
+[38:23] That is the smallest analog input voltage that the ADC can convert.
+[38:36] Which is step size.
+[38:37] Is it clear?
+[38:39] If not, let me know.
+[38:42] Step size is the smallest analog voltage that ADC can convert.
+[38:51] Smallest analog voltage that the ADC can convert is the step size.
+[38:56] So if reference voltage is 5 and resolution is 10,
+[39:03] if reference voltage is 5 and reference voltage is 10,
+[39:07] So, what is the smallest voltage that ADC can convert?
+[39:12] That is step size.
+[39:14] Let's calculate.
+[39:15] Step size 5 divided by reference voltage 5, resolution 10.
+[39:23] That means 1024.
+[39:25] 4.88 millivolt.
+[39:29] What does that mean?
+[39:30] ADC can convert 10-bit ADC with reference voltage 5.
+[39:36] if the reference voltage is 5, 10-bit ADC can convert minimum 4.88 millivolts into a discrete number.
+[39:48] If the input voltage is below 4.88 millivolts, ADC cannot convert it into a discrete number.
+[39:57] So this is the smallest voltage that the ADC can handle, 4.88 millivolts.
+[40:02] If the reference voltage is 1.1, 1.1 divided by 1024, 2 to the power resolution 10.
+[40:12] Resolution is 10, 2 to the power resolution.
+[40:14] Then step size is 1.07 millivolt.
+[40:20] Now ADC can convert much smaller voltage into a discrete number.
+[40:27] 1.07 millivolt is the smallest voltage that ADC can convert into a discrete number.
+[40:36] Right.
+[40:36] Now let's assume we have connected a sensor to our ADC.
+[40:42] We have connected a sensor to our ADC.
+[40:46] And the sensor output is between 0 and 1 volts.
+[40:55] That is the sensor output.
+[40:56] So ADC input voltage is then 0 and 1, right?
+[41:00] If sensor output is 0 and 1 volts, ADC input voltage is 0 and 1.
+[41:07] If we use 5 volts as the reference voltage, ADC gives same discrete number for input voltages,
+[41:18] let's say 501 millivolt and 503 millivolt. The same discrete number. Can you understand?
+[41:28] Now let's say sensor output from sensor you get 501 millivolt. 501 millivolt between 0 and 1 volt.
+[41:37] And ADC would give you some discrete number. Let's say when sensor output is 503 millivolt
+[41:47] ADC would give you the same discrete number. Why? The voltage difference is just 2 millivolts. It's just 2 millivolts. The 2 millivolts is smaller than 4.88. ADC requires at least 4.88 millivolts change. ADC cannot recognize 2 millivolts change.
+[42:11] 501 to 503 millivolt, 2 millivolt change. ADC cannot recognize. To recognize the change,
+[42:19] ADC requires at least 4.88 millivoltz because that is the smallest voltage that the ADC can
+[42:27] convert into a discrete number. So, for 501 millivolt input and 503 millivolt input,
+[42:37] you get the same discrete number. You get the same discrete number from the ADC.
+[42:43] If you use 5 volt as the reference volt, but if you use 1.1 as the reference voltage,
+[42:50] ADC can recognize the voltage change because voltage change is 2 millivolts.
+[42:57] 1.07 is the smallest voltage ADC can recognize.
+[43:02] 2 millivolts is greater than
+[43:06] 1.07 millivolts
+[43:08] so ADC can recognize the change
+[43:10] and ADC will give you
+[43:12] N for
+[43:13] 501
+[43:15] for 503 millivolts
+[43:17] it will give you N1
+[43:19] a different number
+[43:21] if you use 1.1
+[43:24] as the input
+[43:25] reference voltage
+[43:26] can you understand
+[43:27] if not let me know
+[43:30] Excuse me sir.
+[43:33] Yes.
+[43:33] How do we change the VREF?
+[43:36] I will come to that.
+[43:38] Now.
+[43:39] Sensor output is 0 to 1.
+[43:42] So that is our input voltage.
+[43:45] If we use VREF as 5.
+[43:47] This is the minimum voltage.
+[43:50] The smallest voltage.
+[43:51] That we can.
+[43:52] The ADC can recognize.
+[43:54] So if the sensor gives.
+[43:57] 0 1 millivolt.
+[43:59] and 503 millivolts, the change is 2 millivolts. ADC cannot recognize the change because ADC
+[44:05] requires at least 4.88 millivolts to recognize. 2 millivolts less than that. So it cannot recognize.
+[44:13] It will give you the same discrete number as the result. But if you use a different reference
+[44:20] voltage, let's say 1.1 reference voltage, then the smallest voltage that the ADC can recognize
+[44:26] is 1.07 millivolt, which is, right, then in that case, 2 millivolts is greater than that,
+[44:35] the 2 millivolt change, ADC can recognize and ADC will give you two different discrete numbers for
+[44:42] these two voltages, two different discrete numbers, because ADC can recognize the change.
+[44:47] That means if you want more accuracy, it's better to use 1.1 reference voltage instead of 5 volt reference voltage.
+[44:58] If your sensor output is 0 to 1, if your sensor output is 0 to 1, this reference voltage is more closer to your sensor output voltage.
+[45:09] So, you can get a better accuracy.
+[45:12] If you use a traditional 5 volt reference voltage with this sensor, some of the sensor values you will miss.
+[45:21] You will get the same discrete number for some of the sensor values.
+[45:25] Can you understand this?
+[45:27] Millivolt 5V, millivolt 5V, millivolt 5V.
+[45:30] It is a discrete number.
+[45:33] 5 volts reference voltage is useful.
+[45:36] 5 volts, 5V, millivolt 5V.
+[45:38] This is the smallest input voltage that the ADC can convert is 4.88 mV if the reference voltage is 5.
+[45:54] But the smallest input voltage that the ADC can recognize, ADC can convert is 1.07 millivolts.
+[46:07] The difference is 2 millivolts or 2 millivolts greater than 1.07.
+[46:18] Therefore, ADC can convert these two different voltages into two different discrete numbers.
+[46:26] So, if you want more accuracy, better to use 1.1 reference voltage instead of 5 volt reference voltage.
+[46:35] Now, the resolution is the bottom part of the equation, resolution, which is fixed.
+[46:43] Which is fixed.
+[46:44] 2 to the power resolution, which is fixed.
+[46:46] Why?
+[46:47] The resolution is the number of bits you use for the ADC.
+[46:51] That is fixed.
+[46:52] You can't change the number of bits.
+[46:54] But you can change the reference voltage.
+[46:58] By changing the reference voltage, you can change the step size.
+[47:01] By changing the step size, you can increase the accuracy of your ADC.
+[47:09] So, default step size is this, 4.88 millivolt.
+[47:13] Because the Arduino default reference voltage is 1.
+[47:17] This is the default step size.
+[47:19] But you can reduce the step size
+[47:21] and increase the accuracy
+[47:23] if you want.
+[47:24] Now the question is how to change the reference
+[47:27] voltage. In the next slide we will discuss
+[47:29] that. Can you understand
+[47:31] this situation?
+[47:32] Right.
+[47:35] If not, let me know.
+[47:37] I am ready to explain it again.
+[47:39] Many people use reference
+[47:40] voltages, the resolutions
+[47:42] blindly. They have no idea.
+[47:44] They multiply by five
+[47:46] divided by 1024 blindly without any clue they have.
+[47:52] Right.
+[47:53] Then let's talk about ADC registers again.
+[47:56] Admax register.
+[47:58] ADC multiplexer selection register.
+[48:00] In the ADC multiplexer selection register, you have two bits.
+[48:06] Ref S1, Ref S0.
+[48:09] So the Ref S1, Ref S0 means reference selection 1, reference selection 0.
+[48:17] Using them, you can change the VREF.
+[48:20] You can change VREF.
+[48:22] Use to specify the step size.
+[48:25] When you change the VREF, that means you adjust the step size.
+[48:28] Step size means size of one step in volts.
+[48:33] In Arduino, you can use a, there's a function called analog reference, wrapper function.
+[48:40] By using this analog reference function, you can change the step size.
+[48:45] VREF you can change.
+[48:46] using analog reference. In C, you have to access these two bits and change. These are the possible
+[48:53] values. If you put 00 for these two bits, right, the reference voltage is set to Varef supplied
+[49:04] externally. Varef means voltage supplied to Aref pin. In the microcontroller, you have a pin called
+[49:13] AREF, analog reference pin.
+[49:16] For that pin you can
+[49:18] supply a voltage externally.
+[49:20] That voltage
+[49:21] becomes VREF. For example
+[49:23] AREF pin if you supply 3 volts
+[49:26] you can set VREF
+[49:28] to 3 volts.
+[49:29] But to do that you have to set
+[49:31] 0, 0
+[49:33] for these two bits. In Arduino
+[49:35] you have to use analog
+[49:37] reference external
+[49:39] argument.
+[49:41] Externally you can set
+[49:43] the reference voltage. To set the external
+[49:46] reference voltage, you have to use the ARF pin.
+[49:50] Analog reference pin in the microdenture.
+[49:52] Externally, you can give a voltage to ARF pin
+[49:55] and that voltage will be used as the
+[49:59] reference voltage. If you use 0 and 1,
+[50:02] this is 0, this is 1. VREF is set
+[50:06] to AVCC. AVCC
+[50:09] means analog input voltage
+[50:12] supply, sorry, supply voltage to ADC, supply voltage to ADC. Supply voltage to ADC is usually
+[50:19] the supply voltage to microcontroller, that is 5 volts. So, that is the RdNR default, right? AVCC
+[50:26] means supply voltage to ADC. Usually, the supply voltage to ADC equals to supply voltage to the
+[50:35] microcontroller. So, if the supply voltage to microcontroller is 5 volts, AVCC is also 5 volts.
+[50:41] Then reference voltage is set to AVCC.
+[50:46] That is supply voltage to ADC.
+[50:49] That is the default setting of Arduino.
+[50:52] Then this particular, these two combination reserve, we don't use it.
+[50:58] Then one one.
+[50:59] These two bits, if you use one one, you can set reference voltage to 1.1.
+[51:06] If you are using analog reference function of Arduino,
+[51:09] Then you have to use internal parameter.
+[51:14] You have to pass internal parameter.
+[51:17] Is that clear?
+[51:18] This is how we change reference voltage.
+[51:21] Typically we use the second setting.
+[51:24] This is the one typically we use.
+[51:27] That is the default Arduino setting.
+[51:29] And even C programming we typically use this.
+[51:33] Right?
+[51:33] Because we use the reference voltage as 5 volts.
+[51:36] Right?
+[51:36] 5 volt means ADC supply voltage.
+[51:40] That is the typical reference voltage. But for more
+[51:44] accuracy you can change reference voltage. How?
+[51:49] If you want let's say your sensor input voltage is
+[51:52] sensor voltage is 0 to 1
+[51:56] then better to use 1.1 as the reference voltage.
+[52:00] If the sensor voltage is 0 to
+[52:04] 3. Then externally
+[52:07] supply 3 volts
+[52:08] to AFP and use
+[52:11] this city for
+[52:12] better accuracy. When your
+[52:14] sensor output
+[52:16] voltage is 0 to 1
+[52:18] or when your sensor output voltage
+[52:21] is 0 to 3, you
+[52:22] can use 5 volt as the reference
+[52:24] voltage. It works
+[52:26] but less accurate.
+[52:29] Your conversions are less
+[52:30] accurate. For better accuracy
+[52:32] you have to change the reference voltage to suit to your input voltage range.
+[52:39] If your input voltage range is 0 to 1, this is the ideal reference voltage.
+[52:45] If your input voltage range is 0 to 3, then you have to supply 3 volts to a ref pin
+[52:52] and use this setting to change the reference voltage.
+[52:56] Now, then only you can have more accurate conversions.
+[53:01] Can you understand? So depending on your input, you have to decide the proper reference voltage because the resolution you can't change. That is fixed. But the reference voltage you can change. By changing the reference voltage, you can adjust the step size. Is it clear? If not, let me know. Any questions?
+[53:22] Sir, can we use two different VREF for two different input sensors?
+[53:28] Yes. The way is, now let's say the first sensor, if you want to use default 5 volts,
+[53:38] right, then you set these two bits, 0 and 1, and then you read the value. I'll use Arduino terms.
+[53:47] first you
+[53:49] you don't need to do anything
+[53:52] if you are going to use the default
+[53:54] reference voltage. Then you
+[53:56] using the analog read you read the value.
+[53:59] Thereafter
+[54:00] you change the reference voltage
+[54:02] using analog reference function
+[54:04] and read using again
+[54:06] using analog read you can read the second
+[54:08] sensor. First you have to change
+[54:10] the reference voltage then read the
+[54:12] conversion result.
+[54:14] You can do that.
+[54:16] What else?
+[54:17] Unfortunately, I have seen in many examples, right, even in some of the industry applications, right, the developers, they don't touch the reference voltage.
+[54:31] They use the default reference voltage and then they get the conversion results, right.
+[54:38] Some sensors, they give voltage between 0 to 1.5.
+[54:43] But ideally, you have to reduce the reference voltage closer to 1.5 at least.
+[54:50] Then only you can get a better conversion result.
+[54:53] But they simply use the default reference voltage 5 volt.
+[54:58] Even with a sensor which provides voltages between 0 and 1.5.
+[55:04] Right. But now you know the importance of changing the step size,
+[55:09] importance of the reference voltage.
+[55:11] So now you are better equipped with this knowledge
+[55:15] so that depending on the situation,
+[55:18] now you can change the reference voltage.
+[55:21] Sir, when we use external one, what is the maximum Vref we can?
+[55:27] Always, even when you are supplying externally voltage,
+[55:34] The maximum you can go is up to the supply voltage to the microcontroller.
+[55:41] That means 5.
+[55:42] Maximum 5.
+[55:43] Okay, sir.
+[55:44] But you can have lesser number of voltages.
+[55:47] For example, 3.3, 1, 1.1, 2.
+[55:52] These voltages you can externally supply.
+[55:54] To ARF pin and you can get the VREF change.
+[55:59] Are you seeing just two?
+[56:00] Yes.
+[56:01] Yes, Isuru.
+[56:02] Yes, Isuru.
+[56:04] How the accuracy depends on...
+[56:07] Not clear.
+[56:10] Please ask again.
+[56:12] I can't clearly hear you.
+[56:15] Please ask again.
+[56:17] How the
+[56:18] accuracy of the
+[56:23] final results depends on
+[56:25] the
+[56:25] VREF?
+[56:29] So that's what I
+[56:30] explained in the previous
+[56:33] slide.
+[56:34] Now here the sensor output is 0 to 1. Let's assume if you use reference voltage as 5, the minimum, the smallest voltage that the ADC can convert is 4.88.
+[56:49] Let's assume sensor output is 0 to 1.
+[56:52] And in a particular moment, sensor gives 501 millivolts.
+[56:58] And in the next moment, sensor gives 503 millivolts.
+[57:02] The difference is 2 millivolts.
+[57:04] ADC cannot recognize the change.
+[57:07] Why?
+[57:07] ADC requires at least 4.88 millivolts.
+[57:11] So for these two voltages, ADC will give you same discrete number.
+[57:16] But if you use the reference voltage 1.1, then the smallest voltage that the ADC can convert is 1.07.
+[57:24] The sensor gives 501 millivolts a particular moment, then 503 millivolts in another moment.
+[57:32] The difference is 2 millivolts.
+[57:34] 2 millivolts is greater than this.
+[57:37] So, ADC can recognize and give you two discrete numbers, more accurate.
+[57:43] Is it clear?
+[57:44] Thank you.
+[57:46] Right. More ADC registers. Right. The same ADMUX register that is ADC multiplexer selection register. Now we are going to talk about ADLAR bit. ADC left adjust result bit. That bit specifies whether the conversion result is left justified or not.
+[58:10] The default value of ADLAR is 0.
+[58:14] And this is the situation, the default situation.
+[58:18] ADCL contains lower 8 bits of the result.
+[58:23] ADCH contains, ADC high register contains upper 2 bits of the result.
+[58:30] That is the default situation.
+[58:31] But if you set this bit, ADLAR bit, so ADLAR bit, if you set,
+[58:36] you can left justify the result.
+[58:40] That means ADCH contains upper 8 bits of the result and ADCL contains lower 2 bits of the result.
+[58:51] So this is called result multiplexy.
+[58:54] So earlier we discussed the reference multiplexy.
+[58:57] Now result multiplexy.
+[58:59] These are the data registers, right?
+[59:02] Whether you want to, right, have the result left justified or not.
+[59:08] You can specify using ADLAR. ADC left adjust result bit. Result multiplex. Okay. Then. Now let's talk about these three bits. MUX 0, MUX 1 and MUX 2. ADC multiplex selection register. MUX 0, MUX 1 and MUX 2. So they are called multiplex selection bits. Multiplex selection bits. Right.
+[59:35] we use them to select analog input channels.
+[59:41] Now we have six analog input channels.
+[59:44] Out of them, which one you use?
+[59:47] You have to select.
+[59:48] Only one channel you can use at a time.
+[59:50] Now if you are going to use first channel,
+[59:53] then you have to set 0, 0, 0.
+[59:56] If you are going to use sixth channel,
+[59:59] 1, 0, 1, you have to set.
+[1:00:01] So this is called input channel multiplexing.
+[1:00:04] So the default value is 0, 0, 0.
+[1:00:08] So ADC 0 channel we use by default.
+[1:00:12] In Arduino Uno board that is A0P.
+[1:00:15] A0P.
+[1:00:17] Right.
+[1:00:18] Which channel you use?
+[1:00:21] You have to select the channel.
+[1:00:22] For channel selection you have to use these multiplexer selection bits.
+[1:00:28] Right.
+[1:00:28] So you have connected the sensor to.
+[1:00:31] If you have connected the sensor to let's say ADC 3 channel.
+[1:00:34] Then you have to set 011.
+[1:00:38] You can have many sensors connected to different channels.
+[1:00:43] But before you read the result, you have to select the correct channel.
+[1:00:48] Select the channel, read the result.
+[1:00:50] Select the channel, read the conversion result.
+[1:00:53] That's how we do.
+[1:00:57] ADC control and status register.
+[1:01:00] which contains
+[1:01:02] several important bits.
+[1:01:05] The first one ADEN bit.
+[1:01:08] ADC enable bit.
+[1:01:09] By default ADC is disabled to save power.
+[1:01:12] So ADEN bit contains 0.
+[1:01:14] You can set that bit to enable ADC.
+[1:01:17] So you can enable ADC using this bit.
+[1:01:20] Then ADC SC bit.
+[1:01:23] ADC start conversion bit.
+[1:01:25] The conversion you can start by setting this bit.
+[1:01:28] You set this bit.
+[1:01:30] you can start the conversion. When the conversion is over and data registers are updated,
+[1:01:36] automatically this bit is clear. You set this bit to start the conversion. When the conversion
+[1:01:43] is over and data registers updated with the result, this bit is automatically clear. So,
+[1:01:49] you can use this bit to check whether conversion is over. You set the bit and then you can poll
+[1:01:56] this bit to check whether
+[1:01:57] conversion is over. This bit is zero
+[1:02:00] that means conversion is over.
+[1:02:02] To know whether the conversion
+[1:02:03] is over you can poll this bit.
+[1:02:06] This bit is
+[1:02:07] cleared automatically when the conversion
+[1:02:09] is over. To start the conversion
+[1:02:12] you have to set this bit.
+[1:02:14] Start conversion bit. ADC
+[1:02:15] start conversion bit.
+[1:02:19] Then ADIF bit.
+[1:02:22] ADC interrupt flag bit.
+[1:02:24] This bit is set when ADC
+[1:02:25] is over and data registers are updated. When the ADC is over and data registers are updated
+[1:02:32] with the result, this bit is set. It is ADIF bit. Interrupt flag. This bit we can use to
+[1:02:42] check whether ADC is over. This bit can also be used to check whether ADC is over. If this
+[1:02:49] bit is set, that means conversion is over, data registers are updated with the result.
+[1:02:55] If this bit is 0, that means conversion is not yet over.
+[1:03:00] Then ADIE bit.
+[1:03:03] ADC interrupt enable bit.
+[1:03:06] If you want to enable or disable ADC complete interrupt, you can use this bit.
+[1:03:12] ADIE.
+[1:03:12] If it is 0, disable interrupts.
+[1:03:16] If it is 1, enable interrupt.
+[1:03:18] So if you have set this bit, when the ADC is over, conversion is over,
+[1:03:23] the ADC will interrupt the CPU.
+[1:03:26] By default, all these bits are 0.
+[1:03:29] Default value 0. Then these
+[1:03:31] 3 bits, ADPS2, ADPS1
+[1:03:35] and ADPS0. What are they?
+[1:03:38] ADC control and status register, ADPS2
+[1:03:42] ADPS1, ADPS0. They are called
+[1:03:45] ADC prescaler select bits.
+[1:03:49] ADC prescaler select bits. Right.
+[1:03:51] Now you know that ADC uses successive approximation.
+[1:03:57] Successive approximation takes time.
+[1:04:00] So ADC cannot run at processor clock speed.
+[1:04:05] ADC cannot run at CPU clock speed.
+[1:04:09] ADC must run at a lower clock speed because ADC takes time.
+[1:04:14] ADC needs time for the successive approximation.
+[1:04:17] So it cannot run at very fast.
+[1:04:19] It must run at a lower clock speed. Right. So what we do is we scale down the processor clock speed, CPU clock speed by a prescaler. This is called prescaler, a factor and feed to the ADC.
+[1:04:37] The pre-scaler we use to scale down the CPU clock speed to suit for the ADC.
+[1:04:46] So the CPU speed we scaled out to suit for the ADC because ADC runs at a slower speed.
+[1:04:55] Because it needs time for successive approximation.
+[1:04:58] Any question up to this point?
+[1:05:01] Excuse me, sir.
+[1:05:02] Yes.
+[1:05:02] What is the default speed in the ADPS2?
+[1:05:08] Default values are 0, 0, 0 which is reserved.
+[1:05:12] You have to set a particular prescaler before you start ADC.
+[1:05:18] Anything else? Any other question?
+[1:05:21] So here FADC means frequency of ADC.
+[1:05:25] Frequency of ADC we get by dividing frequency of CPU by a factor.
+[1:05:32] pre-scaler because ADC cannot run at the CPU speed.
+[1:05:38] But how do we know the suitable speed for ADC?
+[1:05:44] That's a very good question.
+[1:05:45] So according to the data sheet of this microcontroller
+[1:05:49] or this particular ADC,
+[1:05:51] ADC must run less than 200 kilohertz speed.
+[1:05:57] must run less than 200 kilohertz speed for better accuracy. So, depending on your CPU clock speed,
+[1:06:07] you have to use suitable prescaler to achieve a speed less than 200 kilohertz. For example,
+[1:06:17] if you are using 16 megahertz CPU speed, 16 megahertz means 16 million hertz. 16 million
+[1:06:25] hertz divided by 128, you get 125 kilohertz as the ADC speed, which is less than 200 kilohertz.
+[1:06:36] Good for accuracy, right? It depends on the ADC, it depends on the microcontroller.
+[1:06:41] So, you need to read the data sheet. So, the data sheet will guide you, right? It will tell you
+[1:06:48] the better speed for the ADC.
+[1:06:54] So, according to this ATmega3D,
+[1:06:56] 8P microcontrollers, 10-bit ADC.
+[1:06:59] So, ADC should run less than 200 kHz speed
+[1:07:03] to get better conversion results.
+[1:07:07] You can run it higher than that frequency,
+[1:07:10] but then your results,
+[1:07:11] conversions are not very accurate.
+[1:07:13] If you want to get accurate conversion results,
+[1:07:16] ADC you have to run
+[1:07:18] less than 200 kHz speed.
+[1:07:21] To 200 kHz speed
+[1:07:22] you can achieve
+[1:07:24] by dividing
+[1:07:25] the CPU clock speed
+[1:07:28] by a factor, a prescale.
+[1:07:31] Is this function
+[1:07:32] available for Arduino IDE
+[1:07:35] as well?
+[1:07:36] In the Arduino IDE you can't change the
+[1:07:38] prescaler. The default
+[1:07:40] prescaler Arduino
+[1:07:42] uses 128.
+[1:07:45] It is fixed.
+[1:07:46] You can't change. When you use analog read function,
+[1:07:51] you use this prescale 128.
+[1:07:54] It is fixed. You can't change. But if you use C programming, you have
+[1:07:58] the control. You can use different prescales. Those
+[1:08:02] are the limitations of using Arduino. Certain things are
+[1:08:06] fixed. Any other question?
+[1:08:10] Today till what time we can continue?
+[1:08:12] Sir, at 8 we have a lecture.
+[1:08:15] At 8 you have a lecture?
+[1:08:17] Yes, sir.
+[1:08:18] Then I should stop at least 5 minutes before 8.
+[1:08:25] So how about conducting lectures in the morning?
+[1:08:34] Rather than conducting them according to the timetable, how about early morning lectures?
+[1:08:39] Isuru could you discuss with
+[1:08:43] Yes, Tilina
+[1:08:47] Yes, sir
+[1:08:47] So when can we have lectures then?
+[1:08:54] Tuesday morning?
+[1:08:58] Yes, sir
+[1:08:58] 6 o'clock or 5 o'clock?
+[1:09:05] Tuesday
+[1:09:05] Until what time
+[1:09:07] we can continue? 8 o'clock or 9 o'clock?
+[1:09:09] Tuesday.
+[1:09:12] 8.
+[1:09:12] Then
+[1:09:12] we have to conduct lectures in at least
+[1:09:19] two days because
+[1:09:21] in the Tuesday we have six hours.
+[1:09:24] We need to cover at least
+[1:09:25] five hours. Two hours
+[1:09:27] six to eight
+[1:09:28] Tuesday and then
+[1:09:31] another three hours some other day.
+[1:09:34] Or else Tuesday normally we
+[1:09:35] have lectures from 9 to 12.
+[1:09:37] Can we start from
+[1:09:39] let's say 6 o'clock
+[1:09:41] and continue till
+[1:09:43] 9 o'clock Tuesday.
+[1:09:46] 8 to 9
+[1:09:48] we have lectures.
+[1:09:49] You have 8 to 9 lectures?
+[1:09:51] We don't have.
+[1:09:53] Okay.
+[1:09:54] We will try to
+[1:09:55] do the lectures according
+[1:09:58] to the timetable
+[1:09:59] for the next
+[1:10:02] week also and see whether
+[1:10:04] there will be any interruptions.
+[1:10:07] Right. So
+[1:10:08] So next Tuesday, usual time 9 to 12 and 1 to 4 we'll try to do.
+[1:10:14] But if we encounter interruptions again, then we'll try to have lectures in the morning.
+[1:10:24] Because otherwise it's very difficult because you just two hours, we can have six to eight.
+[1:10:32] then again we have to have another day, another two hours, another day, another two hours. So
+[1:10:39] at least three days then we have to use for the lectures. If you are going to do lectures in the
+[1:10:45] early morning because we can do only two hours. You have lectures at eight o'clock. If we can have,
+[1:10:53] if we can do three hour lectures in the morning, then in two days we can finish six hours.
+[1:10:59] What do you say?
+[1:11:01] Sir, Tuesday 9 to 12, okay sir.
+[1:11:05] That won't be a problem. Then Tuesday afternoon one?
+[1:11:09] Tuesday afternoon, network traffic, Zoom traffic.
+[1:11:15] Yeah, yeah. So what's your suggestion?
+[1:11:19] Tuesday 5 to 8.
+[1:11:22] 5 to 8, 9 to 12.
+[1:11:25] 9 to 12 and 5 to 8
+[1:11:27] Tuesday.
+[1:11:30] Okay, we'll try 5 to 8 and see.
+[1:11:32] Yes, morning 5 to 8.
+[1:11:34] Morning 5 to 8.
+[1:11:35] And after.
+[1:11:37] Morning 5 to 8.
+[1:11:39] Then you have lectures
+[1:11:41] till morning to 12 o'clock.
+[1:11:43] Morning 5. Oh, come on.
+[1:11:45] That is not good.
+[1:11:46] You don't have time even to have breakfast.
+[1:11:52] I have to do it.
+[1:11:53] I have to do it.
+[1:11:53] I have to do it.
+[1:11:55] No sir, 5 to 8.
+[1:11:57] 5 to 8, okay.
+[1:11:58] 5 to 8, I have my lecture.
+[1:12:00] Then there's another lecture.
+[1:12:03] 8 to 9.
+[1:12:04] Then again I'm going to have 9 to 12.
+[1:12:07] Yes.
+[1:12:09] Then 5 to 12, continuous.
+[1:12:14] Then I'll do Tuesday morning, 9 to 12.
+[1:12:17] Then I'll do afternoon.
+[1:12:20] Afternoon, I try.
+[1:12:22] Oh sir, I'll do it.
+[1:12:24] Okay.
+[1:12:25] Right. So according to the timetable,
+[1:12:28] right, Tuesday morning
+[1:12:29] 9 to 12, we'll do
+[1:12:31] our morning lecture and
+[1:12:33] 1 to 4, our
+[1:12:35] afternoon lecture, we'll try again
+[1:12:37] one more time.
+[1:12:39] So
+[1:12:40] that's all for today.
+[1:12:43] We'll see you on next
+[1:12:45] Tuesday, 9 o'clock.
+[1:12:47] Thank you.
+[1:12:49] Thank you.
+[1:12:51] Thank you, sir.

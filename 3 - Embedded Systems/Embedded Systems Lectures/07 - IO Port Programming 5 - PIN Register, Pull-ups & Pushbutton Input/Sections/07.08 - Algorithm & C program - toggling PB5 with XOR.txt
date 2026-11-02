@@ -1,0 +1,158 @@
+[0:01] Because then we can set its default state high.
+[0:07] Pull up.
+[0:07] Then enter into the endless loop.
+[0:11] In the endless loop, toggle PB5.
+[0:15] State of the PB5 toggle.
+[0:18] That means if the state of the PB5 is high, make it low.
+[0:24] If the state of the PB5 is low, make it high.
+[0:29] Toggle the state.
+[0:30] When you toggle the state
+[0:32] LED connected to the
+[0:34] pin starts
+[0:36] blinking. If the pin is
+[0:38] high, make it low. If the
+[0:40] pin is low, make it high. That is toggle.
+[0:43] When you toggle,
+[0:44] you can blink the LED.
+[0:46] Then check whether PB0
+[0:48] is high. PB0
+[0:50] is the pin, the switch
+[0:52] connector, push button
+[0:54] connector. Whether PB0
+[0:56] is high. If it
+[0:58] is high that means it is default state it is default state if it is high that means it's
+[1:04] default state default state means nobody has pressed the button if if it is in the default
+[1:10] state wait 500 milliseconds go to go back top of the loop again toggle the led toggle the state
+[1:19] of the pv5 that means blink the led check whether pin is high right pv0 is high if so
+[1:26] wait 500 milliseconds go to the top of the loop again toggle the state of pb5 now led connected
+[1:35] to pb5 that is pin 13 led right it blinks every half a second now when you press the switch push
+[1:44] button pb0 becomes low if pb0 is low that means there is an input then wait 200 milliseconds and
+[1:54] go back to the top of the loop.
+[1:57] Tuggle the state of PB5.
+[1:59] Check whether pin is
+[2:00] PB0 is high. No, it is
+[2:02] low. Wait 200
+[2:04] milliseconds. Do it again.
+[2:06] Right. Now LED
+[2:08] blinks at the rate of 200
+[2:10] milliseconds. Because you have
+[2:12] pressed the button and you are
+[2:14] keep pressing the button. You are keep
+[2:16] pressing the button. So LED
+[2:18] blinks at the rate of 200
+[2:20] milliseconds. When you release the button
+[2:22] LED blinks
+[2:24] at the rate of 500 milliseconds.
+[2:26] How do we determine whether you have
+[2:28] pressed the button or not? We check the
+[2:30] state of PB0.
+[2:32] If the PB0, which is the
+[2:33] button connected pin, if it is
+[2:36] high, you have not pressed the button.
+[2:38] If it is low, you have pressed
+[2:40] the button. That's how we determine whether
+[2:42] you have pressed the button or not.
+[2:44] The blinking, you achieve the
+[2:46] blinking by toggling
+[2:48] the state of particular pin.
+[2:50] The pin number 13, Arduino pin
+[2:52] number 13, you toggle.
+[2:53] so you blink the LED can you understand this algorithm
+[2:57] if the algorithm is clear
+[3:10] let's go to source code
+[3:16] this is your c code your main function return zero and the commit line dual rate blinker
+[3:29] dot c first you need to include some header files you need to include io.h header file
+[3:38] because all these input output definitions,
+[3:43] code, DDR, all these are defined in input output dot H header file.
+[3:49] Then you need to define the clock speed of your microcontroller
+[3:55] using a constant called FCPU, frequency of CPU, right, 16 megahertz.
+[4:02] Because fcpu constant is used by the delay.h header file.
+[4:09] So you have to define the clock speed for delay.h header file.
+[4:13] Then you have to include delay.h header file.
+[4:16] Because we are planning to use underscore delay underscore ms function to achieve delays.
+[4:26] Then configure pb5 as an output.
+[4:30] right configure pb5 as an output so we set
+[4:34] the bit 5 of ddrb
+[4:38] register we set bit 5 without disturbing
+[4:42] to other bits that's why we have used bitwise
+[4:46] operator because without disturbing to other bits we have set
+[4:50] the bit 5 we have set bit 5 we have set bit 5
+[4:54] and then we have cleared bit 0
+[4:58] PB0 bit 0 of
+[5:01] port B.
+[5:03] Sorry DDRB. DDRB
+[5:05] register. Bit 0 we have
+[5:07] cleared without disturbing
+[5:09] to other bits. That's why we have
+[5:11] used this
+[5:12] bitwise
+[5:14] and operator. As a result
+[5:17] now PB0
+[5:18] pin is an input pin.
+[5:21] Right. PB5
+[5:23] pin is output pin.
+[5:24] PB5 output, PB0
+[5:26] and input. Configure the two pins. Then PB0
+[5:31] pin we need to pull up. Activate internal
+[5:35] pull up resistance. To do that we use the port B register
+[5:39] and we set the corresponding bit. PB0
+[5:43] pull up. We activate internal pull up resistance.
+[5:47] Then endless loop. In the
+[5:51] endless loop we need to toggle an LED.
+[5:55] right. We need to blink LED. So to blink the LED we need to toggle the state of a pin.
+[6:02] PB5 pin we need to toggle. This is the code. So what does this mean? Right. Now this operator
+[6:11] we call this operator we call XO operator exclusive O operator. Right. We call exclusive
+[6:20] O operator. Now the functionality
+[6:22] of the exclusive O operator
+[6:25] is, right,
+[6:26] this is the exclusive O operator
+[6:28] function. 0
+[6:30] XO 0
+[6:32] you get 0.
+[6:34] 0 XO
+[6:36] 1 you get
+[6:38] 1. 1
+[6:39] XO 0
+[6:42] you get 1.
+[6:44] 1 XO 1
+[6:46] you get 0.
+[6:47] This is the exclusive O functionality. If both inputs are same, output is 0. If the inputs are different, output is 1. That is the exclusive logical O operation.
+[7:07] right exclusive logical operation we discussed this operation in the previous semester now
+[7:14] what is the meaning of this code let's see now let's assume the value of the port b register
+[7:22] [unclear — Sinhala / crosstalk]
+[7:36] X O operator and this value
+[7:40] 0 0 1 0 0
+[7:44] 0 0 0. Right. Now let's
+[7:48] take the X O operation. X X
+[7:52] O 0. With X and exclusive
+[7:56] O 0 you get X. Right.
+[8:00] If X is 1, 1 and 0
+[8:04] 1. If x is 0, 0, 0, xo 0, 0. Can you understand? If x is 1, 1, xo 0, two different values.
+[8:18] Then this will be 1. That means x. If x is 0, 0, xo 0, same value, 0. That means again x.
+[8:29] X, XO0, X
+[8:33] X, XO1, let's say Y
+[8:37] All other bits, for all other bits you get X
+[8:41] X, X, X
+[8:44] Now, Y is negation of X
+[8:49] Negation of XY
+[8:51] If Y is, now for example
+[8:55] If X, if Y, this particular bit, if this particular bit is 0, 0 XO1, different inputs, then you get Y.
+[9:07] If X is 1, 1 XO1, then similar inputs, you get 0.
+[9:15] So Y is always opposite of X.
+[9:19] Right.
+[9:19] Now can you understand this?
+[9:22] this is the bitwise not operator y is always opposite of x now as a result if the pin is high
+[9:33] the next moment if you run this statement pin becomes low if pin is low when you run this
+[9:41] statement pin becomes high you can toggle the state of the pin using x o operator right in the
+[9:50] XO operation if inputs are same, output is 0.
+[9:55] If inputs are different, output is 1.
+[9:58] Right.
+[9:59] Now let's say X.
+[10:00] XO 0.
+[10:02] Bindu hai.
+[10:04] XO yi atara exclusive operation.
+[10:07] XO yi atara exclusive operation.
+[10:11] XO yi atara XO operation.
+[10:14] XO yi atara XO operation.
+[10:18] [unclear — Sinhala / crosstalk]
+[10:48] Can you understand?

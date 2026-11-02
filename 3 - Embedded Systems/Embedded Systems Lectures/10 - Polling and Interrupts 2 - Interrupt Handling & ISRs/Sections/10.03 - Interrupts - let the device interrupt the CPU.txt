@@ -1,0 +1,136 @@
+[0:00] Can you understand the problems?
+[0:03] Any question?
+[0:04] Right.
+[0:05] If the questions are clear, the problems of polling, what is the solution?
+[0:11] Solution is interrupts.
+[0:13] Now, polling has problems.
+[0:15] To solve those problems, we use interrupts.
+[0:19] Interrupt is a hardware mechanism.
+[0:21] Interrupts is a hardware mechanism.
+[0:24] Right.
+[0:25] Now in interrupts, peripheral devices interrupt the CPU when they need CPU service while CPU is busy with another task.
+[0:38] Right.
+[0:40] CPU is busy with another task.
+[0:42] In our example, blinking the LED.
+[0:45] CPU is busy.
+[0:46] CPU is busy with blinking the onboard LED.
+[0:49] The switch is the external peripheral device.
+[0:53] The switch will interrupt the CPU when somebody press the switch.
+[0:58] When somebody press the switch, switch will interrupt the CPU.
+[1:01] The peripheral device interrupts the CPU when they need CPU service while CPU is busy with another task.
+[1:10] Then what happens?
+[1:11] CPU suspends the currently performing task and provides its service to the interrupted device.
+[1:20] CPU suspends the currently performing task, currently performing task blinking the onboard LED.
+[1:27] So CPU suspends that, temporarily suspends that.
+[1:32] Then CPU provides its service to interrupted device.
+[1:36] Interrupted device is the switch.
+[1:38] Now we have to attend to that device.
+[1:41] So, atten to that device means we need to toggle the external LED.
+[1:46] Thereafter, CPU resumes the task it was doing.
+[1:52] CPU resumes the task it was doing.
+[1:55] That means CPU resumes blinking the LED again.
+[1:59] If again switch press, the switch will notify the CPU.
+[2:05] Switch will interrupt the CPU.
+[2:06] right and then cpu is cpu has to suspend the suspend the task it is doing currently doing
+[2:17] and it has to attend to the switch right now this mechanism frees cpu from monitoring the
+[2:27] state of peripheral devices ah now we are not going to monitor the peripheral devices right
+[2:34] Why? If the
+[2:36] peripheral device needs CPU
+[2:38] service, peripheral
+[2:40] device will interrupt CPU.
+[2:42] So CPU is not going to
+[2:44] monitor.
+[2:45] Now CPU is free
+[2:48] from that burden.
+[2:50] I forgot to tell you that this is
+[2:52] another problem of polling.
+[2:55] Periodically
+[2:56] monitoring. If you are using
+[2:58] polling, you have to periodically
+[3:00] monitor your peripheral
+[3:02] devices. It's a burden.
+[3:04] And it's unnecessary workload.
+[3:06] Unnecessary workload.
+[3:08] Now while reading your newspaper.
+[3:10] Time to time you have to touch the small fellow's nappy.
+[3:15] And see whether it's wet or not.
+[3:17] It's unnecessary work.
+[3:19] Monitoring workload.
+[3:21] That's another problem of polling.
+[3:24] But with interrupts.
+[3:26] Now you don't need to do that.
+[3:27] Now you read the newspaper.
+[3:29] You continuously read the newspaper.
+[3:32] You keep reading the newspaper.
+[3:35] If small fellow wants your attention to get changed the nappy,
+[3:42] the small fellow will interrupt you.
+[3:45] Small fellow will cry.
+[3:46] Then you know that you have to change the nappy.
+[3:49] You are not going to check whether nappy is wet or not.
+[3:52] No, you are not going to do that.
+[3:54] Right?
+[3:55] The small fellow, right?
+[3:57] The baby will interrupt you.
+[3:59] You are keep reading the newspaper.
+[4:02] You even don't see whether the nappy is wet or not.
+[4:05] You don't check.
+[4:07] You keep reading the newspaper.
+[4:08] The small fellow, the baby will let you know when the baby requires your service to get changed the nappy.
+[4:19] How?
+[4:19] The baby, the small fellow will interrupt you.
+[4:23] So small fellow will cry.
+[4:25] Right?
+[4:26] When small fellow starts crying, you know that.
+[4:29] arm so his nappy must be wet so i need to change it right so you are free from monitoring the
+[4:39] peripheral devices again and again you are free now that burden from that burden you are free why
+[4:47] if the if the peripheral device requires your service it will let you know it will interrupt
+[4:54] to you. So you don't need to check. You are not going to monitor. The advantages are now you are
+[5:02] free from monitoring workload, polling work. You are free. The second thing, it doesn't matter the
+[5:10] state change of the peripheral device is too fast or too slow. It doesn't matter. When the peripheral
+[5:16] device requires CPU's attention, the
+[5:20] peripheral device will interrupt the CPU. No matter the state
+[5:24] changes, fast or slow, no problem. The device
+[5:28] will interrupt the CPU. So the state changes
+[5:32] will not go undetected, will not
+[5:37] go, right? State changes will not go undetected,
+[5:40] right? Now because there is no monitoring, right?
+[5:44] You don't need to worry about the monitoring interval.
+[5:48] Whether the monitoring interval is long or short, you don't need to worry.
+[5:52] Why? No monitoring.
+[5:54] You keep reading the newspaper.
+[5:57] When the nappy is wet, the small fellow will cry.
+[6:02] And he will interrupt you.
+[6:04] Then you change his nappy and then again continue the work that was doing.
+[6:11] That is reading the newspaper.
+[6:12] again. If again the nappy becomes wet, the small fellow
+[6:16] will cry. Again change the nappy and continue reading the newspaper.
+[6:20] Very simple. And another advantage,
+[6:24] interrupt supports concept of priority.
+[6:28] Now if there are couple of peripheral devices, several peripheral devices,
+[6:33] you can prioritize one device over
+[6:36] others. If there are multiple sensors connected,
+[6:39] you can give priority for one sensor over others.
+[6:44] Now if you have, let's say, few kids
+[6:48] on the floor playing with their toys,
+[6:52] you are reading the newspaper, you have two kids,
+[6:57] you can give priority for one kid over other kid
+[7:00] because you are not going to monitor. If they won't
+[7:04] interrupt you, the one with the priority will
+[7:08] interrupt you first. If both
+[7:10] need to interrupt you
+[7:11] at the same time
+[7:13] the device
+[7:16] that with the highest priority will
+[7:18] interrupt the CPU first.
+[7:20] So you can implement the concept
+[7:22] of priority also.
+[7:24] Can you understand?
+[7:26] Any question? No.
+[7:28] Steps. Interrupt
+[7:30] handling. Now when
+[7:31] the CPU is
+[7:33] interrupted, CPU
+[7:35] has to handle
+[7:37] the interrupt. When CPU is interrupted by a device, CPU has to handle the interrupt. Now,
+[7:44] what are the steps of interrupt handling? Right, steps. Now, this is your memory, RAM. In the RAM,
+[7:55] you have your instructions. This is the program, instructions. At the beginning of the RAM,

@@ -1,0 +1,75 @@
+[0:12] Right. Now external interrupts, right. Let's first consider the external interrupts. Peripheral devices interrupt the CPU through the interrupt pins, INT pins. So they are called external interrupts.
+[0:30] Now, external devices connected to an interrupt pin, INT pin, triggers external interrupt. Now, the question is when to trigger the external interrupt? When to trigger? Right? Any peripheral device connected to INT pin triggers external interrupt to CPU.
+[0:57] Now when to interrupt? So we can specify that. How? We use ISC, right? The meaning you will learn in the next couple of slides, the meaning of ISC. ISC bits of EICR register.
+[1:16] ISC bits of EICR register specify when to interact.
+[1:24] Right.
+[1:25] ISC bits of EICR register specify when to interact.
+[1:31] Now there are four choices.
+[1:33] Right.
+[1:33] These are the four choices when to interact.
+[1:36] The first choice.
+[1:38] INTP.
+[1:40] If the INTP is held low.
+[1:43] If the INTP is held low.
+[1:46] Interrupt the CPU. That is the first choice. The second choice, interrupt the CPU when there is a logic change in the interrupt pin. When there is a logic change in the interrupt pin.
+[2:01] For example, interrupt pin was high and it became low. So interrupt the CP. Oh, interrupt pin was low, now it becomes high. A logic change. So interrupt the CP.
+[2:17] The first choice, interrupt pin is held low. If the interrupt pin is held low, INT pin is held low, right? Interrupt the CPU. The second choice, if there's a logic change on interrupt pin, INT pin, interrupt the CPU.
+[2:38] The third choice, right? So, if the INTE pin is going low, it's going low, it has not become low. It is still going. It is going low. From high to low, it is going. It has not become low. Now, it is not high. It is not high, not low. It is going low.
+[3:02] falling edge, right. This is high, this is low and this particular part we call falling
+[3:11] edge of the pulse. If the IN pin, INT pin is going low, interrupt the CPU, falling edge,
+[3:20] the same thing, right, but in the opposite direction. Interrupt the CPU when INT pin
+[3:28] is going high. It is going high. It has not become high. It is going high. Rising edge.
+[3:38] On rising edge of INTP, interrupt the CPU. So there are four choices. Now, how do we
+[3:48] select the particular choice we can use isc bits of eicr register to specify when to interrupt when
+[3:59] to interrupt the cpu so the four choices among the four choices we can select one choice by using isc
+[4:08] bits of eicr register so the four choices are if the int pin is held low interrupt the cpu if the
+[4:17] the INTP in logic change, interrupt the CPU. Logic change means it could be high to low
+[4:24] or low to high. INTP in logic is falling. INTP in state is falling. Right. It is going
+[4:34] low. INTP in is going low. Falling it. Interrupt the CPU. INTP in logic is going high. It is
+[4:43] going high. That means rising, right? Rising edge interrupt the CP. Right. Then there's another
+[4:52] register. EIMSK register. Right. EIMSK register. Right. Very soon you will learn about this register.
+[5:03] more details, right? EIMSK register, that register has INT bits.
+[5:14] INT bits. Simple end means there may be multiple bits.
+[5:18] Int0, Int1, likewise, multiple bits.
+[5:22] Now using these bits, you can enable or disable external interrupts.
+[5:29] If you set the bit, int bit tough, E-I-M-S-K register, you can enable external interrupts. If you clear the bit, you can disable external interrupts. Right. So this is to specify when to interrupt. This is to enable and disable external interrupts. Right.
+[5:53] So before we move into pin change interrupt, any question on external interrupts?
+[6:00] So it means that we can use this external interrupt pin for in these situations.
+[6:12] In low level or in a low level.
+[6:15] The idea is this.
+[6:17] Let's say you have connected a sensor to this particular pin.
+[6:23] Let's say in zero pin in the microcontroller we have a pin call in zero.
+[6:29] Right?
+[6:29] In one there are multiple pins.
+[6:32] Now let's say we use in zero pin.
+[6:35] For the in zero pin we have connected a sensor.
+[6:38] Now when to interrupt the CPU.
+[6:41] So you can select one choice out of the four choices.
+[6:46] So if you for example if you select the choice number one first choice.
+[6:50] That means when the sensor holds this pin low, right, we interrupt the CT.
+[7:02] The second choice, when the sensor changes the state of this pin, either high to low or low to high, we interrupt the CT.
+[7:13] The third choice, when the sensor connected to this pin, right, makes the pin going low, falling edge, we interrupt the CTE.
+[7:25] When the sensor connected to this pin, right, changes the state of this pin, going high, that is rising, we interrupt the CTE.
+[7:37] Then using this particular bit of this register, we can enable or disable interrupts.
+[7:45] If you disable the interrupts, no matter what does this sensor do, CPU will not be interrupted.
+[7:53] If you disable the interrupt, no matter what this sensor does, CPU will not be interrupted.
+[8:00] If you enable the interrupts, right, depending on the choice you have selected, right, when this sensor does something, the CPU will be interrupt depending on the choice you have selected if you have enabled the interrupt, external interrupt. Is that clear?
+[8:20] Yes.
+[8:21] Anything else? Any other question on external interrupts?
+[8:25] Excuse me, sir.
+[8:26] Yes.
+[8:27] Where is the
+[8:30] int pin situated?
+[8:33] Like in the
+[8:34] Arduino board?
+[8:36] Yes.
+[8:37] In the Arduino board,
+[8:40] int pin situated on the
+[8:42] microcontroller.
+[8:44] Microcontroller pins
+[8:46] are exposed
+[8:48] through the headers
+[8:50] of Arduino board.
+[8:52] Very soon you will learn
+[8:54] which header you have to
+[8:56] use to access in zero pin in one pin very soon you will learn thank you anything else

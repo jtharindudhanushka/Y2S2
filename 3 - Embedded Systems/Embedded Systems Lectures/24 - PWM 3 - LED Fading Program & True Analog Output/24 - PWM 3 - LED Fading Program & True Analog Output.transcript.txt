@@ -1,0 +1,406 @@
+24 - PWM 3 - LED Fading Program & True Analog Output  (24 Nov 2020 (afternoon, part 2))
+
+[0:00] Right, okay, we were talking about the algorithm. So each iteration, right, we decrement the pulse width by 5, starting from 255. And that pulse width we set to output compare register. And doing that, we reduce the voltage at OC pin gradually.
+[0:21] This 30 millisecond delay is very important, right?
+[0:26] Because we, otherwise, if this delay, if you don't put this delay,
+[0:31] it would be very difficult to see the fading.
+[0:35] So small delay makes fading visible because our eyes are not very accurate.
+[0:41] So that's why we introduce a small delay so that we can see
+[0:44] the fading of the brightness of LED clear.
+[0:50] So we start with 255. 255 means if you put 255 to OCR, you get 5 volts from the OCP. Then we decrement 5 from the OCR value. It goes to 250. Then it goes to 245, 240. Likewise, gradually it drops.
+[1:12] When it comes to somewhere around 125, you get 50% of the supply voltage.
+[1:20] That means 2.5.
+[1:22] If the OCR value comes somewhere around 60 or 65, you get 25% of the voltage.
+[1:31] That is 1.25 somewhere around.
+[1:35] So likewise we drop the voltage from 5 volt to 0 volts gradually with the step size of 5, right, decrement step size of 5 every 30 milliseconds.
+[1:50] By doing that, we reduce the voltage supply to the LED gradually.
+[1:57] So we would see a fading LED with the full brightness to 0.
+[2:04] Then again full brightness to gradually see.
+[2:07] Can you understand?
+[2:09] Can you understand this algorithm?
+[2:10] Okay, sir.
+[2:11] Right.
+[2:12] Let's see the program.
+[2:13] Right.
+[2:14] So we are going to use delay function for the delay, 30 milliseconds delay.
+[2:19] That's why I have used this header file.
+[2:22] And this header file requires the speed of the CPU.
+[2:26] That's why I have defined fCPU.
+[2:29] First, configure this particular pin, PD6,
+[2:32] which is OCAP.
+[2:35] We have LED connected as an output.
+[2:38] Then specify the fast PWM
+[2:41] waveform generation mode.
+[2:45] You know that waveform generation
+[2:46] WGM bits, two bits are in
+[2:50] TCCR A register and one bit
+[2:54] is in TCCR B register.
+[2:56] The bit in the TCCR B register
+[3:00] we need to clear
+[3:01] and the 2 bits in the TCC are A register
+[3:05] we need to set. By doing that we can specify
+[3:09] fast PWM mode.
+[3:12] See fast PWM mode 0 1 1
+[3:16] waveform generation mode 2 bit 0
+[3:20] waveform generation mode 1 bit 1
+[3:22] waveform generation mode 0 bit 1
+[3:25] we specify fast PWM mode
+[3:30] Then the compare output mode non-inverted we specify using combits of TCCRA register.
+[3:43] Timer control, timer counter control register A.
+[3:47] Using the bits of that register we specify using the combits of that register we specify non-inverted mode.
+[3:57] Using the combits we can specify non-inverted mode.
+[4:01] Then set the PWM frequency as 1 kilohertz.
+[4:07] Set the PWM frequency as 1 kilohertz.
+[4:11] Now we know that the equation, what is our equation?
+[4:17] Our equation is FPWM equals FCPU divided by top plus 1 multiplied by prescale.
+[4:30] FCPU, you have to put it in hertz, divide the 6 megahertz, 16 megahertz, sorry, right.
+[4:38] And this is 8 bit timer, 255 maximum value plus 1 multiplied by prescale.
+[4:45] So what is the pre-scale that we have to use to get 1000 Hz PWM frequency?
+[4:55] So we need to reorganize this equation.
+[4:59] Pre-scale, FCPU, divided by, top plus one, multiplied by, FPWM, hertz, 16 megahertz, 255 plus one, top is 255, 1000 hertz, PWM frequency, 1000 hertz.
+[5:17] Calculate, right? You get a value 62.5 when you do the calculation. 62.5 as the result. Now, we don't have a pre-scale equal to 64.5, but we have a pre-scale 64, which is the nearest pre-scale value we have.
+[5:44] So use that 64.
+[5:47] When you use 64 you can't get 1 kilohertz.
+[5:50] Because if you use 64.
+[5:54] 62.5 then only you get 1 kilohertz.
+[5:58] 1 kilohertz.
+[5:59] Here we use 1 kilohertz.
+[6:01] But if you use 64 you get something less than 1 kilohertz.
+[6:07] Something around 950.
+[6:10] I don't know.
+[6:11] You have to calculate.
+[6:12] Right.
+[6:12] something little bit something little bit less than one kilohertz you cannot get exactly one
+[6:21] kilohertz huh right because if you want to get one kilohertz this is the pre-scale you have to use
+[6:28] 62.5 but that kind of pre-scale we don't have but we have 64 pre-scale so better to use 64 pre-scale
+[6:37] and get a PWM frequency closer to 1 kilohertz.
+[6:43] Not exactly.
+[6:45] So exact frequency would be when you calculate,
+[6:48] let me calculate.
+[6:49] Exact, if you put 64 pre-scale,
+[6:53] use this one, your exact frequency would be
+[6:57] 976.5 hertz, not 1000.
+[7:04] That's the exact frequency you get.
+[7:08] Can you understand?
+[7:09] Can you understand this calculation?
+[7:11] Any question?
+[7:12] One of you are going to get a loop?
+[7:14] Right.
+[7:14] No questions.
+[7:16] Then.
+[7:17] Right.
+[7:18] Now we set the frequency.
+[7:20] Then.
+[7:21] Endless loop.
+[7:23] Inside the endless loop.
+[7:25] We run another loop.
+[7:26] A full loop.
+[7:28] Right.
+[7:29] Starting from 255.
+[7:30] Loop condition is greater than O equals 0
+[7:34] And decrement the value
+[7:37] Every iteration decrement the value by 5
+[7:40] And that value you get
+[7:43] You assign to OCRA register
+[7:45] So the first time value is 255
+[7:48] That means direct 5 volts at OCAP
+[7:52] Then you gradually decrease the value
+[7:55] Every time by 5
+[7:57] And there is a 30 milliseconds small delay
+[8:00] to make the fading visible.
+[8:04] So if you connect an oscilloscope to the OC pin
+[8:09] and if you see the pulse with modulated signal from the OC pin
+[8:13] this kind of output you would see.
+[8:16] So initially the percentage of time that the output is high is more.
+[8:22] Then gradually you reduce the percentage of time that the output is high
+[8:27] in one clock cycle.
+[8:29] That means you gradually reduce the voltage at OC.
+[8:33] So as a result, the LED connected to the OC pin, you will see a gradual fading effect.
+[8:40] When the pulse width becomes 0, you again set it to 255 and run the loop.
+[8:50] That means you fade the LED to 0 and then again to full brightness.
+[8:55] Again gradually reduce the brightness.
+[8:58] Can you understand this code? Any question? No. Right. So the same program using hexadecimal constant. Instead of writing lengthy binary values, you can use hexadecimal constant. Same program. And same program using label constant. Right. And finally, how can we do this using Arduino wrapper function?
+[9:23] algorithm for what do you know? So first we declare the LED connected pin, pin number 6 which is PWM supported. Then in the setup function we configure that pin as output pin. Then in the loop function we set pulse width to 255 and then gradually we reduce that value.
+[9:49] If the pulse width greater than 0, output pulses with specified width from LED pin, 30 millisecond delay, decrement by 5.
+[10:01] The same thing.
+[10:02] Gradually decrease the pulse width, right, in every iteration by 5.
+[10:09] So by doing that, you can gradually reduce the voltage of the pin number 6.
+[10:16] And we have introduced 30 millisecond delay to make the fading visible and the firmware.
+[10:26] Right.
+[10:27] Declare the pin, pin number 6 as LED pin.
+[10:31] Configure the pin as output pin using pin mode wrapper function.
+[10:36] Run a loop.
+[10:38] Within the loop function run a for loop from 255 to 0.
+[10:44] every iteration decrement the
+[10:48] loop count by 5
+[10:50] similar to previous C program
+[10:53] right
+[10:53] the only difference
+[10:55] is in the C program
+[10:58] you have to specify all the values
+[11:01] to registers
+[11:02] you have to specify the waveform generation mode
+[11:05] you have to specify the compare
+[11:07] match mode
+[11:08] you have to specify the PWM frequency
+[11:11] all these things you have to do
+[11:13] But in Arduino, you don't need to do anything because everything is handled behind the scene.
+[11:22] Only thing is you have to use this wrapper function.
+[11:25] Analog write.
+[11:26] Analog write.
+[11:27] Which pin you want to output the PWM pulses?
+[11:33] Pin number 6.
+[11:34] And what is the width of the PWM signal?
+[11:38] You start with 255.
+[11:40] That means direct 5 voltage.
+[11:43] And then gradually you reduce the pulse width, right?
+[11:46] So voltage is reduced on pin number 6.
+[11:51] Every 30 milliseconds you decrement 5 from the pulse width.
+[11:56] So you don't need to specify the waveform generation mode.
+[12:00] You don't need to specify the compare output mode.
+[12:04] You don't specify the PWM frequency.
+[12:07] Everything is handled behind the scene by this function.
+[12:11] This is called a wrapper function.
+[12:12] analog write. In the analog write function you have to pass two
+[12:17] arguments. First one is the pin that you want
+[12:20] to get pulse width modulated output.
+[12:25] That pin should be PWM supported pin.
+[12:28] The second part is the pulse width that you
+[12:33] need. In other words duty cycle that you need.
+[12:37] In other words percentage of time that the output
+[12:40] is high in one clock cycle. Then from this pin, specified pin, you get the pulses with
+[12:51] that specified width. So unlock write function when you call, right, you will get pulses
+[13:00] from the specified pin with the specified width. So the first pulse 255
+[13:10] then gradually you reduce it to zero. So from this pin if you measure the voltage using a multimeter or voltmeter
+[13:17] so it will start with 5 volts and then gradually it is decreased to zero. Then again start with 5 volts and gradually decrease. Is that clear?
+[13:27] Any question?
+[13:29] Sir. Yes.
+[13:32] [unclear — Sinhala / crosstalk]
+[14:02] to the right-fear, the more the one-�-e-cour, the one-e-cour, the one-e-cour, the one-e-cour,
+[14:06] [unclear — Sinhala / crosstalk]
+[14:43] to the right- should the NL.
+[14:44] I have a because the we do.
+[14:45] [unclear — Sinhala / crosstalk]
+[15:15] to the MF.
+[15:16] I have a really good thing, I have a really good thing, I have a really good thing, I have
+[15:18] [unclear — Sinhala / crosstalk]
+[15:19] thing, I have a really good thing, I have a really good thing, I have a really good thing,
+[15:19] I have a really good thing, I have a really good thing, I have a really good thing, I have
+[15:20] a really good thing, I have a really good thing, I have a really good thing, I have a really
+[15:20] good thing, I have a really good thing, I have a really good thing, I have a really good thing,
+[15:21] [unclear — Sinhala / crosstalk]
+[15:21] I have a really good thing, I have a really good thing, I have a really good thing,
+[15:22] If you want to use the WGM, you can use the Waveform Generation mode.
+[15:28] You can't even know what that means.
+[15:32] You can't even know what that means.
+[15:36] If you want to use the WEDS, the BITS, the Registers, and the PAHVICS,
+[15:41] you can't even know what that means.
+[15:44] You can't even know what that means.
+[15:47] I will show you a small program.
+[15:58] Right, small program written using Arduino wrapper function.
+[16:02] Pin number 9 which is PWM supported, configured as an output pin.
+[16:10] then in the loop function out the we generate a pulse with the pulse with 250 which is more closer
+[16:20] to 5 volts right then now i'll show you the waveform now let's go up again so let me turn on
+[16:30] the video camera right right right they know the one pulse right five volts
+[16:46] [unclear — Sinhala / crosstalk]
+[17:16] I plug it.
+[17:20] I plug it.
+[17:22] Right.
+[17:22] One pulse width.
+[17:23] 250.
+[17:27] What's the voltage?
+[17:28] What's the voltage?
+[17:30] 4.72.
+[17:33] 4.72.
+[17:35] Not 5.
+[17:35] Very close to 5.
+[17:37] Right.
+[17:37] 4.72.
+[17:39] Right.
+[17:40] Then let's change this to 200.
+[17:45] Right.
+[17:45] [unclear — Sinhala / crosstalk]
+[18:15] or take up what man right or good the heck to do
+[18:21] in a way of forming can you see
+[18:23] then go Dracula the end of low
+[18:26] Spike it up again what five already he'll I know and gallery you know again a percentage of time that the pulse is high is very less
+[18:35] He will have a voltage
+[18:39] Men a will have voltage it millivolt them pen and a millivolt
+[18:43] [unclear — Sinhala / crosstalk]
+[19:13] We have to do it.
+[19:14] We have to do it by means of digital.
+[19:19] Multitasking is not the same.
+[19:21] We have to do it.
+[19:22] Right?
+[19:23] Is that clear?
+[19:24] Yes sir.
+[19:25] Any question?
+[19:28] Right.
+[19:29] Then let's move into the last slide.
+[19:34] How to get true analog output.
+[19:36] So we discussed PWM.
+[19:38] Right.
+[19:39] Our discussion is almost over.
+[19:42] It's almost over.
+[19:44] We know how to get analog like output by means of digital.
+[19:50] But how to get true analog output?
+[19:52] For example, what is the purpose of getting true analog output?
+[19:57] Let's say you want to create some music.
+[20:00] You want to create some audio.
+[20:02] Computer generated audio.
+[20:04] Computer generated music.
+[20:07] Using PWM you can generate.
+[20:10] Because you know audio is analog.
+[20:12] Right, audio is analog.
+[20:13] Audio signals are analog.
+[20:14] You can generate analog audio signal, analog light signal.
+[20:18] Using PWM, then the quality is not good.
+[20:21] But if you could generate true audio, true analog, that means continuous, the quality would be high.
+[20:29] For that kind of job, can't we generate true analog outputs?
+[20:36] Yes, we can.
+[20:37] How?
+[20:38] There are three options.
+[20:39] First one, you can switch to a microcontroller with built-in DAC, digital to analog converter.
+[20:50] So the Arduino Uno board with ATmega 328P microcontroller, we don't have that facility.
+[20:56] We don't have DAC, digital to analog converter we don't have.
+[21:01] But some microcontrollers, we have DAC facility.
+[21:05] For example, AT91. Let me write it. AT91 SAM3X8E microcontroller has 10 bit. It has 10 bit DAC. It has 10 bit DAC built in.
+[21:34] using that we can generate true analog output this microcontroller comes on Arduino dew board
+[21:45] there's an Arduino board called dew with that dew board you can get this microcontroller so true
+[21:51] analog output you can write Arduino dew board is very expensive even the Chinese version is about
+[21:58] 4000 rupees. The original
+[22:01] one is about 12000 rupees.
+[22:03] Compared to Arduino Uno
+[22:04] this is very expensive. But you can get
+[22:07] true analog output. 10 bit DAC
+[22:09] it has. 10 bit DAC.
+[22:11] 10 bit DAC means
+[22:12] the value
+[22:15] range is 0 to 1023.
+[22:17] If you give 1023
+[22:18] you get 5 volts.
+[22:20] If you give 511
+[22:22] you get 2.5 volts.
+[22:25] Likewise you can
+[22:26] get different voltages by giving different numbers. The second option, you can use digital
+[22:35] to analog breakout board. This is a cheap option, right? DAZ breakout board. It's about 300 rupees,
+[22:44] 350 rupees. But you need to use four microcontroller pins to communicate with this board.
+[22:52] You have to sacrifice 4 IO pins of the microcontroller to communicate with this board.
+[23:00] That's a downside.
+[23:01] But that's a cheap option.
+[23:04] And the third option, using RC filter, you get the PWM generated signal.
+[23:10] You get the PWM generated signal.
+[23:14] And then you pass through this signal, a RC filter, resistor capacitor filter.
+[23:21] So PWM signal input, output is analog output.
+[23:27] Digital in, analog output.
+[23:29] Now these values of R and C, resistor value and the capacitor value, depends on the PWM frequency that you use.
+[23:39] It depends on the PWM frequency.
+[23:41] And for example, you could use larger capacitor and a small resistor if you want to get larger current from this connection.
+[23:51] And this is the input digital signal, pulse width modulated signal.
+[23:55] You can see the pulse width varying pulse width.
+[23:59] And other side you can get analog output, continuous analog output.
+[24:04] Now there is a mathematical formula for calculating R and C for this kind of situation, RC filters.
+[24:11] And which is beyond the scope of this list.
+[24:14] But if you are really interested, RC filters, you can read about it.
+[24:18] In physics electronics there is a mathematical formula for this.
+[24:22] Calculating R and C in RC filters.
+[24:26] Resistor capacitor.
+[24:27] Right.
+[24:28] So these are the three options available to get true analog out.
+[24:32] With that we come to the end of pulse width modulation.
+[24:37] Any questions?
+[24:40] Right.
+[24:42] You can ask any question.
+[24:43] Now at least now you know the three options available to get the true analog output.
+[24:50] Right.
+[24:51] So if you are interested in audio generation, music generation, computer base, microcontroller
+[24:58] base embedded system base, then you can at least read about these different microcontrollers,
+[25:04] breakout boards or RC filters.
+[25:06] Right.
+[25:07] So I'm not going to do those things.
+[25:10] They are somewhat beyond the topic that we discussed. But at least, now you know the path, we have to find out more information. We cannot cover everything, but at least you know the path, then you can refer some books, some material.
+[25:32] For example, if you want to get the true analog output using RC filter,
+[25:39] you can read some electronic books for the equation to calculate R and C values.
+[25:45] Any questions?
+[25:47] Excuse me, sir.
+[25:48] Yeah.
+[25:49] In the reaction time question, what is the use of S-Ren and REN?
+[25:58] I did that.
+[26:00] The question is not clear.
+[26:02] some disturbance. Can you ask again? Sir, how can we use a timer for sRAN function and in the reaction timer?
+[26:13] Random number generation? Yes, sir. Right. Now, random number generation in the typical general purpose programming,
+[26:26] Before we call random number generator, we need to seed the random number generator.
+[26:33] Before we use the random number generator, we seed the random number generator using a random seed.
+[26:41] The random seed normally we use is the type from the system clock type.
+[26:47] Then only the random number generator becomes pure random.
+[26:50] Otherwise, if somebody knows the random number generator algorithm,
+[26:55] so he can predict the next value very easily.
+[26:58] If you know the algorithm, he can predict the next value.
+[27:00] Then it is not random.
+[27:02] But you can make it random, pure random,
+[27:04] by providing a random seed to the random number generator.
+[27:10] Typically, we use the system time because system time varies.
+[27:14] It is not a fixed value.
+[27:16] So if you seed the random number generator using system time,
+[27:20] right? It's very difficult
+[27:22] to predict the next value
+[27:24] generated by the random number generator
+[27:26] but when it comes to microcontrollers
+[27:28] we don't have system plug
+[27:30] system time we don't have
+[27:32] right? So we can
+[27:34] use something related
+[27:36] to that to see if the
+[27:38] random number generator. Some
+[27:40] random seed we can use
+[27:42] right? One way is
+[27:44] we can using a timer
+[27:46] we can measure
+[27:47] the time elapses since we started the board, since we supplied the power to board, time elapses.
+[27:56] And that time is a random time. When you trigger the reaction timer to calculate the time,
+[28:08] from the time you power up the board to the time that you used the reaction timer.
+[28:16] number. That elapsed time is a random amount of time. That time you can use to seed the
+[28:24] random number generator. That's one way. There's another way. Using a random analog
+[28:31] input, you can seed the random number generator. I think in the second or third part of the
+[28:40] exercise you have that using a floating analog input because floating analog input means analog
+[28:48] pin you have not connected to any sensor but that pin generates a random voltage
+[28:56] random analog voltage because of the electromagnetic interferences around the system
+[29:02] There are a lot of electromagnetic signals. So any pin, right, which you have not connected to any sensor is called a floating pin. That pin acts as an antenna. So it generates a small voltage. That's voltage you can convert into a number using ADC. And that voltage we don't know. That's a purely random voltage. You can use that to see the random number generally.
+[29:29] So that is in the second or third part of the exercise.
+[29:33] In the first part, it asks you to use a timer.
+[29:37] That means elapsed time you have to use.
+[29:40] Elapsed time is a purely random time because the point that you power up the board and the point that you first going to use the reaction time.
+[29:54] That elapsed time is a purely random value for different users.
+[29:58] and that value you can use to seed the random number generator.
+[30:04] Thereafter, all the random numbers you generate would be pure random.
+[30:08] Otherwise, it is not pure random.
+[30:11] Without seeding the random number generator with a random seed,
+[30:14] if you try to generate random numbers and if you know the algorithm,
+[30:19] you can predict the value very easily.
+[30:21] You got the answer?
+[30:22] Yes, sir.
+[30:23] Do we have to use two timers?
+[30:28] Eight to sixteen, three timers.
+[30:33] Yeah, yeah, yeah.
+[30:34] Yes, yes.
+[30:35] Thank you.
+[30:36] So I would like to guide you to the answer rather than giving you the answer.
+[30:42] So keep asking questions.
+[30:46] Then I'll guide you to the answer.
+[30:49] I will tell you the answer.
+[30:53] If you have any questions, you can guide us.
+[30:58] If you have any questions, you can answer your questions.
+[31:03] So, I have a few hints, tips I can give you.
+[31:07] Not the direct answer. No.
+[31:10] There is no point. You should be able to find out your own answer.
+[31:14] But I know these questions are really tough.
+[31:17] Therefore, right? So I am happy to help you.
+[31:21] help me so if you are keen in solving these questions i'm ready to help you not direct
+[31:26] answers but i'll guide you right what else you want to know right if no more questions that's all
+[31:46] for today and next week we'll start data communication right the last topic probably
+[31:53] we may have to spend two weeks to complete that two or more not one week it's a little bit lengthy
+[32:00] subject so data communication how micro controllers or embedded systems communicate with other
+[32:07] systems right data communication serial communication parallel communication synchronous communication
+[32:13] a synchronous communication right and ultimately using the easiest way Arduino using serial
+[32:22] that biggie serial print those are like very easy but what happens behind the scene first we'll learn
+[32:34] then we'll come to Arduino okay so that's it thank you thank you sir

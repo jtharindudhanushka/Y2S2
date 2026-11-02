@@ -1,0 +1,1196 @@
+30 - Serial Communication 6 - Terminals, Arduino Serial & Interrupt-driven USART  (8 Dec 2020 (afternoon, part 2))
+
+[0:00] Sorry, I lost the connection for a small moment. Now, could you please tell me which statement I was explaining when I lost the connection?
+[0:13] Seventh line.
+[0:14] Which line?
+[0:15] Seventh.
+[0:17] Seventh line, right, okay. Now, this is the UDRE flag. UDRE flag is set when the UDR is empty.
+[0:30] If UDR is not empty, this will be 0.
+[0:36] Initially, when you call the transmit char function, UDR is empty.
+[0:42] So this flag is 1, value is 1.
+[0:46] We get the negation.
+[0:48] So it will be 0.
+[0:50] Therefore, loop condition is false.
+[0:53] So we directly come to this line, line number 8 and assign the value in the parameter to UDR for transmission.
+[1:04] And when you second time call the transmit char function, right?
+[1:11] Now again UDR is empty Y.
+[1:15] When you load a character to the UDR, that character is transferred immediately to the transmit shift register.
+[1:22] So UDR is again empty.
+[1:26] So the next value you pass will be again assigned to the UDR because this loop condition would be false.
+[1:35] So again immediately assigned to the UDR.
+[1:38] But third time when you call transmit char function, UDR is not empty.
+[1:44] Because the second character UDR cannot immediately transfer to the transmit shift register.
+[1:53] Because transmit shift register contains the first character.
+[1:58] And transmit shift register is transmitting the first character.
+[2:02] So the second character is in the UDR.
+[2:05] So UDR is not empty.
+[2:08] So the third character we cannot assign to the UDR immediately.
+[2:12] That's why we use this condition.
+[2:16] If UDR is not empty, this is 0.
+[2:19] So entire value is 0.
+[2:21] We get the negation of that.
+[2:23] Then while 1.
+[2:25] So loop runs again and again until UDRE becomes 1.
+[2:33] UDR until the UDRE is set.
+[2:36] Right.
+[2:37] Now can you understand this code?
+[2:38] If anything is not clear, please let me know.
+[2:42] Right? If you want me to explain a particular part or even the entire code, please let me know.
+[2:52] Sir, while part is connected.
+[2:54] What is the while part?
+[2:56] While part is connected.
+[2:58] While part is connected.
+[3:00] While part is connected.
+[3:02] While part is connected.
+[3:04] While part is connected.
+[3:06] Right. While not operator.
+[3:10] Usart control and status register A and 1.
+[3:17] Right. Semicolon.
+[3:20] Now let's assume the value in the register is.
+[3:24] This is the value in the register.
+[3:26] Usart control and status register.
+[3:29] Right. And while.
+[3:30] x could be right x could be either 1 or 0. We don't know. Now let's take that end operation
+[3:43] of these two values x and 1. If x is 1 x could be either 1 or 0. If x is 1 1 and 1 outcome is 1.
+[3:54] If x is 0, 0 and 1 outcome is 0.
+[3:59] So outcome depends on x.
+[4:03] The second bit by bit and operation.
+[4:06] x and 0.
+[4:08] When you take x and 0, no matter the value of x, the other operand is 0.
+[4:15] So end operation, outcome would be 0.
+[4:19] Right.
+[4:19] Why?
+[4:20] Now this is the RxC flag.
+[4:23] RxC flag means receive complete flag.
+[4:27] This bit is set when the receive operation is over.
+[4:33] If the receive operation is not over, this bit is 0.
+[4:38] If the receive operation is over, this bit would be 1.
+[4:42] Initially, this bit value is 0 because we have not yet received any value.
+[4:47] If you have not yet received any value, you can't read a value character from UDR.
+[4:53] So this is 0.
+[4:55] Everything is 0.
+[4:57] 0, 0, 0, 0.
+[4:59] That means entire value is a 0.
+[5:02] Not 0 means 1.
+[5:04] That means while 1.
+[5:06] Condition true.
+[5:08] This statement, null statement is executed.
+[5:11] That is the body of the loop.
+[5:13] Then again we check the condition.
+[5:15] Still we have not received any value.
+[5:18] So x is 0.
+[5:20] Entire thing is 0.
+[5:21] not 0 means 1 while 1
+[5:25] condition true. The null statement which is in the body of the loop
+[5:30] executed. Then we again check the condition.
+[5:33] The loop while loop. Now let's assume you have received the character.
+[5:38] The character is in UDR. If you have received the character
+[5:42] then RxC flag becomes 1.
+[5:45] RxC flag becomes 1. Right. If RxC flag becomes
+[5:50] 1. If you get the negation
+[5:52] of that, right,
+[5:54] which would be 0.
+[5:56] Negation of 1, 0.
+[5:58] So while
+[5:59] entire thing is now 0.
+[6:02] While 0,
+[6:03] condition false.
+[6:05] So this null statement is not executed.
+[6:08] Execution goes to the
+[6:10] very next statement after the loop.
+[6:12] What is the very next statement
+[6:14] after the loop? This is the
+[6:16] very next statement after the loop.
+[6:18] Statement number 20.
+[6:20] so we read the character regime which is in the udr to ch variable is it okay is that clear who
+[6:30] asked that question now who wanted me to explain that part again who is that
+[6:42] at least it is in the recording
+[6:53] he can go through it
+[6:54] what else
+[6:58] sorry
+[7:03] now
+[7:10] Now in the transmit character function, again we pull this UDRE flag bit to see whether UDR is empty.
+[7:23] If it is empty, then only we load a character to UDR for transmission.
+[7:28] If the UDR is not empty, we don't load any character.
+[7:30] If you try to load a character while UDR is not empty, if you try to load a character to UDR,
+[7:40] The character that we try to load will be ignored.
+[7:44] Will be ignored.
+[7:45] Now I have a question.
+[7:47] Now I comment this line.
+[7:51] Now line number 7 I have commented.
+[7:54] And from the PC I transmit to this microcontroller simple A.
+[8:01] What would be printed back in the PC?
+[8:05] I will say that the PC is simple.
+[8:07] If you comment on the line number 7,
+[8:11] I will print the PC.
+[8:17] I will print the PC.
+[8:21] Yes, still.
+[8:23] What is the A?
+[8:25] What is the A?
+[8:27] What is the A?
+[8:29] What is the A?
+[8:31] Open bracket or close bracket.
+[8:33] I can you the CQ3.
+[8:35] I have a M5, d.
+[8:35] I have a W1, s.
+[8:36] I have a W1, w.
+[8:36] I have a W1, a w.
+[8:36] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:37] I have a W1, a w.
+[8:38] I have a W1, a w.
+[8:38] I have a W1, a w.
+[8:38] I have a W1, a w.
+[8:38] I have a W1, a w.
+[8:38] I have a W1, a w.
+[8:39] I have a W1, a w.
+[8:39] [unclear — Sinhala / crosstalk]
+[9:09] Transmit Shif Registre Transve.
+[9:11] UDR is empty.
+[9:14] UDR is empty.
+[9:15] Simple A can be UDR.
+[9:21] Simple A can be UDR.
+[9:23] UDR is not immediately transve.
+[9:27] Why?
+[9:29] Transmit Shif Registre already containing
+[9:31] the first character that is opening curly bracket.
+[9:35] And transmitter shift register is transmitting that character bit by bit.
+[9:42] E hinda meh character. Second character ega mehga transfer venni na.
+[9:46] So UDR is not empty.
+[9:48] If you try to assign the third character that is closing curly dagger to UDR,
+[9:55] when UDR is not empty, this will be ignored.
+[9:59] And e hinda thamai menna meh output.
+[10:02] again I read how it will not give up not a cat with other than the radio not
+[10:06] saying about that I thought me it's an umbrella right
+[10:13] mommy cross me data path honey made my UDR made the mind cross me the shift
+[10:21] register UDR again transfer any cross mid shift register will in my
+[10:26] transmit kara udr empty transmit shifra jishtte empty from a transmit shifra jishtte
+[10:33] eke tawathenao dhe petten start bit kai stop bit kai udr empty
+[10:39] ehimana aphe follow any character eke transmit karene opening square bracket eke me parameter
+[10:46] eke dhavilla methaning udr eke side eke transmit shifra jishtte is empty the character
+[10:55] is immediately transferred to transmit shift register.
+[11:00] So UDR becomes again empty.
+[11:03] UDR becomes again empty. Then in the next statement,
+[11:07] we call transmit cha function with simple a.
+[11:12] We can put simple a. So simple a
+[11:15] is in the parameter. That simple a we assign to UDR.
+[11:20] Simple a. But this character we cannot
+[11:23] transfer to transmit shift register.
+[11:25] Why? Transmit shift register
+[11:27] is transmitting
+[11:29] the first character.
+[11:31] That is open square bracket.
+[11:35] May character
+[11:35] transmit transmit
+[11:37] bit by bit.
+[11:39] Bit by bit.
+[11:40] Mission takes some time.
+[11:42] So the second character we cannot
+[11:44] transfer from UDR to transmit
+[11:47] shift register. Immediately
+[11:48] you can't do that. Then in the
+[11:50] third statement. Now we have
+[11:53] the loop is not running. We have commented out
+[11:55] the loop. We have commented the loop.
+[11:58] And third character we
+[11:59] try to transmit.
+[12:01] The third character is
+[12:02] closing square bracket. We try
+[12:05] to assign to UDR.
+[12:07] But UDR is not empty.
+[12:09] When UDR is not empty
+[12:11] if you try to assign a character
+[12:13] to UDR it will
+[12:15] be ignored. So ultimately
+[12:18] our microcontroller
+[12:19] transmits to the
+[12:21] PC is opening curly bracket and simple label.
+[12:27] This is what printed on PC.
+[12:30] We received this.
+[12:32] This is what printed on the PC.
+[12:34] The closing curly bracket will be ignored.
+[12:37] To prevent that, we use this loop.
+[12:41] This loop checks whether UDR is empty.
+[12:45] If the UDR is empty, for that we use UDR, right, empty flag.
+[12:50] if the UDR is empty
+[12:52] then only we assign
+[12:54] the character to UDR
+[12:56] otherwise we hold the character
+[12:58] till the UDR
+[13:00] becomes empty. So we
+[13:02] repeatedly check whether UDR is
+[13:04] empty. If so we assign the
+[13:06] character. Because if you try to
+[13:08] assign a character when the UDR
+[13:10] is not empty it will be
+[13:12] ignored.
+[13:13] Yes sir.
+[13:15] I have a question.
+[13:17] I have a question.
+[13:17] I comment out this line.
+[13:41] Line number 19 I comment. The while loop. And from the PC I sent simple A. What would be the output of computer? Your PC. The output of PC is simple A.
+[14:00] So, what is the output of this microcontroller in this system?
+[14:06] It is printed on PC.
+[14:08] Line number 19 we have commented out.
+[14:11] Can you guess?
+[14:13] Okay, I will leave it for you to try.
+[14:16] Try it.
+[14:17] Now, how do you get the output?
+[14:22] Serial output sent by microcontroller or the embedded system.
+[14:28] How do you read that in the PC?
+[14:32] For that you need a terminal.
+[14:34] Because serial communication was proposed in the mainframe era.
+[14:41] At that time terminals were used.
+[14:44] So we need a terminal.
+[14:45] To send and receive serial communication.
+[14:50] We need terminal.
+[14:51] Right.
+[14:52] So we can extend the IDE.
+[14:55] Atmos Studio IDE.
+[14:56] with a terminal.
+[14:59] Now what is a terminal?
+[15:01] This is a terminal.
+[15:02] A mainframe terminal.
+[15:05] This is called a text terminal.
+[15:08] Right.
+[15:08] This is called a text terminal.
+[15:11] And sometimes
+[15:12] this is called
+[15:14] TTY.
+[15:16] TTY means teletype.
+[15:18] TTY means
+[15:20] teletype.
+[15:22] Meaning teletype
+[15:24] writer.
+[15:25] teletype writer remote typewriter that's why tty teletype right no processing power only the
+[15:33] keyboard and the monitor no processing power this is why we call this kind of terminals
+[15:38] dump terminals right you can send characters you can receive characters and print them that's it
+[15:47] you have a keyboard you have a monitor right now we don't have these hardware
+[15:53] dump terminal now.
+[15:56] They were available in
+[15:58] 1960s but
+[16:00] today we don't have these terminals.
+[16:02] Now what we can do is
+[16:03] using software
+[16:05] we can
+[16:07] imitate hardware
+[16:10] terminal used in
+[16:12] 1960.
+[16:13] We can imitate those
+[16:16] mainframe time
+[16:17] terminals using
+[16:20] software because we don't have
+[16:22] hardware terminals now.
+[16:24] So we imitate them using software.
+[16:27] Imitate
+[16:28] means emulate.
+[16:30] Emulate. So
+[16:32] terminal emulator
+[16:34] is a software
+[16:35] that emulates
+[16:37] a hardware terminal
+[16:40] used to enter and
+[16:42] display data in
+[16:43] mainframe computers
+[16:46] over the serial port.
+[16:48] In the mainframe era,
+[16:50] the hardware terminals we use to enter and display data.
+[16:56] We can emulate or we can imitate using software.
+[17:01] Imitate or emulate using software.
+[17:05] That is called a software terminal emulator.
+[17:10] Right.
+[17:11] A terminal emulator has only the keyboard and the monitor.
+[17:15] And it can print 24 80 character lines.
+[17:21] 24 80 character lines.
+[17:22] One line is 80 characters.
+[17:25] 24 such lines display can print.
+[17:29] Display can display.
+[17:30] 24 80 character lines.
+[17:33] So these terminal emulators we can use to send data to microcontroller.
+[17:40] and also display data received from microcontroller over serial port.
+[17:46] So terminal emulator we can use to send data to an embedded system over the serial port.
+[17:53] Also, we can use terminal emulators to display data received from an embedded system over the serial port.
+[18:03] So these terminal emulators are very useful for debugging.
+[18:07] you want to see the value of a variable.
+[18:11] You can send that value
+[18:13] to a terminal emulator,
+[18:15] print the value and see whether
+[18:16] you have the right value in the variable.
+[18:20] For debugging,
+[18:21] terminal emulators are very useful.
+[18:23] Sensor calibration, they are
+[18:25] very useful. Module configuration,
+[18:27] they are very useful.
+[18:29] Data logging, they are very
+[18:30] useful. These are the
+[18:33] common users of
+[18:35] terminal emulators. Debugging,
+[18:37] Sensor calibration, module configuration and data logging.
+[18:42] Right.
+[18:43] Now we need to extend Atmel Studio IDE with a terminal emulator.
+[18:49] So what we do is from the tools menu, we go to the extensions and updates.
+[18:58] So using this, we can extend the IDE.
+[19:02] Right.
+[19:02] We go to the extensions and updates.
+[19:05] Then we get this extensions and updates window.
+[19:09] From the extensions and updates window, we select all.
+[19:15] Available downloads, all.
+[19:17] And among them, you can select terminal for Atmel Studio, which is free.
+[19:24] Terminal for Atmel Studio, right?
+[19:27] You can select.
+[19:28] And then this particular terminal emulator will be downloaded to your computer and will be configured into the view menu of your IDE.
+[19:41] You want to make a download below.
+[19:42] That is the view menu.
+[19:43] IDE is the view menu.
+[19:46] Configure menu.
+[19:47] Right.
+[19:48] Then from the view menu, then you can select terminal window.
+[19:53] After you got that
+[19:55] Then you have this menu item
+[19:58] In the view menu
+[19:59] Select terminal window
+[20:01] And then you would get this
+[20:03] Terminal emulator
+[20:05] This is the terminal
+[20:07] Text terminal
+[20:08] If you want to send characters
+[20:11] You have to type here
+[20:12] And press the send button
+[20:14] If you receive characters
+[20:16] They will be printed here
+[20:18] And this is the send history
+[20:20] And if you want to connect
+[20:21] this terminal emulator to your microcontroller
+[20:26] over the serial port. You need to select the serial
+[20:30] port that the microcontroller communicating and then click
+[20:34] the connect button. Now it shows disconnect. If you
+[20:38] connect disconnect, it will be disconnected. If it is disconnected
+[20:42] here you can see connect. Then click connect button. So
+[20:45] your terminal emulator will be connected to microcontroller
+[20:49] over the relevant COM port.
+[20:52] That is the serial port.
+[20:54] Set the board rate.
+[20:56] Receiver board rate.
+[20:57] Set the receiver board rate.
+[20:59] The receiver board rate should be matched with the
+[21:02] transmitter board rate.
+[21:03] Now in our
+[21:04] system, char and
+[21:07] closer, we use 9600
+[21:09] BPS board rate.
+[21:11] So specify the board rate
+[21:13] that you want.
+[21:15] Then specify whether
+[21:17] you want to receive ASCII,
+[21:19] the, the, the, what, the, how the received characters to be this decoded, you have to
+[21:28] select how the received characters to be decoded, there are multiple ways to decode the received
+[21:34] characters, you can print the received characters in binary, you can print the received characters
+[21:39] in hexadecimal, you can print the received characters in decimal, or you can print the
+[21:44] received characters in ascii, so I have selected ascii,
+[21:49] If you select binary, hexadecimal,
+[21:51] lodecimal, you get a numeric value
+[21:53] here. Right?
+[21:54] Then, when you send the characters,
+[21:57] again you have to select
+[21:59] how the characters to be
+[22:00] encoded. So you want to send
+[22:03] as ASCII, you want to send as
+[22:05] binary, you want to send as
+[22:06] hexadecimal, lodecimal. You can specify.
+[22:10] So in this example
+[22:11] I have said, I want to send
+[22:13] the characters in ASCII.
+[22:15] Then, select whether you want
+[22:17] to append
+[22:18] line feed and
+[22:20] carriage return characters
+[22:22] to end of
+[22:24] this character. The character that
+[22:26] you sent. End of that
+[22:28] character, do you want to append
+[22:30] line feed character and
+[22:32] carriage return character? You can
+[22:34] specify. Line feed
+[22:37] character means backslash
+[22:38] end. Carriage return
+[22:40] character means backslash
+[22:42] R. Backslash
+[22:44] N. Backslash R.
+[22:46] whether you want to append to the value.
+[22:50] Right. What are these CRLF
+[22:53] carriage return and line feed characters? Okay. Let me
+[22:57] show you an image for that.
+[23:00] I don't know whether I have it. Let me see.
+[23:06] Carriage. Right.
+[23:09] In a typewriter, carriage means
+[23:12] this role. So you need to
+[23:15] when you type it goes to
+[23:19] your right hand side. When you come to the end of the page
+[23:23] sorry when you type it goes to your left hand side.
+[23:26] Then when you come to the end of the page you need to bring that
+[23:31] again to the right hand side.
+[23:34] Then only the printing point again moves to the
+[23:38] beginning of the page,
+[23:41] paper, beginning of the paper.
+[23:43] And then you need to go to the next line.
+[23:45] For that you use this handle,
+[23:47] line feed.
+[23:49] So carriage return means when you go
+[23:51] to the end of the line, again you
+[23:52] need to come to the
+[23:54] beginning of the line to start the
+[23:57] second line. Then you
+[23:59] need to move to the next line to start.
+[24:02] So this
+[24:03] carriage return and line feed
+[24:05] they come from the type
+[24:06] write-a-days. They come
+[24:09] from type write-a-days.
+[24:11] Carry-age CR
+[24:12] means the carry-age holding
+[24:15] the paper.
+[24:17] You need to return
+[24:19] to the starting point.
+[24:21] That means beginning of the line.
+[24:23] Line feed means
+[24:24] you need to go to the next slide
+[24:26] to prevent typing
+[24:28] over the previous slide.
+[24:30] Another name for line feed, new line.
+[24:33] New line. New line character.
+[24:35] Backslash N is the new line
+[24:36] character that means line feed.
+[24:39] Right. Those two
+[24:40] characters if you
+[24:41] want to append
+[24:44] to the character that you transmit
+[24:46] you can select LF
+[24:49] and CR. But in this
+[24:50] example I don't want to append
+[24:52] LF, CR. So I
+[24:54] have not selected them. When I
+[24:56] type A and send I got
+[24:58] this reply. When I type
+[25:00] B and click send I
+[25:02] got this one.
+[25:04] Now this third one. If I send
+[25:06] then I will get n close c open curly bracket c close curly bracket instead of this terminal window
+[25:15] for the same purpose if you want you can use Arduino serial monitor right Arduino serial
+[25:23] monitor works with Atmel studio no problem now here we have extended Atmel studio with a terminal
+[25:30] simulator but if you want you can use serial monitor as well any question excuse me sir yeah
+[25:40] how can how can we use serial monitor in atmel studio no you cannot you cannot embed serial
+[25:48] monitor into atmel studio you have to use it separately right when your system you have
+[25:55] developed the system uh the code in the atmosphere you have compiled uploaded to the microcontroller
+[26:01] now microcontroller is communicating with the pc if you open the serial monitor and if you set the
+[26:08] the relevant comport and the board rate then you will see the output on the serial monitor
+[26:14] is that clear
+[26:15] and using these two buttons you can clear the output and the send history
+[26:41] Send history and the output you can clear using these two buttons.
+[26:46] By putting this tick, the output you get here, you can save to a file.
+[26:52] So this terminal emulator is that provides more facilities than serial monitor.
+[26:58] So you can save the data to a file as well.
+[27:01] Right.
+[27:01] Now let's talk about how to develop the firmware for the char enclosure
+[27:07] using wrapper functions in Arduino platform.
+[27:11] Algorithm for Arduino.
+[27:13] Char and closer, set up function, loop function.
+[27:16] Set up function, set the board rate.
+[27:19] That's the only thing we do in the set up function.
+[27:23] Then in the loop function, we check whether data is available.
+[27:28] We check whether any data is available over the serial port.
+[27:32] If so, if the data is available over the serial port, read the incoming character.
+[27:38] Read the incoming character.
+[27:41] Then send opening curly bracket.
+[27:44] Send the character you received.
+[27:47] Send the closing curly bracket over the serial port.
+[27:51] Do this again and again.
+[27:53] That's it. Very simple.
+[27:54] First you need to check whether any incoming data available.
+[27:58] Then read that data character.
+[28:02] Print opening curly bracket.
+[28:04] Print the character you receive.
+[28:06] Print the closing curly bracket over the serial port.
+[28:09] That's it.
+[28:10] Then source code.
+[28:12] Using Arduino wrapper functions.
+[28:14] Right.
+[28:14] This is the Arduino source code.
+[28:18] Setup function.
+[28:19] Loop function.
+[28:20] First set the board rate.
+[28:22] Serial.begin.
+[28:24] You use this wrapper function.
+[28:26] begin wrapper function of serial object.
+[28:31] Serial port begin function.
+[28:33] Set the board rate.
+[28:35] Now in C programming,
+[28:37] you can't directly set the board rate.
+[28:39] You set the UBRR register.
+[28:42] Then the relevant board rate is automatically calculated.
+[28:47] You set the value for,
+[28:49] you assign a value for UBRR register.
+[28:51] You set board rate register.
+[28:53] But now in Arduino, that has been more simplified.
+[28:58] So you can directly set the baud rate.
+[29:00] Actually what happens is, when you specify the baud rate as an argument for begin function.
+[29:09] Begin wrapper function, you specify the baud rate as an argument.
+[29:13] What actually happens behind the scene is, the relevant value is assigned to UBRR register.
+[29:21] Now, when you call begin function with this argument, what actually happens in this function,
+[29:29] if you go to the definition of function, you can see.
+[29:32] Inside this function, what happens is UBRR is assigned with 103.
+[29:38] That means that you have to be assigned with 103.
+[29:40] That means that UBRR is 103.
+[29:43] That means that you have to be assigned with 103.
+[29:45] That means that you have to be assigned with 103.
+[29:48] So it's very easy.
+[29:56] Not only that.
+[29:58] This function sets the character size 8 bit.
+[30:02] This function enables receiver transmitter.
+[30:07] This function is not the same.
+[30:09] If you set the board rate, you set the board rate, you set the value, you set the UBRR
+[30:15] register, you set the character size, you set the receiver, you set the transmitter,
+[30:23] you set the transmitter, everything wrapped into a one function, very user friendly one
+[30:29] function.
+[30:30] So that's why we call it wrapper functions, everything wrapped.
+[30:33] But then in the loop function, if condition, the condition of the expression of the if condition is serial.available.
+[30:47] In the serial port, we call available function.
+[30:51] This function returns number of unread characters available from serial port.
+[31:00] Number of unread characters available from serial code, this function returns.
+[31:06] If no data coming, if no incoming data, this function returns zero.
+[31:12] If at least one character, if one character is, if there is one incoming character, this function returns one.
+[31:20] If there are 10 incoming characters, this function returns 10.
+[31:24] Number of unread characters.
+[31:28] Number of incoming characters.
+[31:30] available from serial port. So if this function returns a positive value, that means we are getting data over serial port.
+[31:42] We are getting data over serial port. If so, read the next character in the incoming data, right?
+[31:51] Using the read function of the serial port, read the next character, right?
+[31:57] Next character in the serial pool.
+[32:00] Right.
+[32:01] For the first time, this will give you the first character.
+[32:04] If you call the function again, it will read the second character.
+[32:08] If you call the function again, it will read the third character.
+[32:12] Likewise, always it reads the next character.
+[32:17] Next unread character.
+[32:19] That character we put into ch variable.
+[32:23] Right.
+[32:23] That character we put into ch variable.
+[32:26] For the serial port we transmit.
+[32:30] So we use the print function.
+[32:33] We transmit open square bracket character.
+[32:37] Then we transmit the character that we read.
+[32:41] Then we transmit the closing square bracket character.
+[32:46] So these functions we use to transmit over the serial port.
+[32:51] So we don't need to worry about using RxC flag, Udre flag, Udr, Ubrr register, nothing.
+[33:04] Everything wrapped into very user friendly wrapper functions.
+[33:10] So this is the ADD code using Arduino wrapper functions to perform the same function.
+[33:19] Any question?
+[33:21] Yes, Chalat?
+[33:21] Any question?
+[33:23] I got disconnected.
+[33:25] So how can we send data to the...
+[33:30] Data? Sorry?
+[33:33] Characters like where do we type the...
+[33:38] So I didn't get your question.
+[33:40] In the serial monitor can we type data?
+[33:44] No, no. Wait. We have not discussed the serial monitor.
+[33:47] We are going to come into that. Wait.
+[33:50] Right. Now in addition to this serial.print, we can have serial.print LA. Serial.print LA. So whatever the thing you type here.
+[34:06] right now let's say you want to simply then because of LA right simple a will be appended
+[34:19] backslash R and backslash new line LN means new line print line so carriage return new line
+[34:32] characters, line feed. They are automatically appended. These characters are not printable
+[34:38] characters. You can't see these characters. But as a result of these characters, these two characters,
+[34:44] your cursor will be start blinking in the next line. Right. Cursor will be start blinking in
+[34:51] the next line. But if you use print, if you serial print, simply A, then A will be printed and next
+[34:58] to A your cursor will be blink.
+[35:01] Right.
+[35:02] Your cursor will blink next to A.
+[35:04] But you can
+[35:05] move the cursor to the next
+[35:08] line using
+[35:09] backslash R backslash A.
+[35:12] For that you have to use print
+[35:13] LN. Right.
+[35:15] So there are some other
+[35:17] wrapper functions available.
+[35:20] For example
+[35:21] serial dot
+[35:25] read string.
+[35:27] read string function.
+[35:30] Using this function
+[35:31] you can read not single
+[35:34] characters. Now read using read
+[35:36] function you can read only
+[35:38] single characters.
+[35:40] You can read entire string
+[35:42] in the serial buffer.
+[35:44] String of characters you can
+[35:46] read using this function. String of
+[35:48] characters. Then you need to assign
+[35:50] it to a string
+[35:52] type variable.
+[35:54] String type variable.
+[35:56] Right. This function returns
+[35:58] a string. Read string
+[36:00] function. Then
+[36:01] even the serial print
+[36:04] function you can get formatted
+[36:06] output. Serial
+[36:08] print
+[36:09] value you want to print
+[36:12] and then format.
+[36:14] So comma and format.
+[36:16] You can specify the format.
+[36:18] Right. Now for example
+[36:20] if you
+[36:22] use serial
+[36:24] print
+[36:26] 78. 78 will be printed on your screen.
+[36:30] If we use serial print
+[36:33] 78 comma bin.
+[36:38] Format is bin. Then the binary value of
+[36:42] 78 which is 78
+[36:45] binary. Yes, this will be printed. Serial
+[36:49] print 78
+[36:52] hex. The hexadecimal value of the 78 which is
+[36:58] 4e will be printed. And
+[37:02] serial print
+[37:05] 1.2345, 0.
+[37:12] Right. Which will print only 1. No decimal places.
+[37:17] Decimal places 0. Serial print
+[37:21] 1, 2, 3, 4, 5
+[37:25] comma 3
+[37:26] then you get 1.234
+[37:31] 3 decimal places
+[37:33] so likewise serial print function
+[37:35] you can format
+[37:37] the output you can format
+[37:39] in the serial print function
+[37:41] right
+[37:42] and also if you want to stop
+[37:44] serial communication
+[37:46] you can use
+[37:48] serial
+[37:50] Serial.end function.
+[37:54] Serial.end function will disable the receiver and the transmitter.
+[38:00] And then you can use TXD pin and RXD pin for general purpose input and output.
+[38:07] If you call serial end, you can disable receiver and transmitter.
+[38:12] And you can use RXD, TXD pins for general purpose input output.
+[38:18] I.O. you can use.
+[38:20] If you want to again enable transmitter and receiver, you have to call begin function.
+[38:26] Using the begin function, you can enable receiver, transmitter and also set the board rate and character size.
+[38:32] Using the end function, you can disable transmitter and receiver so that you can use the relevant TXD and RXD pins as IO pins.
+[38:44] These are some of the useful wrapper functions related to, not all, there are other functions.
+[38:51] You better go through the Arduino documentation.
+[38:54] These are some of the useful functions, useful wrapper functions for serial communication.
+[39:00] Any question?
+[39:01] No, right.
+[39:03] Then when you send transmit data using print function, where can we get that output?
+[39:09] Right.
+[39:10] In our PC, we have serial monitor.
+[39:13] Actually serial monitor is a part of the Arduino IDE.
+[39:16] Right.
+[39:17] Part of the Arduino IDE.
+[39:19] Which is called.
+[39:20] Which is the terminal emulator of Arduino IDE.
+[39:24] So this emulates or imitates hardware terminal.
+[39:29] Using software.
+[39:31] Right.
+[39:32] So first it shows the serial port.
+[39:36] That the terminal connected.
+[39:39] Right.
+[39:39] Serial port.
+[39:40] we used to communicate with the development board,
+[39:45] Puno board or microcontroller.
+[39:48] So this is the serial port that the terminal communicates over.
+[39:53] And then the board rate.
+[39:55] Using this drop down list, you can select the board rate.
+[39:58] And then this is the text box where you need to type
+[40:02] the data that you want to send.
+[40:05] Now I have typed A, press the button N.
+[40:09] I got N close A.
+[40:12] I type B, press the button
+[40:13] send, got N close B.
+[40:16] Now I am trying to send
+[40:17] C. So the value
+[40:19] you want to send over the serial port,
+[40:22] this is the place you have
+[40:23] to type. And if you want to
+[40:25] append
+[40:27] carriage return character
+[40:29] or line feed character to this
+[40:31] value, you have to select
+[40:33] from this list.
+[40:35] Whether you want to append carriage return character
+[40:37] or line feed character or both.
+[40:40] Now I have selected
+[40:42] no line ending.
+[40:43] No characters are appended
+[40:45] to the value that I set.
+[40:48] Right. Then the
+[40:49] send button. Using that
+[40:51] you can send data to an embedded
+[40:54] system over the serial port.
+[40:56] And then when you receive data
+[40:57] from an embedded system
+[40:59] they will be displayed
+[41:01] in this display area.
+[41:04] Right. Over the com port 3
+[41:05] serial port the data you receive
+[41:07] will be displayed here.
+[41:10] And there are two display options
+[41:12] available.
+[41:13] One is auto scroll.
+[41:16] When you, when the
+[41:17] values are
+[41:19] printed automatically
+[41:21] right, the
+[41:24] list is scrolled down.
+[41:25] If you select auto scroll.
+[41:27] So the list will be scrolled down automatically
+[41:29] when more values are printed.
+[41:32] Then the second one is
+[41:33] show timestamp. So using
+[41:36] this option you can select
+[41:37] whether you want to print
+[41:39] the time that the
+[41:41] values received. A
+[41:43] received at this time. B received
+[41:45] at that time. The value
+[41:48] received time.
+[41:50] There are many data you received.
+[41:52] So you can print
+[41:53] their time stamp.
+[41:55] The time that the value received
+[41:57] using this option. And if you want
+[41:59] to clear all these
+[42:00] the value in the sent text box
+[42:03] and also the value in
+[42:05] the display area. Clear
+[42:07] out you can clear that now have you got answers for your questions related to serial monitor
+[42:15] yes sir so this serial monitor is easier to use but this is not very sophisticated as
+[42:22] the one we downloaded and combined into atmosphere it doesn't matter which one you use right both
+[42:30] perform well. Any question?
+[42:33] No. Right.
+[42:34] Then now
+[42:35] the CHA enclosed
+[42:38] system we develop
+[42:40] using C language and also
+[42:42] using Arduino wrapper functions.
+[42:45] In the both options
+[42:46] we use
+[42:48] polling. Now even
+[42:50] Arduino uses
+[42:52] polling and
+[42:53] we also use polling.
+[42:56] Now we know that polling is not
+[42:58] a good option
+[42:59] when it comes to performance.
+[43:02] Can we do serial
+[43:03] communication using
+[43:05] interrupts? Yes.
+[43:08] Now that's what we are going to discuss
+[43:10] next. Cha enclose
+[43:12] using interrupts.
+[43:13] Receives characters from PC
+[43:16] encloses them with square
+[43:18] brackets and transmits
+[43:20] enclosed characters
+[43:22] back to the PC
+[43:23] using interrupts.
+[43:26] Right. Algorithm.
+[43:28] Main function
+[43:29] main function algorithm. Now this time we declare an array, character array, char array with three
+[43:37] elements and in that array first and last elements are initialized with enclosing brackets. So we
+[43:47] declare an array, a char array with three elements, 0, 1, 2. First and last elements we initialize
+[43:57] with opening
+[43:59] and closing
+[44:00] brackets. Now the
+[44:03] idea is
+[44:04] the received character we
+[44:07] are going to assign to the middle element.
+[44:10] Then entire array
+[44:11] contains the enclosed character.
+[44:14] That's the idea.
+[44:15] Then array index. We declare
+[44:17] array index and initialize it with
+[44:19] 0. Array index variable
+[44:21] we declare and initialize with 0.
+[44:23] Set the board rate. Set the
+[44:25] character size as 8 bits.
+[44:27] enable, receive and transfer.
+[44:30] And enable, receive
+[44:31] complete interrupt.
+[44:33] Enable, receive complete interrupt.
+[44:36] Enable, global interrupt.
+[44:38] When you receive a character,
+[44:40] when a new character
+[44:41] present in the UDR,
+[44:44] when UDR
+[44:45] gets a new character,
+[44:47] receive complete
+[44:49] interrupt is triggered.
+[44:51] So when a new
+[44:53] character, UDR
+[44:55] gets a new character,
+[44:57] The receive complete interrupt triggers.
+[45:01] Now we can use this interrupt to read the new character.
+[45:04] We can use this interrupt to read the new character.
+[45:09] Okay.
+[45:09] Let's handle that interrupt.
+[45:11] Handle receive complete interrupt.
+[45:13] Right.
+[45:14] Read from data register to array.
+[45:17] Data register is the UDR.
+[45:18] Read the character from data registers to middle element of the array.
+[45:23] Then disable receive complete interrupt.
+[45:27] Now disable the receive complete interrupt because if you get another character, you don't have space in the array to load.
+[45:34] You need to transmit the received character first before you get the second character.
+[45:41] So we disable the receive complete interrupt.
+[45:44] By doing that, we force the serial port to hold the next character in the serial buffer.
+[45:52] So if there is another character coming in, now we disable the interrupt so that serial port has to hold it in the serial buffer.
+[46:01] The idea is when you got a character, first you have to transmit it with the scrub records.
+[46:07] Then you can receive the second character.
+[46:09] So we disable receive complete interrupt.
+[46:12] And we enable data register empty interrupt.
+[46:16] That is for transmitting.
+[46:19] Data register empty interrupt.
+[46:20] Right.
+[46:21] UDRE interrupt.
+[46:25] USART data register empty interrupt
+[46:27] V enable. Then we need to transmit.
+[46:30] If the data register UDR is empty
+[46:34] then this interrupt ISR
+[46:37] is automatically executed.
+[46:40] Data register empty interrupt. If the data register UDR is empty
+[46:44] this ISR is automatically called.
+[46:47] In that ISR, we write the value from array to data register.
+[46:54] From array to data register UDR, we write the value.
+[46:58] So array index is 0, initialize with 0.
+[47:03] So first element, value in the first element, we write to the data register.
+[47:08] Then we increment the array index.
+[47:10] So array index becomes 1.
+[47:12] Then we check whether entire enclosed character.
+[47:15] that means all three
+[47:17] elements transmitted.
+[47:20] If no,
+[47:22] write, we exit.
+[47:23] So again, when the data
+[47:26] register is empty,
+[47:28] this ISR
+[47:30] is called. The second
+[47:32] character we write to the data
+[47:33] register. Increment the index.
+[47:36] Index becomes 2.
+[47:38] Check whether entire
+[47:40] enclosed character written.
+[47:42] No. Exit.
+[47:43] When UDR
+[47:44] isr becomes empty. This isr is again called. Write the third element value into the data
+[47:55] register. Increment the index. Index becomes 3. Check whether entire enclose character
+[48:02] written. Yes. If so, reset the array index to 0. Disable the data register empty interrupt.
+[48:09] So this interrupt we disable.
+[48:13] Enable the receive complete interrupt.
+[48:16] Enable this.
+[48:17] Can you understand?
+[48:18] Any question?
+[48:21] Right.
+[48:22] If so, let's move into source code.
+[48:24] Right.
+[48:25] We use ior.h header file for ior definitions.
+[48:28] Interrupt.h header file because we are using interrupt proteins.
+[48:33] Right.
+[48:33] Declare char array.
+[48:36] Initialize the char array.
+[48:37] First element with open square bracket.
+[48:40] Second element with closing square bracket.
+[48:43] Middle element with just a space.
+[48:46] Declare array index as a global volatile variable.
+[48:50] Because we are going to use this variable in the interrupt service routines.
+[48:56] And initialize that with zero.
+[48:58] Array index.
+[48:59] Set the UBRR with the relevant value to get the 9600 BPS.
+[49:06] 103%. Specify the character size as 8 bits.
+[49:11] Enable receiver and transmit. Enable receive
+[49:14] complete interrupt. Enable receive complete
+[49:18] interrupt. This is the bit to enable receive complete interrupt in the
+[49:22] USART control and status register bit. Enable
+[49:27] global interrupt using set interrupt function. Then
+[49:30] endless loop. In this example we don't have anything
+[49:34] any other task to do. So endless loop is empty.
+[49:39] But you could use this to do some other task.
+[49:44] Right. In this example, we don't have other tasks. So we can keep it empty.
+[49:47] But because now everything is handled by interrupts, so you can use
+[49:52] the main loop to do something else, some computational task.
+[49:56] This is the receive complete interrupt. When the data receive
+[50:00] operation is over, this ISR is automatically executed.
+[50:04] receive complete interrupt. In the receive complete interrupt, we assign the value, the new character in the UDR to the middle element of the array.
+[50:14] Middle element of the array. Then we disable receive complete interrupts. This is the bit to disable, so we set it 0.
+[50:24] disable the receive complete interrupt
+[50:27] enable
+[50:29] data register empty interrupt
+[50:31] data register empty interrupt
+[50:33] for transmission
+[50:34] enable
+[50:35] when the data register is empty
+[50:38] this ISR is automatically called
+[50:41] data register
+[50:43] UDR empty
+[50:44] interrupt vector
+[50:46] USAT UDR empty
+[50:49] interrupt vector
+[50:50] this is automatically called
+[50:52] in that
+[50:53] the value in the array
+[50:55] we assign to UDR.
+[50:58] So i is 0
+[50:59] initially.
+[51:01] So we assign the value
+[51:03] the first element value that is the
+[51:05] opening scar bracket
+[51:07] to UDR for transmission.
+[51:09] Then we increment
+[51:11] i by 1.
+[51:13] So post fix operator
+[51:15] now if you look at this statement
+[51:17] there are several
+[51:19] operations. One is the assignment
+[51:21] operation. Another
+[51:23] operation is the increment operation. Now increment operation is a post fix operation. So assignment
+[51:30] happens first. Then only the increment happens. So if I is 0, CH 0, our first element value,
+[51:39] that is the opening square bracket which is assigned to the UDR and then only the I is
+[51:45] incremented from 0 to 1. Then using if condition
+[51:49] we check whether i equals 3. If i equals 3
+[51:53] that means we have assigned all values in the
+[51:57] array to the UDR because the
+[52:01] last element index is 2. If i has become 3
+[52:05] means you have assigned the value in the last element also.
+[52:10] So by checking whether i equals 3
+[52:13] we can make sure the entire enclosed character
+[52:17] has been transmitted. Then if so,
+[52:21] initialize, set the i array index, reset
+[52:25] the array index to 0. Right? Reset the array
+[52:29] index to 0. Then we disable
+[52:33] data register empty interrupt and enable receive complete interrupt.
+[52:38] Right? We disable data register empty interrupt
+[52:41] and enable receive
+[52:43] complete in turn.
+[52:45] So this ISR is automatically
+[52:47] executed when
+[52:48] data register becomes
+[52:51] empty. This ISR is
+[52:53] automatically executed when
+[52:55] receive complete
+[52:57] operation is over.
+[53:00] Can you understand this
+[53:01] source code? Could you please give
+[53:03] me five minutes?
+[53:04] I need
+[53:06] to do something else.
+[53:08] I will come back in five minutes.
+[53:09] right okay any question no right if so the same program using label constant same one with label
+[53:23] cost right so more understandable because you can see right all the bit names right for example here
+[53:34] RxEn. Receiver
+[53:37] enable bit. Transmitter
+[53:39] enable bit.
+[53:41] Receiver complete
+[53:43] interrupt enable.
+[53:44] RxCIE. Receiver
+[53:46] complete interrupt enable. So
+[53:48] these things more
+[53:50] understandable.
+[53:52] Okay. With that we come to
+[53:55] end of serial communication.
+[53:57] So now you know that how to send
+[53:59] data, how to receive data
+[54:00] in the context of embedded system.
+[54:03] Now if anything is, if any part of this serial communication slide set, if you want me to explain again, now you can ask. No issue at all, I can explain.
+[54:16] Sir, excuse me sir.
+[54:18] Yeah.
+[54:19] This is regarding the asynchronous data transfer.
+[54:25] Yes.
+[54:26] Sir, can you tell us about 5-bit to 9-bit?
+[54:33] Yes.
+[54:34] So, if you look at the start bit, it's always zero.
+[54:44] I am not sure what I am going to say about MSB, but I am not sure what I am going to say about 8bit characters.
+[54:57] Right, I am not sure what I am going to say about 8bit characters.
+[55:00] If I am going to close the character, I am going to close the start bit and stop bit.
+[55:07] So, we can use 8 bit characters.
+[55:11] It's default to 8 bit.
+[55:13] We can talk about the special situation.
+[55:18] We can talk about serial monitor, terminal window,
+[55:23] and we can talk about the serial monitor.
+[55:28] We can talk about the same characters.
+[55:31] um how do you cut the way up because i got an embedded systems they cut a
+[55:36] ton of energy in one it came but it system making five bit characters you have no any
+[55:41] embedded system in five bit characters received
+[55:45] how do they oh it's a good a a p character size
+[55:49] second specific five kilo systems the game
+[55:53] the day did not communicate can know it cut up with it
+[55:56] So, if you want to specify the character sizes, do you specify the character sizes?
+[56:09] No, I don't think it's a character size.
+[56:12] If you want to specify the character sizes, you can specify the character sizes.
+[56:18] The default character sizes are 8 bits.
+[56:21] If you use this character size, you specify it.
+[56:25] If you don't specify the character size, you don't need to specify the source code.
+[56:33] This is the default character size.
+[56:35] If you use this character size, you specify it.
+[56:39] to the one-on-one,
+[56:40] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:41] the one-on-one,
+[56:42] the one-on-one,
+[56:42] the one-on-one,
+[56:42] the one-on-one,
+[56:42] the one-on-one,
+[56:42] the one-on-one,
+[56:42] the one-on-one,
+[56:42] and correct okay right where are men made in the specific current make that
+[56:49] default take a mega only now and it was specified around doing
+[56:53] me ready come with the different character sizes or the main ready current
+[56:57] economy the killer see example like a quick assembly example like a
+[57:01] quick visitor of the new one page 250 data sheet taking this year panaswany page
+[57:08] This is a lesson.
+[57:10] What is it?
+[57:12] We don't know.
+[57:14] We have a specific assignment.
+[57:16] This is a data login.
+[57:18] This is a basic exercise.
+[57:20] After the serial monitor,
+[57:22] the terminal window
+[57:24] and the PC
+[57:26] and the PC
+[57:28] is a C-Sharp program.
+[57:30] We have a C-Sharp program.
+[57:32] We have a C-Sharp program.
+[57:34] We know C-Sharp
+[57:36] [unclear — Sinhala / crosstalk]
+[58:06] c-sharpe-fugl.
+[58:07] c-sharpe-fugl.
+[58:07] c-sharpe-fugl.
+[58:07] c-sharpe-fugl.
+[58:07] c-sharpe-fugl.
+[58:07] c-sharpe-fugl.
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] 
+[58:07] is
+[58:13] the
+[58:19] exercise right
+[58:21] right
+[58:25] temperature data
+[58:27] microcontroller read
+[58:29] read
+[58:31] usb port
+[58:33] computer
+[58:35] [unclear — Sinhala / crosstalk]
+[59:05] the data to a website.
+[59:06] So I have a few hints that we use C-sharp to use a serial port component to a toolbox.
+[59:15] So I have to use an embedded system and an interactive application.
+[59:22] I have to use an interactive application design and development.
+[59:26] I have to combine this with a project.
+[59:31] I can project it.
+[59:36] Embedded system, data capture, sensors, and C-Sharp application,
+[59:43] and the data base.
+[59:46] The data is generated by crystal reports.
+[59:49] And the traditional keyboard and mouse data is used to use
+[59:53] a photomated application.
+[59:56] The first thing is to do with the foundation.
+[1:00:00] The embedded system is not available.
+[1:00:04] The interactive application design and development is available.
+[1:00:08] The web is available.
+[1:00:10] If you have a relationship, you can link it.
+[1:00:14] And the first thing is to do with the exercise.
+[1:00:20] data to get a C-Sharp application.
+[1:00:24] This is the C-Sharp application.
+[1:00:28] It's available in the database,
+[1:00:32] menu, tool bus, crystal report.
+[1:00:36] It's available in the same way.
+[1:00:40] We have completed
+[1:00:44] the syllabus. So next week I am going to discuss
+[1:00:48] the bii.
+[1:00:49] the exsatis Izs IZI.
+[1:00:49] the exsatis IZI.
+[1:00:50] 
+[1:00:50] 
+[1:00:50] 
+[1:00:50] 
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] the exsatis IZI.
+[1:00:50] I don't show you the answers. I will guide you how to find the answer.
+[1:01:04] I have a look.
+[1:01:05] 
+[1:01:05] 
+[1:01:05] 
+[1:01:05] 
+[1:01:05] I have a look.
+[1:01:05] 
+[1:01:05] I have a look.
+[1:01:06] I have a look.
+[1:01:06] I have a look.
+[1:01:06] I have a look.
+[1:01:06] I have a look.
+[1:01:06] I have a look.
+[1:01:06] I have a look.
+[1:01:06] I have a look.
+[1:01:06] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:07] I have a look.
+[1:01:08] I have a look.
+[1:01:08] I have a look.
+[1:01:08] I have a look.
+[1:01:08] I have a look.
+[1:01:34] [unclear — Sinhala / crosstalk]
+[1:02:04] account. I will help you to find the answer. But I am not going to show you any answers.
+[1:02:16] I will help you to find the answer. You have to find answers by yourself.
+[1:02:21] I will do next week. Okay. If so, that's all for today. Thank you.
+[1:02:27] Thank you, sir.

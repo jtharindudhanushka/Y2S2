@@ -1,0 +1,166 @@
+[0:04] error you cannot accept you cannot allow because the application is a critical application right
+[0:12] the error board rate error percentage must be zero for communication otherwise you cannot rely
+[0:18] on the communication at least a 0.1 percent board rate error is there you can't rely on the
+[0:26] communication because the the the application is a critical application now let's assume right some
+[0:36] a guided missile you are controlling remotely remotely controlling a guided missile
+[0:44] so data communication between the controller and the missile missile is on the air that data
+[0:51] communication must be 100% accurate. You can't leave 1% error in the communication. 0.1%
+[1:01] no. 0.01% no. 0% errors in the communication because it's a very critical application.
+[1:11] A small error in the communication right would result a friendly fire. You would hit the
+[1:19] friendly forces, not the enemy. So how do we achieve 0% communication error,
+[1:29] baud rate error for critical application? Possible. How? In such cases, how to minimize
+[1:37] baud rate error? Use precision crystals. You have seen some crystals have very precise
+[1:47] frequencies. Now this is an example. 18.432. 18.432 megahertz. That is the frequency of the crystal.
+[2:00] Now we have used 16 megahertz crystal. Now instead of a 16 megahertz crystal, if you use this kind
+[2:06] of precision crystal, then what would happen? Right. Let's calculate the bode rate again.
+[2:11] Board rate register value.
+[2:14] So to calculate the board rate register value.
+[2:17] You have to divide.
+[2:18] F CPU.
+[2:21] You have to divide by.
+[2:24] 16.
+[2:25] Multiplied by the.
+[2:28] Board rate.
+[2:30] Then minus 1.
+[2:32] Right.
+[2:33] F CPU is now.
+[2:35] 18.
+[2:37] Megahertz.
+[2:38] 18.432.
+[2:40] Megahertz.
+[2:41] 4, 3, 2 hertz.
+[2:45] Right.
+[2:47] Divided by 16 into 9,600.
+[2:52] This is the baud rate we need.
+[2:54] Minus 1.
+[2:55] Which will give you exact value.
+[2:58] 119.
+[3:00] No decimal parts.
+[3:02] So exact 119 you can assign to UBRR register.
+[3:07] No baud rate error.
+[3:08] 0% baud rate error.
+[3:10] If you want 0% bode rate error for communication, for a critical application, use precision crystals for FCPU. Use precision crystals for FCPU. That's why this kind of precision crystals are available in the market.
+[3:40] That is clear.
+[3:48] Is that clear?
+[3:49] Yes.
+[3:50] Any question?
+[3:51] You?
+[3:52] Clear?
+[3:53] Yes.
+[3:54] Yes.
+[3:55] Yes.
+[3:56] Yes.
+[3:57] I have a question.
+[3:58] I mean, precision, very accurate crystals, now you should be able to answer.
+[4:06] There are precision crystals.
+[4:10] There are critical applications.
+[4:15] There are no communication errors.
+[4:19] Now you know.
+[4:21] Because this is a university program you must know.
+[4:25] If you know all the bits and bytes, everything.
+[4:33] [unclear — Sinhala / crosstalk]
+[5:03] The reason behind purpose of this precision crystal.
+[5:08] Now in the Arduino Uno board, the crystal that you are using is not a precision crystal.
+[5:12] Because Arduino Uno board we don't use for critical applications.
+[5:16] Now when you are designing critical applications, then you have to think about this factor.
+[5:21] If the application is a critical application.
+[5:24] If you want 0% communication error.
+[5:27] So if you can't tolerate any error.
+[5:31] Some applications, yes.
+[5:32] Now you don't need to think about the military applications.
+[5:36] Let's say you are developing a flight controller for a drone.
+[5:39] Then the data communication between the flight controller in the drone
+[5:44] and the embedded system in your remote controller.
+[5:50] There are two embedded systems.
+[5:52] One is the flight controller on the drone.
+[5:57] The other one is the embedded system in the remote controller.
+[6:00] They communicate.
+[6:02] right now then it's a critical application it's not a military application but it's a
+[6:07] critical application even it's a toy uh a great drone critical application one and error a
+[6:16] communication and error could result the drone to crash now think about if it crash onto a crowded
+[6:25] place some event you are going to video record using a drone
+[6:45] there are a lot of people in on the ground so drone is flying with a video camera over those
+[6:53] people. Now due to some communication error, suddenly, right, you lose the control of the drone
+[7:03] and it crash. Drones are plastic propellers, the issue will not be very serious. But some drones,
+[7:15] there are carbon fiber propellers because carbon fiber is less, the weight is less,
+[7:23] and also very strong right plastic quality about a very high carbon fiber carbon fiber
+[7:45] so it's a critical application it's a critical application so such applications right when you
+[7:52] you are developing but many people develop such applications but they don't consider
+[7:57] the critical critical part the the the how serious this application they don't consider
+[8:03] they just want the functionality they don't think about the possibility of errors worst case scenarios
+[8:11] they don't consider but now when you are developing you must consider because you know
+[8:18] how to solve these issues.
+[8:21] You have to consider
+[8:22] worst case scenarios.
+[8:25] How to minimize the errors.
+[8:27] How to make the communication
+[8:28] the board rate error
+[8:30] percentage zero.
+[8:32] Because you know now how to
+[8:34] handle these
+[8:36] problems. Any question?
+[8:39] Excuse me sir.
+[8:40] Yes.
+[8:41] The timer
+[8:43] also being changed
+[8:46] by the change of the fcpu yes yes correct what can we do about that yes then you have to when
+[8:54] you calculate the timer frequency right you have to use the fcpu frequency of cpu if you if you
+[9:03] change the crystal fcpu would be changed then timers then the pwm then adc frequency pulse
+[9:16] with modulation pwm frequency timer frequency everything will be changed you have to do the
+[9:24] the calculations proper.
+[9:26] What if they also have
+[9:28] a floating point
+[9:29] number or something?
+[9:32] Yeah, that can happen.
+[9:34] So these values
+[9:35] would result a floating point.
+[9:38] Now one option
+[9:40] is you can multiply the
+[9:42] frequency or divide the
+[9:44] frequency by a prescaler
+[9:46] and then convert
+[9:48] this into an integer value.
+[9:50] That is one option.
+[9:52] If you multiply or divide this
+[9:54] 18.43 to
+[9:56] by some prescaler,
+[9:58] then you get an integer value.
+[10:01] Then you can feed
+[10:02] that integer value to timer,
+[10:05] ADC or PWM.
+[10:07] Then you can avoid floating
+[10:08] point part.
+[10:10] So these are the things you have to think
+[10:12] about.
+[10:13] Communication is
+[10:14] a problem.
+[10:18] So how do we handle it?
+[10:20] So for that you can use prescalers.
+[10:23] What else?
+[10:24] What are the other questions you have?
+[10:26] Now for example, as she asked,
+[10:29] now let's say you are using this 18.432 crystal.
+[10:33] 18.432 means 18.432.
+[10:40] Right, this is megahertz.
+[10:41] It means 18.432 30 hertz.
+[10:49] Now if you divide this by 1024 prescaler,
+[10:52] you will get 18000. This is the integer value and this integer value you can use for as time of frequency.
+[11:02] So 18, this is 18kHz as time of frequency. ADC frequency, PWM calculations you can use. This is integer.
+[11:16] So that's why you have prescalers.
+[11:18] And if you have 432 values, you can match with the prescalers.
+[11:24] You can't do that.
+[11:26] If you have the value of the crystal, you can match with the prescalers.
+[11:32] Is that clear?
+[11:33] Okay, right.
+[11:34] Then we need to talk about the source code.
+[11:37] Right?
+[11:38] But I have a meeting at 11 o'clock.
+[11:42] Right?
+[11:43] So I have the department.
+[11:44] So therefore now I am going to stop and we'll meet at one o'clock.
+[11:51] Okay.
+[11:52] Right.
+[11:52] Okay.
+[11:53] Thank you.
+[11:54] Thank you.
+[11:54] Thank you.

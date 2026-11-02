@@ -1,0 +1,88 @@
+[0:02] Same hardware but different firmware.
+[0:05] main function
+[0:06] main function
+[0:07] algorithm
+[0:09] configure PB5, PB5 is
+[0:12] Arduino pin number 13 where LED
+[0:14] connected, onboard LED connected
+[0:17] as an output
+[0:18] configure PD4 as an input
+[0:20] not necessary because already input
+[0:22] pull up PD4 which is the timer
+[0:24] pin, right timer 0
+[0:26] pin, pull up, select
+[0:28] the clock source as timer 0
+[0:30] then set the counter
+[0:32] to do 5.1 initial value
+[0:34] Enable the count overflow interrupt. Enable interrupts. Enable global interrupts. Endless loop. Now inside the endless loop you could do something else. But in this example we don't have any other task so it is just an endless loop.
+[0:57] Right, when the counter counts 5 clock pulses and overflows, when counter counts 5 clock
+[1:08] pulses and overflows, Tov flag is raised, Toebit is set and the timer or the counter interrupts
+[1:18] CP.
+[1:19] So we have to handle that interrupt.
+[1:21] count the overflow interrupt handle it. Tuggle the LED reset the counter to 251. That's it. Very simple. Can you understand this algorithm? Right. Then source code. Before we move into source code, let's talk about this register.
+[1:38] timer interrupt mass register which has toie bit timer overflow interrupt enable bit
+[1:47] using this bit you can enable or disable timer overflow interrupt right if you enable then the
+[1:55] cpu will be enabled when timer overflows by default this is disabled zero therefore
+[2:02] interrupts are disabled.
+[2:05] You can enable it. Now we are going to use
+[2:08] interrupts instead of
+[2:09] polling the TOV bit.
+[2:12] Polling TOV bit is a waste.
+[2:14] Right. So score.
+[2:16] Now we are going to use interrupts.
+[2:17] So we need to include interrupt.h.
+[2:20] Right. Similar to the
+[2:21] previous example.
+[2:24] Configure PD5
+[2:25] as an output. Configure
+[2:27] PD4 as an input. Not necessary.
+[2:30] Pull up PD4.
+[2:31] PD4 is the type T0
+[2:34] that is the type external
+[2:35] timer pin for the timer
+[2:38] 0 then
+[2:39] timer counter control
+[2:42] register B
+[2:42] clock select bits set the clock
+[2:46] source as T0
+[2:47] where the button is connected
+[2:49] timer counter register initial value
+[2:52] 251
+[2:53] enable
+[2:54] timer counter overflow interrupt
+[2:58] using timer
+[3:00] interrupt mask register, right, enable the interrupts, time overflow interrupts.
+[3:05] Enable global interrupts, SCI function which is a set interrupt function defined in interrupt.h.
+[3:12] Endless loop. You can use this loop to do something else. But in this example,
+[3:17] we don't have any other task, therefore it's empty. But if you have some other task, you can use it.
+[3:23] Right. Then, this is the ISR. When timer overflows from 255 to 0, this interrupt service routine is executed. This is called automatically. And this is the vector you have to use. Timer 0. You are using timer 0. Overflow vector. OVF vector.
+[3:44] If you are using timer 1, timer 1 overflow vector, the correct vector you have to use.
+[3:51] Then inside the vector, toggle the LED and reset the counter to 251.
+[4:01] But now we are not going to clear the TOV flag.
+[4:04] Why?
+[4:05] When you are using the ISR, when you are using interrupts, TOV flag is automatically cleared
+[4:12] by the hardware.
+[4:13] So we don't need to worry about it.
+[4:15] But if you are not using interrupts, then you have to explicitly clear the TOE flag.
+[4:22] But now you don't need to clear the TOE flag, flag bit because you are using interrupts,
+[4:28] hardware will clear it.
+[4:30] Only thing you have to do is you have to handle the correct ISR.
+[4:36] That's it.
+[4:37] This is the most efficient way of using counters.
+[4:41] If you are using Arduino platform, you don't have access to these facilities.
+[4:46] You don't have access to ISR because there is no, because the attach interrupt wrapper
+[4:54] function is for external interrupts.
+[4:57] But for timer interrupts, no wrapper function.
+[5:01] And the timers, there is no direct access to timers.
+[5:06] Some Arduino libraries use timers.
+[5:08] That's a different story.
+[5:09] as a firmware developer, you don't have direct access. There are no wrapper functions to give
+[5:15] you direct access to timers. A limitation of Arduino platform. But if you are using C,
+[5:21] you have full access to hardware. These are hardware timers, hardware counters. This is
+[5:28] the most efficient way. Exactly on five button presses, LED will be toggle. Not less than five,
+[5:35] not more than five. Exactly. Can you understand this code? Any question? Yes, any question?
+[5:45] Right. Now with that we have come to the end of counters. But still we have not talked about timing,
+[5:52] measuring time. That's the next part. So now we know how to use timers as counters to count an
+[6:00] event the next part is how to use timers for measuring time counting part is over any question
+[6:08] no if no questions right so now i'll stop the morning session and we'll see you at one o'clock
+[6:17] okay thank you thank you thank you sir

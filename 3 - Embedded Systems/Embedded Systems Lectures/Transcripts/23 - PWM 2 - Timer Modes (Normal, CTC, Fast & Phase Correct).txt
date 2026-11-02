@@ -1,0 +1,882 @@
+23 - PWM 2 - Timer Modes (Normal, CTC, Fast & Phase Correct)  (24 Nov 2020 (afternoon, part 1))
+
+[0:00] Right, this is where we stop at the end of morning session PWM Frequence. Before we move forward, do you have any question?
+[0:10] Sorry. Right, no questions. Let's move on.
+[0:17] Timer counter registers. Now we saw that PWM, pulse width modulation depends on timers. PWM uses timers.
+[0:27] So we need to talk about timer counter registers that are related to pulse width modulation.
+[0:35] Right.
+[0:35] Okay.
+[0:36] We are going to talk about timer counter control register, TCCRB.
+[0:41] Now there are two registers, TCCR, TCCR A, TCCR B.
+[0:48] Now here simple N denotes the timer number with the timer 0, timer 1, timer 2 like that.
+[0:55] There are two registers TCCR-A and TCCR-B. Not only for timers, some other peripherals also. For example, universal, synchronous, synchronous, receiver and transmitter, USART.
+[1:13] It also has two registers, TCCRA, that is not TCC, it is something like U, starting with U, I can't exactly remember the term.
+[1:30] Now, two control and status registers.
+[1:32] The reason is if there are more control bits, if the 8 bit register is not enough to accommodate more control bits, then there can be multiple registers with control bits.
+[1:48] Sometimes three registers.
+[1:51] A, B, C.
+[1:53] So in this case TCCR A, TCCR B.
+[1:57] Now let's talk about TCCR B.
+[2:00] Now in the TCCRB register, some of the bits we have already, some of the control bits we have already discussed.
+[2:06] For example, CS bits, clock select bits we have already discussed.
+[2:11] But let's talk about them again in relation to PWM.
+[2:17] Now using clock select bits, you can set the pre-scale.
+[2:22] We already know that.
+[2:24] We have learned that.
+[2:25] Last week we discussed that part.
+[2:27] Using clock select bits we can set the pre-scale.
+[2:33] If you put 0, 0, 0 to 3 clock select bits you can disconnect the clock source.
+[2:40] Then timer won't count.
+[2:42] If you put 0, 0, 1 for the clock select bits that means you directly connect internal clock to the timer.
+[2:50] That means then the timer would run at the speed of CPU.
+[2:54] frequency would be fCPU
+[2:57] timer frequency would be equal to
+[3:01] frequency of the CPU
+[3:03] but if you want to run the timer
+[3:05] the counting part
+[3:07] if you want to do that slower
+[3:09] you can use a prescaler
+[3:13] to scale down the frequency of the CPU
+[3:17] right you know that
+[3:20] we discussed that
+[3:21] Another important control bit in this register is WGM.
+[3:28] WGM bit.
+[3:32] Again, simple and in all the timer, whether it's a timer 0, timer 1, timer 2, timer 3, like that.
+[3:38] And number 2 indicates that there are two bits at least.
+[3:45] O3 means WGM0, WGM1 and WGM2.
+[3:52] Here you have only WGM2.
+[3:55] Then somewhere else there should be WGM1 and WGM0.
+[4:02] We will come to that later.
+[4:04] Here WGM means waveform generation mode.
+[4:09] Wave form generation mode.
+[4:12] W for waveform, G for generation, M for mode.
+[4:17] Bit number 2.
+[4:19] Now where are bit number 1 and bit number 0?
+[4:22] Let's see.
+[4:23] They are in another register, another control register.
+[4:27] That is TCCRA, timer counter control register A.
+[4:33] In the timer counter control register A, you can find WGM0 and WGM1.
+[4:40] So actually there are three bits, three control bits, WGM0, WGM1 and WGM2.
+[4:48] WGM2 is in other register, TCCRB register.
+[4:52] Right.
+[4:53] These waveform generation mode bits, we can use to specify the waveform generation mode.
+[5:02] There are a number of waveform generation modes.
+[5:05] Normal mode, phase correct PWM mode, clear time on compare, that is CTC mode, and finally fast PWM mode.
+[5:16] What are they? Let's discuss.
+[5:19] Right. The first one is normal mode.
+[5:23] If you set 0004, WGM0, WGM1 and WGM2, three waveform generation modes, bits, if you set 0, you get the normal mode.
+[5:37] In the normal mode, timer increments, TCNT register, that is timer counter register, timer increments, timer counter register in the normal mode, right?
+[5:53] normal mode timer implements timer counter register right from 0 to 255 and then
+[6:00] overflows into 0 and again implements from 0 to 255 whenever the tcnt register overflows
+[6:11] from 255 to 0 now i'm i'm taking 255 assuming that this is an 8 bit timer right so if it is a
+[6:21] 16 bit timer different value that is
+[6:25] 65535 you have to use.
+[6:30] Now whenever the timer counter register
+[6:34] TCNT register overflows from
+[6:37] 255 to 0 the timer sets
+[6:41] TOV bit time overflow
+[6:46] flag bit TOV bit of
+[6:50] TIFR
+[6:52] timer interrupt flag
+[6:54] register. What does that
+[6:56] mean? That's what we discussed
+[6:58] last week. In the
+[7:00] normal mode, timer
+[7:02] behaves as timer
+[7:04] or a counter. That's why we call
+[7:06] it normal mode. That's what we
+[7:08] discussed last week. Timer
+[7:10] counter.
+[7:12] Timers we discuss.
+[7:15] Timer
+[7:15] behaves as a timer or timer
+[7:18] behaves as a counter.
+[7:19] when the mode is normal.
+[7:22] So the default value for these
+[7:23] WGM1,
+[7:26] WGM0, WGM2,
+[7:28] these bits, default value is 0.
+[7:31] And that's why
+[7:31] without talking about those
+[7:33] bits, we used counters
+[7:36] and timers last week because
+[7:38] their default value is 0, 0, 0.
+[7:40] So they are in the normal mode.
+[7:43] Timers, counters, they are
+[7:44] in the normal mode.
+[7:45] So that's why we didn't discuss
+[7:47] those bits
+[7:48] last week.
+[7:50] When they are 0, the timer is a timer
+[7:53] or a counter.
+[7:55] If the timer is
+[7:57] fed with internal clock,
+[8:00] it's a timer.
+[8:01] If the timer is fed with
+[8:03] external clock pulses,
+[8:06] it's a counter.
+[8:07] Last week we discussed.
+[8:09] Is that clear? Any question?
+[8:11] Right.
+[8:13] Then let's talk about the third one.
+[8:16] CTC.
+[8:17] clear timer on compare
+[8:19] CDC means
+[8:22] clear timer on compare
+[8:23] not Ceylon Tobago Corporation
+[8:26] clear timer on compare
+[8:28] the third mode
+[8:29] in this mode if you set this mode
+[8:32] timer increments
+[8:34] TCNT register
+[8:36] timer counter register from 0
+[8:38] to 255
+[8:39] assuming 8 bit timer
+[8:41] so timer increments
+[8:43] TCNT register from 0
+[8:46] to 255. Then overflows to 0, starts again from 0. We load a value between 0 to 255 to OCR,
+[8:58] output compare register. To the output compare register, we load a value between 0 to 255.
+[9:06] Whenever a compare match occurs, timer clears TCNT register.
+[9:13] Timer clears TCNT register.
+[9:16] And sets OCF bit of TIFR.
+[9:21] OCF bit means output compare match flag.
+[9:26] Output compare match flag bit of timer interrupt flag register.
+[9:31] That is set.
+[9:32] Right.
+[9:33] Let me explain it again.
+[9:34] I need some space to write.
+[9:37] Now CTC, normal mode we don't need to discuss because we have discussed that last week.
+[9:46] Now let's talk about CTC mode.
+[9:49] In the CTC mode, time increments, right, time increments TCNT from 0 to 255.
+[9:59] Then starts again from 0.
+[10:03] Load a value between 0 and 255 to OZR, output compare register.
+[10:14] Whenever a match occurs, timer clears TCNT and sets OCF bit of TIFR.
+[10:27] Whenever compare match occurs, timer clears TCNT, timer count register and sets OCF, output compare match flag, output compare match flag bit of timer interrupt flag register.
+[10:43] Right.
+[10:44] So this is different to the normal mode.
+[10:47] This is different to the normal mode.
+[10:48] For example, now let's say you want to trigger something when timer or counter counted 5.
+[10:58] So what you can do is, right, you can assign TCNT 0.
+[11:07] Then you can check if, right, TCNT equals 5.
+[11:13] If TCNT equals 5, you can trigger whatever the activity you want to do.
+[11:18] You can use the CDC mode.
+[11:21] In the CDC mode, when the compare match occurred, sorry, sorry, sorry.
+[11:27] This is the normal way we do the job.
+[11:30] In the CDC mode, what we do is TCNT 0, OCR, you assign 5.
+[11:37] Then you check if OCF is set.
+[11:42] That is what you check.
+[11:43] If there is a compare match occurred, TCNT counts 5 times, then there is a compare match occurred, OCF is set.
+[11:51] You can trigger whatever the activity you want to do.
+[11:55] And after that, do you have to set that TCNT again to 0? No.
+[12:01] Timer clears TCNT to 0 automatically.
+[12:05] Again, timer counts.
+[12:07] When it counted to 5, match occurs, OCF flag is raised.
+[12:13] If the OC flag is set, you can trigger the activity again.
+[12:17] This mode is, again in this mode, CDC mode,
+[12:22] we use the timer as a timer or counter as a counter.
+[12:27] Right?
+[12:28] But little bit different to normal mode.
+[12:32] In the normal mode, right, we don't assign any value to OCR.
+[12:37] But here you assign a value to OCR.
+[12:40] If there is a match, then OCF flag is set.
+[12:45] Using the OCF flag, we can determine whether a match occurred or not.
+[12:50] But still the timer is a timer or counter.
+[12:53] No, there is no relationship to PWM.
+[12:57] Is that clear?
+[12:58] We didn't discuss this part last week.
+[13:01] But now you know.
+[13:03] Is that clear?
+[13:04] Any question?
+[13:05] Yes, sir.
+[13:06] Yes.
+[13:06] At what time do we need CTC?
+[13:10] Now, the thing is this.
+[13:12] Now, if you want to, let's say,
+[13:16] now, the task that you are doing with CTZ mode,
+[13:25] you can do with the normal mode as well.
+[13:29] And the task you do with the normal mode,
+[13:31] you can do with the CTZ mode as well.
+[13:34] Right?
+[13:36] So, these are two different modes available with the timer.
+[13:40] Right. So I cannot give you exact answer now why actually we need CDZ mode. Right. It's a very good question. Right. But I cannot give you answer right now. I'll check and let you know.
+[13:57] At the moment, what I can see is both modes can be used, right, to do the same thing.
+[14:06] But there should be, as you asked the question, there should be some specific reason to have a CDC mode.
+[14:17] Right.
+[14:17] I'll try to find out it and let you know.
+[14:20] Thank you.
+[14:21] That's a very good question.
+[14:23] Right.
+[14:23] What else?
+[14:24] Anything else?
+[14:24] Now is that clear how CTZ mode works? The CTZ mode is not very widely used. I don't know again why. I need to find out that. It is not widely used. The normal mode is widely used. Again there should be a reason for that. Why normal mode is preferred over CTZ mode when the timers and counters are used.
+[14:45] Right. Now if CTZ mode is clear, then let's move into the second mode.
+[14:52] That is phase correct mode. Phase correct PWM.
+[14:59] Right. Phase correct PWM. What is that? Let's see.
+[15:04] This is in this mode. Timer increments TCNT register.
+[15:10] We know that. Timer increments TCNT register.
+[15:15] from 0 to 255 assuming 8 bit time and then there is no overflow. That's the interesting part. No overflow. The timer after that, right, increments from 0 to 255 and then decrements from 255 to 0.
+[15:40] So when you feed pulses to the timer, timer increments TCNT register from 0 to 255 and then increments TCNT register from 255 to 0.
+[15:55] No overflow.
+[15:57] It goes to the maximum value then increments.
+[15:59] We load a value between 0 and 255 to OCR.
+[16:10] Fout compare register, load available.
+[16:14] Right.
+[16:14] Whenever a compare match occurs, right, whenever a compare match occurs, during increment,
+[16:25] during increment, that is very important, during increment, then waveform generator,
+[16:31] right, then waveform generator clears, clears, clears means low.
+[16:39] OC pin and sets.
+[16:43] Sets means high.
+[16:45] OC pin when sets the OC pin.
+[16:49] If compare match occurs during decrement.
+[16:57] So what we do is in this mode.
+[17:02] Phase correct PWM mode.
+[17:06] Right.
+[17:07] Phase correct PWM mode.
+[17:09] Timer increments, TC and T register from 0 to 255.
+[17:15] Then no overflow but decrements from 255 to 0.
+[17:20] We load a value to OZR.
+[17:22] Whenever compare match occurs during increment,
+[17:26] waveform generator clears OCP and sets OCP in if compare match occurs during decrement.
+[17:35] Right. Using a graph, let me show this. Right. Right. I'll erase all these things and draw a graph. Right. Right. Draw a line. Then again, I lost everything. Right. Now what happens is this is zero and this is top. Top piece 255.
+[18:02] Then, it's very difficult.
+[18:07] Time counter register is increments from zero to...
+[18:13] Oh, come on.
+[18:14] It will work.
+[18:15] Now you can understand how useful the whiteboard is.
+[18:20] You know, technology is better than...
+[18:23] Increment.
+[18:25] Decrement.
+[18:26] Zero.
+[18:27] Then again increment.
+[18:29] Again decrement.
+[18:30] decrement about elevating
+[18:33] right
+[18:34] let's take another color
+[18:37] this is OCR
+[18:39] right
+[18:40] let's get the previous color
+[18:43] right
+[18:44] then we need to draw another graph
+[18:46] OCP
+[18:47] I need to show you the OCP
+[18:50] OCP 5 volt
+[18:52] 0 volt
+[18:53] now you can see
+[18:56] this is the place where
+[18:57] compare match occurs
+[19:00] during increment. Ozypin is high.
+[19:04] When a compare match occurred during increment,
+[19:08] it goes low. It goes low. Let me take another color.
+[19:12] It's high and it goes
+[19:16] low when a compare match occurs. It goes low. And then
+[19:20] timer increments and decrement. During the decrement
+[19:24] also compare match occurs. And then what happens is
+[19:28] waveform generator sets
+[19:30] OC pin high
+[19:32] right
+[19:33] then again compare match occurs
+[19:36] during increment
+[19:37] then what happens is
+[19:40] OC pin goes low
+[19:41] and again decrement
+[19:44] compare match occurs
+[19:45] OC pin becomes high
+[19:48] now this is the PWM
+[19:51] signal on OC pin
+[19:52] right
+[19:53] when a compare match occurs
+[19:56] during the increment
+[19:57] waveform generator sets OC pin low
+[20:01] and when the compare match occur during the decrement
+[20:06] OC pin is set high
+[20:08] you get this PWM signal
+[20:13] can you understand any question
+[20:16] this is called phase correct PWM
+[20:19] timer increment with the match
+[20:22] pin low OC pin
+[20:24] timer decrement with the match
+[20:27] no overflow
+[20:31] then the next mode
+[20:33] fast PWL
+[20:35] let's see
+[20:36] in the past again I will draw a graph
+[20:38] top 0
+[20:40] right
+[20:41] timer increments to top
+[20:44] then overflow
+[20:45] timer increments to top
+[20:47] then overflow
+[20:48] timer increments to top
+[20:50] then overflow
+[20:51] right
+[20:52] Then another color
+[20:56] OCR
+[20:57] Then OC pin graph
+[21:01] 5 volts, 0 volts
+[21:06] OC pin is high
+[21:07] Whenever compare match occurs
+[21:10] Waveform generator sets OC pin low
+[21:14] And then whenever an overflow happens
+[21:18] Waveform generator sets OZ pin high
+[21:22] Again whenever there's a compare match occurs
+[21:26] Waveform generator sets OZ pin low
+[21:29] Right?
+[21:30] When there's an overflow
+[21:33] Waveform generator sets OZ pin high
+[21:37] When there's a compare match occurs
+[21:39] OZ pin goes low
+[21:41] When there's an overflow OZ pin goes high
+[21:45] This is what we discussed today morning
+[21:49] Which is called fast PWM
+[21:54] This is called phase correct PWM
+[22:00] OCP
+[22:02] Fast correct PWM we discussed today morning
+[22:07] In the fast correct PWM
+[22:10] When the timer increments from 0 to 255
+[22:14] and then overflows. During the increment, when there's a compare match occurred, whenever
+[22:20] compare match occurred, OC pin is set to low. OC pin goes low. And then when time overflows
+[22:29] from 255 to 0, OC pin goes high. Again, when a compare match occurs, OC pin goes low. And
+[22:38] And when timer overflows, OZ pin goes high.
+[22:42] In the phase correct mode, timer increments from 0 to maximum value and then decrements to 0.
+[22:49] Again increments to maximum value, then decrements.
+[22:52] During the increment, during the timer increment, compare match occurred.
+[22:56] If compare match occurs during the increment, OZ pin goes low.
+[23:02] If during the decrement, compare match occurs, then OZ pin goes high.
+[23:08] During the increment, Kampriyameh chokers, Ozypene goes low. During the decrement, Kampriyameh chokers, Ozypene goes high. Can you understand? Any question?
+[23:18] No questions?
+[23:36] Come on.
+[23:38] You should have a question.
+[23:41] Why we need two different modes for PWM?
+[23:44] Now you just
+[23:46] Few minutes ago you asked me
+[23:48] Why we need CTC and normal modes
+[23:50] For divers
+[23:51] So then why don't you ask
+[23:54] That question
+[23:55] Two PWM modes, why
+[23:58] There is a reason
+[23:59] I know answer for that
+[24:01] Why we need CTC I will find out
+[24:04] And let you know
+[24:05] But this one I know
+[24:07] There is a very valid reason
+[24:09] Just look at these two graphs
+[24:11] Maybe I am a lesson
+[24:13] but you can have a rough idea right in the fast PWM mode so you get more pulses PWM pulses right
+[24:25] because timer goes to high then overflow again goes to high then over you get lot of PWM pulses
+[24:33] in a given period of time.
+[24:37] A lot of PWM pulses in a given period of time
+[24:41] you get in the fast PWM mode.
+[24:45] In the phase correct PWM mode, you get
+[24:49] lesser number of pulses in a
+[24:53] given period of time. The same
+[24:57] if you take a particular time period, within that time
+[25:01] period you get more PWM
+[25:03] pulses if you
+[25:05] select fast PWM
+[25:07] mode. If you select
+[25:09] phase correct PWM mode
+[25:11] you get lesser number
+[25:13] of pulses within that time
+[25:15] frame. Just looking at these
+[25:17] two graphs you can get that idea.
+[25:20] Can you? Can you
+[25:21] understand that? Can you see
+[25:23] that difference? Yes sir.
+[25:25] Right good. Now what
+[25:27] does that mean? More
+[25:29] pulses means
+[25:30] Within a given time more pulses that means more frequency, high frequency.
+[25:37] Within a given period of time less pulses means less cycles.
+[25:44] Less pulses means less cycles. Less cycles means low frequency.
+[25:49] Fast PWM will give you high frequency pulse with modulated output.
+[25:57] Now, phase correct PWM will give you low frequency pulse with modulated output for a given prescalar you have set.
+[26:10] For a given prescalar, let's say you have used 128 prescalar and fixed FCPU.
+[26:19] Your FCPU is fixed, you have selected a particular prescalar, right?
+[26:24] PWM frequency depends on
+[26:27] Prescaler and the
+[26:29] Clock frequency
+[26:31] Of CPU that's what
+[26:33] We discussed in the previous slide
+[26:35] Right yes
+[26:39] PWM frequency depends on
+[26:41] CPU frequency and prescaler
+[26:43] Right for a given timer this is
+[26:45] Fixed CPU frequency also
+[26:47] Fixed because
+[26:49] You have to change the crystal
+[26:50] Of the development board if you want to
+[26:53] Change the frequency
+[26:54] Prescaler you can adjust
+[26:56] Now given prescaler
+[26:59] In a given prescaler
+[27:01] Fast PWM
+[27:02] Will give you
+[27:03] Higher frequency
+[27:06] And phase correct
+[27:08] Will give you lower frequency
+[27:10] So fast PWM
+[27:13] Is suitable
+[27:14] For devices that require
+[27:17] High frequency
+[27:19] PWM signals
+[27:20] Like LEDs
+[27:21] because if you give low frequency PWM signal for an LED
+[27:26] you would see the flickering effect.
+[27:29] So you have to give high frequency, right?
+[27:32] PWM signal for LEDs kind of devices.
+[27:37] This is suitable for those devices.
+[27:40] At the same time, without changing the prescaler
+[27:45] you can get a low frequency PWM signal
+[27:49] Using phase correct PWM.
+[27:52] That is suitable for low frequency devices.
+[27:55] Like motors.
+[27:57] Preferable for driving motors.
+[28:00] Phase correct PWM.
+[28:01] Can you understand?
+[28:02] Because if you give high frequency PWM signal for a motor.
+[28:06] Even motor can't start.
+[28:08] So you.
+[28:08] Because it takes time to start.
+[28:10] You have to give time.
+[28:12] For a given prescale.
+[28:14] You can have two different frequencies.
+[28:17] For example, let's say for a given prescale, this frequency is 1 kilohertz or 1000 hertz, let's assume, then this would be 500 at the same time, half of that.
+[28:34] Without changing the prescaler, you will get 500 hertz PWM signal with this.
+[28:40] So just changing the mode, you can drive high frequency supported PWM devices as well as low frequency supported PWM.
+[28:53] So the phase correct is traditionally, as usually, it is preferred mode for driving motors.
+[29:02] And fast PWM mode is the preferred mode for driving high frequency supported devices like LEDs.
+[29:12] Is that clear? Questions?
+[29:14] Sir, excuse me sir.
+[29:16] Yeah.
+[29:16] If we want to drive an AC bulb, which means a normal bulb, we want to have a relay.
+[29:28] If you use a relay, just on and off. You can't use relays with PWM.
+[29:34] Because you cannot quickly turn on and off relays.
+[29:38] So how can we drive a normal bulb as dimmen?
+[29:43] Yes, there is a device called TRIAC, right, electronic device called, let me write it, TRIAC.
+[29:51] A three pin device, right, it's a three pin device, like transistor, there are three pins.
+[29:58] One is the gate and other two pins are T1 and T2.
+[30:02] So you supply a signal to the gate and these two T1 and T2 pins, they can, right, you can connect the bulk to these two pins and the power supply.
+[30:19] Depending on the signal you supply to the gate, right, these two pins can control 230 volts high voltage.
+[30:27] that is called TRIAC. If you just search TRIAC circuits with microcontrollers or something like
+[30:36] that you can find out many many schematic diagrams but I don't encourage you to use TRIACs
+[30:42] because the risk for an electrical shock is high if you are going to use domestic power supply.
+[30:52] If you know what you are doing and if you have previous experience, then only move forward.
+[31:03] the Nislea�p the T1-2LB.
+[31:33] [unclear — Sinhala / crosstalk]
+[32:03] You should know at least there are possibilities.
+[32:25] Sir, what did you do?
+[32:27] What did you do?
+[32:29] You can't go to the self-checkout library.
+[32:33] You can't go to the recording.
+[32:37] You can't go to the self-checkout library.
+[32:39] You can't go to the RFID.
+[32:41] So you take the book to the counter,
+[32:45] but there is no librarian or staff member at the counter.
+[32:49] You can't go to the counter.
+[32:51] So you have to do everything.
+[32:53] countries you have these libraries. My mother named PhD currently, my experience I make
+[32:59] here. So you have to go to the library, get the book from the shelf, go to the counter
+[33:05] at the counter. There is RFID reading. A reader covered in a bottom because of the tag in
+[33:11] the book, book, a tag, book, a spine, a tag, a dollar, the middle one, because of the tag,
+[33:17] The reader automatically detects the book.
+[33:19] When I come closer to the reader, it automatically detects my ID.
+[33:32] When I come closer to the reader, it automatically detects my ID.
+[33:34] If I get a little receipt, I get a little receipt, and I get a little receipt.
+[33:40] the ina a g ld2 mc8aqT8A3.0
+[33:42] the
+[33:43] the
+[33:43] 
+[33:43] the
+[33:43] the
+[33:43] the
+[33:43] the
+[33:42] the
+[33:42] 
+[33:42] the
+[33:42] the
+[33:42] 
+[33:42] 
+[33:42] the
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] the
+[33:42] the
+[33:42] the
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] the
+[33:42] the
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] 
+[33:42] hist
+[34:10] You can make the security guard as you can use it.
+[34:16] If you take the printer to print out, it's a technical problem.
+[34:23] You do the process well.
+[34:25] You go to the reader and the reader recognizes the book.
+[34:29] Reader recognizes your library membership and the book is issued to you.
+[34:33] Process is clear.
+[34:34] You have done the job well.
+[34:36] I do a when-bill-a, a you-a, a.
+[34:37] the.
+[34:38] the.
+[34:38] the.
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] 
+[34:38] [unclear — Sinhala / crosstalk]
+[35:08] you?
+[35:09] I have a people.
+[35:10] I do.
+[35:10] I do.
+[35:10] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] 
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:11] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] I do.
+[35:12] 
+[35:12] I do.
+[35:12] I do.
+[35:12] 
+[35:12] 
+[35:12] 
+[35:12] 
+[35:12] 
+[35:12] 
+[35:12] If you have any of these nbooks, you can't register.
+[35:19] You can't register.
+[35:20] If you have any sensors, you can't use RFID sensors.
+[35:28] If you have any sensors, you can't detect the sensor.
+[35:33] It's a simple method.
+[35:35] If you have any current, you can't use any current.
+[35:41] like
+[35:43] the thing is that
+[35:45] the
+[35:47] the
+[35:49] the
+[35:51] the
+[35:53] the
+[35:55] the
+[35:57] the
+[35:59] the
+[36:01] the
+[36:03] the
+[36:05] the
+[36:07] the
+[36:09] If you have a RFID signal, you can conceal it.
+[36:13] If you have aluminum foil, you can use it.
+[36:19] If you have a camera, you can use it.
+[36:23] If you have aluminum foil, you can use it.
+[36:26] Depending on the system, some systems, it checks the metal detectors and all these facilities are used.
+[36:35] [unclear — Sinhala / crosstalk]
+[37:05] I have a time.
+[37:06] [unclear — Sinhala / crosstalk]
+[37:13] Let's go back to the lesson.
+[37:32] Right. Then, Combits.
+[37:42] Compare output mode bits.
+[37:45] Com A1, Com A0, Com B1, Com B0.
+[37:50] Using these bits, you can specify the output compare mode, whether inverted or non-inverted.
+[37:58] Today morning, we discussed two modes.
+[38:00] Inverted mode, non-inverted mode.
+[38:02] We can specify that using com mode.
+[38:05] Com bits of the time counter control register A.
+[38:11] TCCR A.
+[38:13] Right.
+[38:13] I told you there are two OCR registers, two comparators, two waveform generators, two OC bits.
+[38:24] That's why you have four com bits.
+[38:27] Right.
+[38:27] So inverted and uninverded mode you can specify.
+[38:31] Right.
+[38:31] Then OCR output compare register
+[38:35] Again two registers
+[38:37] Right
+[38:38] So you can use these registers to hold values to be compared against time account register
+[38:44] And if register is 8 bit
+[38:47] OCR can hold any value between 0 to 2 to the power of 8 minus 1
+[38:53] That means 0 to 255
+[38:54] If the timer is 16 bit
+[38:57] the register can hold
+[38:59] any value between 2 to the power
+[39:02] 60, 0 to 2 to the power
+[39:03] 16 minus 1. 0 to
+[39:05] 65,535.
+[39:08] Then, timer interrupt
+[39:10] flag register. In the timer
+[39:12] interrupt flag register, we already
+[39:13] discussed timer overflow bit.
+[39:16] Today we are going to discuss two more
+[39:18] bits, OCF bits.
+[39:19] These OCF bits are
+[39:22] set when compare
+[39:23] match occurs between OCR
+[39:26] and
+[39:26] TC and T registers.
+[39:29] OCF output compare match
+[39:31] flag bits are sent.
+[39:33] There are two bits. Why?
+[39:35] Two OCR registers. Therefore, there are
+[39:37] two bits. OCFA
+[39:39] OCFB. If you want
+[39:41] to clear these bits,
+[39:43] you need to send them because they are
+[39:45] flag bits. Last week
+[39:46] we discussed.
+[39:49] The flag bits, if you want to clear the flag
+[39:51] bits, you have to send them.
+[39:53] When a compare match occur,
+[39:55] they are automatically
+[39:57] same. Is that clear?
+[39:59] You have to know whether compare match occurred
+[40:01] or not. We can use
+[40:03] these flag bits. If the flag bit is
+[40:05] 1, that means
+[40:07] compare match occurred.
+[40:09] If the flag bit is 0, no
+[40:11] compare match occurred yet.
+[40:13] Now these bits are very important.
+[40:15] So you can determine, you can
+[40:17] check whether compare match
+[40:19] occurred or not.
+[40:21] Just looking at these bits.
+[40:23] Now if the bit value is 1, that means
+[40:25] Compartment occurred. Then you need to
+[40:27] Clear it. Then only again
+[40:29] It will be set. So to clear
+[40:31] It, you have to set. Because
+[40:33] It's a flag bit. It's not
+[40:35] A simple control bit.
+[40:37] To clear the bit, that means to set
+[40:39] 0 to the bit
+[40:41] You have to assign value
+[40:43] 1 to the bit. When you assign value
+[40:45] 1, the bit becomes
+[40:47] 0. Because
+[40:49] It's a flag bit. Right.
+[40:51] then interrupt registers
+[40:53] timer interrupt mass register
+[40:55] we already discussed this bit
+[40:57] TOIE timer overflow
+[40:59] interrupt enable bit
+[41:00] now we are going to discuss these two bits
+[41:03] OCIE
+[41:04] output compare interrupt enable
+[41:07] output compare match interrupt enable
+[41:09] A output compare
+[41:11] match interrupt enable
+[41:13] B so these two bits
+[41:15] enable or disable
+[41:17] timer counter compare
+[41:19] match A, match B interrupts. When there is a match between the TC and the register and OCR register,
+[41:27] you can trigger an interrupt. If the OCR register is A, then you need to enable the interrupt,
+[41:34] you need to set this bit. If the OCR register is B, then to enable interrupts, you need to set this
+[41:41] bit. So when there is a match, you can trigger an interrupt by using these two bits. You can
+[41:47] enable the interrupts. Can you understand? Any question? Before we move into a practical example?
+[41:56] No. Right. System 15, fade. Gradually fades the light of an LED again and again. We are going to
+[42:07] dim an LED. That's an analog effect. Gradually we are going to dim an LED. To do that we need to
+[42:15] reduce the voltage supplied to the LED. If you
+[42:19] supply the proper operating voltage to the LED, LHD will
+[42:23] illuminate with the full brightness. But if you
+[42:27] gradually decrease the voltage supplied to the LED
+[42:30] then you can dim the LED. That means you need to
+[42:35] get a varying, continuously varying voltage
+[42:39] from an output pin. We know how to get 0 or 5
+[42:43] that is digital. Now we are going to get
+[42:47] a continuously varying voltage
+[42:51] from an output. Analog-like output
+[42:55] by means of digital using PWM.
+[42:58] First we should know
+[43:01] what are the IOPs that support
+[43:06] for PWM. Not all IOPs supported
+[43:10] for PWM. Right. So in this micro control only 6 pins are PWM supported. They are right.
+[43:19] This is one of those pins. OC2 pin. Output compare pin number 2. In Arduino Uno board
+[43:27] that is pin number 3 with this tilt character. OC2B. OC0B, OC0A. These are related to timer
+[43:37] 0, 5 and 6 pin. These two are related to timer 1. OC1, OC1A, OC1B. Output compare 1A, output
+[43:49] compare 1B. And these two pins, OC2A and OC2B related to timer 2. There are three timers.
+[43:57] Each timer, you have two OCR registers, two comparators, two waveform generators, two OC
+[44:06] pins. That's why you have 6 OC. These two pins related to timer 0, 8 bit timer. These two pins
+[44:13] related to timer 1, 16 bit timer. And this pin and that pin, they are related to timer 2, again 8 bit
+[44:22] timer. In the Arduino Uno board, these PWM supported pins are denoted using this tilt character. So
+[44:30] other pins, other IOPs are not PWM supported. So analog like output by means of digital you can get
+[44:39] using PWM supported pin. Okay. Right. Now let's talk about the hardware design of our system.
+[44:48] Schematic diagram. This is the LED we are going to dim. That LED I have connected to OCAP. OC0A.
+[45:00] Output compare A pin of timer 0.
+[45:05] 8 bit time.
+[45:07] That is PD6 Arduino pin number 6.
+[45:10] Uno pin number 6.
+[45:12] Can we connect the LED to pin number 8?
+[45:15] No.
+[45:15] Because that is not PWM supported.
+[45:18] You have to use PWM supported pin.
+[45:20] This is one of the common mistakes we make.
+[45:23] We connect the device to some other pin.
+[45:27] Which is not PWM supported.
+[45:29] But then we try to get analog like effect from the device.
+[45:33] No.
+[45:34] You have to connect the device to PWM supported pin.
+[45:38] In this case I have connected the LED to OCA pin of timer 0.
+[45:45] Timer 0 is 8 bit timer.
+[45:47] OCA pin.
+[45:49] Output compare A pin.
+[45:51] Right.
+[45:52] So all other things are pre-connected.
+[45:54] Oscillator pre-connected.
+[45:55] Reset button.
+[45:56] This resistor.
+[45:57] Pull up resistor.
+[45:57] all are pre-connected on the UNO board. So externally on the breadboard you need to connect
+[46:02] this LED with a current limiting resistor to pin number 6 Arduino pin number 6. Right.
+[46:10] So in the wiring diagram you can see pin number 6 which is a PWM supported pin. Right. Denoted
+[46:18] by this tilt character. Here digital PWM means tilt character and you connect the LED
+[46:26] through a resistor to the anode of the LED, cathode connected to the ground power supply.
+[46:32] Right. Then firmware design algorithm. Main function. The main function algorithm. Start.
+[46:42] Configure PD6 as an output. PD6 means OC0AP. Where the LED connected. Configure that pin as an output
+[46:52] because LED connected to that pin.
+[46:54] Specify waveform generation mode as fast PWM.
+[47:00] We use fast PWM while we need high frequencies
+[47:04] to avoid any flickering effect.
+[47:07] So we use fast PWM.
+[47:10] So waveform generation mode we said fast PWM.
+[47:14] Then specify compare output mode as non-inverted.
+[47:18] Right?
+[47:19] Compact output mode as non-inverted
+[47:22] Which is the widely used mode
+[47:25] If you like you can go for inverted mode
+[47:27] Set the PWM frequency as 1 kilohertz or 1000 hertz
+[47:32] High frequency
+[47:33] Then enter into the endless loop
+[47:36] Inside the endless loop
+[47:39] Set the pulse width to 255
+[47:42] Set the pulse width to 255
+[47:44] That means assign 255 to OZR register
+[47:49] Set the pulse width.
+[47:50] If the pulse width is greater than 0, set the output compare value to pulse width.
+[47:57] Set the pulse width to OCR register.
+[48:01] Here we initialize a variable to 255 and then we check whether pulse width is greater than 0.
+[48:08] If so, we assign pulse width to output compare register OCR.
+[48:13] 30 milliseconds delay
+[48:16] decrement pulse width by 5
+[48:19] go again
+[48:20] so this is a loop
+[48:22] within the endless loop
+[48:24] we run another loop
+[48:25] every iteration of the loop
+[48:28] we decrement the pulse width by 5
+[48:30] starting from 255
+[48:32] starting from 255
+[48:33] every iteration we decrement the pulse width
+[48:36] and that decremented value
+[48:39] we assign to the OCR register
+[48:41] that means we gradually
+[48:43] reduce the volume.

@@ -1,0 +1,82 @@
+[0:08] now the problem is if can you now connect a TTL microcontroller directly to serial port no that
+[0:19] That is not possible. Why? If you connect TPL microcontroller directly to the serial port,
+[0:26] there will be a voltage mismatch.
+[0:29] Now, in the TPL logic, we say 2 to 5 was logic high.
+[0:35] 0 to 0.8 was logic low.
+[0:38] But in the serial port, logic high means minus 3 to minus 25.
+[0:44] Logic low means plus 3 to plus 25.
+[0:47] Therefore we need to match the voltages. We need to match the voltages from TtL to RS232 and also RS232 to TtL. To match the voltages we need a line driver.
+[1:05] We need a line driver.
+[1:07] Now can you understand the purpose of line driver?
+[1:11] Why we need a line driver?
+[1:14] Right.
+[1:14] The line driver is in between the microcontroller and the serial port.
+[1:22] The line driver converts TTL voltages to RS232 voltage levels and also RS232 voltage levels to TTL voltage levels.
+[1:39] Who does that conversion? Line driver.
+[1:42] So one of the popular line driver is MAX232 line driver from MAXIM integrated.
+[1:51] Maxim Integrated is a company, right? They market this chip, Max 232, one of the very popular line driver. So the line driver's job is to convert TTL voltage levels to RS 232 voltage levels and RS 232 voltage levels back into TTL voltage levels. Is that clear? Any question?
+[2:16] Excuse me sir, why was the high voltage?
+[2:22] Your question is why do we use voltage of the CEL to 25 volts?
+[2:30] Yes, negative values why?
+[2:32] That is because those days, 1960s, mainframes were used.
+[2:38] Those mainframes were developed using vacuum tubes.
+[2:41] And they consume a lot of power and a lot of high voltages were used.
+[2:46] Today we use transistor-transistor logic, TPL logic, very low voltages used.
+[2:53] And even now the latest logic circuits use CMOS. CMOS means Complementary Metal Oxide Semiconductor Technology.
+[3:08] CMOS complementary metal oxide semiconductor technology is the latest technology.
+[3:14] If you have a logic circuit, CMOS logic circuit, your logic levels are, for the logic levels you use, much lower voltages.
+[3:23] For example, the 3.3 is the logic high, not 5 volts, right?
+[3:29] But in those days, 1960s, those mainframe computers, serial port introduced for the mainframe computers.
+[3:39] They used very high voltages.
+[3:43] But if you follow the serial port RS-232 standard, you have to follow that old standard.
+[3:49] Same standard.
+[3:50] This serial port was introduced in 1960s by IDM.
+[3:54] At that time, the high voltages were used in the mainframe computers.
+[3:59] Even today, if you have a serial port, that serial port follows the same RS-232 standard.
+[4:09] Is it clear?
+[4:10] My voice, high value is negative and SD2.
+[4:16] That is the standard they developed.
+[4:19] I don't know.
+[4:20] Sorry.
+[4:21] The RS-23 is your standard developed by IBM.
+[4:25] You have to read the IBM documentation to find out those things.
+[4:30] I don't know.
+[4:32] One option is you can read IBM old documentation of RS-232 stand.
+[4:40] That is the only way you can find out the reason.
+[4:44] I have no idea.
+[4:46] Thank you.
+[4:47] Anything else?
+[4:47] Any other question?
+[4:49] Now, we don't use other pins in the serial port.
+[4:52] the pins in the serial code we don't use for the data communication. Other pins are used
+[4:59] for different different purposes. Right. We use only the RXT and TXDPs for the data communication.
+[5:09] Now there is Arduino good code, Arduino server reno, right, which uses serial code. Now in this
+[5:20] slide you can see the Arduino server you know board with max 232 chip, line driver chip. Now
+[5:30] the microcontroller communicates over serial. A line driver converts TTL voltages into RS232
+[5:42] and vice versa. Now this is one of the very first Arduino boards developed in the mid 2000s.
+[5:53] Arduino introduced in the mid 2000s, one of the very first Arduino board developed which
+[5:59] is called Arduino Severino. Severino means in Italian, Serdi. Arduino is the first name,
+[6:08] server you know is the CERT that is in Italian right so this is one of the very
+[6:14] first Arduino board developer that uses serial for communication and the line
+[6:20] driver is to interface microcontroller to the serial right then connection over
+[6:28] USB port now we don't have serial ports in our computers in our computers we
+[6:37] don't have serial ports. We have USB ports. Now, how do we connect a microcontroller to
+[6:46] a PC or some other system over USB port? But we use serial communication. Microcontroller
+[6:55] uses serial communication. But unfortunately serial ports are not available. So, how do
+[7:04] we connect over serial sorry USB port this is the way we have to use UART to USB interface
+[7:14] controller now this time I am using UART not USART why we are talking about a synchronous
+[7:22] communication universal a synchronous receiver and transmitter that is UART universal a synchronous
+[7:31] receiver and transmitter UART. UART is the microcontroller's side and USB is the other side.
+[7:40] Now two sides you need to interface. For that you have to use UART to USB interface controller.
+[7:48] Look at this. In this diagram you can see this is the microcontroller UART,
+[7:55] inside the microcontroller and this is the USB. And to interface the UART to USB, we use USB to UART interface controller. This is again a very popular UART to USB interface controller, FT232.
+[8:14] FT232 is from Future Technology Devices International.
+[8:20] That's a company, Future Technology Devices International.
+[8:23] That's why they call the chip as FT232, Future Technology Devices International.
+[8:30] Right.
+[8:31] So this chip interfaces UR to USB.
+[8:37] UR to USB.
+[8:39] In a USB port, you have four connections.
+[8:42] One is for ground, the other one is to supply 5 volts and these two are the data connections.
+[8:49] D plus and D minus are the data connections.
+[8:53] Now data connections we connect to this chip and then we connect the RxD and DxD fields to this chip.

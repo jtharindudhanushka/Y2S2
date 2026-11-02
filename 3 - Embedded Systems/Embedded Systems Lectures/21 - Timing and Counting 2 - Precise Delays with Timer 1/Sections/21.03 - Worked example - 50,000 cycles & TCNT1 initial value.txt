@@ -1,0 +1,78 @@
+[0:05] our example we need 200 milliseconds really 200 milliseconds delay we can't achieve with
+[0:11] 8 bit time so we select 16 bit time that means we we use timer 1 timer 1 is a 16 bit time so a 16 bit
+[0:25] timer can count 0 to 65,535. Right. Now let's calculate the time for one clock cycle. Time.
+[0:40] Prescale. I'm using this equation. Prescale. Let's say I am using 64 as the prescale.
+[0:46] Divided by FCPU.
+[0:49] Frequency of CPU in hertz.
+[0:53] 16 kilohertz.
+[0:56] Then megahertz.
+[0:58] Right.
+[0:58] Then N.
+[1:00] I am using this equation.
+[1:01] N.
+[1:02] 16 kilohertz megahertz.
+[1:06] Divided by 60.
+[1:08] Multiplied by 200 milliseconds.
+[1:12] Now the delay you have to give in seconds.
+[1:14] that means 200 multiplied by 10 to the power minus 3.
+[1:21] Then the delay is in seconds.
+[1:23] 200 milliseconds you have to convert into seconds.
+[1:27] So if CPU is in hertz and this is in seconds.
+[1:31] Delay is in seconds.
+[1:33] Right.
+[1:34] Now when you calculate this you get initial value N as 50,000.
+[1:43] So 50,000 initial value.
+[1:47] Can you put it into 8 bit timer?
+[1:50] No.
+[1:51] You need 16 bit timer.
+[1:54] Right.
+[1:54] You need a 16 bit timer.
+[1:56] A 16 bit timer.
+[1:57] Initial value.
+[1:58] Not the initial value.
+[1:59] This is the end.
+[2:00] Number of clock cycles you need.
+[2:02] Sorry.
+[2:03] Number of clock cycles you need.
+[2:05] 50,000.
+[2:06] 50,000 clock cycles you can't count with 8 bit timer.
+[2:10] Right.
+[2:11] not possible
+[2:13] to count
+[2:16] with 8 bit
+[2:19] timer. So you have to go
+[2:21] for 16 bit timer. No
+[2:22] choice. Then initial
+[2:25] value of the 16 bit
+[2:27] timer that is
+[2:27] TCNT1
+[2:30] Why? We are using
+[2:32] T1 timer. Timer 1
+[2:34] We use timer 1. 16 bit
+[2:37] timer 1.
+[2:39] TCNT1 equals
+[2:40] Maximum value that the timer can count.
+[2:44] 65,535 minus number of clock cycles needed.
+[2:50] 50,000 plus one for the overflow.
+[2:54] You get 15,536.
+[3:00] This is the initial value you have to set for TCNT1 register of timer 1.
+[3:07] If you set this value to TCNT 1 register of timer 1, when timer overflows, 200 milliseconds has elapsed.
+[3:18] So, time overflow you can detect using TOV, time overflow flag.
+[3:24] When timer overflows, that means 200 milliseconds, right, milliseconds gone, elapsed.
+[3:34] that's how we measure 200 milliseconds time we set the initial value to 15,536
+[3:42] and every clock cycle time accounts and we need 50,000 clock cycles to get the 200 milliseconds
+[3:50] delay then after 50,000 clock cycles the time overflows the time overflow we can detect using
+[3:57] Tov flat bit. At that moment, timer has counted 50,000 clock cycles and 200 milliseconds elapsed.
+[4:10] Can you understand? If not, let me know. I can explain again.
+[4:16] Yes sir. How about others?
+[4:18] I have a look.
+[4:19] [unclear — Sinhala / crosstalk]
+[4:26] I can't calculate the flow.
+[4:28] Yes, that is, you can maintain the flow of the flow.
+[4:34] That is, you can do it.
+[4:36] If you have 50,000 clock cycles, you can use the flow of the flow.
+[4:42] You can use the flow of the flow.
+[4:46] It is used in 16-bit time.
+[4:48] You can do it.
+[4:50] Now this is also possible for 200 milliseconds delay.
+[4:59] How about it is, let's say 400 milliseconds delay.

@@ -1,0 +1,178 @@
+[0:00] Excuse me, sir.
+[0:01] Yeah.
+[0:01] Sir, the same method can be used to implement exercise 3.
+[0:06] Yes, but at that time we have not discussed counters, timers.
+[0:11] Yes, I mean now.
+[0:13] Now you can.
+[0:15] But my expectation is you do that exercise without using timers and counters.
+[0:24] But because after we are discussing timers and counters, I will give you another exercise which is related to timers and counters.
+[0:31] You can try using timers and counters also.
+[0:35] Yes, that is possible.
+[0:36] Any other question?
+[0:38] Can you understand the source code?
+[0:40] Right.
+[0:41] Now, the LED is toggled if the number of button pressers are greater than or equal 5.
+[0:52] But we want to, let's say, toggle the LED when the number of button pressers are exactly 5.
+[0:58] Now according to the source code, LED is toggled when the number of button presses are greater than or equal 5.
+[1:08] But let's say we want to toggle the LED when the number of button presses are exactly equal 5.
+[1:17] Can you do that change?
+[1:19] What you should do?
+[1:20] Any suggestion?
+[1:21] I want to toggle
+[1:23] the LED
+[1:25] exactly
+[1:27] when the number of button
+[1:30] presses are 5. Can you do
+[1:32] that change? What about
+[1:33] right? What about instead of
+[1:35] this if you write
+[1:37] T C
+[1:38] and T 0
+[1:41] equals 5.
+[1:43] Then when the number of button presses
+[1:45] if the count is exactly
+[1:47] equal 5 right?
+[1:49] We toggle the LED.
+[1:51] Without writing the condition.
+[1:54] Using equality operator.
+[1:57] Why did I use.
+[1:59] Greater than no equal.
+[2:01] Because this option.
+[2:04] Could be.
+[2:06] Could be.
+[2:07] Problematic.
+[2:09] Why?
+[2:10] That's why I use greater than no equal.
+[2:12] Without using equality operator.
+[2:15] If you use equality operator.
+[2:18] To.
+[2:19] Check whether the count is.
+[2:20] exactly 5-0, whatever
+[2:22] value, that could
+[2:24] be problematic.
+[2:27] Sometimes it would work,
+[2:28] sometimes it would not work.
+[2:31] Why? Any idea?
+[2:33] Sir, condition
+[2:34] checkeran nathi vila
+[2:36] vaka ar pathing increment
+[2:38] kakunotti?
+[2:39] Condition naga checkeran nathi vila
+[2:42] vaka?
+[2:44] Anahari.
+[2:49] Anahari.
+[2:50] right
+[2:51] if you want to get that condition true again
+[3:20] You have to press the button continuously to 255, then overflow and then come to the 5 again.
+[3:28] Can you understand?
+[3:31] In case if you miss the condition, while you are doing something else,
+[3:37] if the counter countered the pulse while the code is doing something else,
+[3:44] not be either before either after checking or before checking the condition that then the count
+[3:54] would be six right the condition would be now would not be true as a result you would have to
+[4:03] press the button continuously to increment the counter to 255 and overflow to zero and then
+[4:10] again come to 5. That
+[4:12] can happen. Right?
+[4:14] We press the button.
+[4:16] Normally our button pressers
+[4:18] are very slow compared to the
+[4:20] execution
+[4:22] of endless
+[4:24] loop. So
+[4:26] every button press
+[4:28] the endless loop should be
+[4:30] able to monitor
+[4:32] because our button pressers
+[4:34] are slow. Right?
+[4:36] So our people
+[4:37] when they do actions, they are very slow compared to the processor.
+[4:43] So using the processor, we pull,
+[4:46] we check, we monitor the counter,
+[4:49] TCN, T0 register, right? So CPU is very fast.
+[4:54] So because we are slow, button pressers are slow,
+[4:58] ideally, all button pressers should be
+[5:01] detected. And the chances
+[5:05] to have two button pressers
+[5:08] one after another
+[5:09] and then increment the counter
+[5:12] to six before monitoring
+[5:14] is very
+[5:16] slim. That charge
+[5:18] is very slim. Very unlikely
+[5:20] that would happen because we are
+[5:22] very slow. But still
+[5:24] the count can exceed
+[5:26] five and move to six.
+[5:28] Right. We have used
+[5:30] a capacitor to debounce
+[5:32] the input. But in
+[5:34] case if a pulse generated spike generated at the input and capacitor couldn't debounce all the
+[5:44] spikes if one is missed as a result there will be two counts and there's a chance that the counter
+[5:53] would exceed five and more to six then the condition would not be true tcnt equals five
+[6:01] condition would not be true.
+[6:03] Right? Then
+[6:05] you have to toggle the LED. You have
+[6:07] to press the button up to 255
+[6:09] and then 0. Again
+[6:11] 5 to toggle the LED.
+[6:13] Can you understand that
+[6:15] problem? To avoid that
+[6:17] I have used greater
+[6:19] than no equal. In case
+[6:20] if you miss the count 5
+[6:22] and go to 6, still
+[6:24] you can detect that and toggle
+[6:26] the LED. The chances are very slim.
+[6:30] But
+[6:30] But that can happen.
+[6:32] So this is one of the good examples.
+[6:36] For the programmers, when you are writing programs,
+[6:39] you have to consider all possible situations.
+[6:42] The chances are very slim.
+[6:44] Because we have used a capacitor to devouse the input.
+[6:48] So very unlikely you will get a spike at the input.
+[6:53] Because the capacitor will suppress all these spikes, voltage spikes.
+[6:56] But in case if there is a spike and capacitor couldn't suppress it, then there will be two button pressers.
+[7:05] The microcontroller will detect that spike as another button press.
+[7:08] The counter will detect it as another button press and count.
+[7:12] And also normally human inputs are very slow.
+[7:16] But in case somehow you press the button quickly two times, very unlikely, then counter will count two button pressers.
+[7:25] If the count is 4 and 2 button presses then it will be 6.
+[7:32] And then you check the condition whether the count is 5.
+[7:37] No.
+[7:39] The chances are very slim but still possible.
+[7:43] So this is a very good example.
+[7:44] As programmers you have to think about all possible situations.
+[7:50] In majority of cases your system would work perfectly.
+[7:54] but exceptions
+[7:56] there can be exceptional situations
+[7:58] your program, your system
+[8:00] would behave
+[8:02] strangely and even
+[8:04] not only users even you
+[8:06] would not be able to understand
+[8:08] what has happened and if the system
+[8:11] is a very critical system
+[8:13] mission critical, safety critical
+[8:14] system
+[8:15] if the application is a medical
+[8:18] application or military application
+[8:20] or
+[8:21] aerospace
+[8:23] then the consequences would be
+[8:26] very severe.
+[8:28] So as embedded systems
+[8:31] programmers, you should be
+[8:32] very careful. You have to
+[8:34] think about all possible situations.
+[8:37] That's why I use greater than
+[8:39] or equal without using
+[8:40] equality of power. I just wanted
+[8:43] to show you
+[8:44] this situation. Can you understand?
+[8:47] This is a very good example.
+[8:49] Very important lesson you
+[8:51] learn. Is that clear?
+[8:52] the reasons we are using greater than
+[8:55] equality operator
+[8:56] instead of equality operator
+[8:59] is that clear

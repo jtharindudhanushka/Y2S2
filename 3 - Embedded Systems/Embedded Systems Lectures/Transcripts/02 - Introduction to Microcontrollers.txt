@@ -1,0 +1,1380 @@
+02 - Introduction to Microcontrollers  (15 Sep 2020)
+
+[0:00] Select a microcontroller suitable for academic purposes.
+[0:05] Out there are thousands of, hundreds of thousands of microcontrollers in the world.
+[0:11] Out of them how do we select one microcontroller?
+[0:15] In this case academic purposes.
+[0:17] But when you are in the industry according to your requirement the same approach you can use to select one.
+[0:23] You have to select one for the given problem.
+[0:26] How to select a microcontroller?
+[0:28] Out of the thousands of microcontrollers available, discuss about the AVR family of microcontrollers, the particular family of microcontrollers, discuss about the AVR family of microcontrollers, explain the main features of AT-Mega-328P microcontroller, particular microcontroller, and discuss about its main features.
+[0:51] And finally select a suitable microcontroller development board for academic purposes.
+[0:58] For academic purposes select a suitable microcontroller base development board.
+[1:03] So these are our learning outcomes of this session.
+[1:06] First, what's a microcontroller?
+[1:08] And this picture speaks about that.
+[1:14] This is the microcontroller.
+[1:16] It contains a CPU, it contains a RAM, it contains ROM, it contains a pulse with modulator, it contains a timer, it contains an analog to digital converter, it contains an oscillator, it contains input output ports, it contains serial ports, everything in one chip.
+[1:38] Everything you need for a computer is in one chip
+[1:42] Single chip computer
+[1:45] Microcontroller is a single chip computer
+[1:49] Everything you need for a computer is in one chip
+[1:54] So, simply a single chip computer
+[1:58] So these different different hardware components are now in one chip
+[2:03] Packaged into one chip
+[2:05] Now what are the co-components?
+[2:10] This is the inside of a micro-culture.
+[2:13] You have the CPU.
+[2:16] Then we know that to the CPU we have to provide clock pulses to operate.
+[2:23] Who generates clock pulses for the CPU to operate?
+[2:26] One, zero, one, zero pulses.
+[2:29] Oscillator.
+[2:31] Oscillator generates clock pulses for CPU.
+[2:34] oscillator, oscillator provides clock pulses
+[2:43] then next to the CPU, next to the oscillator
+[2:47] you have serial communication peripherals
+[2:51] serial communication peripherals
+[2:54] the serial communication peripherals we use for data communication
+[2:58] data communication
+[3:01] [unclear — Sinhala / crosstalk]
+[3:31] Microcontroller can communicate with PC using serial communication, data communication.
+[3:38] Serial communication peripherals, one is USART
+[3:43] One peripheral is USART
+[3:45] USART means universal
+[3:50] Synchronous, Synchronous, Synchronous, Asynchronous, Asynchronous, Asynchronous Receiver Transmitter
+[4:04] That is the normal serial communication usually, this is the serial communication peripheral that we use.
+[4:12] Apart from that, there are two other serial communication peripherals.
+[4:16] One is SPI, this is the most common one, USADA is the most commonly used one. Apart from that, two others SPI, Serial Peripheral Interface.
+[4:29] SPI means Serial Peripheral Interface.
+[4:33] Serial Peripheral Interface.
+[4:36] Right. Now it is used for short distance communication. Serial communication but short distance.
+[4:43] SPI is faster than user but for the short distance
+[4:50] faster than user but short distance
+[4:52] for example if microcontroller wants to communicate with external memory chip on the same board
+[5:00] if microcontroller wants to communicate with external memory chip on the same board
+[5:06] microcontroller may use SPI same board short distance
+[5:10] external memory, microcontroller may use SPI for that purpose
+[5:15] but if microcontroller wants to communicate with a piece
+[5:19] right microcontroller here, piece is there
+[5:22] it's a long distance
+[5:24] then microcontroller may use user
+[5:28] if microcontroller wants to communicate with another microcontroller
+[5:33] for example one microcontroller is the remote controller
+[5:36] other one other microcontroller is the TOEKA
+[5:41] now two microcontrollers you need one is at the TOEKA receiver and one is at the transmitter
+[5:48] remote control then it's a long distance communication
+[5:53] then we use USAR
+[5:57] short distance STI then we have another one called I2C
+[6:03] I2C. I2C means inter-integrated circuit. Two times I. That's why we call I2C. Inter-integrated circuit. Right. Again for short distance. I2C again for short distance.
+[6:21] slower than SPI
+[6:23] slower than SPI
+[6:25] but the advantage is
+[6:27] I2C
+[6:31] you need for I2C you need just 2 wires
+[6:35] using just 2 wires you can connect multiple devices
+[6:39] using just 2 wires you can connect multiple devices
+[6:43] that is the advantage
+[6:45] or the gappa which is called many devices you can connect to the microphone
+[6:49] but it is slower than SPR and used for short distance
+[6:54] in some books I2C is referred to as TWI
+[7:05] two wire interface
+[7:07] two wire interface
+[7:08] TWI two wire interface
+[7:11] so same thing I2C and TWI both same
+[7:14] two wire interface
+[7:15] Then you have next to serial communication variables, you have timers.
+[7:23] Timers we use to measure the time.
+[7:27] If you want to measure the time between two events, then you can use a timer.
+[7:32] If you want to measure the time between two events, you can use timers.
+[7:37] One example is let's say you want to distinguish between a single press and double press. Single click double click. That's a bad.
+[7:50] measure it is a single press so double press
+[7:53] so how do we know
+[7:55] 2 single presses or 1 double press
+[7:59] now that is the correct
+[8:01] 2 single presses or 1 double press
+[8:05] 2 single clicks or 1 double click
+[8:08] how do we know
+[8:10] then you have to measure the time between the events
+[8:13] first click and the second click the time
+[8:16] If the time duration is so small, it's a double point.
+[8:20] Time duration is greater than a certain value, it's a two single point.
+[8:26] For that kind of purposes, we can use time.
+[8:33] Next, here it is, analog to digital converter.
+[8:39] Analog to digital converter.
+[8:43] Sometimes we have to give analog input to the microphone.
+[8:48] Input is analog.
+[8:50] But the problem is, the processor CPU is digital.
+[8:55] CPU cannot process analog inputs.
+[8:59] CPU cannot process analog inputs.
+[9:01] Analog means continuous.
+[9:02] Digital means discrete.
+[9:04] CPU cannot process analog inputs.
+[9:07] So, we need someone to convert the analog input into digital.
+[9:12] For that we use ADC. Convert analog inputs into digital so that CPU can process.
+[9:20] For that purpose we use ADC. To get converted analog inputs into digital so that CPU can process.
+[9:28] Then we have pulse with modulator. Pw. Pulse with modulator.
+[9:34] Now the output of CPU is digital but sometimes we want analog output, not digital output
+[9:44] we want analog output. For example digital output means we can turn on a light or turn off the light.
+[9:51] But we don't want to turn on, we don't want to turn off, we want to dim the light in between.
+[9:58] Can you understand? If you turn on, fully turn on, so full brightness, turn off, fully
+[10:05] down. But we don't want on, on, we want to dim the light. That means analog light output
+[10:12] being there. So you can't get analog output from screen. You need to get converted the
+[10:19] digital output into analog light output. Not true analog, analog light output. You want
+[10:27] want to get converted, the digital output of the CPU into an analog like output. That
+[10:34] like word is very important. Analog like output, not a true analog output. The output of the
+[10:41] CPU you can get converted into an analog like output using PWM. That is the job of PWM.
+[10:51] Using TWM you can get the output of the CPU into an analog like output, analog buggy output, analog like output.
+[11:04] But not true analog, that is the job of TWM, first with modulator.
+[11:11] Then you have ROM where you keep your firmware, the program code where you store your firmware in the ROM, which is like your hard disk. In terms of personal computers, this is like hard disk where you keep your firmware, ROM, read or dimm.
+[11:31] your instructions, you store your instructions in ROM
+[11:36] then we have RAM, right?
+[11:39] RAM, where you create your variables, where you create the constants
+[11:43] where you keep the inputs, where you keep the outputs
+[11:47] RAM, random access memory
+[11:52] now RAM is volatile, when you disconnect the power you lose everything
+[11:57] ROM is not volatile, it is non-volatile
+[12:00] So the contents are there. Now writing the ROM, it's like flashing the memory. Right? We normally don't do it very frequently. That's why we call it firmware we store there.
+[12:16] in the room we store firmware because we normally don't change
+[12:19] but sometimes
+[12:22] some applications we need to store the settings
+[12:26] settings of the system somewhere
+[12:30] like for example let's say in a digital TV
+[12:34] the volume level
+[12:38] the color level, brightness, those things you store
+[12:42] settings. To change the settings you don't need to flash the firmware. You can easily
+[12:48] change and you can retain them in the system. If you keep the settings in rock, right, then
+[12:57] when you disconnect the power you lose. If you keep the settings in rock, to change them
+[13:03] you have to rewrite the entire firmware into the rock. So you need somewhere else to keep
+[13:10] the settings. If you want you can easily changeable but not no matter. For that purpose we have
+[13:19] EE prop electrically erasable programmable read only memory. EE prop electrically erasable
+[13:32] programmable read or the memory
+[13:35] electrically erasable programmable read or the memory
+[13:41] electrically erasable programmable read or the memory
+[13:44] right
+[13:45] so we use the EE-CROP to keep the settings
+[13:49] settings of the system that we don't change very frequently
+[13:55] settings we don't change very frequently but sometimes we change
+[13:59] right
+[14:00] to keep the settings, settings of the system.
+[14:04] And finally, then we have reset mechanism.
+[14:12] Now reset mechanism means, when you activate the reset,
+[14:18] it will immediately stop the operation of the microcontroller.
+[14:23] It will stop the operation of the microcontroller,
+[14:26] [unclear — Sinhala / crosstalk]
+[14:56] the execution from the first instruction again it's like restarting your pc
+[15:02] when you start the computer you start to run the algorithm and windows run the same
+[15:08] then finally we have i-o ports input output ports input output ports we use to connect sensors and
+[15:19] actuators, sensors and actuators. Input ports for sensors, output ports for actuators. Right.
+[15:26] So normally the ports are numbered using port A, port B, port C like that way. Some microcontrollers
+[15:33] have more ports. Then there are a lot of pins in the microcontroller and expensive. Microcontroller
+[15:39] is expensive. Right. And some microcontrollers have only few ports. Only B, C, D. And some
+[15:48] microcontrollers may have only one port, just one port, two small microcontrollers.
+[15:55] Like at least small microcontrollers have one port, just one port, only port B. Some
+[16:03] microcontrollers port B, C, D, some microcontrollers A, B, C, D, pole as well. Right. So more
+[16:10] complicated, large microcontrollers have more ports. More ports means more sensors you can
+[16:16] and more actuators you can tell.
+[16:19] Right.
+[16:20] So these are the four components of a microgrid.
+[16:23] Four components.
+[16:26] Right.
+[16:27] Now let's talk about IEO ports.
+[16:31] Input, output, ports.
+[16:33] Right.
+[16:34] There you can see the CPU and IEO port.
+[16:38] So what is an IEO port?
+[16:41] IEO port is a register.
+[16:43] It's a register.
+[16:44] input output code is a register associated with microcontroller pins
+[16:52] microcontroller pins
+[16:53] a register associated with microcontroller pins
+[16:58] right
+[17:01] now this is the register
+[17:03] this is an 8 bit register
+[17:05] 1, 2, 3, 4, 5, 6, 7, 8
+[17:09] so 8 bit register that means 8 bit code
+[17:12] this is 8 bit code
+[17:13] These are the register bits, here you can see the register bits
+[17:17] And register bits are connected to pins, these are the pins
+[17:22] Register bits are connected to pins
+[17:25] And these pins you can use to connect external electronics
+[17:29] These pins you can use to connect sensors and actuators
+[17:33] External electronics, right
+[17:35] So this is the register, these bits are connected to pins
+[17:39] Pins we are, we use pins to connect external electronics. Now the question is how can external electronics order the flow of program execution. Now the program is running in the PC. Now that program execution we can order using external electronics.
+[18:01] connected to these 4 pins, the 4 pins are connected in electronics, partial electrical, external electronics
+[18:08] we can change the program execution in the CPU
+[18:13] and also the program in the execution can drive external electronics
+[18:21] the third moment I will tell you again
+[18:24] now there is a program firmware running in the CPU
+[18:28] that firmware execution, order of execution, we can alter, we can change using external electronics connected to these fields.
+[18:38] And also, the program running in the microcontroller can drive external electronics connected to these fields.
+[18:46] If you have a program running, you can't run in order, you can change the order.
+[18:55] You can use electronics power to get the alien to get the petrol.
+[19:01] That's it.
+[19:02] If you have a program running, you can use electronics power to get the electric driver.
+[19:09] What does that mean?
+[19:11] Now let's assume a switch is connected to one of the pins, switch appear and a program is running. The program has if condition. If condition means there are two paths either this way or that way.
+[19:27] Execution can take either this way or that way
+[19:31] If the switch is release, execution will take this way
+[19:37] If you press the switch, execution will take that way
+[19:41] Can you understand?
+[19:43] There is a program running in the CPU which has if condition
+[19:47] If condition means to pass either this way or that way
+[19:50] If condition is not passed, run into the path
+[19:53] Switch will release and then it will be no power
+[19:56] switch reboot or execution
+[19:58] so by pressing the external switch we can change the execution
+[20:03] we can change the execution
+[20:05] can you understand?
+[20:07] switch reboot or execution
+[20:09] switch reboot or execution
+[20:11] so by using the switch we can alter the execution
+[20:16] execution of the file we can alter
+[20:18] and also let's assume the light is connected to LED connected to one of the bits
+[20:25] using the firmware we can turn on the LED or turn off the LED
+[20:33] that means we can drive external electronics
+[20:37] using the firmware
+[20:40] the program running in the CPU
+[20:43] using the program running in the CPU
+[20:45] we can drive the external electronics
+[20:48] we can drive the LED connected to this particular vehicle
+[20:51] either turn on or turn off we can
+[20:54] right?
+[20:56] in the next slide we will discuss how these things have
+[21:02] internal work
+[21:04] if you want to use it, you can use it
+[21:06] many people know how to use microcontrollers
+[21:10] but only few people know how internal things work
+[21:16] you can go to the internet
+[21:18] you may need many people who have done microcontrollers
+[21:22] people who have done microcontroller programming poses, embedded system programming poses,
+[21:28] RDLOW poses, right? Ask them about whether they know how internal, inside the microcontroller
+[21:37] how things happen. No, they don't. Right. Let's see. Okay, this is the microcontroller and the port.
+[21:45] And there are some external electronics connected. For example, this particular pin, this is the port bit, the bit connected to this pin, the pin, we have connected an LED. This is an LED.
+[22:01] We have connected an LED to limit the current to LED we have used a resistor.
+[22:07] We have used a resistor to limit the current.
+[22:09] Don't worry about too much, yeah?
+[22:11] About the resistors, but this is just an LED, yeah?
+[22:14] Just an LED.
+[22:16] Then this particular pin, we have connected a push button switch.
+[22:21] Push button switch, but the now button is release.
+[22:24] Button is in the release state.
+[22:27] And we have connected that pin with the 5V power supply through a resistor.
+[22:34] 5V power supply through a resistor we have connected.
+[22:37] Right.
+[22:38] And in the CPU this is the code that I am going to run.
+[22:43] I have written in pseudo code.
+[22:46] Anybody can understand.
+[22:48] Right.
+[22:49] Inside the CPU it is machine code.
+[22:51] Right.
+[22:52] But this is not in machine code then you can't understand.
+[22:55] and this is in Zulu
+[22:57] Now, can you tell me the voltage at this particular point?
+[23:02] What is the voltage at this particular point?
+[23:05] At this moment?
+[23:07] 5 volts
+[23:10] But it is connected to 5 volt power supply through the resistor
+[23:15] So voltage is 5
+[23:17] That voltage is 5
+[23:19] That means we have set this pin to 5 volts externally.
+[23:26] Listen to this.
+[23:28] This is not simple.
+[23:30] We have set this pin's voltage to 5 volts externally.
+[23:37] This pin's voltage is 5 volts.
+[23:41] Why?
+[23:42] We have connected the pin to 5 volt power supply.
+[23:45] So that means the pin's voltage we have set externally to 5 volts.
+[23:51] The link of the pin voltage is 5 volts to the set.
+[23:55] If the digital circuits, digital electronics, digital logic, 5 volts means 1, 0 volts means 0.
+[24:08] And that's why this bit is 1.
+[24:11] What is the bit? It's 5V. The external pin is 5V, therefore the associated bit is what?
+[24:21] If there is a pin in the port, there are 5V. If the pin is 0V, then what would happen to the bit inside? 0.
+[24:35] If you want to get the pin to get 0, you can get 0
+[24:41] When you get the pin, you can get the pin to get 0
+[24:46] You understand, you can get 10 times, you can get 10 times, you can get 10 times
+[24:51] Ok, you understand
+[24:56] Now let's run this code in the CV
+[25:00] Now this arrow points the line in execution. This is the line in execution. If bit 0, this is the bit 0, normally we count bits from the left hand side. 0, 1, 2, 3, 4, 5, 6, 7. 8 bit port means, like arrays we count starting from 0.
+[25:23] So and from the left hand side we start
+[25:25] 0, 1, 2, 3, 4, 5, 6, 7
+[25:31] So this is the LSB, this is the NSB
+[25:34] This is significant bit, more significant
+[25:36] If bit 0 of food is equal to 0
+[25:41] What can you say about this condition?
+[25:43] Is that true?
+[25:45] No, it is false
+[25:46] Why? Bit 0 is 1
+[25:47] It is not 0
+[25:48] Then what happens?
+[25:51] Del's part is executed
+[25:52] Tradition false, else part is exit. In the else part we say assign 0 to bit 2 of 4.
+[26:01] bit 2, 0, 1, 2. And then maybe they can assign the random 0.
+[26:07] Ok, let's assign but will that make any change? No, because it is already 0.
+[26:13] It is already 0. If you assign another 0, it won't make any change.
+[26:19] Can you understand?
+[26:21] Right.
+[26:22] Then, can you understand up to that point?
+[26:25] Okay.
+[26:27] Now let's press this switch.
+[26:29] Now I am going to press this switch.
+[26:30] See what happened.
+[26:31] The bit became 0.
+[26:34] Why?
+[26:35] When you press the switch, pin is connected to ground power supply.
+[26:41] What is the voltage at ground power supply?
+[26:44] 0 volts.
+[26:46] So, now what is the voltage of this pin?
+[26:49] 0. As a result, internal bit change to 0. External voltage of the external pin B change to 0. As a result, internal bit value change to 0. Clear? Okay. Now, let's run the code again.
+[27:07] If bit 0 of 4 equals 0, condition true, assign value 1 to bit 2 of 4, assign value 1, 0, 1, 2. To this bit assign value 1, I get a value 1 dot.
+[27:27] Ok let's assign whatever you assign value 1 to this bit, the program assign value 1 to this bit. When value 1, when this bit became value 1, the associated bit voltage becomes 5 volts.
+[27:46] Take a 5 volts to the hammer, the distance is zero, this particular thing 5 volts, there is a voltage
+[27:54] it develops, as a result a small current flows through the LED and LED turns on, LED turns on.
+[28:04] That's it. Now in this code you saw how external electronics change the flow of execution.
+[28:14] If you switch the code and run the flow, you can switch it.
+[28:18] If you switch the code and run the flow, you can switch it.
+[28:22] And external electronics can change the flow of its circuit.
+[28:26] And also, the program can drive external electronics.
+[28:31] The program can drive external electronics.
+[28:34] So what is the summary?
+[28:36] Summary is, if particular pin's voltage is 5V,
+[28:41] If you set it to 5V external, associated port bit would become 1.
+[28:49] If you set the port pin voltage external to 0V, associated bit value becomes 0.
+[28:57] You can check the bit value using if condition and determine whether the pin voltage is 5 O 0.
+[29:05] If you check the bit value, the pin voltage will be 0.
+[29:10] I am going to say that.
+[29:11] So the pin value will be 0.
+[29:16] Now what is it? If the bit is 0, external pin's voltage is 0.
+[29:23] But internally if you change the bit to 1, external pin voltage becomes 5.
+[29:29] If you internally change the B12 to CU, external pin voltage becomes 0.
+[29:35] If you internally change the B12 to 1, external pin voltage becomes 5.
+[29:41] Any device connected to that pin will start operating.
+[29:45] If I voltage 1, I am going to connect to 0, device I got to connect to.
+[29:49] So this is the digital sensor, this is the digital actuator.
+[29:54] Now in this slide you can understand how a digital sensor and digital actuate connected to a microcontroller were.
+[30:06] So you can see how digital sensor is.
+[30:10] So you can see how much of a digital sensor is.
+[30:13] One or three.
+[30:15] LED is a digital actuate
+[30:17] If you don't see it, you can see it
+[30:19] You can see it
+[30:21] Is that clear?
+[30:23] Any question?
+[30:25] You are not going to ask
+[30:27] Yes, you are not going to ask
+[30:29] Now
+[30:31] Instead of this switch
+[30:33] You connect the motion sensor here
+[30:37] And instead of this LED
+[30:39] You connect an alarm there
+[30:41] or you connect smoke sensor here and alarm there
+[30:45] if there is a smoke this will be changed
+[30:51] the pin value would be changed
+[30:54] and microcontroller can capture that and set this pin value
+[30:58] what? you trigger the alarm
+[31:01] fire alarm
+[31:05] you connect motion detector here and alarm there
+[31:11] If there is a break into your house and the motion detected a human movement, the voltage of this bit will change.
+[31:20] Accordingly, the internal bit value will change.
+[31:23] Micro controller can detect, the program can detect that and the program can change the bit value of this bit.
+[31:29] And you can't see it.
+[31:31] You can't see it.
+[31:32] If you don't have a problem, you can't see it.
+[31:35] It's a problem.
+[31:37] This is a simple idea.
+[31:41] If this is clear,
+[31:46] I will show you how to do it.
+[31:48] Digital inputs, digital outputs should not be a problem.
+[31:53] What's the problem?
+[31:55] What problem?
+[31:57] What problem?
+[31:59] Yes, question mark on your face.
+[32:02] of this
+[32:10] yes it was one because the voltage becomes zero when you press the button the the pin is directly connected to the ground power supply
+[32:20] ground is zero volts when pin voltage becomes zero as a result it becomes zero right
+[32:28] The lift condition is 2.
+[32:32] So the B2-4 becomes 1?
+[32:34] Yeah.
+[32:35] When the B2 becomes 1 as a result, the pin voltage becomes 5 volts.
+[32:42] So, when the next step can we increase the button?
+[32:49] No, no, we have not written that button.
+[32:54] Right, you want to make it?
+[32:56] Yeah, ideal.
+[32:59] Oh, this is a curve like a head loop.
+[33:02] It's not a loop.
+[33:05] You have to repeatedly check this condition.
+[33:09] Like that looping part we have not written.
+[33:12] So, when you release the button, if you want to turn off the light,
+[33:17] you have to check this condition again and again.
+[33:20] Then there should be a loop.
+[33:21] So, we have not written to that part.
+[33:23] Sir, to be 5 volts, do we need a power supply for that?
+[33:31] For the microcontroller?
+[33:33] No, the LED to be applied.
+[33:36] No, the idea is this, you supply power to the microcontroller, right, the power supply
+[33:43] is somewhere here, you supply power to the microcontroller.
+[33:47] If the bit becomes 1, the microcontroller internally sets the voltage of this bit to 5 volts.
+[33:56] If you externally set the voltage to 5, this becomes 1.
+[34:01] If you externally set the clip voltage to 0, this becomes 0.
+[34:06] Microcontroller, the program also can assign a bit to a particular bit, value to a particular bit.
+[34:15] and then if it is 1, microcontroller sets internally the voltage to 1
+[34:20] if this is 0, microcontroller sets internally the voltage to 0
+[34:25] now all these pins have 0 ports
+[34:28] this one means 5 ports
+[34:30] all are 0
+[34:32] all others are 0
+[34:34] I can use the cord pin like this or it can connect the unit
+[34:41] Any cord pin you can use
+[34:44] All cord pins are equal
+[34:46] So I select a cord 0 pin and cord pin number 2
+[34:50] If you don't like you can use these 2 pins
+[34:53] No problem
+[34:55] Ok, right
+[34:57] I?
+[34:57] I.
+[34:57] I.
+[34:57] 
+[34:57] I.
+[34:57] I.
+[34:57] 
+[34:57] I.
+[34:57] 
+[34:57] I.
+[34:57] I.
+[34:57] I.
+[34:57] I.
+[34:57] I.
+[34:57] I.
+[34:57] I.
+[34:57] I.
+[34:57] 
+[34:57] I.
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] I.
+[34:57] 
+[34:57] I.
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[34:57] 
+[35:27] [unclear — Sinhala / crosstalk]
+[35:57] How do we do that?
+[35:59] We can't do that.
+[36:01] Ohm's law.
+[36:05] I equals V divided by R.
+[36:09] V is 5 volts.
+[36:11] Now let's assume there is no resistance.
+[36:13] Just a piece of wire.
+[36:15] Right? Resistance given.
+[36:17] Infinity.
+[36:19] Current goes to infinity.
+[36:21] A very large current
+[36:23] goes through the switch terminals
+[36:25] whether it is integral
+[36:27] To prevent that we use a large resistor
+[36:30] for example 10k ohm resistor
+[36:32] then I
+[36:34] V divided by large
+[36:37] pi divided by
+[36:38] 10k ohms means 10,000 ohms
+[36:41] pi into 10 to the power minus 4 ampere
+[36:46] very small current
+[36:48] goes through the switch darkness
+[36:50] that's why we use resistor
+[36:52] If you don't use the resistor, there will be a short circuit in the switch pins when you press the switch.
+[37:00] Switching up to the switch, it will not be done.
+[37:04] It will not be the current or limit current.
+[37:08] Switches release the voltage.
+[37:12] Press current, like a delay connection, so voltage becomes equal.
+[37:17] Limiting the current.
+[37:20] Daraa was C mark in the ring.
+[37:23] Voltage dropped it up when Daraa was limited.
+[37:27] Voltage dropped it up when you switch.
+[37:30] There is no current flow.
+[37:33] Current flow again then there is no voltage drop.
+[37:36] Medratpa hai Medratpa.
+[37:38] There is no voltage drop.
+[37:40] If there is a current flow then there will be a voltage.
+[37:45] Voltage dropped again when current flow again.
+[37:49] The switch is not going to be a current flow.
+[37:52] So, if you press the current, there should be a voltage difference.
+[37:57] What difference is it?
+[37:58] The switch is press the current flow, there is a difference.
+[38:01] 0, 5, that's why.
+[38:03] The switch is press the current flow, because there is a difference.
+[38:08] The switch is release, there is no difference.
+[38:11] Whereas, the current flow, there is no current flow.
+[38:16] If there is no current flow, no voltage, you know.
+[38:19] So 5 hours, 5 hours.
+[38:21] Overall science.
+[38:25] Can others understand?
+[38:26] No?
+[38:30] Right.
+[38:32] Microcontroller programming.
+[38:34] How to program a microcontroller?
+[38:37] So you need a PC.
+[38:38] Personal computer.
+[38:40] Using the personal computer, you write your firmware.
+[38:44] You write your firmware.
+[38:46] Normally, to program microcontrollers we use low level languages.
+[38:53] Assembly OC, those are the widely used languages for writing firmware for microcontrollers.
+[39:01] Assembly NC, right, you write.
+[39:04] And then you compile, if you use C language, you compile your source code into machine code.
+[39:11] If you use assembly, you use assembler to compile.
+[39:16] Translate. Either compiler or assembler you have to use.
+[39:21] If you have to use C, you use compiler.
+[39:25] If you use assembly, you use assembler.
+[39:28] And then you get a machine code file.
+[39:31] Machine code file.
+[39:33] This file we call hex file.
+[39:36] because it is hex station is hex
+[39:40] hex station is hex
+[39:42] h e x
+[39:44] no matter you use c co assembly
+[39:48] ultimately you get hex file
+[39:50] hex station hex
+[39:52] the reason is its contents are in hexadecimal
+[39:56] contents are in hexadecimal context
+[39:58] contents are in hexadecimal context
+[40:00] right
+[40:02] converting hexadecimal to binary is nothing
+[40:04] nothing it's very straightforward then this is your firmware now you have to burn this
+[40:14] firmware into the ROM of microcontroller from a little year you have to write this firmware
+[40:20] into the ROM right so we call flashing flash the firmware to microcontroller's ROM to do
+[40:29] that we use a programmer, hardware programmer. Using a hardware programmer we can burn this
+[40:39] firmware into the ROM of this microcontroller. ROM of this microcontroller. Microcontroller
+[40:47] ROM negative, and the end of the 1 may be firmware. Using this hardware programmer. Right. Now
+[40:53] Initially this microcontroller is empty microcontroller, no program. Now we flash the firmware into microcontroller's rock. Now this is a programmed microcontroller.
+[41:04] [unclear — Sinhala / crosstalk]
+[41:13] system. We program power to microcontroller and the system goes here and then we supply
+[41:19] power to the system. Then we supply power to the system. Now for programming the microcontroller
+[41:27] we use a programmer. You need a programmer to program the microcontroller. Programmer
+[41:32] means it's like a DVD writer. Right? You need to write the firmware to run. That is hardware
+[41:39] device you can write the firmware i to ROM. Then the microcontroller contains the ROM.
+[41:48] Then you connect the microcontroller to system board and power the system board. Right.
+[41:55] When you power the system board this is what happens. Right.
+[42:00] CPU takes line by line from the ROM and executes
+[42:06] The ROM contains all the machine code and line by line
+[42:11] CPU reads and executes
+[42:14] CPU reads line by line and executes
+[42:18] Right
+[42:19] Then what happens is
+[42:21] We take the state of physical world using sensors
+[42:26] and we change the state of word using actual
+[42:30] This is the process of programming
+[42:37] the programming process
+[42:39] Okay?
+[42:40] So that is
+[42:41] Now you know what's a microcontroller
+[42:43] internal components of a microcontroller
+[42:45] how internally microcontrollers work
+[42:47] and how to program microcontrollers
+[42:51] Compare to other
+[42:53] When you compare with Java and C sharp, C is lower.
+[42:57] But the lower level is assembly?
+[43:00] Assembly no, then C is higher.
+[43:02] Assembly is lower.
+[43:04] Assembly is the lowest level.
+[43:06] Actually lowest level is the machine core but we don't write in machine cores then.
+[43:10] The programming language, lowest level programming language is assembly.
+[43:14] But C is little bit higher than assembly.
+[43:19] But when you compare C with other programming languages, Visual Basic, C is far lower than Visual Basic.
+[43:27] C is more as an easy tool or something?
+[43:30] Not ordinary. Sometimes even with C language we cannot achieve the performance that we need.
+[43:39] Sometimes we have no choice, we have to go for C.
+[43:42] The reason is this, if you use very high level programming language, it would be very friendly for the programmer because of many layers.
+[43:52] But many layers means more overhead.
+[43:57] If you go for a low level language, no layers.
+[44:03] Sometimes you directly work with hardware.
+[44:06] For programmer it is not very friendly, but efficiently you can get the job done.
+[44:12] I will give you one example.
+[44:14] Now in C language, there is a problem called memory leak.
+[44:19] If you reserve dynamic memory using new operator,
+[44:25] other new operator will be dynamic memory reserver. If you reserve dynamic variables using new operator, the memory will be reserved and you will get a pointer to that memory.
+[44:40] You use the memory, that particular variable using the pointer and when you no longer need that memory, you need to delete that memory location. You use the delete keyword and remove the memory, release the memory.
+[44:56] If you don't release the memory, that memory will be there, reserved but not used. If you do this again and again, ultimately there will be lot of memory locations reserved but not used.
+[45:11] So you will end up with memory leak. That means you will run out of memory over the time because you have reserved more memory but you are not going to use.
+[45:24] It's like you go to a hotel, book a room, get the key and go up. You don't stay in that room. You get the key and go up. Again tomorrow you book another room, get the key and go up.
+[45:38] Then I will be made in the midnight, I will book a room, the hotel people will say all rooms occupied.
+[45:47] But none of the rooms are occupied, go with that. You have just reserve, reserve, reserve.
+[45:53] Like I said, if you are not going to use, you have to release.
+[45:58] This is the problem of C language. If you reserve, you have to release. That is your responsibility.
+[46:05] If you don't release, there will be a memory leak.
+[46:08] So as a programmer, you are responsible for that.
+[46:11] It's a burden for you.
+[46:13] When you write a code, when you declare a dynamic memory,
+[46:17] then you have to keep in mind that,
+[46:19] okay, I declared dynamic memory late, I have to release.
+[46:22] I have to release, I have to release, you have to keep that in mind.
+[46:25] Okay, I need to release this. I declared, I need to release.
+[46:30] I declared, I need to release.
+[46:32] So you have to give that, that is a burden for you.
+[46:34] But in Java, you don't need to do that. Java has a garbage collector.
+[46:40] Francisha also has a garbage collector. The garbage collector periodically examines memory to see whether there are any reserved memory but no longer use.
+[46:54] periodically test, check whether there are reserved memory no longer use.
+[47:00] It's like you appoint someone in that hotel to periodically check whether the rooms are a few pipes or just close the door.
+[47:08] You appoint someone who goes room to room and check whether there are a few pipes or just close the door.
+[47:16] If there are some memory reserved but not on the use, then the garbage collector releases them automatically. So you don't need to do that. As the programmer you reserve but you don't release.
+[47:33] It's something like this, when you go out from this lab, you don't turn off the lights. You turn on the lights but you don't turn off because there's another person to turn off. You appoint another person, a worker, for the lab to turn off the lights. You turn on, you don't turn off. But that person you have to pay. You turn off but you don't turn off because you have assigned somebody else to do that.
+[47:59] The garbage collector is something like that. You reserve memory but you don't release. The garbage collector will take care of it. But garbage collector has to periodically scan the memory and check whether there are reserved locations no longer used.
+[48:18] Periodically it has to do that. That means periodically it has to examine the memory, scan the memory. For that, garbage collector needs some resources.
+[48:30] This garbage collector is a program itself. To run that program it needs memory, it needs percent of time, it needs bus bandwidth, it needs some resources.
+[48:42] So more resources you give for the privilege. It's like for the lap you have appointed someone and you pay a salary just to turn off lights. If you turn on, the idea is in the C philosophy is, if you turn on, it's your responsibility to turn off.
+[49:02] If you take that responsibility, okay I turn on the light, I turn off, then when I go out, then you don't need to pay somebody else. You are very efficient. Now that's the C philosophy. You don't have shortcuts. If you declare memory, you release memory. Then no need to periodically discard. Periodically discarding learning is again computing resources. Can you understand?
+[49:28] That's why we say C is difficult
+[49:32] Because as a programmer all the responsibilities are not assured us
+[49:37] But on the other hand
+[49:39] There are no other routines running behind the scene to help us
+[49:45] No routines running behind the scene means very efficient
+[49:50] Can you understand?
+[49:52] To help you if there are routines running behind
+[49:55] behind, they consume resources. Then you will get only limited resources. Why? You have
+[50:02] to allocate some resources for those routines running behind the screen. There are routines
+[50:08] running behind the screen. So then you have to assign resources. But if there are no such
+[50:13] routines running behind and you take all the responsibility, then there is a mission. But
+[50:17] But if you make mistakes, then nobody do.
+[50:21] Take care of you.
+[50:34] Now, if you have not executed the code, then variables are not created.
+[50:38] If you run the code, then variables are created.
+[50:41] That declaration likely you have to execute.
+[50:46] Then only the variable is created. The line is not the variable created.
+[50:51] What the garbage collector does is it checks whether there is a variable. Yes, dynamically allocated variable.
+[50:59] But it is not long to use. The variable created subtlety function has returned.
+[51:08] Inside a function you declare the variable, then that function returned.
+[51:13] But variable is still there, so clean up that variable. But garbage collector has to find it. It has to scan the member time to time. It needs resources, it needs member. It needs possessor power.
+[51:28] The idea is rather than giving those computing resources to garbage collectors, use them for your program.
+[51:35] And you take the out of cleaning the miller. That's the idea.
+[51:39] So compared to modern programming languages, it is lower.
+[51:44] But high efficiency.
+[51:46] So when it comes to the environment system, efficiency is very important.
+[51:50] because we are going to live in another planet
+[51:54] we are only a bottle of water and oxygen silica
+[51:58] every single bit of water is very precious
+[52:02] we take that burden and save our precious reason
+[52:08] right now the next step
+[52:10] selecting a microcontroller for academic work
+[52:14] first you have to decide the world size
+[52:18] the word number of bits process at a time word size of a processor means number of bits process at a time
+[52:28] number of bits process at a time now modern processors like i7 right word size is 64 that means 64 bits
+[52:38] the processor can process at a time right now when it comes to microcontrollers these are the possible
+[52:46] possible bird sizes 4, 8, 16 and 30. Out of them we have to select a suitable bird size.
+[52:58] So we look at the trend. This is the trend. Here you can see. This is called compound annual growth rate.
+[53:07] Compound annual growth rate you can see in this column. Now when you look at that, you can see 4 bit microcontrollers annual growth rate is negative.
+[53:23] That means their usage of 4-bit microcontrollers are getting less and less. They are getting out of the market little by little. That's why at all growth rate is negative.
+[53:37] When you check 8 bit, 6.4 growth rate. 16 bit, 0. No growth rate. Not negative but no growth rate. 32 bit, there is a growth rate. Similar to 8 bit.
+[53:52] Now if you want to learn about microcontrollers, you should learn about microcontrollers, family which has a growth.
+[54:00] So 4 bit no point. 16 bit zero. No growth. 8 bit and 32 bit. Right? Similar growth. 6.4, 6.5. Then we have to select either 8 bit or 32 bit.
+[54:24] word size because they have a growth, they have a future. Out of 32 bit and 8 bit, not only the growth rate and word size, we have to consider about other factors.
+[54:40] ease of learning
+[54:43] that is simplicity and the support available
+[54:47] ease of learning means simplicity and support available
+[54:51] right? obvious 8 bit is simple compared to 32
+[54:55] compared to 32 bit, 8 bit is simple
+[54:58] and support available for both 8 bit and 32 bit
+[55:02] support available for both 8 bit and 32 bit
+[55:05] then we have to consider the cost
+[55:08] per microcontroller cost. 8bit cheap, 32bit expensive. Then we have to consider about the tool chain.
+[55:16] The tool surveillance for both 32bit and 8bit there are free and open source tools available.
+[55:24] Free and open source tools are available. Right.
+[55:28] Now only the factors that differ are the simplicity and the cost.
+[55:36] 8 bit simple, 32 bit compared to 32 bit. 8 bit cheap, compared to 32 bit.
+[55:42] So we select 8 bit because simpler is better for athernalythesis.
+[55:50] We can determine a sural agent for athernalythesis.
+[55:53] That's why we selected 8 bits of learning cost.
+[55:58] Considering these two factors, we selected 8 bits.
+[56:02] Once you learn 8 bit then you can migrate to 32 bit. You can easily migrate to 32 bit. So no point of learning 16 bit. There is no future. 4 bit already out.
+[56:15] Then you have to select a particular 8 bit family, a particular microcontroller family
+[56:24] following. Now there are 5 major 8 bit families. One is 68HC08 family that is from Freescale
+[56:37] formerly from Motorola, right?
+[56:40] One of the very popular microcontroller family, right?
+[56:44] Formerly from Motorola, now it is called, the company called, FreeSky.
+[56:48] 1851 family from Intel, another popular family, right?
+[56:54] ADR family from Microchip, formerly from Ant-Man.
+[56:58] Pick family from Microchip.
+[57:00] This is the family actually I use to learn and learn systems.
+[57:06] So I started my learning of systems using PIC microgram.
+[57:11] Then, visit AIT from zero.
+[57:13] Among them, we select ABR.
+[57:16] The reason is, the architecture is Harvard RISC.
+[57:21] Like we discussed in the previous chapter,
+[57:24] the Harvard architecture and the RISC architecture.
+[57:27] ABR architecture is Harvard RISC, not Montemar, Harvard RISC.
+[57:33] Our risk card is reduce instruction set computer
+[57:40] This means, our risk ingredient is reduce instruction set computer
+[57:46] And this family is very popular in academia
+[57:50] As a result, there is a large user base
+[57:55] and lot of free development tools available
+[57:58] lot of supporting materials available
+[58:02] Very popular in academia, lot of documentation available, lot of development tools, pre-development tools available, larger user base.
+[58:14] And the AVR is the heart of Arduino family.
+[58:18] Arduino family uses AVR.
+[58:26] Now let's see this video.
+[58:30] This is about AVR family.
+[58:31] That's what I hate it doesn't matter.
+[58:33] There's a tabasco here sitting there.
+[59:01] I have a because I have a so-called
+[59:03] I have a isa
+[59:03] I have a I ofa
+[59:03] I have a people to go.
+[59:04] I have a right-z
+[59:05] I have a right-z
+[59:06] I have a right-z
+[59:06] I have a right-z
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:06] 
+[59:34] I'm not going to be able to get it.
+[59:38] I'm not going to be able to get it.
+[59:40] I'm not going to be able to get it.
+[1:00:04] [unclear — Sinhala / crosstalk]
+[1:00:08] I have a look!
+[1:00:08] I have a look!
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] 
+[1:00:09] I have a look!
+[1:00:09] I have a look!
+[1:00:09] I have a look!
+[1:00:09] I have a look!
+[1:00:09] I have a really got a really very good one, I have a really say
+[1:00:13] I have a really really want a really got a really need
+[1:00:14] to be a really not.
+[1:00:15] I have a really have a really not.
+[1:00:15] I have a really for a really not.
+[1:00:15] 
+[1:00:15] I have a really to be a get-gant, to be a rar, to be a gant, to be a d'e-d'e, to be a
+[1:00:16] aon, ae, ae, aa, aL, a.
+[1:00:16] I don't know, I don't know.
+[1:00:18] I don't know, I don't know.
+[1:00:30] This is a joke.
+[1:00:32] This is a sugar.
+[1:00:36] This is a candy bag.
+[1:00:38] I want to go.
+[1:00:40] I don't know.
+[1:00:42] I don't know.
+[1:00:46] What on earth is ABR?
+[1:01:07] How can it become one of the greatest successions in the industry?
+[1:01:12] And what does ABR really stand for? It's a long story and it started right here.
+[1:01:19] The Norwegian University of Technology and Science educates several thousand US and PhD candidates every year
+[1:01:29] and is a prime resource for technological brain power for the industry in Norway.
+[1:01:35] In 1992, two students graduated with a thesis on a RISC microcontroller with flash-program memory.
+[1:01:43] Alvegen-Buhl and Weger-Wohlan were confident that their innovative design had competitive advantages and decided to develop it further.
+[1:01:52] After a couple of years of refining the architecture and adding peripherals, a complete design took form.
+[1:01:59] It became evident that their invention was ready for the next step, then eating a corporate partner.
+[1:02:14] The two no-interest stayed downtown San Francisco, eating waffles with brown cheese,
+[1:02:19] at the same as Turks, while waiting for the meeting with Admiral Beans in Silicon Valley.
+[1:02:25] I remember the first time in my first time, I had scheduled a meeting with the top management
+[1:02:32] of ACMO and the first thing they said to us in the meeting was that they had about 10
+[1:02:36] minutes to listen to us.
+[1:02:37] And we had prepared about 42 pages starting with very much details and bits and bytes.
+[1:02:43] And we looked at each other and said, we are not going to make this presentation in 10
+[1:02:48] minutes.
+[1:02:49] So we decided to reverse the order and starting the last page showing a hundred million dollar revenue.
+[1:02:56] And that got their attention.
+[1:02:58] We moved all the way back to page number one with bits and bytes and the whole meeting took about three hours.
+[1:03:05] They rented an entire floor in a Trondheim office building and started recruiting the best mines in the region.
+[1:03:12] Most of them stayed out of university.
+[1:03:15] We were just a group of people working very closely together in those days.
+[1:03:20] We reached an invaluable asset to the platform runway team.
+[1:03:24] A unique team spirit, which is still one of the most important qualities of our much larger team today.
+[1:03:31] 1997 is a milestone in this story.
+[1:03:35] A year where the AVR started attracting international attention.
+[1:03:39] It was the year when the first actual AVR product hit the market.
+[1:03:44] the 1890s1200. We launched a very easy to use market controller. It had built-in flash
+[1:03:52] which was in system programmable, we had eSquare on board and on top of this we had
+[1:03:57] three development tools offering a low cost hardware emulator and giving away software
+[1:04:03] tools for free. It was a very controversial thing to do at the time but it helped make
+[1:04:09] the AVR very attractive to the market. This immediately made it possible for everyone to enter the world of the AVR.
+[1:04:17] A strategy that soon proved to be successful and made the company grow rapidly.
+[1:04:23] Today the AVR is a market-leading high-performance ultra-low-power microcontroller.
+[1:04:30] From day one we wanted to enable our AVR users with the perfect balance between
+[1:04:36] between high performance and the lowest possible power consumption.
+[1:04:41] And the AVR architecture is supporting this in two major ways.
+[1:04:45] First, it's the single cycle instruction execution, and it's the highest code density.
+[1:04:52] These two in combination are giving the AVR CPU architecture,
+[1:04:57] which is really supporting our low power consumption.
+[1:05:02] We have developed a ultra-light power design technique and in addition with fine-tuned or process manufacturing technologies.
+[1:05:13] So it's the cocktail of these three elements which are together resulting in the industry's lowest power models today.
+[1:05:22] The ABR teams have extended their product families into the 32-bit range, with the ABR32 product family launched in 2006.
+[1:05:33] Furthermore, product groups have also been established in other countries, such as France, Germany and Finland.
+[1:05:40] As a consequence of all the expansion, the number of patents is constantly growing.
+[1:05:45] We are new work patents in annual court with workflows even on their complete systems,
+[1:05:51] and as our number of devices grow, so does in the number of pending market patents.
+[1:05:55] We are constantly working to develop new and innovative products,
+[1:05:59] to grow our market shares in the market where we are today,
+[1:06:03] but also to expand into new segments for the future.
+[1:06:07] It's a serious thing to educate people who are passionate about their work.
+[1:06:11] It's a big teamwork between designers, marketing people, manufacturing, sales and distribution.
+[1:06:18] All of these people are important.
+[1:06:20] Here in Tramon we are one of the best universities in Europe.
+[1:06:23] Most of the 17 employees we have here in Tramon today are educated at this university.
+[1:06:30] The technological excellence of the NDR products is widely appreciated.
+[1:06:35] turning many customers into fans more than just users.
+[1:06:40] An AVR community has formed on the internet, inspired to collaborate and share their knowledge,
+[1:06:46] adding to the solid technical support directive on Admo.
+[1:06:51] What does AVR really stand for?
+[1:06:55] Well, I guess we promised to put more bands in the way.
+[1:07:01] So, um, ABR stands for...
+[1:07:08] So, so much show mister.
+[1:07:11] Other than when, you know, the ABR will be stands for a new way.
+[1:07:16] But, a couple of important lessons that I learned from this video.
+[1:07:31] Two students designed this microcontroller in the nine months.
+[1:07:36] Then they went to Sri Gattavarivas to find a corporate partner to market.
+[1:07:44] The top management gave them all 10 minutes.
+[1:07:49] There about 40 odd slides.
+[1:07:51] So they realised that they could make it in 10 minutes.
+[1:07:56] So they started with last time, 100 million people.
+[1:08:00] That got the attention, the entire discussion went 3 hours.
+[1:08:04] So you also sometimes face this type of senior people in the corporate world, they tell you, I can give you five minutes.
+[1:08:16] But you have done a brilliant job within five minutes, you can't explain.
+[1:08:20] You have to grab that.
+[1:08:21] So they started with the last line.
+[1:08:23] Last line is about 100 million revenue mark.
+[1:08:26] That's not that actually.
+[1:08:29] Then 10 minutes, 10 minutes to 3 hours.
+[1:08:33] Right?
+[1:08:33] All the top people they spent 3 hours with these two guys, in these three students.
+[1:08:40] If you know some hundred million dollars, if they started with bits and bytes of the first life,
+[1:08:46] that means everything is gone. That is you can't do it.
+[1:08:50] Then ma'am, another reason, the meaning of area, they don't disclose.
+[1:08:57] All other micro-corrections, for example, PIC, peripheral interface completely.
+[1:09:06] The meaning is, everybody knows, they don't disclose.
+[1:09:11] So in this video also, they said, okay, we need to talk about that and then got some distraction and ended up with a mystery.
+[1:09:20] Another marketing strategy.
+[1:09:22] If you leave some mysterious thing with your hudda, that becomes the marketing point.
+[1:09:30] Now as a result, many people give many different definitions for ADR.
+[1:09:36] Some people say AVR means at-pass virtual risk.
+[1:09:41] Some people say these two guys are, one is ALF and the other is, they got ALF and they got risk.
+[1:09:50] So many different definitions. So when people talk about that, when people talk about that, it means it's fun.
+[1:09:59] People talk about Yomada, what is the meaning of aliena. So you create something to discuss.
+[1:10:08] Any other side?
+[1:10:10] As an MIT student you should know his quality.
+[1:10:13] It's very important. I remember one couple of years ago when Hackertham at IDR Mandelberg,
+[1:10:22] they had many teams and the final round, MIT team also got selected to final round.
+[1:10:31] and I was there. My honours, according to my honours assessment, we didn't deserve the first place.
+[1:10:41] There was a team from Moradu Engineering, they developed a pair of glasses which can detect whether you are sleepy or not.
+[1:10:52] That is very important when you are driving.
+[1:10:54] So our people developed, I can't even remember the product our people developed, right?
+[1:10:59] And there was some, another team from UCSC, they also did a good job, one team from the street, they also did a good job.
+[1:11:07] Ultimately, we got the first place. How? According to the technology and the invention part of that, like SSM, we don't deserve it.
+[1:11:21] But we got the first question. The reason is, the last percent of our team is a good marketer. He marketed the product to the back. So technology wise, his knowledge is zero, another person is the other.
+[1:11:37] But he marketed, so probably you have heard about him suddenly.
+[1:11:41] So he marketed the product and all the panel, they would even think about where they were because of his talk.
+[1:11:51] Finally they gave marks.
+[1:11:54] So that marketing fact is also important.
+[1:11:57] Now even in this video you can see AVR is a mystery, the key.
+[1:12:02] So the people talk about it.
+[1:12:04] They have created a recent product.
+[1:12:08] And another thing.
+[1:12:11] Now when they enter into the market, AVR,
+[1:12:15] it is a very very young market to a family,
+[1:12:18] entered into late 90s into the market with their product.
+[1:12:24] The product designed by two students.
+[1:12:27] There were giants in the market at that time.
+[1:12:30] Motorola, Intel, PIC, they were giant and the PIC was the market dominated, PIC dominated the market.
+[1:12:40] Till late, till early 2010 PIC dominated the market.
+[1:12:49] So I started learning Emberate Systems in 2007-2008.
+[1:12:57] At that time DIC was the market leader. So that's why I selected DIC micro-thr
+[1:13:04] and DIC student. Because there is a future. I told at that time. But in the minute, around
+[1:13:12] 2006, 5-2006, the group of people in Italy, they started out. They selected AVR and
+[1:13:27] as their microcontroller for their Arduino goods.
+[1:13:30] As a result, later the market share of AVR increased dramatically because Arduino was everywhere.
+[1:13:41] As a result, AVR dominated the market, not PIC.
+[1:13:48] PIC tried to compete. PIC was a giant in the industry. PIC tried to compete, no, failed.
+[1:13:55] As I remember in 2011-2012, the world market leader for the microcontrollers came, not big. Before that, it was big. The big company tried to compete fair. Ultimately, they bought entire Acknell company to their company.
+[1:14:21] They bought that. Now today, the area runs micro-gene, same company.
+[1:14:29] Micro-gene, they have the peak, they have the area.
+[1:14:33] Because they fail the generation, they bought the money. They buy the money.
+[1:14:38] Because if there is a big child with enough money and resources, they bought the company.
+[1:14:45] Atmel is a small, very young company, but they dominated the market and then the giant bought that.
+[1:14:54] That's why today, if you go to this thing, you can see, formerly Atmel, now Microchip, picked from Microchip.
+[1:15:03] So in 2014 I remember, right, the microchip got back.
+[1:15:10] Now again the microchip says they are the leader in the market.
+[1:15:17] Why? Now they are who? They have a program.
+[1:15:21] There they are. Right. Okay.
+[1:15:24] Now this is the microcontroller that we selected in the ADR family.
+[1:15:30] Ok let's see some of the features of this micro-controller
+[1:15:34] Howard RISC Appetiture
+[1:15:37] 131 single clock instructions
+[1:15:41] Instruction set how many instructions?
+[1:15:44] 131
+[1:15:46] Single clock means 1 clock cycle for each instruction
+[1:15:51] That means very fast instructions
+[1:15:54] 8 bit 30 megahertz CPE
+[1:15:58] and 14 bit pc program counter size 14 what does that mean address size
+[1:16:06] program counter we used to keep the is address of the next question
+[1:16:12] 14 bit address size 32 kilobyte 16 bit word addressable rock size of rock 32
+[1:16:21] below bytes. So when you write firmware, your firmware when you compile, it should be less
+[1:16:29] than 32K. Otherwise you can't flash, you can't upload to ROM if your firmware machine code
+[1:16:39] version is greater than 32K. Whatever the program you write, it must be less than 32K.
+[1:16:47] 2kb is not a big size sir
+[1:16:50] therefore when you write program you have to be careful about your algorithm
+[1:16:54] 2kb prime and 1kb EEProp
+[1:16:59] EEProp is 1kb that is enough for settings
+[1:17:02] but 2kb prime
+[1:17:04] that means you can't create very bulky variables
+[1:17:09] now lengthy arrays
+[1:17:12] Arrays of structures, strings you can use but not much. If your program uses lot of strings you would easily run out of crap. If you create very lengthy arrays you would easily run out of crap. Why? You have only 2kp.
+[1:17:32] 2 kV RAM for variables, inputs and outputs. Everything you have to gain. 3 I.O. ports with 23 I.O. pins. 3 timers, 6 pulse width modulated channels and 6 channel 10 bit ADC.
+[1:17:55] ADC, DEPT ADC with 6 channels
+[1:17:58] Pulse in modular it with 6 channels
+[1:18:01] 1 USART, 2 SPI and 1 I2C
+[1:18:06] and 28 pin plastic dual inline package
+[1:18:11] this is, here you can see
+[1:18:13] this is the plastic dual inline
+[1:18:17] right, dual side pins inline package
+[1:18:21] this is called PD
+[1:18:22] plastic dual inline package
+[1:18:24] Why? And this is because this package, this is ideal for insert into breadboards. This dual inline package is ideal for working with breadboards. It's a very breadboard friendly package.
+[1:18:38] and apart from all these things we selected this microcontroller because it is the heart of Arduino
+[1:18:49] the most popular Arduino board Kuno uses
+[1:18:53] Kuno is the most popular microcontroller and most popular microcontroller development board is Arduino Uno
+[1:18:59] and most well documented microcontroller development board is also Arduino
+[1:19:04] We are talking about the most common and it uses this particular microcontroller so we use this microcontroller.
+[1:19:12] So we use Arduino hardware that doesn't mean we are going to use Arduino software.
+[1:19:20] We are going to use C program because we want efficiency.
+[1:19:25] Right. Now we need a development goal. To start our embedded system development lesson, we need a development goal. There are number of development goals available.
+[1:19:39] So one is this from Atmel, right, explain. One is this from Microelectronica, EasyAEA, right. This is very expensive. This is about $150, $200. This is about $20, $30.
+[1:20:00] or else you can have your homemade wood
+[1:20:03] that is also possible, homemade development wood
+[1:20:07] right?
+[1:20:08] homemade wood
+[1:20:10] if you know electronics you can have
+[1:20:13] you can develop this kind of development wood by yourself
+[1:20:17] but again even if you try to develop your own wood, homemade wood
+[1:20:23] it will cost more than thousand
+[1:20:25] You have to design the board and all these components you buy and then you have to buy a soldering iron to solder the components and to all these things it would cost more than 1000. But thanks to China you have this for 900. But if you go to buy the original Italian product it would cost you about 4500 original Italian food.
+[1:20:49] I will show you some of the bowls
+[1:20:58] This is a homemade one
+[1:21:00] So I remember that in early 2008
+[1:21:04] Homemade development is possible
+[1:21:07] Look at cereal pot
+[1:21:09] At that time we had cereal pot in the government
+[1:21:12] Now you have cereal pot
+[1:21:14] Then this is original Italian food
+[1:21:16] not Chinese one
+[1:21:26] right this is the one that I use today
+[1:21:30] so you can plug many different microgrid rollers into those sockets
+[1:21:35] and to a good
+[1:21:37] right just have these are the possibilities of the way
+[1:21:46] It's ok
+[1:21:48] It's ok
+[1:21:50] It's ok, very bad
+[1:21:52] It's just crazy about this
+[1:21:54] So that's the first board I use
+[1:21:56] Yes
+[1:21:58] There's a big micro controller
+[1:22:00] In the SIM socket
+[1:22:02] So you can go to the board
+[1:22:04] How you can come up?
+[1:22:06] This is no SIM, zero insertion force
+[1:22:08] How you can go
+[1:22:10] I can go to the display
+[1:22:12] I can help you
+[1:22:14] This is the latest version of Easy Real.
+[1:22:18] That one 2005 I think.
+[1:22:21] 2005 development.
+[1:22:24] I got it in 2008. Easy think.
+[1:22:27] Now there you can see all the input switches.
+[1:22:30] And LEDs as actuators.
+[1:22:33] These displays as actuators.
+[1:22:36] So you can connect other variables to these pools.
+[1:22:40] and 7 segment displays are available. If you program different microcontrollers you can
+[1:22:47] plug them into different formats.
+[1:22:50] It depends on the work you are going to. That means if you need more I-O codes, you need
+[1:22:59] to go with this type of larger. Because the plug of pins...
+[1:23:03] No, you can't plug more. Just one.
+[1:23:09] And this is the programmer. Hardware programmer.
+[1:23:19] So those codes, we have serial. Now we don't have that CID.
+[1:23:23] So here you have CID.
+[1:23:27] right and is this the ESP module you talk about?
+[1:23:33] no sir
+[1:23:35] ESP
+[1:23:37] not MC
+[1:23:39] not MC
+[1:23:41] not MC also uses ESP
+[1:23:43] not MC uses it will be touchable
+[1:23:47] so this has micro
+[1:23:49] microbrotis
+[1:23:51] this is about 400 Brotis
+[1:23:55] How much you got?
+[1:23:57] $10 that means about $2000
+[1:24:01] This is about $4
+[1:24:03] Right
+[1:24:05] Now therefore we select this Rd1
+[1:24:09] As the regular menu
+[1:24:11] Now let's start about Rd2
+[1:24:13] An open source
+[1:24:15] Low cost PC to use
+[1:24:17] Hardware and software platform for
+[1:24:21] Prototype
+[1:24:23] very important prototyping embedded systems. Right prototyping embedded systems. So prototyping
+[1:24:32] embedded systems. So many people think they if they when they use Arduino and they know
+[1:24:41] how to use Arduino they can do embedded systems for any purpose using Arduino. No. Arduino
+[1:24:48] you can use for prototype. If you want to do real application or industrial system using Arduino,
+[1:24:56] in industry they don't use Arduino. The reason is from performance point of view, Arduino is
+[1:25:04] nursery. For prototype, first prototype, if you want to try, this is Arduino. Thereafter,
+[1:25:10] you have to go for some other reason. Now, in this module, we are going to learn how to use
+[1:25:16] Arduino hardware to get the maximum power out of it. If you use Arduino software platform,
+[1:25:23] you can't get the maximum power out of that because Arduino software platform is very highly user-effective.
+[1:25:31] They developed that form with the purpose of making it highly user-effective.
+[1:25:37] The performance was not their concern. Usability is their concern.
+[1:25:43] So that's why it is so easy and many people like to use it.
+[1:25:48] But when it comes to real problems, when you develop real solutions for real problems,
+[1:25:54] then you need the professionals.
+[1:25:56] Now in this module we only use Arduino hardware to get the maximum benefit,
+[1:26:02] we learn how to get the maximum benefit from this Arduino hardware.
+[1:26:06] Right. But you have to self-learn how to use Arduino software.
+[1:26:11] Because even small kids, small children they know how to use Arduino.
+[1:26:16] So as university students after following embedded systems module you can't say I don't know how to use Arduino.
+[1:26:23] You can't do it. Right? So you have to self-learn Arduino.
+[1:26:28] It is very easy. It is very easy to learn.
+[1:26:31] Therefore you can self-learn.
+[1:26:34] I will explain you how to use Arduino hardware with C program A to get the maximum power out of the cheap hardware.
+[1:26:44] That's what we did when developing that QA. We got maximum power from the cheap Arduino.
+[1:26:52] I will explain that. And when you learn those things later you can migrate into different micro-micro-data platforms depending on your return.
+[1:27:02] For example, I learnt with DICT, now I am teaching you in different countries.
+[1:27:08] But it doesn't matter if you learn the concept properly.
+[1:27:11] If you have proper foundation and concepts are given, you can easily migrate into different countries.
+[1:27:18] Or if you learn computer programming with one programming language, then you can learn any programming language.
+[1:27:24] Very easy. Only the differences it takes.
+[1:27:27] but if you learn the one programming language correctly, then learning another language is matter of time.
+[1:27:35] It has same concepts, selection, repetition, sequence, those are the literal structure.
+[1:27:41] Then function call, function returns, memory allocation, pointers, parameter passing, value parameters,
+[1:27:48] several parameters, those are, every programming language, those are the concepts, nothing else.
+[1:27:53] Then you can learn it later.
+[1:27:55] Stay away with the embedded systems program, including using Arduino hardware.
+[1:28:00] See, later you can migrate to any platform that you like.
+[1:28:05] Right.
+[1:28:06] In this back-walk there are number of books.
+[1:28:10] There are number of books.
+[1:28:12] Use for different purposes.
+[1:28:14] Now more information you can find from this lecture.
+[1:28:17] Some books are specially for girls, right?
+[1:28:20] Like this is really bad.
+[1:28:22] So they purposely develop for girls because normally the girls use this mini pad to design very interactive dress with the lights blinking and showing very beautiful desires.
+[1:28:44] You may be interested in this particular mini pad.
+[1:28:49] Just search Google really bad designs, you can see a lot of nice designs.
+[1:28:59] Right, now out of these boards, this is the most primitive board.
+[1:29:07] Most primitive board is Uru.
+[1:29:09] Uno stands for one in Italian language.
+[1:29:12] One.
+[1:29:13] In Italian language, Uru means one.
+[1:29:15] because this, the Arduino started from Italy, right.
+[1:29:21] In Italy, right, there is an area called Iberia, Iberia.
+[1:29:28] So from that area, there is a university, and that university, this Arduino development started.
+[1:29:38] As a master's project, MSC project, you can read about the history.
+[1:29:44] And one nice story is, you know how they got this name, Arif.
+[1:29:51] This is the group of people developed this Sata software platform.
+[1:29:57] They used to get together at a particular place to discuss about their project time to time.
+[1:30:05] That place was a bar, bar in my second, to discuss about their project.
+[1:30:13] One day they wanted to make their project open source and available for others so that others also can develop.
+[1:30:23] That's a very great decision they did.
+[1:30:26] That's a key milestone in their project, a good decision they made.
+[1:30:32] They decided to make the project open source so that others can contribute.
+[1:30:37] When you upload it using github you can make it available for others, then you needed a name for the project.
+[1:30:46] At that time they had no name, they wanted a name.
+[1:30:50] They were having that discussion at the bar, they wanted a name.
+[1:30:55] They looked at Evaraya and then they showed the name board of the bar, Ardeen of Ivareya.
+[1:31:02] Aadhin of Ivaraya is the name of the land. Ivaraya is the area of that particular region.
+[1:31:10] Aadhin of the area. So they can't even put Aadhin on.
+[1:31:14] But it's not that. It's not that. It's not that.
+[1:31:20] It's not that.
+[1:31:22] It's not that.
+[1:31:24] It's not that.
+[1:31:26] It's not that.
+[1:31:28] But now that particular bar, it has become a tourist attraction.
+[1:31:35] Now people go there to see that bar because that is the birthplace of Rd.
+[1:31:41] It has become a very popular place now, tourist attraction.
+[1:31:46] Right.
+[1:31:47] Ok, next step, we need to talk about the features of Rd No.
+[1:31:51] Who knows? We will discuss that.
+[1:31:53] Okay, you have properly, we may not be able to start the tactical next week.
+[1:32:08] So you have time to get kicked up.
+[1:32:13] In case you have trouble, please let me do.
+[1:32:23] I hate them.
+[1:32:24] You're not going to die?
+[1:32:32] I'm not going to die.
+[1:32:36] I'm not going to die.
+[1:32:39] I'm not going to die.
+[1:32:41] I'm not going to die.
+[1:32:47] What are you doing here?
+[1:32:49] I have a one-hate, ase, a fad.
+[1:32:51] I have a beu, aat, a ss,s,
+[1:32:52] a t7,I a t3,8,1,
+[1:32:52] I have a pletal-difedn.
+[1:32:54] I have a pletal-difed.
+[1:32:55] I have a more..
+[1:32:56] I have a really...
+[1:32:56] I have a maquy
+[1:32:56] I have a hap
+[1:32:57] 
+[1:32:57] I have a m oqd
+[1:32:57] 
+[1:32:57] I have a c.M.A.
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] 
+[1:32:57] I have a thing, I have a think, a thing
+[1:32:59] I have a think
+[1:32:59] I have a like
+[1:32:59] a like
+[1:32:59] 
+[1:32:59] a a
+[1:33:00] 
+[1:33:00] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] a
+[1:32:59] 
+[1:32:59] 
+[1:32:59] a
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] a
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] a
+[1:32:59] 
+[1:32:59] 
+[1:32:59] a
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] 
+[1:32:59] I have a thing, I have a really good one!
+[1:33:01] I have a really good one!
+[1:33:02] I have a really good one!
+[1:33:03] I have a really good one!
+[1:33:03] I have a really good one!
+[1:33:04] I have a really good one!
+[1:33:04] I have a really good one!
+[1:33:04] I have a really good one!
+[1:33:05] I have a really good one!
+[1:33:05] I have a really good one!
+[1:33:05] I have a really good one!
+[1:33:05] I have a really good one!
+[1:33:05] I have a really good one!
+[1:33:06] I have a really good one!
+[1:33:06] I have a really good one!
+[1:33:06] I have a really good one!
+[1:33:06] I have a really good one!
+[1:33:06] I have a really good one!
+[1:33:06] I have a really good one!
+[1:33:06] I have a really good one!
+[1:33:07] I have a really good one!
+[1:33:07] I have a really good one!
+[1:33:07] I have a really good one!
+[1:33:07] I have a really good one!
+[1:33:07] I have a thing
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:08] I do
+[1:33:07] I do
+[1:33:07] I do
+[1:33:07] I do
+[1:33:37] A little bit of lemon.
+[1:34:07] [unclear — Sinhala / crosstalk]
+[1:34:37] I have a look.
+[1:34:38] I have a look.
+[1:34:38] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] 
+[1:34:39] 
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:39] I have a look.
+[1:34:40] I have a look.
+[1:34:40] I have a look.
+[1:34:40] I have a look.
+[1:34:40] 
+[1:34:40] I have a look.
+[1:34:40] I have a look.
+[1:34:40] I have a look.
+[1:34:40] 
+[1:34:40] I have a look.
+[1:34:40] I have a look.
+[1:34:40] 
+[1:35:07] Okay.
+[1:35:37] [unclear — Sinhala / crosstalk]
+[1:36:07] So, let's go.
+[1:36:37] I have a look.
+[1:37:07] So, let's go.
+[1:37:37] I have a right.
+[1:37:38] [unclear — Sinhala / crosstalk]
+[1:37:40] I have a right-raith, to the one-�-raith, to the one-n-a-h-e, bh, a-h, a-bh!
+[1:37:41] I have a right-raith!
+[1:37:41] I have a right-raith!
+[1:37:42] I have a right-raith!
+[1:37:42] I have a right-raith!
+[1:37:42] I have a right-raith!
+[1:37:42] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:37:43] I have a right-raith!
+[1:38:07] I have a right.
+[1:38:08] [unclear — Sinhala / crosstalk]

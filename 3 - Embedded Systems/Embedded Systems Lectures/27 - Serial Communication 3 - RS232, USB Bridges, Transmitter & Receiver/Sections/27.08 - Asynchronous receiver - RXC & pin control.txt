@@ -1,0 +1,234 @@
+[0:00] Right. Now let's see how that receiver works. This is how transmitter works. How receiver works. This is the block diagram of receiver.
+[0:12] A synchronous receiver block diagram. Right. Again let's start with Bordrade generator.
+[0:19] Two inputs to the bode rate generator. One is the oscillator signal from CPU. That is F-CPU, frequency of CPU, clock pulses. One input is clock pulses, F-CPU.
+[0:36] The other input is the value of UBRR register, USAT board rate register, UBRR register.
+[0:46] According to this formula, fcpu divided by 16 multiplied by UBRR plus 1.
+[0:55] According to this formula, board rate generator generates board rate, data transfer rate.
+[1:02] Board rate generator generates data transfer rate.
+[1:06] If you want to match the receiver's board rate to transmitter's board rate, you can change the value of UBRR.
+[1:17] By changing this UBRR, you can change the board rate.
+[1:22] Because FCPU is normally fixed.
+[1:25] So, this is the register value you can change.
+[1:28] This register value you can vary between 0 to 255, 8-bit register.
+[1:33] and you can adjust the board rate
+[1:36] or data transfer rate
+[1:38] to match with the
+[1:40] data transfer rate of the
+[1:42] transmitter. Now we are in the
+[1:44] receiver. Why? That's the first
+[1:46] one. The receiver
+[1:48] receives data
+[1:50] through RxPP.
+[1:53] Receiver receives
+[1:54] bit by bit. Not
+[1:56] parallel bits. Serially
+[1:58] bit by bit through RxPP.
+[2:01] Receiver receives
+[2:02] data through RxDB. RxDB means receive data.
+[2:06] Receive data. And then synchronization
+[2:09] unit. Synchronization unit recognizes
+[2:14] sync bits. That is start bit and
+[2:18] stop bit. Synchronization unit recognizes
+[2:21] sync bits. Using the board drain.
+[2:25] Using the board drain, synchronization unit recognizes
+[2:30] start bit and stop bit and load the character to receive shift register. Load the database
+[2:41] to receive shift register. Every character is framed with a start bit and a stop bit.
+[2:49] Synchronization unit recognizes and loads the character to receive shift register. When
+[2:56] When received shift register is full, it transfers character to the UDR, USAT data register.
+[3:09] When the shift register is full, the character, not the start bit and stop bit, just the character
+[3:16] in between start bit and stop bit.
+[3:19] The character is transferred to UDR.
+[3:22] When UDR contains an unread character, a character that we have not yet read, RxP flag bit is
+[3:36] safe. Receive complete flag bit is safe. Receive complete flag bit. That flag bit is in UCSRA
+[3:46] register. User control and status register A. Receive complete flag bit of user control and
+[3:57] status register A is set. Also, if you have enabled, receive complete interrupt using this particular
+[4:08] bit that is called RxCIEB receive complete interrupt enable using this bit
+[4:15] you can either enable or disable receive complete interrupt if you set value 1 to
+[4:22] this bit you enable receive complete interrupt if you set value 0 to this bit
+[4:28] you disable receive complete interrupt so if you enable the receive complete
+[4:33] interrupt. When this flag is set, CPU
+[4:37] will be interrupted. When this flag bit is set,
+[4:42] it indicates UDR contains
+[4:45] a new character. This flag bit is set,
+[4:49] it indicates a new character is in the UDR.
+[4:54] So you can read the character.
+[4:57] So when you read the character, automatically this bit is clear.
+[5:01] The flag bit is automatically cleared when you read the character.
+[5:05] So by polling this flag bit, you can read character by character.
+[5:11] By polling this RxC receive complete flag bit, you can read character by character.
+[5:17] Instead of polling this flag bit, you can use the interrupt.
+[5:22] Receive complete interrupt.
+[5:23] If you have enabled it, right, when there's a new character in UDR, this interrupt is
+[5:30] you can use this interrupt to read character by character from UDR is that clear when there's a
+[5:42] new character in the UDR flag bit is set interrupt is triggered either interrupt or flag bit you can
+[5:49] use to read character by character if the UDR contains an already read character not a new
+[5:57] character already red character or UDR is empty. Either UDR is empty or it contains already red
+[6:06] character. Then RxC flag is not set. Receive complete interrupt is not triggered. RxC flag is set.
+[6:14] Receive complete interrupt is triggered only when there's a new character in the UDR. So you can read.
+[6:22] is that clear any question okay let me ask a question now without polling rxc flag oh without
+[6:32] using this internet sorry
+[6:37] [unclear — Sinhala / crosstalk]
+[7:07] I have a here, the tos, the the.
+[7:09] [unclear — Sinhala / crosstalk]
+[7:17] right now I think another thing thank you coming to a time I make it even after their
+[7:26] neck right some onion from a data line with your data line again only some
+[7:33] [unclear — Sinhala / crosstalk]
+[8:03] the man you that the we have a to a
+[8:06] the the the the
+[8:07] [unclear — Sinhala / crosstalk]
+[8:38] the how we need the the how many top ready the receiver a balapro to you know I cut you
+[8:49] not I love any top ready stop stop the window are now the harmony top ready in the only stop
+[8:59] bit. If you receive the start bit at time zero, the first second, at the tenth second, you
+[9:25] should receive some if the data transfer rate is one bit per second data transfer rate
+[9:32] the top rated be taken up all of any top ready start with the car now the how many top ready
+[9:40] stop it again the how many top ready the cookie lava now up the the top ready our window the
+[9:49] the
+[9:51] a
+[9:52] a
+[9:53] a
+[9:53] a
+[9:53] a
+[9:53] a
+[9:54] a
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[9:54] 
+[10:19] I have been the target of the very current.
+[10:21] I have a question.
+[10:23] I have begun.
+[10:25] I have to not.
+[10:27] But I call I.
+[10:29] I have to not.
+[10:31] I follow.
+[10:33] I say.
+[10:35] I got the heart.
+[10:37] I got the hand.
+[10:39] I can most significant character.
+[10:41] This side.
+[10:43] The end of the.
+[10:45] [unclear — Sinhala / crosstalk]
+[11:45] I have a very very very very very mage-gurus, the kakwadhahar, a bithyjhjh, a sqa-bh mb.
+[11:51] I do a sdhjh, a tbf, tb.
+[11:52] I is a tb.
+[11:52] I is a tb.
+[11:52] I m1,I.
+[11:52] I a tb.
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] 
+[11:52] I tb.
+[11:52] I tb.
+[11:52] the
+[11:54] the
+[11:55] the
+[11:55] the
+[11:56] the
+[11:56] the
+[11:56] the
+[11:57] the
+[11:57] the
+[11:57] 
+[11:57] 
+[11:57] 
+[11:57] 
+[11:57] 
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] 
+[11:57] the
+[11:57] the
+[11:57] 
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] 
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] 
+[11:57] 
+[11:57] 
+[11:57] 
+[11:57] 
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] the
+[11:57] 
+[12:22] [unclear — Sinhala / crosstalk]
+[12:52] If something is not clear, it doesn't matter.
+[13:12] it was discussed in a previous slide go in a previous session no even in the
+[13:19] last year doesn't matter
+[13:31] the idea is to learn don't keep quiet
+[13:39] When at night? Right. I am very happy at least half of the batch. We have not much name. Nine or ten people among them. At least half. They talk very well. Right. Compared to last year or last couple of years. Your batch is really good. You guys ask questions. Right.
+[13:58] Then, what is this pin control? I will discuss it. Even in the transmitter, we had that pin control. What is this pin control?
+[14:13] What is pin control? The pin control role of the pin control. Let's discuss that.
+[14:29] So, left pin control. Now, these pins are IO pins, input-output pins. These pins are IO pins. We need to disable their IO functionality. Then only we can use them for data communication.
+[14:46] We need to disable their input-output functionality and then only we can use them for data communication.
+[14:59] That is done by PIN control.
+[15:01] Using the PIN control, we can alternate the PIN functions.
+[15:07] PIN has two functions.
+[15:09] One is GPIO function, general purpose input-output function.
+[15:14] GPIO. The other function is RxD function, receive data function. Between these two functions,
+[15:24] RxD function and GPIO function, general purpose input output function, how do we alternate
+[15:31] using PIN. Then you receive data bit by bit. You receive data to receive shift register
+[15:42] bit by bit, you load data to receive shift register bit by and then as a character, as
+[15:51] a whole character, you transfer the character to UDR and then the CPU reads entire 8 bit
+[16:01] characters. But the receive shift register is filled with bit by bit. Bit by bit input,
+[16:11] entire character output serial in parallel out serial in parallel out then you understand right
+[16:22] without shift registers both transmit and receive shift registers you can't implement this function
+[16:29] parallel in serial out at the transmitter serial in parallel out at the receiver
+[16:37] Those two function
+[16:39] you can't implement
+[16:41] without chip register.
+[16:43] That's why we need chip register.
+[16:45] You need transmit chip register to implement
+[16:47] parallel in
+[16:49] serial out function.
+[16:52] You need receive chip register
+[16:53] to implement serial
+[16:56] in parallel out function.
+[16:58] Is that clear?

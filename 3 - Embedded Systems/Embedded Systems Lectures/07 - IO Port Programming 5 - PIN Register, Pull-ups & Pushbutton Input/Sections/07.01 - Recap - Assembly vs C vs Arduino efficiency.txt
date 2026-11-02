@@ -1,0 +1,109 @@
+[0:00] Right, started recording as well. This is where we stopped last time. We discussed about different software implementations, one with assembly, another with C, and the third option using Arduino platform.
+[0:22] And then we had a comparison and we know that assembly is very highly efficient in terms of speed and also the file size.
+[0:34] However, coding assembly is very difficult and also assembly programs are not portable because we use the instruction set of particular microcontroller.
+[0:49] So you can't use the program written with that instruction set to run on another microcontroller.
+[0:58] So it is not portable.
+[1:00] then C, C is not that efficient but C is also efficient but compared to assembly C efficiency is not that great but still C is very efficient programming language.
+[1:13] You get a small file and you can run your file very fast, your program very fast.
+[1:22] And one problem of C is there can be data type misuse.
+[1:29] Now, I explain you instead of char, probably you may use 16-bit integer, right?
+[1:36] to store let's say to let's say you want to store student marks the marks vary between 0 and 100.
+[1:44] So char is a good data type to store marks because char can hold any value between 0 to 255.
+[1:52] So it would char but normally we think char is for characters no we can use char for store
+[2:00] numeric values as well because at the lowest level there are no characters no numeric values
+[2:05] everything is bits and bytes.
+[2:08] And when you are using C, C coding is fairly easy.
+[2:12] Not very easy, but fairly easy.
+[2:14] And there are a lot of libraries available.
+[2:17] So we don't need to start from scratch.
+[2:20] You can, we can simply use libraries.
+[2:24] And C is a portable programming language.
+[2:28] That means you can write a program in C.
+[2:31] then using a particular compiler you can compile it to run on any platform for example in the first
+[2:39] year you wrote many c programs c++ programs the c++ is the predecessor of c language so you wrote
+[2:47] a lot of programs and you compile them using the c++ compiler for windows that's why you could you
+[2:54] you could run them on windows but if you use a c++ compiler for linux you can run them on linux
+[3:01] If you use C++ compiler for Macintosh, Apple Macintosh, you can run them on Apple Macintosh operating system.
+[3:09] So likewise, any platform you can run your C program if you use correct C compiler.
+[3:19] Right. Same way. Now, let's say you have a program written in C for a particular microcontroller.
+[3:25] Now, let's say microcontroller is particular AVR microcontroller.
+[3:29] microcontroller then you use c compiler for avr and you get the machine code you can run that on
+[3:35] avr microcontroller but if you use c compiler for pick then you get the machine code for pick you
+[3:42] can run on pick microcontroller likewise the same program you can compile and run on different
+[3:48] hardware platforms that is another advantage of c
+[3:52] right then finally we came to assembly so assembly is very easier to code right because
+[4:05] the language developed the the actually the the assembly the not it's not a language Arduino is
+[4:13] not a language it's a hardware software platform so the it was developed not for
+[4:20] engineering or computer science or IT students, not for industry. It was developed for
+[4:28] non-technical people and to help them to use embedded systems, develop embedded systems,
+[4:37] like fashion designing students. Then the people who do electronics for their hobby,
+[4:45] those kind of people
+[4:48] Arduino was developed.
+[4:50] Therefore it is very easy to code.
+[4:52] Highly friendly.
+[4:54] Highly user friendly.
+[4:55] And there are a lot of libraries
+[4:58] available. Open source libraries
+[4:59] available. So
+[5:00] doing things with Arduino is
+[5:03] quite easy.
+[5:06] But on the other hand
+[5:07] it is highly inefficient.
+[5:10] Because
+[5:11] the developers
+[5:13] their main concern was to make
+[5:15] the platform so friendly as a result right they have sacrificed efficiency to achieve the
+[5:23] friendliness and also Arduino firmware they are not portable right you can't run them on
+[5:32] different micro controllers now the question is right if Arduino also uses GCC right
+[5:43] GCC compiler and AVRD as the host application.
+[5:50] How can Arduino become so inefficient?
+[5:54] The reason is Arduino uses wrapper functions.
+[5:58] There are a lot of wrapper functions using Arduino.
+[6:01] For example, digital write is one wrapper function.
+[6:04] Pin mode is another wrapper function.
+[6:07] Then delay is another wrapper function.
+[6:10] So these are wrapper functions.
+[6:11] That means a lot of C codes, they have been wrapped into a very user-friendly function.
+[6:20] So let's say you want to change the state of a particular input-output pin.
+[6:27] You don't need to do that.
+[6:28] You don't need to know the registers, which register, which bit you need to set.
+[6:35] You don't need to know.
+[6:36] because digital write function
+[6:38] asks you to specify
+[6:40] only the pin number
+[6:42] and the state you want to set
+[6:44] on that pin.
+[6:46] The rest of the things are taken care of
+[6:49] by the
+[6:51] digital write function.
+[6:53] And the digital write function
+[6:54] has to check
+[6:56] which board you have connected
+[6:59] to your computer.
+[7:00] It could be Arduino Uno, it could be Arduino Mega,
+[7:02] it could be Dio, it could be
+[7:05] MKR series board. It could be something else. It could be
+[7:08] NodeMCU. So the digital write function
+[7:13] has to check all these things. Which board
+[7:16] connected? Which pin you have been specified?
+[7:21] Whether that pin is a digital IO pin or not?
+[7:25] Right? All these things it has to check behind
+[7:28] the scene and ultimately it will set
+[7:32] a particular bit of particular register
+[7:35] and change the state of that bit.
+[7:40] So because of all this checking and other
+[7:44] things, the digital write function has become
+[7:48] so inefficient. On the other hand, it is so
+[7:51] friendly. Without knowing even the register
+[7:55] or the bit that you have to set, you can
+[8:00] change the state of a P. Right. So then
+[8:03] when you are using these different implementation options
+[8:08] you have to assess the pros and
+[8:11] cons of these different
+[8:14] options available. Right. So
+[8:19] Arduino is good for prototyping.
+[8:24] So first prototype you can easily develop using Arduino. Then later
+[8:28] you can gradually increase the efficiency of your system by replacing some Arduino
+[8:38] wrapper functions with C codes. And if you identify a particular function in your code
+[8:48] is called again and again. For example, most frequently used functions if you could identify.
+[8:55] and even you have the option to replace those functions with assembly codes which is called

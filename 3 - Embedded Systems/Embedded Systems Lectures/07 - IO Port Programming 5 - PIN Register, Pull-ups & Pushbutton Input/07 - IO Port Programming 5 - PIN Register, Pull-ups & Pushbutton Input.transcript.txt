@@ -1,0 +1,2110 @@
+07 - IO Port Programming 5 - PIN Register, Pull-ups & Pushbutton Input  (13 Oct 2020 (morning))
+
+[0:00] Right, started recording as well. This is where we stopped last time. We discussed about different software implementations, one with assembly, another with C, and the third option using Arduino platform.
+[0:22] And then we had a comparison and we know that assembly is very highly efficient in terms of speed and also the file size.
+[0:34] However, coding assembly is very difficult and also assembly programs are not portable because we use the instruction set of particular microcontroller.
+[0:49] So you can't use the program written with that instruction set to run on another microcontroller.
+[0:58] So it is not portable.
+[1:00] then C, C is not that efficient but C is also efficient but compared to assembly C efficiency is not that great but still C is very efficient programming language.
+[1:13] You get a small file and you can run your file very fast, your program very fast.
+[1:22] And one problem of C is there can be data type misuse.
+[1:29] Now, I explain you instead of char, probably you may use 16-bit integer, right?
+[1:36] to store let's say to let's say you want to store student marks the marks vary between 0 and 100.
+[1:44] So char is a good data type to store marks because char can hold any value between 0 to 255.
+[1:52] So it would char but normally we think char is for characters no we can use char for store
+[2:00] numeric values as well because at the lowest level there are no characters no numeric values
+[2:05] everything is bits and bytes.
+[2:08] And when you are using C, C coding is fairly easy.
+[2:12] Not very easy, but fairly easy.
+[2:14] And there are a lot of libraries available.
+[2:17] So we don't need to start from scratch.
+[2:20] You can, we can simply use libraries.
+[2:24] And C is a portable programming language.
+[2:28] That means you can write a program in C.
+[2:31] then using a particular compiler you can compile it to run on any platform for example in the first
+[2:39] year you wrote many c programs c++ programs the c++ is the predecessor of c language so you wrote
+[2:47] a lot of programs and you compile them using the c++ compiler for windows that's why you could you
+[2:54] you could run them on windows but if you use a c++ compiler for linux you can run them on linux
+[3:01] If you use C++ compiler for Macintosh, Apple Macintosh, you can run them on Apple Macintosh operating system.
+[3:09] So likewise, any platform you can run your C program if you use correct C compiler.
+[3:19] Right. Same way. Now, let's say you have a program written in C for a particular microcontroller.
+[3:25] Now, let's say microcontroller is particular AVR microcontroller.
+[3:29] microcontroller then you use c compiler for avr and you get the machine code you can run that on
+[3:35] avr microcontroller but if you use c compiler for pick then you get the machine code for pick you
+[3:42] can run on pick microcontroller likewise the same program you can compile and run on different
+[3:48] hardware platforms that is another advantage of c
+[3:52] right then finally we came to assembly so assembly is very easier to code right because
+[4:05] the language developed the the actually the the assembly the not it's not a language Arduino is
+[4:13] not a language it's a hardware software platform so the it was developed not for
+[4:20] engineering or computer science or IT students, not for industry. It was developed for
+[4:28] non-technical people and to help them to use embedded systems, develop embedded systems,
+[4:37] like fashion designing students. Then the people who do electronics for their hobby,
+[4:45] those kind of people
+[4:48] Arduino was developed.
+[4:50] Therefore it is very easy to code.
+[4:52] Highly friendly.
+[4:54] Highly user friendly.
+[4:55] And there are a lot of libraries
+[4:58] available. Open source libraries
+[4:59] available. So
+[5:00] doing things with Arduino is
+[5:03] quite easy.
+[5:06] But on the other hand
+[5:07] it is highly inefficient.
+[5:10] Because
+[5:11] the developers
+[5:13] their main concern was to make
+[5:15] the platform so friendly as a result right they have sacrificed efficiency to achieve the
+[5:23] friendliness and also Arduino firmware they are not portable right you can't run them on
+[5:32] different micro controllers now the question is right if Arduino also uses GCC right
+[5:43] GCC compiler and AVRD as the host application.
+[5:50] How can Arduino become so inefficient?
+[5:54] The reason is Arduino uses wrapper functions.
+[5:58] There are a lot of wrapper functions using Arduino.
+[6:01] For example, digital write is one wrapper function.
+[6:04] Pin mode is another wrapper function.
+[6:07] Then delay is another wrapper function.
+[6:10] So these are wrapper functions.
+[6:11] That means a lot of C codes, they have been wrapped into a very user-friendly function.
+[6:20] So let's say you want to change the state of a particular input-output pin.
+[6:27] You don't need to do that.
+[6:28] You don't need to know the registers, which register, which bit you need to set.
+[6:35] You don't need to know.
+[6:36] because digital write function
+[6:38] asks you to specify
+[6:40] only the pin number
+[6:42] and the state you want to set
+[6:44] on that pin.
+[6:46] The rest of the things are taken care of
+[6:49] by the
+[6:51] digital write function.
+[6:53] And the digital write function
+[6:54] has to check
+[6:56] which board you have connected
+[6:59] to your computer.
+[7:00] It could be Arduino Uno, it could be Arduino Mega,
+[7:02] it could be Dio, it could be
+[7:05] MKR series board. It could be something else. It could be
+[7:08] NodeMCU. So the digital write function
+[7:13] has to check all these things. Which board
+[7:16] connected? Which pin you have been specified?
+[7:21] Whether that pin is a digital IO pin or not?
+[7:25] Right? All these things it has to check behind
+[7:28] the scene and ultimately it will set
+[7:32] a particular bit of particular register
+[7:35] and change the state of that bit.
+[7:40] So because of all this checking and other
+[7:44] things, the digital write function has become
+[7:48] so inefficient. On the other hand, it is so
+[7:51] friendly. Without knowing even the register
+[7:55] or the bit that you have to set, you can
+[8:00] change the state of a P. Right. So then
+[8:03] when you are using these different implementation options
+[8:08] you have to assess the pros and
+[8:11] cons of these different
+[8:14] options available. Right. So
+[8:19] Arduino is good for prototyping.
+[8:24] So first prototype you can easily develop using Arduino. Then later
+[8:28] you can gradually increase the efficiency of your system by replacing some Arduino
+[8:38] wrapper functions with C codes. And if you identify a particular function in your code
+[8:48] is called again and again. For example, most frequently used functions if you could identify.
+[8:55] and even you have the option to replace those functions with assembly codes which is called
+[9:03] inline assembly in the in between c codes you can write assembly which is called inline assembly
+[9:10] in that way you can make your codes your firmware so efficient you can push your firmware to its
+[9:19] H right you can get the maximum out of your firmware right so you start with Arduino
+[9:30] the first prototype then gradually you increase the function the efficiency by writing replacing
+[9:39] some of the Arduino codes with C and later you identify the most frequently called functions
+[9:46] and you replace them with assembly codes inline assembly codes inline in the sense
+[9:54] in the in the flow of c you can write assembly you want to start with keyword asm and then you
+[10:02] can write assembly that's how we write asm you can search about inline assembly there are books
+[10:07] written on inline assembly if you know assembly writing inline assembly is not a big deal right
+[10:13] So again, assembly is not a, you don't need to worry too much on assembly because only thing is you have to go to the data sheet and go through the instruction set of particular microcontroller and then try to code using those instructions that is assembly.
+[10:31] Right. Now one argument, the proponents of Arduino. Some people are Arduino fans. They argue that hardware is getting more and more powerful. So inefficiencies are getting less and less significant.
+[10:52] So, we don't need to worry about the inefficiency of Arduino. Why? Because you can get the efficiency from hardware. Hardware is getting more and more powerful and the cost of the hardware is getting very cheaper and cheaper. Right. So, you don't need to worry about the inefficiencies you get with Arduino because the efficiency you can achieve with hardware.
+[11:17] That is one argument the proponents of the fans of Arduino, they argue.
+[11:27] But the counter argument is if you can do the job, right, with less resources, then why don't you use cheaper hardware instead?
+[11:39] That's the counter argument.
+[11:41] Now for example, let's say you want to do a certain function, certain program, certain firmware you want to run within one second.
+[11:53] Now if you write that firmware using Arduino, probably you may not be able to run it within one second.
+[12:00] Then the Arduino fans would argue, okay, use high speed, much better hardware.
+[12:07] right with uno arduino uno you may not be able to run it within one second because
+[12:13] arduino because of the inefficiencies in the wrapper function so they will say okay rather
+[12:19] than uno go for arduino duo arduino duo is a powerful microcontroller the speed is
+[12:26] more than 16 megahertz i think that the speed is about uh in the due 84 megahertz so which is quite
+[12:35] higher compared to 16 megahertz Arduino Uno. So they may say okay you take Arduino Duo and do the
+[12:45] job then you may be able to achieve your goal that means run the program within one second.
+[12:52] But the counter argument is without using Arduino either using CO assembly if you can do that job
+[13:00] you can use cheap hardware. Uno is very cheap
+[13:05] but due is expensive. So if you can
+[13:09] use cheaper hardware then why do you waste
+[13:13] resources and use very expensive hardware
+[13:17] to do the same thing just because your firmware
+[13:21] is not efficient. That's the counter argument.
+[13:27] Any questions on
+[13:29] these three different implementations.
+[13:36] Now let's say you want to develop a flight controller.
+[13:40] Now if you write that flight controller firmware
+[13:44] using Arduino, you may not be able to achieve
+[13:48] the required performance. Arduino Uno for example.
+[13:51] And the Arduino wrapper functions.
+[13:54] But one can argue, okay, drop Uno, go for
+[13:59] of better hardware.
+[14:01] Arduino do.
+[14:03] Oh, MKR. Some MKR series boot.
+[14:06] Arduino, there's a series called
+[14:07] MKR. So, there are a lot
+[14:09] of powerful boots. So,
+[14:11] people may
+[14:12] argue. Why do you
+[14:15] use Uno? Drop Uno
+[14:17] and go for a better boot?
+[14:19] Then efficiency you can achieve
+[14:21] using hardware.
+[14:23] But the counter argument is
+[14:25] if you go for better hardware,
+[14:27] you have to spend lot.
+[14:28] Better hardware, expensive.
+[14:31] Rather than using, rather
+[14:33] spending unnecessarily,
+[14:35] use cheap, humble
+[14:37] hardware.
+[14:38] And right, and efficient
+[14:40] firmware. Achieve the performance.
+[14:43] Right? Using a,
+[14:45] let's say,
+[14:46] if you want to, if you are a good
+[14:49] driver, then
+[14:50] to
+[14:51] win a race, you don't need
+[14:54] Ferrari. Right?
+[14:56] some Toyota model
+[14:59] you may be able to win the race
+[15:01] if you are a good driver.
+[15:03] That's the argument.
+[15:05] Any question?
+[15:07] You may also have different ideas.
+[15:09] Okay, let's try to discuss.
+[15:11] This is time to discuss.
+[15:14] Any question?
+[15:15] Any ideas?
+[15:17] Different opinions?
+[15:20] Isuru?
+[15:20] Any different opinion?
+[15:24] No, sir.
+[15:26] Madusha, any idea about these three different implementations?
+[15:31] Any question?
+[15:33] Sir, I have a question.
+[15:36] Sir, when using usage for get efficiency,
+[15:43] in Arduino we can write C codes between Arduino codes
+[15:48] and next for repetitive functions we can write assembly.
+[15:55] Yes. So when it comes to the efficiency, the pure assembly, pure C codes, when if you write the whole code, that whole code in C, the efficiency of the C code is more efficient than the other code needs.
+[16:19] Yes, you are correct. Now, ideal if you want to get the maximum efficiency, write everything from assembly, right? From the entire firmware, write in assembly if you want to achieve the maximum efficiency.
+[16:36] But again, your assembly algorithm should be efficient.
+[16:40] Using assembly also, you can write inefficient codes.
+[16:44] Using assembly, now you cannot guarantee that just because I use assembly, my program is efficient.
+[16:52] No, your algorithm should be first efficient.
+[16:55] Then if you use assembly with an efficient algorithm, that is the ideal situation.
+[17:02] You can get the maximum.
+[17:04] However, it is not practically feasible. For small firmware to blink an LED, you can ride in assembly. Now think about a firmware that controls a machine machine, a firmware that controls the ABS, anti-lock braking system of a vehicle, a firmware that controls a quadcopter or a drone.
+[17:34] It's a very lengthy.
+[17:35] Now, for example, for the Vidya exhibition in this university, I developed a flight controller.
+[17:44] And as I remember, number of lines in that firmware, it was more than 500 or 600 lines of code.
+[17:55] I wrote it in C.
+[17:57] Now think about if you write that firmware in assembly, how many lines of codes?
+[18:04] Now just to blink and LAD, how many lines you wrote in assembly?
+[18:09] Now if you are going to convert 500 to 600 C lines into assembly,
+[18:17] then it would be a very lengthy program.
+[18:21] Possibility for errors would be then very high.
+[18:24] right and it may take a lot of time for you to develop the firmware that is also one of the
+[18:32] concerns because programmers time is money right so ideal option you write everything in assembly
+[18:41] you first you have to come up with a better algorithm efficient algorithm then write in
+[18:46] assembly but that is not practically feasible so what is the practically feasible option
+[18:51] Now, if you want to first prove the concept is working, the easiest way is to assemble the hardware and write the firmware using Arduino software platform.
+[19:07] Then you can prove that it's working.
+[19:10] Then you have to optimize your firmware or your hardware, both.
+[19:15] If you are not going to touch the hardware, from the firmware front, you can achieve the efficiency or you can optimize your system.
+[19:28] To do that, you can replace some of the inefficient assembly wrapper functions.
+[19:37] Now for example, in your Arduino firmware, there is a wrapper function called digital write.
+[19:49] You can replace that digital write function using the correct register and a simple assignment of set of bits.
+[20:02] The entire digital write function you can replace.
+[20:05] right for example um let me give you an example now let's say in the code we have
+[20:14] digital right let's say
+[20:23] um uh pin uh adeno pin number eight i want to make high right this line is in your
+[20:35] Right. This line is in your Arduino firmware.
+[20:39] Now this entire line you can replace.
+[20:42] You can comment out this line.
+[20:44] And then you can write port B.
+[20:47] We know that pin number 8 is port B first pin.
+[20:52] That is PB0.
+[20:53] And to assign that pin 0B 0 0 0 0 0.
+[21:02] 1, 2, 3, 4, 5, 6, 7, 8.
+[21:04] right the entire function you can replace with just one line right now in this function inside
+[21:13] the function i i showed you where the function is in your system you can open that function
+[21:20] and go through that function there are a lot of other functions are called inside this function
+[21:25] to check various things because they they have made this function generic so this function can
+[21:31] run on any any Arduino compatible boot so it takes a lot of time for the execution now if you replace
+[21:39] the entire function with just one line that means one way of achieving efficiency rather than
+[21:47] replacing your entire Arduino code developed using Arduino wrapper functions certain functions you
+[21:54] you can replace with C.
+[21:56] Then your program becomes
+[21:58] little bit more efficient.
+[22:00] If you can replace everything
+[22:02] in C, ideal
+[22:04] again, your program
+[22:06] would be very efficient.
+[22:08] However, other than doing that,
+[22:10] certain parts you can
+[22:11] write in C. Certain parts
+[22:14] in the sense, the parts
+[22:15] in your program that are
+[22:17] frequently called or frequently
+[22:20] used, you can replace
+[22:22] those parts with C.
+[22:23] Then, if you want to further improve, you can identify one or two functions in your program which are called most frequently and replace them with assembly.
+[22:38] Rather than writing entire thing in assembly, then you can within a reasonable time, without much hard work, you can achieve certain level of efficiency.
+[22:55] which is similar to
+[22:58] the memory hierarchy in our computers.
+[23:02] We know that SRAMs are high speed
+[23:05] but can we have the entire memory
+[23:09] in our computer with SRAM?
+[23:11] Then our computer would be very expensive.
+[23:14] So we use SRAMs only for the registers
+[23:18] and cache. Then DRAMs
+[23:21] for the main memory. Larger DRAM
+[23:24] but not that efficient.
+[23:27] And then a bulky hard disk, highly inefficient.
+[23:32] So we arrange them in a higher art.
+[23:35] So for a given cost, we can get better performance.
+[23:40] The same way.
+[23:41] Rather than if you can write everything in assembly, good idea.
+[23:46] If you can write everything in C, good idea.
+[23:49] but given a given time frame within a reasonable time if you want to achieve a higher performance
+[23:59] start with Arduino replace certain functions with C identify the most frequently called functions
+[24:07] and replace them with inline assembly right if you can write everything in C that would be good
+[24:13] but it may take some time
+[24:15] but if you want to quickly achieve
+[24:18] the performance
+[24:19] this is the way, is that clear?
+[24:22] Yes sir. What else?
+[24:24] Now these things are very important
+[24:26] when you go for
+[24:27] hackathons, right
+[24:29] so you go there to win
+[24:31] right, now keep these things
+[24:34] in mind when you
+[24:35] go for competitions
+[24:37] because within a reasonable time
+[24:39] you have to achieve
+[24:40] a certain level of performance
+[24:43] Anything else? Any other question?
+[24:46] Excuse me, sir.
+[24:47] Yeah.
+[24:48] Sir, how can we identify
+[24:50] that the assembly C
+[24:53] Arduino combination or the C
+[24:55] combination is more efficient
+[24:57] in a specific code?
+[25:00] I could get your question.
+[25:02] If we
+[25:03] combine Arduino
+[25:05] C and assembly in one
+[25:07] code,
+[25:09] how can we
+[25:10] if sometimes the C code
+[25:13] is more efficient than the completely C code is like writing everything in C, if it is
+[25:23] efficient than the combination of those three, how can we identify that C code is more efficient
+[25:33] than in this instance?
+[25:36] Yeah.
+[25:36] If you can write everything in assembly, that is the most efficient way.
+[25:40] If you can write everything in C, the second most efficient option.
+[25:45] The third most efficient option is combination of C, Arduino and assembly.
+[25:52] Right.
+[25:52] Because if you write everything in C, you replace all the Arduino wrapper functions.
+[25:58] Inefficient Arduino wrapper functions, you replace with C.
+[26:01] So obviously you get efficiency.
+[26:03] But if you write everything in assembly, that is the most efficient option.
+[26:07] The second most efficient, complete C.
+[26:11] And the third most efficient option, combination of Arduino and C.
+[26:17] Arduino, C and SMP.
+[26:19] Right.
+[26:20] Is that clear?
+[26:21] Yes, sir.
+[26:22] What else?
+[26:24] Right.
+[26:25] In addition to these things, you should know all these things.
+[26:30] Right.
+[26:30] Now, one is the efficiency problem.
+[26:32] But some people, some fans argue you can go for better hardware.
+[26:36] Right.
+[26:36] But my argument is why do we need to waste resources for going for a better hardware when you can write efficient programs.
+[26:48] In addition to this efficiency issue, there are other issues with Arduino.
+[26:54] One is the license issue.
+[26:59] Now, you think that Arduino is open source, free and open source.
+[27:05] Yes, it's free and open source.
+[27:08] But its license is LGPL license.
+[27:13] LGPL means lesser general public license.
+[27:18] Lesser general public license.
+[27:22] That is Arduino license.
+[27:24] Lesser general public license.
+[27:27] Right.
+[27:27] That license allows to use free and open source elements in either free or propriety systems.
+[27:40] Lesser general public license means LGPL.
+[27:45] Means that license allows us to use free and open source elements.
+[27:53] I use the term elements because free and open source could be software or hardware or both.
+[28:01] If the hardware design is available, we say it's free and open source hardware.
+[28:07] So license, this LGPL license allows us to use free and open source elements in either free or proprietary systems.
+[28:18] That means you can develop free systems.
+[28:21] that means you are planning to give that system free or you can develop
+[28:25] proprietary systems that means you are going to market those
+[28:29] systems for money and you are not going to
+[28:31] I mean release the design or the source code
+[28:36] proprietary right but there are
+[28:41] some conditions if you read if you have
+[28:44] I am sure you have not read the license agreement of Arduino but if
+[28:49] you read the license agreement you will find these issues one is if you design a commercial hardware
+[28:57] based on a design you derive from an arduino boot you must release your design what does that mean
+[29:06] if you develop some system some hardware commercial hardware let's say you design
+[29:13] some home security system.
+[29:16] Now you are planning to market
+[29:18] that product.
+[29:20] A commercial hardware.
+[29:21] For that commercial hardware you derive
+[29:24] the design of Arduino Uno
+[29:26] board. Let's assume
+[29:27] you derive the design of Arduino Uno
+[29:30] board and then you
+[29:32] extend that design and
+[29:34] you come up with home security system
+[29:36] hardware. Your idea goal
+[29:38] is to commercialize the product.
+[29:40] But according to Arduino
+[29:42] LGPL license,
+[29:46] you must release your hardware design
+[29:48] because you derive
+[29:50] your hardware design
+[29:52] from Arduino
+[29:54] free and open source
+[29:56] hardware boot. That means
+[29:58] you have to release your hardware design.
+[30:00] If you release your
+[30:02] hardware design of your
+[30:04] home security system, tomorrow
+[30:06] there will be a
+[30:08] competitive product
+[30:09] similar to your one.
+[30:12] Another problem of Arduino.
+[30:15] Can you understand?
+[30:18] You design a home security system.
+[30:22] Your goal is to commercialize the product.
+[30:25] However, you derive your design from some Arduino hardware boot.
+[30:31] You start with your design.
+[30:35] You derive the design from Arduino hardware boot.
+[30:37] It could be you know Mega or whatever.
+[30:40] Some Arduino hardware boot.
+[30:41] and then you extend that and you come up with your home security system.
+[30:47] Just because you use Arduino, just because you derived your design from Arduino hardware,
+[30:55] you have to release, you must release your security system design, hardware design.
+[31:01] That is the license agreement.
+[31:02] If somebody goes to court saying this guy derived design of Arduino free and open source hardware design and he extended it and then he came up with a new security system but he didn't release the design.
+[31:22] Then you are wrong.
+[31:23] Then court will say you to release the design.
+[31:26] Because you started your design with Arduino free and open source hardware.
+[31:30] So then you are bound to release your design.
+[31:34] Another problem.
+[31:35] So those who are planning to use Arduino for commercial products.
+[31:40] They have to keep that in mind.
+[31:42] You can't hide your design.
+[31:44] Because you use Arduino.
+[31:46] According to this license agreement.
+[31:49] You agree to release your design.
+[31:52] If you derive anything from hardware.
+[31:55] Arduino hardware.
+[31:56] You are bound to release your design as well.
+[32:00] That's one issue. Not only that.
+[32:02] There are many other issues.
+[32:04] I'll come one by one.
+[32:06] Is that clear? The first issue?
+[32:09] So I need you. Yes.
+[32:11] Sir.
+[32:12] What's mean by
+[32:13] DERI means?
+[32:17] You use
+[32:18] Arduino hardware
+[32:19] design. Schematic
+[32:22] diagram. Let's say
+[32:24] UNO board schematic diagram you use.
+[32:26] And then you extend it with
+[32:28] other hardware and you
+[32:30] come up with a different diagram now. But you started with that design, then you are
+[32:37] bound to release your modified design. Is that clear?
+[32:41] Yes sir. Right. Any other question?
+[32:44] What if we use microprocessor? No problem. No problem. Then you are not bound to release
+[32:51] the design. These things are very important because when you go to the industry, sometimes,
+[32:56] Sometimes some industries, some companies will ask you to use Arduino hardware because they want to use cheap hardware and quickly do the job.
+[33:06] And if the systems are not very critical, especially in the apparel industry, I know, right, some apparel companies, they have their own automation units in their company.
+[33:18] Now they are getting more and more automated systems, right.
+[33:21] last several years we we saw right a lot of apparel companies for checking defects in the fabrics
+[33:31] various things they they automate their systems and to do that they use embedded systems they
+[33:40] recruit people and ask to develop certain embedded systems for their process automation
+[33:47] and they will in most cases they ask people to use Arduino hardware because cheap widely available
+[33:55] and the developers are very familiar and their systems are not very critical
+[34:00] not real-time critical systems so Arduino would do a good job but then you have to keep in your
+[34:09] mind you are bound to release your hardware design if you if you derive anything from
+[34:15] Arduino free and open source
+[34:18] hardware design. If you derive anything
+[34:20] from Arduino hardware
+[34:22] designs, then you are bound to release
+[34:24] your design. That is the Lysen
+[34:26] agreement. You know that in our
+[34:28] country, we don't follow
+[34:30] these Lysen agreements. We don't
+[34:32] obey these rules. But in
+[34:34] other countries, right,
+[34:36] you can't do that. Here
+[34:38] we use a lot of pirated software, but
+[34:40] in other countries, can you? No, that
+[34:42] is not possible.
+[34:42] right the legal system is very tough and the monitoring and everything happens right even in
+[34:51] our country also now you know that even the operating systems are not we have to buy operating
+[34:57] systems we have to buy certain hardware unlike 10 years ago right 10 years ago we use a lot of
+[35:03] pirated software but now that is not that easy same way you must if it is a commercial product
+[35:12] if you are developing a system for a for industry you should worry about these regulations otherwise
+[35:18] at the end you may have to the company may have to pay penalties in millions if you have misused
+[35:26] the license agreements right that's one problem the second problem right if you develop a firmware
+[35:34] using Arduino
+[35:37] Co and
+[35:39] libraries. If you develop a
+[35:41] firmware using Arduino Co
+[35:43] and libraries, you don't
+[35:45] require to release your source code.
+[35:47] That means you can develop
+[35:49] a firmware using Arduino Co.
+[35:51] Arduino Co means there's a header file
+[35:53] in the Arduino Co, Arduino.h.
+[35:55] Right.
+[35:57] In the Arduino development environment,
+[35:59] right, IDE, there's a
+[36:01] header file. It is automatically
+[36:03] added to your project.
+[36:04] Add it to your code, your sketch, it is automatically added.
+[36:09] You don't need to add it explicitly.
+[36:12] Right? Arduino.h.
+[36:14] That is Arduino code.
+[36:16] And some library files available in the Arduino.
+[36:20] For example, Ethernet.h library for Ethernet shield.
+[36:24] Wi-Fi.h library for Wi-Fi shield.
+[36:27] GSM.h library for GSM shield.
+[36:30] Likewise, there are some library files.
+[36:32] They are available in the Arduino IDE.
+[36:35] If you develop a firmware using this Arduino Co and the libraries,
+[36:41] you are not required to release your source code.
+[36:47] That means you can keep the source code with you and just give the machine code.
+[36:55] You can flash the machine code to your commercial products.
+[36:58] However, you must release the object file enabling the future users to relink your object file with the Arduino, updated Arduino code and the libraries.
+[37:14] You don't need to release the source code but you have to release the object file.
+[37:19] What is the object file?
+[37:20] When you compile high level program code, you create object file.
+[37:26] That is intermediate file.
+[37:27] When you compile the compilation, there are two steps.
+[37:32] One step is the compilation.
+[37:33] The other step is the linking.
+[37:35] I hope you remember these things.
+[37:38] Compiling and linking.
+[37:41] Compiling part creates object file.
+[37:44] That is intermediate file, which is not in machine language.
+[37:47] Intermediate file, object file.
+[37:50] Then the object file and the libraries are linked.
+[37:52] And then it is translated into machine code.
+[37:57] The object file and the libraries are linked and translated into machine code.
+[38:02] That is how compilation happens.
+[38:04] It's a two-step process.
+[38:06] Compiling and linking.
+[38:07] Compiling means source code converted into object code.
+[38:11] Then libraries are linked with the object code and translated into machine code.
+[38:19] So you don't have to release the source code.
+[38:25] But you have to release.
+[38:26] you must release object code, object file.
+[38:31] The reason is then the future users should be able to relink your object file with the updated libraries and Arduino code and using.
+[38:46] Now you are using Arduino libraries and Arduino code to write your firmware.
+[38:52] you don't need to release the source code
+[38:54] but you have to release
+[38:56] not only the machine code
+[38:58] but you have to release object code
+[39:00] the reason is
+[39:02] in future use
+[39:03] future user should be able to use
+[39:06] your object code and update
+[39:08] it Arduino code and the libraries
+[39:10] and relink
+[39:12] them another
+[39:14] condition in the license
+[39:16] when you release the object code
+[39:18] right
+[39:19] then anybody can use the object code
+[39:24] use the libraries
+[39:27] I do know who am the libraries
+[39:29] really and use it.
+[39:33] Another thing is object code is easier to reverse engineer
+[39:37] back to the source code.
+[39:39] If somebody reverse engineer the object code into source code
+[39:43] then all your business secrets
+[39:46] all your algorithm secrets
+[39:49] everything is exposed. You don't need to release the source code. Object code would be enough
+[39:54] for a right person with right knowledge can reverse engineer. You don't need to release
+[40:00] the source code but you have to release object code because with the future version of Arduino,
+[40:07] future version of Arduino Co and the libraries, users should be able to relink your object code
+[40:15] with this updated Arduino code library.
+[40:19] That is another requirement of license agreement.
+[40:25] Can you understand?
+[40:26] If you have any question, ask.
+[40:28] Sir, how do we release?
+[40:30] Sorry, what happened to you?
+[40:31] Like from GitHub, how do we release?
+[40:36] How do we release?
+[40:38] Is the object code?
+[40:39] Hardware design.
+[40:41] Yeah, hardware design.
+[40:42] Yeah, we can.
+[40:44] If somebody asks, we have to release.
+[40:47] Or else you can make it publicly available using GitHub.
+[40:52] Or else you can keep it with you.
+[40:55] And if somebody asks, then you have to give.
+[40:59] You can't say, no, no, no.
+[41:00] It's my intellectual property.
+[41:03] I won't give you.
+[41:04] You can't say.
+[41:05] You have to give the hardware design.
+[41:07] You have to give the object code.
+[41:09] Source code, you can say, no, I won't release the source code.
+[41:12] But object code is enough for a right person with right tools, right knowledge to reverse engineer the source code. And the third point, if you modify Arduino core or any Arduino library, when you develop your firmware, you modify. You found that Arduino core is not very efficient, Arduino libraries are not efficient or there is a bug in the Arduino library. You correct that, you make it more efficient, whatever it is.
+[41:40] You modify Arduino CoO libraries when you develop your firmware.
+[41:45] Then you must release the source code.
+[41:48] Then you have to release the source code.
+[41:49] You can't keep it with you.
+[41:51] You have to release your source code.
+[41:53] If you do any modification to Arduino CoO, Arduino libraries,
+[41:58] you must release your source code.
+[42:00] Right?
+[42:01] Third license agreement.
+[42:02] So, it's better you go through these license,
+[42:07] the terms and conditions in the license.
+[42:09] right unfortunately many people don't read them right but if you if you are planning to use arduino
+[42:17] for a very serious project then you should have some idea of this license because later you can't
+[42:26] say i don't know i didn't think like so i didn't get that very seriously oh blah blah blah you can't
+[42:36] later if it is a very serious project then you have to think about this and another negative point
+[42:45] right of using Arduino IDE is Arduino IDE has no debug so if you have if you want to debug
+[42:54] your firmware the normal way we what we do is we write many print lines using
+[43:02] serial.print
+[43:05] and see
+[43:08] the values in the variables
+[43:10] and to study our
+[43:14] program firmware
+[43:16] we use a lot of
+[43:18] serial.print statements
+[43:20] and we print the values on the
+[43:22] serial monitor. That's how we
+[43:24] normally debug
+[43:25] Arduino firmware.
+[43:27] But the problem is
+[43:29] If your firmware is a very time critical system, adding one print line would change the timing of your system. That's another problem.
+[43:40] Very easily we can debug Arduino firmware in Arduino IDE by writing set of print lines to print the values of variables or the statements in the serial monitor.
+[43:59] That is quite easy and that is the normal way the programmers do because there is no debugger.
+[44:06] There is no debugger support available with the IDE.
+[44:10] However, if you add these print lines to your firmware for the debugging purpose, and if your system is a very time critical system, adding just one print line would change the timing of your system. That's another problem.
+[44:27] Can you understand that?
+[44:31] Now,
+[44:31] compile errors, you can,
+[44:33] the compiler can detect.
+[44:35] But the logical errors,
+[44:37] compiler can't detect.
+[44:39] If there's a logical error, we have to
+[44:41] debug it. So normally what
+[44:43] we do is, certain variable
+[44:45] values, right,
+[44:47] whether a particular
+[44:49] place executed
+[44:51] or not, to check
+[44:53] all these things, we use print statements.
+[44:55] and we print the output in the
+[44:58] serial monitor.
+[45:00] Every single print statement
+[45:02] you add to your firmware
+[45:03] change the timing
+[45:06] of your system. If the system is time
+[45:08] critical, then
+[45:10] that would create a lot of problems.
+[45:13] And finally,
+[45:15] the Arduino hardware
+[45:16] is cheap, easier
+[45:18] to use.
+[45:20] However, every
+[45:22] Arduino hardware boot,
+[45:23] there is an onboard usb to serial interface right because of that you can easily connect
+[45:31] the boot to your usb port of your computer now this onboard usb serial to interface they make
+[45:38] the boards are more expensive and power hungry than they need to be for example arduino uno
+[45:47] board you have a usb to serial interface controller right thanks to that you can directly plug the
+[45:56] board to your usb port however that part makes the board expensive and board consumes more power
+[46:06] than it needs to be another problem now if you are going to use the arduino hardware
+[46:15] for a commercial development,
+[46:18] you have to think about that task.
+[46:19] Because if you have the commercial product,
+[46:21] you have to develop in large scale.
+[46:24] Every, every,
+[46:25] every system, then
+[46:27] if you have USB to serial
+[46:29] interface, unnecessary.
+[46:31] That part, that would cost
+[46:33] you extra money.
+[46:35] That would consume more power.
+[46:37] For the academic purposes,
+[46:41] right,
+[46:42] to learning purposes,
+[46:43] It is very helpful on board USB to serial interface controller.
+[46:48] You can directly plug the board to USB port and upload your code, read the data over serial port.
+[46:58] You can do whatever you like.
+[47:00] But in the commercial development, once you have flashed the firmware into the microcontroller, thereafter do you need that USB to serial interface?
+[47:11] No.
+[47:11] once you flash the firmware to microcontroller, thereafter you don't need that USB to serial
+[47:17] interface controller. But if you are going to use Arduino hardware for a commercial product,
+[47:23] then that USB to serial interface controller would make your product little bit more expensive,
+[47:31] little bit more power hungry.
+[47:34] For example, in our
+[47:36] blink
+[47:36] the blinker system
+[47:40] that we develop
+[47:42] to blink an LED.
+[47:44] After flashing
+[47:46] the hardware, after
+[47:48] flashing firmware to
+[47:50] microcontroller, then only
+[47:52] thing you need is the microcontroller,
+[47:55] the crystal oscillator
+[47:56] to give pulses
+[47:58] to microcontroller,
+[47:59] the resistor and led connected to pin number eight that's it nothing else you need even the
+[48:08] reset button you don't need you can directly connect the reset pin to five volt line connect
+[48:15] the the crystal oscillator to the clock pins and connect the led and resistor to
+[48:24] pin number 5
+[48:26] sorry pin number 8
+[48:27] PB0 that's it
+[48:30] you don't need anything else
+[48:32] the USB to interface
+[48:34] controller and other power
+[48:36] circuit other LEDs
+[48:37] and all these things power LED
+[48:40] RX-TX LEDs
+[48:42] all these things you need
+[48:44] to flash the
+[48:45] code to microcontroller once you
+[48:48] flash thereafter
+[48:49] you don't need them if you
+[48:52] keep them in your commercial product,
+[48:54] then they will make
+[48:56] your product little bit expensive.
+[48:58] They will make your product
+[48:59] little bit power hungry.
+[49:01] Can you understand that?
+[49:03] Sir,
+[49:04] micro-control only for our production
+[49:09] and it processing power
+[49:13] the same
+[49:15] with 16
+[49:18] because
+[49:19] the Arduino board
+[49:21] crystal supplies
+[49:23] 16 megahertz
+[49:25] and the
+[49:27] microcontroller also
+[49:28] has
+[49:29] crystal or something.
+[49:35] Inside?
+[49:36] Inside.
+[49:38] No, actually there is no
+[49:40] crystal inside the microcontroller.
+[49:43] Inside the microcontroller
+[49:45] there is RC oscillator.
+[49:47] Resistor capacitor oscillator.
+[49:49] Right, which is not very accurate compared to crystal oscillator.
+[49:53] Right, you can change the frequency of that internal oscillator by changing the R and C values.
+[50:03] Right, based on your program codes.
+[50:05] Okay.
+[50:07] Right, so you have to write a firmware.
+[50:08] In the firmware, you have to specify certain statements to change the R and C values, resistor and capacitor values in the internal oscillator.
+[50:21] Based on that, you can clock internally your microcontroller with the required frequency.
+[50:28] However, that RC oscillator is not very accurate.
+[50:33] That is normally any RC oscillator is not very accurate.
+[50:37] That is the nature of RC oscillators.
+[50:40] That's why we use crystal oscillators.
+[50:42] Crystal oscillators are very accurate.
+[50:45] Even in the Arduino Uno board,
+[50:47] that 16 MHz clock source is not a crystal oscillator.
+[50:51] It's a ceramic resonator.
+[50:53] Ceramic resonators are cheap and smaller than the crystals.
+[50:58] But not that accurate.
+[51:00] Crystals are the most accurate.
+[51:03] And next, ceramic resonators.
+[51:05] and next
+[51:07] RC oscillator. The most accurate
+[51:09] crystal. Then ceramic
+[51:11] resonator. And then
+[51:13] RC oscillator. So internal oscillator
+[51:16] is RC. Now in the Arduino
+[51:17] UNA board you have ceramic resonator.
+[51:20] Anything else? Any other question?
+[51:22] Ask. Ask if you have questions.
+[51:24] Don't hesitate and ask.
+[51:25] Because at the end of this course module
+[51:27] you should have very thorough
+[51:29] knowledge about all these things
+[51:31] related to embedded systems.
+[51:33] You should have a very thorough knowledge.
+[51:40] To get that knowledge you need to ask lot of questions.
+[51:44] So ideally you need to read a lot.
+[51:47] At least if you are not going to read a lot ask lot of questions.
+[51:50] Right.
+[51:51] If no questions let's continue our lesson.
+[51:55] I.O. register.
+[51:57] Right.
+[51:57] We discuss I.O. registers.
+[51:59] We discuss two input output registers.
+[52:02] One is the DDR register, data direction register.
+[52:07] The other one is the port register, port output register.
+[52:11] Now we are going to discuss the third IO register.
+[52:14] Two registers we have already discussed.
+[52:16] This is the third IO register.
+[52:19] Right.
+[52:20] This is called pin register.
+[52:23] Pin means port input register.
+[52:26] Port input register.
+[52:27] So this register, the default values are 0.
+[52:32] So this is a 8-bit register.
+[52:34] And this register default values are 0.
+[52:37] All bits are 0 by default.
+[52:39] Similar to DDR and port.
+[52:42] This is the pin register, port input register.
+[52:45] Right.
+[52:46] This register we use to read the state present at port pins.
+[52:53] So DDR register we use to change the direction, data direction.
+[52:58] That means whether you want to make a particular pin as input pin or output pin, you use DDR.
+[53:07] Then to set the state of particular pin, you use the port output register or port register.
+[53:14] Using that, you can set the state of a particular pin with a high or low.
+[53:21] Now this is the third register.
+[53:24] This one is to read the state of particular pin.
+[53:29] We want to read.
+[53:30] We want to know the state of the pin.
+[53:33] Whether it is high or low.
+[53:35] We want to know.
+[53:36] We are not going to change the state.
+[53:38] We are going to read the state.
+[53:40] Not to change the state but to read the state.
+[53:43] Port input register.
+[53:45] Right.
+[53:45] In this register, if you set the bits of port register, you can activate the internal pull-up resistors.
+[53:57] What does that mean?
+[53:59] Right.
+[54:01] First, now look at here.
+[54:05] Now this is the particular port pin.
+[54:08] I want to read the state of this particular pin.
+[54:12] I want to read the state of this particular pin.
+[54:14] I want to know whether this pin is high or low.
+[54:18] High or low.
+[54:19] Let's say this is the pin N of port X.
+[54:23] X could be A, B, C.
+[54:24] Port A, port B, port C likewise.
+[54:27] And pin N.
+[54:29] Right.
+[54:29] It could be 0 to 7.
+[54:31] Because 8 bit port you have 0 to 7 pins.
+[54:36] Now I want to read the state of this pin.
+[54:38] I can read the state of this pin.
+[54:40] by reading the nth bit of this register.
+[54:47] If the nth bit of this register is 1, that means this pin is high.
+[54:58] If the nth bit of this register is 0, that means this pin is low.
+[55:05] To read the state of this pin, I can use the bits of this register.
+[55:12] Now, this pin is the pin number N.
+[55:16] The register has N bits.
+[55:18] By reading the, by checking the Nth bit, we can determine the state of this pin.
+[55:24] Right.
+[55:25] Now, you can see using the DDR, we have made this pin as an input pin.
+[55:33] See, input.
+[55:35] We have made the pin as an input pin using DDR.
+[55:39] Right.
+[55:39] We have set the nth bit of DDR to 0.
+[55:43] So that we have made this pin an input pin.
+[55:47] Now to read the state of this pin.
+[55:50] We read the nth bit of pin register.
+[55:53] Up to that point.
+[55:55] Is it clear?
+[55:56] Now DDR n is 0.
+[55:58] If pin n is 0.
+[56:02] That means this particular pin.
+[56:05] Look, if pin n is 1, this particular pin, can you understand up to this point?
+[56:14] This is a little bit confusing.
+[56:18] Yes or no?
+[56:20] Aruni, can you understand up to this point?
+[56:23] Yes, sir.
+[56:24] Then Binuri?
+[56:26] Yes, sir.
+[56:28] Samakka?
+[56:30] Sir, can you explain it again?
+[56:33] That's why I ask. Don't wait till I ask. Now the idea is this. This is the third register we are going to discuss. We have already discussed DDR and port register. DDR using the DDR register, I will remind you again. Using the DDR register, we can specify whether the pin is an input pin or output pin. The direction, data direction, we can specify.
+[57:02] Invert or outward
+[57:03] That is the data direction register
+[57:06] And port register
+[57:08] Using port register
+[57:09] Port output register we can specify
+[57:12] A particular pin is
+[57:14] The state of the particular pin
+[57:16] Using the port register
+[57:18] We can specify the state of particular pin
+[57:20] For example in the port register
+[57:22] Port B register
+[57:23] Let's say port B register
+[57:25] Bit 0
+[57:26] We set
+[57:28] When you set the bit 0 of port B
+[57:32] First we have to
+[57:33] Using DDRB
+[57:35] D
+[57:37] BRB
+[57:39] For the DDRB
+[57:42] I assign 0B
+[57:43] 1 2 4
+[57:46] 1 2 3
+[57:48] 1
+[57:48] Now bit 0 of DDRB is 1
+[57:52] That means
+[57:54] Pin 1
+[57:55] Pin 0 of port B
+[57:57] Pin 0 of port B is
+[58:00] Output B
+[58:01] pin 0 of port B
+[58:06] is output. Then
+[58:11] port B, port output register
+[58:15] 0 B
+[58:16] 1 4 1 2 3 1
+[58:22] So I assign 1 2 with 0 of port B
+[58:27] then what happens is pin
+[58:30] 0 state becomes height. Now if you say port B, if you assign 0B, 1, 2, 3, 4, 1, 2, 3,
+[58:52] zero. Then what happens is
+[58:55] pin zero state
+[59:00] becomes low. So we know
+[59:03] all these things. Is that clear?
+[59:07] Yes sir. Right. Okay. Then
+[59:11] now we know how to set the state
+[59:16] of particular pin using port register.
+[59:19] now the next step is how to read the state of a particular P.
+[59:23] that means6.2.
+[59:23] the state of a particular P, that means.
+[59:24] the state of a particular P, that means, you go.
+[59:24] how to read the state of a particular PIN, that means, we, if you are going to read the state of
+[59:30] a particular PIN, that means, that PIN should be an Input PIN, that's why, you are going to read
+[59:36] the state, if the PIN is the output PIN, you are not going to read the state, but, you are going to
+[59:42] set the state, if the PIN is the input PIN, you are going to set the state, if the PIN is the Input PIN,
+[59:48] you are going to read the state, to make the PIN, an Input PIN,
+[59:54] You have to set the corresponding bit 0 in the DDR.
+[1:00:00] Right.
+[1:00:01] Now what I am going to do is write.
+[1:00:05] Then pin 0 of port B is input.
+[1:00:13] Why?
+[1:00:14] Pin 0.
+[1:00:16] I cleared the bit 0 of port B.
+[1:00:20] So that pin 0 is now input pin.
+[1:00:22] Now how do we read the value of the state of pin 0?
+[1:00:31] To do that I use pin register, pin register, port input register.
+[1:00:39] Now port input register, this is the port input register.
+[1:00:42] 1, 2, 3, 4, 5, 6, 7, 1, 2, 1, 8, right.
+[1:00:49] Now there are values in these bits.
+[1:00:52] [unclear — Sinhala / crosstalk]
+[1:00:58] Now this is the bit 0.
+[1:01:00] Now bit 0 is 0.
+[1:01:02] That means the pin is low.
+[1:01:05] If bit 0 is 1, if bit 0 is 1, that means pin 0 is high.
+[1:01:13] By reading the value of the corresponding bit of the input register,
+[1:01:20] we can determine the state of the pin.
+[1:01:25] We can determine the state of the pin
+[1:01:28] by reading the corresponding bit of the port input register.
+[1:01:35] We can read the port input register
+[1:01:37] and we can see the state of the pin.
+[1:01:43] If the pin is high then this bit is 1.
+[1:01:47] If the pin is low, this bit is zero.
+[1:01:51] So you can read the state of the pin by checking the corresponding bit of port input register.
+[1:02:02] Can you understand?
+[1:02:03] Yes, sir.
+[1:02:05] How about others?
+[1:02:08] Let me know if you want me to further explain this.
+[1:02:12] Right.
+[1:02:13] Because this is complicated.
+[1:02:14] Now I am going to combine the port input register with port output register.
+[1:02:20] Then things become more complicated.
+[1:02:22] Before that if this is not clear please let me know.
+[1:02:26] Now this is the pin B register.
+[1:02:29] Let's assume this is the PB0.
+[1:02:33] This pin is the PB0.
+[1:02:35] Pin state PB0 pin state we can determine just looking at this bit.
+[1:02:43] This is PB0, this is the corresponding bit
+[1:02:46] Just look at the corresponding bit
+[1:02:49] If it is 1, the pin is high
+[1:02:52] If it is 0, pin is low
+[1:02:55] We are not going to set the state of the pin
+[1:02:58] But we are going to read the state of the pin
+[1:03:00] That's why we call it port input register
+[1:03:03] Then set the bits of port register
+[1:03:07] To activate the internal pull up resistor
+[1:03:11] Now, if you set the port register corresponding bit, if you set 1, you can activate this internal pull-up resistor.
+[1:03:23] The resistor connected to 5V and the other side of the resistor connected to pin resistor.
+[1:03:31] register right you can activate or deactivate this internal pull-up resistor by setting or clearing
+[1:03:41] corresponding port bits what does that mean let's see now by default by default
+[1:03:51] the pin b register port input register contains zeros but externally you can set you can make
+[1:03:59] this pin high or low.
+[1:04:01] Externally you can do that.
+[1:04:03] If you make the pin high,
+[1:04:05] this bit would be
+[1:04:07] 1. If you
+[1:04:09] change the state of this pin to
+[1:04:11] low, then
+[1:04:13] this bit would be 0.
+[1:04:15] You can do that externally.
+[1:04:17] Now, let's say you
+[1:04:19] want to set
+[1:04:21] this pin
+[1:04:23] state.
+[1:04:25] You want to set
+[1:04:27] by default high.
+[1:04:28] how can we do that? One way is you can connect
+[1:04:33] a resistor to this pin and 5 volt light.
+[1:04:38] Now as a result this pin voltage becomes 5
+[1:04:41] and by default you can set this pin high.
+[1:04:45] Then you can connect a switch and other
+[1:04:49] side you can connect to ground. When you press the switch
+[1:04:52] then the pin becomes low. Otherwise
+[1:04:56] by default pin is high. Can you understand this?
+[1:05:01] We have connected a resistor between 5 volt power supply
+[1:05:05] and the pin and we have connected a push button switch
+[1:05:09] between pin and the ground. If the switch is open
+[1:05:13] when the switch is open the voltage of the pin
+[1:05:17] is 5 volts because of this resistor. As a result
+[1:05:21] the logic state of the pin is high. If the logic state
+[1:05:25] of the pin is high, the corresponding bit value of the pin B register is 1. This is the default
+[1:05:33] state. But when you push the button, pin is connected to ground power supply, the pin's
+[1:05:39] voltage becomes 0. As a result, the logic state of the pin becomes low. As a result,
+[1:05:47] the corresponding bit of the pin B register becomes 0. Can you understand up to this point?
+[1:05:55] I'm not sure.
+[1:05:57] Madhushan, are you there?
+[1:06:01] Are you there?
+[1:06:03] Understood, sir.
+[1:06:05] Yes, sorry, I couldn't unmute myself.
+[1:06:09] Yes, sir, I understand.
+[1:06:11] Shani?
+[1:06:13] Yes, I understand.
+[1:06:15] Sure.
+[1:06:17] Yes, sir.
+[1:06:19] Now,
+[1:06:21] this is fairly complicated concept.
+[1:06:23] that's why i am taking time right now again i'll explain it again sure yes now we have connected
+[1:06:33] forget about all these internal things everything forget about it this is the five word power supply
+[1:06:42] i think you can see my pointer and this is the particular pin pbz now we have made this pin
+[1:06:50] and input pin. Right. By setting the corresponding
+[1:06:54] bit of the DDRB register 0. So now PB0
+[1:06:58] is input pin. Pin 0 of port B is input. Right.
+[1:07:03] Now we have connected a resistor. Let's say 10 kilo ohm
+[1:07:06] resistor. 10 kilo ohm resistor between 5 volt
+[1:07:11] and the particular pin PB0. And
+[1:07:14] ground and the particular pin. There is a push button switch.
+[1:07:18] switch is open, release. Now the voltage
+[1:07:22] of the pin because it is connected to the 5 volt through
+[1:07:26] the resistor, voltage is 5. The pin's voltage
+[1:07:30] is 5. The voltage 5 means the logic state
+[1:07:34] of the pin is high. Because of that
+[1:07:37] the corresponding bit value of the
+[1:07:42] pin B register, input register
+[1:07:46] is 1. Because the voltage
+[1:07:48] is 5. Logic state
+[1:07:50] is high. Therefore
+[1:07:52] corresponding bit. Bit 0 is the
+[1:07:54] corresponding bit because this pin 0
+[1:07:56] right it is
+[1:07:58] 1. Right. That is the
+[1:08:00] default state.
+[1:08:02] Now if you read this bit
+[1:08:04] and it is 1
+[1:08:06] that means we know
+[1:08:07] switch is in the release state.
+[1:08:10] Nobody has pushed the switch
+[1:08:12] because the value
+[1:08:14] in the corresponding bit is 1.
+[1:08:17] We know switch is in the release mode.
+[1:08:19] Release state, nobody has pushed the switch.
+[1:08:22] So how did we know that?
+[1:08:23] We read the corresponding bit value
+[1:08:27] of the port input register.
+[1:08:29] And we can determine whether the switch press or release.
+[1:08:34] Now at the moment switch is released.
+[1:08:37] So voltage of the pin is 5 volts.
+[1:08:40] The logic state of the pin is high.
+[1:08:42] corresponding bit value of the port input
+[1:08:45] register is 1. Now you press the switch
+[1:08:48] you press the switch, press the switch. When you
+[1:08:51] press the switch the pin is connected to ground
+[1:08:54] ground power supply and the pin's
+[1:08:57] voltage becomes 0. Now pin's voltage
+[1:09:00] is 0. As a result the
+[1:09:03] corresponding bit value becomes 0
+[1:09:06] corresponding bit value becomes 0. Now if you read
+[1:09:09] the particular bit of the port input
+[1:09:11] register. If the
+[1:09:13] value is 0, we know that
+[1:09:15] somebody has
+[1:09:17] pressed the switch. That's why
+[1:09:19] the value became 0.
+[1:09:22] Earlier it was 1, now
+[1:09:23] it is 0. Somebody
+[1:09:25] has pressed the switch. The external
+[1:09:28] input we can recognize
+[1:09:30] by reading the bit value.
+[1:09:32] Can you understand?
+[1:09:34] Is that clear now?
+[1:09:36] If not, tell me.
+[1:09:37] Is that clear now?
+[1:09:38] Sir, is the white color connecting pin and input, is it just a conductor?
+[1:09:50] You are talking about these white color parts.
+[1:09:53] Lisa?
+[1:09:53] Yes.
+[1:09:55] I asked you.
+[1:09:56] I asked you.
+[1:09:58] Huh?
+[1:09:59] This, the black color on DDRX.
+[1:10:06] This one.
+[1:10:07] This one.
+[1:10:07] talking about this one it's not clear are you talking about this particular part
+[1:10:14] upper two way or three is this one it's not clear that woman but can you make an
+[1:10:27] amina meter this is the place you want to first forget about the all these
+[1:10:32] internal things.
+[1:10:33] Forget about all these things.
+[1:10:39] Right now the pin is connected to 5 volts.
+[1:10:44] As a result, pin's voltage is 5.
+[1:10:47] Logic state is high.
+[1:10:49] So the corresponding bit value is 1.
+[1:10:53] Right.
+[1:10:54] You read the particular bit of the port input register and you found this value is 1.
+[1:11:01] means you know that switch is released then you press the switch when you press the switch which
+[1:11:07] is connected to the ground voltage of the pin becomes zero the logic state of the pin becomes
+[1:11:14] low as a result the corresponding bit value becomes zero now you read the input register
+[1:11:21] corresponding bit again now you for you can find that this bit has changed from one to zero that
+[1:11:30] That means you know that somebody pressed the switch.
+[1:11:34] Is that clear?
+[1:11:35] Yes sir.
+[1:11:36] Right.
+[1:11:37] Now, by reading corresponding bit of input register, port input register, we can determine
+[1:11:48] the logic state of a pin.
+[1:11:50] To do that, there should be a clear logic state change, high to low or low to high.
+[1:11:58] should be a clear logic state change then only by reading the corresponding bit we can determine
+[1:12:08] the state of the pin a pin naked state take a clearly change window high to low or low to high
+[1:12:17] then only by reading this bit we can determine the state of the pin to have a clear state change
+[1:12:24] we need to have a default value for the pin default state for the pin the clear state
+[1:12:31] change in a window now you need to have a default state for the pin so what is the default state for
+[1:12:39] the pin hi why we have connected the pin to 5 volt power supply when the switch is released
+[1:12:46] the pin state is high. Why? We have connected the pin to 5 volt power supply. So that is the
+[1:12:59] default state of the pin. When the pin is in its default state, the value of the corresponding bit
+[1:13:07] is what? The default state is high. The value of the corresponding bit is what? The default
+[1:13:16] state to get over the pin you have connected the pin to 5 volt power supply through a resistor
+[1:13:22] so we call this resistor a pull-up resistor why we have pulled the pin up to high up in a pull
+[1:13:35] who does that this resist so we call this resistor is a pull-up resistor right using
+[1:13:41] this pull up resistor we have
+[1:13:43] pulled the pin to high.
+[1:13:46] That is the default
+[1:13:47] state of the pin. Can you understand?
+[1:13:51] The pin is a default
+[1:13:52] state. High.
+[1:13:54] Why? This resistor has
+[1:13:56] pulled it up.
+[1:13:58] Pulled up. So we call
+[1:13:59] this resistor pull up resistor.
+[1:14:01] We have pulled the state of this
+[1:14:03] pin to high.
+[1:14:05] So it's a pull up resistor.
+[1:14:07] There and all. Visuru?
+[1:14:09] Yes sir. Nirasha?
+[1:14:11] Yes, sir. Right. So this is a pull-up resistor. But the resistor is external. So we call this external pull-up resistor. We call this external pull-up resistor. Why? Resistor is external.
+[1:14:27] Now the same thing we can do internally.
+[1:14:31] If the external pull-up operation is clear, then we can move to internal pull-up operation.
+[1:14:39] Now I remove this external pull-up.
+[1:14:42] And instead of that, I connect this pin to 5 volts through this internal pull-up resistance.
+[1:14:51] Internal pull-up resistance.
+[1:14:52] I connect the pin to 5 volts through the internal pull up resistor.
+[1:14:59] Right.
+[1:15:00] Internal pull up resistor.
+[1:15:02] Right.
+[1:15:06] Again now the voltage of the pin is 5 volts.
+[1:15:09] Why?
+[1:15:10] Through this resistor the pin connected to 5 volts.
+[1:15:15] Through the resistor the pin connected to 5 volts.
+[1:15:18] So the voltage of the pin is 5.
+[1:15:20] State of the pin is high
+[1:15:22] The corresponding bit value is 1
+[1:15:26] Then you press the switch
+[1:15:28] When you press the switch
+[1:15:29] The pin is connected to ground
+[1:15:31] Voltage of the pin becomes 0
+[1:15:34] Logic state of the pin becomes low
+[1:15:37] The corresponding bit value becomes 0
+[1:15:41] Now again by reading the bit value
+[1:15:45] We can determine whether the switch has been pressed or not
+[1:15:48] Without using external pull-up resistor, now I have used the internal pull-up resistor.
+[1:15:55] Can you understand?
+[1:15:56] Same thing with internal pull-up resistor.
+[1:15:58] Clear?
+[1:16:01] Then external pull-up resistor, internal pull-up resistor.
+[1:16:06] Right.
+[1:16:08] Now, the next question.
+[1:16:10] How do we activate or deactivate this internal pull-up resistor?
+[1:16:15] To do that, we can use the port register.
+[1:16:20] We can use the port register.
+[1:16:21] Right.
+[1:16:22] Now let's assume the default state is the switch is in the release mode.
+[1:16:27] Switch release.
+[1:16:29] In the release mode, pin is connected to 5 volts through the internal pull-up resistor.
+[1:16:35] The internal pull-up resistor is connected to the pin.
+[1:16:38] The voltage of the pin is 5.
+[1:16:42] Logic state is high.
+[1:16:43] corresponding bit value of the input register, port input register is 1.
+[1:16:48] To do that, you have to activate the internal pull up register.
+[1:16:52] How do we do that?
+[1:16:53] For that, what we do is port register, port B register, the first bit 0, bit 0.
+[1:17:03] 1, 2, 3, 4, 1, 2, 3, 1.
+[1:17:07] We set the corresponding bit of the port B register.
+[1:17:10] You can see if the value is 1 switch on, if the value is 0 switch off.
+[1:17:21] You can activate or deactivate the internal pull up resistor by either setting or clearing corresponding bit of the port resistor.
+[1:17:33] If you want to activate or deactivate the port register, you can set the port register and clear.
+[1:17:43] Rather than using external pull-up resistor, you can either activate or deactivate internal pull-up resistor by setting or clearing the corresponding bit of the port output register.
+[1:17:59] register can you understand now all three registers they have come into the play ddr pin and port
+[1:18:10] them may turn it will be in the patalo gun data the method of all of the hammer me blander ddr
+[1:18:17] register okay at all a bit take a zero glut input other bit take a couple of output then
+[1:18:27] So, if you have a pin, it will be the pin.
+[1:18:30] If you have a pin in the state, it will be the input register.
+[1:18:36] If you have an internal resistor, you can activate or deactivate, it will be the output register.
+[1:18:44] Can you understand? Yes?
+[1:18:46] [unclear — Sinhala / crosstalk]
+[1:19:16] I have a thing.
+[1:19:17] I have a more isa-
+[1:19:17] the
+[1:19:19] the
+[1:19:20] the
+[1:19:21] the
+[1:19:21] the
+[1:19:21] the
+[1:19:21] the
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:21] 
+[1:19:47] [unclear — Sinhala / crosstalk]
+[1:20:47] the with a is
+[1:20:50] a
+[1:20:50] a
+[1:20:50] a
+[1:20:50] a
+[1:20:50] a
+[1:20:50] a
+[1:20:50] a
+[1:20:49] a
+[1:20:49] a
+[1:20:49] a
+[1:20:49] a
+[1:20:49] a
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] 
+[1:20:49] the one-in-dust-brih.
+[1:20:50] I have a right-home.
+[1:20:51] to the necqa.
+[1:20:51] to the nis.
+[1:20:52] the cd.
+[1:20:51] the cd.
+[1:20:51] the cd.
+[1:20:51] s.
+[1:20:51] a.
+[1:20:51] a.
+[1:20:51] a.
+[1:20:51] a.
+[1:20:51] a.
+[1:20:51] a.
+[1:20:51] 
+[1:20:51] a.
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] a.
+[1:20:51] 
+[1:20:51] a.
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] 
+[1:20:51] [unclear — Sinhala / crosstalk]
+[1:21:21] in the moment we have to go to the ddr can register again in a bit take us in
+[1:21:27] cana ddr can register again in a bit take a cana my port can register again in a bit
+[1:21:34] take a counter make pin naked logic state to come up ddr can register in in in
+[1:21:43] in canna be taken what can register again canna be taken because the map in the logic state
+[1:21:51] i the load may be negative state of the high the load hi it's got me ddr
+[1:21:58] can register again canna be taken a coverla my port can register again canna be taken
+[1:22:06] and can a bit take a zero not may pin naked logic state come about low take a
+[1:22:12] period right right again in a port can register a bit well value
+[1:22:19] without venus calla may pin naked logic state that when us current
+[1:22:23] pool one getting it again
+[1:22:25] again may port can register a bit of lagay when us calla may pin naked voltage
+[1:22:31] you can see that's why we call this as port output register to do that we have to activate this line
+[1:22:48] a blue color line how do we activate that blue color line we use the ddr register the corresponding
+[1:22:57] [unclear — Sinhala / crosstalk]
+[1:23:27] the
+[1:23:28] the
+[1:23:30] the
+[1:23:30] the
+[1:23:31] the
+[1:23:31] the
+[1:23:31] the
+[1:23:31] the
+[1:23:31] the
+[1:23:32] the
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:32] 
+[1:23:57] m
+[1:23:57] 
+[1:23:57] a
+[1:23:57] a
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:24:27] [unclear — Sinhala / crosstalk]
+[1:24:57] external pull-up resistor we can use internal pull-up resistor to set a default value for the
+[1:25:04] pin. The pin will get a default value when I copied at the end of the pull-up rather than using
+[1:25:09] external pull-up resistor. External pull-up resistor means you have to use another external
+[1:25:14] component. Without using external component you can activate or deactivate internal pull-up
+[1:25:21] resist to do that you have to either set or clear the corresponding bit of the port register
+[1:25:29] and then a port register to be set clear the lagila may be in a game of good when I may
+[1:25:36] be three break well at the remain maybe second a bit of a seven name may switch either on the
+[1:25:43] of the vinegar with a mega a color message you did a set to know mega bin do not message
+[1:25:49] a paler said message a paler said to know five word line mega pinnada connect when in a
+[1:25:56] resisted car message check out a set to know five word line mega pinnada connect when a
+[1:26:02] resisted a car a mono resisted a harha five word connect to a kidney pinnada default value
+[1:26:10] 5 volts. It can be in default state high. Input register corresponding bit value is 1.
+[1:26:20] If the push button is open, the voltage is 0. Logic state is low.
+[1:26:29] Clear state change. So we can determine whether the external switch has been pressed or released
+[1:26:38] release by reading the corresponding bit value of port input register can you understand
+[1:26:48] there in a other there in a thank you aruni
+[1:26:51] yes sir
+[1:26:58] yes sir
+[1:27:03] right now there are three registers ddr specifies whether the pin is input pin or output pin data
+[1:27:13] direction inverts or outwards port specifies state of the pin with a high or low right so we can use
+[1:27:22] the port register to specify the pin state high or low first you have to use the ddr and make the pin
+[1:27:30] output pin still output pin again to change the state of the pin if the pin is an input pin right
+[1:27:42] now we have if you have defined the pin as input pin using the ddr
+[1:27:47] to read the pin state whether it's high or low we can use port input register
+[1:27:59] we can use port input register now to read the pin state we need a clear state change
+[1:28:05] high to low or low to high that means we need a default state for the pin
+[1:28:10] To set a default state, either we can use external pull-up resistor to pull the pin up, up to high level.
+[1:28:20] Or we can activate internal pull-up resistor.
+[1:28:24] Internal pull-up resistor, to activate the internal pull-up resistor, what we have to do is set the corresponding bit of the port register.
+[1:28:33] By setting the corresponding bit of the port output register, we can activate the internal pull-up resistor.
+[1:28:40] and set the pin's default state high.
+[1:28:43] If the pin's default state is high,
+[1:28:46] when externally the pin becomes low,
+[1:28:49] we can determine that by reading the corresponding bit of port input register.
+[1:28:57] Is that clear?
+[1:28:58] Right.
+[1:28:59] If so, look at this example.
+[1:29:02] Right.
+[1:29:03] Now we have used external pull-up resistors.
+[1:29:06] Here you can see external pull-up resistors.
+[1:29:08] These are external pull-ups
+[1:29:10] 5 volt line
+[1:29:12] Through the resistors
+[1:29:13] We have connected the pins to 5 volt
+[1:29:16] All the pins we have connected
+[1:29:18] To 5 volts through
+[1:29:20] External pull-up
+[1:29:21] And all these 4 pins
+[1:29:25] We have configured
+[1:29:27] As input pins
+[1:29:28] Because DDR bits are 0
+[1:29:30] All pins are
+[1:29:31] All the first 4 pins
+[1:29:34] Are input pins
+[1:29:36] Last 4 pins are output
+[1:29:37] First power pins are input
+[1:29:40] And all the pins we have connected
+[1:29:42] To 5 volts through external pull up
+[1:29:44] And some switches we have
+[1:29:46] Press, some switches we have
+[1:29:48] Release
+[1:29:48] When the switch is released
+[1:29:50] The port input register bit value is 1
+[1:29:54] Why?
+[1:29:56] The voltage is 5
+[1:29:57] Because of this external pull up
+[1:30:00] Voltage is 5
+[1:30:02] The state is high
+[1:30:03] The corresponding bit value is 1
+[1:30:06] When you press the button
+[1:30:07] The pin is connected to ground
+[1:30:10] Voltage is 0
+[1:30:13] Logic state is 0
+[1:30:15] The corresponding bit value is 0
+[1:30:18] If the switch is released
+[1:30:20] Pin is connected to 5 volts light
+[1:30:22] Voltage is 5
+[1:30:24] Logic state is high
+[1:30:26] The corresponding bit value is 1
+[1:30:29] Right
+[1:30:30] So using external pull up
+[1:30:32] We have set the default state is high
+[1:30:35] when you press the button default state change to low if you have released the button the pin
+[1:30:44] goes to default state so using the external pull-up resistors we have set the default state to high
+[1:30:50] if the switch is released the pin is in the default state when the button is pressed pin is in the
+[1:30:58] state low. Now instead of external pull-up resistors you can use internal pull-up resistors.
+[1:31:06] Now if you want to activate the internal pull-up resistors this is the statement you have to write.
+[1:31:11] Now let's say this is port B. Port B. 0B. 1 2 3 4 1 1 1 1. First four pins. First four pins
+[1:31:25] internal pull-up resistors activated then you don't need this the same effect
+[1:31:31] without external pull-up resistors why we have activated internal pull-up
+[1:31:37] resistors right activated internal pull-up resistors it's very difficult to
+[1:31:44] write right then you don't need external pull-up resistors
+[1:31:50] In the first place, we can use DDR to configure the input pins and output pins.
+[1:31:58] The first pin is the input.
+[1:32:00] Now, DDR pin is 0.
+[1:32:02] The second pin is the output.
+[1:32:04] DDR 1.
+[1:32:06] The second pin is the external pull up resistance.
+[1:32:10] The first pin is the pull up.
+[1:32:13] That means we have set the default state of the pin high.
+[1:32:17] The first pin is the default state of the pin high.
+[1:32:19] the push button switch is released now the pins are in their default state
+[1:32:27] high a hint but release pins corresponding input pin bit value in register one but
+[1:32:37] press the pin is connected to ground voltage becomes zero logic level becomes low port input
+[1:32:45] register corresponding bit value zero so the external pull up resistors
+[1:32:50] power which in occur if you want to activate the internal pull up resistors
+[1:32:56] you can use the port register bits now here we have mentioned x me all the bits as x so this is
+[1:33:04] port x not b port x in the port x we have set the first four bits and other four bits we
+[1:33:15] have cleared so that we have activated internal pull-up resistance then you don't need external
+[1:33:21] pull-up resistance make up may example if not please ask now we are we have to develop a system
+[1:33:31] you have to go for an example before that can you understand this tilina yes sir i can understand
+[1:33:39] so how about others nirasha yes sir i understood
+[1:33:48] shani
+[1:33:52] okay if so
+[1:33:55] let's move into the development system full dual red blinker again we are going to blink and led
+[1:34:05] but in two different rates.
+[1:34:08] This system blinks an LED every 500 milliseconds,
+[1:34:13] every half a second, if no input.
+[1:34:17] If there is no input, it blinks LED every half a second.
+[1:34:20] If there is an input, it blinks the LED every 200 milliseconds.
+[1:34:27] Two different rates, either 500 milliseconds,
+[1:34:31] every 500 milliseconds or every 200 milliseconds.
+[1:34:33] It blinks and LED.
+[1:34:35] Whether it's 500 milliseconds rate or 200 milliseconds rate,
+[1:34:39] it depends on whether there is an input or not.
+[1:34:43] If there is no input, the blinking rate is 500 milliseconds.
+[1:34:48] If there is an input, blinking rate is every 200 milliseconds.
+[1:34:55] So LED got blink when all.
+[1:34:58] Input tak agnatta every 500 milliseconds.
+[1:35:01] Input tak agnatta every 200 milliseconds.
+[1:35:04] That means this system needs an input.
+[1:35:08] It needs to read an input.
+[1:35:10] Blinking LED is the output.
+[1:35:13] In addition to that, this system needs to read an input.
+[1:35:17] Now how do we read an input?
+[1:35:20] So for that we have to use some sensor to give an input.
+[1:35:24] The sensor that we are going to use is a micro push button switch.
+[1:35:30] Right.
+[1:35:30] So this is a kind of sensor.
+[1:35:33] You can give input to your sister using this micro push button switch.
+[1:35:38] Right.
+[1:35:39] The micro push button switch connects two points in a circuit when pressed.
+[1:35:44] When you press it connects two points in a circuit.
+[1:35:48] And normally the switch is open.
+[1:35:50] and when you press, it becomes
+[1:35:54] close. And the contact
+[1:35:56] points are, you can see
+[1:35:58] in this diagram. Now there are
+[1:36:00] four pins in the switch
+[1:36:01] but they have
+[1:36:04] been connected according
+[1:36:06] to this picture.
+[1:36:08] So here you can see
+[1:36:09] according to the picture
+[1:36:10] how the four pins
+[1:36:14] are connected. This is another micro
+[1:36:16] push button switch.
+[1:36:17] A, B, C, D.
+[1:36:18] A and C directly connected
+[1:36:21] D and D again directly connected
+[1:36:24] If you want to get the switch
+[1:36:26] The functionality of the switch
+[1:36:28] You have to use either A B
+[1:36:30] C D
+[1:36:32] C B or A D
+[1:36:34] Now easiest way
+[1:36:36] Is to use the switch diagonally
+[1:36:40] C B or A D
+[1:36:43] Then you will get the functionality of the switch
+[1:36:46] The easiest way is use the pins diagonally.
+[1:36:49] Right?
+[1:36:50] Diagonally pins are connected.
+[1:36:52] Because some pins are connected.
+[1:36:55] Directly connected.
+[1:36:57] If you are using diagonally,
+[1:36:59] you will get the functionality of the switch.
+[1:37:02] Diagonally connected,
+[1:37:04] switch is not a functionality.
+[1:37:06] Right.
+[1:37:07] Isuru raise the hand.
+[1:37:09] Why?
+[1:37:10] Yes, Isuru.
+[1:37:10] Any question?
+[1:37:11] Sir, I have a question,
+[1:37:14] but not regarding this may i ask okay no problem is it uh hello yeah yeah any any question even
+[1:37:23] related to your personal life uh about your girlfriend anything you can ask
+[1:37:31] it's about so the our assignment assignment we had to uh blink i can remember only several
+[1:37:41] uh five or six leds now so if we were so for that i use all all the parts in
+[1:37:52] uh so if i want to uh develop a long song or big bigger uh circuit so
+[1:38:05] things are not enough everybody yeah for the do i need everybody but is a photo so it is not
+[1:38:14] emission no sir yes in the assignment there was a question now using uh at least maximum of seven
+[1:38:25] pins run 10 ladies or something like that yeah how can and there was a hint also use a transistor
+[1:38:36] you you couldn't get that hint
+[1:38:37] There was a hint. Use a transistor and switch the first LEDs,
+[1:38:45] ground line connect the, switch the ground power supply to first five LEDs and second five LEDs
+[1:38:51] separate. Right. In the afternoon during our practical session, you know how is the practical
+[1:38:59] how can we do it online?
+[1:39:00] I will consider again.
+[1:39:08] This is going to be a
+[1:39:12] unique experience
+[1:39:16] doing embedded system
+[1:39:18] practicals online.
+[1:39:20] Anything else?
+[1:39:32] Any other questions?
+[1:39:33] No, right.
+[1:39:35] Then, hardware design.
+[1:39:38] Right? Schematic diagram.
+[1:39:40] Schematic diagram,
+[1:39:42] you know that, it shows
+[1:39:44] how components
+[1:39:46] are connected with standard
+[1:39:48] symbols.
+[1:39:50] Right. Using standard symbols, how components of a hardware circuit connected. We can show using schematic diagram. Right. So we use standard symbols, not realistic images, pictures. Right.
+[1:40:05] So this is how the Arduino Uno board schematic diagram
+[1:40:12] In this schematic diagram you can see the crystal oscillator
+[1:40:17] actually is a ceramic resonator
+[1:40:20] connected to
+[1:40:21] Extel 1, Extel 2 pins
+[1:40:24] reset button connected to reset pin pin number 1 and
+[1:40:29] Using a 10 kilo ohm resistor. We have pulled up the pin again. This is a pull up
+[1:40:35] we just discussed the pull up concept
+[1:40:37] we have pulled the pin up
+[1:40:38] so the default value of the pin is high
+[1:40:41] when you press the button it becomes
+[1:40:43] zero and then only the micro
+[1:40:45] controller resets itself
+[1:40:47] and in the Arduino Uno
+[1:40:49] board pin 13 there is
+[1:40:51] an LED connected to pin 13
+[1:40:53] this is that LED
+[1:40:55] make a board together
+[1:40:57] already connected
+[1:40:58] an LED connected to pin 13
+[1:41:01] of Arduino Uno
+[1:41:03] boot right this is the led connected to pin 30 and this is the ceramic resonator and this is the
+[1:41:10] reset button and the pull-up resistor for the reset pin because you have to keep the reset pin high
+[1:41:18] then only you can use the microcontroller if the reset pin is low the microcontroller resets itself
+[1:41:24] to keep the pin high by default we use pull-up resistor this is pull-up external pull-up right
+[1:41:32] now we need to connect a switch to give an input now this is the led we are going to blink if
+[1:41:41] there is no input 500 millisecond rate if there is an input 200 millisecond rate that means we
+[1:41:50] need to give an input to give the input we use a push button switch so we connect the switch to
+[1:41:56] pb zero o in arduino terms digital iop number eight a push button switch if the switch is
+[1:42:05] released no input then we blink the led every 500 milliseconds when you press the switch then there
+[1:42:13] is an input we blink the led every 200 milliseconds that means the microcontroller has to recognize
+[1:42:21] whether you have pushed the button or not we have to recognize microcontroller has to recognize
+[1:42:30] to do that we read the state of this spin the microcontroller reads the state of this spin
+[1:42:38] right and if the state of this pin is high that means no input if the state of this pin is low
+[1:42:46] that means there is an input button has been pressed if the value of this input
+[1:42:52] pin is zero that means low right that means but you have you have given an
+[1:42:59] input you have pressed the button that means by reading the logic state of this
+[1:43:03] pin whether high or low we can determine whether the button press or not when you
+[1:43:11] press the button the pin is connected to ground and the pin becomes low. When you press the button
+[1:43:18] that means when you have not pressed the button the pin should be high. That means the default
+[1:43:25] state of the pin should be high. The pin again default state like a high window. When you press
+[1:43:31] the button it becomes low. So how do we set the default state of the button of this pin high?
+[1:43:39] That means we have to pull up the resistor, internal pull up resistor connected to this pin.
+[1:43:47] Then only we can make this pin's default state.
+[1:43:52] Yes, Nipuna.
+[1:43:52] You have a question.
+[1:43:54] Nipuna.
+[1:43:54] Yes, Nipuna.
+[1:43:56] Hello.
+[1:43:57] Yes, sir.
+[1:43:57] Yeah.
+[1:43:58] Sorry, sir.
+[1:43:59] I cannot see anything.
+[1:44:01] I am only seeing a black screen.
+[1:44:03] Can I disconnect and connect?
+[1:44:04] Sure, no problem.
+[1:44:06] How about others?
+[1:44:07] Can you see my slides?
+[1:44:09] Yes, sir.
+[1:44:11] Yes, sir.
+[1:44:12] Only for Nipun and Black Screen.
+[1:44:15] Yes, I can see.
+[1:44:17] Ah, right.
+[1:44:17] Okay, okay.
+[1:44:18] Right.
+[1:44:19] Now this online learning is a big problem.
+[1:44:23] I know.
+[1:44:24] I also don't like.
+[1:44:26] But what to do?
+[1:44:27] Right.
+[1:44:28] Now we need to make this pin state by default high.
+[1:44:35] By default.
+[1:44:37] When you press the button, the pin becomes low. Clear state change. We can determine whether there is an input or not.
+[1:44:47] If you press the button, that's an input. So if the default state of the pin is high, when you press the button, the pin becomes low. Clear state change.
+[1:44:56] To keep the pin's default state high, we have to activate the internal pull-up resistor because there is no external pull-up resistor.
+[1:45:06] you have to activate the internal pull up resistor can you understand the hardware design right you
+[1:45:12] reactivate the internal pull up resistor so the button state the sorry so the pin state is pb0
+[1:45:18] pin state is high when you press the push button the pin is connected to the ground
+[1:45:25] then pins state becomes low clear state change based on that we can determine whether button
+[1:45:31] press or not and accordingly we can change the state of blinking rate that we can change the
+[1:45:37] blinking rate by default how do we do that by activating internal pull-up resistance then
+[1:45:47] when you press the button the pin is connected to ground pin state becomes low clear state change
+[1:45:55] based on that we can determine somebody has pressed the button that is an input so we change
+[1:46:01] the blinking rate if no input 500 milliseconds rate if there's an input 200 milliseconds rate
+[1:46:08] is that clear is that clear yes sir right now if the hardware design is
+[1:46:20] okay then we have to assemble the system hardware we have to assemble to assemble the hardware we
+[1:46:27] use breadboard and this is the wiring diagram right wiring diagram shows a pictorial representation
+[1:46:36] of how electronic components are connected this is not a symbolic representation sanket anime
+[1:46:43] the real component pictures of real components we use and we show how they are connected in the
+[1:46:50] wiring diagram right so pin 13 led connected to pin 13 this is the pin this is that led that is
+[1:46:59] already there so we don't need to do anything the only connection that we have to do is connect the
+[1:47:06] switch we use the switch diagonally right one side of the switch we connect to pin number eight
+[1:47:13] and the other side we connect to ground power supply.
+[1:47:18] We use the switch diagonally.
+[1:47:20] Then we are sure that we can get the functionality of the switch.
+[1:47:25] So this is the wiring diagram.
+[1:47:28] Now ground power supply through this black wire comes here.
+[1:47:34] And through the horizontal rail it goes to there.
+[1:47:40] And from there through the wire it goes to again this particular place.
+[1:47:48] And through this vertical connection it goes to the switch.
+[1:47:55] Through the switch it goes to the other side.
+[1:47:58] And again through the vertical connection underneath it goes to there.
+[1:48:04] And through the green color wire it goes to pin number 8.
+[1:48:09] Right.
+[1:48:10] Can you understand this wiring diagram?
+[1:48:13] Now LED connected to pin.
+[1:48:15] Right. LED connected to pin 13 is already on the board.
+[1:48:21] We don't need to do anything.
+[1:48:22] Right.
+[1:48:23] Then if the hardware part is okay, then the software part.
+[1:48:29] Firmware.
+[1:48:30] First we have to come up with an algorithm.
+[1:48:32] Right.
+[1:48:33] This is our algorithm.
+[1:48:35] Dual red blinker.
+[1:48:36] That is the name of our firmware.
+[1:48:38] and we write using C.
+[1:48:42] In the C we have the main function.
+[1:48:45] Every C program you have main function.
+[1:48:48] Now the main function algorithm.
+[1:48:52] So we start main function.
+[1:48:55] First we configure pin number 8.
+[1:48:58] That is pin number 13.
+[1:49:02] That is PB5.
+[1:49:04] Port B.
+[1:49:06] Pin 5 as an output.
+[1:49:08] Because we want to blink the LED.
+[1:49:11] PB5 is port B pin 13.
+[1:49:14] Sorry, PB5 means Arduino pin 13.
+[1:49:17] Right.
+[1:49:17] Arduino pin 13, PB5.
+[1:49:19] In the schematic diagram you can see.
+[1:49:22] Arduino pin 13 means PB5.
+[1:49:25] Arduino pin 13, PB5.
+[1:49:27] Right.
+[1:49:28] So, the pin 13, Arduino pin 13 we have configured as an output.
+[1:49:33] So that we can blink the LED.
+[1:49:35] Then switch connected to Arduino pin number 8.
+[1:49:39] Pin number 8 means PB0.
+[1:49:42] Port B, first pin.
+[1:49:45] Configure it as an input.
+[1:49:47] Configure it as an input.
+[1:49:49] Right.
+[1:49:50] So this configuration we have to use DDR, data direction register.
+[1:49:55] Then pull up PB0.
+[1:49:58] Right.
+[1:49:58] The first pin of port B we need to pull up.
+[1:50:01] Because then we can set its default state high.
+[1:50:07] Pull up.
+[1:50:07] Then enter into the endless loop.
+[1:50:11] In the endless loop, toggle PB5.
+[1:50:15] State of the PB5 toggle.
+[1:50:18] That means if the state of the PB5 is high, make it low.
+[1:50:24] If the state of the PB5 is low, make it high.
+[1:50:29] Toggle the state.
+[1:50:30] When you toggle the state
+[1:50:32] LED connected to the
+[1:50:34] pin starts
+[1:50:36] blinking. If the pin is
+[1:50:38] high, make it low. If the
+[1:50:40] pin is low, make it high. That is toggle.
+[1:50:43] When you toggle,
+[1:50:44] you can blink the LED.
+[1:50:46] Then check whether PB0
+[1:50:48] is high. PB0
+[1:50:50] is the pin, the switch
+[1:50:52] connector, push button
+[1:50:54] connector. Whether PB0
+[1:50:56] is high. If it
+[1:50:58] is high that means it is default state it is default state if it is high that means it's
+[1:51:04] default state default state means nobody has pressed the button if if it is in the default
+[1:51:10] state wait 500 milliseconds go to go back top of the loop again toggle the led toggle the state
+[1:51:19] of the pv5 that means blink the led check whether pin is high right pv0 is high if so
+[1:51:26] wait 500 milliseconds go to the top of the loop again toggle the state of pb5 now led connected
+[1:51:35] to pb5 that is pin 13 led right it blinks every half a second now when you press the switch push
+[1:51:44] button pb0 becomes low if pb0 is low that means there is an input then wait 200 milliseconds and
+[1:51:54] go back to the top of the loop.
+[1:51:57] Tuggle the state of PB5.
+[1:51:59] Check whether pin is
+[1:52:00] PB0 is high. No, it is
+[1:52:02] low. Wait 200
+[1:52:04] milliseconds. Do it again.
+[1:52:06] Right. Now LED
+[1:52:08] blinks at the rate of 200
+[1:52:10] milliseconds. Because you have
+[1:52:12] pressed the button and you are
+[1:52:14] keep pressing the button. You are keep
+[1:52:16] pressing the button. So LED
+[1:52:18] blinks at the rate of 200
+[1:52:20] milliseconds. When you release the button
+[1:52:22] LED blinks
+[1:52:24] at the rate of 500 milliseconds.
+[1:52:26] How do we determine whether you have
+[1:52:28] pressed the button or not? We check the
+[1:52:30] state of PB0.
+[1:52:32] If the PB0, which is the
+[1:52:33] button connected pin, if it is
+[1:52:36] high, you have not pressed the button.
+[1:52:38] If it is low, you have pressed
+[1:52:40] the button. That's how we determine whether
+[1:52:42] you have pressed the button or not.
+[1:52:44] The blinking, you achieve the
+[1:52:46] blinking by toggling
+[1:52:48] the state of particular pin.
+[1:52:50] The pin number 13, Arduino pin
+[1:52:52] number 13, you toggle.
+[1:52:53] so you blink the LED can you understand this algorithm
+[1:52:57] if the algorithm is clear
+[1:53:10] let's go to source code
+[1:53:16] this is your c code your main function return zero and the commit line dual rate blinker
+[1:53:29] dot c first you need to include some header files you need to include io.h header file
+[1:53:38] because all these input output definitions,
+[1:53:43] code, DDR, all these are defined in input output dot H header file.
+[1:53:49] Then you need to define the clock speed of your microcontroller
+[1:53:55] using a constant called FCPU, frequency of CPU, right, 16 megahertz.
+[1:54:02] Because fcpu constant is used by the delay.h header file.
+[1:54:09] So you have to define the clock speed for delay.h header file.
+[1:54:13] Then you have to include delay.h header file.
+[1:54:16] Because we are planning to use underscore delay underscore ms function to achieve delays.
+[1:54:26] Then configure pb5 as an output.
+[1:54:30] right configure pb5 as an output so we set
+[1:54:34] the bit 5 of ddrb
+[1:54:38] register we set bit 5 without disturbing
+[1:54:42] to other bits that's why we have used bitwise
+[1:54:46] operator because without disturbing to other bits we have set
+[1:54:50] the bit 5 we have set bit 5 we have set bit 5
+[1:54:54] and then we have cleared bit 0
+[1:54:58] PB0 bit 0 of
+[1:55:01] port B.
+[1:55:03] Sorry DDRB. DDRB
+[1:55:05] register. Bit 0 we have
+[1:55:07] cleared without disturbing
+[1:55:09] to other bits. That's why we have
+[1:55:11] used this
+[1:55:12] bitwise
+[1:55:14] and operator. As a result
+[1:55:17] now PB0
+[1:55:18] pin is an input pin.
+[1:55:21] Right. PB5
+[1:55:23] pin is output pin.
+[1:55:24] PB5 output, PB0
+[1:55:26] and input. Configure the two pins. Then PB0
+[1:55:31] pin we need to pull up. Activate internal
+[1:55:35] pull up resistance. To do that we use the port B register
+[1:55:39] and we set the corresponding bit. PB0
+[1:55:43] pull up. We activate internal pull up resistance.
+[1:55:47] Then endless loop. In the
+[1:55:51] endless loop we need to toggle an LED.
+[1:55:55] right. We need to blink LED. So to blink the LED we need to toggle the state of a pin.
+[1:56:02] PB5 pin we need to toggle. This is the code. So what does this mean? Right. Now this operator
+[1:56:11] we call this operator we call XO operator exclusive O operator. Right. We call exclusive
+[1:56:20] O operator. Now the functionality
+[1:56:22] of the exclusive O operator
+[1:56:25] is, right,
+[1:56:26] this is the exclusive O operator
+[1:56:28] function. 0
+[1:56:30] XO 0
+[1:56:32] you get 0.
+[1:56:34] 0 XO
+[1:56:36] 1 you get
+[1:56:38] 1. 1
+[1:56:39] XO 0
+[1:56:42] you get 1.
+[1:56:44] 1 XO 1
+[1:56:46] you get 0.
+[1:56:47] This is the exclusive O functionality. If both inputs are same, output is 0. If the inputs are different, output is 1. That is the exclusive logical O operation.
+[1:57:07] right exclusive logical operation we discussed this operation in the previous semester now
+[1:57:14] what is the meaning of this code let's see now let's assume the value of the port b register
+[1:57:22] [unclear — Sinhala / crosstalk]
+[1:57:36] X O operator and this value
+[1:57:40] 0 0 1 0 0
+[1:57:44] 0 0 0. Right. Now let's
+[1:57:48] take the X O operation. X X
+[1:57:52] O 0. With X and exclusive
+[1:57:56] O 0 you get X. Right.
+[1:58:00] If X is 1, 1 and 0
+[1:58:04] 1. If x is 0, 0, 0, xo 0, 0. Can you understand? If x is 1, 1, xo 0, two different values.
+[1:58:18] Then this will be 1. That means x. If x is 0, 0, xo 0, same value, 0. That means again x.
+[1:58:29] X, XO0, X
+[1:58:33] X, XO1, let's say Y
+[1:58:37] All other bits, for all other bits you get X
+[1:58:41] X, X, X
+[1:58:44] Now, Y is negation of X
+[1:58:49] Negation of XY
+[1:58:51] If Y is, now for example
+[1:58:55] If X, if Y, this particular bit, if this particular bit is 0, 0 XO1, different inputs, then you get Y.
+[1:59:07] If X is 1, 1 XO1, then similar inputs, you get 0.
+[1:59:15] So Y is always opposite of X.
+[1:59:19] Right.
+[1:59:19] Now can you understand this?
+[1:59:22] this is the bitwise not operator y is always opposite of x now as a result if the pin is high
+[1:59:33] the next moment if you run this statement pin becomes low if pin is low when you run this
+[1:59:41] statement pin becomes high you can toggle the state of the pin using x o operator right in the
+[1:59:50] XO operation if inputs are same, output is 0.
+[1:59:55] If inputs are different, output is 1.
+[1:59:58] Right.
+[1:59:59] Now let's say X.
+[2:00:00] XO 0.
+[2:00:02] Bindu hai.
+[2:00:04] XO yi atara exclusive operation.
+[2:00:07] XO yi atara exclusive operation.
+[2:00:11] XO yi atara XO operation.
+[2:00:14] XO yi atara XO operation.
+[2:00:18] [unclear — Sinhala / crosstalk]
+[2:00:48] Can you understand?
+[2:01:11] Sir Aashar?
+[2:01:13] Yes sir, I can understand.
+[2:01:15] Right.
+[2:01:16] Now we want to determine whether switch has been pressed or not.
+[2:01:22] Whether there is an input or not.
+[2:01:24] To do that we check the state of the pin register with this constant value.
+[2:01:34] Using bitwise AND operation.
+[2:01:38] Now in the bitwise AND operation all the bits are 0 except the bit 1.
+[2:01:44] except this particular bit.
+[2:01:46] If the switch is
+[2:01:48] if the
+[2:01:49] pin is in default
+[2:01:52] state that means switch has not been
+[2:01:54] pressed then this pin B
+[2:01:56] register contains
+[2:01:57] [unclear — Sinhala / crosstalk]
+[2:02:00] last the first bit 1
+[2:02:02] 1 and 1
+[2:02:04] 1. The entire thing is
+[2:02:06] 1. Condition is true
+[2:02:08] the rate delay
+[2:02:10] rate is 500
+[2:02:12] milliseconds. If you press the button
+[2:02:14] right. The pin B
+[2:02:16] register, the first bit
+[2:02:18] that is a bit 0 becomes 0.
+[2:02:20] 0 and
+[2:02:22] 1. 0, the
+[2:02:24] entire thing becomes 0.
+[2:02:26] Else part is executed.
+[2:02:28] The delay becomes 200
+[2:02:30] minutes. Right. Can you
+[2:02:32] understand this if condition?
+[2:02:34] Right. Now let's assume
+[2:02:35] pin B, let's take this statement.
+[2:02:38] If condition expression
+[2:02:39] pin B
+[2:02:41] and 1, 2,
+[2:02:44] [unclear — Sinhala / crosstalk]
+[2:02:59] That is the existing value of pin B.
+[2:03:02] End operation.
+[2:03:04] 1, 2, 3, 4.
+[2:03:06] 1, 2, 3, 1.
+[2:03:09] Now let's take end operation.
+[2:03:11] X and 0.
+[2:03:13] 0.
+[2:03:14] X and 0.
+[2:03:16] 0, 0, 0.
+[2:03:18] 0, 0, 0.
+[2:03:20] X and 1.
+[2:03:21] X and 1.
+[2:03:22] X.
+[2:03:23] This is the final result.
+[2:03:25] Now if the default state of the PB0 pin is high
+[2:03:33] X is 1
+[2:03:34] That means the if condition is 1
+[2:03:37] Condition true 500 milliseconds delay
+[2:03:40] If you have pressed the button
+[2:03:43] The PB0 state is low
+[2:03:46] That means this X is 0
+[2:03:49] That means all bits are 0
+[2:03:51] The if condition is 0
+[2:03:53] else part is executed
+[2:03:55] right
+[2:03:57] then the rate is 200 mil second
+[2:03:59] can you understand
+[2:04:01] x could be either 0 or 1
+[2:04:10] and we take
+[2:04:11] bitwise and operation with this
+[2:04:14] constant and we get
+[2:04:15] this result now
+[2:04:17] this result
+[2:04:19] this particular bit is x
+[2:04:21] x depends on
+[2:04:23] The state of PB0
+[2:04:25] If PB0 is high
+[2:04:27] X is 1
+[2:04:28] If PB0 is low
+[2:04:30] X is 0
+[2:04:31] If X is 1
+[2:04:33] The entire if condition is 1
+[2:04:35] That means condition true
+[2:04:37] If X is 0
+[2:04:38] If condition is 0
+[2:04:40] That means if condition false
+[2:04:42] Then you go to 200 millisecond state
+[2:04:45] Can you understand?
+[2:04:50] Right
+[2:04:50] Now we continuously did this session
+[2:04:53] almost 3 hours. Sorry, I also
+[2:04:55] forgot to ask from you whether
+[2:04:57] you need any break.
+[2:05:00] I know doing online
+[2:05:01] is not very
+[2:05:03] pleasant experience.
+[2:05:06] Right?
+[2:05:07] Now, afternoon we have
+[2:05:09] a practical session 3 hours.
+[2:05:12] Now, during the practical session
+[2:05:14] we'll finish this
+[2:05:15] theory part first
+[2:05:17] and then we talk about your assignment
+[2:05:20] and other practical things.
+[2:05:21] and I'm sure you have the kit with you so that you can do the practical
+[2:05:28] and when you encounter problems, you can ask from me
+[2:05:32] and now you can turn on the webcam and show your hardware assembly.
+[2:05:38] If you couldn't find any errors, then I can help you.
+[2:05:43] I can guide you during that practical session.
+[2:05:46] That's how I'm planning to do the afternoon session.
+[2:05:49] I don't know how much that would be successful.
+[2:05:52] And I will try to do it.
+[2:05:54] If I do it, I will try to do it.
+[2:05:56] I will try to do it, I will try to do it, I will try to do it.
+[2:06:10] Then another thing is, is it okay to have a continuous 3 hour session?
+[2:06:17] Oh, you need break in between.
+[2:06:24] What is it?
+[2:06:26] Nothing different.
+[2:06:28] I feel okay.
+[2:06:30] Okay, no problem.
+[2:06:31] 
+[2:06:33] Okay, tell me whether you need a break in between or is it okay to continuously do three hours?
+[2:06:45] What is it?
+[2:06:45] Up to now it is okay sir.
+[2:06:51] Up to now it is okay.
+[2:06:53] Anyway, no problem.
+[2:06:54] If you want a break
+[2:06:56] in between let's say
+[2:06:58] after one and half hours or two hours
+[2:07:00] just let me know.
+[2:07:02] I know this is not a very pleasant experience.
+[2:07:06] In the afternoon
+[2:07:07] we will try to do our
+[2:07:08] very first online practical.
+[2:07:10] I don't know
+[2:07:12] what could happen.
+[2:07:15] during that time. But anyway, we have no choice. Somehow we have to do this.
+[2:07:22] If you have any issue, I also can assemble the circuit and I can turn on my webcam and show you
+[2:07:29] how I have done that. All these things I can also do. From your side, you also can turn on your
+[2:07:35] webcam and show you are working. Because if it is just the software development thing, you can
+[2:07:41] using a screen sharing
+[2:07:43] we can show your
+[2:07:45] editor screen and those things
+[2:07:47] very easily but now
+[2:07:49] there are some hardware assembly
+[2:07:51] we have to turn on our webcams and show
+[2:07:53] if you need
+[2:07:56] any help
+[2:07:56] right so I also can
+[2:07:59] assemble the things and show you
+[2:08:01] using my
+[2:08:03] webcam you also can do the same
+[2:08:05] we will try
+[2:08:06] so
+[2:08:08] So let's meet then again at one o'clock. Same link would be okay.
+[2:08:15] Do you need me to send another link?
+[2:08:19] No, same link is okay.
+[2:08:21] Right, okay. We'll use the same link.
+[2:08:24] Alright, thank you then.
+[2:08:26] Thank you, sir.
+[2:08:27] Thank you, sir.
+[2:08:29] Thank you, sir.
+[2:08:30] Thank you, sir.

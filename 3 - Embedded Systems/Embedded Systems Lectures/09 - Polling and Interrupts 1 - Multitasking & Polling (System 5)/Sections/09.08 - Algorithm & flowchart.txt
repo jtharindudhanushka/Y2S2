@@ -1,0 +1,187 @@
+[0:01] One is using pseudocode.
+[0:04] The other approach is using flowchart.
+[0:06] But we know that a picture is worth than 1000 words.
+[0:12] So we prefer flowcharts because easier to understand.
+[0:16] So let's design our algorithm using flowcharts.
+[0:21] Right.
+[0:22] This is the algorithm.
+[0:24] Polling based trigger start of the flowchart.
+[0:28] The main function because we use C programming language.
+[0:32] In the C programming language, every program is executed.
+[0:37] Every program starts execution from main function.
+[0:41] Then we have stop, end of the algorithm, end of the flowchart.
+[0:45] Now, main function algorithm or main function flowchart.
+[0:50] In the main function, first we configure PB0 and PB5 as output pins.
+[0:59] because two LEDs are connected to these two pins.
+[1:05] The built-in LED connected to onboard LED connected to PB5,
+[1:11] that is Arduino pin number 13.
+[1:14] The external LED on the breadboard connected to PB0,
+[1:18] which is Arduino Uno pin number 8.
+[1:20] Right.
+[1:21] So therefore, now we want to turn on of these LEDs.
+[1:26] So those two pins we have to configure as output pins.
+[1:31] Right.
+[1:32] We know that to configure those two pins as output pins.
+[1:35] What we have to do is.
+[1:37] Right.
+[1:38] What we have to do is.
+[1:39] We have to set the relevant bits of the port B DDR register.
+[1:50] Data direction register of port B.
+[1:53] We have to set the relevant bits.
+[1:54] Then configure PD2 port D pin number 2 which is Arduino pin number 2.
+[2:05] Arduino digital IO pin number 2.
+[2:08] PD2 AVR terms.
+[2:10] Configure it as input pin Y as the switch is connected to that pin.
+[2:16] Now using the switch we are going to provide an input.
+[2:20] So configure this IOPin, digital IOPin as input pin.
+[2:25] Right.
+[2:26] Now when you press the switch, this pin, the logic state of this pin becomes low.
+[2:33] Why?
+[2:34] The other side of the switch connected to ground.
+[2:38] When you press the switch, that means you turn on the switch, PD2 logic state becomes low.
+[2:45] To recognize that state change, we need the PD2 by default high.
+[2:53] We need to keep PD2 by default high.
+[2:57] Then when you press the switch, it becomes low.
+[3:00] A clear state change.
+[3:02] The microcontroller can recognize that clear state change.
+[3:06] If you keep PD2 high by default and when the switch is pressed, PD2 becomes low.
+[3:13] so that we can clearly identify the state change.
+[3:18] Now, how do we keep PD2 by default high?
+[3:22] The logic state of the PD2, we need to keep high by default.
+[3:28] For that, we pull up PD2.
+[3:31] We pull up PD2.
+[3:33] Right.
+[3:33] So that PD2 is high by default.
+[3:36] When you press the switch, PD2 becomes low
+[3:40] so that microcontroller can recognize the state change.
+[3:44] Then we have endless loop.
+[3:46] Inside the endless loop, we toggle PB5.
+[3:50] We toggle PB5.
+[3:52] That means we toggle the onboard LED.
+[3:56] If the onboard LED is off, we turn it on.
+[4:00] If it is on, we turn it off.
+[4:02] We wait two seconds.
+[4:06] We wait two seconds.
+[4:07] Thereafter we check whether switch has been pressed.
+[4:11] If PD2 is low we check whether the switch is pressed.
+[4:15] We know that if the switch is pressed PD2 becomes low.
+[4:19] We check whether PD2 is low.
+[4:22] If it is low the second LED we toggle.
+[4:28] The second LED we toggle that is PB0.
+[4:31] We toggle the second LED.
+[4:33] If the second LED is off, we turn it on.
+[4:37] If it is on, we turn it off.
+[4:40] After that, we go to the next iteration of the loop.
+[4:44] And again, we toggle onboard LED.
+[4:48] Wait two seconds.
+[4:50] Check whether there is an input.
+[4:52] If so, toggle the second LED.
+[4:56] Go again for the next iteration.
+[4:59] And toggle the onboard LED.
+[5:01] Wait 2 seconds and check whether there is an input.
+[5:07] If no input, do nothing.
+[5:10] Go to the top of the loop again.
+[5:13] Toggle onboard LED.
+[5:15] Wait 2 seconds.
+[5:16] Check whether there is an input.
+[5:18] No input.
+[5:19] Do nothing.
+[5:21] Go to the top of the loop.
+[5:23] Toggle onboard LED.
+[5:25] Wait 2 seconds.
+[5:26] Check whether there is an input.
+[5:27] Yes, there is an input.
+[5:29] Toggle the second LED.
+[5:31] and go to the next item.
+[5:33] Now let's take our day-to-day example.
+[5:35] Right?
+[5:36] You are reading the newspaper.
+[5:39] You are reading the newspaper.
+[5:40] And every two seconds,
+[5:43] you check small fellow's nappy is wet.
+[5:46] If it is not wet,
+[5:47] you continue reading the newspaper.
+[5:50] Every two seconds,
+[5:51] you check whether small fellow's nappy is wet.
+[5:53] No, it is not wet.
+[5:56] Then you continue reading the newspaper.
+[5:58] Every two seconds,
+[6:00] [unclear — Sinhala / crosstalk]
+[6:30] Attend to the small fellow, chain the nappy, continue reading the newspaper.
+[6:35] Can you understand this algorithm?
+[6:38] Any questions?
+[6:39] Sir?
+[6:39] Yes.
+[6:40] Sir, what is the difference between the previous one and this one?
+[6:49] Isn't that one also polling?
+[6:53] What do you mean by previous one?
+[6:54] The switch on, off, off.
+[7:00] Last week application we developed. Yes sir. Yes. We didn't mention that we were using polling but it
+[7:09] is it was it was based on polling. No difference. Thank you. Right. Very good. Good question. That
+[7:15] means you have compared this with the last time work. That's why you could you got that question.
+[7:23] Last time also, right, we developed a system, right, if there is no input, we blink the LED every half a second.
+[7:37] If there is an input, we blink the same LED every 200 milliseconds, right.
+[7:45] Now, two tasks.
+[7:47] One is blinking the LED, whatever the rate,
+[7:51] and monitoring the external switch, the second task.
+[7:55] So if there is no input, you blink the LED every half a second.
+[8:00] If there is an input, you blink the LED every 200 milliseconds.
+[8:05] Right?
+[8:06] So we use polling.
+[8:07] But at that time, we didn't mention that.
+[8:11] So, idea of polling is you regularly monitor the peripheral devices.
+[8:19] Now, here you can see the loop, the endless loop.
+[8:25] Every iteration of endless loop, right?
+[8:29] We monitor whether PD2 is low.
+[8:33] That means we monitor the peripheral device again and again.
+[8:38] status of the peripheral device we monitor again and again.
+[8:43] At regular intervals, in this example the regular interval is two seconds.
+[8:49] Every two seconds we monitor the state of peripheral device.
+[8:54] If the state is low then we attend to the second task.
+[9:00] If the state is not low we don't do anything we do the first task.
+[9:07] Reading the newspaper we do while monitoring whether the nappy is wet.
+[9:14] If the nappy is not wet, keep reading the newspaper.
+[9:19] Don't do anything.
+[9:20] Keep reading the newspaper if nappy is not wet.
+[9:23] Why?
+[9:24] One hour, two hour, three hour nappy is not wet.
+[9:27] Keep reading the newspaper.
+[9:29] But monitor whether nappy is wet regularly.
+[9:32] If nappy is wet, then stop reading the newspaper.
+[9:37] Attend to the small fellow, change the nappy.
+[9:42] After that, keep reading the newspaper and monitoring whether the nappy is wet.
+[9:48] Right.
+[9:49] Now here, this loop, this loop runs again and again.
+[9:54] Now this part is the reading newspaper.
+[9:58] This is the regular interval.
+[10:00] and this is the part you check whether nappy is wet.
+[10:04] If it is not wet, keep reading the newspaper.
+[10:08] And if it is wet, attend to the small fellow,
+[10:12] change the nappy.
+[10:13] After that, keep reading the newspaper.
+[10:16] But at regular intervals, check whether nappy is wet.
+[10:23] Now in day-to-day life,
+[10:24] If you can think about many examples that you have used polling.
+[10:31] If you have polling used examples, you can use polling examples.
+[10:39] You can use polling examples.
+[10:42] You can tell us about polling.
+[10:47] That is the main task.
+[10:50] But regularly you monitor the buzzword, whether that girl has come.
+[10:57] Interested girl, regularly monitor her.
+[11:01] But while talking with your friend, if she has come, then you start doing something else.
+[11:09] The second task.
+[11:10] Holy!
+[11:11] You have to give a little bit of a question.
+[11:13] You have to give a little bit of a question.
+[11:15] Right?
+[11:16] Right?
+[11:16] Listening to the lecture, that is the main task.
+[11:21] You regularly look at the screen of your smartphone.
+[11:32] Message.
+[11:35] Regularly check.
+[11:37] Then you reply to that text.
+[11:41] And again you start resuming your work.
+[11:45] That is listening to the lecture.
+[11:48] The main task is attending to this lecture online.
+[11:55] While doing that, have you done any other task?
+[11:59] Have you checked whether something has happened regularly?

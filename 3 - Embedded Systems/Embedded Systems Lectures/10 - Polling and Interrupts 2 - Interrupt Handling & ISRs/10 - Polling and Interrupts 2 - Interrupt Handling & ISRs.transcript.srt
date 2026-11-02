@@ -1,0 +1,9944 @@
+1
+00:00:00,000 --> 00:00:29,239
+Right. So can you see the slides? No, sir. No? No. No. All right. Now can you see the slides? Yes, sir. Right. Right. Now, did you develop that application? So what kind of experience you got when you increase the time interval or decrease the time interval? Who developed that application? Yes. Hirasha, you developed? Yes.
+
+2
+00:00:29,239 --> 00:00:42,240
+Yes sir. When we input the time, the button is not, the response is not shown by the button.
+
+3
+00:00:42,240 --> 00:00:47,240
+That means always you don't get the response, so sometimes.
+
+4
+00:00:47,240 --> 00:00:54,240
+Sometimes, slowly, when you...
+
+5
+00:00:54,240 --> 00:00:57,200
+Sometimes your input is not detected.
+
+6
+00:00:57,539 --> 00:00:58,679
+Sometimes it is detected.
+
+7
+00:01:00,299 --> 00:01:03,560
+How about others experience?
+
+8
+00:01:04,760 --> 00:01:06,280
+Quick response.
+
+9
+00:01:09,579 --> 00:01:12,560
+When you keep on pressing,
+
+10
+00:01:13,219 --> 00:01:14,439
+both LEDs
+
+11
+00:01:14,439 --> 00:01:17,180
+work in the same.
+
+12
+00:01:18,519 --> 00:01:21,459
+That means you have to give many inputs.
+
+13
+00:01:21,459 --> 00:01:23,680
+You have to hold the button
+
+14
+00:01:23,680 --> 00:01:35,480
+press. Yes sir. How about if you give a quick button press? If the delay is small, if the
+
+15
+00:01:35,480 --> 00:01:45,760
+delay is about 200 milliseconds, then a quick push is enough. But even in 200 milliseconds
+
+16
+00:01:45,760 --> 00:01:52,439
+sometimes the input is not recognized. Not detected. Sometimes. Right. Right. Okay. This
+
+17
+00:01:52,439 --> 00:01:54,859
+This is the experience that you should have.
+
+18
+00:01:55,620 --> 00:01:55,939
+Right.
+
+19
+00:01:56,459 --> 00:01:57,760
+The reason is this.
+
+20
+00:01:58,299 --> 00:01:59,980
+Now let's go back to our lesson.
+
+21
+00:02:01,959 --> 00:02:03,260
+Problems of polling.
+
+22
+00:02:04,000 --> 00:02:06,040
+If the state of a device.
+
+23
+00:02:06,700 --> 00:02:08,340
+Changes too fast.
+
+24
+00:02:08,819 --> 00:02:09,960
+The device state.
+
+25
+00:02:10,379 --> 00:02:11,620
+That is the peripheral device.
+
+26
+00:02:11,699 --> 00:02:12,780
+In this case your button.
+
+27
+00:02:13,699 --> 00:02:16,860
+State change of the button is too fast.
+
+28
+00:02:16,860 --> 00:02:18,479
+That's what you mentioned.
+
+29
+00:02:18,599 --> 00:02:19,240
+Quick press.
+
+30
+00:02:19,900 --> 00:02:21,620
+And press and hold.
+
+31
+00:02:21,620 --> 00:02:23,520
+is a long press.
+
+32
+00:02:24,460 --> 00:02:28,120
+That is the device, the state change is not that fast.
+
+33
+00:02:28,479 --> 00:02:31,759
+So you press and hold the button sometime.
+
+34
+00:02:32,340 --> 00:02:36,719
+That means it's a long press and the device,
+
+35
+00:02:37,039 --> 00:02:39,280
+the state change is not that fast.
+
+36
+00:02:39,280 --> 00:02:41,060
+The state was high.
+
+37
+00:02:41,300 --> 00:02:47,560
+When you press, it became low and it remains low, right?
+
+38
+00:02:47,560 --> 00:02:54,340
+certain amount of time because you press and hold the button. Now that is not the case.
+
+39
+00:02:54,800 --> 00:03:02,680
+The situation is you press and release. The state change, high, low. It was high initially.
+
+40
+00:03:02,680 --> 00:03:09,539
+You press the button. The state became low. State change happened. But it happened very quickly.
+
+41
+00:03:09,539 --> 00:03:20,360
+If the state change is too fast or processors, CPUs, device monitoring interval is too long.
+
+42
+00:03:20,939 --> 00:03:30,139
+Now, if you use 2 seconds, 2000 milliseconds device monitoring interval, that is a long interval, right?
+
+43
+00:03:30,139 --> 00:03:43,900
+If you use 200 millisecond interval, right, as Srinjit told, 200 millisecond, then it's a small interval, right?
+
+44
+00:03:44,319 --> 00:03:53,759
+So if the device monitoring interval is too long, the state change may go undetected.
+
+45
+00:03:53,759 --> 00:04:11,719
+Now two situations. One is state change is very fast. State change is very fast so state change may go undetected. The device state change may go undetected if the device state change is too fast.
+
+46
+00:04:11,719 --> 00:04:16,959
+The second situation, the device state change is not that fast.
+
+47
+00:04:17,600 --> 00:04:23,439
+But device monitoring, state change monitoring interval is too long.
+
+48
+00:04:24,040 --> 00:04:24,180
+Right?
+
+49
+00:04:24,639 --> 00:04:32,399
+So even if you use a long press, if the device monitoring interval is let's say 5 seconds or 10 seconds,
+
+50
+00:04:32,819 --> 00:04:34,319
+then it may go undetected.
+
+51
+00:04:35,000 --> 00:04:38,800
+That state change, the button press may go undetected.
+
+52
+00:04:39,300 --> 00:04:40,879
+This is a serious problem.
+
+53
+00:04:40,879 --> 00:04:48,060
+You press the button, but the system would not recognize that because you did a quick button press.
+
+54
+00:04:48,620 --> 00:04:50,360
+Or you press the button.
+
+55
+00:04:50,740 --> 00:04:52,740
+It's not a quick button press.
+
+56
+00:04:52,860 --> 00:04:54,759
+It's a normal button press.
+
+57
+00:04:55,480 --> 00:04:55,620
+Right.
+
+58
+00:04:56,040 --> 00:05:00,120
+But the monitoring interval is too long.
+
+59
+00:05:00,459 --> 00:05:03,699
+So your button press may go undetected.
+
+60
+00:05:04,240 --> 00:05:04,399
+Right.
+
+61
+00:05:04,399 --> 00:05:10,879
+Now think about a situation like ABS, Antilock Braking System.
+
+62
+00:05:11,300 --> 00:05:16,620
+The system monitors the rotational speed of each and every wheel.
+
+63
+00:05:17,180 --> 00:05:18,879
+It monitors the first wheel.
+
+64
+00:05:19,699 --> 00:05:22,839
+It monitors the rotational speed of the second wheel.
+
+65
+00:05:23,279 --> 00:05:26,240
+It monitors the rotational speed of the third wheel.
+
+66
+00:05:26,860 --> 00:05:29,899
+Then it monitors the rotational speed of the fourth wheel.
+
+67
+00:05:29,899 --> 00:05:35,740
+and it comes back to the monitoring of rotational speed of the first wheel again.
+
+68
+00:05:35,899 --> 00:05:42,459
+Likewise, repeatedly it monitors the rotational speed of all wheels one by one.
+
+69
+00:05:42,459 --> 00:05:49,779
+Right. Now, while you are monitoring the rotational speed of the second wheel,
+
+70
+00:05:50,319 --> 00:05:59,019
+listen carefully, while you are monitoring the rotational speed of the second wheel,
+
+71
+00:05:59,019 --> 00:06:00,720
+the first wheel
+
+72
+00:06:00,720 --> 00:06:02,819
+rotational speed
+
+73
+00:06:02,819 --> 00:06:05,600
+goes down for a moment.
+
+74
+00:06:06,120 --> 00:06:07,259
+After monitoring
+
+75
+00:06:07,259 --> 00:06:09,259
+the rotational speed
+
+76
+00:06:09,259 --> 00:06:10,959
+of the second wheel you move to the
+
+77
+00:06:10,959 --> 00:06:13,220
+third wheel. Then you move to the
+
+78
+00:06:13,220 --> 00:06:15,300
+fourth wheel and then you come back to the
+
+79
+00:06:15,300 --> 00:06:17,339
+first wheel. At that time
+
+80
+00:06:17,339 --> 00:06:18,759
+first wheel is again
+
+81
+00:06:18,759 --> 00:06:21,339
+rotating normally. But it
+
+82
+00:06:21,339 --> 00:06:23,279
+was somewhat slow
+
+83
+00:06:23,279 --> 00:06:24,279
+right?
+
+84
+00:06:25,040 --> 00:06:26,579
+Just a moment ago.
+
+85
+00:06:27,360 --> 00:06:28,939
+But we couldn't detect
+
+86
+00:06:28,939 --> 00:06:36,040
+that. Why? We were monitoring the rotational speed of the second wheel. After that, we go to the third
+
+87
+00:06:36,040 --> 00:06:42,160
+wheel, fourth wheel and come back to the first wheel. There's a certain time. During that time,
+
+88
+00:06:42,160 --> 00:06:51,980
+the first wheel rotational speed go down and then it come back to the normal state. That speed
+
+89
+00:06:51,980 --> 00:07:00,319
+change we couldn't detect. As a result, during that small moment, the car can go off direction.
+
+90
+00:07:00,860 --> 00:07:09,459
+A very serious problem, especially a system like ABS, safety critical system, right? Let me do
+
+91
+00:07:09,459 --> 00:07:17,519
+explain it again. Let's say anti-lock braking system. Now there are four wheels in the car.
+
+92
+00:07:17,519 --> 00:07:23,240
+We need to monitor the rotational speed of each and every wheel one after another.
+
+93
+00:07:24,120 --> 00:07:35,500
+And if one wheel is slower than others, we need to release the brake of that wheel to bring the rotational speed of that wheel back to the speed of the other wheels.
+
+94
+00:07:35,939 --> 00:07:40,879
+So that we can prevent the car going any off direction.
+
+95
+00:07:41,360 --> 00:07:42,379
+Now this is the way.
+
+96
+00:07:42,379 --> 00:07:49,439
+we monitor the first wheel rotational speed, then we go to the second wheel, we monitor the second
+
+97
+00:07:49,439 --> 00:07:54,860
+wheel rotational speed, we go to the third wheel, we monitor the third wheel rotational speed, we go
+
+98
+00:07:54,860 --> 00:07:59,920
+to the fourth wheel, we monitor the fourth wheel rotational speed, we go to the first wheel again,
+
+99
+00:07:59,920 --> 00:08:08,160
+this is the way we rotate, now we monitored the first wheel, it is okay, it is rotting normally
+
+100
+00:08:08,160 --> 00:08:10,180
+and then we move to the second wheel.
+
+101
+00:08:10,620 --> 00:08:12,439
+While we were monitoring
+
+102
+00:08:12,439 --> 00:08:13,959
+the second wheel
+
+103
+00:08:13,959 --> 00:08:16,040
+rotational speed
+
+104
+00:08:16,040 --> 00:08:18,060
+the first wheel rotational
+
+105
+00:08:18,060 --> 00:08:20,360
+speed, right, went out.
+
+106
+00:08:20,500 --> 00:08:22,199
+But we can't detect that.
+
+107
+00:08:22,639 --> 00:08:24,139
+Why? We are monitoring
+
+108
+00:08:24,139 --> 00:08:26,259
+the second wheel. Then we
+
+109
+00:08:26,259 --> 00:08:28,399
+go to the third wheel, monitoring
+
+110
+00:08:28,399 --> 00:08:30,199
+the third wheel, we go to the
+
+111
+00:08:30,199 --> 00:08:32,080
+fourth wheel, monitoring the fourth wheel
+
+112
+00:08:32,080 --> 00:08:34,080
+then we come back to the first wheel
+
+113
+00:08:34,080 --> 00:08:36,240
+monitoring. When we come
+
+114
+00:08:36,240 --> 00:08:37,679
+back to the first wheel monitoring
+
+115
+00:08:37,679 --> 00:08:41,539
+the rotational speed of the first wheel has come back to the normal.
+
+116
+00:08:41,539 --> 00:08:48,820
+So that speed change in the first wheel went undetected.
+
+117
+00:08:49,259 --> 00:08:56,100
+During that small brief time period, due to the speed change of the first wheel,
+
+118
+00:08:56,639 --> 00:09:00,299
+the vehicle can go some off direction.
+
+119
+00:09:00,860 --> 00:09:07,000
+Depending on the speed of the vehicle, you may face a very critical accident.
+
+120
+00:09:07,000 --> 00:09:09,320
+So very serious problem.
+
+121
+00:09:09,799 --> 00:09:13,379
+Input, right, may go undetected.
+
+122
+00:09:13,840 --> 00:09:14,659
+That's the situation.
+
+123
+00:09:14,799 --> 00:09:15,399
+That's the problem.
+
+124
+00:09:16,159 --> 00:09:22,019
+The input may go undetected because the input is too fast.
+
+125
+00:09:22,500 --> 00:09:24,440
+Either input is too fast.
+
+126
+00:09:24,600 --> 00:09:26,320
+One possible situation.
+
+127
+00:09:26,919 --> 00:09:29,100
+The state change of the input is too fast.
+
+128
+00:09:29,559 --> 00:09:32,860
+Or your monitoring interval is too long.
+
+129
+00:09:33,500 --> 00:09:35,360
+You take a lot of time to monitor.
+
+130
+00:09:35,360 --> 00:09:39,919
+Then during that time, the input may go undetected.
+
+131
+00:09:40,419 --> 00:09:43,399
+So this is a critical problem of polling.
+
+132
+00:09:44,379 --> 00:09:46,399
+There is another problem of polling.
+
+133
+00:09:46,980 --> 00:09:56,000
+No support for the concept of priority as CPU repeatedly perform all tasks in the same order.
+
+134
+00:09:56,519 --> 00:10:04,480
+Now we know that if there are multiple tasks to perform, some tasks are more important than others.
+
+135
+00:10:04,480 --> 00:10:11,860
+But unfortunately, if he was polling, all tasks are treated equally.
+
+136
+00:10:12,460 --> 00:10:12,779
+Why?
+
+137
+00:10:13,539 --> 00:10:21,740
+The CPU performs all tasks in the same manner, same sequence.
+
+138
+00:10:22,159 --> 00:10:24,279
+Now in the application that we developed.
+
+139
+00:10:24,960 --> 00:10:25,799
+So what is the order?
+
+140
+00:10:26,539 --> 00:10:32,600
+Blink the onboard LED, then monitor the switch.
+
+141
+00:10:32,600 --> 00:10:42,840
+If the switch has been pressed, toggle the external LED, then again blink the onboard LED.
+
+142
+00:10:43,379 --> 00:10:44,299
+Monitor the switch.
+
+143
+00:10:44,700 --> 00:10:49,779
+If pressed, toggle the external LED, monitor the onboard LED.
+
+144
+00:10:49,879 --> 00:10:50,879
+That is the sequence.
+
+145
+00:10:51,379 --> 00:10:57,899
+Now, can we prioritize button press over blinking LED?
+
+146
+00:10:58,580 --> 00:11:00,700
+Onboard blinking LED, less priority.
+
+147
+00:11:00,700 --> 00:11:25,539
+button press monitoring more priority. Can we change the priority? No. Because things happen in the same order. So no way to implement the concept of priority. But we know that if there are multiple tasks to perform, some tasks are more important. So we should give more priority than others.
+
+148
+00:11:25,539 --> 00:11:36,019
+But unfortunately, if you use polling, you can't implement concept of priority because all tasks are treated in the same manner.
+
+149
+00:11:36,519 --> 00:11:42,460
+The tasks are executed, tasks are performed by the CPU in the same order.
+
+150
+00:11:43,440 --> 00:11:44,200
+No priority.
+
+151
+00:11:44,659 --> 00:11:46,919
+That's another problem of polling.
+
+152
+00:11:47,379 --> 00:11:50,340
+One problem is input may go undetected.
+
+153
+00:11:50,759 --> 00:11:53,440
+That could happen because input is too fast.
+
+154
+00:11:53,440 --> 00:11:56,440
+O, the monitoring interval is too long.
+
+155
+00:11:57,039 --> 00:12:00,360
+The second problem, no support for the priority.
+
+156
+00:12:00,919 --> 00:12:02,940
+Can you understand the problems?
+
+157
+00:12:03,360 --> 00:12:03,919
+Any question?
+
+158
+00:12:04,539 --> 00:12:04,919
+Right.
+
+159
+00:12:05,419 --> 00:12:10,700
+If the questions are clear, the problems of polling, what is the solution?
+
+160
+00:12:11,120 --> 00:12:13,220
+Solution is interrupts.
+
+161
+00:12:13,620 --> 00:12:15,059
+Now, polling has problems.
+
+162
+00:12:15,200 --> 00:12:19,399
+To solve those problems, we use interrupts.
+
+163
+00:12:19,759 --> 00:12:21,840
+Interrupt is a hardware mechanism.
+
+164
+00:12:21,840 --> 00:12:24,059
+Interrupts is a hardware mechanism.
+
+165
+00:12:24,580 --> 00:12:24,840
+Right.
+
+166
+00:12:25,360 --> 00:12:38,480
+Now in interrupts, peripheral devices interrupt the CPU when they need CPU service while CPU is busy with another task.
+
+167
+00:12:38,820 --> 00:12:39,220
+Right.
+
+168
+00:12:40,080 --> 00:12:42,039
+CPU is busy with another task.
+
+169
+00:12:42,500 --> 00:12:44,840
+In our example, blinking the LED.
+
+170
+00:12:45,299 --> 00:12:46,279
+CPU is busy.
+
+171
+00:12:46,740 --> 00:12:49,480
+CPU is busy with blinking the onboard LED.
+
+172
+00:12:49,480 --> 00:12:52,580
+The switch is the external peripheral device.
+
+173
+00:12:53,019 --> 00:12:57,779
+The switch will interrupt the CPU when somebody press the switch.
+
+174
+00:12:58,340 --> 00:13:01,000
+When somebody press the switch, switch will interrupt the CPU.
+
+175
+00:13:01,500 --> 00:13:10,580
+The peripheral device interrupts the CPU when they need CPU service while CPU is busy with another task.
+
+176
+00:13:10,919 --> 00:13:11,740
+Then what happens?
+
+177
+00:13:11,740 --> 00:13:20,159
+CPU suspends the currently performing task and provides its service to the interrupted device.
+
+178
+00:13:20,419 --> 00:13:26,100
+CPU suspends the currently performing task, currently performing task blinking the onboard LED.
+
+179
+00:13:27,200 --> 00:13:31,639
+So CPU suspends that, temporarily suspends that.
+
+180
+00:13:32,399 --> 00:13:36,620
+Then CPU provides its service to interrupted device.
+
+181
+00:13:36,740 --> 00:13:38,220
+Interrupted device is the switch.
+
+182
+00:13:38,840 --> 00:13:41,360
+Now we have to attend to that device.
+
+183
+00:13:41,740 --> 00:13:45,740
+So, atten to that device means we need to toggle the external LED.
+
+184
+00:13:46,360 --> 00:13:51,600
+Thereafter, CPU resumes the task it was doing.
+
+185
+00:13:52,679 --> 00:13:55,240
+CPU resumes the task it was doing.
+
+186
+00:13:55,360 --> 00:13:59,740
+That means CPU resumes blinking the LED again.
+
+187
+00:13:59,740 --> 00:14:04,659
+If again switch press, the switch will notify the CPU.
+
+188
+00:14:05,220 --> 00:14:06,840
+Switch will interrupt the CPU.
+
+189
+00:14:06,840 --> 00:14:17,299
+right and then cpu is cpu has to suspend the suspend the task it is doing currently doing
+
+190
+00:14:17,299 --> 00:14:27,240
+and it has to attend to the switch right now this mechanism frees cpu from monitoring the
+
+191
+00:14:27,240 --> 00:14:34,019
+state of peripheral devices ah now we are not going to monitor the peripheral devices right
+
+192
+00:14:34,019 --> 00:14:36,200
+Why? If the
+
+193
+00:14:36,200 --> 00:14:38,379
+peripheral device needs CPU
+
+194
+00:14:38,379 --> 00:14:40,139
+service, peripheral
+
+195
+00:14:40,139 --> 00:14:42,340
+device will interrupt CPU.
+
+196
+00:14:42,840 --> 00:14:44,240
+So CPU is not going to
+
+197
+00:14:44,240 --> 00:14:44,580
+monitor.
+
+198
+00:14:45,639 --> 00:14:48,200
+Now CPU is free
+
+199
+00:14:48,200 --> 00:14:49,360
+from that burden.
+
+200
+00:14:50,080 --> 00:14:52,200
+I forgot to tell you that this is
+
+201
+00:14:52,200 --> 00:14:54,100
+another problem of polling.
+
+202
+00:14:55,500 --> 00:14:56,399
+Periodically
+
+203
+00:14:56,399 --> 00:14:58,279
+monitoring. If you are using
+
+204
+00:14:58,279 --> 00:15:00,419
+polling, you have to periodically
+
+205
+00:15:00,419 --> 00:15:02,100
+monitor your peripheral
+
+206
+00:15:02,100 --> 00:15:04,000
+devices. It's a burden.
+
+207
+00:15:04,019 --> 00:15:05,840
+And it's unnecessary workload.
+
+208
+00:15:06,679 --> 00:15:07,860
+Unnecessary workload.
+
+209
+00:15:08,460 --> 00:15:10,480
+Now while reading your newspaper.
+
+210
+00:15:10,759 --> 00:15:15,299
+Time to time you have to touch the small fellow's nappy.
+
+211
+00:15:15,519 --> 00:15:17,320
+And see whether it's wet or not.
+
+212
+00:15:17,779 --> 00:15:19,120
+It's unnecessary work.
+
+213
+00:15:19,740 --> 00:15:20,940
+Monitoring workload.
+
+214
+00:15:21,639 --> 00:15:24,379
+That's another problem of polling.
+
+215
+00:15:24,879 --> 00:15:26,039
+But with interrupts.
+
+216
+00:15:26,100 --> 00:15:27,320
+Now you don't need to do that.
+
+217
+00:15:27,320 --> 00:15:29,460
+Now you read the newspaper.
+
+218
+00:15:29,720 --> 00:15:32,120
+You continuously read the newspaper.
+
+219
+00:15:32,120 --> 00:15:34,919
+You keep reading the newspaper.
+
+220
+00:15:35,539 --> 00:15:41,659
+If small fellow wants your attention to get changed the nappy,
+
+221
+00:15:42,200 --> 00:15:44,460
+the small fellow will interrupt you.
+
+222
+00:15:45,019 --> 00:15:46,240
+Small fellow will cry.
+
+223
+00:15:46,700 --> 00:15:48,960
+Then you know that you have to change the nappy.
+
+224
+00:15:49,419 --> 00:15:52,279
+You are not going to check whether nappy is wet or not.
+
+225
+00:15:52,539 --> 00:15:54,039
+No, you are not going to do that.
+
+226
+00:15:54,539 --> 00:15:54,679
+Right?
+
+227
+00:15:55,100 --> 00:15:57,039
+The small fellow, right?
+
+228
+00:15:57,240 --> 00:15:59,279
+The baby will interrupt you.
+
+229
+00:15:59,279 --> 00:16:01,759
+You are keep reading the newspaper.
+
+230
+00:16:02,120 --> 00:16:05,919
+You even don't see whether the nappy is wet or not.
+
+231
+00:16:05,960 --> 00:16:06,799
+You don't check.
+
+232
+00:16:07,440 --> 00:16:08,940
+You keep reading the newspaper.
+
+233
+00:16:08,940 --> 00:16:18,799
+The small fellow, the baby will let you know when the baby requires your service to get changed the nappy.
+
+234
+00:16:19,179 --> 00:16:19,480
+How?
+
+235
+00:16:19,759 --> 00:16:23,580
+The baby, the small fellow will interrupt you.
+
+236
+00:16:23,840 --> 00:16:25,159
+So small fellow will cry.
+
+237
+00:16:25,899 --> 00:16:26,159
+Right?
+
+238
+00:16:26,500 --> 00:16:29,620
+When small fellow starts crying, you know that.
+
+239
+00:16:29,620 --> 00:16:39,139
+arm so his nappy must be wet so i need to change it right so you are free from monitoring the
+
+240
+00:16:39,779 --> 00:16:47,620
+peripheral devices again and again you are free now that burden from that burden you are free why
+
+241
+00:16:47,620 --> 00:16:54,820
+if the if the peripheral device requires your service it will let you know it will interrupt
+
+242
+00:16:54,820 --> 00:17:02,399
+to you. So you don't need to check. You are not going to monitor. The advantages are now you are
+
+243
+00:17:02,399 --> 00:17:10,740
+free from monitoring workload, polling work. You are free. The second thing, it doesn't matter the
+
+244
+00:17:10,740 --> 00:17:16,940
+state change of the peripheral device is too fast or too slow. It doesn't matter. When the peripheral
+
+245
+00:17:16,940 --> 00:17:20,720
+device requires CPU's attention, the
+
+246
+00:17:20,720 --> 00:17:24,799
+peripheral device will interrupt the CPU. No matter the state
+
+247
+00:17:24,799 --> 00:17:28,960
+changes, fast or slow, no problem. The device
+
+248
+00:17:28,960 --> 00:17:32,900
+will interrupt the CPU. So the state changes
+
+249
+00:17:32,900 --> 00:17:37,039
+will not go undetected, will not
+
+250
+00:17:37,039 --> 00:17:40,619
+go, right? State changes will not go undetected,
+
+251
+00:17:40,960 --> 00:17:44,819
+right? Now because there is no monitoring, right?
+
+252
+00:17:44,819 --> 00:17:47,640
+You don't need to worry about the monitoring interval.
+
+253
+00:17:48,240 --> 00:17:52,559
+Whether the monitoring interval is long or short, you don't need to worry.
+
+254
+00:17:52,680 --> 00:17:53,680
+Why? No monitoring.
+
+255
+00:17:54,640 --> 00:17:56,819
+You keep reading the newspaper.
+
+256
+00:17:57,799 --> 00:18:01,200
+When the nappy is wet, the small fellow will cry.
+
+257
+00:18:02,299 --> 00:18:04,140
+And he will interrupt you.
+
+258
+00:18:04,940 --> 00:18:11,119
+Then you change his nappy and then again continue the work that was doing.
+
+259
+00:18:11,279 --> 00:18:12,539
+That is reading the newspaper.
+
+260
+00:18:12,539 --> 00:18:16,380
+again. If again the nappy becomes wet, the small fellow
+
+261
+00:18:16,380 --> 00:18:20,440
+will cry. Again change the nappy and continue reading the newspaper.
+
+262
+00:18:20,819 --> 00:18:23,900
+Very simple. And another advantage,
+
+263
+00:18:24,680 --> 00:18:28,099
+interrupt supports concept of priority.
+
+264
+00:18:28,640 --> 00:18:32,500
+Now if there are couple of peripheral devices, several peripheral devices,
+
+265
+00:18:33,099 --> 00:18:36,480
+you can prioritize one device over
+
+266
+00:18:36,480 --> 00:18:39,640
+others. If there are multiple sensors connected,
+
+267
+00:18:39,640 --> 00:18:44,200
+you can give priority for one sensor over others.
+
+268
+00:18:44,759 --> 00:18:48,420
+Now if you have, let's say, few kids
+
+269
+00:18:48,420 --> 00:18:51,759
+on the floor playing with their toys,
+
+270
+00:18:52,079 --> 00:18:55,880
+you are reading the newspaper, you have two kids,
+
+271
+00:18:57,079 --> 00:19:00,259
+you can give priority for one kid over other kid
+
+272
+00:19:00,259 --> 00:19:04,220
+because you are not going to monitor. If they won't
+
+273
+00:19:04,220 --> 00:19:08,240
+interrupt you, the one with the priority will
+
+274
+00:19:08,240 --> 00:19:10,359
+interrupt you first. If both
+
+275
+00:19:10,359 --> 00:19:11,839
+need to interrupt you
+
+276
+00:19:11,839 --> 00:19:13,519
+at the same time
+
+277
+00:19:13,519 --> 00:19:16,099
+the device
+
+278
+00:19:16,099 --> 00:19:18,119
+that with the highest priority will
+
+279
+00:19:18,119 --> 00:19:19,660
+interrupt the CPU first.
+
+280
+00:19:20,099 --> 00:19:22,299
+So you can implement the concept
+
+281
+00:19:22,299 --> 00:19:24,299
+of priority also.
+
+282
+00:19:24,900 --> 00:19:25,599
+Can you understand?
+
+283
+00:19:26,000 --> 00:19:27,380
+Any question? No.
+
+284
+00:19:28,319 --> 00:19:30,099
+Steps. Interrupt
+
+285
+00:19:30,099 --> 00:19:31,619
+handling. Now when
+
+286
+00:19:31,619 --> 00:19:33,859
+the CPU is
+
+287
+00:19:33,859 --> 00:19:35,920
+interrupted, CPU
+
+288
+00:19:35,920 --> 00:19:37,980
+has to handle
+
+289
+00:19:37,980 --> 00:19:44,740
+the interrupt. When CPU is interrupted by a device, CPU has to handle the interrupt. Now,
+
+290
+00:19:44,839 --> 00:19:54,259
+what are the steps of interrupt handling? Right, steps. Now, this is your memory, RAM. In the RAM,
+
+291
+00:19:55,299 --> 00:20:02,559
+you have your instructions. This is the program, instructions. At the beginning of the RAM,
+
+292
+00:20:02,559 --> 00:20:04,660
+you have the interrupt
+
+293
+00:20:04,660 --> 00:20:06,660
+vector table. At the
+
+294
+00:20:06,660 --> 00:20:08,799
+beginning you have the interrupt vector table.
+
+295
+00:20:09,680 --> 00:20:10,859
+Then you have
+
+296
+00:20:10,859 --> 00:20:11,779
+the program,
+
+297
+00:20:12,460 --> 00:20:14,200
+instructions of your firmware.
+
+298
+00:20:14,980 --> 00:20:16,539
+Then you have interrupt
+
+299
+00:20:16,539 --> 00:20:17,680
+service routine.
+
+300
+00:20:18,859 --> 00:20:20,680
+Right. All these things are in the
+
+301
+00:20:20,680 --> 00:20:22,180
+RAM. Right.
+
+302
+00:20:22,180 --> 00:20:24,039
+So RAM has address
+
+303
+00:20:24,039 --> 00:20:26,440
+and instruction. Address, instruction.
+
+304
+00:20:26,660 --> 00:20:28,279
+Every instruction has an address.
+
+305
+00:20:29,799 --> 00:20:30,279
+Right.
+
+306
+00:20:30,819 --> 00:20:32,019
+Now when you run your
+
+307
+00:20:32,019 --> 00:20:42,299
+firmware the execution begins from address 0 execution begins from address 0 right so address
+
+308
+00:20:42,299 --> 00:20:52,279
+0 the first instruction of your firmware from that we begin the execution however then we have
+
+309
+00:20:52,279 --> 00:21:00,740
+interrupt vector table right if the interrupts are used interrupt vector table is at the top of the
+
+310
+00:21:00,740 --> 00:21:03,059
+wrap. If interrupts
+
+311
+00:21:03,059 --> 00:21:05,099
+are used, if interrupts
+
+312
+00:21:05,099 --> 00:21:06,900
+are not used, this vector table is
+
+313
+00:21:06,900 --> 00:21:08,960
+not there. If interrupts are
+
+314
+00:21:08,960 --> 00:21:10,579
+used, the vector table
+
+315
+00:21:10,579 --> 00:21:12,220
+will be at
+
+316
+00:21:12,220 --> 00:21:13,940
+the top of the wrap,
+
+317
+00:21:14,660 --> 00:21:16,920
+at the beginning of the wrap. So
+
+318
+00:21:16,920 --> 00:21:18,740
+CPU jumps
+
+319
+00:21:18,740 --> 00:21:20,740
+over the interrupt
+
+320
+00:21:20,740 --> 00:21:22,319
+vector table and
+
+321
+00:21:22,319 --> 00:21:24,680
+continue the execution
+
+322
+00:21:24,680 --> 00:21:26,259
+of your firmware.
+
+323
+00:21:27,299 --> 00:21:28,880
+So CPU starts execution
+
+324
+00:21:28,880 --> 00:21:30,279
+from the address 0
+
+325
+00:21:30,279 --> 00:21:32,680
+the first instruction in address 0
+
+326
+00:21:32,680 --> 00:21:34,859
+then CPU jumps
+
+327
+00:21:34,859 --> 00:21:37,140
+over the interrupt vector table
+
+328
+00:21:37,140 --> 00:21:38,859
+and continues
+
+329
+00:21:38,859 --> 00:21:39,940
+the execution
+
+330
+00:21:39,940 --> 00:21:42,700
+of your firmware.
+
+331
+00:21:43,599 --> 00:21:45,119
+Here you can see
+
+332
+00:21:45,119 --> 00:21:47,079
+that started
+
+333
+00:21:47,079 --> 00:21:48,839
+the execution from
+
+334
+00:21:48,839 --> 00:21:49,900
+address 0
+
+335
+00:21:49,900 --> 00:21:51,579
+first instruction
+
+336
+00:21:51,579 --> 00:21:53,240
+then interrupts
+
+337
+00:21:53,240 --> 00:21:55,380
+we are using interrupt so interrupt
+
+338
+00:21:55,380 --> 00:21:56,559
+vector table is there
+
+339
+00:21:56,559 --> 00:21:59,599
+so we jump over the vector table
+
+340
+00:21:59,599 --> 00:22:07,819
+to next instruction and next instruction, the next instruction. Likewise, instructions are
+
+341
+00:22:07,819 --> 00:22:16,920
+executed one by one. Right. Now let's assume while you are executing this particular instruction,
+
+342
+00:22:16,920 --> 00:22:23,319
+while you are executing this particular instruction, a peripheral device interrupts
+
+343
+00:22:23,319 --> 00:22:30,420
+you. Here you mean CPU. While the CPU is executing this particular instruction,
+
+344
+00:22:31,660 --> 00:22:38,720
+a peripheral device interrupts the CPU. Right. While you are reading a particular article in the
+
+345
+00:22:38,720 --> 00:22:46,579
+newspaper, small fellow interrupts you. So small fellow starts crying. Right. Interrupt. Right.
+
+346
+00:22:46,579 --> 00:22:47,980
+You got the interrupt.
+
+347
+00:22:48,420 --> 00:22:49,400
+Then what happens?
+
+348
+00:22:49,819 --> 00:22:56,799
+The CPU then saves address of the next instruction to execute.
+
+349
+00:22:57,460 --> 00:22:58,500
+What is the next instruction?
+
+350
+00:22:58,660 --> 00:22:59,759
+This is the next instruction.
+
+351
+00:23:00,079 --> 00:23:02,259
+This is the instruction currently in execution.
+
+352
+00:23:02,640 --> 00:23:03,980
+Currently in execution.
+
+353
+00:23:04,559 --> 00:23:07,660
+While this is in execution, interrupt happened.
+
+354
+00:23:08,440 --> 00:23:09,859
+The CPU interrupted.
+
+355
+00:23:10,460 --> 00:23:11,960
+So this is the next instruction.
+
+356
+00:23:12,140 --> 00:23:13,720
+Address of the next instruction.
+
+357
+00:23:13,720 --> 00:23:31,400
+CPU saves on stack. Address of next instruction saves on stack. Right. Right. That address is in the program counter. So what is that? Whatever the address in program counter is saved on a stack. Right.
+
+358
+00:23:31,400 --> 00:23:42,119
+then cpu turns off interrupts cpu turns off interrupts to prevent any more interrupts while
+
+359
+00:23:42,119 --> 00:23:49,240
+handling one interrupts so all interrupts are turned off because now we are going to handle
+
+360
+00:23:49,240 --> 00:23:55,220
+one interrupt while we are handling one interrupt we can't attend to another interrupt so we turn
+
+361
+00:23:55,220 --> 00:23:56,720
+after interrupts, right?
+
+362
+00:23:57,119 --> 00:23:58,380
+Something like this.
+
+363
+00:23:59,079 --> 00:24:01,220
+You were reading the newspaper.
+
+364
+00:24:01,619 --> 00:24:03,000
+While you were reading
+
+365
+00:24:03,000 --> 00:24:04,579
+this particular article,
+
+366
+00:24:05,259 --> 00:24:07,059
+right? Let's say
+
+367
+00:24:07,059 --> 00:24:07,980
+you have two kids,
+
+368
+00:24:09,099 --> 00:24:10,460
+right? The big
+
+369
+00:24:10,460 --> 00:24:11,539
+brother
+
+370
+00:24:11,539 --> 00:24:14,200
+started crying,
+
+371
+00:24:14,859 --> 00:24:16,460
+interrupt, right?
+
+372
+00:24:17,079 --> 00:24:18,099
+Then what do you,
+
+373
+00:24:18,559 --> 00:24:20,859
+now there's a small fellow also, a small brother
+
+374
+00:24:20,859 --> 00:24:22,660
+also there. The
+
+375
+00:24:22,660 --> 00:24:24,900
+Ayya started crying and Mali is also
+
+376
+00:24:24,900 --> 00:24:33,859
+there. Now what would happen if Mali also starts crying? You can't attend to two kids at the same
+
+377
+00:24:33,859 --> 00:24:46,180
+time. So what you do is you put the teeth on the Mali's mouth. So he can't cry. So you disable
+
+378
+00:24:46,180 --> 00:24:51,299
+interrupts when you are trying to handle one interrupt because you want to prevent
+
+379
+00:24:51,299 --> 00:25:01,279
+right any more interrupts while handling one interrupt now that's why cpu disables cpu turns
+
+380
+00:25:01,279 --> 00:25:09,720
+off interrupts right so when interrupted the address is saved on the stack and then turns
+
+381
+00:25:09,720 --> 00:25:15,500
+off interrupts because now we are going to handle one interrupt while we are handling one interrupt
+
+382
+00:25:15,500 --> 00:25:17,259
+We cannot handle another interrupt.
+
+383
+00:25:17,500 --> 00:25:19,059
+So we disable interrupts.
+
+384
+00:25:19,380 --> 00:25:19,619
+Right.
+
+385
+00:25:20,180 --> 00:25:22,579
+Then CPU execution.
+
+386
+00:25:22,819 --> 00:25:25,460
+The CPU jumps to the interrupt vector table.
+
+387
+00:25:25,900 --> 00:25:28,000
+CPU jumps to the interrupt vector table.
+
+388
+00:25:28,420 --> 00:25:35,140
+Interrupt vector table contains addresses of interrupt service routines.
+
+389
+00:25:35,720 --> 00:25:38,400
+Addresses of interrupt service routines.
+
+390
+00:25:38,400 --> 00:25:46,200
+The interrupt vector table contains addresses of interrupt service routines.
+
+391
+00:25:46,700 --> 00:25:51,299
+In other words, where the relevant ISR is.
+
+392
+00:25:51,400 --> 00:25:53,180
+Interrupt service routine means ISR.
+
+393
+00:25:53,779 --> 00:25:56,259
+Where the relevant ISR is.
+
+394
+00:25:56,759 --> 00:25:59,259
+You can find out from the interrupt vector table.
+
+395
+00:25:59,640 --> 00:26:01,980
+So execution jumps to the interrupt vector table.
+
+396
+00:26:02,619 --> 00:26:07,119
+And we can find out where the relevant ISR is.
+
+397
+00:26:07,119 --> 00:26:13,119
+And with that address, right, the CPU can jump to the relevant ISR.
+
+398
+00:26:14,140 --> 00:26:18,579
+The CPU can jump to the relevant ISR, interrupt service routine.
+
+399
+00:26:18,799 --> 00:26:25,079
+From the vector table, we pick the address and then we jump to the relevant ISR, interrupt service routine.
+
+400
+00:26:25,579 --> 00:26:29,680
+Now each and every interrupt has interrupt service routine.
+
+401
+00:26:30,240 --> 00:26:36,619
+Each and every interrupt has relevant associated ISR, interrupt service routine, right.
+
+402
+00:26:36,619 --> 00:26:44,440
+Now the ISR contains instructions to handle the interrupt.
+
+403
+00:26:44,859 --> 00:26:48,099
+So ISR contains instructions to handle the interrupt.
+
+404
+00:26:48,440 --> 00:26:50,900
+ISR contains instructions to handle the interrupt.
+
+405
+00:26:51,180 --> 00:26:58,599
+So when you got the address of the relevant ISR, you jump to the ISR and you execute the ISR.
+
+406
+00:26:58,599 --> 00:27:07,359
+Now, as programmers, we have to write the instructions in the ISR to handle the interrupt.
+
+407
+00:27:07,779 --> 00:27:11,980
+So, instructions to handle the interrupt, we have to write within the ISR.
+
+408
+00:27:12,240 --> 00:27:18,779
+In our example, when the button is pressed, we jump to the particular ISR.
+
+409
+00:27:18,900 --> 00:27:25,599
+Inside the ISR, we have written code to toggle the state of external LED.
+
+410
+00:27:25,599 --> 00:27:31,400
+So code in the ISR is to toggle the state of external LDD.
+
+411
+00:27:31,880 --> 00:27:34,779
+So that is, as programmers, we have to write it.
+
+412
+00:27:35,279 --> 00:27:37,900
+The relevant instructions for the ISR.
+
+413
+00:27:38,660 --> 00:27:45,640
+The CPU will pick the address of relevant ISR from the interrupt vector table and jump to the ISR.
+
+414
+00:27:46,099 --> 00:27:48,619
+And then CPU will execute the ISR.
+
+415
+00:27:48,619 --> 00:27:56,299
+At the completion of the execution of ISR, at the completion of the execution of ISR,
+
+416
+00:27:57,319 --> 00:27:59,519
+this is what happened, right?
+
+417
+00:27:59,519 --> 00:28:02,259
+From the vector table, we get the address.
+
+418
+00:28:02,740 --> 00:28:07,720
+We come to the ISR and we execute ISR line by line, right?
+
+419
+00:28:07,900 --> 00:28:14,359
+CP will jump to the vector table, get the address, come to the ISR and instructions
+
+420
+00:28:14,359 --> 00:28:16,720
+with ISR are executed line by line.
+
+421
+00:28:16,720 --> 00:28:25,980
+Now at the end of the execution of ISR, right, the CPU will turn on interrupts again, right?
+
+422
+00:28:26,799 --> 00:28:30,799
+Before handling the interrupt, CPU turned off interrupts.
+
+423
+00:28:30,799 --> 00:28:36,400
+And now after handling the interrupt, CPU will turn on the interrupts again.
+
+424
+00:28:36,980 --> 00:28:43,299
+So after changing the nappy of the big brother, we remove the teeth from the small fellow.
+
+425
+00:28:43,640 --> 00:28:45,640
+So that small fellow can also cry.
+
+426
+00:28:45,640 --> 00:29:01,259
+But while we are changing the nappy of the big brother, we have put the teeth in the mouth of small brother, Mally's mouth, we have put the teeth so that Mally can't cry.
+
+427
+00:29:02,180 --> 00:29:14,859
+While we change the nappy of Aya, once you finish changing the nappy, Aya's nappy, we remove the teeth, Supur, from Mally's mouth so he also can now cry.
+
+428
+00:29:14,859 --> 00:29:26,220
+You also can interrupt. So CPU will turn on the interrupts again and CPU will get the address
+
+429
+00:29:26,220 --> 00:29:34,279
+saved on the stack. CPU will get the address saved on the stack. Get the address. There is a return
+
+430
+00:29:34,279 --> 00:29:42,220
+address from the stack. And then we can the execution jumps back to the statement where
+
+431
+00:29:42,220 --> 00:29:49,359
+the interrupt happened. Using that address you go back to the instruction where the interrupt happened.
+
+432
+00:29:49,359 --> 00:29:59,180
+And from there we resume the execution that we were doing. Then from there we resumes the execution.
+
+433
+00:29:59,500 --> 00:30:06,759
+The CPU resumes the execution from where it was suspended. Using the address we go back to the
+
+434
+00:30:06,759 --> 00:30:08,480
+place where we were interrupted
+
+435
+00:30:08,480 --> 00:30:11,039
+and from there we continue
+
+436
+00:30:11,039 --> 00:30:12,460
+the execution. Right.
+
+437
+00:30:12,940 --> 00:30:14,579
+Any question? Can you
+
+438
+00:30:14,579 --> 00:30:15,839
+understand this?
+
+439
+00:30:16,240 --> 00:30:17,359
+Monadath, you can get along?
+
+440
+00:30:18,000 --> 00:30:18,380
+Yes, sir.
+
+441
+00:30:19,019 --> 00:30:19,819
+Yes, sir.
+
+442
+00:30:20,359 --> 00:30:21,740
+Sir, when
+
+443
+00:30:21,740 --> 00:30:24,380
+we get more than one interrupt,
+
+444
+00:30:24,559 --> 00:30:25,099
+the CPU
+
+445
+00:30:25,099 --> 00:30:27,940
+disables one and
+
+446
+00:30:27,940 --> 00:30:29,299
+prioritizes the other.
+
+447
+00:30:29,900 --> 00:30:31,880
+So if both are critical,
+
+448
+00:30:32,119 --> 00:30:34,000
+then there is a problem in the system.
+
+449
+00:30:34,599 --> 00:30:36,140
+Yes. Now, if
+
+450
+00:30:36,140 --> 00:30:41,420
+there are multiple interrupts now we have two kids so both are important
+
+451
+00:30:41,420 --> 00:30:51,900
+both ayya and malli both are important so as a father so we have to take care of both
+
+452
+00:30:51,900 --> 00:31:03,559
+but we cannot do two tasks parallely at the same time so we have to prioritize one over other
+
+453
+00:31:03,559 --> 00:31:14,000
+So that's why when you are about to handle one interrupt, you disable other interrupts until you finish handling the interrupt.
+
+454
+00:31:14,480 --> 00:31:22,579
+Once you finish handling the interrupt, then you again enable the interrupt so that the other devices also can interrupt you.
+
+455
+00:31:23,220 --> 00:31:23,339
+Right.
+
+456
+00:31:23,720 --> 00:31:27,819
+When Aya starts crying, you have to attend to Aya.
+
+457
+00:31:28,640 --> 00:31:29,660
+Change his nappy.
+
+458
+00:31:30,299 --> 00:31:30,519
+Right.
+
+459
+00:31:30,519 --> 00:31:35,220
+While you are doing all these things, what would happen if Mali also starts crying?
+
+460
+00:31:35,880 --> 00:31:38,940
+Can you attend to Mali at the same time? No.
+
+461
+00:31:39,900 --> 00:31:44,759
+So you disable the Mali's interrupt. How?
+
+462
+00:31:45,799 --> 00:31:49,299
+Then Mali turned under there.
+
+463
+00:31:49,859 --> 00:31:54,240
+So once you finish changing the nappy, Ayya's nappy,
+
+464
+00:31:54,240 --> 00:31:59,660
+then you remove the teeth from Mali's mouth.
+
+465
+00:31:59,660 --> 00:32:02,420
+So he can also interrupt you.
+
+466
+00:32:02,420 --> 00:32:12,079
+The reason is we cannot do multiple tasks truly at the same time because we have one CPU.
+
+467
+00:32:12,599 --> 00:32:24,799
+If you really want to handle multiple tasks at the same time, truly, if you want to do that, you need multiple CPUs, multi-co-processors.
+
+468
+00:32:25,140 --> 00:32:25,759
+Is that clear?
+
+469
+00:32:26,940 --> 00:32:27,420
+Shandhi?
+
+470
+00:32:28,059 --> 00:32:28,599
+Yes, sir.
+
+471
+00:32:28,599 --> 00:32:31,119
+Anything else? Any other question?
+
+472
+00:32:31,759 --> 00:32:32,180
+No, no.
+
+473
+00:32:32,819 --> 00:32:34,559
+Whatever the question you have.
+
+474
+00:32:35,099 --> 00:32:36,500
+I know some people, they
+
+475
+00:32:36,500 --> 00:32:39,039
+have questions, but they don't ask.
+
+476
+00:32:39,700 --> 00:32:39,900
+Right?
+
+477
+00:32:40,660 --> 00:32:42,880
+So, only few people, they ask
+
+478
+00:32:42,880 --> 00:32:44,799
+questions and get the things sorted out.
+
+479
+00:32:45,200 --> 00:32:46,319
+So, others keep quiet.
+
+480
+00:32:46,700 --> 00:32:48,519
+But they have questions. I know.
+
+481
+00:32:49,039 --> 00:32:50,859
+Because when I was a student, when I
+
+482
+00:32:50,859 --> 00:32:52,900
+learned all these things, I had thousands of
+
+483
+00:32:52,900 --> 00:32:54,799
+questions. Even today, I have
+
+484
+00:32:54,799 --> 00:32:56,839
+questions. Though I have taught this
+
+485
+00:32:56,839 --> 00:32:58,460
+Mulder several years.
+
+486
+00:32:59,599 --> 00:33:01,099
+Right. If I think
+
+487
+00:33:01,099 --> 00:33:02,480
+about this more deeply,
+
+488
+00:33:03,259 --> 00:33:04,480
+I get a lot of questions.
+
+489
+00:33:05,039 --> 00:33:06,539
+Right. Now,
+
+490
+00:33:07,039 --> 00:33:08,819
+let's try to understand
+
+491
+00:33:08,819 --> 00:33:10,980
+this model with our real world
+
+492
+00:33:10,980 --> 00:33:11,519
+example.
+
+493
+00:33:12,740 --> 00:33:15,200
+You start reading the newspaper.
+
+494
+00:33:15,200 --> 00:33:17,460
+At the top of the newspaper,
+
+495
+00:33:18,460 --> 00:33:19,380
+you have
+
+496
+00:33:19,380 --> 00:33:21,259
+this interrupt vector table, so you
+
+497
+00:33:21,259 --> 00:33:23,279
+skip that and you
+
+498
+00:33:23,279 --> 00:33:25,180
+continue your reading.
+
+499
+00:33:25,180 --> 00:33:35,859
+While you are reading the let's say first line, second line, first paragraph, second paragraph, third paragraph, fourth paragraph.
+
+500
+00:33:36,180 --> 00:33:41,680
+While you are reading the fourth paragraph, Ayya started crying.
+
+501
+00:33:42,200 --> 00:33:44,819
+Then you know that you have to attend to Ayya.
+
+502
+00:33:45,259 --> 00:33:45,559
+Right.
+
+503
+00:33:46,099 --> 00:33:46,779
+Now what?
+
+504
+00:33:47,259 --> 00:33:49,779
+So let's say you are reading a book, not a newspaper.
+
+505
+00:33:50,259 --> 00:33:51,220
+You are reading a book.
+
+506
+00:33:51,859 --> 00:33:53,200
+You start reading the book.
+
+507
+00:33:53,200 --> 00:33:55,839
+the first chapter, the first paragraph.
+
+508
+00:33:56,539 --> 00:33:57,700
+After the first paragraph,
+
+509
+00:33:57,880 --> 00:33:59,319
+you have the interrupt vector table.
+
+510
+00:34:00,059 --> 00:34:01,180
+So you skip that
+
+511
+00:34:01,180 --> 00:34:03,720
+and then you second paragraph, third paragraph,
+
+512
+00:34:03,920 --> 00:34:05,660
+fourth paragraph. While you are reading
+
+513
+00:34:05,660 --> 00:34:06,799
+the fourth paragraph,
+
+514
+00:34:08,579 --> 00:34:09,920
+I interrupted you.
+
+515
+00:34:10,480 --> 00:34:11,760
+Now you know that you have to
+
+516
+00:34:11,760 --> 00:34:13,139
+attend, right?
+
+517
+00:34:13,699 --> 00:34:15,760
+Sorry, sorry, again, not paragraphs.
+
+518
+00:34:15,960 --> 00:34:16,719
+Say pages.
+
+519
+00:34:17,420 --> 00:34:19,579
+You started reading from first page.
+
+520
+00:34:19,579 --> 00:34:21,860
+The second page interrupt vector table,
+
+521
+00:34:21,860 --> 00:34:23,679
+you skip third page,
+
+522
+00:34:23,840 --> 00:34:25,340
+fourth page, fifth page.
+
+523
+00:34:25,980 --> 00:34:27,840
+Now while you are reading the fifth page,
+
+524
+00:34:28,000 --> 00:34:29,599
+Ayya interrupted you.
+
+525
+00:34:30,139 --> 00:34:31,059
+He started crying.
+
+526
+00:34:31,659 --> 00:34:33,280
+You know that you have to attend to Ayya.
+
+527
+00:34:33,780 --> 00:34:35,300
+What you do is
+
+528
+00:34:35,300 --> 00:34:37,800
+you put a bookmark in the
+
+529
+00:34:37,800 --> 00:34:39,860
+fifth page, address
+
+530
+00:34:39,860 --> 00:34:41,840
+of the fifth page.
+
+531
+00:34:42,659 --> 00:34:43,719
+Ideally, in the
+
+532
+00:34:43,719 --> 00:34:45,880
+computer, you save that
+
+533
+00:34:45,880 --> 00:34:47,760
+address on a stack. Same way, you
+
+534
+00:34:47,760 --> 00:34:49,500
+put a bookmark in the
+
+535
+00:34:49,500 --> 00:34:51,800
+fifth page, close the
+
+536
+00:34:51,800 --> 00:35:03,599
+book right close the book go to the place where the the diapers are from that you find the location
+
+537
+00:35:03,599 --> 00:35:13,320
+where the diapers are go to that place and get a get a diaper the wet one right throw it out put
+
+538
+00:35:13,320 --> 00:35:21,559
+the new diaper, right? Now you change his nappy, the diaper you change. Then, right,
+
+539
+00:35:22,500 --> 00:35:29,400
+you using the bookmark, you go to the page where you were reading and from that page
+
+540
+00:35:29,400 --> 00:35:34,659
+you continue reading, right? While you are reading, again if you got an interrupt, you
+
+541
+00:35:34,659 --> 00:35:40,840
+do the same. Very simple. Very simple. That is what you do in your normal day-to-day life.
+
+542
+00:35:40,840 --> 00:35:45,820
+So, sir, in the interrupt vector table, what we have?
+
+543
+00:35:46,679 --> 00:35:49,659
+Where the interrupt service routine is?
+
+544
+00:35:50,380 --> 00:35:51,099
+The address.
+
+545
+00:35:51,320 --> 00:35:53,400
+Address of the interrupt service routine.
+
+546
+00:35:54,400 --> 00:36:03,440
+So, when it comes to the blinking one, that push button.
+
+547
+00:36:04,059 --> 00:36:06,280
+The push button is not going to be.
+
+548
+00:36:06,280 --> 00:36:08,519
+hammer. Now, when you
+
+549
+00:36:08,519 --> 00:36:09,619
+press the push button,
+
+550
+00:36:10,239 --> 00:36:12,659
+interrupt the push button,
+
+551
+00:36:12,780 --> 00:36:14,460
+the button interrupts
+
+552
+00:36:14,460 --> 00:36:15,179
+the CPU.
+
+553
+00:36:15,940 --> 00:36:18,400
+When button interrupted the
+
+554
+00:36:18,400 --> 00:36:20,039
+CPU, the state change
+
+555
+00:36:20,039 --> 00:36:21,739
+interrupted the CPU.
+
+556
+00:36:22,280 --> 00:36:24,599
+Now, you should do something.
+
+557
+00:36:25,599 --> 00:36:26,400
+Ideally,
+
+558
+00:36:27,099 --> 00:36:28,199
+what you have to do is
+
+559
+00:36:28,199 --> 00:36:29,860
+toggle the
+
+560
+00:36:29,860 --> 00:36:31,219
+external LED.
+
+561
+00:36:32,219 --> 00:36:34,320
+You have written some code to
+
+562
+00:36:34,320 --> 00:36:35,659
+toggle the external LED.
+
+563
+00:36:36,280 --> 00:36:53,159
+Where that code is? That is the ISR, interrupt service routine. When interrupt happened, you have to provide the service. That service is the interrupt service routine. Where that service is? Address is in the interrupt vector table.
+
+564
+00:37:06,280 --> 00:37:09,280
+Oh, a suspect item properly, put a bookmark?
+
+565
+00:37:09,280 --> 00:37:13,280
+Yes, I'm going to do a bookmark.
+
+566
+00:37:13,280 --> 00:37:18,280
+So, I don't have to do a bookmark.
+
+567
+00:37:18,280 --> 00:37:22,280
+I don't have to do a bookmark.
+
+568
+00:37:22,280 --> 00:37:26,280
+I don't have to do a blink.
+
+569
+00:37:26,280 --> 00:37:28,280
+Oh, I don't know.
+
+570
+00:37:28,280 --> 00:37:35,280
+If you're a ISR, Interrupt Service Routine is a very lengthy ISR,
+
+571
+00:37:35,280 --> 00:37:36,019
+ISR.
+
+572
+00:37:36,679 --> 00:37:41,519
+It takes a lot of time.
+
+573
+00:37:42,199 --> 00:37:43,019
+Right?
+
+574
+00:37:47,099 --> 00:37:49,300
+But if the ISR is a small
+
+575
+00:37:49,300 --> 00:37:51,360
+short one, you can quickly
+
+576
+00:37:51,360 --> 00:37:53,280
+come back and start the
+
+577
+00:37:53,280 --> 00:37:55,179
+work that was what
+
+578
+00:37:55,179 --> 00:37:56,460
+you were doing.
+
+579
+00:38:01,239 --> 00:38:01,679
+Right?
+
+580
+00:38:02,079 --> 00:38:02,519
+So,
+
+581
+00:38:03,320 --> 00:38:04,239
+in programming,
+
+582
+00:38:04,239 --> 00:38:10,739
+The programmers are advised when they handle interrupts, right?
+
+583
+00:38:11,480 --> 00:38:19,920
+The programmers must try to write the interrupt service routines as much as smaller.
+
+584
+00:38:20,440 --> 00:38:27,860
+As smaller, so it should be small routine, not lengthy one, very short.
+
+585
+00:38:28,059 --> 00:38:32,820
+You have to try to write the interrupt service routine as shorter as possible.
+
+586
+00:38:32,820 --> 00:38:37,920
+Then only there will be no effect to the main task.
+
+587
+00:38:38,340 --> 00:38:42,760
+If the ISR, Interrupt Service Routine, is a very lengthy service routine,
+
+588
+00:38:43,539 --> 00:38:47,440
+then there will be a delay for the main task.
+
+589
+00:38:47,820 --> 00:38:51,760
+The advantage is now there are no monitoring.
+
+590
+00:38:52,159 --> 00:38:55,699
+We don't monitor with the button press or not.
+
+591
+00:38:56,059 --> 00:38:59,280
+So the monitoring workload is not a problem.
+
+592
+00:39:00,199 --> 00:39:05,500
+Second thing, the state change of the device may not go undetected.
+
+593
+00:39:05,500 --> 00:39:10,000
+Now all the state changes, all the device interrupts, right?
+
+594
+00:39:10,800 --> 00:39:11,739
+We have to handle it.
+
+595
+00:39:12,139 --> 00:39:14,440
+Nothing will go undetected, right?
+
+596
+00:39:14,599 --> 00:39:16,159
+And the priority comes.
+
+597
+00:39:16,619 --> 00:39:20,920
+We can give priority for one interrupt over other interrupts.
+
+598
+00:39:21,199 --> 00:39:22,400
+Those are the advantages.
+
+599
+00:39:22,400 --> 00:39:25,260
+however if the ISR
+
+600
+00:39:25,260 --> 00:39:26,300
+is very lengthy
+
+601
+00:39:26,300 --> 00:39:28,960
+right that will affect
+
+602
+00:39:28,960 --> 00:39:31,039
+to the main
+
+603
+00:39:31,039 --> 00:39:32,860
+task that you were doing
+
+604
+00:39:32,860 --> 00:39:35,159
+for example you were reading
+
+605
+00:39:35,159 --> 00:39:36,039
+the new book
+
+606
+00:39:36,039 --> 00:39:38,960
+and then you attend to a different
+
+607
+00:39:38,960 --> 00:39:41,159
+task if the different task
+
+608
+00:39:41,159 --> 00:39:43,199
+is a very lengthy task if it takes
+
+609
+00:39:43,199 --> 00:39:45,260
+one hour after one
+
+610
+00:39:45,260 --> 00:39:47,159
+hour you can resume the book reading
+
+611
+00:39:47,159 --> 00:39:48,699
+again but if the
+
+612
+00:39:48,699 --> 00:39:51,039
+second task is a quick task
+
+613
+00:39:51,039 --> 00:39:52,940
+just couple of seconds,
+
+614
+00:39:53,480 --> 00:39:55,800
+you can quickly come back and start reading.
+
+615
+00:39:56,300 --> 00:39:56,880
+So therefore,
+
+616
+00:39:57,800 --> 00:39:59,679
+when you are writing the ISR,
+
+617
+00:39:59,940 --> 00:40:01,320
+it should be,
+
+618
+00:40:01,599 --> 00:40:03,639
+it must be, right,
+
+619
+00:40:04,119 --> 00:40:05,019
+very short.
+
+620
+00:40:05,500 --> 00:40:07,840
+That's the responsibility of the programmer.
+
+621
+00:40:07,840 --> 00:40:10,099
+I told you now you don't have
+
+622
+00:40:10,099 --> 00:40:12,139
+the luxury of operating system.
+
+623
+00:40:12,699 --> 00:40:13,719
+As the programmer,
+
+624
+00:40:13,940 --> 00:40:15,179
+you have to do everything.
+
+625
+00:40:16,159 --> 00:40:17,780
+So you are in the full control.
+
+626
+00:40:18,420 --> 00:40:19,719
+If you want, you can
+
+627
+00:40:19,719 --> 00:40:29,559
+misuse interrupts if you if you want you can properly use interrupts that's totally under your control
+
+628
+00:40:30,119 --> 00:40:32,440
+sir
+
+629
+00:40:38,360 --> 00:40:39,159
+time out
+
+630
+00:40:41,960 --> 00:40:43,559
+hardware will in the operating system
+
+631
+00:40:43,559 --> 00:41:09,519
+Can you understand?
+
+632
+00:41:09,519 --> 00:41:13,059
+the time to in a M4C?
+
+633
+00:41:13,059 --> 00:41:13,400
+the M2B.
+
+634
+00:41:13,400 --> 00:41:13,179
+theim2.
+
+635
+00:41:13,179 --> 00:41:13,099
+theF.
+
+636
+00:41:13,099 --> 00:41:13,179
+the.
+
+637
+00:41:13,179 --> 00:41:13,179
+
+
+638
+00:41:13,179 --> 00:41:13,179
+
+
+639
+00:41:13,179 --> 00:41:13,179
+
+
+640
+00:41:13,179 --> 00:41:13,179
+
+
+641
+00:41:13,179 --> 00:41:13,179
+
+
+642
+00:41:13,179 --> 00:41:13,179
+
+
+643
+00:41:13,179 --> 00:41:13,179
+
+
+644
+00:41:13,179 --> 00:41:13,179
+
+
+645
+00:41:13,179 --> 00:41:13,179
+
+
+646
+00:41:13,179 --> 00:41:13,179
+
+
+647
+00:41:13,179 --> 00:41:13,179
+
+
+648
+00:41:13,179 --> 00:41:13,179
+
+
+649
+00:41:13,179 --> 00:41:13,179
+
+
+650
+00:41:13,179 --> 00:41:13,199
+the.
+
+651
+00:41:13,199 --> 00:41:13,219
+the.
+
+652
+00:41:13,219 --> 00:41:13,219
+
+
+653
+00:41:13,219 --> 00:41:13,219
+
+
+654
+00:41:13,219 --> 00:41:13,219
+
+
+655
+00:41:13,219 --> 00:41:13,219
+
+
+656
+00:41:13,219 --> 00:41:13,219
+
+
+657
+00:41:13,219 --> 00:41:13,219
+
+
+658
+00:41:13,219 --> 00:41:13,219
+
+
+659
+00:41:13,219 --> 00:41:13,219
+
+
+660
+00:41:13,219 --> 00:41:13,219
+
+
+661
+00:41:13,219 --> 00:41:13,219
+
+
+662
+00:41:13,219 --> 00:41:13,219
+
+
+663
+00:41:13,219 --> 00:41:13,219
+
+
+664
+00:41:13,219 --> 00:41:13,219
+
+
+665
+00:41:13,219 --> 00:41:13,219
+
+
+666
+00:41:13,219 --> 00:41:13,219
+
+
+667
+00:41:13,219 --> 00:41:13,219
+
+
+668
+00:41:13,219 --> 00:41:13,219
+
+
+669
+00:41:13,219 --> 00:41:13,219
+
+
+670
+00:41:13,219 --> 00:41:13,219
+
+
+671
+00:41:13,219 --> 00:41:13,219
+
+
+672
+00:41:13,219 --> 00:41:13,219
+
+
+673
+00:41:13,219 --> 00:41:13,219
+
+
+674
+00:41:13,219 --> 00:41:13,219
+
+
+675
+00:41:13,219 --> 00:41:13,219
+
+
+676
+00:41:13,219 --> 00:41:13,219
+
+
+677
+00:41:13,219 --> 00:41:13,219
+
+
+678
+00:41:13,219 --> 00:41:13,219
+
+
+679
+00:41:13,219 --> 00:41:13,219
+
+
+680
+00:41:13,219 --> 00:41:13,219
+
+
+681
+00:41:13,219 --> 00:41:13,219
+
+
+682
+00:41:13,219 --> 00:41:13,219
+
+
+683
+00:41:13,219 --> 00:41:13,219
+
+
+684
+00:41:13,219 --> 00:41:14,880
+m8
+
+685
+00:41:14,880 --> 00:41:15,519
+the
+
+686
+00:41:15,519 --> 00:41:15,800
+the
+
+687
+00:41:15,800 --> 00:41:16,000
+the
+
+688
+00:41:16,000 --> 00:41:16,159
+the
+
+689
+00:41:16,159 --> 00:41:16,280
+the
+
+690
+00:41:16,280 --> 00:41:16,360
+the
+
+691
+00:41:16,360 --> 00:41:16,440
+the
+
+692
+00:41:16,440 --> 00:41:16,440
+
+
+693
+00:41:16,440 --> 00:41:16,440
+
+
+694
+00:41:16,440 --> 00:41:16,420
+the
+
+695
+00:41:16,420 --> 00:41:16,420
+
+
+696
+00:41:16,420 --> 00:41:16,420
+
+
+697
+00:41:16,420 --> 00:41:16,400
+the
+
+698
+00:41:16,400 --> 00:41:16,380
+the
+
+699
+00:41:16,380 --> 00:41:16,380
+
+
+700
+00:41:16,380 --> 00:41:16,360
+the
+
+701
+00:41:16,360 --> 00:41:16,340
+the
+
+702
+00:41:16,340 --> 00:41:16,320
+the
+
+703
+00:41:16,320 --> 00:41:16,320
+
+
+704
+00:41:16,320 --> 00:41:16,300
+the
+
+705
+00:41:16,300 --> 00:41:16,300
+
+
+706
+00:41:16,300 --> 00:41:16,300
+
+
+707
+00:41:16,300 --> 00:41:16,300
+
+
+708
+00:41:16,300 --> 00:41:16,300
+
+
+709
+00:41:16,300 --> 00:41:16,300
+
+
+710
+00:41:16,300 --> 00:41:16,300
+
+
+711
+00:41:16,300 --> 00:41:16,300
+
+
+712
+00:41:16,300 --> 00:41:16,320
+the
+
+713
+00:41:16,320 --> 00:41:16,300
+the
+
+714
+00:41:16,300 --> 00:41:16,300
+
+
+715
+00:41:16,300 --> 00:41:16,320
+the
+
+716
+00:41:16,320 --> 00:41:16,300
+the
+
+717
+00:41:16,300 --> 00:41:16,320
+the
+
+718
+00:41:16,320 --> 00:41:16,300
+the
+
+719
+00:41:16,300 --> 00:41:16,320
+the
+
+720
+00:41:16,320 --> 00:41:16,320
+
+
+721
+00:41:16,320 --> 00:41:16,320
+
+
+722
+00:41:16,320 --> 00:41:16,320
+
+
+723
+00:41:16,320 --> 00:41:16,320
+
+
+724
+00:41:16,320 --> 00:41:16,320
+
+
+725
+00:41:16,320 --> 00:41:16,320
+
+
+726
+00:41:16,320 --> 00:41:16,320
+
+
+727
+00:41:16,320 --> 00:41:16,320
+
+
+728
+00:41:16,320 --> 00:41:16,340
+the
+
+729
+00:41:16,340 --> 00:41:16,360
+the
+
+730
+00:41:16,360 --> 00:41:16,340
+the
+
+731
+00:41:16,340 --> 00:41:16,340
+
+
+732
+00:41:16,340 --> 00:41:16,360
+the
+
+733
+00:41:43,219 --> 00:41:53,219
+Is that just a function?
+
+734
+00:41:53,219 --> 00:41:56,219
+Is that just a function?
+
+735
+00:41:56,219 --> 00:42:03,219
+Is that a facility that has a break?
+
+736
+00:42:03,219 --> 00:42:07,219
+Is that a statement?
+
+737
+00:42:07,219 --> 00:42:08,099
+I have a time.
+
+738
+00:42:08,099 --> 00:42:08,340
+I have a time-gall.
+
+739
+00:42:08,340 --> 00:42:08,420
+I have a time-gall.
+
+740
+00:42:08,420 --> 00:42:08,460
+I have a time-gall.
+
+741
+00:42:08,460 --> 00:42:08,460
+
+
+742
+00:42:08,460 --> 00:42:08,460
+
+
+743
+00:42:08,460 --> 00:42:08,460
+
+
+744
+00:42:08,460 --> 00:42:08,460
+
+
+745
+00:42:08,460 --> 00:42:08,460
+
+
+746
+00:42:08,460 --> 00:42:08,480
+I have a time-gall.
+
+747
+00:42:08,480 --> 00:42:08,519
+I have a time-gall.
+
+748
+00:42:08,519 --> 00:42:08,559
+I have a time-gall.
+
+749
+00:42:08,559 --> 00:42:08,579
+I have a time-gall.
+
+750
+00:42:08,579 --> 00:42:08,639
+I have a time-gall.
+
+751
+00:42:08,639 --> 00:42:08,739
+I have a time-gall.
+
+752
+00:42:08,739 --> 00:42:08,840
+I have a time-gall.
+
+753
+00:42:08,840 --> 00:42:08,940
+I have a time-gall.
+
+754
+00:42:08,940 --> 00:42:09,059
+I have a time-gall.
+
+755
+00:42:09,059 --> 00:42:09,219
+I have a time-gall.
+
+756
+00:42:09,219 --> 00:42:09,340
+I have a time-gall.
+
+757
+00:42:09,340 --> 00:42:09,440
+I have a time-gall.
+
+758
+00:42:09,440 --> 00:42:09,519
+I have a time-gall.
+
+759
+00:42:09,519 --> 00:42:11,760
+I is a re-bacat akei
+
+760
+00:42:11,760 --> 00:42:11,840
+the
+
+761
+00:42:11,840 --> 00:42:12,159
+the
+
+762
+00:42:12,159 --> 00:42:12,280
+the
+
+763
+00:42:12,280 --> 00:42:12,340
+the
+
+764
+00:42:12,340 --> 00:42:12,400
+the
+
+765
+00:42:12,400 --> 00:42:12,440
+the
+
+766
+00:42:12,440 --> 00:42:12,460
+the
+
+767
+00:42:12,460 --> 00:42:12,460
+
+
+768
+00:42:12,460 --> 00:42:12,480
+the
+
+769
+00:42:12,480 --> 00:42:12,480
+
+
+770
+00:42:12,480 --> 00:42:12,480
+
+
+771
+00:42:12,480 --> 00:42:12,480
+
+
+772
+00:42:12,480 --> 00:42:12,480
+
+
+773
+00:42:12,480 --> 00:42:12,480
+
+
+774
+00:42:12,480 --> 00:42:12,500
+the
+
+775
+00:42:12,500 --> 00:42:12,519
+the
+
+776
+00:42:12,519 --> 00:42:12,519
+
+
+777
+00:42:12,519 --> 00:42:12,519
+
+
+778
+00:42:12,519 --> 00:42:12,519
+
+
+779
+00:42:12,519 --> 00:42:12,519
+
+
+780
+00:42:12,519 --> 00:42:12,519
+
+
+781
+00:42:12,519 --> 00:42:12,519
+
+
+782
+00:42:12,519 --> 00:42:12,519
+
+
+783
+00:42:12,519 --> 00:42:12,519
+
+
+784
+00:42:12,519 --> 00:42:12,519
+
+
+785
+00:42:12,519 --> 00:42:12,519
+
+
+786
+00:42:12,519 --> 00:42:12,519
+
+
+787
+00:42:12,519 --> 00:42:12,519
+
+
+788
+00:42:12,519 --> 00:42:12,519
+
+
+789
+00:42:12,519 --> 00:42:12,519
+
+
+790
+00:42:12,519 --> 00:42:12,519
+
+
+791
+00:42:12,519 --> 00:42:12,519
+
+
+792
+00:42:12,519 --> 00:42:12,519
+
+
+793
+00:42:12,519 --> 00:42:12,519
+
+
+794
+00:42:12,519 --> 00:42:12,519
+
+
+795
+00:42:12,519 --> 00:42:12,519
+
+
+796
+00:42:12,519 --> 00:42:12,519
+
+
+797
+00:42:12,519 --> 00:42:12,519
+
+
+798
+00:42:12,519 --> 00:42:12,519
+
+
+799
+00:42:12,519 --> 00:42:12,519
+
+
+800
+00:42:12,519 --> 00:42:12,519
+
+
+801
+00:42:12,519 --> 00:42:12,519
+
+
+802
+00:42:12,519 --> 00:42:12,519
+
+
+803
+00:42:12,519 --> 00:42:12,519
+
+
+804
+00:42:12,519 --> 00:42:12,519
+
+
+805
+00:42:12,519 --> 00:42:12,559
+the
+
+806
+00:42:12,559 --> 00:42:12,519
+the
+
+807
+00:42:12,519 --> 00:42:12,559
+the
+
+808
+00:42:12,559 --> 00:42:12,519
+the
+
+809
+00:42:12,519 --> 00:42:12,559
+the
+
+810
+00:42:12,559 --> 00:42:12,539
+the
+
+811
+00:42:12,519 --> 00:42:12,519
+
+
+812
+00:42:12,519 --> 00:42:12,559
+the
+
+813
+00:42:12,559 --> 00:42:12,559
+
+
+814
+00:42:12,559 --> 00:42:12,559
+
+
+815
+00:42:12,559 --> 00:42:12,559
+
+
+816
+00:42:12,559 --> 00:42:12,599
+the
+
+817
+00:42:12,599 --> 00:42:12,559
+the
+
+818
+00:42:12,559 --> 00:42:12,599
+the
+
+819
+00:42:12,599 --> 00:42:12,599
+
+
+820
+00:42:12,599 --> 00:42:12,599
+
+
+821
+00:42:12,599 --> 00:42:12,599
+
+
+822
+00:42:12,599 --> 00:42:12,599
+
+
+823
+00:42:12,599 --> 00:42:12,599
+
+
+824
+00:42:12,599 --> 00:42:13,159
+hist
+
+825
+00:42:13,119 --> 00:42:12,599
+the
+
+826
+00:42:39,519 --> 00:43:09,519
+[unclear — Sinhala / crosstalk]
+
+827
+00:43:09,519 --> 00:43:11,519
+the you know plat for the the
+
+828
+00:43:11,519 --> 00:43:11,519
+
+
+829
+00:43:11,519 --> 00:43:11,519
+
+
+830
+00:43:11,519 --> 00:43:11,519
+
+
+831
+00:43:11,519 --> 00:43:11,519
+
+
+832
+00:43:11,519 --> 00:43:11,519
+
+
+833
+00:43:11,519 --> 00:43:11,519
+
+
+834
+00:43:11,519 --> 00:43:11,519
+
+
+835
+00:43:11,519 --> 00:43:11,519
+
+
+836
+00:43:11,519 --> 00:43:11,519
+
+
+837
+00:43:11,519 --> 00:43:11,519
+
+
+838
+00:43:11,519 --> 00:43:11,519
+
+
+839
+00:43:11,519 --> 00:43:11,519
+
+
+840
+00:43:11,519 --> 00:43:11,519
+
+
+841
+00:43:11,519 --> 00:43:11,519
+
+
+842
+00:43:11,519 --> 00:43:11,519
+
+
+843
+00:43:11,519 --> 00:43:11,519
+
+
+844
+00:43:11,519 --> 00:43:11,519
+
+
+845
+00:43:11,519 --> 00:43:11,519
+
+
+846
+00:43:11,519 --> 00:43:11,519
+
+
+847
+00:43:11,519 --> 00:43:11,519
+
+
+848
+00:43:11,519 --> 00:43:11,519
+
+
+849
+00:43:11,519 --> 00:43:11,519
+
+
+850
+00:43:11,519 --> 00:43:11,519
+
+
+851
+00:43:11,519 --> 00:43:11,519
+
+
+852
+00:43:11,519 --> 00:43:11,519
+
+
+853
+00:43:11,519 --> 00:43:11,519
+
+
+854
+00:43:11,519 --> 00:43:11,519
+
+
+855
+00:43:11,519 --> 00:43:11,519
+
+
+856
+00:43:11,519 --> 00:43:11,519
+
+
+857
+00:43:11,519 --> 00:43:11,519
+
+
+858
+00:43:11,519 --> 00:43:11,519
+
+
+859
+00:43:11,519 --> 00:43:11,519
+
+
+860
+00:43:11,519 --> 00:43:11,519
+
+
+861
+00:43:11,519 --> 00:43:11,519
+
+
+862
+00:43:11,519 --> 00:43:11,519
+
+
+863
+00:43:11,519 --> 00:43:11,519
+
+
+864
+00:43:11,519 --> 00:43:11,519
+
+
+865
+00:43:11,519 --> 00:43:11,519
+
+
+866
+00:43:11,519 --> 00:43:11,519
+
+
+867
+00:43:11,519 --> 00:43:11,519
+
+
+868
+00:43:11,519 --> 00:43:11,519
+
+
+869
+00:43:11,519 --> 00:43:11,519
+
+
+870
+00:43:11,519 --> 00:43:11,519
+
+
+871
+00:43:11,519 --> 00:43:11,519
+
+
+872
+00:43:11,519 --> 00:43:11,519
+
+
+873
+00:43:11,519 --> 00:43:11,519
+
+
+874
+00:43:11,519 --> 00:43:11,519
+
+
+875
+00:43:11,519 --> 00:43:11,519
+
+
+876
+00:43:11,519 --> 00:43:11,519
+
+
+877
+00:43:11,519 --> 00:43:11,519
+
+
+878
+00:43:11,519 --> 00:43:11,519
+
+
+879
+00:43:11,519 --> 00:43:11,519
+
+
+880
+00:43:11,519 --> 00:43:11,519
+
+
+881
+00:43:11,519 --> 00:43:11,519
+
+
+882
+00:43:11,519 --> 00:43:11,519
+
+
+883
+00:43:11,519 --> 00:43:11,519
+
+
+884
+00:43:11,519 --> 00:43:11,519
+
+
+885
+00:43:11,519 --> 00:43:11,519
+
+
+886
+00:43:11,519 --> 00:43:11,519
+
+
+887
+00:43:11,519 --> 00:43:11,519
+
+
+888
+00:43:11,519 --> 00:43:11,519
+
+
+889
+00:43:11,519 --> 00:43:11,519
+
+
+890
+00:43:11,519 --> 00:43:11,519
+
+
+891
+00:43:11,519 --> 00:43:11,519
+
+
+892
+00:43:11,519 --> 00:43:11,519
+
+
+893
+00:43:11,519 --> 00:43:11,519
+
+
+894
+00:43:11,519 --> 00:43:11,519
+
+
+895
+00:43:11,519 --> 00:43:11,519
+
+
+896
+00:43:11,519 --> 00:43:11,519
+
+
+897
+00:43:11,519 --> 00:43:11,519
+
+
+898
+00:43:11,519 --> 00:43:11,519
+
+
+899
+00:43:11,519 --> 00:43:13,519
+the
+
+900
+00:43:13,519 --> 00:43:15,519
+interrupt
+
+901
+00:43:15,519 --> 00:43:17,519
+accurately
+
+902
+00:43:17,519 --> 00:43:19,519
+delay
+
+903
+00:43:19,519 --> 00:43:21,519
+timing
+
+904
+00:43:21,519 --> 00:43:23,519
+the
+
+905
+00:43:23,519 --> 00:43:25,519
+milis
+
+906
+00:43:25,519 --> 00:43:27,519
+the
+
+907
+00:43:27,519 --> 00:43:29,519
+timing
+
+908
+00:43:29,519 --> 00:43:31,519
+interrupt
+
+909
+00:43:31,519 --> 00:43:33,519
+interrupt
+
+910
+00:43:33,519 --> 00:43:35,519
+count
+
+911
+00:43:35,519 --> 00:43:37,519
+this
+
+912
+00:43:37,519 --> 00:44:07,519
+[unclear — Sinhala / crosstalk]
+
+913
+00:44:07,519 --> 00:44:08,960
+the
+
+914
+00:44:08,960 --> 00:44:09,820
+the
+
+915
+00:44:09,820 --> 00:44:10,340
+the
+
+916
+00:44:10,340 --> 00:44:10,599
+the
+
+917
+00:44:10,599 --> 00:44:10,739
+the
+
+918
+00:44:10,739 --> 00:44:10,820
+the
+
+919
+00:44:10,820 --> 00:44:10,840
+the
+
+920
+00:44:10,840 --> 00:44:10,860
+the
+
+921
+00:44:10,860 --> 00:44:10,860
+
+
+922
+00:44:10,860 --> 00:44:10,860
+
+
+923
+00:44:10,860 --> 00:44:10,860
+
+
+924
+00:44:10,860 --> 00:44:10,860
+
+
+925
+00:44:10,860 --> 00:44:10,860
+
+
+926
+00:44:10,860 --> 00:44:10,860
+
+
+927
+00:44:10,860 --> 00:44:10,860
+
+
+928
+00:44:10,860 --> 00:44:10,860
+
+
+929
+00:44:10,860 --> 00:44:10,880
+the
+
+930
+00:44:10,880 --> 00:44:10,900
+the
+
+931
+00:44:10,900 --> 00:44:10,920
+the
+
+932
+00:44:10,920 --> 00:44:10,920
+
+
+933
+00:44:10,920 --> 00:44:10,940
+the
+
+934
+00:44:10,940 --> 00:44:10,940
+
+
+935
+00:44:10,940 --> 00:44:10,940
+
+
+936
+00:44:10,940 --> 00:44:10,940
+
+
+937
+00:44:10,940 --> 00:44:10,940
+
+
+938
+00:44:10,940 --> 00:44:10,940
+
+
+939
+00:44:10,940 --> 00:44:10,940
+
+
+940
+00:44:10,940 --> 00:44:10,940
+
+
+941
+00:44:10,940 --> 00:44:10,940
+
+
+942
+00:44:10,940 --> 00:44:10,960
+the
+
+943
+00:44:10,960 --> 00:44:10,960
+
+
+944
+00:44:10,960 --> 00:44:10,980
+the
+
+945
+00:44:10,980 --> 00:44:10,980
+
+
+946
+00:44:10,980 --> 00:44:11,000
+the
+
+947
+00:44:11,000 --> 00:44:11,000
+
+
+948
+00:44:11,000 --> 00:44:11,000
+
+
+949
+00:44:11,000 --> 00:44:11,000
+
+
+950
+00:44:11,000 --> 00:44:11,000
+
+
+951
+00:44:11,000 --> 00:44:11,000
+
+
+952
+00:44:11,000 --> 00:44:11,000
+
+
+953
+00:44:11,000 --> 00:44:11,019
+the
+
+954
+00:44:11,019 --> 00:44:11,019
+
+
+955
+00:44:37,519 --> 00:44:53,099
+When you are handling one interrupt, we disable all other interrupts.
+
+956
+00:44:53,659 --> 00:44:58,500
+Because we cannot handle any more interrupts while handling one interrupt.
+
+957
+00:44:59,000 --> 00:45:00,099
+Because we have one CPU.
+
+958
+00:45:00,539 --> 00:45:02,159
+So we disable other interrupts.
+
+959
+00:45:02,699 --> 00:45:05,079
+That's why we have to quickly finish interrupt handling.
+
+960
+00:45:05,079 --> 00:45:12,199
+If you take a lot of time to handle one interrupt, during that time there will be many other interrupts may go undetected.
+
+961
+00:45:13,719 --> 00:45:16,139
+If you take a lot of interrupts, you can quickly handle it.
+
+962
+00:45:17,360 --> 00:45:21,880
+If you have a problem with the problem, you can't tell me.
+
+963
+00:45:23,099 --> 00:45:24,079
+You can't tell me.
+
+964
+00:45:25,079 --> 00:45:26,079
+You can't tell me.
+
+965
+00:45:27,079 --> 00:45:28,079
+You can't tell me.
+
+966
+00:45:29,079 --> 00:45:30,079
+You can't tell me.
+
+967
+00:45:30,079 --> 00:45:31,079
+You can't tell me.
+
+968
+00:45:31,079 --> 00:45:32,079
+You can't tell me.
+
+969
+00:45:32,079 --> 00:45:33,360
+I have a really right.
+
+970
+00:45:33,360 --> 00:46:03,360
+[unclear — Sinhala / crosstalk]
+
+971
+00:46:03,360 --> 00:46:09,119
+you have to monitor. But now you are not doing that. That means that burden, you are free
+
+972
+00:46:09,119 --> 00:46:15,960
+from that burden. You can continuously read your newspaper or the book, right, until you
+
+973
+00:46:15,960 --> 00:46:16,960
+are interrupted.
+
+974
+00:46:16,960 --> 00:46:31,960
+But in the polling situation, what is the problem? What is the problem? What is the problem?
+
+975
+00:46:31,960 --> 00:46:33,000
+bbbB
+
+976
+00:46:33,000 --> 00:46:33,519
+the
+
+977
+00:46:33,519 --> 00:46:33,860
+the
+
+978
+00:46:33,860 --> 00:46:34,019
+the
+
+979
+00:46:34,019 --> 00:46:34,139
+the
+
+980
+00:46:34,139 --> 00:46:34,239
+the
+
+981
+00:46:34,239 --> 00:46:34,300
+the
+
+982
+00:46:34,300 --> 00:46:34,320
+the
+
+983
+00:46:34,320 --> 00:46:34,340
+the
+
+984
+00:46:34,340 --> 00:46:34,340
+
+
+985
+00:46:34,340 --> 00:46:34,320
+the
+
+986
+00:46:34,320 --> 00:46:34,320
+
+
+987
+00:46:34,320 --> 00:46:34,320
+
+
+988
+00:46:34,320 --> 00:46:34,300
+the
+
+989
+00:46:34,300 --> 00:46:34,300
+
+
+990
+00:46:34,300 --> 00:46:34,300
+
+
+991
+00:46:34,300 --> 00:46:34,300
+
+
+992
+00:46:34,300 --> 00:46:34,300
+
+
+993
+00:46:34,300 --> 00:46:34,300
+
+
+994
+00:46:34,300 --> 00:46:34,300
+
+
+995
+00:46:34,300 --> 00:46:34,300
+
+
+996
+00:46:34,300 --> 00:46:34,300
+
+
+997
+00:46:34,300 --> 00:46:34,300
+
+
+998
+00:46:34,300 --> 00:46:34,300
+
+
+999
+00:46:34,300 --> 00:46:34,300
+
+
+1000
+00:46:34,300 --> 00:46:34,300
+
+
+1001
+00:46:34,300 --> 00:46:34,300
+
+
+1002
+00:46:34,300 --> 00:46:34,300
+
+
+1003
+00:46:34,300 --> 00:46:34,300
+
+
+1004
+00:46:34,300 --> 00:46:34,300
+
+
+1005
+00:46:34,300 --> 00:46:34,300
+
+
+1006
+00:46:34,300 --> 00:46:34,300
+
+
+1007
+00:46:34,300 --> 00:46:34,300
+
+
+1008
+00:46:34,300 --> 00:46:34,300
+
+
+1009
+00:46:34,300 --> 00:46:34,300
+
+
+1010
+00:46:34,300 --> 00:46:34,300
+
+
+1011
+00:46:34,300 --> 00:46:34,300
+
+
+1012
+00:46:34,300 --> 00:46:34,300
+
+
+1013
+00:46:34,300 --> 00:46:34,300
+
+
+1014
+00:46:34,300 --> 00:46:34,300
+
+
+1015
+00:47:01,960 --> 00:47:08,840
+That's a burn.
+
+1016
+00:47:09,260 --> 00:47:10,880
+Now you don't have that burn.
+
+1017
+00:47:11,000 --> 00:47:11,960
+You are free from that.
+
+1018
+00:47:12,420 --> 00:47:12,559
+Right?
+
+1019
+00:47:13,019 --> 00:47:14,860
+When the device requires your service,
+
+1020
+00:47:14,960 --> 00:47:16,000
+device will interrupt you.
+
+1021
+00:47:16,440 --> 00:47:17,800
+When device is interrupted,
+
+1022
+00:47:18,500 --> 00:47:19,780
+you can attend to the device.
+
+1023
+00:47:20,599 --> 00:47:22,360
+When you are attending to the device,
+
+1024
+00:47:22,460 --> 00:47:23,739
+you disable the interrupts.
+
+1025
+00:47:23,739 --> 00:47:25,820
+And you have to quickly handle the interrupt
+
+1026
+00:47:25,820 --> 00:47:26,480
+and come back.
+
+1027
+00:47:26,639 --> 00:47:29,659
+Otherwise, other interrupts may go undetected.
+
+1028
+00:47:30,099 --> 00:47:31,519
+So when interrupts,
+
+1029
+00:47:31,519 --> 00:48:01,519
+[unclear — Sinhala / crosstalk]
+
+1030
+00:48:01,519 --> 00:48:03,519
+I'm going to check the polling.
+
+1031
+00:48:03,519 --> 00:48:05,519
+Check the polling.
+
+1032
+00:48:05,519 --> 00:48:07,519
+Check the polling.
+
+1033
+00:48:07,519 --> 00:48:09,519
+Check the polling.
+
+1034
+00:48:09,519 --> 00:48:13,519
+I'm continuously checking the polling.
+
+1035
+00:48:13,519 --> 00:48:15,519
+I'm not sure.
+
+1036
+00:48:15,519 --> 00:48:17,519
+We are not sure.
+
+1037
+00:48:17,519 --> 00:48:19,519
+We are not sure.
+
+1038
+00:48:19,519 --> 00:48:21,519
+We are not sure.
+
+1039
+00:48:21,519 --> 00:48:23,519
+We are not sure.
+
+1040
+00:48:23,519 --> 00:48:25,519
+That is a hardware mechanism.
+
+1041
+00:48:25,519 --> 00:48:29,519
+That is part of the device.
+
+1042
+00:48:29,519 --> 00:48:59,519
+[unclear — Sinhala / crosstalk]
+
+1043
+00:48:59,519 --> 00:49:08,000
+now you are now now you have been informed that i am going to visit your home
+
+1044
+00:49:08,000 --> 00:49:12,000
+and then
+
+1045
+00:49:16,400 --> 00:49:28,000
+mama
+
+1046
+00:49:29,519 --> 00:49:51,360
+come then you have to come and open the door that is polling you are wasting to check whether
+
+1047
+00:49:51,360 --> 00:49:52,599
+I am coming or not.
+
+1048
+00:49:52,599 --> 00:49:59,239
+But you don't do that.
+
+1049
+00:49:59,239 --> 00:50:02,239
+You do whatever the task you have.
+
+1050
+00:50:02,239 --> 00:50:11,239
+Then you know that I have.
+
+1051
+00:50:11,239 --> 00:50:16,239
+Polling mechanism is used.
+
+1052
+00:50:16,239 --> 00:50:35,239
+The event may go undetected.
+
+1053
+00:50:35,239 --> 00:50:37,239
+But now this doesn't happen.
+
+1054
+00:50:37,239 --> 00:50:40,000
+Even may not go undetected. Why?
+
+1055
+00:50:40,000 --> 00:50:42,480
+If you come, you will be able to do it.
+
+1056
+00:50:42,480 --> 00:50:44,739
+You will be able to do it.
+
+1057
+00:50:44,739 --> 00:50:48,239
+One thing is hardware.
+
+1058
+00:50:48,239 --> 00:50:50,239
+One thing is hardware mechanism.
+
+1059
+00:50:50,239 --> 00:50:53,239
+A hardware mechanism will interrupt the CPU.
+
+1060
+00:50:53,239 --> 00:50:57,239
+This hardware mechanism will use calling?
+
+1061
+00:50:57,239 --> 00:50:58,239
+Is it polling?
+
+1062
+00:50:58,239 --> 00:50:59,239
+Oh.
+
+1063
+00:50:59,239 --> 00:51:00,239
+It is polling.
+
+1064
+00:51:00,239 --> 00:51:02,239
+It is pollinable.
+
+1065
+00:51:02,239 --> 00:51:04,239
+It is software protocol.
+
+1066
+00:51:04,239 --> 00:51:09,639
+pooling software protocol CPU run with the CPU again time to time check
+
+1067
+00:51:09,639 --> 00:51:29,440
+then we are not going to check periodically using software the hardware
+
+1068
+00:51:29,440 --> 00:51:30,619
+will interrupt us.
+
+1069
+00:51:30,800 --> 00:51:32,039
+I will let us know.
+
+1070
+00:51:32,539 --> 00:51:37,519
+You are not
+
+1071
+00:51:37,519 --> 00:51:39,519
+going to monitor it again
+
+1072
+00:51:39,519 --> 00:51:40,079
+and again.
+
+1073
+00:51:41,400 --> 00:51:43,300
+But if you are using polling,
+
+1074
+00:51:43,460 --> 00:51:45,559
+you have to monitor. You have to open
+
+1075
+00:51:45,559 --> 00:51:47,320
+the door, check whether someone's standing
+
+1076
+00:51:47,320 --> 00:51:49,300
+in front of the door. Then close.
+
+1077
+00:51:49,519 --> 00:51:51,619
+Again, after sometime, you again
+
+1078
+00:51:51,619 --> 00:51:53,480
+open the door, check whether someone's standing
+
+1079
+00:51:53,480 --> 00:51:55,659
+in front of the door. That's a waste
+
+1080
+00:51:55,659 --> 00:51:57,659
+of time. Your resources you waste
+
+1081
+00:51:57,659 --> 00:51:58,920
+just for checking.
+
+1082
+00:51:59,440 --> 00:52:06,639
+whether someone is standing in front of the door. That's a waste of resources. And on the other hand,
+
+1083
+00:52:07,280 --> 00:52:14,880
+if you take long time to check whether someone is standing in front of the door during that time,
+
+1084
+00:52:15,440 --> 00:52:19,760
+I can come and I can go also because door was closed.
+
+1085
+00:52:19,760 --> 00:52:30,079
+If I am very quick, quickly you cannot detect whether I came or not. Because when you open
+
+1086
+00:52:30,079 --> 00:52:38,599
+the door, nobody standing in front of the door. But I came and I went. That can happen.
+
+1087
+00:52:38,599 --> 00:52:45,599
+But with interrupts that doesn't happen. Why? If I come, then I knock the door. And then
+
+1088
+00:52:45,599 --> 00:52:50,760
+that knock will interrupt you. So you have to then handle the interrupt. That means you
+
+1089
+00:52:50,760 --> 00:52:56,719
+have to handle the interrupt means you have to open the door and welcome me into your
+
+1090
+00:52:56,719 --> 00:53:03,619
+home. While you are doing that, you cannot attend to another interrupt. So you disable
+
+1091
+00:53:03,619 --> 00:53:04,619
+all interrupts.
+
+1092
+00:53:04,619 --> 00:53:15,519
+You can't do anything else. So you have to turn off all your other interrupts. Interrupt
+
+1093
+00:53:15,519 --> 00:53:20,800
+devices like you have to turn off the phone you have to turn off whatever the devices you have
+
+1094
+00:53:20,800 --> 00:53:25,519
+you have to turn off why if you get another interrupt you can't handle it why because you
+
+1095
+00:53:25,519 --> 00:53:33,119
+are handling one interrupt so you have to quickly handle the interrupt and then only you can start
+
+1096
+00:53:33,119 --> 00:53:43,039
+handling other interrupt is that clear is it is it clear what happened to you is it so how about
+
+1097
+00:53:43,039 --> 00:53:50,800
+others any other questions so then if we have different interrupts is that different isr for
+
+1098
+00:53:50,800 --> 00:53:58,239
+each oh yes yes yes different isr for each interrupt and each isr there's a different address
+
+1099
+00:53:59,920 --> 00:54:06,400
+from the vector table we find out that address thank you so how the prioritizing works right
+
+1100
+00:54:06,400 --> 00:54:08,099
+some interrupts, right,
+
+1101
+00:54:08,300 --> 00:54:10,639
+have more priority over other interrupts.
+
+1102
+00:54:10,960 --> 00:54:12,519
+Right. Some interrupts have more
+
+1103
+00:54:12,519 --> 00:54:14,380
+priority. So that is well
+
+1104
+00:54:14,380 --> 00:54:16,579
+defined. So if you want
+
+1105
+00:54:16,579 --> 00:54:18,480
+to do an important
+
+1106
+00:54:18,480 --> 00:54:20,380
+task, then you have to
+
+1107
+00:54:20,380 --> 00:54:22,659
+handle that important task
+
+1108
+00:54:22,659 --> 00:54:24,559
+under a high priority interrupt
+
+1109
+00:54:24,559 --> 00:54:25,920
+service routine. Right.
+
+1110
+00:54:26,340 --> 00:54:27,239
+In the next slide.
+
+1111
+00:54:28,400 --> 00:54:29,380
+Yes, Telina. Yes.
+
+1112
+00:54:29,880 --> 00:54:32,320
+Sir, let's say we are now
+
+1113
+00:54:32,320 --> 00:54:33,900
+handling a low priority one.
+
+1114
+00:54:33,900 --> 00:54:38,099
+when we are handling a low priority one
+
+1115
+00:54:38,099 --> 00:54:40,159
+the other interrupts also are
+
+1116
+00:54:40,159 --> 00:54:40,500
+disabled.
+
+1117
+00:54:42,500 --> 00:54:45,920
+The situation is this. If two
+
+1118
+00:54:45,920 --> 00:54:47,860
+interrupts interrupt
+
+1119
+00:54:47,860 --> 00:54:50,179
+at the same time. If two
+
+1120
+00:54:50,179 --> 00:54:52,059
+devices, let's assume
+
+1121
+00:54:52,059 --> 00:54:54,340
+two peripheral devices interrupt
+
+1122
+00:54:54,340 --> 00:54:56,300
+the CPU at the same time
+
+1123
+00:54:56,300 --> 00:54:58,380
+then the high priority
+
+1124
+00:54:58,380 --> 00:55:00,280
+interrupt will interrupt the CPU
+
+1125
+00:55:00,280 --> 00:55:01,619
+and other one is disabled.
+
+1126
+00:55:01,619 --> 00:55:02,380
+Okay.
+
+1127
+00:55:02,960 --> 00:55:06,000
+If you see the interrupt, you can see the high priority.
+
+1128
+00:55:06,880 --> 00:55:11,340
+If you handle the low priority, you can see the high priority or disable.
+
+1129
+00:55:11,900 --> 00:55:12,320
+Yes, sir.
+
+1130
+00:55:12,780 --> 00:55:13,139
+Okay.
+
+1131
+00:55:13,539 --> 00:55:16,019
+Then, interrupt vector table.
+
+1132
+00:55:16,480 --> 00:55:20,559
+Now, here you can see some widely used interrupt vectors.
+
+1133
+00:55:20,920 --> 00:55:22,679
+Widely used interrupt vectors.
+
+1134
+00:55:23,019 --> 00:55:27,079
+You can see the address, interrupt, and the vector.
+
+1135
+00:55:27,500 --> 00:55:27,760
+Right?
+
+1136
+00:55:27,760 --> 00:55:36,820
+now external interrupt on int0 pin, external interrupt on int1 pin, pin change interrupt,
+
+1137
+00:55:36,820 --> 00:55:43,340
+that is a state change, ah, pin change interrupt on port b pin, pin change interrupt on port c pin,
+
+1138
+00:55:43,340 --> 00:55:52,800
+pin change interrupt on port d pin, time2 over-flow interrupt, time1 over-flow interrupt,
+
+1139
+00:55:52,800 --> 00:55:54,739
+interrupt. Time zero
+
+1140
+00:55:54,739 --> 00:55:56,739
+overflow interrupt. Universal
+
+1141
+00:55:56,739 --> 00:55:58,400
+synchronous, asynchronous
+
+1142
+00:55:58,400 --> 00:56:00,420
+receiver, transmitter,
+
+1143
+00:56:01,179 --> 00:56:02,920
+receive complete interrupt.
+
+1144
+00:56:03,059 --> 00:56:04,739
+Data receive. Data
+
+1145
+00:56:04,739 --> 00:56:06,719
+transmit complete interrupt.
+
+1146
+00:56:07,320 --> 00:56:08,420
+Analog to digital
+
+1147
+00:56:08,420 --> 00:56:10,619
+conversion complete interrupt.
+
+1148
+00:56:11,159 --> 00:56:12,739
+Then these are commonly used. There are
+
+1149
+00:56:12,739 --> 00:56:14,500
+many interrupts but here
+
+1150
+00:56:14,500 --> 00:56:15,719
+I have
+
+1151
+00:56:15,719 --> 00:56:18,820
+I am showing you only the commonly
+
+1152
+00:56:18,820 --> 00:56:20,900
+used one. But if you refer a book
+
+1153
+00:56:20,900 --> 00:56:22,780
+you will find out many interrupts.
+
+1154
+00:56:22,800 --> 00:56:25,860
+And these are the interrupt vectors.
+
+1155
+00:56:26,159 --> 00:56:29,780
+Or the name of relevant ISR.
+
+1156
+00:56:30,320 --> 00:56:33,639
+For example, ADC completion interrupt.
+
+1157
+00:56:34,159 --> 00:56:36,980
+When the analog to digital conversion is over,
+
+1158
+00:56:38,159 --> 00:56:43,539
+the ADC peripheral device, internal peripheral device, ADC will interrupt the CPU.
+
+1159
+00:56:44,139 --> 00:56:51,219
+At that time, the CPU has to execute a particular ISR, interrupt service routine.
+
+1160
+00:56:51,219 --> 00:56:54,199
+That service routine address is this.
+
+1161
+00:56:54,800 --> 00:56:57,280
+And that service routine name is this.
+
+1162
+00:56:58,139 --> 00:56:59,940
+Maybe that ISR name.
+
+1163
+00:57:00,079 --> 00:57:01,780
+ADC underscore VECT.
+
+1164
+00:57:02,059 --> 00:57:06,420
+So each and every interrupt has an associated interrupt service routine.
+
+1165
+00:57:06,900 --> 00:57:11,340
+Now interrupt vector table can direct the CPU to relevant ISR.
+
+1166
+00:57:11,739 --> 00:57:16,420
+Interrupt vector table can direct the CPU to relevant ISR for handling.
+
+1167
+00:57:17,039 --> 00:57:20,500
+Now priority is related to the interrupt address.
+
+1168
+00:57:20,500 --> 00:57:21,940
+in the vector table.
+
+1169
+00:57:22,599 --> 00:57:24,440
+Priority is related to the interrupt address
+
+1170
+00:57:24,440 --> 00:57:26,519
+in the vector table. Lower
+
+1171
+00:57:26,519 --> 00:57:28,420
+the address, higher
+
+1172
+00:57:28,420 --> 00:57:30,340
+the priority. That means
+
+1173
+00:57:30,340 --> 00:57:32,119
+this is the highest
+
+1174
+00:57:32,119 --> 00:57:33,760
+priority interval.
+
+1175
+00:57:34,280 --> 00:57:36,579
+According to this table, this is the lowest
+
+1176
+00:57:36,579 --> 00:57:38,639
+priority interval. This is the highest
+
+1177
+00:57:38,639 --> 00:57:40,300
+priority. Right? If two
+
+1178
+00:57:40,300 --> 00:57:42,579
+interrupts interrupt the same time,
+
+1179
+00:57:43,039 --> 00:57:43,579
+let's say
+
+1180
+00:57:43,579 --> 00:57:45,619
+int 0 vect
+
+1181
+00:57:45,619 --> 00:57:46,900
+and
+
+1182
+00:57:46,900 --> 00:57:50,059
+adc vect, both
+
+1183
+00:57:50,059 --> 00:57:57,179
+interrupt at the same time this is given the priority so cpu will handle this right in your
+
+1184
+00:57:57,179 --> 00:58:06,139
+microcontroller at mega 328p there are pins in zero pin in one pin there are two pins in zero
+
+1185
+00:58:06,139 --> 00:58:14,139
+pin in one pin right if you connect two switches to in zero and in one when you press the in zero
+
+1186
+00:58:14,139 --> 00:58:20,039
+pin connected switch this is the interrupt you have to handle if you press the switch connected
+
+1187
+00:58:20,039 --> 00:58:26,980
+to int 1 pin then this is the interrupt that you have to handle int 0 has high priority than int 1
+
+1188
+00:58:26,980 --> 00:58:34,780
+same way the port there are three ports in the microcontroller port b port c port d they have
+
+1189
+00:58:34,780 --> 00:58:41,980
+pin change interrupts and the microcontroller has three timers timer 0 timer 1 timer 2 they have
+
+1190
+00:58:41,980 --> 00:58:48,519
+their overflow interrupts. Overflow interrupt means timer count to its maximum possible value.
+
+1191
+00:58:49,300 --> 00:58:56,219
+For example, let's say timer is 8 bit timer. Then the maximum possible value that the timer can count
+
+1192
+00:58:56,219 --> 00:59:04,360
+is 255. Because using 8 bits, you can specify between 0 to 255. So if the 8 bit timer, the
+
+1193
+00:59:04,360 --> 00:59:08,099
+maximum value that a timer can count is 255.
+
+1194
+00:59:08,820 --> 00:59:11,699
+After counting to 255,
+
+1195
+00:59:12,000 --> 00:59:13,960
+timer overflows to 0.
+
+1196
+00:59:16,119 --> 00:59:20,539
+At that time, when timer overflows, the timer interrupts
+
+1197
+00:59:20,539 --> 00:59:24,420
+the CPU. And this is the interrupt, then CPU has
+
+1198
+00:59:24,420 --> 00:59:28,260
+to handle. This interrupt vector routine, this service
+
+1199
+00:59:28,260 --> 00:59:32,360
+routine, CPU has to handle. When timer interrupts
+
+1200
+00:59:32,360 --> 00:59:36,800
+on overflow. Then the serial communication
+
+1201
+00:59:36,800 --> 00:59:40,079
+peripheral received some data.
+
+1202
+00:59:40,800 --> 00:59:44,679
+Received some data over serial port. If that
+
+1203
+00:59:44,679 --> 00:59:48,659
+data received is complete, the serial
+
+1204
+00:59:48,659 --> 00:59:52,739
+communication peripheral will interrupt the CPU. Then CPU
+
+1205
+00:59:52,739 --> 00:59:56,579
+is to handle this particular interrupt service. So likewise
+
+1206
+00:59:56,579 --> 01:00:00,519
+there are many peripheral devices. Some are external
+
+1207
+01:00:00,519 --> 01:00:07,960
+some are internal. They have their own interrupts. They have their own interrupt service routines,
+
+1208
+01:00:08,760 --> 01:00:14,679
+associated interrupt service routines. Each and every interrupt service routine has an address.
+
+1209
+01:00:14,679 --> 01:00:21,239
+Those addresses are in the interrupt vector table. Lower the address, higher the priority.
+
+1210
+01:00:21,239 --> 01:00:27,480
+Any question? Sorry sir. No, no, really. What about the correction problem, man?
+
+1211
+01:00:27,480 --> 01:01:27,480
+[unclear — Sinhala / crosstalk]
+
+1212
+01:01:27,480 --> 01:01:28,480
+the of a Trin.
+
+1213
+01:01:28,480 --> 01:01:29,480
+I have a lot to do.
+
+1214
+01:01:29,480 --> 01:01:30,480
+I have a good 1, to be a...
+
+1215
+01:01:30,480 --> 01:01:30,780
+to be a.
+
+1216
+01:01:30,780 --> 01:01:31,019
+to be a.
+
+1217
+01:01:31,019 --> 01:01:31,059
+to be a.
+
+1218
+01:01:31,059 --> 01:01:31,059
+
+
+1219
+01:01:31,059 --> 01:01:31,059
+
+
+1220
+01:01:31,059 --> 01:01:31,059
+
+
+1221
+01:01:31,059 --> 01:01:31,059
+
+
+1222
+01:01:31,059 --> 01:01:31,059
+
+
+1223
+01:01:31,059 --> 01:01:31,059
+
+
+1224
+01:01:31,059 --> 01:01:31,059
+
+
+1225
+01:01:31,059 --> 01:01:31,059
+
+
+1226
+01:01:31,059 --> 01:01:31,059
+
+
+1227
+01:01:31,059 --> 01:01:31,059
+
+
+1228
+01:01:31,059 --> 01:01:31,059
+
+
+1229
+01:01:31,059 --> 01:01:31,079
+to be a.
+
+1230
+01:01:31,079 --> 01:01:31,099
+to be a.
+
+1231
+01:01:31,099 --> 01:01:31,099
+
+
+1232
+01:01:31,099 --> 01:01:31,099
+
+
+1233
+01:01:31,099 --> 01:01:31,099
+
+
+1234
+01:01:31,099 --> 01:01:31,099
+
+
+1235
+01:01:31,099 --> 01:01:31,099
+
+
+1236
+01:01:31,099 --> 01:01:31,099
+
+
+1237
+01:01:31,099 --> 01:01:31,099
+
+
+1238
+01:01:31,099 --> 01:01:31,099
+
+
+1239
+01:01:31,099 --> 01:01:31,099
+
+
+1240
+01:01:31,099 --> 01:01:31,099
+
+
+1241
+01:01:31,099 --> 01:01:31,099
+
+
+1242
+01:01:31,099 --> 01:01:31,099
+
+
+1243
+01:01:31,099 --> 01:01:31,099
+
+
+1244
+01:01:31,099 --> 01:01:31,099
+
+
+1245
+01:01:31,099 --> 01:01:31,099
+
+
+1246
+01:01:31,099 --> 01:01:31,099
+
+
+1247
+01:01:31,099 --> 01:01:31,099
+
+
+1248
+01:01:31,099 --> 01:01:38,099
+call a function that function call the return the function
+
+1249
+01:01:38,099 --> 01:01:47,099
+a b c main function function a call function a welling function b call function b welling function c call
+
+1250
+01:01:47,099 --> 01:01:47,360
+call.
+
+1251
+01:01:47,739 --> 01:01:48,980
+C return.
+
+1252
+01:01:49,239 --> 01:01:50,539
+C return when you go ahead of the B.
+
+1253
+01:01:51,320 --> 01:01:53,280
+B return when you go ahead of the A.
+
+1254
+01:01:53,659 --> 01:01:56,559
+A return when you go ahead of the main function.
+
+1255
+01:01:57,000 --> 01:01:58,280
+And call on order.
+
+1256
+01:01:58,820 --> 01:02:01,780
+Main A B C return.
+
+1257
+01:02:02,000 --> 01:02:03,840
+C B A main.
+
+1258
+01:02:04,500 --> 01:02:04,659
+Right.
+
+1259
+01:02:05,320 --> 01:02:07,019
+Last in.
+
+1260
+01:02:07,800 --> 01:02:08,440
+First out.
+
+1261
+01:02:08,440 --> 01:02:10,440
+And stack.
+
+1262
+01:02:11,239 --> 01:02:11,780
+Stack.
+
+1263
+01:02:11,960 --> 01:02:13,079
+Stack is clear.
+
+1264
+01:02:14,719 --> 01:02:15,880
+Stack is clear.
+
+1265
+01:02:15,880 --> 01:02:45,880
+[unclear — Sinhala / crosstalk]
+
+1266
+01:02:45,880 --> 01:02:48,280
+local variables values
+
+1267
+01:02:48,280 --> 01:02:49,960
+return address
+
+1268
+01:02:49,960 --> 01:02:53,000
+function
+
+1269
+01:02:53,000 --> 01:02:53,960
+function
+
+1270
+01:02:53,960 --> 01:02:56,039
+function
+
+1271
+01:02:56,039 --> 01:02:59,480
+local variables
+
+1272
+01:02:59,480 --> 01:03:01,559
+values
+
+1273
+01:03:01,559 --> 01:03:04,280
+function
+
+1274
+01:03:04,280 --> 01:03:06,599
+return address
+
+1275
+01:03:06,599 --> 01:03:07,599
+the b1.
+
+1276
+01:03:07,599 --> 01:03:07,599
+
+
+1277
+01:03:07,599 --> 01:03:07,599
+
+
+1278
+01:03:07,599 --> 01:03:07,599
+
+
+1279
+01:03:07,599 --> 01:03:07,599
+
+
+1280
+01:03:07,599 --> 01:03:07,619
+the a.
+
+1281
+01:03:07,619 --> 01:03:07,820
+the a.
+
+1282
+01:03:07,820 --> 01:03:07,860
+the a.
+
+1283
+01:03:07,860 --> 01:03:07,920
+the a.
+
+1284
+01:03:07,920 --> 01:03:07,980
+the a.
+
+1285
+01:03:07,980 --> 01:03:08,039
+the a.
+
+1286
+01:03:08,039 --> 01:03:08,099
+the a.
+
+1287
+01:03:08,099 --> 01:03:08,159
+the a.
+
+1288
+01:03:08,159 --> 01:03:08,219
+the a.
+
+1289
+01:03:08,219 --> 01:03:08,280
+the a.
+
+1290
+01:03:08,280 --> 01:03:08,360
+the a.
+
+1291
+01:03:08,360 --> 01:03:08,440
+the a.
+
+1292
+01:03:08,440 --> 01:03:08,519
+the a.
+
+1293
+01:03:08,519 --> 01:03:08,599
+the a.
+
+1294
+01:03:08,599 --> 01:03:08,659
+the a.
+
+1295
+01:03:08,659 --> 01:03:08,699
+the a.
+
+1296
+01:03:08,699 --> 01:03:08,719
+the a.
+
+1297
+01:03:08,719 --> 01:03:08,739
+the a.
+
+1298
+01:03:08,739 --> 01:03:08,760
+the a.
+
+1299
+01:03:08,760 --> 01:03:08,800
+the a.
+
+1300
+01:03:08,800 --> 01:03:08,800
+
+
+1301
+01:03:08,800 --> 01:03:08,820
+the a.
+
+1302
+01:03:08,820 --> 01:03:08,820
+
+
+1303
+01:03:08,820 --> 01:03:08,840
+the a.
+
+1304
+01:03:08,840 --> 01:03:08,840
+
+
+1305
+01:03:08,840 --> 01:03:08,840
+
+
+1306
+01:03:08,840 --> 01:03:08,840
+
+
+1307
+01:03:08,840 --> 01:03:08,860
+the a.
+
+1308
+01:03:08,860 --> 01:03:08,860
+
+
+1309
+01:03:08,860 --> 01:03:08,860
+
+
+1310
+01:03:08,860 --> 01:03:08,860
+
+
+1311
+01:03:08,860 --> 01:03:08,860
+
+
+1312
+01:03:08,860 --> 01:03:08,860
+
+
+1313
+01:03:08,860 --> 01:03:08,860
+
+
+1314
+01:03:08,860 --> 01:03:08,860
+
+
+1315
+01:03:08,860 --> 01:03:08,860
+
+
+1316
+01:03:08,860 --> 01:03:08,860
+
+
+1317
+01:03:08,860 --> 01:03:08,860
+
+
+1318
+01:03:08,860 --> 01:03:08,860
+
+
+1319
+01:03:08,860 --> 01:03:10,219
+the
+
+1320
+01:03:10,219 --> 01:03:10,679
+the
+
+1321
+01:03:10,679 --> 01:03:10,900
+the
+
+1322
+01:03:10,900 --> 01:03:11,019
+the
+
+1323
+01:03:11,019 --> 01:03:11,099
+the
+
+1324
+01:03:11,099 --> 01:03:11,139
+the
+
+1325
+01:03:11,139 --> 01:03:11,159
+the
+
+1326
+01:03:11,159 --> 01:03:11,159
+
+
+1327
+01:03:11,159 --> 01:03:11,139
+the
+
+1328
+01:03:11,139 --> 01:03:11,139
+
+
+1329
+01:03:11,139 --> 01:03:11,139
+
+
+1330
+01:03:11,139 --> 01:03:11,139
+
+
+1331
+01:03:11,139 --> 01:03:11,139
+
+
+1332
+01:03:11,139 --> 01:03:11,139
+
+
+1333
+01:03:11,139 --> 01:03:11,139
+
+
+1334
+01:03:11,139 --> 01:03:11,139
+
+
+1335
+01:03:11,139 --> 01:03:11,139
+
+
+1336
+01:03:11,139 --> 01:03:11,139
+
+
+1337
+01:03:11,139 --> 01:03:11,139
+
+
+1338
+01:03:11,139 --> 01:03:11,139
+
+
+1339
+01:03:11,139 --> 01:03:11,139
+
+
+1340
+01:03:11,139 --> 01:03:11,139
+
+
+1341
+01:03:11,139 --> 01:03:11,139
+
+
+1342
+01:03:11,139 --> 01:03:11,139
+
+
+1343
+01:03:11,139 --> 01:03:11,139
+
+
+1344
+01:03:11,139 --> 01:03:11,139
+
+
+1345
+01:03:11,139 --> 01:03:11,139
+
+
+1346
+01:03:11,139 --> 01:03:11,139
+
+
+1347
+01:03:11,139 --> 01:03:11,139
+
+
+1348
+01:03:11,139 --> 01:03:11,139
+
+
+1349
+01:03:11,139 --> 01:03:11,139
+
+
+1350
+01:03:11,139 --> 01:03:11,139
+
+
+1351
+01:03:11,139 --> 01:03:11,139
+
+
+1352
+01:03:11,139 --> 01:03:11,139
+
+
+1353
+01:03:11,139 --> 01:03:11,139
+
+
+1354
+01:03:11,139 --> 01:03:11,139
+
+
+1355
+01:03:11,139 --> 01:03:11,139
+
+
+1356
+01:03:11,139 --> 01:03:11,139
+
+
+1357
+01:03:11,139 --> 01:03:11,139
+
+
+1358
+01:03:11,139 --> 01:03:11,139
+
+
+1359
+01:03:11,139 --> 01:03:11,139
+
+
+1360
+01:03:11,139 --> 01:03:11,139
+
+
+1361
+01:03:11,139 --> 01:03:11,139
+
+
+1362
+01:03:11,139 --> 01:03:11,139
+
+
+1363
+01:03:11,139 --> 01:03:11,139
+
+
+1364
+01:03:11,139 --> 01:03:11,139
+
+
+1365
+01:03:11,139 --> 01:03:11,139
+
+
+1366
+01:03:11,139 --> 01:03:11,139
+
+
+1367
+01:03:11,139 --> 01:03:11,139
+
+
+1368
+01:03:11,139 --> 01:03:11,139
+
+
+1369
+01:03:11,139 --> 01:03:11,139
+
+
+1370
+01:03:11,139 --> 01:03:11,139
+
+
+1371
+01:03:11,139 --> 01:03:11,139
+
+
+1372
+01:03:11,139 --> 01:03:11,139
+
+
+1373
+01:03:11,139 --> 01:03:11,139
+
+
+1374
+01:03:11,139 --> 01:03:11,139
+
+
+1375
+01:03:11,139 --> 01:03:11,139
+
+
+1376
+01:03:11,139 --> 01:03:11,139
+
+
+1377
+01:03:11,139 --> 01:03:11,139
+
+
+1378
+01:03:11,139 --> 01:03:11,139
+
+
+1379
+01:03:11,139 --> 01:03:11,139
+
+
+1380
+01:03:11,139 --> 01:03:11,139
+
+
+1381
+01:03:11,139 --> 01:03:11,139
+
+
+1382
+01:03:11,139 --> 01:03:11,139
+
+
+1383
+01:03:11,139 --> 01:03:11,139
+
+
+1384
+01:03:11,139 --> 01:03:11,139
+
+
+1385
+01:03:11,139 --> 01:03:11,139
+
+
+1386
+01:03:11,139 --> 01:03:11,139
+
+
+1387
+01:03:11,139 --> 01:03:11,139
+
+
+1388
+01:03:11,139 --> 01:03:11,139
+
+
+1389
+01:03:11,139 --> 01:03:11,139
+
+
+1390
+01:03:11,139 --> 01:03:11,139
+
+
+1391
+01:03:11,139 --> 01:03:11,139
+
+
+1392
+01:03:11,139 --> 01:03:11,139
+
+
+1393
+01:03:11,139 --> 01:03:13,059
+the the
+
+1394
+01:03:13,059 --> 01:03:13,460
+the
+
+1395
+01:03:13,460 --> 01:03:13,559
+the
+
+1396
+01:03:13,559 --> 01:03:13,679
+the
+
+1397
+01:03:13,679 --> 01:03:13,719
+the
+
+1398
+01:03:13,719 --> 01:03:13,760
+the
+
+1399
+01:03:13,760 --> 01:03:13,800
+the
+
+1400
+01:03:13,800 --> 01:03:13,820
+the
+
+1401
+01:03:13,820 --> 01:03:13,820
+
+
+1402
+01:03:13,820 --> 01:03:13,820
+
+
+1403
+01:03:13,820 --> 01:03:13,820
+
+
+1404
+01:03:13,820 --> 01:03:13,820
+
+
+1405
+01:03:13,820 --> 01:03:13,800
+the
+
+1406
+01:03:13,800 --> 01:03:13,800
+
+
+1407
+01:03:13,800 --> 01:03:13,800
+
+
+1408
+01:03:13,800 --> 01:03:13,800
+
+
+1409
+01:03:13,800 --> 01:03:13,800
+
+
+1410
+01:03:13,800 --> 01:03:13,800
+
+
+1411
+01:03:13,800 --> 01:03:13,820
+the
+
+1412
+01:03:13,820 --> 01:03:13,820
+
+
+1413
+01:03:13,820 --> 01:03:13,820
+
+
+1414
+01:03:13,820 --> 01:03:13,820
+
+
+1415
+01:03:13,820 --> 01:03:13,820
+
+
+1416
+01:03:13,820 --> 01:03:13,820
+
+
+1417
+01:03:13,820 --> 01:03:13,820
+
+
+1418
+01:03:13,820 --> 01:03:13,820
+
+
+1419
+01:03:13,820 --> 01:03:13,840
+the
+
+1420
+01:03:13,840 --> 01:03:13,840
+
+
+1421
+01:03:13,840 --> 01:03:13,840
+
+
+1422
+01:03:13,840 --> 01:03:13,840
+
+
+1423
+01:03:13,840 --> 01:03:13,840
+
+
+1424
+01:03:13,840 --> 01:03:13,860
+the
+
+1425
+01:03:13,860 --> 01:03:13,880
+the
+
+1426
+01:03:13,880 --> 01:03:13,880
+
+
+1427
+01:03:13,880 --> 01:03:13,900
+the
+
+1428
+01:03:13,900 --> 01:03:13,940
+the
+
+1429
+01:03:13,940 --> 01:03:13,980
+the
+
+1430
+01:03:13,980 --> 01:03:14,000
+the
+
+1431
+01:03:14,000 --> 01:03:14,000
+
+
+1432
+01:03:14,000 --> 01:03:14,039
+the
+
+1433
+01:03:14,039 --> 01:03:14,079
+the
+
+1434
+01:03:14,079 --> 01:03:14,119
+the
+
+1435
+01:03:14,119 --> 01:03:14,139
+the
+
+1436
+01:03:14,139 --> 01:03:14,219
+the
+
+1437
+01:03:14,219 --> 01:03:14,199
+the
+
+1438
+01:03:14,199 --> 01:03:14,239
+the
+
+1439
+01:03:14,239 --> 01:03:14,239
+
+
+1440
+01:03:14,239 --> 01:03:14,260
+the
+
+1441
+01:03:14,260 --> 01:03:14,340
+the
+
+1442
+01:03:14,340 --> 01:03:14,380
+the
+
+1443
+01:03:14,380 --> 01:03:14,440
+the
+
+1444
+01:03:14,440 --> 01:03:14,460
+the
+
+1445
+01:03:41,139 --> 01:03:45,139
+If you have a stocker, you can get a B return.
+
+1446
+01:03:45,139 --> 01:03:49,139
+If you have a B return, you can get a B return address.
+
+1447
+01:03:49,139 --> 01:03:51,139
+What is the return?
+
+1448
+01:03:51,139 --> 01:03:53,139
+A, it is not a problem.
+
+1449
+01:03:53,139 --> 01:03:55,139
+A, it is not a stocker.
+
+1450
+01:03:55,139 --> 01:03:57,139
+A return, then A complete.
+
+1451
+01:03:57,139 --> 01:03:59,139
+A execution is complete.
+
+1452
+01:03:59,139 --> 01:04:01,139
+A execution is complete,
+
+1453
+01:04:01,139 --> 01:04:05,139
+then the stocker will be a value stick.
+
+1454
+01:04:05,139 --> 01:04:09,139
+But A complete, then A return.
+
+1455
+01:04:09,139 --> 01:04:10,139
+the M8.
+
+1456
+01:04:10,139 --> 01:04:10,139
+
+
+1457
+01:04:10,139 --> 01:04:10,920
+the at-mr.
+
+1458
+01:04:10,920 --> 01:04:10,900
+the at-mr.
+
+1459
+01:04:10,900 --> 01:04:10,840
+the to-mr.
+
+1460
+01:04:10,840 --> 01:04:10,739
+the the.
+
+1461
+01:04:10,739 --> 01:04:10,599
+th-mr.
+
+1462
+01:04:10,599 --> 01:04:11,599
+the co-pest.
+
+1463
+01:04:11,599 --> 01:04:11,599
+
+
+1464
+01:04:11,599 --> 01:04:41,599
+[unclear — Sinhala / crosstalk]
+
+1465
+01:04:41,599 --> 01:04:45,000
+If you return the C, you can't stack it.
+
+1466
+01:04:45,000 --> 01:04:47,000
+You can't do it.
+
+1467
+01:04:47,000 --> 01:04:50,599
+If you return the C, you can stack it.
+
+1468
+01:04:50,599 --> 01:04:52,400
+You can't do it.
+
+1469
+01:04:52,400 --> 01:04:55,599
+If you return the C, you can stack it.
+
+1470
+01:04:55,599 --> 01:04:56,599
+It's the main function.
+
+1471
+01:04:56,599 --> 01:04:59,400
+Right? Last in, first out.
+
+1472
+01:04:59,400 --> 01:05:00,400
+Stacking up.
+
+1473
+01:05:00,400 --> 01:05:01,800
+That's it. Thank you.
+
+1474
+01:05:01,800 --> 01:05:02,800
+Right.
+
+1475
+01:05:02,800 --> 01:05:06,800
+What is the question?
+
+1476
+01:05:06,800 --> 01:05:11,800
+It is to create a computer science related data.
+
+1477
+01:05:11,800 --> 01:05:15,800
+If you call recursive function, you can stack it.
+
+1478
+01:05:15,800 --> 01:05:21,800
+If you call recursive function, you can call recursive function.
+
+1479
+01:05:21,800 --> 01:05:25,800
+The function calls itself again and again. That is called recursive function.
+
+1480
+01:05:25,800 --> 01:05:36,500
+If you have a recursive function, you can call a return address in the local variable.
+
+1481
+01:05:36,500 --> 01:05:42,500
+If you have a recursive function, you can call a stack.
+
+1482
+01:05:42,500 --> 01:05:49,500
+If you have a stack, you can call a memory runout.
+
+1483
+01:05:49,500 --> 01:05:59,500
+So, I would advise that the performance path is better to use iterative functions, not recursive functions.
+
+1484
+01:05:59,500 --> 01:06:04,500
+If it is a performance, it doesn't matter if it is iterative or recursive.
+
+1485
+01:06:04,500 --> 01:06:11,500
+If you have recursion, you can call the function.
+
+1486
+01:06:11,500 --> 01:06:16,500
+If you have the stack, you can run out of memory.
+
+1487
+01:06:16,500 --> 01:06:46,500
+[unclear — Sinhala / crosstalk]
+
+1488
+01:06:46,500 --> 01:06:53,500
+If you have a return address, you can call it.
+
+1489
+01:06:53,500 --> 01:06:57,500
+If you have a return address, you can call it.
+
+1490
+01:06:57,500 --> 01:07:02,500
+Ultimately, you run out of memory.
+
+1491
+01:07:02,500 --> 01:07:10,500
+A system can be crashed by hacking a recursive function.
+
+1492
+01:07:10,500 --> 01:07:19,539
+function right the way that they could take a loophole so hackers sometimes exploit right
+
+1493
+01:07:26,820 --> 01:07:33,380
+the algorithm is much clear right if you want to solve a problem right the recursive approach is
+
+1494
+01:07:33,380 --> 01:07:43,380
+very straightforward. It's very understandable, very clear and some there are some problems,
+
+1495
+01:07:44,019 --> 01:07:50,179
+right? Using recursion very easily solved, very easily. I'll tell you one example.
+
+1496
+01:07:53,780 --> 01:08:00,340
+There's a problem called towers of anol. The computer science problem called towers of anol.
+
+1497
+01:08:03,380 --> 01:08:05,159
+Towers of Hanoi can have connected in our.
+
+1498
+01:08:05,840 --> 01:08:06,780
+Just raise your hand.
+
+1499
+01:08:07,380 --> 01:08:08,920
+If you have heard that.
+
+1500
+01:08:09,480 --> 01:08:11,500
+It's a classical computer science problem.
+
+1501
+01:08:12,019 --> 01:08:13,719
+Which is called Towers of Hanoi.
+
+1502
+01:08:14,340 --> 01:08:18,479
+That Towers of Hanoi problem can be solved using recursion very easily.
+
+1503
+01:08:19,140 --> 01:08:19,380
+Right.
+
+1504
+01:08:19,859 --> 01:08:20,239
+Right.
+
+1505
+01:08:20,560 --> 01:08:20,899
+Okay.
+
+1506
+01:08:21,039 --> 01:08:22,020
+You have heard that.
+
+1507
+01:08:22,159 --> 01:08:22,380
+Good.
+
+1508
+01:08:22,939 --> 01:08:23,199
+Right.
+
+1509
+01:08:23,800 --> 01:08:32,239
+And if you try to solve the problem, Towers of Hanoi problem iteratively, it is nearly impossible.
+
+1510
+01:08:32,239 --> 01:08:51,239
+I don't say impossible but very difficult. Iterative solution. But recursive solution is very easy. That's one of the examples classically used in computer science to highlight the importance of recursion.
+
+1511
+01:08:51,239 --> 01:08:59,239
+In computer science, if you are studying high studies, you will use a recursion to learn about the recursion.
+
+1512
+01:08:59,239 --> 01:09:03,239
+In the example, Towers of Hanoi.
+
+1513
+01:09:03,239 --> 01:09:14,239
+According to that problem, Towers of Hanoi, it's a very classical problem according to the legend in the Hanoi.
+
+1514
+01:09:14,239 --> 01:09:17,239
+Where is Hanoi? Hanoi is a question.
+
+1515
+01:09:17,239 --> 01:09:44,680
+It's a city. In which country? Hanoi. China? No. Close to China. Hanoi. Vietnam. Yes. Hanoi is Vietnam. Right? According to the legend, in the city of Hanoi, Vietnam, there was a temple. Vietnam is a Buddhist country.
+
+1516
+01:09:44,680 --> 01:09:46,159
+There was a temple.
+
+1517
+01:09:47,100 --> 01:09:48,119
+In that temple
+
+1518
+01:09:48,119 --> 01:09:50,739
+there were three diamond
+
+1519
+01:09:50,739 --> 01:09:51,500
+pillars.
+
+1520
+01:09:52,560 --> 01:09:54,359
+Diamond building had to be kanu tunatti.
+
+1521
+01:09:54,760 --> 01:09:55,439
+It's a nice story.
+
+1522
+01:09:55,699 --> 01:09:58,779
+In the first pillar filled with
+
+1523
+01:09:58,779 --> 01:10:00,319
+64
+
+1524
+01:10:00,319 --> 01:10:01,600
+gold rings.
+
+1525
+01:10:02,340 --> 01:10:04,539
+In the first one
+
+1526
+01:10:04,539 --> 01:10:06,720
+there are gold, 64
+
+1527
+01:10:06,720 --> 01:10:08,500
+gold rings. Then
+
+1528
+01:10:08,500 --> 01:10:10,720
+there's a task given for the
+
+1529
+01:10:10,720 --> 01:10:11,899
+monks of that temple.
+
+1530
+01:10:12,659 --> 01:10:14,579
+The task is to shift
+
+1531
+01:10:14,579 --> 01:10:16,659
+those 64 gold rings
+
+1532
+01:10:16,659 --> 01:10:18,399
+from tower 1
+
+1533
+01:10:18,399 --> 01:10:20,260
+to the tower 3.
+
+1534
+01:10:20,920 --> 01:10:22,600
+That's why we call it towers of Hanon.
+
+1535
+01:10:23,220 --> 01:10:23,380
+Right?
+
+1536
+01:10:23,739 --> 01:10:26,199
+Three gold
+
+1537
+01:10:26,199 --> 01:10:28,380
+diamond towers
+
+1538
+01:10:28,380 --> 01:10:30,000
+and the first tower
+
+1539
+01:10:30,000 --> 01:10:32,159
+there are 64 gold rings.
+
+1540
+01:10:32,840 --> 01:10:33,880
+Right? Now
+
+1541
+01:10:33,880 --> 01:10:36,659
+these monks they have
+
+1542
+01:10:36,659 --> 01:10:38,260
+to transfer
+
+1543
+01:10:38,260 --> 01:10:40,239
+these 64 gold rings
+
+1544
+01:10:40,239 --> 01:10:42,739
+from tower 1 to tower 3.
+
+1545
+01:10:42,739 --> 01:10:45,779
+they can use tower 2
+
+1546
+01:10:45,779 --> 01:10:48,060
+as a temporary tower
+
+1547
+01:10:48,060 --> 01:10:50,079
+to do their job.
+
+1548
+01:10:50,680 --> 01:10:50,880
+Right.
+
+1549
+01:10:51,840 --> 01:10:53,739
+Now these rings are not
+
+1550
+01:10:53,739 --> 01:10:55,539
+in the same size.
+
+1551
+01:10:55,840 --> 01:10:58,199
+Some rings are large, some are small.
+
+1552
+01:10:58,699 --> 01:10:59,720
+There are conditions.
+
+1553
+01:11:00,300 --> 01:11:02,279
+You can't put a large
+
+1554
+01:11:02,279 --> 01:11:03,840
+ring on a top of
+
+1555
+01:11:03,840 --> 01:11:06,239
+smaller ring. When you transfer
+
+1556
+01:11:06,239 --> 01:11:08,239
+rings from one tower to another tower
+
+1557
+01:11:08,239 --> 01:11:10,060
+you can't put a
+
+1558
+01:11:10,060 --> 01:11:11,600
+larger ring on top of
+
+1559
+01:11:11,600 --> 01:11:14,380
+smaller ring. And also
+
+1560
+01:11:14,380 --> 01:11:16,380
+when you trans the rings from
+
+1561
+01:11:16,380 --> 01:11:18,020
+between towers,
+
+1562
+01:11:18,479 --> 01:11:20,560
+you can trans only one ring
+
+1563
+01:11:20,560 --> 01:11:22,619
+at a time. You can't move
+
+1564
+01:11:22,619 --> 01:11:24,159
+multiple rings at a time.
+
+1565
+01:11:24,659 --> 01:11:25,880
+Only one at a time.
+
+1566
+01:11:26,399 --> 01:11:28,260
+Now the task is to move
+
+1567
+01:11:28,260 --> 01:11:30,260
+all the 64 rings from tower
+
+1568
+01:11:30,260 --> 01:11:31,319
+1 to tower 3.
+
+1569
+01:11:32,380 --> 01:11:34,239
+So at first
+
+1570
+01:11:34,239 --> 01:11:36,159
+glance you may see this is
+
+1571
+01:11:36,159 --> 01:11:38,000
+very simple but that is not very simple.
+
+1572
+01:11:38,579 --> 01:11:40,220
+It's a complicated problem.
+
+1573
+01:11:40,220 --> 01:11:42,680
+using recursive
+
+1574
+01:11:42,680 --> 01:11:44,659
+algorithm we can solve this.
+
+1575
+01:11:45,060 --> 01:11:46,579
+Fairly easily we can solve
+
+1576
+01:11:46,579 --> 01:11:48,520
+this and according to this
+
+1577
+01:11:48,520 --> 01:11:50,500
+is very interesting read about this Towers of
+
+1578
+01:11:50,500 --> 01:11:52,600
+Anon. Right. According to
+
+1579
+01:11:52,600 --> 01:11:54,560
+the legend when monks
+
+1580
+01:11:54,560 --> 01:11:56,600
+completed this task
+
+1581
+01:11:56,600 --> 01:11:58,439
+that means when they moved
+
+1582
+01:11:58,439 --> 01:12:00,420
+all the rings from
+
+1583
+01:12:00,420 --> 01:12:02,500
+Tower 1 to Tower 3 when they completed
+
+1584
+01:12:02,500 --> 01:12:04,560
+that would be the
+
+1585
+01:12:04,560 --> 01:12:05,760
+end of the world.
+
+1586
+01:12:05,760 --> 01:12:11,659
+That means it takes lot of time.
+
+1587
+01:12:12,180 --> 01:12:17,899
+So that problem very easily you can solve using recursion.
+
+1588
+01:12:18,279 --> 01:12:20,479
+If you are interested, read about that.
+
+1589
+01:12:20,979 --> 01:12:25,920
+Likewise, there are many interesting computer science classical examples.
+
+1590
+01:12:26,319 --> 01:12:27,579
+One is Towers of Anoy.
+
+1591
+01:12:28,399 --> 01:12:31,380
+There is another one called Sleeping Barber's Problem.
+
+1592
+01:12:31,380 --> 01:12:33,340
+Sleeping Barber's Problem.
+
+1593
+01:12:33,340 --> 01:12:39,779
+There is another classical computer science problem called dining philosophers problem.
+
+1594
+01:12:40,739 --> 01:12:42,520
+Dining philosophers problem.
+
+1595
+01:12:43,579 --> 01:12:46,460
+This is why you enjoy it.
+
+1596
+01:12:47,260 --> 01:12:49,500
+Computer science is studying.
+
+1597
+01:12:50,020 --> 01:12:54,539
+Dining philosophers problem, sleeping barbers problem, towers of phanom.
+
+1598
+01:12:55,659 --> 01:12:56,779
+You can keep that word.
+
+1599
+01:12:56,779 --> 01:13:10,899
+I was doing my masters in computer science.
+
+1600
+01:13:10,899 --> 01:13:15,220
+Okay, then interrupt routines.
+
+1601
+01:13:15,760 --> 01:13:17,720
+First one, interrupt service routine.
+
+1602
+01:13:18,359 --> 01:13:22,079
+Another name for ISR is interrupt handler.
+
+1603
+01:13:22,760 --> 01:13:26,439
+Some books, this ISR, they call interrupt handler.
+
+1604
+01:13:26,779 --> 01:13:30,579
+Right. This is the ISR. Typical ISR.
+
+1605
+01:13:31,020 --> 01:13:34,520
+Starts. So we start with the keyword ISR.
+
+1606
+01:13:35,060 --> 01:13:37,960
+Right. We start with the keyword ISR.
+
+1607
+01:13:38,500 --> 01:13:42,000
+And then within bracket you have to specify the interrupt vector.
+
+1608
+01:13:42,619 --> 01:13:45,399
+Now vectors you have to take from the previous table.
+
+1609
+01:13:45,399 --> 01:13:50,039
+Now if you put ADC underscore VECT for example.
+
+1610
+01:13:50,760 --> 01:13:53,819
+If you put ADC underscore VECT here.
+
+1611
+01:13:53,819 --> 01:14:03,460
+this ISR is called automatically when ADC completed the conversion.
+
+1612
+01:14:04,180 --> 01:14:04,279
+Right.
+
+1613
+01:14:04,859 --> 01:14:12,000
+Now this interrupt happens when ADC completed the conversion.
+
+1614
+01:14:12,779 --> 01:14:15,359
+Analog to digital conversion completed.
+
+1615
+01:14:16,420 --> 01:14:19,560
+This interrupt is, the CPU is interrupted.
+
+1616
+01:14:19,560 --> 01:14:24,239
+The ADC is an internal peripheral device.
+
+1617
+01:14:24,899 --> 01:14:30,659
+When it completed the conversion, the ADC interrupts the CPU.
+
+1618
+01:14:31,220 --> 01:14:38,939
+When ADC interrupts the CPU, CPU has to handle the relevant ISR.
+
+1619
+01:14:39,539 --> 01:14:41,859
+Then this is the ISR.
+
+1620
+01:14:42,039 --> 01:14:44,420
+CPU has to handle.
+
+1621
+01:14:45,020 --> 01:14:47,739
+So here you have to put ADC underscore weight.
+
+1622
+01:14:47,739 --> 01:14:56,260
+Now if you put here some other IS vector, for example, if you put timer 0 overflow vector,
+
+1623
+01:14:56,600 --> 01:15:07,279
+if you put here timer 0 overflow vector, when the timer 0 overflows from 255 to 0,
+
+1624
+01:15:07,960 --> 01:15:10,720
+the timer 0 will interrupt the CPU.
+
+1625
+01:15:11,340 --> 01:15:15,359
+And then CPU has to handle the ISR, the relevant.
+
+1626
+01:15:15,359 --> 01:15:21,720
+Our CPU will call this ISR automatically, right?
+
+1627
+01:15:21,840 --> 01:15:29,520
+If you put timer zero overflow vector here, this is the code that as programmers you have
+
+1628
+01:15:29,520 --> 01:15:31,180
+to write to handle the interrupt.
+
+1629
+01:15:34,180 --> 01:15:35,760
+Can you understand?
+
+1630
+01:15:36,060 --> 01:15:38,399
+For example, right?
+
+1631
+01:15:38,399 --> 01:15:40,460
+Let's take a simple example.
+
+1632
+01:15:40,460 --> 01:15:47,460
+Now ISR within bracket ADC Vect.
+
+1633
+01:15:47,720 --> 01:15:49,100
+Opening curly bracket.
+
+1634
+01:15:49,720 --> 01:15:50,760
+Closing curly bracket.
+
+1635
+01:15:51,239 --> 01:15:56,199
+Then inside the ISR, let's say we have a couple of LEDs.
+
+1636
+01:15:57,199 --> 01:15:57,680
+Turn.
+
+1637
+01:15:58,460 --> 01:16:00,619
+It's very difficult to write.
+
+1638
+01:16:01,020 --> 01:16:05,100
+Turn on red LED.
+
+1639
+01:16:05,659 --> 01:16:07,739
+Then there's another ISR.
+
+1640
+01:16:07,739 --> 01:16:11,319
+within bracket
+
+1641
+01:16:11,319 --> 01:16:13,239
+timer 0
+
+1642
+01:16:13,239 --> 01:16:15,939
+overflow vector
+
+1643
+01:16:15,939 --> 01:16:17,739
+opening curly bracket
+
+1644
+01:16:17,739 --> 01:16:19,859
+closing curly bracket
+
+1645
+01:16:19,859 --> 01:16:21,420
+within that
+
+1646
+01:16:21,420 --> 01:16:23,979
+turn on
+
+1647
+01:16:23,979 --> 01:16:25,319
+green
+
+1648
+01:16:25,319 --> 01:16:26,960
+LED
+
+1649
+01:16:26,960 --> 01:16:28,279
+right
+
+1650
+01:16:28,279 --> 01:16:32,100
+now let's assume
+
+1651
+01:16:32,100 --> 01:16:33,520
+we have
+
+1652
+01:16:33,520 --> 01:16:35,500
+2 ISR
+
+1653
+01:16:35,500 --> 01:16:37,460
+ADC
+
+1654
+01:16:37,460 --> 01:16:39,560
+analog to digital conversion
+
+1655
+01:16:39,560 --> 01:16:41,500
+if analog to digital conversion
+
+1656
+01:16:41,500 --> 01:16:42,340
+is over
+
+1657
+01:16:42,340 --> 01:16:45,380
+we want to turn on red LED
+
+1658
+01:16:45,380 --> 01:16:47,399
+when the timer 0
+
+1659
+01:16:47,399 --> 01:16:48,800
+overflow from
+
+1660
+01:16:48,800 --> 01:16:50,560
+255 to 0
+
+1661
+01:16:50,560 --> 01:16:53,619
+we want to turn on green LED
+
+1662
+01:16:53,619 --> 01:16:56,000
+so we have written 2 ISR
+
+1663
+01:16:56,000 --> 01:16:57,659
+then we can ask
+
+1664
+01:16:57,659 --> 01:16:59,220
+CPU to do something else
+
+1665
+01:16:59,220 --> 01:17:01,140
+CPU will blinking
+
+1666
+01:17:01,140 --> 01:17:03,260
+let's say
+
+1667
+01:17:03,260 --> 01:17:04,579
+yellow LED
+
+1668
+01:17:04,579 --> 01:17:07,439
+CPU will do blinking the yellow LED
+
+1669
+01:17:07,439 --> 01:17:09,439
+LED. The third task.
+
+1670
+01:17:09,979 --> 01:17:10,199
+Right.
+
+1671
+01:17:11,199 --> 01:17:12,979
+While CPU blinking
+
+1672
+01:17:12,979 --> 01:17:15,500
+the yellow LED
+
+1673
+01:17:15,500 --> 01:17:17,460
+ADC
+
+1674
+01:17:17,460 --> 01:17:19,640
+completes the conversion.
+
+1675
+01:17:19,640 --> 01:17:21,380
+ADC is a separate
+
+1676
+01:17:21,380 --> 01:17:22,399
+peripheral device.
+
+1677
+01:17:23,399 --> 01:17:25,859
+So ADC can complete the conversion
+
+1678
+01:17:25,859 --> 01:17:27,340
+from analog to digital.
+
+1679
+01:17:28,020 --> 01:17:29,420
+While CPU
+
+1680
+01:17:29,420 --> 01:17:31,140
+blinking yellow LED.
+
+1681
+01:17:31,720 --> 01:17:33,359
+When ADC completed
+
+1682
+01:17:33,359 --> 01:17:35,640
+the conversion, analog to
+
+1683
+01:17:35,640 --> 01:17:36,779
+digital conversion,
+
+1684
+01:17:37,439 --> 01:17:39,600
+ADC will interrupt the CPU.
+
+1685
+01:17:40,180 --> 01:17:44,720
+Then CPU will automatically call the first ISR.
+
+1686
+01:17:45,039 --> 01:17:46,380
+This particular ISR.
+
+1687
+01:17:46,800 --> 01:17:48,399
+This one is automatically called.
+
+1688
+01:17:48,680 --> 01:17:52,079
+And you will see red LED turn on.
+
+1689
+01:17:52,079 --> 01:17:57,960
+After that, CPU will again resume the work it was doing.
+
+1690
+01:17:58,079 --> 01:17:59,640
+That is blinking yellow LED.
+
+1691
+01:18:00,079 --> 01:18:05,579
+While CPU blinking LED, the timer 0 will overflow.
+
+1692
+01:18:05,579 --> 01:18:07,979
+from 255 to 0.
+
+1693
+01:18:08,399 --> 01:18:10,000
+When timer 0
+
+1694
+01:18:10,000 --> 01:18:12,220
+overflows, the timer
+
+1695
+01:18:12,220 --> 01:18:13,739
+will interrupt the CPU.
+
+1696
+01:18:14,279 --> 01:18:15,399
+Then CPU will
+
+1697
+01:18:15,399 --> 01:18:18,239
+call this ISR
+
+1698
+01:18:18,239 --> 01:18:19,739
+automatically. And
+
+1699
+01:18:19,739 --> 01:18:22,159
+this ISR will turn on
+
+1700
+01:18:22,159 --> 01:18:24,100
+green LED. You will see green
+
+1701
+01:18:24,100 --> 01:18:25,140
+LED turn on.
+
+1702
+01:18:25,380 --> 01:18:28,000
+The CPU doesn't require
+
+1703
+01:18:28,000 --> 01:18:30,159
+to monitor the timer 0
+
+1704
+01:18:30,159 --> 01:18:31,779
+whether it's
+
+1705
+01:18:31,779 --> 01:18:32,979
+overflowing or not.
+
+1706
+01:18:32,979 --> 01:18:35,739
+CPU doesn't require to monitor
+
+1707
+01:18:35,739 --> 01:18:37,840
+CPU doesn't
+
+1708
+01:18:37,840 --> 01:18:39,819
+require to monitor whether ADC
+
+1709
+01:18:39,819 --> 01:18:41,880
+completed the conversion or not
+
+1710
+01:18:41,880 --> 01:18:43,760
+CPU will do its
+
+1711
+01:18:43,760 --> 01:18:45,720
+job separately
+
+1712
+01:18:45,720 --> 01:18:48,239
+when this peripheral ADC
+
+1713
+01:18:48,239 --> 01:18:50,039
+requires CPU
+
+1714
+01:18:50,039 --> 01:18:52,079
+service the ADC
+
+1715
+01:18:52,079 --> 01:18:53,199
+will interrupt the CPU
+
+1716
+01:18:53,199 --> 01:18:55,680
+then CPU will handle this
+
+1717
+01:18:55,680 --> 01:18:56,319
+routine
+
+1718
+01:18:56,319 --> 01:18:59,159
+CPU will execute this routine
+
+1719
+01:18:59,159 --> 01:19:01,539
+when timer requires CPU
+
+1720
+01:19:01,539 --> 01:19:02,239
+service
+
+1721
+01:19:02,239 --> 01:19:05,079
+the timer will interrupt the CPU
+
+1722
+01:19:05,079 --> 01:19:07,920
+and then CPU will handle this routine.
+
+1723
+01:19:08,579 --> 01:19:11,420
+Right? Therefore, no need to monitor
+
+1724
+01:19:11,420 --> 01:19:14,340
+the peripheral device. If peripheral device
+
+1725
+01:19:14,340 --> 01:19:17,399
+requires CPU service, the peripheral
+
+1726
+01:19:17,399 --> 01:19:20,199
+device will interrupt the CPU. Then CPU
+
+1727
+01:19:20,199 --> 01:19:23,199
+has to attend to the peripheral device and
+
+1728
+01:19:23,199 --> 01:19:26,560
+provide the service. That is, run the relevant
+
+1729
+01:19:26,560 --> 01:19:29,239
+ISR. Run the relevant interrupt
+
+1730
+01:19:29,239 --> 01:19:34,880
+service routine. Running the relevant interrupt service routine means attending to the interrupt,
+
+1731
+01:19:35,300 --> 01:19:42,579
+handling the interrupt. Can you understand? Right. Now, interrupt service routine is like a function.
+
+1732
+01:19:43,500 --> 01:19:51,039
+It is like a normal function, but it is drastically different from a normal function,
+
+1733
+01:19:51,039 --> 01:19:56,359
+though it looks like a function. ISR looks like a function, but it is different.
+
+1734
+01:19:56,359 --> 01:19:58,500
+Right. One is
+
+1735
+01:19:58,500 --> 01:20:00,640
+the ISR
+
+1736
+01:20:00,640 --> 01:20:02,000
+has no return value.
+
+1737
+01:20:02,619 --> 01:20:04,479
+Normal functions you need
+
+1738
+01:20:04,479 --> 01:20:06,239
+a return value. At least void.
+
+1739
+01:20:06,880 --> 01:20:08,439
+You need return type
+
+1740
+01:20:08,439 --> 01:20:10,140
+void at least. But
+
+1741
+01:20:10,140 --> 01:20:12,140
+ISR no return value.
+
+1742
+01:20:12,600 --> 01:20:14,039
+No return value. And
+
+1743
+01:20:14,039 --> 01:20:15,359
+ISR
+
+1744
+01:20:15,359 --> 01:20:18,520
+has only one parameter.
+
+1745
+01:20:18,920 --> 01:20:20,300
+That is the interrupt vector.
+
+1746
+01:20:20,680 --> 01:20:21,779
+Only one parameter.
+
+1747
+01:20:22,199 --> 01:20:24,340
+That is the interrupt vector. That means
+
+1748
+01:20:24,340 --> 01:20:26,060
+you can't pass
+
+1749
+01:20:26,060 --> 01:20:27,920
+any argument, any other
+
+1750
+01:20:27,920 --> 01:20:29,479
+argument to ISR.
+
+1751
+01:20:29,779 --> 01:20:31,680
+You can't pass any other
+
+1752
+01:20:31,680 --> 01:20:33,279
+arguments to ISR.
+
+1753
+01:20:33,699 --> 01:20:35,640
+Because interrupt vector is the only
+
+1754
+01:20:35,640 --> 01:20:37,300
+parameter that it accepts.
+
+1755
+01:20:37,699 --> 01:20:39,920
+So you can't pass any parameters
+
+1756
+01:20:39,920 --> 01:20:41,239
+to ISR.
+
+1757
+01:20:41,560 --> 01:20:44,100
+Any arguments to ISR you can't pass.
+
+1758
+01:20:44,100 --> 01:20:45,899
+The ISR accepts
+
+1759
+01:20:45,899 --> 01:20:47,880
+only the interrupt vector
+
+1760
+01:20:47,880 --> 01:20:50,020
+argument. Because it has only
+
+1761
+01:20:50,020 --> 01:20:52,239
+one parameter. And it has no return
+
+1762
+01:20:52,239 --> 01:20:53,979
+value. So you
+
+1763
+01:20:53,979 --> 01:20:55,840
+can't get any value returned
+
+1764
+01:20:55,840 --> 01:21:02,399
+from ISR. Why? The reason is this. Interrupt service routines are called automatically,
+
+1765
+01:21:02,800 --> 01:21:08,220
+right? They are called automatically when interrupt happens. We don't know when interrupt
+
+1766
+01:21:08,220 --> 01:21:15,539
+would happen, right? At the time of writing the program, at the time of compiling the
+
+1767
+01:21:15,539 --> 01:21:21,739
+program, we don't know when interrupt would happen. Interrupt can happen at the beginning
+
+1768
+01:21:21,739 --> 01:21:25,140
+of the execution, it can happen at the middle of the execution.
+
+1769
+01:21:25,680 --> 01:21:28,640
+It can happen at the end of the execution. We don't know.
+
+1770
+01:21:29,239 --> 01:21:33,600
+At the time of writing the code or at the time of compiling the code.
+
+1771
+01:21:34,180 --> 01:21:37,340
+We don't know when interrupt would happen.
+
+1772
+01:21:37,979 --> 01:21:41,560
+When interrupt happens, ISR is called automatically.
+
+1773
+01:21:41,560 --> 01:21:48,020
+Therefore, if it is not called explicitly,
+
+1774
+01:21:48,020 --> 01:21:56,060
+if the ISR is not called explicitly, it is called implicitly, then we are to return the value.
+
+1775
+01:21:56,840 --> 01:22:02,520
+If it is called implicitly, we are to return the value. So no return value.
+
+1776
+01:22:03,199 --> 01:22:08,359
+ISR call automatically automatically, we don't know what we are going to return.
+
+1777
+01:22:09,159 --> 01:22:14,359
+We don't know how to return value. We know when we are going to call a statement,
+
+1778
+01:22:14,359 --> 01:22:15,039
+pass say,
+
+1779
+01:22:15,399 --> 01:22:23,319
+but if you don't,
+
+1780
+01:22:23,319 --> 01:22:25,239
+if you don't know
+
+1781
+01:22:25,239 --> 01:22:27,500
+when the ISR would be
+
+1782
+01:22:27,500 --> 01:22:29,520
+called, how can you
+
+1783
+01:22:29,520 --> 01:22:31,659
+return a value? Can you understand?
+
+1784
+01:22:32,399 --> 01:22:32,760
+Again,
+
+1785
+01:22:33,420 --> 01:22:35,600
+if interrupt service
+
+1786
+01:22:35,600 --> 01:22:37,899
+routines are called implicitly,
+
+1787
+01:22:38,380 --> 01:22:39,260
+we don't know where
+
+1788
+01:22:39,260 --> 01:22:41,260
+they will be called, then
+
+1789
+01:22:41,260 --> 01:22:43,800
+how can we pass a value to ISR?
+
+1790
+01:22:44,359 --> 01:22:53,460
+as an argument. If you don't know when it will be cool, then how can we pass a parameter
+
+1791
+01:22:53,460 --> 01:22:58,800
+to an ISR. We don't know it will be when it will be cool, then how can we get a return
+
+1792
+01:22:58,800 --> 01:23:05,840
+value from ISR. ISR is a call, we have to know. We have to pass the value. We have to
+
+1793
+01:23:05,840 --> 01:23:10,739
+pass the value. We have to know ISR, the call, the return value. We have to know the value
+
+1794
+01:23:10,739 --> 01:23:18,140
+We don't know when it will be called.
+
+1795
+01:23:18,779 --> 01:23:21,020
+It is called when an interrupt happens.
+
+1796
+01:23:21,479 --> 01:23:22,920
+Can you understand this?
+
+1797
+01:23:22,920 --> 01:23:29,420
+Now if you are asked why interrupt service routines are interrupt service routines looks like.
+
+1798
+01:23:29,979 --> 01:23:34,359
+They look like functions but they have no return data type.
+
+1799
+01:23:34,359 --> 01:23:41,140
+and they cannot accept any arguments other than interrupt vector.
+
+1800
+01:23:41,840 --> 01:23:42,159
+Why?
+
+1801
+01:23:43,199 --> 01:23:44,199
+Can you explain?
+
+1802
+01:23:45,479 --> 01:23:48,659
+Overlooking how is the ISR function?
+
+1803
+01:23:51,039 --> 01:23:53,819
+Is the ISR return value?
+
+1804
+01:23:54,960 --> 01:23:58,239
+Is the ISR parameter passed?
+
+1805
+01:23:58,600 --> 01:24:02,199
+Can you ask?
+
+1806
+01:24:02,199 --> 01:24:03,159
+Is it called ISR?
+
+1807
+01:24:03,159 --> 01:24:05,159
+Is it called ISR?
+
+1808
+01:24:05,159 --> 01:24:06,039
+No.
+
+1809
+01:24:06,039 --> 01:24:08,279
+It is outside the loop.
+
+1810
+01:24:08,279 --> 01:24:10,000
+It is in outside the loop.
+
+1811
+01:24:10,000 --> 01:24:11,239
+If it comes to the loop,
+
+1812
+01:24:11,239 --> 01:24:13,000
+then it will be called.
+
+1813
+01:24:13,000 --> 01:24:14,920
+We don't know when it will be called.
+
+1814
+01:24:14,920 --> 01:24:17,319
+It comes outside the loop.
+
+1815
+01:24:17,319 --> 01:24:20,199
+It comes even outside the main function.
+
+1816
+01:24:20,199 --> 01:24:22,199
+Then it comes to the main function.
+
+1817
+01:24:22,199 --> 01:24:24,199
+If it comes to the main function,
+
+1818
+01:24:24,199 --> 01:24:26,199
+we cannot pass a value.
+
+1819
+01:24:26,199 --> 01:24:28,199
+We cannot get a value return.
+
+1820
+01:24:28,199 --> 01:24:31,399
+So ISR is called automatically.
+
+1821
+01:24:31,399 --> 01:24:35,800
+So from where we pass a parameter, no, we can't, we don't know.
+
+1822
+01:24:36,479 --> 01:24:40,539
+And also where to return a return value, we don't know.
+
+1823
+01:24:41,199 --> 01:24:47,880
+Therefore, no return value, no parameter passing, except interrupt vector.
+
+1824
+01:24:47,880 --> 01:24:48,560
+Right.
+
+1825
+01:24:49,239 --> 01:24:57,359
+But if you really need to pass some data to an ISR, how can we do that?
+
+1826
+01:24:57,359 --> 01:25:05,939
+If you want to process some data inside the ISR, that means you need to pass some data into the ISR.
+
+1827
+01:25:06,619 --> 01:25:12,399
+But we can't pass arguments because no parameter is accepted except interrupt vector.
+
+1828
+01:25:12,859 --> 01:25:18,199
+And we can't get any process data out from the ISR because no return value.
+
+1829
+01:25:18,199 --> 01:25:27,199
+But we want to pass some data into the ISR and we want to get some data returned from the ISR.
+
+1830
+01:25:27,359 --> 01:25:49,420
+Global? Yeah, very good. Very good. Using global variables you can do that. Because global variables are accessible from any function. Using global variables you can do that. You can pass values into the ISR as well as you can get the values out from the ISR. Right.
+
+1831
+01:25:49,420 --> 01:26:00,920
+But when you use global variables, you have to declare them as volatile global variable, not simple global variables.
+
+1832
+01:26:01,119 --> 01:26:05,340
+You have to use the keyword volatile, volatile global variables.
+
+1833
+01:26:06,659 --> 01:26:16,779
+Using volatile global variables, you can pass values data into the ISR and also you can get data out from the ISR.
+
+1834
+01:26:16,779 --> 01:26:21,739
+Now the question is why do we need to specify the word volatile?
+
+1835
+01:26:22,460 --> 01:26:22,800
+Right.
+
+1836
+01:26:23,079 --> 01:26:31,199
+We need to specify the word volatile when you declare global variables that are to be used within ISR.
+
+1837
+01:26:31,720 --> 01:26:36,579
+Any global variable to be used within ISR you have to declare them as volatile.
+
+1838
+01:26:37,140 --> 01:26:37,539
+Why?
+
+1839
+01:26:38,159 --> 01:26:38,399
+Right.
+
+1840
+01:26:38,460 --> 01:26:40,500
+What is the meaning of the term volatile?
+
+1841
+01:26:41,340 --> 01:26:42,680
+We say run is volatile.
+
+1842
+01:26:43,239 --> 01:26:44,039
+What does that mean?
+
+1843
+01:26:44,479 --> 01:26:45,119
+It's changing.
+
+1844
+01:26:45,119 --> 01:26:45,960
+Yes.
+
+1845
+01:26:45,960 --> 01:26:50,140
+volatile means the value can change.
+
+1846
+01:26:50,739 --> 01:26:52,699
+It can change that means volatile.
+
+1847
+01:26:53,560 --> 01:26:57,659
+Now using the keyword volatile
+
+1848
+01:26:57,659 --> 01:27:02,140
+we tell the compiler the global variable
+
+1849
+01:27:02,140 --> 01:27:06,159
+value can change. When you declare global variable
+
+1850
+01:27:06,159 --> 01:27:10,119
+we use the volatile keyword and using the
+
+1851
+01:27:10,119 --> 01:27:14,119
+keyword we tell the compiler the value of this global
+
+1852
+01:27:14,119 --> 01:27:15,800
+variable can change.
+
+1853
+01:27:16,319 --> 01:27:18,520
+Why do we tell that to the compiler?
+
+1854
+01:27:18,739 --> 01:27:20,619
+Because, let's assume
+
+1855
+01:27:20,619 --> 01:27:22,520
+you declare global variable.
+
+1856
+01:27:23,020 --> 01:27:24,260
+And the global variable,
+
+1857
+01:27:24,399 --> 01:27:26,319
+the value of the global variable would
+
+1858
+01:27:26,319 --> 01:27:28,420
+be changed within the ISR.
+
+1859
+01:27:29,199 --> 01:27:30,500
+Inside the ISR
+
+1860
+01:27:30,500 --> 01:27:32,500
+we change the value of the global variable.
+
+1861
+01:27:32,939 --> 01:27:34,460
+Right. At the time
+
+1862
+01:27:34,460 --> 01:27:35,340
+of compilation,
+
+1863
+01:27:36,699 --> 01:27:38,279
+we don't know when the
+
+1864
+01:27:38,279 --> 01:27:39,680
+ISR would be called.
+
+1865
+01:27:40,680 --> 01:27:42,220
+We don't know. So the compiler
+
+1866
+01:27:42,220 --> 01:27:44,260
+doesn't know. When ISR
+
+1867
+01:27:44,260 --> 01:27:45,140
+would be called.
+
+1868
+01:27:46,060 --> 01:27:48,039
+Compiler doesn't know at the time of compilation.
+
+1869
+01:27:48,560 --> 01:27:49,939
+The compiler will
+
+1870
+01:27:49,939 --> 01:27:52,460
+consider ISR as
+
+1871
+01:27:52,460 --> 01:27:54,020
+a function
+
+1872
+01:27:54,020 --> 01:27:56,060
+that would
+
+1873
+01:27:56,060 --> 01:27:58,300
+never execute it. At the time
+
+1874
+01:27:58,300 --> 01:28:00,100
+of compilation, compiler will
+
+1875
+01:28:00,100 --> 01:28:01,720
+consider ISR as
+
+1876
+01:28:01,720 --> 01:28:04,119
+a function which
+
+1877
+01:28:04,119 --> 01:28:05,680
+is never executed.
+
+1878
+01:28:06,319 --> 01:28:08,359
+Why? There is no calling statement.
+
+1879
+01:28:08,960 --> 01:28:10,079
+There is no calling statement.
+
+1880
+01:28:10,199 --> 01:28:12,199
+If there is a function, there should be a calling statement.
+
+1881
+01:28:12,220 --> 01:28:14,060
+but no calling statement
+
+1882
+01:28:14,060 --> 01:28:16,479
+the ISR is called automatically.
+
+1883
+01:28:17,199 --> 01:28:19,180
+So compiler doesn't know when it will be called.
+
+1884
+01:28:19,840 --> 01:28:21,500
+So compiler will recognize
+
+1885
+01:28:21,500 --> 01:28:22,399
+ISR
+
+1886
+01:28:22,399 --> 01:28:25,140
+will consider ISR as
+
+1887
+01:28:25,140 --> 01:28:27,000
+a function that is
+
+1888
+01:28:27,000 --> 01:28:29,060
+never called. Then your
+
+1889
+01:28:29,060 --> 01:28:30,539
+global variable is
+
+1890
+01:28:30,539 --> 01:28:33,239
+accessed and changed
+
+1891
+01:28:33,239 --> 01:28:35,020
+the value of the global variable is
+
+1892
+01:28:35,020 --> 01:28:36,939
+changed within the ISR.
+
+1893
+01:28:37,279 --> 01:28:39,100
+So compiler will think
+
+1894
+01:28:39,100 --> 01:28:41,000
+this global
+
+1895
+01:28:41,000 --> 01:28:42,979
+variable value would never
+
+1896
+01:28:42,979 --> 01:28:44,619
+be changed because
+
+1897
+01:28:44,619 --> 01:28:46,100
+ISR is never executed.
+
+1898
+01:28:46,880 --> 01:28:49,020
+So the global variable value would never be
+
+1899
+01:28:49,020 --> 01:28:50,899
+changed. So compiler
+
+1900
+01:28:50,899 --> 01:28:53,020
+will replace that global
+
+1901
+01:28:53,020 --> 01:28:54,920
+variable value with
+
+1902
+01:28:54,920 --> 01:28:56,939
+a constant. If it is not going
+
+1903
+01:28:56,939 --> 01:28:58,720
+to change, compiler
+
+1904
+01:28:58,720 --> 01:29:00,680
+will optimize the code
+
+1905
+01:29:00,680 --> 01:29:03,000
+by replacing the variable
+
+1906
+01:29:03,000 --> 01:29:05,140
+value with a constant.
+
+1907
+01:29:05,140 --> 01:29:07,220
+So it set to
+
+1908
+01:29:07,220 --> 01:29:08,800
+default value as constant.
+
+1909
+01:29:08,800 --> 01:29:11,359
+Now let's say you have a global variable,
+
+1910
+01:29:11,560 --> 01:29:12,739
+integer global variable
+
+1911
+01:29:12,739 --> 01:29:15,319
+and you have a default value
+
+1912
+01:29:15,319 --> 01:29:16,800
+initialized with value 5.
+
+1913
+01:29:17,380 --> 01:29:18,840
+And inside the ISR,
+
+1914
+01:29:19,539 --> 01:29:21,460
+you increment the global variable
+
+1915
+01:29:21,460 --> 01:29:23,279
+value by 1. That means value
+
+1916
+01:29:23,279 --> 01:29:25,600
+becomes 6 inside the ISR.
+
+1917
+01:29:25,960 --> 01:29:26,899
+But the compiler,
+
+1918
+01:29:27,699 --> 01:29:29,319
+at the compilation time,
+
+1919
+01:29:29,460 --> 01:29:30,840
+compiler sees,
+
+1920
+01:29:30,979 --> 01:29:33,239
+ISR is a function
+
+1921
+01:29:33,239 --> 01:29:35,520
+that is never called. So inside
+
+1922
+01:29:35,520 --> 01:29:37,319
+the ISR, global variable is
+
+1923
+01:29:37,319 --> 01:29:39,239
+incremented but compiler
+
+1924
+01:29:39,239 --> 01:29:41,079
+right compiler
+
+1925
+01:29:41,079 --> 01:29:42,579
+thinks this
+
+1926
+01:29:42,579 --> 01:29:45,460
+increment will never
+
+1927
+01:29:45,460 --> 01:29:47,420
+happen. So the global
+
+1928
+01:29:47,420 --> 01:29:48,779
+variable value 5
+
+1929
+01:29:48,779 --> 01:29:51,619
+it will remain as 5
+
+1930
+01:29:51,619 --> 01:29:53,500
+forever if it is
+
+1931
+01:29:53,500 --> 01:29:55,439
+not incremented inside
+
+1932
+01:29:55,439 --> 01:29:57,479
+the ISR and if
+
+1933
+01:29:57,479 --> 01:29:59,399
+ISR is not executed
+
+1934
+01:29:59,399 --> 01:30:01,720
+the value of the global variable
+
+1935
+01:30:01,720 --> 01:30:03,319
+will remain 5 forever.
+
+1936
+01:30:04,319 --> 01:30:04,420
+So
+
+1937
+01:30:04,420 --> 01:30:06,920
+the compiler will
+
+1938
+01:30:06,920 --> 01:30:10,220
+replace the global variable with constant fun.
+
+1939
+01:30:10,699 --> 01:30:12,460
+That is called compiler optimization.
+
+1940
+01:30:13,039 --> 01:30:14,899
+Why? Why do we need a variable?
+
+1941
+01:30:15,739 --> 01:30:17,920
+If it is not going to change,
+
+1942
+01:30:18,439 --> 01:30:19,420
+so use a constant.
+
+1943
+01:30:20,180 --> 01:30:23,680
+Why do we reserve memory for a variable,
+
+1944
+01:30:23,680 --> 01:30:28,560
+for a value that is not going to be changed?
+
+1945
+01:30:29,140 --> 01:30:31,039
+That is the argument of the compiler.
+
+1946
+01:30:31,380 --> 01:30:36,140
+That will result wrong answers in our code.
+
+1947
+01:30:36,140 --> 01:30:43,279
+So how can we a constant variable is optimized than the normal variable?
+
+1948
+01:30:43,779 --> 01:30:46,819
+Not a constant variable, it's a literal constant.
+
+1949
+01:30:47,119 --> 01:30:47,800
+Constant, yeah.
+
+1950
+01:30:48,100 --> 01:30:48,880
+Literal constant.
+
+1951
+01:30:49,420 --> 01:30:55,680
+Constant variable and a normal variable, they both require memory.
+
+1952
+01:30:56,560 --> 01:31:00,800
+But literal constants, literal constants are associated with the source code.
+
+1953
+01:31:00,800 --> 01:31:05,199
+Literal constants means, right.
+
+1954
+01:31:06,140 --> 01:31:10,520
+int x 5. This is a variable.
+
+1955
+01:31:10,979 --> 01:31:15,199
+Const, const int y 5.
+
+1956
+01:31:15,560 --> 01:31:19,039
+This is a constant. Right. Just 5.
+
+1957
+01:31:19,659 --> 01:31:23,760
+Literal constant. Now in your code, let's say you have
+
+1958
+01:31:23,760 --> 01:31:27,619
+equation. X assignment operator.
+
+1959
+01:31:28,380 --> 01:31:31,380
+Right. Let's say you have this kind of expression.
+
+1960
+01:31:31,380 --> 01:31:33,579
+x, x plus
+
+1961
+01:31:33,579 --> 01:31:35,319
+y plus
+
+1962
+01:31:35,319 --> 01:31:37,479
+5. This is literal
+
+1963
+01:31:37,479 --> 01:31:39,340
+constant. This is variable
+
+1964
+01:31:39,340 --> 01:31:41,300
+constant. This is a variable.
+
+1965
+01:31:41,960 --> 01:31:42,619
+Variable,
+
+1966
+01:31:43,420 --> 01:31:45,800
+variable constant.
+
+1967
+01:31:46,479 --> 01:31:47,500
+This is literal.
+
+1968
+01:31:48,100 --> 01:31:48,960
+Literal constant.
+
+1969
+01:31:49,380 --> 01:31:50,899
+Literal constant is just a number.
+
+1970
+01:31:51,560 --> 01:31:53,239
+So now memory reserved.
+
+1971
+01:31:53,939 --> 01:31:54,500
+Is it clear?
+
+1972
+01:31:55,260 --> 01:31:55,720
+Yes sir.
+
+1973
+01:31:57,020 --> 01:31:59,399
+The compiler will replace
+
+1974
+01:31:59,399 --> 01:32:01,399
+the entire global variable
+
+1975
+01:32:01,399 --> 01:32:02,520
+with a literal constant.
+
+1976
+01:32:03,380 --> 01:32:05,399
+If it is not going to be changed
+
+1977
+01:32:05,399 --> 01:32:07,460
+so the result of our
+
+1978
+01:32:07,460 --> 01:32:09,380
+program would be wrong
+
+1979
+01:32:09,380 --> 01:32:11,359
+then. To prevent that
+
+1980
+01:32:11,359 --> 01:32:12,960
+we have to tell the compiler
+
+1981
+01:32:12,960 --> 01:32:15,500
+this variable
+
+1982
+01:32:15,500 --> 01:32:17,340
+can be changed
+
+1983
+01:32:17,340 --> 01:32:19,420
+even though there is no
+
+1984
+01:32:19,420 --> 01:32:21,239
+calling statement for the routine
+
+1985
+01:32:21,239 --> 01:32:23,300
+even though at the
+
+1986
+01:32:23,300 --> 01:32:25,239
+compilation time we don't know
+
+1987
+01:32:25,239 --> 01:32:26,680
+when it will be changed
+
+1988
+01:32:26,680 --> 01:32:29,239
+when the ISR will be called
+
+1989
+01:32:29,239 --> 01:32:31,159
+we don't know at the compilation time.
+
+1990
+01:32:31,720 --> 01:32:33,100
+We don't know at the
+
+1991
+01:32:33,100 --> 01:32:35,159
+compilation time when the value
+
+1992
+01:32:35,159 --> 01:32:37,079
+of the global variable would be changed.
+
+1993
+01:32:37,140 --> 01:32:38,239
+We don't know. However,
+
+1994
+01:32:39,020 --> 01:32:41,279
+the value of the global variable will be
+
+1995
+01:32:41,279 --> 01:32:43,100
+changed. It can be
+
+1996
+01:32:43,100 --> 01:32:44,960
+changed. Therefore, don't
+
+1997
+01:32:44,960 --> 01:32:47,039
+optimize it. We need to tell
+
+1998
+01:32:47,039 --> 01:32:49,180
+the compiler. So how do we
+
+1999
+01:32:49,180 --> 01:32:50,159
+tell it to the compiler?
+
+2000
+01:32:50,899 --> 01:32:53,039
+We use volatile keyword.
+
+2001
+01:32:53,939 --> 01:32:55,340
+We declare the variable
+
+2002
+01:32:55,340 --> 01:32:57,000
+as volatile global
+
+2003
+01:32:57,000 --> 01:32:58,899
+variable, then compile
+
+2004
+01:32:58,899 --> 01:33:07,380
+knows somewhere in the program sometimes at somewhere the value of the global variable will
+
+2005
+01:33:07,380 --> 01:33:13,220
+be changed so compiler will not optimize the variable with a constant can you understand
+
+2006
+01:33:13,220 --> 01:33:17,220
+I don't know if you are talking about the monke.
+
+2007
+01:33:17,220 --> 01:33:23,220
+Is it a reference type or study?
+
+2008
+01:33:23,220 --> 01:33:26,220
+No, I don't know.
+
+2009
+01:33:26,220 --> 01:33:28,220
+It's a global variable.
+
+2010
+01:33:28,220 --> 01:33:31,220
+Isr is not a value of the values.
+
+2011
+01:33:31,220 --> 01:33:34,220
+If you have arguments passed,
+
+2012
+01:33:34,220 --> 01:33:36,220
+if you have a parameter,
+
+2013
+01:33:36,220 --> 01:33:38,220
+if you have a parameter,
+
+2014
+01:33:38,220 --> 01:33:41,220
+if you have a value of ISR,
+
+2015
+01:33:41,220 --> 01:33:45,859
+If you want to add value to the ISR, there is no return value.
+
+2016
+01:33:45,859 --> 01:33:48,760
+If you want to add value to the ISR,
+
+2017
+01:33:48,760 --> 01:33:52,399
+if you want to add value to the ISR,
+
+2018
+01:33:52,399 --> 01:33:54,699
+then you will use global variables.
+
+2019
+01:33:54,699 --> 01:33:57,279
+As you will use global variables,
+
+2020
+01:33:57,279 --> 01:34:01,439
+it will be declared as a global variable.
+
+2021
+01:34:01,439 --> 01:34:03,399
+At the time of compilation,
+
+2022
+01:34:03,399 --> 01:34:08,600
+there is no ISR calling statement in the compiler.
+
+2023
+01:34:08,600 --> 01:34:11,579
+in the code, there is no calling state, I have a time to go.
+
+2024
+01:34:11,579 --> 01:34:14,060
+I have a time to go, to the first to the 2-0, the one to the one-pun.
+
+2025
+01:34:14,060 --> 01:34:17,060
+to the right-ish, the more the there-sit-e-call, the one-hur, the all-futat, the that-e-call, the
+
+2026
+01:34:17,060 --> 01:34:17,960
+the to-e-call, the thet,e-call, the a-call, the
+
+2027
+01:34:17,960 --> 01:34:20,399
+I have a very good thing, to be out.
+
+2028
+01:34:20,399 --> 01:34:24,560
+I have a very good thing, to be out, to be in a very contiging, to be in a very very very very intre mh,
+
+2029
+01:34:24,560 --> 01:34:28,760
+I have a very good thing, to be in a very good thing, the one I have a very good thing,
+
+2030
+01:34:28,760 --> 01:34:30,779
+the one I have a very good thing, the one I have a very good thing,
+
+2031
+01:34:30,779 --> 01:34:31,760
+the one I have a very good thing, the one I have a very good thing,
+
+2032
+01:34:31,760 --> 01:34:32,460
+the one I have a very good thing, the one I have a very good thing,
+
+2033
+01:34:32,460 --> 01:34:32,979
+the one I have a very good thing, the one I have a thing,
+
+2034
+01:34:32,979 --> 01:34:33,460
+the one I have a really good thing, the one I have a really good thing,
+
+2035
+01:34:33,460 --> 01:34:33,939
+the one I have a really good thing, the one I have a really good thing,
+
+2036
+01:34:33,939 --> 01:34:34,340
+the one I have a really good thing, the one I have a really good thing,
+
+2037
+01:34:34,340 --> 01:34:34,640
+the one I have a really good thing, the one I have a really good thing,
+
+2038
+01:34:34,640 --> 01:34:35,000
+the one I have a really good thing, the one I have a really good thing,
+
+2039
+01:34:35,000 --> 01:34:35,260
+the one I have a really good thing, the one I have a really good thing,
+
+2040
+01:34:54,560 --> 01:35:00,560
+If you want to call it, you can optimize it.
+
+2041
+01:35:00,560 --> 01:35:06,560
+If you want to compile it, you can use the memory of the program.
+
+2042
+01:35:06,560 --> 01:35:13,560
+Try to optimize the execution time and try to optimize the memory consumption.
+
+2043
+01:35:13,560 --> 01:35:15,560
+This is the compile optimization.
+
+2044
+01:35:15,560 --> 01:35:16,579
+I have a now-gall.
+
+2045
+01:35:16,579 --> 01:35:17,479
+to theher.
+
+2046
+01:35:17,479 --> 01:35:19,100
+I have a say, to theher, the ct, the in-cg, the t,p,
+
+2047
+01:35:19,100 --> 01:35:22,779
+[unclear — Sinhala / crosstalk]
+
+2048
+01:35:22,779 --> 01:35:23,199
+the of the iso, the the the.
+
+2049
+01:35:23,199 --> 01:35:23,199
+
+
+2050
+01:35:23,199 --> 01:35:23,199
+
+
+2051
+01:35:23,199 --> 01:35:23,199
+
+
+2052
+01:35:23,199 --> 01:35:23,199
+
+
+2053
+01:35:23,199 --> 01:35:23,199
+
+
+2054
+01:35:23,199 --> 01:35:23,199
+
+
+2055
+01:35:23,199 --> 01:35:23,199
+
+
+2056
+01:35:23,199 --> 01:35:23,199
+
+
+2057
+01:35:23,199 --> 01:35:23,199
+
+
+2058
+01:35:23,199 --> 01:35:23,199
+
+
+2059
+01:35:23,199 --> 01:35:23,199
+
+
+2060
+01:35:23,199 --> 01:35:23,199
+
+
+2061
+01:35:23,199 --> 01:35:23,199
+
+
+2062
+01:35:23,199 --> 01:35:23,199
+
+
+2063
+01:35:23,199 --> 01:35:23,199
+
+
+2064
+01:35:23,199 --> 01:35:23,199
+
+
+2065
+01:35:23,199 --> 01:35:23,199
+
+
+2066
+01:35:23,199 --> 01:35:23,199
+
+
+2067
+01:35:23,199 --> 01:35:23,199
+
+
+2068
+01:35:23,199 --> 01:35:23,199
+
+
+2069
+01:35:23,199 --> 01:35:23,199
+
+
+2070
+01:35:23,199 --> 01:35:23,199
+
+
+2071
+01:35:23,199 --> 01:35:23,199
+
+
+2072
+01:35:23,199 --> 01:35:23,199
+
+
+2073
+01:35:23,199 --> 01:35:23,199
+
+
+2074
+01:35:23,199 --> 01:35:23,199
+
+
+2075
+01:35:23,199 --> 01:35:23,199
+
+
+2076
+01:35:23,199 --> 01:35:23,199
+
+
+2077
+01:35:23,199 --> 01:35:23,199
+
+
+2078
+01:35:23,199 --> 01:35:23,199
+
+
+2079
+01:35:23,199 --> 01:35:23,199
+
+
+2080
+01:35:23,199 --> 01:35:23,199
+
+
+2081
+01:35:23,199 --> 01:35:23,199
+
+
+2082
+01:35:23,199 --> 01:35:23,199
+
+
+2083
+01:35:23,199 --> 01:35:23,199
+
+
+2084
+01:35:23,199 --> 01:35:23,199
+
+
+2085
+01:35:23,199 --> 01:35:23,199
+
+
+2086
+01:35:23,199 --> 01:35:23,199
+
+
+2087
+01:35:23,199 --> 01:35:23,199
+
+
+2088
+01:35:23,199 --> 01:35:23,199
+
+
+2089
+01:35:23,199 --> 01:35:23,199
+
+
+2090
+01:35:23,199 --> 01:35:23,199
+
+
+2091
+01:35:23,199 --> 01:35:23,199
+
+
+2092
+01:35:23,199 --> 01:35:23,199
+
+
+2093
+01:35:23,199 --> 01:35:23,199
+
+
+2094
+01:35:49,100 --> 01:35:56,100
+It can be change.
+
+2095
+01:35:56,100 --> 01:36:03,100
+We use the volatile key.
+
+2096
+01:36:03,100 --> 01:36:08,100
+Can you understand?
+
+2097
+01:36:08,100 --> 01:36:11,100
+Is that clear?
+
+2098
+01:36:11,100 --> 01:36:41,100
+[unclear — Sinhala / crosstalk]
+
+2099
+01:36:41,100 --> 01:36:43,100
+complete it is our cp
+
+2100
+01:36:43,100 --> 01:36:45,100
+around time
+
+2101
+01:36:45,100 --> 01:36:47,100
+of low
+
+2102
+01:36:47,100 --> 01:36:49,100
+it is our cp
+
+2103
+01:36:49,100 --> 01:36:51,100
+it is our
+
+2104
+01:36:51,100 --> 01:36:53,100
+code
+
+2105
+01:36:53,100 --> 01:36:55,100
+it is
+
+2106
+01:36:55,100 --> 01:36:57,100
+complete
+
+2107
+01:36:57,100 --> 01:36:59,100
+we will
+
+2108
+01:36:59,100 --> 01:37:01,100
+pop up
+
+2109
+01:37:01,100 --> 01:37:03,100
+adc
+
+2110
+01:37:03,100 --> 01:37:05,100
+cp
+
+2111
+01:37:05,100 --> 01:37:07,100
+cp
+
+2112
+01:37:07,100 --> 01:37:09,100
+cp
+
+2113
+01:37:09,100 --> 01:37:10,340
+the isaqa
+
+2114
+01:37:10,340 --> 01:37:10,880
+the I mekoui
+
+2115
+01:37:10,880 --> 01:37:11,699
+the I mEaG
+
+2116
+01:37:11,699 --> 01:37:11,500
+sHG
+
+2117
+01:37:11,500 --> 01:37:10,659
+a
+
+2118
+01:37:10,659 --> 01:37:10,960
+a
+
+2119
+01:37:10,960 --> 01:37:10,960
+
+
+2120
+01:37:10,960 --> 01:37:10,979
+a
+
+2121
+01:37:10,979 --> 01:37:11,000
+a
+
+2122
+01:37:11,000 --> 01:37:11,000
+
+
+2123
+01:37:11,000 --> 01:37:11,000
+
+
+2124
+01:37:11,000 --> 01:37:11,000
+
+
+2125
+01:37:11,000 --> 01:37:11,000
+
+
+2126
+01:37:11,000 --> 01:37:11,000
+
+
+2127
+01:37:11,000 --> 01:37:11,000
+
+
+2128
+01:37:11,000 --> 01:37:11,000
+
+
+2129
+01:37:11,000 --> 01:37:11,000
+
+
+2130
+01:37:11,000 --> 01:37:11,000
+
+
+2131
+01:37:11,000 --> 01:37:11,000
+
+
+2132
+01:37:11,000 --> 01:37:11,000
+
+
+2133
+01:37:11,000 --> 01:37:11,000
+
+
+2134
+01:37:11,000 --> 01:37:11,000
+
+
+2135
+01:37:11,000 --> 01:37:11,000
+
+
+2136
+01:37:11,000 --> 01:37:11,000
+
+
+2137
+01:37:11,000 --> 01:37:11,000
+
+
+2138
+01:37:11,000 --> 01:37:11,000
+
+
+2139
+01:37:11,000 --> 01:37:11,000
+
+
+2140
+01:37:11,000 --> 01:37:11,000
+
+
+2141
+01:37:11,000 --> 01:37:11,000
+
+
+2142
+01:37:11,000 --> 01:37:11,000
+
+
+2143
+01:37:11,000 --> 01:37:11,000
+
+
+2144
+01:37:11,000 --> 01:37:11,000
+
+
+2145
+01:37:11,000 --> 01:37:11,000
+
+
+2146
+01:37:11,000 --> 01:37:11,000
+
+
+2147
+01:37:11,000 --> 01:37:11,000
+
+
+2148
+01:37:11,000 --> 01:37:11,000
+
+
+2149
+01:37:11,000 --> 01:37:11,000
+
+
+2150
+01:37:11,000 --> 01:37:11,000
+
+
+2151
+01:37:11,000 --> 01:37:11,000
+
+
+2152
+01:37:11,000 --> 01:37:11,039
+a
+
+2153
+01:37:11,039 --> 01:37:11,060
+a
+
+2154
+01:37:11,060 --> 01:37:11,060
+
+
+2155
+01:37:11,060 --> 01:37:11,100
+a
+
+2156
+01:37:11,100 --> 01:37:11,100
+
+
+2157
+01:37:11,100 --> 01:37:11,100
+
+
+2158
+01:37:11,100 --> 01:37:11,100
+
+
+2159
+01:37:11,100 --> 01:37:11,100
+
+
+2160
+01:37:11,100 --> 01:37:11,100
+
+
+2161
+01:37:11,100 --> 01:37:11,119
+a
+
+2162
+01:37:11,119 --> 01:37:11,159
+a
+
+2163
+01:37:11,159 --> 01:37:11,199
+a
+
+2164
+01:37:11,199 --> 01:37:11,199
+
+
+2165
+01:37:11,199 --> 01:37:11,199
+
+
+2166
+01:37:11,199 --> 01:37:11,199
+
+
+2167
+01:37:11,199 --> 01:37:11,199
+
+
+2168
+01:37:11,199 --> 01:37:11,199
+
+
+2169
+01:37:11,199 --> 01:37:11,199
+
+
+2170
+01:37:11,199 --> 01:37:11,199
+
+
+2171
+01:37:11,199 --> 01:37:11,199
+
+
+2172
+01:37:11,199 --> 01:37:11,199
+
+
+2173
+01:37:11,199 --> 01:37:11,199
+
+
+2174
+01:37:11,199 --> 01:37:11,199
+
+
+2175
+01:37:11,199 --> 01:37:11,199
+
+
+2176
+01:37:11,199 --> 01:37:11,199
+
+
+2177
+01:37:11,199 --> 01:37:11,199
+
+
+2178
+01:37:11,199 --> 01:37:11,199
+
+
+2179
+01:37:11,199 --> 01:37:11,199
+
+
+2180
+01:37:11,199 --> 01:37:11,199
+
+
+2181
+01:37:11,199 --> 01:37:11,199
+
+
+2182
+01:37:11,199 --> 01:37:12,199
+to the Tm.
+
+2183
+01:37:12,199 --> 01:37:45,380
+[unclear — Sinhala / crosstalk]
+
+2184
+01:37:45,380 --> 01:37:47,380
+when the sudden interrupt happens
+
+2185
+01:37:47,380 --> 01:37:49,380
+over right
+
+2186
+01:37:49,380 --> 01:37:51,380
+over right
+
+2187
+01:37:51,380 --> 01:37:53,380
+over right
+
+2188
+01:37:53,380 --> 01:37:55,380
+over right
+
+2189
+01:37:55,380 --> 01:37:57,380
+over right
+
+2190
+01:37:57,380 --> 01:37:59,380
+object oriented
+
+2191
+01:37:59,380 --> 01:38:01,380
+function over id
+
+2192
+01:38:01,380 --> 01:38:03,380
+oh
+
+2193
+01:38:03,380 --> 01:38:05,380
+oh
+
+2194
+01:38:05,380 --> 01:38:07,380
+vector
+
+2195
+01:38:07,380 --> 01:38:09,380
+the return value
+
+2196
+01:38:09,380 --> 01:38:32,779
+Other thing is these are not only for the embedded systems are these are hard computer science
+
+2197
+01:38:32,779 --> 01:38:35,119
+even in a general purpose
+
+2198
+01:38:35,119 --> 01:38:35,560
+PC
+
+2199
+01:38:35,560 --> 01:38:38,960
+if you are going to write an OS
+
+2200
+01:38:38,960 --> 01:38:42,760
+if you are a system
+
+2201
+01:38:42,760 --> 01:38:44,960
+program, if you are going to write an
+
+2202
+01:38:44,960 --> 01:38:46,880
+operating system, you should have
+
+2203
+01:38:46,880 --> 01:38:47,600
+this knowledge
+
+2204
+01:38:47,600 --> 01:38:54,460
+what else?
+
+2205
+01:38:54,579 --> 01:38:55,899
+what are the other questions you have?
+
+2206
+01:38:56,420 --> 01:38:57,960
+Thilina, Sri Anjit
+
+2207
+01:38:57,960 --> 01:38:59,300
+any questions?
+
+2208
+01:38:59,779 --> 01:39:00,439
+no sir
+
+2209
+01:39:00,439 --> 01:39:14,420
+Right. Then that is about ISR. When ISR is in execution, interrupts are disabled to prevent any more interrupts while handling one interrupt.
+
+2210
+01:39:14,420 --> 01:39:30,279
+Therefore, ISR must be short to prevent another interrupt passed without detecting. ISR must be short to prevent another event passed without interrupting.
+
+2211
+01:39:30,439 --> 01:39:41,420
+Now if this ADC vector ISR is very lengthy, while running this ISR, timer may overflow.
+
+2212
+01:39:41,420 --> 01:39:54,420
+But that time overflow event may pass without interrupting the CPU because interrupts you have disabled to run the ADC ISR.
+
+2213
+01:39:54,420 --> 01:40:00,779
+To prevent that, you have to write ISR, very short ISR.
+
+2214
+01:40:01,119 --> 01:40:06,880
+So therefore, it is programmer's responsibility to write short ISR.
+
+2215
+01:40:07,260 --> 01:40:08,840
+Don't write long ISR.
+
+2216
+01:40:09,199 --> 01:40:10,579
+So short ISR.
+
+2217
+01:40:10,979 --> 01:40:16,659
+Then another function we have related to another routine related to interrupts.
+
+2218
+01:40:16,960 --> 01:40:18,899
+We have set interrupt routine.
+
+2219
+01:40:18,899 --> 01:40:23,880
+That is SEI, set interrupt routine.
+
+2220
+01:40:24,420 --> 01:40:31,220
+If you want to enable all interrupts in the system, you can use this routine.
+
+2221
+01:40:32,260 --> 01:40:38,819
+Globally enable interrupts. If you want to globally enable interrupts, all interrupts in the system.
+
+2222
+01:40:39,380 --> 01:40:45,939
+You want to enable. This is the function that you should use. Globally enable interrupts.
+
+2223
+01:40:45,939 --> 01:40:51,939
+The same way if you want to disable interrupts. Clear interrupt function CLI.
+
+2224
+01:40:51,939 --> 01:41:00,699
+you can disable all interrupts in the system by default all interrupts are disabled to save power
+
+2225
+01:41:00,699 --> 01:41:06,960
+right because this interrupt is a hardware mechanism it consumes power to save power
+
+2226
+01:41:06,960 --> 01:41:13,199
+by default interrupts are disabled whenever you want to enable interrupts you enable them
+
+2227
+01:41:13,199 --> 01:41:19,840
+right for that you can use set interrupt routine to disable interrupts you can use
+
+2228
+01:41:19,840 --> 01:41:31,420
+clear interrupt CLI routine. And these routines, SCI, CLI and also interrupt vectors, ISR vectors
+
+2229
+01:41:31,420 --> 01:41:42,960
+for ISR, they are defined in a header file called interrupt.h. That means if you are using interrupts
+
+2230
+01:41:42,960 --> 01:41:48,939
+In your firmware, you have to include interrupt.h header file.
+
+2231
+01:41:49,340 --> 01:41:51,340
+Interrupt.h header file.
+
+2232
+01:41:51,800 --> 01:41:52,000
+Right.
+
+2233
+01:41:52,100 --> 01:41:54,699
+You have to use interrupt.h header file.
+
+2234
+01:41:55,199 --> 01:41:55,760
+Any question?
+
+2235
+01:41:56,479 --> 01:41:56,899
+Right.
+
+2236
+01:41:57,720 --> 01:42:00,899
+Now next we have to talk about interrupt registers.
+
+2237
+01:42:02,399 --> 01:42:09,079
+Before we do that, I think it's better you go through what we have discussed so far.
+
+2238
+01:42:09,079 --> 01:42:10,520
+and understand
+
+2239
+01:42:10,520 --> 01:42:13,579
+how these interrupts work.
+
+2240
+01:42:14,039 --> 01:42:15,659
+Thereafter we can talk about
+
+2241
+01:42:15,659 --> 01:42:17,220
+interrupt related register.
+
+2242
+01:42:17,760 --> 01:42:19,579
+Therefore, I am
+
+2243
+01:42:19,579 --> 01:42:20,720
+going to stop now.
+
+2244
+01:42:21,260 --> 01:42:22,640
+Any question you have?
+
+2245
+01:42:23,380 --> 01:42:24,239
+One of the questions you have?
+
+2246
+01:42:25,619 --> 01:42:26,960
+Interrupt registers are
+
+2247
+01:42:26,960 --> 01:42:28,960
+all over, all over, all over.
+
+2248
+01:42:28,960 --> 01:42:30,979
+I want you
+
+2249
+01:42:30,979 --> 01:42:31,899
+to go through
+
+2250
+01:42:31,899 --> 01:42:34,920
+what we have discussed so far.
+
+2251
+01:42:35,220 --> 01:42:36,840
+Then read the recommended
+
+2252
+01:42:36,840 --> 01:42:38,140
+reference textbook
+
+2253
+01:42:38,140 --> 01:42:45,600
+and get the things cleared related to interrupts and then come so we can discuss interrupt register
+
+2254
+01:42:45,600 --> 01:42:53,619
+right these things are not straightforward these things are not very simple this is actually hard
+
+2255
+01:42:53,619 --> 01:43:03,939
+computer science computer science we have a sugar-coded version of computing
+
+2256
+01:43:03,939 --> 01:43:09,520
+the mycall the the real computer program a
+
+2257
+01:43:09,520 --> 01:43:10,859
+the therein a yourc
+
+2258
+01:43:10,859 --> 01:43:12,760
+the real computer programy thadh of a
+
+2259
+01:43:12,760 --> 01:43:12,260
+the o-c-bkddh a
+
+2260
+01:43:12,260 --> 01:43:21,260
+So, we use the OSG, we use the libraries, we use the sugar-coated version.
+
+2261
+01:43:21,260 --> 01:43:27,260
+We use the same as the other people who use it, we use the same as the other people.
+
+2262
+01:43:27,260 --> 01:43:32,260
+We use the same as the other people.
+
+2263
+01:43:32,260 --> 01:43:35,260
+We use the same as the other people we use.
+
+2264
+01:43:35,260 --> 01:43:39,260
+You think sometimes beyond what we have discussed.
+
+2265
+01:43:39,260 --> 01:43:41,260
+That's really good sign.
+
+2266
+01:43:41,260 --> 01:43:52,260
+If you are planning a computer science career in the future,
+
+2267
+01:43:52,260 --> 01:43:55,260
+you will need to do this in the future.
+
+2268
+01:43:55,260 --> 01:43:58,260
+Not IT, IT is the sugar coated version.
+
+2269
+01:43:58,260 --> 01:44:04,260
+If you are planning a computer science career,
+
+2270
+01:44:04,260 --> 01:44:09,260
+you will need to make your knowledge.
+
+2271
+01:44:09,260 --> 01:44:20,260
+There is no need to access the register, the interrupts, the performance, the code, the
+
+2272
+01:44:20,260 --> 01:44:30,260
+compiler optimization, the data types misuse, the volatile variables.
+
+2273
+01:44:30,260 --> 01:44:45,100
+Actually hackers are good programmers.
+
+2274
+01:44:45,100 --> 01:44:53,720
+They exploit recursive functions to crash systems.
+
+2275
+01:44:53,720 --> 01:45:00,939
+But you must know these things are possible.
+
+2276
+01:45:01,659 --> 01:45:03,479
+There are two schools.
+
+2277
+01:45:04,899 --> 01:45:10,199
+The white hat hackers and black hat hackers.
+
+2278
+01:45:10,760 --> 01:45:11,739
+The white hat.
+
+2279
+01:45:12,739 --> 01:45:16,520
+Black hat.
+
+2280
+01:45:16,520 --> 01:45:22,359
+If you are really interested about these
+
+2281
+01:45:22,359 --> 01:45:24,539
+hardcore computer science
+
+2282
+01:45:24,539 --> 01:45:26,520
+read about the classical
+
+2283
+01:45:26,520 --> 01:45:29,000
+computer science problems that I mentioned
+
+2284
+01:45:29,000 --> 01:45:30,119
+earlier.
+
+2285
+01:45:31,039 --> 01:45:32,079
+Towers of Hanoi,
+
+2286
+01:45:32,619 --> 01:45:34,100
+Sleeping Barbers problem,
+
+2287
+01:45:34,819 --> 01:45:36,460
+Dining Philosopher's problem.
+
+2288
+01:45:36,460 --> 01:45:37,500
+What are they?
+
+2289
+01:45:37,819 --> 01:45:39,779
+They are algorithms.
+
+2290
+01:45:40,659 --> 01:45:42,300
+They are code.
+
+2291
+01:45:43,300 --> 01:45:43,939
+They are study.
+
+2292
+01:45:44,899 --> 01:45:45,460
+They are study.
+
+2293
+01:45:47,279 --> 01:45:48,159
+Unfortunately,
+
+2294
+01:45:48,640 --> 01:45:50,460
+our degree program is management
+
+2295
+01:45:50,460 --> 01:45:52,619
+and IT, the computing
+
+2296
+01:45:52,619 --> 01:45:54,619
+emphasis is not that much.
+
+2297
+01:45:55,500 --> 01:45:56,600
+Right. But when
+
+2298
+01:45:56,600 --> 01:45:58,640
+you pass out, when you go to the industry,
+
+2299
+01:45:58,779 --> 01:46:00,699
+if you have that computing
+
+2300
+01:46:00,699 --> 01:46:02,239
+hardcore background,
+
+2301
+01:46:02,579 --> 01:46:04,520
+then you have the edge. You can
+
+2302
+01:46:04,520 --> 01:46:06,760
+compete with people coming from UCSC,
+
+2303
+01:46:06,939 --> 01:46:08,279
+people coming from Monotone.
+
+2304
+01:46:08,800 --> 01:46:10,640
+If you have that edge, that is
+
+2305
+01:46:10,640 --> 01:46:12,500
+the edge
+
+2306
+01:46:12,500 --> 01:46:13,619
+that they use
+
+2307
+01:46:13,619 --> 01:46:15,960
+in the industry.
+
+2308
+01:46:16,399 --> 01:46:18,760
+They have that hardcore computer science background.
+
+2309
+01:46:19,380 --> 01:46:19,960
+Right. Therefore,
+
+2310
+01:46:20,460 --> 01:46:23,520
+Go through what we have discussed so far.
+
+2311
+01:46:24,420 --> 01:46:28,520
+Read the relevant chapters in the recommended textbook.
+
+2312
+01:46:28,680 --> 01:46:30,399
+There's a relevant chapter interrupt.
+
+2313
+01:46:30,899 --> 01:46:33,180
+There's a chapter for interrupts.
+
+2314
+01:46:34,039 --> 01:46:35,239
+Read that chapter.
+
+2315
+01:46:36,239 --> 01:46:38,979
+Try to understand how interrupts work.
+
+2316
+01:46:40,140 --> 01:46:45,800
+And come the next week, we'll discuss about interrupt registers
+
+2317
+01:46:45,800 --> 01:46:50,239
+and try to write a couple of firmware using interrupts.
+
+2318
+01:46:50,460 --> 01:46:53,199
+Any question, anything you want to know?
+
+2319
+01:46:53,859 --> 01:47:00,180
+Sir, how do we check the PIN register in the assembly?
+
+2320
+01:47:00,840 --> 01:47:01,779
+PIN register?
+
+2321
+01:47:03,159 --> 01:47:03,979
+Ah, PIN.
+
+2322
+01:47:04,359 --> 01:47:05,039
+Right, okay.
+
+2323
+01:47:06,319 --> 01:47:09,779
+You are talking about the second assignment.
+
+2324
+01:47:10,520 --> 01:47:11,220
+Yes, sir.
+
+2325
+01:47:11,460 --> 01:47:12,319
+Right, okay.
+
+2326
+01:47:13,359 --> 01:47:19,119
+Now, I have given you a recommended textbook.
+
+2327
+01:47:19,119 --> 01:47:21,420
+in that textbook is
+
+2328
+01:47:21,420 --> 01:47:23,699
+M-B-R-E-P system programming
+
+2329
+01:47:23,699 --> 01:47:25,399
+using assembly and C.
+
+2330
+01:47:25,939 --> 01:47:27,760
+Could you find a time to go through
+
+2331
+01:47:27,760 --> 01:47:29,840
+that? I can simply give
+
+2332
+01:47:29,840 --> 01:47:31,699
+you the answer. Then you
+
+2333
+01:47:31,699 --> 01:47:33,840
+won't learn. I want you to learn.
+
+2334
+01:47:35,979 --> 01:47:37,340
+Yes, sir. I will.
+
+2335
+01:47:38,060 --> 01:47:39,880
+Right. Go through that.
+
+2336
+01:47:40,659 --> 01:47:41,720
+Excuse me, sir.
+
+2337
+01:47:42,060 --> 01:47:43,840
+Yes. For that,
+
+2338
+01:47:43,979 --> 01:47:45,840
+sir, can't we
+
+2339
+01:47:45,840 --> 01:47:47,439
+use compare immediate?
+
+2340
+01:47:47,439 --> 01:48:05,439
+It's like a compare immediate zero and the pin register zero and you want to see whether
+
+2341
+01:48:05,439 --> 01:48:06,600
+a particular
+
+2342
+01:48:06,600 --> 01:48:09,960
+pin is low or high.
+
+2343
+01:48:10,600 --> 01:48:11,180
+Right.
+
+2344
+01:48:13,000 --> 01:48:14,039
+One
+
+2345
+01:48:14,039 --> 01:48:15,479
+option is
+
+2346
+01:48:15,479 --> 01:48:16,979
+yes
+
+2347
+01:48:16,979 --> 01:48:19,319
+you can
+
+2348
+01:48:19,319 --> 01:48:22,159
+there's an instruction
+
+2349
+01:48:22,159 --> 01:48:23,199
+called
+
+2350
+01:48:23,199 --> 01:48:25,199
+SBIC.
+
+2351
+01:48:26,479 --> 01:48:27,399
+SBIC.
+
+2352
+01:48:28,060 --> 01:48:29,659
+Assembly instruction called
+
+2353
+01:48:29,659 --> 01:48:30,619
+SBIC.
+
+2354
+01:48:32,140 --> 01:48:33,920
+Now with that
+
+2355
+01:48:33,920 --> 01:48:45,460
+If you use pin register and a bit, particular bit, you can skip the execution of next line, right?
+
+2356
+01:48:45,840 --> 01:48:48,479
+If the specified bit is clear.
+
+2357
+01:48:49,140 --> 01:48:57,539
+For example, let's say now your switch, push button switch is connected to PD2.
+
+2358
+01:48:58,199 --> 01:48:58,859
+Am I right?
+
+2359
+01:48:59,479 --> 01:48:59,880
+Yes, sir.
+
+2360
+01:49:00,140 --> 01:49:00,859
+Yeah, PD2.
+
+2361
+01:49:00,859 --> 01:49:06,079
+That means the number 2 bit of PIN D register.
+
+2362
+01:49:06,579 --> 01:49:13,760
+So if you use SDIC PIN D comma 2.
+
+2363
+01:49:14,239 --> 01:49:17,000
+This instruction, this assembly instruction.
+
+2364
+01:49:17,739 --> 01:49:24,340
+This means skip the next if bit 0 is clear.
+
+2365
+01:49:24,340 --> 01:49:28,100
+Skip the next instruction.
+
+2366
+01:49:28,100 --> 01:49:31,020
+if the bit 0 is clear.
+
+2367
+01:49:32,100 --> 01:49:33,340
+If the bit is clear, sorry.
+
+2368
+01:49:34,220 --> 01:49:36,939
+Next, skip the next instruction.
+
+2369
+01:49:37,819 --> 01:49:39,779
+If the bit
+
+2370
+01:49:39,779 --> 01:49:44,539
+is clear, I can't exactly
+
+2371
+01:49:44,539 --> 01:49:46,899
+remember the correct meaning, right?
+
+2372
+01:49:46,899 --> 01:49:50,220
+You have to read the relevant book
+
+2373
+01:49:50,220 --> 01:49:53,000
+then you can get the exact meaning of this SPIC.
+
+2374
+01:49:53,920 --> 01:49:56,220
+Right? So simply the idea is
+
+2375
+01:49:56,220 --> 01:49:57,859
+skip the next instruction.
+
+2376
+01:49:58,100 --> 01:50:05,399
+If the particular specified bit in this case bit number 2 of this register is clear.
+
+2377
+01:50:05,960 --> 01:50:09,939
+Now if you have pressed the button the bit number 2 is clear.
+
+2378
+01:50:10,720 --> 01:50:11,439
+Zero.
+
+2379
+01:50:12,060 --> 01:50:15,699
+So if it is zero skip the next line.
+
+2380
+01:50:16,340 --> 01:50:19,819
+Next line could be called delay.
+
+2381
+01:50:20,600 --> 01:50:21,640
+Your delay subroutine.
+
+2382
+01:50:21,640 --> 01:50:34,880
+now the question ask you to delay the blink the LED in to 400 milliseconds
+
+2383
+01:50:34,880 --> 01:50:41,819
+yeah 400 milliseconds if the button is released if the button is pressed 200
+
+2384
+01:50:41,819 --> 01:50:48,800
+milliseconds right now if the button is pressed the bit number two is clear so
+
+2385
+01:50:48,800 --> 01:50:51,619
+So if the bit number 2 is clear, skip this.
+
+2386
+01:50:52,100 --> 01:50:56,420
+So you can write a function to delay 200 milliseconds.
+
+2387
+01:50:56,939 --> 01:51:01,560
+And you can call that function twice to get the 400 millisecond delay.
+
+2388
+01:51:02,119 --> 01:51:05,319
+And if the button is pressed, skip one delay.
+
+2389
+01:51:06,199 --> 01:51:09,640
+Then your blinking rate would be 200 milliseconds.
+
+2390
+01:51:09,640 --> 01:51:12,840
+Can you understand what I explained?
+
+2391
+01:51:13,359 --> 01:51:13,920
+Good.
+
+2392
+01:51:14,539 --> 01:51:14,859
+Right.
+
+2393
+01:51:14,859 --> 01:51:24,220
+You can have a routine function called delay which delays the execution for 200 milliseconds.
+
+2394
+01:51:24,739 --> 01:51:29,180
+If you call that function twice, you get the 400 milliseconds delay.
+
+2395
+01:51:30,180 --> 01:51:38,500
+But if the button is pressed using this SBIC instruction, you can skip the next instruction and skip one delay.
+
+2396
+01:51:39,060 --> 01:51:41,159
+So, your blinking rate will be 200 milliseconds.
+
+2397
+01:51:41,159 --> 01:51:46,420
+I think that would be enough for you to move further.
+
+2398
+01:51:47,420 --> 01:52:08,640
+If I can give you the source code and everything, then what happens is you will be good type, not good programmers, you can be good typists.
+
+2399
+01:52:08,640 --> 01:52:20,640
+You have to be programmers.
+
+2400
+01:52:20,640 --> 01:52:29,640
+You have to be programmers.
+
+2401
+01:52:29,640 --> 01:52:33,640
+Nirasha, this is the instruction that you need.
+
+2402
+01:52:33,640 --> 01:52:34,640
+Thank you.
+
+2403
+01:52:34,640 --> 01:52:35,439
+right.
+
+2404
+01:52:37,439 --> 01:52:42,060
+What else you want to know?
+
+2405
+01:52:42,640 --> 01:52:45,739
+Now if you want to toggle an LED,
+
+2406
+01:52:46,600 --> 01:52:48,380
+toggle a pin, you have to use
+
+2407
+01:52:48,380 --> 01:52:51,319
+exclusive O operator.
+
+2408
+01:52:52,220 --> 01:52:55,239
+Exclusive O operator in assembly is EOR.
+
+2409
+01:52:55,239 --> 01:52:58,000
+EOR is the
+
+2410
+01:52:58,000 --> 01:53:00,659
+assembly instruction for exclusive O.
+
+2411
+01:53:01,560 --> 01:53:04,039
+EOR. So other than that
+
+2412
+01:53:04,039 --> 01:53:06,680
+other instructions you already know.
+
+2413
+01:53:07,380 --> 01:53:08,380
+You know SBI,
+
+2414
+01:53:09,239 --> 01:53:09,920
+CBI,
+
+2415
+01:53:10,800 --> 01:53:12,760
+LDI, BRNE,
+
+2416
+01:53:13,680 --> 01:53:14,300
+DEC,
+
+2417
+01:53:15,520 --> 01:53:16,180
+JMP,
+
+2418
+01:53:17,039 --> 01:53:18,560
+call, then
+
+2419
+01:53:18,560 --> 01:53:20,619
+RET, return.
+
+2420
+01:53:21,439 --> 01:53:22,920
+Other instructions you know.
+
+2421
+01:53:23,479 --> 01:53:24,899
+These are the two critical instructions
+
+2422
+01:53:24,899 --> 01:53:26,020
+you should know. One is
+
+2423
+01:53:26,020 --> 01:53:28,279
+if you want to toggle the
+
+2424
+01:53:28,279 --> 01:53:30,819
+state of a particular pin, you have to use
+
+2425
+01:53:30,819 --> 01:53:32,619
+exclusive O operator.
+
+2426
+01:53:32,619 --> 01:53:35,060
+the assembly instruction is EOR.
+
+2427
+01:53:35,880 --> 01:53:36,119
+And
+
+2428
+01:53:36,119 --> 01:53:38,699
+if a particular
+
+2429
+01:53:38,699 --> 01:53:40,279
+register bit is clear,
+
+2430
+01:53:41,119 --> 01:53:42,619
+if you want to skip the next
+
+2431
+01:53:42,619 --> 01:53:44,539
+instruction, you can use
+
+2432
+01:53:44,539 --> 01:53:46,100
+SBIC instruction.
+
+2433
+01:53:46,399 --> 01:53:48,640
+SBIC instruction. So, using
+
+2434
+01:53:48,640 --> 01:53:50,619
+that instruction, you can skip the
+
+2435
+01:53:50,619 --> 01:53:52,380
+next instruction if
+
+2436
+01:53:52,380 --> 01:53:54,840
+a particular bit of a register
+
+2437
+01:53:54,840 --> 01:53:56,619
+is clear. Clear means
+
+2438
+01:53:56,619 --> 01:53:58,119
+zero. What else?
+
+2439
+01:53:58,119 --> 01:54:00,199
+How to
+
+2440
+01:54:00,199 --> 01:54:02,260
+get the 400 millisecond delay
+
+2441
+01:54:02,260 --> 01:54:04,659
+without calling two times delay.
+
+2442
+01:54:06,239 --> 01:54:08,859
+Then if you are going to use,
+
+2443
+01:54:09,560 --> 01:54:11,819
+if you are going to have a delay loop
+
+2444
+01:54:11,819 --> 01:54:14,760
+with 400 milliseconds delay, right?
+
+2445
+01:54:15,680 --> 01:54:19,119
+And then when the button press,
+
+2446
+01:54:19,180 --> 01:54:21,140
+you want to get 200 milliseconds delay,
+
+2447
+01:54:21,260 --> 01:54:23,619
+you need to write two loops, two delay loops.
+
+2448
+01:54:24,239 --> 01:54:26,779
+That's not very efficient way, right?
+
+2449
+01:54:27,220 --> 01:54:30,619
+Better to write two delay loops for 200 milliseconds
+
+2450
+01:54:30,619 --> 01:54:32,640
+and call it twice
+
+2451
+01:54:32,640 --> 01:54:34,619
+to get 400 milliseconds.
+
+2452
+01:54:35,180 --> 01:54:35,500
+If you want
+
+2453
+01:54:35,500 --> 01:54:38,039
+400 milliseconds,
+
+2454
+01:54:38,340 --> 01:54:40,539
+that's no point.
+
+2455
+01:54:41,000 --> 01:54:42,739
+Then your program would be very lengthy.
+
+2456
+01:54:43,619 --> 01:54:44,199
+Not even
+
+2457
+01:54:44,199 --> 01:54:45,680
+400.
+
+2458
+01:54:45,939 --> 01:54:48,279
+If you want one second delay,
+
+2459
+01:54:48,380 --> 01:54:49,600
+you can achieve. You need to
+
+2460
+01:54:49,600 --> 01:54:51,399
+nested many loops.
+
+2461
+01:54:52,079 --> 01:54:58,359
+Then you can get
+
+2462
+01:54:58,359 --> 01:55:00,119
+the delay, whatever the delay you require.
+
+2463
+01:55:00,619 --> 01:55:04,880
+Probably you may need two more assembly instructions.
+
+2464
+01:55:05,640 --> 01:55:07,699
+In instruction and out instruction.
+
+2465
+01:55:08,340 --> 01:55:17,479
+In instruction in assembly if you want to assign a value of a register, port register to a general purpose register.
+
+2466
+01:55:17,479 --> 01:55:21,199
+Like R17, R16 like general purpose register.
+
+2467
+01:55:21,500 --> 01:55:24,220
+If you want to assign a value of a port register.
+
+2468
+01:55:24,819 --> 01:55:30,039
+Like port BO, pin BO, DDRB that kind of register value.
+
+2469
+01:55:30,039 --> 01:55:36,760
+if you want to assign to a general purpose register you can use in instruction and if you want to
+
+2470
+01:55:37,960 --> 01:55:46,680
+out right the value of a general purpose register to a port register you can use out instruction
+
+2471
+01:55:46,680 --> 01:55:54,439
+probably you may need those two instructions as well in and out mainly you need this sbic
+
+2472
+01:55:54,439 --> 01:55:57,420
+and EOR. EOR you need to
+
+2473
+01:55:57,420 --> 01:55:59,439
+toggle. SBIC you need
+
+2474
+01:55:59,439 --> 01:56:00,859
+to skip the delay function.
+
+2475
+01:56:01,220 --> 01:56:01,579
+Delay
+
+2476
+01:56:01,579 --> 01:56:04,939
+calling of delay function.
+
+2477
+01:56:05,539 --> 01:56:07,140
+Right. So that you can have
+
+2478
+01:56:07,140 --> 01:56:08,539
+200 milliseconds delay.
+
+2479
+01:56:09,020 --> 01:56:10,239
+If you don't skip the
+
+2480
+01:56:10,239 --> 01:56:13,100
+200 milliseconds delay then you get the
+
+2481
+01:56:13,100 --> 01:56:14,739
+400 milliseconds delay.
+
+2482
+01:56:14,739 --> 01:56:16,920
+Two times you call the delay.
+
+2483
+01:56:17,380 --> 01:56:17,939
+What else?
+
+2484
+01:56:19,020 --> 01:56:19,420
+Thank you.
+
+2485
+01:56:21,060 --> 01:56:22,720
+Others? Any question?
+
+2486
+01:56:22,720 --> 01:56:32,000
+right if so that's all for today yeah thank you thank you sir thank you thank you
+

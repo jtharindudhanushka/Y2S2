@@ -1,0 +1,108 @@
+[0:01] Then set the PWM frequency as 1 kilohertz.
+[0:07] Set the PWM frequency as 1 kilohertz.
+[0:11] Now we know that the equation, what is our equation?
+[0:17] Our equation is FPWM equals FCPU divided by top plus 1 multiplied by prescale.
+[0:30] FCPU, you have to put it in hertz, divide the 6 megahertz, 16 megahertz, sorry, right.
+[0:38] And this is 8 bit timer, 255 maximum value plus 1 multiplied by prescale.
+[0:45] So what is the pre-scale that we have to use to get 1000 Hz PWM frequency?
+[0:55] So we need to reorganize this equation.
+[0:59] Pre-scale, FCPU, divided by, top plus one, multiplied by, FPWM, hertz, 16 megahertz, 255 plus one, top is 255, 1000 hertz, PWM frequency, 1000 hertz.
+[1:17] Calculate, right? You get a value 62.5 when you do the calculation. 62.5 as the result. Now, we don't have a pre-scale equal to 64.5, but we have a pre-scale 64, which is the nearest pre-scale value we have.
+[1:44] So use that 64.
+[1:47] When you use 64 you can't get 1 kilohertz.
+[1:50] Because if you use 64.
+[1:54] 62.5 then only you get 1 kilohertz.
+[1:58] 1 kilohertz.
+[1:59] Here we use 1 kilohertz.
+[2:01] But if you use 64 you get something less than 1 kilohertz.
+[2:07] Something around 950.
+[2:10] I don't know.
+[2:11] You have to calculate.
+[2:12] Right.
+[2:12] something little bit something little bit less than one kilohertz you cannot get exactly one
+[2:21] kilohertz huh right because if you want to get one kilohertz this is the pre-scale you have to use
+[2:28] 62.5 but that kind of pre-scale we don't have but we have 64 pre-scale so better to use 64 pre-scale
+[2:37] and get a PWM frequency closer to 1 kilohertz.
+[2:43] Not exactly.
+[2:45] So exact frequency would be when you calculate,
+[2:48] let me calculate.
+[2:49] Exact, if you put 64 pre-scale,
+[2:53] use this one, your exact frequency would be
+[2:57] 976.5 hertz, not 1000.
+[3:04] That's the exact frequency you get.
+[3:08] Can you understand?
+[3:09] Can you understand this calculation?
+[3:11] Any question?
+[3:12] One of you are going to get a loop?
+[3:14] Right.
+[3:14] No questions.
+[3:16] Then.
+[3:17] Right.
+[3:18] Now we set the frequency.
+[3:20] Then.
+[3:21] Endless loop.
+[3:23] Inside the endless loop.
+[3:25] We run another loop.
+[3:26] A full loop.
+[3:28] Right.
+[3:29] Starting from 255.
+[3:30] Loop condition is greater than O equals 0
+[3:34] And decrement the value
+[3:37] Every iteration decrement the value by 5
+[3:40] And that value you get
+[3:43] You assign to OCRA register
+[3:45] So the first time value is 255
+[3:48] That means direct 5 volts at OCAP
+[3:52] Then you gradually decrease the value
+[3:55] Every time by 5
+[3:57] And there is a 30 milliseconds small delay
+[4:00] to make the fading visible.
+[4:04] So if you connect an oscilloscope to the OC pin
+[4:09] and if you see the pulse with modulated signal from the OC pin
+[4:13] this kind of output you would see.
+[4:16] So initially the percentage of time that the output is high is more.
+[4:22] Then gradually you reduce the percentage of time that the output is high
+[4:27] in one clock cycle.
+[4:29] That means you gradually reduce the voltage at OC.
+[4:33] So as a result, the LED connected to the OC pin, you will see a gradual fading effect.
+[4:40] When the pulse width becomes 0, you again set it to 255 and run the loop.
+[4:50] That means you fade the LED to 0 and then again to full brightness.
+[4:55] Again gradually reduce the brightness.
+[4:58] Can you understand this code? Any question? No. Right. So the same program using hexadecimal constant. Instead of writing lengthy binary values, you can use hexadecimal constant. Same program. And same program using label constant. Right. And finally, how can we do this using Arduino wrapper function?
+[5:23] algorithm for what do you know? So first we declare the LED connected pin, pin number 6 which is PWM supported. Then in the setup function we configure that pin as output pin. Then in the loop function we set pulse width to 255 and then gradually we reduce that value.
+[5:49] If the pulse width greater than 0, output pulses with specified width from LED pin, 30 millisecond delay, decrement by 5.
+[6:01] The same thing.
+[6:02] Gradually decrease the pulse width, right, in every iteration by 5.
+[6:09] So by doing that, you can gradually reduce the voltage of the pin number 6.
+[6:16] And we have introduced 30 millisecond delay to make the fading visible and the firmware.
+[6:26] Right.
+[6:27] Declare the pin, pin number 6 as LED pin.
+[6:31] Configure the pin as output pin using pin mode wrapper function.
+[6:36] Run a loop.
+[6:38] Within the loop function run a for loop from 255 to 0.
+[6:44] every iteration decrement the
+[6:48] loop count by 5
+[6:50] similar to previous C program
+[6:53] right
+[6:53] the only difference
+[6:55] is in the C program
+[6:58] you have to specify all the values
+[7:01] to registers
+[7:02] you have to specify the waveform generation mode
+[7:05] you have to specify the compare
+[7:07] match mode
+[7:08] you have to specify the PWM frequency
+[7:11] all these things you have to do
+[7:13] But in Arduino, you don't need to do anything because everything is handled behind the scene.
+[7:22] Only thing is you have to use this wrapper function.
+[7:25] Analog write.
+[7:26] Analog write.
+[7:27] Which pin you want to output the PWM pulses?
+[7:33] Pin number 6.
+[7:34] And what is the width of the PWM signal?
+[7:38] You start with 255.
+[7:40] That means direct 5 voltage.
+[7:43] And then gradually you reduce the pulse width, right?
+[7:46] So voltage is reduced on pin number 6.
+[7:51] Every 30 milliseconds you decrement 5 from the pulse width.
+[7:56] So you don't need to specify the waveform generation mode.

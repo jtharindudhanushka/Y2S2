@@ -1,0 +1,164 @@
+[0:00] Right. Now, today we are going to discuss a new topic, pulse width modulation. Right. Last week we discussed about timers and the pulse width modulation is related to timers. So with that knowledge we can proceed.
+[0:22] Now, so far we have discussed how to get digital input from a sensor, how to capture a digital input from a sensor.
+[0:35] In other words, state of real world, state of physical world, how to capture using a digital sensor, we discussed.
+[0:45] Then we discussed how to change the state of physical world with a digital actuator.
+[0:52] We turn on a light, turn off a light.
+[0:56] So we illuminate the physical world, then we turn the physical world into dark.
+[1:02] So it's a change of state of the physical world using a digital actuate.
+[1:10] Now capture the state of physical world.
+[1:14] For example, push button.
+[1:16] When you press the button, one state.
+[1:19] When you release the button, a different state.
+[1:21] We can capture the state of physical world.
+[1:25] And we discuss about some sensors, transducers, to capture state of physical world.
+[1:35] The flame sensor, it's a digital sensor.
+[1:39] So which using that we can capture whether there's a flame or not in the physical world.
+[1:44] Then we discuss about how to capture state of physical world, the variation of the state of physical world.
+[1:53] Continuous variation of the state of physical world using analog sensors.
+[1:58] The variation of light, variation of temperature.
+[2:02] So likewise, the state of physical world state is a variation.
+[2:09] It's a continuous variation, not a discrete.
+[2:11] Now, how to capture them using analog sensors?
+[2:16] For example, using a light dependent resistor or LDR or using LM35 like temperature sensors, right?
+[2:25] And also under transducers, we discuss about soil moisture sensor, water level sensor, gas sensor, MQ2 gas sensor for LPG, right?
+[2:39] So the gas concentration, the variation of the gas concentration, it's not discrete, it's a continuous.
+[2:46] How to capture using analog cells.
+[2:49] But so far, we couldn't touch, we couldn't discuss how to change the state of physical world using analog actuator.
+[3:00] Now we know how to turn on a light, turn off a light.
+[3:03] Doing that, we can change the state of physical world.
+[3:05] When you turn off the light, physical world is dark.
+[3:09] When you turn on the light, physical world, you can illuminate.
+[3:12] Change of state.
+[3:14] But can't you do that gradually, continuously?
+[3:19] For example, can't we dim a light?
+[3:23] Not to turn off, not to turn on, but to dim.
+[3:29] If the actuator is a motor,
+[3:32] right we know how to turn off the motor we know how to couple a motor interface a high power
+[3:40] actuator to a microcontroller using a BJT transistor bipolar junction transistor MOSFET
+[3:49] metal oxide semiconductor field effect transistors or relays we have discussed and we know how to
+[3:56] turn on the transistor. We know how to turn, sorry, we know how to turn on the motor. We know
+[4:02] how to turn off the motor. When you turn on the motor, motor runs at its full speed. When you turn
+[4:09] off the motor, motor stops. But can't we reduce the speed, right? Can't we gradually slow down
+[4:16] the motor, gradually increase the speed? Now, these things are very important in certain
+[4:23] applications for example let's say you are planning to develop you are going to develop
+[4:29] an autonomous vehicle a small autonomous vehicle not not like the vehicles that google
+[4:39] or tesla develop but a small one for a hacker right a line following car right kind of one
+[4:46] Now you want to, when your car, small that car, line following car, when it comes to a bend or junction, now you need to turn it to either right side or left side.
+[5:03] But then you need to slow down it, right?
+[5:06] Otherwise, if you try to, with the same high speed, if you try to take the bend, right, it would be toppled.
+[5:15] So we need to slow down.
+[5:17] Now how to slow down the motors?
+[5:19] Then after you took the turn,
+[5:22] then you want to again increase the speed of the motors.
+[5:25] How to gradually increase the speed of the motor?
+[5:28] Now let's say you are developing a drone,
+[5:31] a flight controller for a drone, right?
+[5:34] A codcopter.
+[5:35] So we call it a codcopter because it has four propellers.
+[5:41] Cod, cod means four.
+[5:42] copters, four propellers.
+[5:46] These four propellers
+[5:47] you drive using four motors.
+[5:50] Now you want to gradually
+[5:51] land the
+[5:53] codcopter. If you suddenly land
+[5:55] the codcopter, it will be destroyed.
+[5:58] That's a crash landing.
+[6:00] If you turn off
+[6:01] the motors, then it will
+[6:03] crash.
+[6:05] But you want to gradually, smoothly
+[6:07] land it. Gradually
+[6:09] take off it. Gradually
+[6:11] move forward, gradually move backward so that you have to adjust the speed of the motors
+[6:18] gradually. It's not just a turn on, just a turn off. A gradual increase of power, gradual
+[6:26] decrease of power, a continuous analog, not digital. Now the question is how to drive
+[6:34] analog actuators using a digital computer.
+[6:40] Microcontroller is a computer, single chip computer.
+[6:43] It's a digital computer.
+[6:45] It has a CPU.
+[6:46] The CPU can work on ones and zeros.
+[6:50] Process of electricity, absence of electricity.
+[6:52] That is the only thing that CPU can understand.
+[6:55] But the output we need, analog output, to drive analog actuators.
+[6:59] Slow down a motor.
+[7:01] Increase the speed of a motor.
+[7:03] Dim a light.
+[7:04] So how to drive analog actuators using digital computers, right?
+[7:12] So that's what we are going to discuss under pulse width modulation.
+[7:17] Is that clear?
+[7:19] Pulse width modulation is a concept.
+[7:22] Using that concept, we are going to get an analog-like output, right?
+[7:31] Okay, let's first discuss our learning outcomes.
+[7:38] On completion of this session, you should be able to explain the need of PWM.
+[7:45] I have already discussed that.
+[7:47] Why we need PWM?
+[7:49] We need PWM to get analog output.
+[7:52] Then we can drive analog actuators using a digital computer.
+[7:57] We have a digital computer, right?
+[7:59] We have a digital computer, we want to drive analog actuators.
+[8:03] So that's why we need PWM.
+[8:05] PWM is a technique that we use to get analog outputs from a digital computer.
+[8:12] Compare duty cycle, sorry compute, duty cycle, frequency and frequency for PWM outputs.
+[8:21] For pulse with modulated outputs, there are two properties.
+[8:27] Any PWM output, any pulse with modulated output
+[8:30] There are two properties
+[8:31] We need to pay our attention
+[8:34] One is the duty cycle
+[8:36] The other one is the frequency
+[8:39] Frequency of the output
+[8:41] Duty cycle of the output
+[8:43] How to compute them
+[8:45] Right
+[8:45] We need to determine, we need to calculate them
+[8:48] Before generating the output
+[8:50] How to calculate them
+[8:52] Third, learning outcome
+[8:54] Describe how time must generate
+[8:56] PWM outputs. We discussed timers last week.
+[9:01] Now using timers we can generate
+[9:04] pulse with modulated outputs. How?
+[9:08] The next learning outcome. Explain the functionality
+[9:12] of timer counter registers used for
+[9:17] PWM. Now if you are going to use timers
+[9:20] to generate PWM outputs, you have to use timer
+[9:24] count registers. Then what are the registers we need to use for PWM output? Construct a microcontroller
+[9:32] based system and program it to generate a PWM output with varying duty cycle. And finally,
+[9:41] we are going to put everything into practice. We are going to construct a microcontroller
+[9:47] system and programming to generate a PWN pulse with modulated output with a varying duty cycle
+[9:55] duty cycle we vary in that output okay let's start pulse with modulation now this pulse with
+[10:04] modulation is a technique right the mathematics behind this but without going into mathematics
+[10:11] Right. In very simple terms, I will explain you this concept.
+[10:18] Right. Let's see what is this concept.
+[10:21] First, it's a technique for getting analog like output by means of digital.
+[10:29] This word analog like is very important.
+[10:32] It is not analog, but analog like.
+[10:36] Not true analog. PWM is not true analog.
+[10:40] It gives analog like output.
+[10:44] Then what is PWM?
+[10:45] PWM is digital.
+[10:47] Pulse with modulation is a digital technique.
+[10:51] Using digital we can get analog like output.
+[10:55] Like.
+[10:55] Analog like.
+[10:57] The users see.
+[10:59] Users feel analog like output.
+[11:03] But the output is not true analog.
+[11:06] Kind of illusion.
+[11:08] As bad.
+[11:09] But that is not analog. It's truly digital.
+[11:15] But it's analog-like.
+[11:17] So at least if we can see it like analog, that's okay.
+[11:21] We don't care whether it's true or not.
+[11:26] It could be true or something else.
+[11:29] We don't care about that.
+[11:31] If we can feel it like analog, that's it.
+[11:34] If we can reduce the speed of a motor gradually, that's it.
+[11:39] If we can dim a light, that's it.
+[11:43] We don't care whether it's true analog or not.
+[11:45] But you should know PWM is not analog.
+[11:51] It's digital.
+[11:52] But it will give you analog-like effect.
+[11:56] Right.
+[11:57] Now let's see how it works.
+[11:59] It toggles.

@@ -1,0 +1,208 @@
+[0:04] transmit shipments. So UDR is a data buffer. It holds the character to be transferred to
+[0:12] the transmit shipments. And also UDR refers to the received data buffer that holds the
+[0:20] character transferred from received shift register. So both data buffers we refer using the same name
+[0:30] UDR. Right UDR. Actually there are two registers but they share the same address. Therefore we refer
+[0:44] both registers using same name. Two registers share the same members. So, we refer two registers
+[0:53] using the same name. Then will there be conflicts? No. Why? If data is written to UDR,
+[1:02] if you write data to UDR, you refer transmit data by. If you read from UDR, you refer
+[1:12] receive data
+[1:14] so you don't need to worry
+[1:16] those things are handled behind this
+[1:18] right
+[1:19] two data buffers
+[1:21] right
+[1:22] transmit ship register
+[1:24] and receive
+[1:26] transmit data buffer
+[1:29] and receive data buffer
+[1:30] let me drop these two
+[1:32] so you can understand
+[1:34] sir we can't see the boat
+[1:36] sorry
+[1:36] we can't see the boat
+[1:39] okay
+[1:40] Now this is Transmeet data. Transmeet shift resistance.
+[1:55] Now, from the cross-piece data buffer to cross-piece shift, parallel link and PXBD serial lock.
+[2:07] Then receive shift register, receive data buffer, RSVP, serial P parallel CPU.
+[2:29] Right. Now, these two data methods, they share the same address. They share the same address. Therefore, we call them using the same name UDR.
+[2:46] Now the question is, will there be conflicts if you use same name for two registers?
+[2:54] No. Why? If you assign a value to UDR, if you assign a value to UDR, this is the register
+[3:06] refer. If you read
+[3:08] from the UDR,
+[3:10] if you read from the UDR,
+[3:12] receive the register UDR.
+[3:14] So those things will be handled
+[3:16] behind the scenes. If you write
+[3:18] away the UDR, you
+[3:20] refer to a cross-sheet data
+[3:22] document. If you read
+[3:24] from UDR, you
+[3:26] refer to receive data document.
+[3:28] They shall save address
+[3:30] so we use
+[3:32] same name. Is that
+[3:34] it? If you want more time to
+[3:36] see that whiteboard I can switch it to the whiteboard again. What do you say?
+[3:43] Sir can you please explain it one more time please.
+[3:46] Sure. Now from CPU you load to the transmit data buffer a character. Then character is
+[3:54] loaded to the transmit chip register and bit by bit you transmit. That's what we discussed
+[4:00] just under transmit of blood data. And you receive data through R-H-T-E-P, right?
+[4:07] So then receive data shift register, receive shift register. And from the receive shift
+[4:14] register, entire character you get to the receive data buffer. And from the receive
+[4:20] data buffer you read the character. Now this receive data buffer and transmit data buffer,
+[4:26] They share same memory objects. Therefore we call them using same name UDR. Then we may think that there will be conflicts. No.
+[4:40] When you write a value to the UDR, you write a value to the UDR, we refer to Transmit data.
+[4:51] When you read a value from UDR, you read a value from UDR to that, you read a value from UDR.
+[4:59] You refer to the UDR.
+[5:02] So behind the scenes that happens.
+[5:05] So you can use the same name. If you write a value to the UDR, that is the register you will. If you read a value from UDR, receive the register you will. Is that clear?
+[5:17] Yes sir. Thank you sir. Because we are using only receive or transmit at a time, that's why we are not getting a conflict.
+[5:25] Even at the same time we can receive when class B. When you refer, the current, the relevant
+[5:34] data buffer is reference. Because two different ones.
+[5:40] Okay sir.
+[5:41] If you write a letter from UDR, that point is reference. If you read a letter from UDR,
+[5:46] this point is reference.
+[5:48] Okay sir.
+[5:49] No problem.
+[5:50] Right.
+[5:52] Then,
+[5:53] USART control and status register A.
+[5:57] It contains receive complete flag.
+[6:00] Right.
+[6:01] Receive complete flag.
+[6:03] This flag is set when UDR contains unread character.
+[6:08] When UDR contains unread character, this flag is set.
+[6:12] And when you read the character from UDR,
+[6:16] when you read the character from UDR,
+[6:18] this flag is automatically cleared.
+[6:20] It is automatically cleared when you read the character from UDR.
+[6:24] So you can use this flag bit and poll it, read character by character.
+[6:31] By polling this flag bit, you can read character by character.
+[6:35] Then we have transmit complete flag bit, bit number 6, transmit complete flag.
+[6:41] This flag bit is set when the entire frame in the transmit shift register has been shifted out and UDR is empty. Both shift register and UDR are empty. This flag bit is set.
+[6:55] Then the third flag bit, UDRE flag bit.
+[7:01] This is set when UDR becomes set.
+[7:04] Either this flag bit or that flag bit you can use,
+[7:10] pull them and load character by character to UDR for transmission.
+[7:19] And if you use UDRE, you can get higher throughput.
+[7:22] but you can use THC flag to make sure that everything has been transferred.
+[7:28] Nothing is left. Right. The default value of UDRE is 1. Why? At the beginning UDRE is
+[7:37] empty. USAR data register is empty at the beginning. So UDRE flag bit is set when UDRE is
+[7:45] empty so default value of UDR is one other two flag bits before really we see UDR a flag with
+[7:54] default value is what why at the beginning when you turn off the USART paragraph UDR USART data
+[8:01] register is empty so UDR USART data register empty flag is one clear right USART control and status
+[8:12] register B which contains some bits important bits one is there are two bits
+[8:20] important bits Rx C I e receive complete interrupt enable bit receive complete
+[8:28] interrupt enable bit and transmit complete interrupt enable it using them
+[8:34] you can enable or disable receive complete interrupt or transmit complete
+[8:41] interrupt you can enable load is equal then you have udr ie usad data register empty interrupt
+[8:50] enable using that you can enable interrupt on udre flag right you can enable you can interrupt when
+[8:59] udr usad data register is empty you can enable it and finally you have rx en flag sorry rx in
+[9:08] a EN bit and TXEN bit. So, whether you want to enable the transmitter and receiver, you
+[9:16] can use these two bits. Because by default, the receiver and the transmitter both are
+[9:23] disabled to save power. If you want to enable them, these are the two bits you have to save.
+[9:29] These are the two bits you have to save. If you set RXEN bit, receiver you can enable.
+[9:34] if you set TXEN, you can enable the transmit. And interrupts you can enable either UDRE user data
+[9:45] register empty interrupt, transmit complete interrupt, receive complete interrupt. These
+[9:50] interrupts you can enable disable using these three bits. And this particular UCSZ we'll discuss
+[10:00] in the next slide.
+[10:02] Sorry, in the next slide.
+[10:03] This is the UCSZ bit number 2.
+[10:07] So before we move into the next slide,
+[10:09] any questions?
+[10:10] And again, these are the two bits
+[10:13] you need to set to enable
+[10:14] and disable transmit and receive.
+[10:17] When you enable the receive,
+[10:19] RXDP,
+[10:21] right, RXDP
+[10:22] becomes the receive,
+[10:25] data receive,
+[10:26] disabling its GPIO function.
+[10:30] PIN control, right?
+[10:31] If you enable the receiver, the relevant GPIOP, general purpose IOP, becomes data received
+[10:40] RxDB, received data.
+[10:43] And when you enable the transmitter, the relevant GPIOP, general purpose input output pin, becomes
+[10:51] TxDB, transmit data.
+[10:53] So you can enable receiver and transmitter and then you can enable TXD and RXD pins.
+[11:04] So then those pins provide the functionality for data communication.
+[11:10] But if you disable receiver and transmitter, the relevant pins you can use for general purpose input output, GPI.
+[11:20] That's important.
+[11:22] Let's say you are developing an embedded system and you don't want to do any data in English.
+[11:28] But you need some pins to connect sensors and actuators.
+[11:32] Disable receiver, disable transmitter, TXV and RxV pins used for GPIO, general purpose input.
+[11:41] That is possible. Right. So this is what I discussed.
+[11:46] The need of enabling, disabling RxQ.
+[11:49] One need is to save power.
+[11:52] The second need is, right, to override the GPIO functionality of relevant pins.
+[12:02] That's why we enable, disable, receive and transfer.
+[12:05] The one reason is we can save power by disabling receiver and transfer.
+[12:10] The another reason is by enabling the receiver and transmitter, we can override the GPIO functionality, general purpose input output functionality we can override with data communication function.
+[12:26] Right. Then USART, control and status register C, the third register. Control and status register C. And that register we have two important bits. UCSZ bit 1, UCSZ bit 0 and the previous register we saw, UCSZ bit number 2.
+[12:51] What are they? They are called USART character size bits. USART character size bits. Now using these three bits, you can specify the character size. I told you the character size could vary between five bits to nine bits. This is the default character size, eight bit.
+[13:12] This is the default. Right? UCSZ 0 bit 1, UCSZ 1 bit 1 and UCSZ 2 bit 0. That is the default.
+[13:25] But if you want, you can have other character sizes. For example, 8 bit character with a
+[13:31] one parity bit, you can have 9 bit characters or you can have 5 bit character sizes. If
+[13:38] If you want to communicate just hexadecimal numbers, 4 bit for the number and 1 for the
+[13:45] paradigm.
+[13:46] So likewise, you can have different character sizes for different purposes.
+[13:53] But generally, typically we use 8 bit character.
+[13:56] With that we come to the end of theory part.
+[14:00] The next part is to develop a system to understand how USAT works, serial data communication
+[14:09] works.
+[14:10] Before we move into that practical part, any question on theory part?
+[14:15] Right.
+[14:16] If so, you better go through all these theory things again and we'll discuss the practical
+[14:27] thing, the system development
+[14:29] part in the next
+[14:31] so that's all for today
+[14:33] and also
+[14:34] right
+[14:36] let me know, right, you can write
+[14:39] emails, let me know
+[14:40] your experience, right
+[14:42] on this new setup
+[14:44] right, whether you prefer
+[14:46] this new setup or the old
+[14:49] way of conducting
+[14:51] online lectures
+[14:52] sometimes the slides
+[14:55] going blurred
+[14:56] sometimes just after switching to a video to slides sometimes it blows then you experience
+[15:08] that in long time oh it's a today's okay we'll see i also have the recording i will go through the
+[15:16] recording and see whether it's right it's not a very big issue sir but sometimes
+[15:26] after a few times it cannot do the normal way just after switching to the slide from video it
+[15:37] seems sometimes okay i'll i'll go through the recording then i can see the see that problem
+[15:44] Okay, the idea is now if we have to conduct lectures in this manner for next several months,
+[15:55] we need to come up with some sort of mechanism to make the lectures more interactive.
+[16:02] So that's why we are thinking about these different different options.
+[16:07] But I don't know whether all these things will be useful or practically feasible.
+[16:13] My preferred method is how lectures, physical lectures, that means have personal touch,
+[16:25] so you are in front of me, you can see me, I can see you, even I can come to you.
+[16:32] So unfortunately with this situation, those things are not possible.
+[16:37] So let's see.
+[16:38] So at least some sort of method we can figure out.
+[16:44] We'll see.
+[16:45] Right.
+[16:46] Okay.
+[16:47] Thank you very much.
+[16:48] Sir, small thing.
+[16:49] Yeah.
+[16:50] This is not relevant to embedded systems.
+[16:54] No, not.
+[16:55] Family problem.
+[16:56] No, not.
+[16:57] Family problem.
+[16:58] No, not.
+[16:59] No, not.
+[17:00] No, not.
+[17:01] I have a very very very very say-
+[17:03] I have a very very say-
+[17:03] I have a very very time
+[17:03] to go to a very very very Yin-Ce.
+[17:04] I have a very very and and a very so-
+[17:04] I have a very say-
+[17:04] I have a very at-
+[17:04] I have a very so-
+[17:05] I have a very and a really
+[17:05] you

@@ -1,0 +1,408 @@
+[0:01] In addition to the microcontroller, to interface the microcontroller with the serial port, we use a line driver.
+[0:09] Now the purpose of the line driver, we will discuss in the next couple of slides.
+[0:18] right very soon we'll discuss
+[0:20] not now what is the
+[0:22] purpose of line drive
+[0:24] right now let's talk about
+[0:27] this USAT
+[0:28] peripheral right
+[0:30] USAT this is the USAT peripheral
+[0:32] inside the microcontroller you can
+[0:34] see inside the microcontroller CPU
+[0:36] ROM RAM ports
+[0:38] timers
+[0:40] pulse width modulator ADC
+[0:42] unlock to digital converter everything
+[0:44] is there so it's a
+[0:46] single chip computer everything in one
+[0:48] single chip. Among these items there are communication peripherals. One is serial communication
+[0:55] peripherals. One is USART. USART means universal, serial, asynchronous, receiver, transmitter.
+[1:06] Universal, synchronous, asynchronous, receiver, transmitter. Right. Now USART is a peripheral
+[1:16] device that implement asynchronous and synchronous serial communication. Now what do you mean by
+[1:23] asynchronous? What do you mean by synchronous serial communication? Right. First let's talk
+[1:30] about asynchronous. Now in the asynchronous data communication, data is transferred without the
+[1:40] support of a clock signal in the synchronous data communication data is transferred without
+[1:49] support of a clock signal what does that mean bits are not synchronized with a clock
+[1:58] pulse bits are not synchronized with a clock synchronized means a line so bits are not
+[2:05] align with the clock pulse. As a result, the receiver must know the transmitter's data transfer
+[2:15] rate. The receiver must know the transmitter's data transfer rate. Now let's take a simple example.
+[2:23] Now I am the transmitter, you are the receiver and we both have a clock, right? Our clocks,
+[2:31] we have synchronized using a wire. One clock wire we use to synchronize my clock with your
+[2:38] clock. Align my clock with your clock using one wire. Through that wire we can send the
+[2:45] clock signal. Right. They run at the same speed because we have synchronized the two
+[2:57] clocks. So the time in my
+[2:59] clock and time in your
+[3:01] clock are identical.
+[3:04] There is no difference because
+[3:06] using one wire
+[3:07] right through that
+[3:09] wire we send the clock pulse.
+[3:11] We have synchronized align the both
+[3:13] clocks. Transmitter's clock
+[3:16] we have aligned with the receiver's
+[3:18] clock. Then
+[3:19] at every clock pulse
+[3:21] I send a bit
+[3:23] data bit. Every
+[3:25] clock pulse I send a data bit.
+[3:28] So you are the receiver.
+[3:30] You know that.
+[3:31] Every bit pulse you get a bit.
+[3:34] You know that.
+[3:35] Every clock pulse you receive a bit.
+[3:37] So we have.
+[3:39] We both have agreed.
+[3:41] On this rule.
+[3:44] Every clock pulse.
+[3:46] The transmitter.
+[3:47] Transmets a bit.
+[3:49] And every clock pulse.
+[3:50] The receiver receives a bit.
+[3:52] Because the both devices.
+[3:55] They have aligned.
+[3:57] their clocks so receiver does a need to know so sorry so that is a synchronous communication
+[4:07] actually i explained right let's talk about synchronous communication thereafter we can
+[4:12] talk about synchronous again right the example i use was a synchronous coming in the synchronous
+[4:17] communication right the data line we pair with a clock signal we pair with a clock signal that
+[4:25] That means additional wire you need to send clock signal.
+[4:28] Right.
+[4:29] Let me draw it.
+[4:31] In the synchronous communication.
+[4:33] Now this is the transmitter.
+[4:35] This is the receiver.
+[4:37] And this is.
+[4:38] Sorry.
+[4:39] This is the clock signal.
+[4:41] And this is the data wire.
+[4:43] In the synchronous communication.
+[4:46] We use a clock wire.
+[4:49] The clock wire connects my clock.
+[4:51] With your clock.
+[4:53] The clocks are aligned.
+[4:54] and every clock pulse
+[4:56] we transmit a data
+[4:59] item. So the
+[5:00] receiver can receive a
+[5:02] data item at
+[5:04] every clock pulse. So the
+[5:06] data bits are aligned
+[5:08] or synchronized
+[5:10] with the clock pulse. So if
+[5:12] you are the receiver, you
+[5:14] don't need to know my data
+[5:16] transfer speed. Why?
+[5:18] You know that every
+[5:20] clock pulse you receive a
+[5:22] data item. The clock pulses, right? The clock
+[5:26] speed maybe we can slow down the clock speed or we can
+[5:30] increase the clock speed. That's a different matter.
+[5:34] Whatever the speed of the clock. If there's a clock pulse, you
+[5:38] receive a data item because every clock pulse I
+[5:42] send a data item. Now you are the receiver, I am the transmitter.
+[5:46] Every clock pulse I send a data item through the data
+[5:50] wire and you check the clock signal wire. If there's a pulse in the clock signal wire, you know
+[5:57] that you should then receive a data item. If there's a pulse in the clock wire, you should
+[6:03] receive a data item at the same time. If the clock is slow, the communication data communication speed
+[6:09] is low. If the clock is fast, the data communication speed is fast. You don't need to know my data
+[6:16] transfer speed. I may be
+[6:18] sending data faster or slower.
+[6:21] It depends on my clock.
+[6:24] If my clock
+[6:24] runs fast, I send more data.
+[6:27] If my clock runs slow,
+[6:29] I send less data. Whatever
+[6:30] it is, the receiver
+[6:32] look at the clock wire.
+[6:35] If the clock wire
+[6:36] in the clock wire, if the receiver
+[6:38] gets a pulse,
+[6:41] if the receiver knows,
+[6:43] it should immediately
+[6:44] get a data item.
+[6:46] If there is no pulse in the clock, receiver knows there will be no data item in the data wire.
+[6:53] Because data items are aligned with the clock.
+[6:56] Aligned with the clock pulses.
+[6:58] This is the synchronous data communication.
+[7:01] Then a synchronous data communication, Rx, Tx.
+[7:07] We don't have a clock signal.
+[7:09] We have reduced another wire.
+[7:13] We have only one wire for the communication.
+[7:15] We don't need a wire for the clock signal connecting the transmitter and receiver.
+[7:21] That means we can save another IOP.
+[7:24] Another IOP we can save if you use a synchronous communication because just one wire.
+[7:31] Now the question is how receiver knows when to receive data.
+[7:37] Because in the previous case, synchronous transcommunication, receiver knows, receiver has to receive data when there is a clock pulse in the clock wire.
+[7:49] Because both have shared the same clock speed.
+[7:55] But now, they don't share the same clock speed.
+[7:59] So, receiver don't know when to receive a data item.
+[8:03] To solve this problem, both transmitter and receiver, they have to agree on their data transfer speed.
+[8:13] Data transfer speed.
+[8:17] They have to agree.
+[8:18] If they know, if the receiver knows transmitter's data transfer speed, for example, let's say one bit per second,
+[8:26] then receiver knows every second receiver will receive a bit.
+[8:29] because receiver knows transmitter's data transfer speed
+[8:33] one bit per second.
+[8:34] If the transmitter sends one bit per second
+[8:37] then receiver knows that speed
+[8:39] and receiver knows every second it will get one bit
+[8:43] or they can have the communication.
+[8:45] But to have a synchronous data communication
+[8:48] the receiver must know transmitter's data transfer rate.
+[8:54] But in the synchronous data communication
+[8:56] Receiver doesn't require to know transmitter's data transfer rate.
+[9:03] Why?
+[9:03] All the data items sent by the transmitter align with a clock pulse.
+[9:09] And the clock is shared between transmitter and receiver.
+[9:14] Can you understand the difference?
+[9:15] Sir, why is it released the clock speed and time?
+[9:22] I don't know how to release it.
+[9:24] I'm saying that it's synchronous.
+[9:26] It's synchronous.
+[9:28] When you see the wire, you can see the wire.
+[9:31] The wire is transferred.
+[9:33] One wire is to show you the clock signal.
+[9:38] That's why we use the clock signal to show you the LED.
+[9:44] If you see the clock signal, you can see the LED.
+[9:48] If you have a clock signal, you can see that data item.
+[9:55] If you have a clock signal, you can see that data item.
+[10:03] If you have a communication, you can receive a little data,
+[10:10] you can receive a little data.
+[10:14] It depends on the clock signal.
+[10:18] If we have data, we have clock speed.
+[10:23] We have clock pulse.
+[10:26] If we have clock pulse, we have data item.
+[10:31] If we have data, we have clock speed.
+[10:36] We have clock pulse.
+[10:41] I have a lot of you, I do a lot.
+[10:42] I do a lot.
+[10:43] [unclear — Sinhala / crosstalk]
+[10:44] 
+[10:44] I have a work to go to a clock-signal, the very thing-
+[10:47] [unclear — Sinhala / crosstalk]
+[10:53] I have a very good thing.
+[10:54] I have a very good thing.
+[10:55] [unclear — Sinhala / crosstalk]
+[11:01] to the other.
+[11:02] I have a way to go.
+[11:03] I have a way to go.
+[11:03] I have a way to go.
+[11:04] I have a way to go.
+[11:04] I have a way to go.
+[11:05] I have a way to go.
+[11:05] I have a way to go.
+[11:05] I have a way to go.
+[11:06] I have a way to go.
+[11:06] I have a way to go.
+[11:06] I have a way to go.
+[11:06] I have a way to go.
+[11:06] I have a way to go.
+[11:07] I have a way to go.
+[11:07] I have a way to go.
+[11:07] I have a way to go.
+[11:07] I have a way to go.
+[11:07] I have a way to go.
+[11:07] I have a way to go.
+[11:08] I have a way to go.
+[11:08] I have a way to go.
+[11:08] I have a way to go.
+[11:08] I have a way to go.
+[11:08] I have a way to go.
+[11:08] to the people.
+[11:09] [unclear — Sinhala / crosstalk]
+[11:11] I have a look.
+[11:12] I have a look, the one I have.
+[11:13] [unclear — Sinhala / crosstalk]
+[11:18] I have a time.
+[11:19] I have a time.
+[11:20] I have a time.
+[11:20] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] 
+[11:21] 
+[11:21] 
+[11:21] 
+[11:21] 
+[11:21] 
+[11:21] 
+[11:21] I have a time.
+[11:21] 
+[11:21] I have a time.
+[11:21] 
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] 
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] I have a time.
+[11:21] 
+[11:48] I have a look.
+[11:49] [unclear — Sinhala / crosstalk]
+[11:52] I have a look, the one I have a look, the one I have.
+[11:53] I have a look, the one I have.
+[11:54] I have a look, the one I have.
+[11:55] I have a look, the one I have.
+[11:55] I have a look, the one I have.
+[11:56] I have a look, the one I have.
+[11:56] I have a look, the one I have.
+[11:57] [unclear — Sinhala / crosstalk]
+[11:57] I have a look, the one I have, a look, the one the I have, a look, the one.
+[11:57] I have a look, the one.
+[11:58] [unclear — Sinhala / crosstalk]
+[12:28] So, it's not just clock speed or data transfer.
+[12:32] Yes, it's clock speed.
+[12:33] We adjust the clock speed,
+[12:36] and we adjust the clock speed,
+[12:38] we adjust the clock speed,
+[12:42] and we adjust the clock speed.
+[12:44] We align the data items with clock pulses.
+[12:49] If we use a lot of data items,
+[12:52] we use clock pulses.
+[12:55] If you have a clock pulse, you have a clock pulse.
+[13:00] What is the clock pulse?
+[13:03] What is the clock line?
+[13:07] What is the clock line?
+[13:09] It is asynchronous.
+[13:11] If you know that,
+[13:15] you have a clock signal,
+[13:18] and you have a clock signal,
+[13:20] you have a clock signal.
+[13:22] But it's not as synchronous. We have clock signals.
+[13:25] So, we can't receive a transmitter.
+[13:29] We can't align the same.
+[13:33] We can't do anything.
+[13:36] We can't do anything.
+[13:38] We can't do anything.
+[13:40] We can't do anything.
+[13:42] We can't do anything.
+[13:44] We can't do anything.
+[13:48] It's asynchronous communication.
+[13:50] When you use the synchronization, you can use the link to the link.
+[13:57] If you use the link to the link, you can use the link to the link.
+[14:03] You can use the synchronization.
+[14:06] You can use the synchronization.
+[14:11] Clear?
+[14:13] How about others?
+[14:16] Sir, why does the processor need to know when there is a data transmission?
+[14:24] Otherwise, now for example, let's say you want to send 8 bits, a character.
+[14:32] So let's say I am sending you a character, 8-bit character.
+[14:37] Then you should receive the 8 bits properly.
+[14:41] You should know when the first bit will reach you.
+[14:45] You should know when the second bit will reach you.
+[14:49] You should know when the third bit will reach you.
+[14:52] Likewise, if you know when all the eight bits reach you,
+[15:01] then you can recognize the character.
+[15:04] Otherwise, you should not be able to recognize the character.
+[15:08] Because you are receiving many bits.
+[15:10] how do you know when you received the first bit of the character.
+[15:15] How do you know when you received the last bit of the character.
+[15:20] Then you can, once you received the last bit of the character,
+[15:24] you can say, I received one character.
+[15:27] That character is A, you can say.
+[15:29] Then you can again, right, receive 8 bits
+[15:34] and then you can say, I received the second character,
+[15:37] that is character B.
+[15:38] You can recognize the character
+[15:41] If you know
+[15:43] Starting point and end point
+[15:46] Of the character
+[15:47] To do that you should know
+[15:49] When you receive the first bit
+[15:51] When you receive the second bit
+[15:54] When you receive the third bit
+[15:56] Likewise
+[15:56] That means you need to align
+[16:00] Yourself with the transmitter
+[16:02] Right
+[16:03] One way of aligning
+[16:05] The receiver with the transmitter
+[16:07] is sharing a clock signal.
+[16:10] Another way of aligning
+[16:11] the receiver with the transmitter
+[16:14] is knowing
+[16:15] the transmitter's data
+[16:17] transfer rate in advance.
+[16:20] Asynchronous.
+[16:22] Otherwise, you will
+[16:23] receive a lot of bits.
+[16:25] You won't be able to recognize them.
+[16:27] You can receive
+[16:28] a stream of bits you can receive
+[16:31] but you won't be able to recognize.
+[16:33] To recognize a bit,
+[16:36] recognize a character,
+[16:37] Ultimately we want to decode these bits into characters.
+[16:43] Numbers are also characters.
+[16:45] ASCII.
+[16:46] You need to decode them into ASCII characters.
+[16:51] To do that, you should know when you receive the least significant bit.
+[16:57] LSP.
+[16:58] When you receive the most significant bit of the character.
+[17:03] You should know.
+[17:04] When to receive the least significant bit.
+[17:06] When to receive the most significant.
+[17:08] If you know that.
+[17:10] Then in between you have the bits.
+[17:12] You can recognize the character.
+[17:14] Otherwise it would be a series of bits.
+[17:18] Stream of bits.
+[17:19] Right.
+[17:20] Among the stream of bits.
+[17:21] How can you recognize the character?
+[17:24] We need to align receiver with the transmitter.
+[17:27] Right.
+[17:27] If you align the receiver with the transmitter.
+[17:30] Receiver knows.
+[17:31] Now I am going to receive a bit.
+[17:34] Right.
+[17:34] Then now I am going to receive the second bit.
+[17:38] Now I am going to receive the third bit.
+[17:40] Now I receive the 8 bit.
+[17:42] One character I received.
+[17:44] According to the bits, that character is A.
+[17:48] Receiver can return.
+[17:49] To do that, receiver and transmitter we need to align.
+[17:53] One way of aligning, you can have a common clock signal.
+[17:57] Another way of aligning,
+[18:00] receiver
+[18:01] should know the transmitters
+[18:04] data transfer rate. Is that clear?
+[18:07] Yes, sir. Thank you.
+[18:08] What else? Anything else?
+[18:10] Any other question? Right.
+[18:12] Then, why separate
+[18:15] peripheral device for data
+[18:16] communication? Any reason?
+[18:18] Because even in the general purpose
+[18:20] computers, we do data communication.
+[18:23] Right? Your laptops, desktops,
+[18:24] they communicate data.
+[18:26] but they don't have use site they don't have separate peripheral device for data communication
+[18:32] but when it comes to microcontrollers or embedded systems why do we need a separate
+[18:37] peripheral device for data now these statements with question mark on my slides are very important
+[18:46] Now, the slides are the question mark, the lines are the same.
+[18:52] The slides are the same. Why? What? How?
+[18:58] The question marks are the lines.
+[19:01] For the exam point of view, these lines are very important.
+[19:04] Why do we need a separate peripheral device?
+[19:08] Any idea? Come on, you should be able to answer this question.
+[19:12] A similar question we discussed last week.
+[19:21] Why do we need a separate hardware or peripheral device called timers for timing when we can use the CPU for timing?
+[19:35] Highly accurate.
+[19:36] Highly accurate.
+[19:38] That's not the main reason.
+[19:39] That's one reason, yes.
+[19:41] But that is not the main reason why we need separate hardware or peripheral device called timer for timing and counting.
+[19:49] When we can use CPU for timing and counting.
+[19:53] This question we discussed last week.
+[19:56] Yes, Vyvasha?
+[19:57] I can't hear you.
+[19:59] Sorry, I can't hear you.

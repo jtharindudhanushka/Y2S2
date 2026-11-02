@@ -1,0 +1,206 @@
+[0:10] Okay, then interrupt routines.
+[0:15] First one, interrupt service routine.
+[0:18] Another name for ISR is interrupt handler.
+[0:22] Some books, this ISR, they call interrupt handler.
+[0:26] Right. This is the ISR. Typical ISR.
+[0:31] Starts. So we start with the keyword ISR.
+[0:35] Right. We start with the keyword ISR.
+[0:38] And then within bracket you have to specify the interrupt vector.
+[0:42] Now vectors you have to take from the previous table.
+[0:45] Now if you put ADC underscore VECT for example.
+[0:50] If you put ADC underscore VECT here.
+[0:53] this ISR is called automatically when ADC completed the conversion.
+[1:04] Right.
+[1:04] Now this interrupt happens when ADC completed the conversion.
+[1:12] Analog to digital conversion completed.
+[1:16] This interrupt is, the CPU is interrupted.
+[1:19] The ADC is an internal peripheral device.
+[1:24] When it completed the conversion, the ADC interrupts the CPU.
+[1:31] When ADC interrupts the CPU, CPU has to handle the relevant ISR.
+[1:39] Then this is the ISR.
+[1:42] CPU has to handle.
+[1:45] So here you have to put ADC underscore weight.
+[1:47] Now if you put here some other IS vector, for example, if you put timer 0 overflow vector,
+[1:56] if you put here timer 0 overflow vector, when the timer 0 overflows from 255 to 0,
+[2:07] the timer 0 will interrupt the CPU.
+[2:11] And then CPU has to handle the ISR, the relevant.
+[2:15] Our CPU will call this ISR automatically, right?
+[2:21] If you put timer zero overflow vector here, this is the code that as programmers you have
+[2:29] to write to handle the interrupt.
+[2:34] Can you understand?
+[2:36] For example, right?
+[2:38] Let's take a simple example.
+[2:40] Now ISR within bracket ADC Vect.
+[2:47] Opening curly bracket.
+[2:49] Closing curly bracket.
+[2:51] Then inside the ISR, let's say we have a couple of LEDs.
+[2:57] Turn.
+[2:58] It's very difficult to write.
+[3:01] Turn on red LED.
+[3:05] Then there's another ISR.
+[3:07] within bracket
+[3:11] timer 0
+[3:13] overflow vector
+[3:15] opening curly bracket
+[3:17] closing curly bracket
+[3:19] within that
+[3:21] turn on
+[3:23] green
+[3:25] LED
+[3:26] right
+[3:28] now let's assume
+[3:32] we have
+[3:33] 2 ISR
+[3:35] ADC
+[3:37] analog to digital conversion
+[3:39] if analog to digital conversion
+[3:41] is over
+[3:42] we want to turn on red LED
+[3:45] when the timer 0
+[3:47] overflow from
+[3:48] 255 to 0
+[3:50] we want to turn on green LED
+[3:53] so we have written 2 ISR
+[3:56] then we can ask
+[3:57] CPU to do something else
+[3:59] CPU will blinking
+[4:01] let's say
+[4:03] yellow LED
+[4:04] CPU will do blinking the yellow LED
+[4:07] LED. The third task.
+[4:09] Right.
+[4:11] While CPU blinking
+[4:12] the yellow LED
+[4:15] ADC
+[4:17] completes the conversion.
+[4:19] ADC is a separate
+[4:21] peripheral device.
+[4:23] So ADC can complete the conversion
+[4:25] from analog to digital.
+[4:28] While CPU
+[4:29] blinking yellow LED.
+[4:31] When ADC completed
+[4:33] the conversion, analog to
+[4:35] digital conversion,
+[4:37] ADC will interrupt the CPU.
+[4:40] Then CPU will automatically call the first ISR.
+[4:45] This particular ISR.
+[4:46] This one is automatically called.
+[4:48] And you will see red LED turn on.
+[4:52] After that, CPU will again resume the work it was doing.
+[4:58] That is blinking yellow LED.
+[5:00] While CPU blinking LED, the timer 0 will overflow.
+[5:05] from 255 to 0.
+[5:08] When timer 0
+[5:10] overflows, the timer
+[5:12] will interrupt the CPU.
+[5:14] Then CPU will
+[5:15] call this ISR
+[5:18] automatically. And
+[5:19] this ISR will turn on
+[5:22] green LED. You will see green
+[5:24] LED turn on.
+[5:25] The CPU doesn't require
+[5:28] to monitor the timer 0
+[5:30] whether it's
+[5:31] overflowing or not.
+[5:32] CPU doesn't require to monitor
+[5:35] CPU doesn't
+[5:37] require to monitor whether ADC
+[5:39] completed the conversion or not
+[5:41] CPU will do its
+[5:43] job separately
+[5:45] when this peripheral ADC
+[5:48] requires CPU
+[5:50] service the ADC
+[5:52] will interrupt the CPU
+[5:53] then CPU will handle this
+[5:55] routine
+[5:56] CPU will execute this routine
+[5:59] when timer requires CPU
+[6:01] service
+[6:02] the timer will interrupt the CPU
+[6:05] and then CPU will handle this routine.
+[6:08] Right? Therefore, no need to monitor
+[6:11] the peripheral device. If peripheral device
+[6:14] requires CPU service, the peripheral
+[6:17] device will interrupt the CPU. Then CPU
+[6:20] has to attend to the peripheral device and
+[6:23] provide the service. That is, run the relevant
+[6:26] ISR. Run the relevant interrupt
+[6:29] service routine. Running the relevant interrupt service routine means attending to the interrupt,
+[6:35] handling the interrupt. Can you understand? Right. Now, interrupt service routine is like a function.
+[6:43] It is like a normal function, but it is drastically different from a normal function,
+[6:51] though it looks like a function. ISR looks like a function, but it is different.
+[6:56] Right. One is
+[6:58] the ISR
+[7:00] has no return value.
+[7:02] Normal functions you need
+[7:04] a return value. At least void.
+[7:06] You need return type
+[7:08] void at least. But
+[7:10] ISR no return value.
+[7:12] No return value. And
+[7:14] ISR
+[7:15] has only one parameter.
+[7:18] That is the interrupt vector.
+[7:20] Only one parameter.
+[7:22] That is the interrupt vector. That means
+[7:24] you can't pass
+[7:26] any argument, any other
+[7:27] argument to ISR.
+[7:29] You can't pass any other
+[7:31] arguments to ISR.
+[7:33] Because interrupt vector is the only
+[7:35] parameter that it accepts.
+[7:37] So you can't pass any parameters
+[7:39] to ISR.
+[7:41] Any arguments to ISR you can't pass.
+[7:44] The ISR accepts
+[7:45] only the interrupt vector
+[7:47] argument. Because it has only
+[7:50] one parameter. And it has no return
+[7:52] value. So you
+[7:53] can't get any value returned
+[7:55] from ISR. Why? The reason is this. Interrupt service routines are called automatically,
+[8:02] right? They are called automatically when interrupt happens. We don't know when interrupt
+[8:08] would happen, right? At the time of writing the program, at the time of compiling the
+[8:15] program, we don't know when interrupt would happen. Interrupt can happen at the beginning
+[8:21] of the execution, it can happen at the middle of the execution.
+[8:25] It can happen at the end of the execution. We don't know.
+[8:29] At the time of writing the code or at the time of compiling the code.
+[8:34] We don't know when interrupt would happen.
+[8:37] When interrupt happens, ISR is called automatically.
+[8:41] Therefore, if it is not called explicitly,
+[8:48] if the ISR is not called explicitly, it is called implicitly, then we are to return the value.
+[8:56] If it is called implicitly, we are to return the value. So no return value.
+[9:03] ISR call automatically automatically, we don't know what we are going to return.
+[9:09] We don't know how to return value. We know when we are going to call a statement,
+[9:14] pass say,
+[9:15] but if you don't,
+[9:23] if you don't know
+[9:25] when the ISR would be
+[9:27] called, how can you
+[9:29] return a value? Can you understand?
+[9:32] Again,
+[9:33] if interrupt service
+[9:35] routines are called implicitly,
+[9:38] we don't know where
+[9:39] they will be called, then
+[9:41] how can we pass a value to ISR?
+[9:44] as an argument. If you don't know when it will be cool, then how can we pass a parameter
+[9:53] to an ISR. We don't know it will be when it will be cool, then how can we get a return
+[9:58] value from ISR. ISR is a call, we have to know. We have to pass the value. We have to
+[10:05] pass the value. We have to know ISR, the call, the return value. We have to know the value
+[10:10] We don't know when it will be called.
+[10:18] It is called when an interrupt happens.
+[10:21] Can you understand this?
+[10:22] Now if you are asked why interrupt service routines are interrupt service routines looks like.
+[10:29] They look like functions but they have no return data type.
+[10:34] and they cannot accept any arguments other than interrupt vector.
+[10:41] Why?
+[10:43] Can you explain?
+[10:45] Overlooking how is the ISR function?
+[10:51] Is the ISR return value?
+[10:54] Is the ISR parameter passed?
+[10:58] Can you ask?

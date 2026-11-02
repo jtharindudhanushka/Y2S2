@@ -1,0 +1,69 @@
+[0:00] This is the place where we stopped last week. We discussed about serial communication, asynchronous serial communication we discussed. Then we discussed about the asynchronous transmitter, asynchronous receiver, and UART registers. Universal, synchronous, asynchronous receiver and transmitter.
+[0:30] So use our registers we discussed and now we are going to develop small embedded system based on a microcontroller to understand how serial communication both the receiving part and the transmission part works.
+[0:53] Right. So this system we call char enclosure, character enclosure.
+[1:00] Right. This system receives characters from PC.
+[1:05] So this microcontroller based system is connected to a PC, personal computer.
+[1:11] From the personal computer, the microcontroller receives characters.
+[1:17] Sorry.
+[1:18] receives characters and then encloses these characters with square buckets and transmits
+[1:27] enclosed characters back to the PC. What does that mean? Now let's say let me to drop right
+[1:36] this is the PC and this is the microcontroller. So PC sends characters to microcontroller. Let's
+[1:44] say PC, let's assume PC sent simply.
+[1:49] The microcontroller, what the microcontroller does is,
+[1:52] microcontroller receives simple A,
+[1:55] encloses simple A with square brackets
+[1:58] and transmits enclosed character back to PC.
+[2:03] This is what transmitted back to the PC.
+[2:07] If you send A, you get A enclosed with square brackets.
+[2:11] If you send B, you get B enclosed with scrap records.
+[2:16] Right.
+[2:16] So very simple system.
+[2:21] There is no practical usefulness of this kind of system.
+[2:25] But using this kind of system, we can learn how serial communication works very easily.
+[2:31] Without, I mean, making the things more complicated.
+[2:37] Very simply, we can learn how serial communication works.
+[2:40] because the microcontroller has to receive characters sent by the PC.
+[2:47] So the receiving part we can learn.
+[2:50] Then the received character we enclose with square brackets
+[2:54] and we transmit back to the PC.
+[2:57] The transmission part also we can learn.
+[3:00] Both synchronous receiving part,
+[3:03] synchronous transmission part we can learn by developing this system.
+[3:08] So once you have the knowledge, how an embedded system receives characters using serial communication and how embedded system can transmit characters using serial communication, thereafter you can use those knowledge for some useful applications.
+[3:32] something like data logging application right which i have which i have uh asked you to develop
+[3:39] for your exercise number seven a data logger right so then it's a very useful application
+[3:46] using a sensors we we capture data then those data we log in a pc right a computer when you
+[3:54] can log data in a pc there are then you can save data in a database you can save them in a file
+[4:00] You can even upload them into a web page, a cloud platform, whatever you want, you can do.
+[4:07] If you can transmit data, you capture from sensors to a PC, right?
+[4:13] So by developing this application is not useful, right?
+[4:17] Practically, this is not useful.
+[4:19] But using this, we can learn how you can receive data and how you can transmit data.
+[4:26] An embedded system, this is the embedded system.
+[4:29] This is the external world.
+[4:30] some other system. A communication, serial communication between an embedded system and some other system.
+[4:38] So that's the idea of developing this system. Is it clear? Yes, sir. Right.
+[4:47] First of all, we should learn about USART pinout of ATmega328B microcontroller.
+[4:55] Whatever the microcontroller you use, you can download the data sheet.
+[4:59] And from the data sheet, you can learn universal synchronous, asynchronous receiver and transmitter pinout.
+[5:08] Now, this is the microcontroller.
+[5:10] In this microcontroller, there are 28 pins.
+[5:13] Out of these 28 pins, these two are the pins we use for serial communication.
+[5:20] Pin number 2 and 3.
+[5:21] Actually, they are input-output pins of port D.
+[5:25] PD0 and PD1.
+[5:28] They are two IO pins.
+[5:31] General purpose IO.
+[5:32] GPIO pins of port D.
+[5:35] But we can
+[5:36] multiplex them.
+[5:37] We can multiplex them
+[5:39] as receive
+[5:42] data pin and transmit
+[5:44] data pin. Receive data
+[5:46] T. RxD, transmit
+[5:48] data. Txt.
+[5:50] Right.
+[5:51] So we can tell the
+[5:52] microcontroller
+[5:53] right, override the function I.O. functionality of these two pins and make them data communication

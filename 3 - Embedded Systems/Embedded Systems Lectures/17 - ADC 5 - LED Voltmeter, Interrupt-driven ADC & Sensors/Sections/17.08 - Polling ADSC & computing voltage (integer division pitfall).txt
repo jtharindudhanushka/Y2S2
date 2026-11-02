@@ -1,0 +1,145 @@
+[0:03] clock speed, enable ADC,
+[0:07] then enter into
+[0:10] endless loop. Enable ADC,
+[0:14] enter into endless loop. Right. Because I switched some
+[0:18] slides back and forth. As a result, I have moved to a wrong
+[0:22] place. Now I am in the correct slide.
+[0:26] Now, in the endless loop, we
+[0:30] start ADC. To start the ADC, I use ADC start conversion bit. ADC start conversion bit is
+[0:41] the bit number six of control and status register, bit number six. ADC start conversion bit. I set that
+[0:49] bit and start the ADC. Then once you start the ADC, you have to check whether ADC is over.
+[0:55] because when the ADC is over,
+[0:59] the data registers are updated.
+[1:01] Data registers are updated.
+[1:03] So here actually data registers are ADC L and ADC H.
+[1:07] ADC low and ADC high.
+[1:09] When the ADC L and ADC H are updated,
+[1:12] the virtual register ADC W, we get the result.
+[1:16] To get the result from ADC W, the virtual register,
+[1:21] first the data registers, we need to get updated.
+[1:24] The data registers will be updated when the ADC is over.
+[1:29] Now, we have to check whether ADC is over.
+[1:32] Then only we can get the conversion result.
+[1:35] When the ADC is over, now to start the ADC, we set this bit.
+[1:40] ADC start conversion bit, we set to start the ADC.
+[1:44] When the ADC is over, this bit is automatically clear.
+[1:47] This bit is automatically clear.
+[1:49] ADC clears this bit when the ADC is over.
+[1:53] So this bit is a very good indication to know whether ADC is over. So we can pull this bit.
+[2:02] We can check this bit. Now we have set the bit to start the ADC and then we can check this bit.
+[2:09] And if this bit goes zero, that means ADC is over. Conversion is over. To start ADC,
+[2:17] we set the bit and then we keep check this bit we check this bit and if this bit goes zero that
+[2:26] means adz conversion is over so we need to check this bit repeatedly to see whether conversion is
+[2:35] so we have to use polling now how do we check this bit whether this is over repeatedly this is
+[2:43] the loop. We run a loop. The loop condition, in the loop condition we check this bit. ADC start
+[2:51] conversion bit. And the loop body, nothing. Just a semicolon. Just a semicolon. So what is the loop
+[2:59] condition, right? ADCSRA, control and status register. Let's assume its values are x, x, x, x,
+[3:12] x, x, x, x. Its values are this register. X could be either 1 or 0. And with that we take
+[3:21] [unclear — Sinhala / crosstalk]
+[3:37] Now this is the outcome of this operation. So while now this is the condition and no statements
+[3:46] under the loop, just a semicolon.
+[3:49] Right. Now, if
+[3:50] we know that this bit is
+[3:52] this particular bit.
+[3:54] This is the ADSC bit.
+[3:59] ADC start conversion bit.
+[4:02] If you want to start
+[4:03] the conversion, you set this bit.
+[4:05] And when the conversion is over,
+[4:07] this bit is, this bit
+[4:09] goes zero. It becomes
+[4:11] zero when the conversion is over.
+[4:13] If the conversion is not
+[4:15] over, this bit is one.
+[4:16] This bit 1 means this is a positive result. 0 1 0 0 0 0 0 0. This is a positive value if this is 1. While positive value means conditioned true loop runs.
+[4:32] But if the ADC is over, this bit becomes 0.
+[4:40] Then this entire expression of the while loop becomes 0.
+[4:45] While 0 means end of the loop.
+[4:49] So we move to the next statement, right?
+[4:53] End of the loop, loop terminates and we go to the next statement when the conversion is over.
+[4:59] If the conversion is not over, x is 1, then this contains a positive value.
+[5:06] While a positive value means condition is true, loop runs again and again, but doing nothing.
+[5:14] Can you understand?
+[5:16] If not, let me know.
+[5:17] I can explain again.
+[5:19] Is that clear?
+[5:21] Sir.
+[5:22] Is that clear?
+[5:23] Yes, sir.
+[5:24] Aruni?
+[5:25] Yes, sir.
+[5:26] Clear.
+[5:26] Okay.
+[5:26] If not, let me know. I can explain again. Right. So, using this loop, we check whether ADC is over.
+[5:38] If ADC is over, then we move into the next slide. Right. If ADC is not over, we keep checking.
+[5:45] We repeat this loop, right?
+[5:48] We repeat this loop and pull this ADC start conversion.
+[5:54] If ADC is over, we move to the next line.
+[5:58] In the next line, we get the result, conversion result,
+[6:01] which is in the ADCW, ADC word register.
+[6:05] Multiply that value by reference voltage
+[6:10] divided by the total number of discrete steps.
+[6:15] total number of discrete steps 1024 because ADC is a 10 bit ADC.
+[6:23] Right.
+[6:24] And we calculate the input analog voltage to V in,
+[6:29] which is a floating point variable.
+[6:32] Now, this is very important to put 0.05.0.
+[6:39] If you simply write something like this,
+[6:42] ADCW
+[6:44] multiplied by
+[6:47] 5 divided
+[6:49] by 1024
+[6:50] into
+[6:52] V in.
+[6:55] Then you will, you won't get
+[6:57] the correct result. The reason
+[6:59] is this is integer.
+[7:01] ADCW value is integer value
+[7:03] 0 to 1023.
+[7:04] This is integer
+[7:05] and this is integer.
+[7:09] So, integer
+[7:10] division you lose the decimal part.
+[7:15] In an integer division you lose the decimal part.
+[7:19] You will get integer result not a floating
+[7:23] point result. But we know that when we do this calculation
+[7:26] we get some decimal part. If you want to get that
+[7:31] decimal part at least one operand should be decimal
+[7:34] or at least one operand should be floating point.
+[7:38] If you divide integer operand with another integer operand, you get integer result,
+[7:46] losing the decimal part.
+[7:48] So, at least one operand must be floating point.
+[7:52] That's why I have put point zero.
+[7:54] This is one of the mistakes we do.
+[7:58] 5 volt divided by 1024.
+[8:00] Integer operand divided by integer operand, you get integer result,
+[8:04] losing all the decimal value, decimal part of the division.
+[8:10] Then your result would not be accurate.
+[8:13] If you want accurate result, accurate input voltage calculation,
+[8:19] then you have to use at least one operand of this equation
+[8:23] as floating point operating.
+[8:27] Floating point operand.
+[8:28] Then only the value would be converted into floating point.
+[8:32] Is that clear?
+[8:32] These are basic programming things.
+[8:36] In the programming, I am sure you have learned explicit conversions and implicit conversions.
+[8:42] In programming, it is called casting.
+[8:48] Right.
+[8:50] Then we calculated the input voltage, right, using the converted result.
+[8:58] This is the conversion result.
+[9:00] Using that, we determine input voltage.
+[9:04] Then turn off all LEDs.
+[9:07] Clear bit 0 to bit 4 of code B.
+[9:12] That means set all PB0 to PB4 pins low and turn off all LEDs.
+[9:19] If voltage is greater than 4 volts, this computed voltage is greater than 4 volts,
+[9:25] turn on all 5 LEDs.
+[9:27] set PB0 to PB4 pins high. Turn on 5 LEDs. If not, else if voltage is greater than 3,
+[9:39] not greater than 4 but greater than 3, that means between 3 and 4 voltage, turn on 4 LEDs.
+[9:47] Set PB0 to PB3 high and turn on 4 LEDs. Else if computed voltage is greater than 2 but not 3,
+[9:57] that means between 2 and 3, turn on 3 LEDs. Set PB0 to PB2 high. Else if voltage is greater than 1,
+[10:09] that means greater than 1, less than 2, turn on 2 LEDs. Set PB0 to PB1 high. If not, else voltage
+[10:20] is greater than zero, greater than zero but less than. Turn on only one LV. Set PB0. Right. So the
+[10:29] input continuous analog input voltage, now we are going to display using five discrete LVs
+[10:38] and do this again and again. Now whenever you rotate the potentiometer and change the input
+[10:46] voltage immediately you get that value reflected on five discrete delugals now can you understand
+[10:55] this code resource code if not let me know i can explain again if you have any question on particular

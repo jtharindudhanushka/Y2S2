@@ -1,0 +1,279 @@
+[0:01] In the C program, we previously
+[0:05] developed. We use poly. We repeatedly
+[0:10] check ADC SC bit. ADC
+[0:14] start conversion bit. To see whether ADC is over.
+[0:18] conversion is over.
+[0:20] We use polling.
+[0:22] Now you know that using polling is a waste.
+[0:25] The time you
+[0:26] used to check whether
+[0:28] a particular thing has happened
+[0:30] again and again is a waste.
+[0:33] Because during that time
+[0:34] you could have done
+[0:36] some other task.
+[0:38] Rather than repeatedly checking
+[0:40] whether a particular thing has happened
+[0:42] or not. You could have done
+[0:44] something else during that time.
+[0:46] So, in the C program that we developed earlier, we use polling, we check, we repeatedly check
+[0:54] whether the conversion is over by monitoring, by checking ADC, ADC bit.
+[1:05] ADC bit means ADC start conversion bit.
+[1:10] Because if you want to start the conversion, you set that bit.
+[1:13] and when the conversion is over, that bit is automatically clear.
+[1:18] So we check whether that bit is clear.
+[1:21] If it is zero, that means conversion is over.
+[1:24] So that's a waste polling a bit again and again.
+[1:27] Not only in the C program.
+[1:30] Arduino analog read function is also polling based.
+[1:35] Analog read function uses polling.
+[1:37] So, Arduino analog read function is not an efficient way to use ADC.
+[1:46] If it uses polling means, it wastes time.
+[1:52] You could have used that time to do something else.
+[1:57] So, the better approach is using interrupts.
+[2:00] When the ADC is over, ADC will interrupt you.
+[2:04] Let the ADC to do the conversion.
+[2:07] When the conversion is over ADC will interrupt. Then you attend to ADC. Then you can attend
+[2:15] to ADC. Kill them, you can do something else, some other task. Rather than monitoring the
+[2:21] ADC, you do some other task. When the ADC will over, ADC will notify you. ADC will interrupt
+[2:30] you. So you don't need to check ADC whether ADC is over again and again. You can do something else.
+[2:39] From other tasks you can do. And when ADC is over, ADC will interrupt you, then you can add into ADC.
+[2:46] That is the better approach, efficient approach. However, with Arduino, you can't do that because
+[2:52] Arduino has analog to analog read function, which is based on polling. This is another example that,
+[3:00] right, this is another example that you can use to prove that Arduino is inefficient. Because if you
+[3:07] want to do analog to digital conversion, you have to use analog read function, which is based on
+[3:12] polling. We know that polling is inefficient, right. Now, how to do the job efficiently
+[3:19] using in drums. Same volt meter measure and display any voltage between 0 and 5 with set
+[3:28] of LEDs using in drums. Now when it comes to ADC this is very critical because ADC takes
+[3:37] time and running slow because ADC is based on successive approximation. So it again and
+[3:46] again gradually it it comes to an approximated value so it takes takes time it is it takes time
+[3:54] and it is running slow it is it cannot run at the speed of cpu so you use a pre-scaler and you scale
+[4:03] down the speed and if you want better accuracy in this particular microcontroller this particular
+[4:09] micro according to its data sheet this may be different to another micro controller but this
+[4:16] particular micro controller based on the data sheet if you need that you have to run the adc
+[4:21] less than 200 kilohertz it's very slow speed 200 kilohertz not even one megahertz
+[4:29] so it is slow
+[4:29] Now, if you are going to check a slow ADC, whether it's over again and again, using polling,
+[4:41] if you are going to check whether it's over or not, over or not, over or not, again and again,
+[4:46] because ADC is running slow, you waste time. So, the better approach is using interrupts.
+[4:53] You start the ADC and then you carry out something else, some other task you do.
+[4:58] When the ADC is over, ADC will notify you.
+[5:01] ADC will interrupt you.
+[5:03] And then you can attend to ADC.
+[5:05] That's the idea of interrupt.
+[5:07] Right.
+[5:07] So ADC interrupts are not available in RDE.
+[5:11] Right.
+[5:12] But in C, you can't do that.
+[5:13] You can.
+[5:14] Sorry.
+[5:15] You can do that.
+[5:16] Let's see.
+[5:17] Algorithm.
+[5:19] The same hardware, only the firmware is different.
+[5:23] Algorithm.
+[5:23] Main function.
+[5:24] Volt meter using interrupts.
+[5:26] Start.
+[5:27] Main function.
+[5:27] stop voltmeter using impact.
+[5:30] Right. Main function.
+[5:31] As in the previous example,
+[5:34] we configure PB0
+[5:36] to PB4 as
+[5:37] outputs because LED is connected
+[5:39] to these peaks. Configure
+[5:41] PC0 or ADC0
+[5:43] which is ADC0 we multiplex
+[5:45] as an input.
+[5:48] Not necessary but
+[5:49] a good practice. Set the reference
+[5:51] voltage to 5 volts.
+[5:53] The supply voltage to ADC.
+[5:56] Multiplex PC
+[5:57] 0 as ADC input channel. Select PC 0 as ADC input channel. Set the ADC clock speed. Set
+[6:06] the ADC clock speed. Enable ADC. Enable ADC. Up to this point, everything is similar to
+[6:14] what we have already done. Then enable ADC complete interrupt. Enable the interrupt because
+[6:22] interrupts are by default disabled. Enable interrupt. Right. So when the ADC is over,
+[6:29] the ADC will interrupt the CPU. ADC complete interrupt, enable. Enable global interrupt.
+[6:37] Enable the global interrupts. Start ADC. Enter into endless loop. In the endless loop, you can do your
+[6:46] main task. Some other job you can do. In this example, we have no other job to do. Therefore,
+[6:53] endless loop is empty, but you can use this endless loop to do something else, some useful
+[6:59] other task. Because you are not going to monitor whether ADC is over. You start the ADC and then
+[7:04] you can do whatever you like. In this example, we have nothing to do that. That's why endless loop is
+[7:12] empty but you can use this endless loop to do something else from other tasks then when the
+[7:18] adc is over adc will interrupt the cpu when adc interrupted the cpu we have to handle that interrupt
+[7:27] this is the interrupt handling routine handle adc interrupt interrupt handler right in the
+[7:37] interrupt handler we compute the input voltage because we know that now ADC is over so the result
+[7:45] is available in the data registers so we compute the input voltage then we turn off all LEDs
+[7:54] if computed voltage greater than 2 turn on all LEDs else if computed voltage greater than 3 turn
+[8:01] on four LEDs. Else if computer voltage greater than two, turn on three LEDs. Else if computer
+[8:09] voltage greater than one, turn on two LEDs. Else if computer voltage greater than zero, turn on one
+[8:16] LED. After that, restart ADC. After doing all these things, restart the ADC. Because you know
+[8:25] that to start the ADC, we set the ADC start conversion bit, we set. And when the ADC is over,
+[8:40] ADC start conversion bit is clear. ADC start conversion bit becomes zero when the ADC is over.
+[8:49] So we have to start the ADC again for the next conversion. So again, you have to set ADC start
+[8:58] conversion loop. In the polling example, we set this bit inside the loop. So when the ADC,
+[9:07] when all these calculations are over, then we can restart the, we got the ADC restarted
+[9:14] because we set this bit inside the loop. But in this case, we set the start bit
+[9:20] EREC start before the loop. Therefore, before we leaving interrupt handler, we have to restart the EREC.
+[9:29] Can you understand this algorithm?
+[9:35] Any question? No, it's not. Let's move into source code.
+[9:39] The interrupt parties are light path way to the counter, so interrupts?
+[9:51] Light path way to compute voltage, light path way to ISR, interrupt handling routine.
+[10:01] What is normal?
+[10:04] You can do it in a loop.
+[10:06] You can do it in a example.
+[10:09] You can do it in a way.
+[10:13] You can do it in multiple tasks.
+[10:18] You can do it in a way.
+[10:24] You can do it in a way.
+[10:27] You can do it in a loop.
+[10:29] I have a say, I have a look.
+[10:31] I have a look.
+[10:32] I have a look.
+[10:33] I have a look.
+[10:34] I have a look.
+[10:35] I have a look.
+[10:36] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[10:39] I have a look.
+[10:39] I have a look.
+[10:39] I have a look.
+[10:39] I have a look.
+[10:39] I have a look.
+[10:39] I have a look.
+[10:39] I have a look.
+[10:40] I have a look.
+[10:40] I have a look.
+[10:40] 
+[10:40] 
+[10:40] 
+[10:40] 
+[10:40] 
+[10:40] 
+[10:40] 
+[10:40] 
+[10:40] is that clear yes everything else right so school right now we are going to use interrupts
+[11:07] So we have to include this interrupt.h header file.
+[11:11] In addition to io.h, now interrupt.h you have to include.
+[11:15] Why?
+[11:16] This header file contains your ISR.
+[11:20] Definition for ISR is in this header file.
+[11:22] SCI, set interrupt function, is in this header file.
+[11:27] CLI function, clear interrupt function defined in this header file.
+[11:31] So you need this header file.
+[11:32] Then similar to the previous example, configure PB0 to PB4 as output pins, configure PC0 that is
+[11:43] input channel 1 ADC, ADC0 as an input. This line is not necessary because by default it is an input
+[11:52] channel. Then set the reference voltage, multiplex PC0 as input channel,
+[11:58] set the clock speed by dividing 128 16 megahertz divided by 128 that is clock speed would be
+[12:06] 125 kilohertz enable adc up to this point similar to the previous example then
+[12:13] we have to enable adc complete interrupt this particular bit we have to set adc complete
+[12:22] interrup. That is ADEN bit. ADC enable bit. ADEN bit. We have to say to enable ADC complete interrup.
+[12:33] Then, next one. Enable global interrup. Enable global interrup. Start ADC using ADC
+[12:47] ADC conversion
+[12:49] start conversion
+[12:51] ADSCD.
+[12:53] Start ADC. Set this bit
+[12:55] so ADC would start
+[12:57] running.
+[12:59] Then enter into the endless loop.
+[13:02] Now in the endless loop
+[13:03] there is nothing but
+[13:05] you can use it to perform
+[13:07] another task. If you have
+[13:09] another task inside
+[13:12] the loop you can do. But in this
+[13:13] example there is no
+[13:15] another task to do. So
+[13:17] I leave endless loop empty.
+[13:20] But you can use it to do
+[13:21] something else. When the ADC
+[13:23] is over, when the conversion is over,
+[13:26] ADC will interrupt the CPU.
+[13:27] ADC will interrupt the CPU.
+[13:30] Right. Then you
+[13:31] have to, when interrupted, you have to
+[13:33] handle that interrupt.
+[13:36] That means
+[13:36] you have to handle the
+[13:39] relevant ISR, interrupt
+[13:41] service routine. This is
+[13:43] the relevant ISR.
+[13:45] The vector is ADC vector, ISR ADC vector.
+[13:50] Now this ISR is automatically executed when ADC is over.
+[13:55] Now we know that when the ADC is over, result is in the data register.
+[14:00] Conversion result is in the data register.
+[14:03] Using the result in the data register, we can calculate, we can compute the input voltage.
+[14:08] We compute the input voltage.
+[14:10] The result is in the ADCW multiplied by reference voltage divided by the total number of discrete
+[14:18] states. You get the input voltage, a floating point value. Then you turn off all LEDs. If the
+[14:26] voltage is greater than 4, turn on all LEDs. If the voltage is greater than 3, turn on 4 LEDs.
+[14:33] If the voltage is greater than 2, turn on 3 LEDs. If the voltage is greater than 1, turn on 2 LEDs.
+[14:39] if the voltage greater than zero turn on one le display the output after displaying the output
+[14:47] for the next conversion you have to restart the adc again set the adscb adc start conversion
+[14:57] bit set the bit and restart it for the next conversion because we know that conversion is over
+[15:04] this particular bit is cleared now so we have to reset it can you understand this
+[15:11] this is the efficient way to do adc this approach is not possible with ardino because there is no
+[15:20] wrapper function arduino wrapper function to support adc interrupts arduino wrapper function
+[15:27] analog read uses for it
+[15:34] [unclear — Sinhala / crosstalk]
+[16:04] hda
+[16:06] 
+[16:06] w
+[16:05] w
+[16:06] w
+[16:06] w
+[16:05] w
+[16:05] w
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:05] 
+[16:34] [unclear — Sinhala / crosstalk]
+[18:04] in the
+[18:09] programming skills. Any other question? Any other question?
+[18:19] All others are ADC experts. No questions.
+[18:25] Right. Now, rather than writing these lengthy binary values,
+[18:29] We can write the same program using hexadecimal values. Same program using hexadecimal values.
+[18:44] Now, for example, 0x1f means 0b, 0xfe means.
+[18:59] So likewise, if you are very well familiar with hexadecimal notation,

@@ -1,0 +1,393 @@
+[0:02] Using this bit you can enable or disable data register empty interrupt.
+[0:11] You can enable or disable data register empty interrupt.
+[0:16] If you write value 1 to this bit, you enable the data register empty interrupt.
+[0:23] If you write value 0 to this bit, you disable the data register empty interrupt.
+[0:30] So, instead of calling this bit, you can use the interrupt.
+[0:36] When UDR becomes empty, if you have enabled the interrupt, the CPU will be interrupted.
+[0:45] right because when UDR becomes empty and ready to receive another character right CPU will be
+[0:55] interrupted because you have enabled USART data register empty interrupt you have enabled so CPU
+[1:04] will be interrupted by USART data register empty interrupt so instead of polling this way you can
+[1:12] use the interrupt and load character by character to UDR. Right now there are two options you have.
+[1:21] One is you can pull this bit using pulling, load character by character to the UDR. Oh,
+[1:29] you can use interrupt. Use our data register in a empty interrupt. Use our data register
+[1:36] empty interrupt you can use and load character by character to UDR. Questions? Right. Then,
+[1:45] now when you win a character transfer to transmit ship register, the character is framed with a
+[1:54] start bit and a stop bit and bit by bit transmitted through the TXT at boundary. When the entire
+[2:05] frame is shifted out, the entire frame is transmitted, transmit shift registry becomes
+[2:15] empty. Transmit shift register becomes empty. When the entire frame is transmitted bit by bit,
+[2:25] transmit shift register becomes empty. When transmit shift register becomes empty, UDR
+[2:33] UDR processes the character in the UDR to transmit shipping. Then transmit ship register, frame the character with start bit and stop bit and bit by bit transmitted through the TXP.
+[2:48] When transmit ship register becomes empty, UDR transfers the character in UDR to transmit ship register. So that happens again and again.
+[2:59] When transmit ship register is empty and UDR is also empty, if UDR contains a character, when transmit ship register becomes empty, UDR will transfer that character to the transmit ship register.
+[3:15] But if transmit shift register is empty and UDR is also empty, both empty.
+[3:23] This is empty and that is also empty.
+[3:26] Then this flag bit is set.
+[3:30] TXT flag bit is set.
+[3:34] TXT flag bit means transmit complete.
+[3:39] TXT means transmit.
+[3:41] C means complete.
+[3:43] Transmit flag bit is set.
+[3:45] Set means 1. TxC flat bit becomes 1. And TxC flat bit is in UCSRA register. UCSRA means USART control and status register A. USART control and status register A.
+[4:05] So, this flag bit is set when transmit ship register, both transmit ship register and UDR, both of them become int. This flag bit is set. You can pull this flag bit and load character by character to UDR.
+[4:28] The second option. First option, you can pull this flag bit, UDRE flag bit, which indicates this UDRE setting and load character by character to the UDR.
+[4:43] The TXC flag bit indicates both transmit shift register and UDRRT.
+[4:50] So, by pulling the TXC flag bit you can load character by character.
+[4:56] This is the second option for transmitting data.
+[5:00] Then, there is another bit called TXCIE bit.
+[5:05] TXCIE bit. The TXCIE means, TX means transmit, complete, interrupt, enable. Transmit, complete, interrupt, enable. Transmit, complete, interrupt, enable.
+[5:21] That bit is in UCSRB register. UCSRB means USAT control and status register B. USAT control and status register B. Using this B you can enable or disable transmit complete interrupt.
+[5:45] you can enable or disable transmit complete. If you write value 1 to this bit, you can enable transmit complete interrupt. If you write value 0 to this bit, you can disable transmit complete interrupt.
+[6:00] Now, instead of calling this transmit complete bit, you can use this interrupt. When both transmit shift register and UDR are become empty, if you have enabled this interrupt, the CPU will be interrupted by transmit complete interrupt.
+[6:23] So when both transmit shift register and UDR are empty, if you have enabled this interrupt, then CPU will be interrupted by transmit complete interrupt.
+[6:37] So instead of calling the transmit complete bit, you can use the transmit complete interrupt and load character by character to UDR.
+[6:48] load character by character. The second way of transmit is that clear. Any question? If you want me to explain it again or if you have any particular question or particular component in this block diagram, now you can answer.
+[7:09] Now, if you have no questions, then I have a question. So what's the answer? Which flag
+[7:17] bit? UDRE, USAR data register, empty flag bit, or transmit complete flag bit? Out of
+[7:30] which one gives maximum
+[7:33] throughput?
+[7:34] Okay? Let's ask
+[7:37] from Shani. Shani,
+[7:41] your idea about this question?
+[7:43] You can come up with some idea.
+[7:46] It doesn't matter whether it's correct
+[7:47] or wrong. So, what do you
+[7:49] think? Which flag bit
+[7:51] would give you maximum
+[7:52] throughput? Shani?
+[7:55] No idea.
+[7:58] So, I can't
+[7:59] hear you. It's okay.
+[8:00] Could you please speak a little bit louder? No idea sir. No idea? Come on. So what is the
+[8:09] difference between these two plant bits? So what is the difference? Okay, let's say you have no
+[8:16] idea about the throughput Kim? Like what is the difference between these two flag bits?
+[8:21] UDRE interrupt used. UDRE sorry? UDRE interrupt used. No, no, no, no, no. I'm not talking about
+[8:35] the interrupts. I'm talking about these flag bits. We can use these flag bits for polling.
+[8:39] So UDRE flag bit is set when?
+[8:44] UDRE flag bit is set when?
+[8:49] Okay.
+[8:49] TXC flag bit is set when?
+[8:52] Then UDRE
+[8:54] set when?
+[8:58] Ekanidaru, I asked whether if this is not clear,
+[9:02] please let me know. I can explain it again.
+[9:06] But you don't talk.
+[9:08] ultimately
+[9:10] you will be in a big trouble.
+[9:13] You have not got this
+[9:14] understood clearly.
+[9:17] But even you don't
+[9:19] ask questions.
+[9:20] You don't ask me to explain.
+[9:22] At least explain it again.
+[9:25] So,
+[9:26] this opportunity.
+[9:29] Simply I could have
+[9:31] given the lecture, blah, blah, blah,
+[9:33] blah, blah and finish.
+[9:35] But I don't do that.
+[9:37] Right?
+[9:38] I do very slowly and I repeatedly ask you to let me know whether things are not clear.
+[9:47] So what's the benefit of doing that? I could have done the lecture straight away and finish
+[9:57] the entire module. But I don't do that. I have very slowly, I do the lecture and then I ask
+[10:07] questions and I give you the option to, right? Let me know whether things are not clear and if
+[10:15] you say things are not clear and if you want me to explain the things again, I am ready to do that.
+[10:24] Do I get a pay increment? Do I get any benefit? No. But you get a benefit. I don't get any
+[10:37] benefit. But you have a benefit. So why don't you use this opportunity?
+[10:52] opportunity okay right so what is the difference between UDRE and TXC flags
+[11:01] Madusha now could you please tell me when UDRE flag is set sir when UDRE flag is set
+[11:13] Sir, data is transmitted by placing the UDR register.
+[11:26] Not clear. Could you speak a little bit louder?
+[11:31] Data is transmitted by placing the UDR register.
+[11:37] when UDR register is empty, UDRE flag bit is sent.
+[11:45] This register empty means this register is ready to receive another character.
+[11:54] This register is ready to receive another character.
+[11:58] How do we know that this register is ready to receive another character?
+[12:03] If this flag bit is 1, that means this register is ready to receive another character.
+[12:11] If this flag bit is 0, that means this register contains a character.
+[12:18] So, it is not ready to receive another character.
+[12:23] May flag bit take a dihae, malala, we can design whether to load a new character to UDR or not.
+[12:31] So, when UDR is empty, UDR is empty means UDR is ready to receive another character.
+[12:43] Then TXC flag.
+[12:45] Mahusha, when does TXC flag be seen?
+[12:49] in the transmit shift register has been shift out and there are no new data currently, so it's safe.
+[13:11] When the transmit shift register is empty, UDR will transfer the character to transmit
+[13:21] shift register.
+[13:22] As soon as transmit shift register becomes empty, UDR transfers character to transmit
+[13:29] shift register.
+[13:30] So this flag is set when both transmit shift register and UDR, both of them are empty.
+[13:41] both of them are ending transmit ship register and UDR both this flag so this flag bit indicates
+[13:51] transmit ship register is empty UDR is empty so you can load another character UDR who indicates
+[14:00] that this flag right now can you tell me out of these two flag bits THC and UDRE which flag
+[14:15] would give you maximum throughput.
+[14:20] For a given period of time, maximum amount of data you can transmit if you use which flag
+[14:38] bit?
+[14:39] UDRE.
+[14:40] UDRE, correct.
+[14:44] Because UDRE is set when the UDR becomes empty.
+[14:48] But TXC flag bit is set when both are in transmit shift register as well as UDR.
+[14:57] When both are empty this is set.
+[14:59] But this is set, UDRE is set when the UDRE is set.
+[15:05] Right.
+[15:06] Therefore, if you use UDRE flag bit, you can have a maximum problem.
+[15:13] [unclear — Sinhala / crosstalk]
+[15:43] shift register, I get a UDR again, you know, so you can transfer another character to use that.
+[15:49] But if you are using this flag, you load a character to UDR, UDR transfers that character
+[15:55] to transmit shift register, transmit shift register transmits bit by bit through TXEP,
+[16:03] and then transmit shift register becomes empty, and there is no character in the UDR, UDR is also empty,
+[16:10] then this flag so you load a character in the UDR transfers that character
+[16:16] transmission transmission transmits the character character by character and
+[16:22] then transmission becomes empty UDR is this
+[16:27] So, maximum throughput you would get with UDR.
+[16:55] the this the the
+[16:58] the
+[16:59] the
+[16:59] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] the
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] 
+[17:00] hist
+[17:25] I have nothing needed
+[17:28] I don't know ABC
+[17:32] to load
+[17:35] no UDR
+[17:37] transfer in our transmit ship register
+[17:41] transmit ship register bit by bit
+[17:43] transmit transmit
+[17:46] I'm a
+[17:48] man
+[17:50] I
+[17:52] I
+[17:54] I
+[17:56] I
+[17:58] I
+[18:00] I
+[18:02] I
+[18:04] I
+[18:06] I
+[18:08] I
+[18:10] I
+[18:12] I
+[18:14] [unclear — Sinhala / crosstalk]
+[18:44] the
+[18:46] to the
+[18:47] the
+[18:48] the
+[18:48] the
+[18:48] the
+[18:49] the
+[18:49] 
+[18:49] the
+[18:49] the
+[18:49] the
+[18:48] the
+[18:48] the
+[18:48] the
+[18:48] the
+[18:48] the
+[18:48] the
+[18:48] the
+[18:48] 
+[18:48] 
+[18:48] the
+[18:48] 
+[18:48] 
+[18:48] 
+[18:48] 
+[18:48] 
+[18:48] 
+[18:48] 
+[19:14] If you use UD or E flag, if you use TXE flag, you have to wait till when both registers
+[19:27] become empty.
+[19:28] Vedima data pramanya dhyati khalaya for a given period of time at a given
+[19:38] board rate maximum amount of data you can transfer you can transmit if you use UDRI
+[19:47] The same thing. If we use UDRI interrupt, that is USAR data register empty interrupt and
+[20:04] transmit complete interrupt. There are two interrupts.
+[20:08] Transmit complete interrupt.
+[20:11] Usad data register empty.
+[20:13] This interrupt is triggered when UDR is in.
+[20:18] This interrupt, transmit complete interrupt
+[20:21] is triggered when both shift register and UDR
+[20:25] both time. So if you ask
+[20:28] which interrupt you should use to get
+[20:31] the maximum throughput. This is the one you have to get. The maximum throughput you can
+[20:37] get if you use USAR data register emptied. Because this interrupt is triggered when UDR
+[20:45] becomes. But transmit complete interrupt is triggered when both register, transmit ship
+[20:52] register and UDR.
+[20:55] When both are empty, this is
+[20:56] clear. So to get a maximum
+[20:58] throughput, this is
+[21:00] the interrupt you should use.
+[21:02] Is that clear?
+[21:04] Is it clear?
+[21:06] No feedback? Yes, sir.
+[21:09] Right. If it
+[21:10] is clear, okay, then I have another
+[21:12] question. If you get a
+[21:14] maximum, if you can get a maximum
+[21:16] throughput using UDR
+[21:19] E-flat, what's the
+[21:20] purpose of DXC flag.
+[21:23] Maximum throughput
+[21:24] UDRE flag
+[21:25] and the DXC flag.
+[21:28] Aruni, any idea?
+[21:31] Yes.
+[21:34] I can't hear you.
+[21:36] Can you please speak a little bit louder?
+[21:39] The thing is this,
+[21:41] I am not using my
+[21:42] headphones in this setup.
+[21:45] Right?
+[21:46] So you need to speak a little bit louder.
+[21:48] Sir, can you hear me?
+[21:50] No, I can't hear you.
+[21:52] You speak very, very...
+[21:54] Okay? Sorry?
+[21:56] Can you hear me?
+[21:57] No, my question is, what is the purpose of this TXE flag?
+[22:01] Wait from
+[22:02] starting UR
+[22:03] UDR?
+[22:05] No, it's not clear. Some disturbance in UR
+[22:08] may go communication.
+[22:10] It's alright. Okay.
+[22:11] Any idea?
+[22:14] What's up?
+[22:14] What's up?
+[22:16] I have a so you the I the gamee
+[22:18] a
+[22:19] a
+[22:19] a
+[22:20] a
+[22:20] a
+[22:20] a
+[22:20] 
+[22:20] a
+[22:20] 
+[22:20] a
+[22:20] a
+[22:20] a
+[22:20] a
+[22:20] a
+[22:20] 
+[22:20] a
+[22:20] a
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] a
+[22:20] 
+[22:20] a
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] 
+[22:20] a
+[22:20] 
+[22:46] I have a look you have a DM.
+[22:47] I have a DG.
+[22:47] [unclear — Sinhala / crosstalk]
+[23:17] the
+[23:19] the
+[23:20] the
+[23:21] the
+[23:21] the
+[23:22] the
+[23:22] the
+[23:22] the
+[23:22] the
+[23:22] the
+[23:22] the
+[23:22] the
+[23:22] the
+[23:22] 
+[23:22] 
+[23:22] the
+[23:22] the
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] 
+[23:22] the
+[23:22] 
+[23:22] 
+[23:22] 
+[23:47] UDRE flag, user data register empty interrupt.
+[23:54] UDRE flag or user data register empty interrupt, you can get a maximum throw.

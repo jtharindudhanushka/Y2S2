@@ -1,0 +1,193 @@
+[0:01] Right.
+[0:01] Now let's talk about how to develop the firmware for the char enclosure
+[0:07] using wrapper functions in Arduino platform.
+[0:11] Algorithm for Arduino.
+[0:13] Char and closer, set up function, loop function.
+[0:16] Set up function, set the board rate.
+[0:19] That's the only thing we do in the set up function.
+[0:23] Then in the loop function, we check whether data is available.
+[0:28] We check whether any data is available over the serial port.
+[0:32] If so, if the data is available over the serial port, read the incoming character.
+[0:38] Read the incoming character.
+[0:41] Then send opening curly bracket.
+[0:44] Send the character you received.
+[0:47] Send the closing curly bracket over the serial port.
+[0:51] Do this again and again.
+[0:53] That's it. Very simple.
+[0:54] First you need to check whether any incoming data available.
+[0:58] Then read that data character.
+[1:02] Print opening curly bracket.
+[1:04] Print the character you receive.
+[1:06] Print the closing curly bracket over the serial port.
+[1:09] That's it.
+[1:10] Then source code.
+[1:12] Using Arduino wrapper functions.
+[1:14] Right.
+[1:14] This is the Arduino source code.
+[1:18] Setup function.
+[1:19] Loop function.
+[1:20] First set the board rate.
+[1:22] Serial.begin.
+[1:24] You use this wrapper function.
+[1:26] begin wrapper function of serial object.
+[1:31] Serial port begin function.
+[1:33] Set the board rate.
+[1:35] Now in C programming,
+[1:37] you can't directly set the board rate.
+[1:39] You set the UBRR register.
+[1:42] Then the relevant board rate is automatically calculated.
+[1:47] You set the value for,
+[1:49] you assign a value for UBRR register.
+[1:51] You set board rate register.
+[1:53] But now in Arduino, that has been more simplified.
+[1:58] So you can directly set the baud rate.
+[2:00] Actually what happens is, when you specify the baud rate as an argument for begin function.
+[2:09] Begin wrapper function, you specify the baud rate as an argument.
+[2:13] What actually happens behind the scene is, the relevant value is assigned to UBRR register.
+[2:21] Now, when you call begin function with this argument, what actually happens in this function,
+[2:29] if you go to the definition of function, you can see.
+[2:32] Inside this function, what happens is UBRR is assigned with 103.
+[2:38] That means that you have to be assigned with 103.
+[2:40] That means that UBRR is 103.
+[2:43] That means that you have to be assigned with 103.
+[2:45] That means that you have to be assigned with 103.
+[2:48] So it's very easy.
+[2:56] Not only that.
+[2:58] This function sets the character size 8 bit.
+[3:02] This function enables receiver transmitter.
+[3:07] This function is not the same.
+[3:09] If you set the board rate, you set the board rate, you set the value, you set the UBRR
+[3:15] register, you set the character size, you set the receiver, you set the transmitter,
+[3:23] you set the transmitter, everything wrapped into a one function, very user friendly one
+[3:29] function.
+[3:30] So that's why we call it wrapper functions, everything wrapped.
+[3:33] But then in the loop function, if condition, the condition of the expression of the if condition is serial.available.
+[3:47] In the serial port, we call available function.
+[3:51] This function returns number of unread characters available from serial port.
+[4:00] Number of unread characters available from serial code, this function returns.
+[4:06] If no data coming, if no incoming data, this function returns zero.
+[4:12] If at least one character, if one character is, if there is one incoming character, this function returns one.
+[4:20] If there are 10 incoming characters, this function returns 10.
+[4:24] Number of unread characters.
+[4:28] Number of incoming characters.
+[4:30] available from serial port. So if this function returns a positive value, that means we are getting data over serial port.
+[4:42] We are getting data over serial port. If so, read the next character in the incoming data, right?
+[4:51] Using the read function of the serial port, read the next character, right?
+[4:57] Next character in the serial pool.
+[5:00] Right.
+[5:01] For the first time, this will give you the first character.
+[5:04] If you call the function again, it will read the second character.
+[5:08] If you call the function again, it will read the third character.
+[5:12] Likewise, always it reads the next character.
+[5:17] Next unread character.
+[5:19] That character we put into ch variable.
+[5:23] Right.
+[5:23] That character we put into ch variable.
+[5:26] For the serial port we transmit.
+[5:30] So we use the print function.
+[5:33] We transmit open square bracket character.
+[5:37] Then we transmit the character that we read.
+[5:41] Then we transmit the closing square bracket character.
+[5:46] So these functions we use to transmit over the serial port.
+[5:51] So we don't need to worry about using RxC flag, Udre flag, Udr, Ubrr register, nothing.
+[6:04] Everything wrapped into very user friendly wrapper functions.
+[6:10] So this is the ADD code using Arduino wrapper functions to perform the same function.
+[6:19] Any question?
+[6:21] Yes, Chalat?
+[6:21] Any question?
+[6:23] I got disconnected.
+[6:25] So how can we send data to the...
+[6:30] Data? Sorry?
+[6:33] Characters like where do we type the...
+[6:38] So I didn't get your question.
+[6:40] In the serial monitor can we type data?
+[6:44] No, no. Wait. We have not discussed the serial monitor.
+[6:47] We are going to come into that. Wait.
+[6:50] Right. Now in addition to this serial.print, we can have serial.print LA. Serial.print LA. So whatever the thing you type here.
+[7:06] right now let's say you want to simply then because of LA right simple a will be appended
+[7:19] backslash R and backslash new line LN means new line print line so carriage return new line
+[7:32] characters, line feed. They are automatically appended. These characters are not printable
+[7:38] characters. You can't see these characters. But as a result of these characters, these two characters,
+[7:44] your cursor will be start blinking in the next line. Right. Cursor will be start blinking in
+[7:51] the next line. But if you use print, if you serial print, simply A, then A will be printed and next
+[7:58] to A your cursor will be blink.
+[8:01] Right.
+[8:02] Your cursor will blink next to A.
+[8:04] But you can
+[8:05] move the cursor to the next
+[8:08] line using
+[8:09] backslash R backslash A.
+[8:12] For that you have to use print
+[8:13] LN. Right.
+[8:15] So there are some other
+[8:17] wrapper functions available.
+[8:20] For example
+[8:21] serial dot
+[8:25] read string.
+[8:27] read string function.
+[8:30] Using this function
+[8:31] you can read not single
+[8:34] characters. Now read using read
+[8:36] function you can read only
+[8:38] single characters.
+[8:40] You can read entire string
+[8:42] in the serial buffer.
+[8:44] String of characters you can
+[8:46] read using this function. String of
+[8:48] characters. Then you need to assign
+[8:50] it to a string
+[8:52] type variable.
+[8:54] String type variable.
+[8:56] Right. This function returns
+[8:58] a string. Read string
+[9:00] function. Then
+[9:01] even the serial print
+[9:04] function you can get formatted
+[9:06] output. Serial
+[9:08] print
+[9:09] value you want to print
+[9:12] and then format.
+[9:14] So comma and format.
+[9:16] You can specify the format.
+[9:18] Right. Now for example
+[9:20] if you
+[9:22] use serial
+[9:24] print
+[9:26] 78. 78 will be printed on your screen.
+[9:30] If we use serial print
+[9:33] 78 comma bin.
+[9:38] Format is bin. Then the binary value of
+[9:42] 78 which is 78
+[9:45] binary. Yes, this will be printed. Serial
+[9:49] print 78
+[9:52] hex. The hexadecimal value of the 78 which is
+[9:58] 4e will be printed. And
+[10:02] serial print
+[10:05] 1.2345, 0.
+[10:12] Right. Which will print only 1. No decimal places.
+[10:17] Decimal places 0. Serial print
+[10:21] 1, 2, 3, 4, 5
+[10:25] comma 3
+[10:26] then you get 1.234
+[10:31] 3 decimal places
+[10:33] so likewise serial print function
+[10:35] you can format
+[10:37] the output you can format
+[10:39] in the serial print function
+[10:41] right
+[10:42] and also if you want to stop
+[10:44] serial communication
+[10:46] you can use
+[10:48] serial
+[10:50] Serial.end function.
+[10:54] Serial.end function will disable the receiver and the transmitter.
+[11:00] And then you can use TXD pin and RXD pin for general purpose input and output.
+[11:07] If you call serial end, you can disable receiver and transmitter.
+[11:12] And you can use RXD, TXD pins for general purpose input output.
+[11:18] I.O. you can use.
+[11:20] If you want to again enable transmitter and receiver, you have to call begin function.
+[11:26] Using the begin function, you can enable receiver, transmitter and also set the board rate and character size.
+[11:32] Using the end function, you can disable transmitter and receiver so that you can use the relevant TXD and RXD pins as IO pins.
+[11:44] These are some of the useful wrapper functions related to, not all, there are other functions.
+[11:51] You better go through the Arduino documentation.
+[11:54] These are some of the useful functions, useful wrapper functions for serial communication.

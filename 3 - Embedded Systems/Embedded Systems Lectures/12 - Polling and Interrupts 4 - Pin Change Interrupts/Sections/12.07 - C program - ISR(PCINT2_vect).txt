@@ -1,0 +1,214 @@
+[0:03] First what we do is we configure
+[0:06] PB0 and PB5 as outputs.
+[0:12] Then we configure PD2 which is PCINT18.
+[0:20] PD2 means PCINT18 as an input.
+[0:25] Ideally you don't need this line.
+[0:27] because by default this particular bit is zero.
+[0:33] So you don't need this line actually
+[0:35] because by default the register values are zero.
+[0:39] That means all pins are input pins by default.
+[0:44] So no need to configure them explicitly.
+[0:48] However, this is a good practice.
+[0:50] That makes your code more understandable, right?
+[0:54] But on the other hand, extra one clock cycle.
+[1:00] So you waste one clock cycle, but you improve the understandability of your write.
+[1:08] Then pull up PD2, that is PCI-NT18, by activating the internal pull-up resistance.
+[1:18] We set this bit on port D, so we pull up PD2.
+[1:23] Then we need to enable port default pin change interrupts.
+[1:30] Port default pin change interrupts.
+[1:32] So we set the bit number 2.
+[1:35] Bit number 2 is the PCIe2.
+[1:39] Pin change interrupt enable 2 bit.
+[1:42] We set that bit of PCICR, pin change interrupt control register.
+[1:49] to enable the entire port for pin change interrupts.
+[1:54] Then we enable the individual pin of port D.
+[2:01] The individual pin is the PD2 or PCI-NT18 via the switch connected.
+[2:09] To do that, we use PCMSK2 register, pin change mask 2 register
+[2:16] because MAS2 register is the corresponding register for 4D.
+[2:23] In that register, we set PCINT 18 bit
+[2:33] to enable pin change interrupts on this particular pin.
+[2:40] Thereafter, we enable global interrupts
+[2:44] by calling this function set interrupt. So this function will set bit 7 that is interrupt bit of
+[2:53] sreg register status register. Status register bit number 7 that is interrupt bit we set. So we
+[3:00] enable global interrupt. Then we enter into endless loop. Right. In the endless loop we start doing
+[3:10] our main job. Toggling PB5
+[3:14] that is onboard LED connected to PB5.
+[3:19] Toggle PB5 every 2 seconds and
+[3:22] keep doing that job till you are interrupted.
+[3:27] Till you are interrupted keep doing this. If you are
+[3:30] interrupted then handle the relevant ISR.
+[3:34] If you are interrupted then handle the relevant ISR. So this is
+[3:38] the ISR, the relevant ISR. Interrupt service routine.
+[3:43] Pin change interrupt two vector.
+[3:46] Why pin change interrupt two vector? It is for port D.
+[3:49] Pin change interrupts on port D.
+[3:53] If the interrupts are on port C, pin change interrupt
+[3:58] one vector. If the interrupts are on port B,
+[4:02] pin change interrupt zero vector. So different
+[4:06] interrupt vectors for different ports.
+[4:08] pin change interrupt 2 vector for port D,
+[4:12] pin change interrupt 1 vector for port C,
+[4:16] pin change interrupt 0 vector for port B.
+[4:20] Right.
+[4:21] The relevant ISR you have to handle.
+[4:24] Now inside the ISR we need to toggle the external LED.
+[4:30] You can't do it simply because this ISR is called
+[4:35] when the state of the pin goes from high to low as well as it comes from low to high.
+[4:44] That means this ISR is called when you press the button as well as when you release the button.
+[4:50] But we want to toggle the LED, external LED connected to PB5 only when you press the button.
+[5:00] Therefore, we need to check whether it is a button press or button release.
+[5:06] To do that, we use an if condition.
+[5:10] And this is the if condition that we use to check whether it is a button press or button release.
+[5:16] We check the bit 2, right?
+[5:21] This is bit 0, bit 1, bit 2.
+[5:23] Bit 2 of PIN D.
+[5:25] PIN D register.
+[5:26] bit 2 we check whether it is equal to 0.
+[5:31] When you press the button, the PD2,
+[5:34] state of the PD2 becomes low. When you press the button,
+[5:39] state of PD2 becomes low. As a result, right?
+[5:43] Let me write that. Now,
+[5:46] when you press the button, PD2
+[5:50] pin becomes low. Right. Now, if this is
+[5:53] pin D register. Let's say pin D register has these values. It has these values. 1 XX. Why?
+[6:03] This bit is 1 because we have pull up the pin. We have pull up the pin. So that means PD2 is high
+[6:13] by default. Bit 0, bit 1, bit 2. Therefore, bit 2 is 1 of the pin D register. But when you press
+[6:21] the button, the pin becomes low, right? Now, let's take the end operation with this end,
+[6:31] the other part, 0, 0, 0, 0, 0, 1, 0, 0. Now, when you get the end operation of these two values,
+[6:42] x and 0x.
+[6:46] No, sorry.
+[6:46] x and 0, 0.
+[6:48] 0, 0, 0, 0.
+[6:52] 0, x, 0, 0.
+[6:56] This is the result.
+[6:57] So the result of the AND operation depends on x.
+[7:02] Right.
+[7:03] Let's say this is also x.
+[7:07] x and 1, x.
+[7:09] So the result of the AND operation depends on x.
+[7:12] By default x is 1.
+[7:15] Why?
+[7:15] We have pull up PD2.
+[7:18] By default value of x is 1.
+[7:20] We have pull up PD2.
+[7:23] Right.
+[7:23] So if x is 1, this condition becomes false.
+[7:28] 1 not equals to 0.
+[7:31] If x is 1, 1 means 100.
+[7:34] 100 means 4.
+[7:37] 4 is not equal to 0.
+[7:39] So if condition false.
+[7:41] That means when you have released the button, if nobody has pressed the button, this condition falls, nothing happens.
+[7:50] But when you press the button, then X becomes 0.
+[7:55] Because PD2 state becomes low.
+[7:59] As a result, X becomes PIN D register.
+[8:03] The second bit becomes 0.
+[8:06] So, entire value would be 0.
+[8:08] 0 equals to 0.
+[8:10] Yes.
+[8:11] condition is true
+[8:13] we toggle the LED.
+[8:15] Right. The idea
+[8:17] is this. If this value
+[8:19] is zero
+[8:20] the pin change interrupt
+[8:22] happens when there is a
+[8:25] when there is a state
+[8:26] change on the pin.
+[8:28] When there is a state change on the pin
+[8:30] this interrupt, this ISR is
+[8:32] executed. Now when the
+[8:34] ISR is executed
+[8:36] if the value of this bit
+[8:39] is zero
+[8:39] that means PD2 is low. When the interrupt ISR is executed, if this bit is 0, that means PD2 is low.
+[8:53] To happen the interrupt, the PD2 must be high before the interrupt happens. If it was high,
+[9:06] now it is low
+[9:08] if it was high
+[9:09] then there is a state change
+[9:12] that's why interrupt happened.
+[9:14] So high to low it was high
+[9:16] now it is low
+[9:18] interrupt happened.
+[9:20] That means state change.
+[9:22] High to low means
+[9:24] falling edge.
+[9:26] But when you release the button also
+[9:28] interrupt happens.
+[9:29] When you release the button
+[9:31] the value of x would be
+[9:34] 1. Why?
+[9:36] We have pull up PD2.
+[9:38] So, we check the value.
+[9:40] If it is one interrupt happen, then its previous state should be low.
+[9:48] Because state change, low to high happen.
+[9:51] That is rising edge.
+[9:53] In the rising edge, we don't toggle the LED, right?
+[9:57] Now, in the external interrupts, you have four choices.
+[10:01] whether the pin held low, whether state change happened,
+[10:08] whether falling edge, whether rising edge.
+[10:14] But when it comes to pin change interrupts, you don't have those choices.
+[10:17] You have only one choice, logic change.
+[10:21] But using a simple if condition,
+[10:24] we can determine whether it is on falling edge or rising edge.
+[10:29] whether the interrupt happened.
+[10:32] When you press the button or release the button,
+[10:34] you can determine.
+[10:35] In the external interrupts,
+[10:37] you don't need to determine that
+[10:38] because there are choices.
+[10:40] You have to use the correct choice.
+[10:43] If you want to determine
+[10:44] whether it's a button press,
+[10:48] you have to use the falling edge interrupt.
+[10:50] If you want to determine
+[10:52] whether it's a button release,
+[10:55] you can use rising edge interrupt.
+[10:57] But in pin change interrupts,
+[10:59] you don't have those choices. But using if condition, you can simply determine that.
+[11:04] If the current value of the pin is low, an interrupt happened, that means the previous
+[11:12] state of the pin must be high. High to low, it happened. That's why interrupt happened.
+[11:18] Falling edge. If the current value of the current state of the pin is low, interrupt happened.
+[11:26] that means it was
+[11:29] current state of the pin is
+[11:31] high and interrupt happened
+[11:33] that means it was
+[11:35] low previously, low to
+[11:37] high, rising
+[11:39] edge. Based on that
+[11:41] we can determine whether it's
+[11:43] a button press or button release.
+[11:46] If there's a button press
+[11:47] we toggle the LED
+[11:49] if it is a
+[11:51] button release we don't do
+[11:53] anything. Can you understand?
+[11:55] Any question?
+[11:56] In this line we check whether the state of the pin is low.
+[12:01] That is current state.
+[12:02] Whether it is low.
+[12:04] Then interrupt happened.
+[12:06] To happen the interrupt there should be a state change.
+[12:09] Currently low.
+[12:10] Currently low means previously high.
+[12:13] If previously also low.
+[12:15] Then there is no state change.
+[12:18] The ISR would not be executed.
+[12:20] ISR executed.
+[12:22] Currently low.
+[12:23] That means previously high.
+[12:25] High to low.
+[12:25] button press. If currently high
+[12:28] ISR executed currently high
+[12:31] that means previously low
+[12:33] low to high
+[12:34] button release. Is that clear?
+[12:37] Can you understand? Any question?
+[12:41] Okay. No questions.
+[12:43] Right.
+[12:45] One problem
+[12:47] actually not a problem
+[12:49] one
+[12:51] issue with this code is
+[12:55] when you are writing this code you have to write
+[12:58] you have written actually

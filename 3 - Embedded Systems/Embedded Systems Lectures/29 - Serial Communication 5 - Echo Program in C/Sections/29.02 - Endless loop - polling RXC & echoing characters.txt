@@ -1,0 +1,158 @@
+[0:03] Right.
+[0:03] Then, we enter into endless loop.
+[0:07] Inside the endless loop, we poll RxC bit, receive complete bit.
+[0:16] We poll receive complete bit.
+[0:20] Receive complete bit is the bit number 7 of UCSR A register.
+[0:28] USAT control and status A register.
+[0:30] Bit number 7 is receive complete bit.
+[0:35] We poll that bit.
+[0:37] The bit value is usually 0.
+[0:40] But when the receive operation is complete,
+[0:45] the bit value would be 1.
+[0:47] RxC bit flag bit is raise.
+[0:50] Right?
+[0:50] Bit value would be 1.
+[0:51] so we check whether receive
+[0:54] is
+[0:55] not yet over
+[0:57] we repeatedly
+[0:58] check
+[0:59] now this while loop
+[1:01] this is the body of the while loop
+[1:03] null statement in the body
+[1:05] right
+[1:06] so this condition is repeatedly
+[1:08] checked
+[1:09] now
+[1:10] now let's say
+[1:11] this register. Let us assume the initial value of this register is xxxxxxxxx. Let us assume.
+[1:26] And with that we take the end operation.
+[1:28] [unclear — Sinhala / crosstalk]
+[1:34] Now when you take the end operation, x and 1.
+[1:38] If x is 1, outcome is 1.
+[1:41] If x is 0, outcome is 0, x and 1.
+[1:46] So when you take x and 1, the outcome is x.
+[1:51] x and 0 because one operand is 0,
+[1:56] no matter the value of other operand, outcome is 0.
+[2:00] Right.
+[2:01] Now this is the value you get when you perform this bitwise end operation between this register and this value.
+[2:12] This is the outcome you get.
+[2:14] You get its negation.
+[2:16] You get its negation.
+[2:19] Now you should, by default, that is the RxC flag.
+[2:23] This is the R X C flag.
+[2:26] It is 0.
+[2:27] That means entire thing is 0.
+[2:30] If you get the negation of that, you get 1.
+[2:33] While 1, loop condition is true.
+[2:37] Right?
+[2:37] Body is executed, which is the null statement.
+[2:40] Then again the condition is checked.
+[2:43] If R X C flag is 0, entire thing is 0.
+[2:47] negation of that 1. Condition 1.
+[2:52] Again the null statement of the body is executed.
+[2:57] So likewise this loop would be repeated again and again.
+[3:01] When the data receive operation is over
+[3:05] RxC flag would be 1. This particular bit would be 1.
+[3:10] Then 1 0 0 0 0 0.
+[3:14] If you take the negation of that, it will be 0.
+[3:19] Right?
+[3:20] So negation will be 0.
+[3:22] Then while loop condition becomes false.
+[3:26] Right?
+[3:26] When the receive operation is over or receive operation is complete,
+[3:33] the while loop terminates.
+[3:35] and then we read
+[3:37] the value, the character
+[3:39] in the USART data register
+[3:41] to
+[3:42] CH variable.
+[3:45] CH variable is of
+[3:46] chart type. To that variable
+[3:49] we read the
+[3:50] value in the USART
+[3:52] data register. When you read
+[3:54] a value from the USART data
+[3:56] register, automatically
+[3:58] RSC flag is clear.
+[4:01] When you read a character
+[4:03] from udr rxc flag is automatically clear right now we got the character sent from
+[4:12] pc we read the characters and from pc right
+[4:18] now without
+[4:20] pulling
+[4:21] RxC flag
+[4:23] without
+[4:24] pulling RxC flag
+[4:25] if you try to read
+[4:27] if you try to read
+[4:29] the UDR
+[4:31] register
+[4:32] then what would happen is
+[4:34] you would read the same
+[4:37] character again and again
+[4:39] but we don't need to do that
+[4:40] we want to read a new character
+[4:43] always
+[4:43] we don't want to read the same character
+[4:46] that's why we pull
+[4:47] RxC flag
+[4:49] till the receive operation
+[4:52] is over
+[4:53] then we read
+[4:55] the new character
+[4:57] in UDR
+[4:58] that is USAT data register
+[5:01] to this variable
+[5:03] right
+[5:04] after doing that
+[5:05] we call
+[5:06] transmit char function
+[5:08] right transmits
+[5:09] char function we call
+[5:11] and first when we
+[5:13] call the transmit char function we
+[5:15] use
+[5:15] opening square bracket as
+[5:18] the argument
+[5:19] that means we transmit
+[5:21] opening square bracket
+[5:23] then we transmit
+[5:24] the character that we receive
+[5:26] which is in the ch variable
+[5:28] the character that we receive
+[5:30] then we transmit
+[5:31] Then we transmit the closing square bracket.
+[5:37] So when these three statements, execution of entry, these three statements are over,
+[5:42] we have transmitted one enclosed character.
+[5:47] One enclosed character.
+[5:48] Now, where is this function?
+[5:52] Transmit cha function.
+[5:54] Yes.
+[5:54] this is the transmit
+[5:56] cha function
+[5:56] in the transmit cha function
+[5:58] we have
+[5:59] a parameter
+[6:01] to that parameter
+[6:02] we pass arguments
+[6:04] first time
+[6:05] we pass opening curly bracket
+[6:07] second time when we call
+[6:09] the transmit cha function we pass
+[6:11] the character that we receive
+[6:13] and third time
+[6:16] when we call the transmit cha function
+[6:17] we pass closing curly bracket.
+[6:20] And inside the transmit
+[6:22] function, again we pull.
+[6:27] This time we pull UDRE flag.
+[6:30] For that we use USAT status
+[6:33] and control register A. USAT
+[6:36] control and status register A. In the USAT control
+[6:40] status register A, we have UDRE flag. This is the UDRE flag. UDRE flag. Right? Let's
+[6:52] assume. Right? If you take this one. U C S R 0 A N.
+[7:04] Let us assume the initial value is xxxxxxxxxxx and 0.
+[7:14] X and 0 outcome is 0. X and 0 outcome is 0. X and 1 outcome is X. Likewise you get this
+[7:24] result. And then you take the negation of that. Now this is the UDRE flag. USAR data
+[7:34] register empty flag right if the data register udr register is empty this will be one if the udr
+[7:43] is not empty this is zero now when you

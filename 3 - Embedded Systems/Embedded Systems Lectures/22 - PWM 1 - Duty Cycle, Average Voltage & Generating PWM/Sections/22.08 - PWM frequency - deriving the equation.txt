@@ -1,0 +1,205 @@
+[0:01] What is the maximum PWM supported frequency?
+[0:04] For a given device, we can find out from the device data sheet.
+[0:10] Then accordingly we need to adjust the PWM frequency of our embedded system.
+[0:20] Let's say a particular data sheet of a particular device says, let's say, minimum PWM frequency is 100 Hz and the maximum PWM frequency is 300 Hz.
+[0:35] Then you have to set the pulsed modulated output frequency of your system,
+[0:44] of the output pin that is connected to the device.
+[0:48] You have to set the frequency between 100 to 300 Hz,
+[0:53] probably 200 or 250.
+[0:55] You have to set.
+[0:56] So you can properly operate the connected device.
+[0:59] To do that, you should know how to change the PWM frequency.
+[1:05] Now, that is what we are going to discuss.
+[1:09] P, W, N, Frequent.
+[1:11] Right.
+[1:11] So, I use non-inverted mode because it is easier to understand.
+[1:17] Later, the same concept you can apply for the inverted mode.
+[1:23] And then you can get the opposite of the non-inverted mode.
+[1:26] Right.
+[1:27] So, for this example, I use non-inverted mode.
+[1:30] In the non-inverted mode, you can see while time counts from zero to maximum value.
+[1:42] Right?
+[1:43] Zero to maximum value.
+[1:44] From bottom to top, while time counts.
+[1:47] If a compare match occurs, you can see this is the place where compare match occurs.
+[1:52] Waveform generator clears the output compare up in.
+[1:57] Waveform generator clears output compare up in.
+[2:00] and sets output compare pin when timer overflows.
+[2:06] So, timer starts from 0 and increments to 2550, whatever the top value.
+[2:12] It could be 65,535 if it is a 16-bit timer.
+[2:16] And in between, a compare match can occur depending on the value of OCR.
+[2:22] When a compare match occurs, as soon as a compare match occurs,
+[2:27] waveform generator
+[2:29] clears OCP.
+[2:32] OCP becomes
+[2:34] low. And again
+[2:35] OCP is set.
+[2:38] It goes to high.
+[2:40] When time
+[2:41] overcomes.
+[2:43] We discussed that in the previous
+[2:46] slide. By doing that
+[2:48] waveform generator
+[2:50] generates
+[2:51] one PWM cycle.
+[2:53] By doing that
+[2:55] waveform generator generates
+[2:57] 1 PWM pulse with modulated cycle.
+[3:01] Now here you can see 1 PWM cycle.
+[3:04] 1 PWM cycle.
+[3:06] Now what is frequency?
+[3:10] Frequency means number of cycles
+[3:14] per second. That is frequency.
+[3:17] Time for 1 clock cycle.
+[3:19] 1 clock cycle. Time for 1 cycle.
+[3:22] 1 divided by 4.
+[3:24] Time for one clock cycle is 1 divided by 2. Now I need some white space. Let me get some white space. Now time accounts from bottom. So which is 0 to top and overflows to bottom. That is 0.
+[3:44] Overflow to zero. Zero to top and again overflow to zero. How many timer cycles? How many timer cycles? Zero to top and then overflow to zero. How many timer cycles? Let's say top piece three. For simplicity let's say top piece three. How many timer cycles there?
+[4:08] 0 to 1, 1 to 2, 2 to 3, 3 to again overflow 0.
+[4:15] How many time cycles? 4.
+[4:17] If top is 3, how many time cycles? 4 cycles.
+[4:20] Why? 0 to 1, 1 cycle.
+[4:23] 1 to 2, another cycle.
+[4:25] 2 to 3, another cycle.
+[4:27] And 3 to 0, another cycle. 4 cycles.
+[4:30] That means if timer comes from 0 to top and overflows to 0 again, number of timer cycles is top plus 1.
+[4:45] Now when timer goes from 0 to top and again overflows to 0, during that time, how many PWM cycles you get?
+[4:59] Timer goes from 0 to top.
+[5:03] Overflows again to 0.
+[5:07] And during that time.
+[5:09] You get 1 PWM cycle.
+[5:12] That means.
+[5:13] Top plus 1 timer cycles.
+[5:18] Give 1 PWM cycle.
+[5:22] Top plus 1 timer cycles.
+[5:24] Give 1 PWM cycle.
+[5:26] Can you understand this line?
+[5:29] Right.
+[5:29] Even in this picture you can see that.
+[5:32] The timer goes from bottom to top and then again overflow to bottom.
+[5:37] How many cycles?
+[5:38] Top plus one cycles.
+[5:40] During the top one plus cycles, the PWM you get one PWM cycle.
+[5:47] Top plus one timer cycles give you one PWM cycle.
+[5:52] Is that clear?
+[5:53] If not, let me know.
+[5:55] Before we proceed.
+[5:56] So we can form an equation.
+[6:02] Time for top plus 1 timer cycles equals time 1 PWM cycle.
+[6:12] If top plus 1 timer cycles give you 1 PWM cycle,
+[6:19] time for top plus 1 timer cycles equals 2.
+[6:24] time for one PWM cycle.
+[6:28] So, time for
+[6:30] one timer cycle equals
+[6:34] time for one PWM
+[6:38] cycle divided by
+[6:42] top plus one. Can you understand?
+[6:46] Time for top plus one timer cycles equals
+[6:50] time for one PWM cycle.
+[6:53] So, that figure if you divide by top plus one, when you get time for one timer cycle,
+[7:01] timer cycles top plus one pramaana, PWM cycle is not going to be the PWM cycle.
+[7:08] If you have a PWM cycle, top plus one will be the timer cycle, you can get it.
+[7:17] Right.
+[7:23] Right.
+[7:25] Then
+[7:26] time for one timer cycle equals
+[7:30] time for one PWM cycle divided by the plus one.
+[7:34] Right.
+[7:36] Now time for one timer cycle.
+[7:39] Time for one cycle means one divided by frequency.
+[7:44] So we can
+[7:45] introduce frequency here.
+[7:47] Right. That means time for one timer cycle means one divided by one divided by timer frequency.
+[8:02] Timer frequency means F timer.
+[8:06] Because we know that time for one cycle equals one divided by frequency.
+[8:12] If so, time for one timer cycle, we can replace with 1 divided by timer frequency.
+[8:23] 1 divided by timer frequency means 1 divided by the other side of the equation, top plus 1 multiplied by time for 1 PWM cycle.
+[8:38] Time for 1 PWM cycle means again cycle type we can relate to frequency.
+[8:46] Time for 1 PWM cycle means 1 divided by PWM frequency.
+[8:54] F PWM.
+[8:56] So we can replace time for 1 PWM cycle with 1 divided by PWM frequency.
+[9:03] Can you understand this part up to this point?
+[9:06] If not, don't hesitate. Please tell me.
+[9:11] So last line, not understanding.
+[9:15] This equation part?
+[9:18] Yes.
+[9:19] Right. Now, look at here.
+[9:23] Time for one clock cycle means one divided by frequency.
+[9:26] Time for one time clock cycle.
+[9:35] Time for one time cycle means then 1 divided by time of frequency.
+[9:43] Time for one cycle equals 1 divided by frequency.
+[9:48] If so, time for one time cycle means 1 divided by time of frequency.
+[9:55] Then other side of the equation.
+[9:57] 1 divided by top plus 1 multiplied by time for one PWM cycle.
+[10:03] Time for 1 PWM cycle means 1 divided by frequency of PWM.
+[10:11] Because here we have found that time for 1 cycle equals 1 divided by frequency.
+[10:22] 1 cycle is equal to 2 times.
+[10:26] How about now?
+[10:35] Okay, sir.
+[10:36] Right.
+[10:37] Then from this equation, we can get FPWM.
+[10:44] Frequency of PWM.
+[10:47] Pulse with modulation frequency equals timer frequency.
+[10:53] F timer.
+[10:54] I use F timer because we are familiar with F CPU.
+[11:00] F timer divided by top plus 1.
+[11:06] PWM frequency equals timer frequency divided by top plus 1.
+[11:11] Is that clear?
+[11:13] Right.
+[11:13] If clear, now I am going to erase all these things.
+[11:18] Right.
+[11:20] This is the equation.
+[11:22] Look at this equation.
+[11:23] We know that time of frequency equals fCPU divided by prescaler.
+[11:30] We know that.
+[11:32] CPU frequency we scale down using a prescaler and feed to the timer.
+[11:38] That is the time of frequency.
+[11:40] And on the other hand, we just derived this equation.
+[11:45] PWM frequency equals time of frequency divided by top plus 1.
+[11:50] If it is 8 bit timer, top could be 255.
+[11:55] If it is a 16 bit timer, top could be 65,535.
+[12:00] This equation we just derived.
+[12:04] We previously know this equation.
+[12:08] Right?
+[12:09] Make a culling that now.
+[12:11] Because if CPU frequency will scale down and feed to the timer.
+[12:16] So time of frequency is CPU frequency divided by prescale.
+[12:22] PWM frequency equals time of frequency divided by top plus 1.
+[12:26] We just derived that equation.
+[12:28] When you combine these two equations, the time of frequency you can replace with this part.
+[12:35] FCPU divided by prescale.
+[12:37] You can replace time of frequency with this part.
+[12:40] Then you get this.
+[12:42] PWM frequency equals FCPU.
+[12:46] CPU frequency divided by top plus 1 multiplied by prescale.
+[12:52] So whatever the PWM frequency you need, now you can calculate.
+[12:58] You know FCPU.
+[12:59] That is your clock speed of the processor.
+[13:04] And based on the timer that you are using, you know that the top.
+[13:09] If the timer is 8 bit, this is 255.
+[13:12] Then top plus 1 is 256.
+[13:14] If the timer is 16 bit, this is 65,535.
+[13:20] Then top plus one is 65,536.
+[13:24] And the pre-scale, you know what is the pre-scale that you use.
+[13:29] You know whether it's 64, whether 128, whatever the pre-scale you use, you know.
+[13:35] Based on that, you can calculate the required PWM frequency.
+[13:40] So PWM frequency should be high enough to minimize any flicker.
+[13:49] Should be high enough to minimize any flicker.
+[13:52] And also PWM frequency should be low enough to device to react for a change.
+[14:00] The proper range of the PWM frequency that the device supports, you can find out from the data sheet.
+[14:07] And then you can determine what is the prescaler that you have to use to get that frequency.
+[14:18] For example, let's say you want 200 hertz as the PWM frequency.
+[14:23] And if your CPU frequency is 16 megahertz and the timer is 8-bit timer, then this part is 256.
+[14:33] six to get 200
+[14:35] around 200 to 300
+[14:37] between 100 to 300 frequency
+[14:40] around 200
+[14:42] if you want to get what is
+[14:43] the prescaler you should use
+[14:45] you can calculate
+[14:47] any question
+[14:55] right if this is clear
+[14:57] that's all for the
+[15:00] morning session right
+[15:01] so we'll continue this
+[15:03] in the afternoon right so see you at one o'clock thank you thank you

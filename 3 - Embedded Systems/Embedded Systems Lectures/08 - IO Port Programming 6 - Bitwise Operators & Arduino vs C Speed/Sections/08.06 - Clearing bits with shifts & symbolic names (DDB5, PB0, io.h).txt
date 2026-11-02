@@ -1,0 +1,120 @@
+[0:07] which bits you want to clear without writing lengthy binary strings then and what about this
+[0:17] statement statement number 10 can you understand line number 10 line number 10 is to clear
+[0:26] the bit 0 of
+[0:29] DDRB. Bit 0 of
+[0:33] DDRB to clear without disturbing to other bits.
+[0:38] Right. Let's see how it works.
+[0:42] DDRB
+[0:43] AND operator then bitwise
+[0:47] negation operator 1
+[0:51] left shift 0. Let's assume DDRB
+[0:54] contains XXXXXXXXXXXXX
+[0:59] and negation
+[1:02] within bracket 1 means binary 1
+[1:06] 3 4 5 6 7 1
+[1:09] left shift 0 times 0 times left shift
+[1:14] that means don't left shift. The meaning is don't left shift
+[1:18] 0 times means right.
+[1:21] [unclear — Sinhala / crosstalk]
+[1:26] End operation.
+[1:28] 1, 2, 3, 4.
+[1:30] 1, 2, 3, 1.
+[1:33] Now this is the answer.
+[1:35] Now negation of this value.
+[1:39] [unclear — Sinhala / crosstalk]
+[1:46] That is the negation.
+[1:47] zeros are converted into 1
+[1:50] 1 is converted into 0
+[1:52] and then
+[1:54] and x x x x
+[1:57] x x x x
+[2:00] x and 1
+[2:01] x x and 1
+[2:04] x likewise
+[2:06] all are x x
+[2:07] x x x
+[2:09] last one x and 0
+[2:12] no matter the value of x
+[2:14] it is 0
+[2:15] So bit 0 we cleared without disturbing to other bits.
+[2:21] This is the value we assigned to DDRP.
+[2:26] Can you understand?
+[2:29] Can you understand?
+[2:31] Any question?
+[2:32] No.
+[2:33] Right.
+[2:34] Then there is another way to write this program.
+[2:38] Now first I showed you how to assign registers directly.
+[2:43] then there's a problem that when we set or clear a bit other bits also affected
+[2:51] then to avoid that we use bitwise operators without disturbing to other bits now we know
+[3:00] how to set or clear bits then the problem is it is not convenient to specify lengthy strings of
+[3:09] ones and zeros. If the architecture is 8 bit that is
+[3:13] okay but if the architecture is 32 bits that becomes
+[3:17] very inconvenient. The solution bitwise shift
+[3:21] operators. Using bitwise shift operators we can
+[3:25] set or clear bits in a register without
+[3:29] specified strings of ones and zeros.
+[3:33] Then there is another way of writing
+[3:36] this program. Let's see. Now, this is similar to the previous one. But instead of 5, I have
+[3:46] used DTB5. Instead of 0, I have used DTB0. DTB5 means actually 5. DTB0 means actually
+[4:01] 0. Port B 0
+[4:03] means actually 0.
+[4:05] These are labels.
+[4:07] DDRB register
+[4:09] bit 5 label
+[4:11] is DDB5.
+[4:13] So this statement says
+[4:15] set the bit 5 of
+[4:17] DDRB register.
+[4:19] This statement says clear
+[4:21] the bit 0 of
+[4:23] DDRB register. Why?
+[4:26] DDRB register
+[4:27] bit 0 there is a label.
+[4:29] label is ddb0. ddb0 is the label for ddrb register bit 0. Port b register bit 0. Port b register bit
+[4:42] 0. There is a label port b0. Using this label constant you can do that. You can write your code.
+[4:51] Now your program is more readable and understandable. Now just looking at this line we can understand
+[4:59] ddrb data direction register b we are going to set because o operator that means we are going to set
+[5:08] fifth bit bit number five ddb5 ddrb register and operator that means we are going to clear
+[5:17] bit 0 ddb 0 port b register we are going to set port b 0 that means bit 0 port b register we are
+[5:29] going to toggle right exo operator that means we are going to toggle port b5 that means bit 5 bit
+[5:39] 5 we are going to toggle. Pin B, in this expression we evaluate the end operation with pin B register
+[5:48] with pin B0, 0 bit of the pin B operator. Then the code is more readable. These constants,
+[5:58] these label constants are defined in a header file called IOM328P.h. IOM328P.h. Right.
+[6:16] Input output microcontroller 328 that is the microcontroller's number P.h. But we have not
+[6:26] included that header file into our program.
+[6:30] No problem. That header file included
+[6:33] inside this header file.
+[6:37] io.h has included this.
+[6:40] So we have included io.h.
+[6:43] io.h has included this. So this header file
+[6:46] contains all the
+[6:49] label constant definitions.
+[6:54] ddb5 means 5.
+[6:56] DDB 0 means 0. Port B5 means 5. All these definitions are in this header file. If you use label constants, your code would be more readable, more understandable.
+[7:12] Now the reason that I explained you all these different ways of writing firmware, because in case accidentally if you happen to read, you would find these different styles in the books.
+[7:30] Some books, some authors prefer this type, label constants.
+[7:36] Some authors prefer bit shift operators.
+[7:39] Some authors prefer lengthy binary string.
+[7:43] So it's okay, whatever the style you like, you can use.
+[7:49] But you should know at least these type of,
+[7:54] these kind of ways are available to specify your approach.
+[7:59] Then when you read, if you encounter any previously written program, a program from a book, then you should be able to understand.
+[8:10] And even at the exam, if you are given a source code in these styles, then you should be able to understand.
+[8:17] These are the different ways of writing firmware.
+[8:20] Either you can use lengthy binary strings or you can use bit shift operators with numbers or you can use bit shift operators with label cost. Can you understand? Any question?
+[8:34] Marathiya Prashna? Any question? Can you understand all three styles of writing firmware? Right, now let me show you something. Right, now you can see.
+[8:50] Now this is ddb file. Right click, go to implementation. This is the file iom328p.h file. ddb file means file defined in this header file.
+[9:08] AVR IOM 328P.h definitions for ATmega 328P. And this is the actual memory address of DDRB
+[9:21] register 0x0v memory address of DDRB register. And this is the port B register memory address.
+[9:29] And port B5 means just 5.
+[9:33] Port B0 means just 0.
+[9:36] So these are the definitions.
+[9:38] So label constants.
+[9:39] You can use label constants if you want.
+[9:42] Right.
+[9:43] Right.
+[9:43] Now, if C programming is clear, let's try to develop the same firmware using Arduino platform.
+[9:55] Right.
+[9:56] Arduino is not a programming language.
+[9:58] the programming language behind Arduino is C but using Arduino platform because platform provides

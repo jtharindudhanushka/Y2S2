@@ -1,0 +1,149 @@
+[0:05] labels right then let's move into algorithm because hardware we have already designed
+[0:11] design developed the same hardware right the hardware that we use for
+[0:16] pulling hardware that we use for external interrupts the same hardware that we are going
+[0:23] So we don't need to talk about the schematic diagram or wiring diagram, no. Same hardware, right? The external interrupts, we develop hardware and then to devouse the input, we use a capacitor in parallel to the input switch, the same hardware.
+[0:46] But now we are going to use different types of interrupts.
+[0:52] So the firmware would be different.
+[0:54] But the same hardware algorithm.
+[0:57] So we start the flowchart.
+[1:00] Pin change in truck base trigger.
+[1:02] Then the main function.
+[1:04] Any C program you have this function.
+[1:08] And start.
+[1:09] Now let's talk about this main function.
+[1:11] Our flowchart for this main function.
+[1:13] Right.
+[1:14] So as usual, we configure PB0 and PB5 as outputs.
+[1:21] So these are the two IO pins that we use to connect LEDs.
+[1:28] The PB0 we have connected the external LED on the breadboard and PB5 onboard LED connected.
+[1:37] Arduino pin number 8, Arduino pin number 13.
+[1:40] Then we configure PD2 as an input because the switch connected to PD2.
+[1:49] Actually, the PD2 means PCINT18.
+[1:54] PD2 means PCINT18.
+[1:57] Pin change interrupt 2.
+[1:59] Pin change interrupt 2.
+[2:01] So, we configure that pin as an input because the switch connected to that pin.
+[2:06] Then we pull up that pin.
+[2:08] Idea is the default state of the pin is now high when you pull up.
+[2:15] We activate the internal pull up resistance.
+[2:18] So we pull up the pin.
+[2:20] So the default state of the pin is high.
+[2:23] PD2.
+[2:24] PD2 means PCI NT18.
+[2:27] Then we enable pin change interrupt on port D.
+[2:31] We enable the entire port D for pin change interrupts.
+[2:35] Entire port D we enable for pin change interrupt.
+[2:39] Then in that port individual pin.
+[2:43] We enable pin change interrupt on PD2 that is PCI and E80.
+[2:49] The individual pin where the switch connected.
+[2:53] We enable that pin for pin change interrupt.
+[2:56] Then we enable global interrupt.
+[2:59] SEI function set interrupt function.
+[3:02] Then we enter into the endless loop.
+[3:04] And we start doing the main task.
+[3:09] Tuggling onboard LED every two seconds.
+[3:13] That is the main task.
+[3:15] Keep reading the newspaper.
+[3:17] Tuggling PB5 that is onboard LED connected to PB5 pin number 30 every two seconds.
+[3:25] That's the main task.
+[3:26] While we are doing the main task, if input, if somebody presses the button,
+[3:33] then we will be interrupted.
+[3:36] So till then we can do the main task.
+[3:39] When you got interrupted
+[3:41] then you have to attend to the input.
+[3:44] Right.
+[3:44] So when there is an interrupt
+[3:47] we have to handle the relevant interrupt handling routine.
+[3:51] So this is the interrupt handling routine for pin change interrupt.
+[3:55] Now in that routine we have to toggle the external LED.
+[4:01] Externally connected LED
+[4:02] we have to toggle. But unlike in the previous example, we can't simply do that. We have to
+[4:10] check a condition. Why? The reason is this. The pin change interrupts occur when the state of
+[4:20] a particular pin, when the state of a particular pin change. The pin change, that's why we call
+[4:28] pin change. When the state change, pin change interrupt happens. Now state change means the
+[4:37] state could go from high to low as well as from low to high. There can be two state changes.
+[4:46] High to low, low to high. Right. What does that mean? By default, the pin is high. When
+[4:54] you press the button, the pin becomes low. That means when you press the button, the state change
+[5:02] is high to low. Pin change interrupt happens. Also, when you release the button, then low to high,
+[5:12] the pin state is changed from low to high. Again, pin change interrupt happens. When you press the
+[5:18] button, interrupt happens.
+[5:20] When you release the button,
+[5:22] interrupt happens. But we
+[5:24] want to toggle the LED
+[5:26] only when
+[5:28] we press the button,
+[5:30] not when we
+[5:32] release the button. So, we want
+[5:34] to toggle the LED when we
+[5:36] press the button. We don't want to
+[5:38] toggle the LED when we release the button.
+[5:40] But the pin change interrupt
+[5:42] can happen when
+[5:44] we press the button as well as when
+[5:46] we release the button, because state change
+[5:48] happens when you press the button high to low state change when you release the button low to
+[5:53] high in our external interrupt example right we use falling edge to trigger to interrupt the cpu
+[6:05] falling edge that means the pin state going high to low falling edge only one falling edge there
+[6:13] There are no two falling edges.
+[6:15] You have one falling edge, one rising edge.
+[6:18] So that's why in that example, we didn't encounter this kind of problem.
+[6:24] But here we have that problem.
+[6:27] When you press the button, CPU is interrupted.
+[6:30] When you release the button, again CPU is interrupted.
+[6:33] We don't want that to happen.
+[6:35] We want to toggle the LED only when we press the button.
+[6:40] That's why we check using this condition.
+[6:43] if interrupt is on falling edge.
+[6:47] If interrupt is on falling edge.
+[6:50] That means, falling edge means
+[6:53] the state goes from high to low.
+[6:56] We check whether state goes from high to low.
+[7:00] If so, we toggle the LED.
+[7:03] The state goes from high to low
+[7:05] when you press the button.
+[7:07] Because default state high,
+[7:09] when you press the button, it becomes low.
+[7:11] So high to low happens when you press the button.
+[7:14] That is falling edge.
+[7:16] But when you release the button, the state was low.
+[7:21] It goes to high.
+[7:23] Low to high, that is rising edge.
+[7:26] So this condition becomes false when you release the button.
+[7:30] So we don't toggle the LED.
+[7:31] When this condition is true, then only we toggle the LED.
+[7:37] So when you press the button, LED will be toggled.
+[7:41] When you release the button, nothing will happen.
+[7:43] Although this interrupt routine is executed, nothing will happen because of this condition.
+[7:50] Can you understand that?
+[7:55] Any question?
+[7:59] Can you understand why we need this if condition?
+[8:02] Without this if condition, if we use just toggle TB0.
+[8:07] in the interrupt handling routine, what would happen is PB0 will be toggled when you press
+[8:13] the button as well as when you release the button. So if the LED was off, when you press the button,
+[8:19] it will be turned on and when you release the button again, it will be turned off.
+[8:24] But we don't want to do that. When you press the button, we want to toggle. If the LED was off,
+[8:31] when you press the button, we want to turn on the LED. And when you release the button,
+[8:36] nothing should happen.
+[8:39] But the problem of pin change interrupts
+[8:41] so they interrupt the CPU
+[8:44] when the state of the pin is changed.
+[8:47] That means this pin change interrupt handling routine
+[8:52] is executed when you press the button
+[8:55] as well as when you release the button.
+[8:57] That's why we have put this if condition.
+[9:00] Using that we check whether
+[9:02] it's a button press or button release.
+[9:05] If it is a button press, toggle the LED.
+[9:09] If it is a button release, do nothing.
+[9:12] Is it clear?
+[9:13] Any question?
+[9:15] Right.
+[9:15] Then let's move into source code.
+[9:19] Right.
+[9:21] We need this header file which contains input-output definitions.
+[9:26] Right.
+[9:28] And we need this fcpu constant.
+[9:32] that is the speed of the cpu because delay.h header file requires the speed of cpu to determine
+[9:43] delays and also this header file contains definition of underscore delay underscore
+[9:50] ms function and we are going to use interrupts so we need this header file interrupt.h then
+[9:58] you have main function in main void return 0.

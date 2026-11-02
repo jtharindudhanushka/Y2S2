@@ -1,0 +1,176 @@
+[0:05] lot of wrapper functions. First you have to have an algorithm right this is the algorithm Arduino
+[0:14] algorithm for dual red blinker program right dual red blinker program algorithm right first we
+[0:23] declare digital io pin 8 as switch pin switch connected to digital io pin 8 which is pb0
+[0:33] declare digital io pin 13 as led pin the built-in led connected to digital io pin 13 which is pb5
+[0:43] setup and loop now let's see setup in the setup we configure switch pin as input
+[0:53] and pull up. The switch pin is a digital IEO pin 8 which is PB0. We configure that pin as input pin
+[1:01] and we pull up the pin. That means we set the default state high. Then we configure a LED pin
+[1:11] which is digital IEO pin 13, AVR terms PB5 as output end of the setup. Then loop.
+[1:21] In the loop function, toggle state of LED pin.
+[1:27] LED pin state, toggle.
+[1:29] If the state is high, make it low.
+[1:31] If it is low, make it high, toggle.
+[1:34] Read the state of switch pin.
+[1:36] The switch connected pin state, whether high or low, read it.
+[1:40] If it is high, that means nobody has pressed the switch.
+[1:45] Wait 500 milliseconds.
+[1:47] If it is not high, that means somebody has pressed the switch.
+[1:51] then wait 200 milliseconds. Stop. And the loop runs again and again. So we toggle the LED
+[1:59] either rate of 500 milliseconds or 200 milliseconds depending on the state of the switch pin.
+[2:09] If switch is high 500 milliseconds, if switch is low, if the switch pin state is low 200 milliseconds.
+[2:16] Can you understand this algorithm?
+[2:20] This is for Arduino.
+[2:22] Can you see the similarity between this algorithm and previous C programming algorithm?
+[2:29] Can you see the differences between this algorithm and that algorithm?
+[2:33] Any question?
+[2:34] No.
+[2:34] Right.
+[2:35] Then let's go to source code.
+[2:37] So in Arduino we have source setup function and loop function.
+[2:41] Those functions they don't return any value.
+[2:44] Therefore return data type is void.
+[2:47] And this is the commit line.
+[2:49] And normally the extension of Arduino sketches are in extension INO ENO.
+[2:55] First we declare two pins.
+[2:57] Switch pin, digital IO pin 8, LED pin, digital IO pin 13 as integer constants.
+[3:05] Then we configure the two pins.
+[3:08] Switch pin we configure as input pull up.
+[3:11] pin mode, function, switch pin that is pin number 8.
+[3:17] Not just input but pull up.
+[3:19] That means the default state of the switch pin would be high.
+[3:24] We activate the internal resistor, internal pull up resistor.
+[3:28] We activate the internal pull up resistor.
+[3:31] In C programming, right, so we set the DDR,
+[3:36] particular DDR bit 0 and particular port bit 1.
+[3:40] Now instead of accessing registers, we call this function.
+[3:46] Then pin mode LED pin output.
+[3:50] We configure LED pin as output pin, which is pin number 13.
+[3:54] Then we need to, according to our algorithm, we need to toggle the state of LED pin.
+[4:02] We need to toggle.
+[4:03] How do we do that?
+[4:04] For that we need another variable, a Boolean variable called state.
+[4:10] and initialize with false.
+[4:12] And we toggle the value of this variable.
+[4:16] How do we do that?
+[4:17] This is the way.
+[4:19] For the state variable, we assign not state.
+[4:23] If the state variable contains false, we assign true.
+[4:28] Not state is true.
+[4:30] If the state variable contains true, we assign false.
+[4:34] This is how we toggle the state.
+[4:37] Then using digital write function,
+[4:40] Which we set the state of LED pin.
+[4:44] So LED pin pin number 13.
+[4:47] State.
+[4:48] Initially state is false.
+[4:50] The first execution.
+[4:51] State becomes true.
+[4:53] Then this is true.
+[4:55] Right.
+[4:56] So LED is turned on.
+[5:00] Then.
+[5:01] Next iteration.
+[5:02] It is true.
+[5:03] It becomes false.
+[5:04] Right.
+[5:05] State becomes false.
+[5:06] So LED would be turned off.
+[5:08] This is how we toggle the LDD.
+[5:11] Then, in the if condition, digital read, another function.
+[5:17] Using digital read function, we check the state of the switch pin.
+[5:22] We check the state of the switch pin.
+[5:24] This digital read function, right, reads the state of the switch pin and returns it.
+[5:30] This function returns the state.
+[5:33] If the switch pin is, switch connected pin, which is pin number 8,
+[5:36] If that pin is high, this function returns high.
+[5:41] If high, delay 500 milliseconds.
+[5:44] If this function returns low, delay 200 milliseconds.
+[5:48] Because if low means if condition false, then delay 200 milliseconds.
+[5:53] Can you understand this Arduino code?
+[5:57] Right.
+[5:57] Now instead of this Boolean variable, you can have integer variable.
+[6:04] Initialize with 0.
+[6:05] then here you can have state exclusive O operator 1.
+[6:12] The value is 0 initially exclusive O 1.
+[6:17] Value would be 1.
+[6:19] And that one we put here.
+[6:21] So you turn on the LED.
+[6:23] Next time.
+[6:24] The variable value is 1.
+[6:26] 1 XO 1 0.
+[6:29] Then put the 0 here.
+[6:30] Turn off the LED.
+[6:31] This is another way of writing the same.
+[6:36] Without using this variable, we can write the program.
+[6:42] How?
+[6:42] Then we don't need this variable.
+[6:45] Right?
+[6:45] We can write, is it of this line?
+[6:48] In a line.
+[6:50] Right?
+[6:50] You can write.
+[6:52] Digital.
+[6:53] Write.
+[6:54] LED pin.
+[6:57] Comma.
+[6:58] Not operator.
+[6:59] Digital.
+[7:00] Read.
+[7:01] So let's see. You can write. So we read the LED pin state. If it is low, negation of that high.
+[7:15] Turn on the LED pin. Next time, read the state of LED pin. If it is high, not high, low, turn off the LED pin.
+[7:23] Another way of writing the same thing. Can you understand?
+[7:28] So it's very important to know these different ways of writing codes.
+[7:35] Because probably in the exam, I may ask you to explain a certain code segment.
+[7:44] In the industry, when you read somebody else's source code, firmware, you may be able to understand it.
+[7:54] You should be able to understand it.
+[7:55] So different ways of writing.
+[7:57] When you read a book, you may encounter a different way of writing the source code.
+[8:04] Even this Arduino program, I have explained you three ways of writing the same firmware.
+[8:11] Any question?
+[8:12] Can you understand this life?
+[8:16] Can you understand this life?
+[8:18] At the end, you have two ways.
+[8:27] This is a digital write line.
+[8:30] Yes, sir.
+[8:31] Now this idea is
+[8:34] we need to toggle the LED
+[8:36] we need to toggle the
+[8:37] LED pin high and low.
+[8:41] When you toggle the state
+[8:42] of LED pin high and low
+[8:44] the LED connected to that pin
+[8:46] you can turn on and off.
+[8:48] Now what we do is
+[8:49] we read the state of that pin
+[8:52] digital read function using the
+[8:54] digital read function we read the
+[8:56] state of that pin if the state is let's say low then we get using the not operator this is the
+[9:05] not operator we get the negation of low what is the negation of low high then digital write
+[9:13] led pin comma high you turn on the led then the next iteration the loop runs again and again
+[9:20] The next iteration we read the digital read function.
+[9:24] We read the state of LED pin.
+[9:27] Now LED pin is high.
+[9:29] So this function returns high.
+[9:31] Using the not operator we get the negation.
+[9:35] Not high that means low.
+[9:37] Now this is low then.
+[9:38] So digital write LED pin low.
+[9:41] We turn off the LED.
+[9:43] Next iteration.
+[9:44] Now the pin is low.
+[9:46] Digital read function we read the state of pin.
+[9:48] It is low.
+[9:50] you get low. Low, not low.
+[9:53] Not low means high. Digital write
+[9:56] LED pin high. You again turn on the LED.
+[9:59] That means each iteration we toggle
+[10:02] LED pin state high and low.
+[10:05] As a result, LED connected to that pin
+[10:08] will be blink on and off.
+[10:12] And the blinking rate depends on
+[10:14] the delay you have used.
+[10:17] For that we use switch. We get the digital read function. We read the switch pin state. If the switch pin state is high, 500 millisecond delay. If the switch pin state is low, 200 millisecond delay. If the switch pin state is high, you get high for the if condition. If high, that means condition true.
+[10:39] If this returns low, that means if low, low means zero. If zero, condition falls, else party is executed. Is that clear?
+[10:50] Yes, sir. Thank you.
+[10:51] What else? Ask us any question. Don't keep quiet if you have questions.
+[10:56] [unclear — Sinhala / crosstalk]

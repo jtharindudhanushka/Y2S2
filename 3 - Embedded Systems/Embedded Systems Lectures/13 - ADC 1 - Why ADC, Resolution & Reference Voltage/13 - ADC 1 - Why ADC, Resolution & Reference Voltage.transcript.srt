@@ -1,0 +1,852 @@
+1
+00:00:00,000 --> 00:00:11,300
+Right. Now the next topic is analog to digital conversion. Right. First, let's see the learning outcomes.
+
+2
+00:00:15,599 --> 00:00:28,600
+Explain the need of ADC on completion of this session. You should be able to explain the
+
+3
+00:00:28,600 --> 00:00:40,079
+need, why we need analog to digital conversion. Describe how analog to digital converter ADC
+
+4
+00:00:40,079 --> 00:00:50,960
+converts an analog input into a discrete number. Analog means continuous. Discrete means not
+
+5
+00:00:50,960 --> 00:00:59,960
+continuous. So describe how you should be able to describe how ADC converts an analog
+
+6
+00:00:59,960 --> 00:01:08,599
+input, continuous input into a discrete number. How that happens, you should be able to explain.
+
+7
+00:01:08,599 --> 00:01:10,920
+Not how to use ADC.
+
+8
+00:01:11,879 --> 00:01:12,680
+That is simple.
+
+9
+00:01:12,819 --> 00:01:15,319
+How to use analog digital converter is simple.
+
+10
+00:01:15,980 --> 00:01:16,939
+Many people knows.
+
+11
+00:01:18,439 --> 00:01:20,420
+But how it works,
+
+12
+00:01:20,599 --> 00:01:22,480
+how that conversion happens,
+
+13
+00:01:23,140 --> 00:01:24,439
+you should be able to explain.
+
+14
+00:01:25,900 --> 00:01:29,340
+Explain the functionality of ADC registers.
+
+15
+00:01:30,500 --> 00:01:31,000
+Right.
+
+16
+00:01:31,000 --> 00:01:37,599
+there are some dedicated registers related to ADC what are they and what are their function
+
+17
+00:01:40,120 --> 00:01:47,159
+construct a microcontroller based system and program it to read an analog input
+
+18
+00:01:47,859 --> 00:01:54,340
+now you develop a system and program it to read analog input convert that input
+
+19
+00:01:55,140 --> 00:02:02,500
+into a discrete number then convert it into a discrete number then display it as a digital output
+
+20
+00:02:03,459 --> 00:02:10,479
+analog input you display as a digital output so that means you need to convert analog to digital
+
+21
+00:02:11,039 --> 00:02:14,680
+ADC analog input display as a digital output
+
+22
+00:02:14,680 --> 00:02:26,539
+So, once we finish, you should be able to read any analog input from any analog sensor
+
+23
+00:02:26,539 --> 00:02:34,199
+and convert it into a digital output and drive digital actuators.
+
+24
+00:02:34,199 --> 00:02:42,599
+you should be able to get analog input from any analog sensor and drive digital actuators.
+
+25
+00:02:42,780 --> 00:02:45,039
+So that's the goal of this session.
+
+26
+00:02:45,500 --> 00:02:50,219
+Okay, let's start with why we need analog to digital conversion.
+
+27
+00:02:51,020 --> 00:02:52,979
+Answer for that question. Let's see.
+
+28
+00:02:52,979 --> 00:03:03,180
+In physical world that we live, everything is analog. Now for example if you take temperature,
+
+29
+00:03:03,180 --> 00:03:11,500
+variation of temperature is continuous. It is not discrete. The light intensity, right?
+
+30
+00:03:11,500 --> 00:03:22,419
+So from the rise of sun to the nightfall, the variation of light intensity is continuous.
+
+31
+00:03:22,419 --> 00:03:30,060
+That variation is continuous, not discrete. Distance, if you measure the distance of one
+
+32
+00:03:30,060 --> 00:03:38,240
+place to another place. Again the variation of the distance. For example, the distance
+
+33
+00:03:38,240 --> 00:03:51,460
+you traveled, distance you rode your bicycle, it's continuous, not discrete. The pressure,
+
+34
+00:03:51,460 --> 00:03:52,759
+Atmospheric pressure.
+
+35
+00:03:54,439 --> 00:03:55,240
+Variation.
+
+36
+00:03:55,680 --> 00:03:57,300
+At sea level, pressure.
+
+37
+00:03:57,699 --> 00:03:59,939
+Then when you climb a mountain,
+
+38
+00:04:00,780 --> 00:04:02,379
+there's a variation of pressure.
+
+39
+00:04:03,400 --> 00:04:05,280
+That variation is continuous.
+
+40
+00:04:05,680 --> 00:04:06,340
+Velocity.
+
+41
+00:04:08,120 --> 00:04:10,860
+The speed, when you ride a bicycle,
+
+42
+00:04:11,020 --> 00:04:12,840
+the speed, variation of the speed,
+
+43
+00:04:13,460 --> 00:04:14,860
+continuous, not discrete.
+
+44
+00:04:15,300 --> 00:04:15,939
+Acceleration.
+
+45
+00:04:16,500 --> 00:04:25,399
+Contiguous, not discrete. So everything in physical world, continuous, in other words,
+
+46
+00:04:25,399 --> 00:04:37,360
+analog. But in computers, everything is digital. Right? The variation is discrete. In computers,
+
+47
+00:04:37,360 --> 00:04:47,720
+is discrete. Actually two discrete steps, one row zero. So using ones and zeros we can
+
+48
+00:04:47,720 --> 00:04:55,660
+specify variation of digital variation. So variation is discrete in computers. Now this
+
+49
+00:04:55,660 --> 00:05:05,699
+is the place where ADC comes in. Now we need to capture state of the physical world using
+
+50
+00:05:05,699 --> 00:05:11,720
+analog sensors. For example temperature we want to capture. The variation of temperature
+
+51
+00:05:11,720 --> 00:05:18,120
+is continuous so using analog sensor we capture temperature in the physical world that is the
+
+52
+00:05:18,120 --> 00:05:27,240
+state of physical world and then that input we need to process using a cpu
+
+53
+00:05:27,240 --> 00:05:38,680
+Now the problem is CPU can process only digital inputs, not analog inputs, discrete inputs,
+
+54
+00:05:38,680 --> 00:05:40,240
+not continuous inputs.
+
+55
+00:05:40,240 --> 00:05:50,100
+So there should be someone to transform or convert analog input into a digital input.
+
+56
+00:05:50,100 --> 00:05:59,379
+That job is done by ADC, analog to digital converter.
+
+57
+00:05:59,379 --> 00:06:07,000
+Now analog sensors, they transform physical quantities into analog voltages.
+
+58
+00:06:07,000 --> 00:06:17,620
+The continuous variation of energy is converted into continuous variation of voltage, analog
+
+59
+00:06:17,620 --> 00:06:29,139
+sensors. For example, if you use a temperature sensor, the continuous variation of temperature
+
+60
+00:06:29,139 --> 00:06:35,379
+is the thermal energy. Temperature means thermal energy. Continuous variation of thermal energy
+
+61
+00:06:35,379 --> 00:06:44,680
+is converted by the temperature sensor into a continuous variation of a voltage.
+
+62
+00:06:45,300 --> 00:06:54,300
+So, we can measure the voltage and by measuring the voltage we can have an idea of the temperature.
+
+63
+00:06:54,300 --> 00:06:57,160
+temperature is converted into a voltage.
+
+64
+00:06:58,220 --> 00:07:01,000
+The thermal energy, variation of thermal energy
+
+65
+00:07:01,000 --> 00:07:03,980
+is converted into a voltage.
+
+66
+00:07:04,839 --> 00:07:06,980
+Analog sensors. Another one, light
+
+67
+00:07:06,980 --> 00:07:08,579
+sensor converts
+
+68
+00:07:08,579 --> 00:07:12,579
+continuous variation of light level.
+
+69
+00:07:13,420 --> 00:07:16,079
+Continuous variation of light intensity
+
+70
+00:07:16,079 --> 00:07:27,300
+into a voltage. So light is radiation energy. So the light sensor converts variation of
+
+71
+00:07:27,300 --> 00:07:33,699
+radiation energy into a voltage, electrical energy. Voltage is electrical energy. One
+
+72
+00:07:33,699 --> 00:07:41,839
+One energy to another energy, transformation done by sensor.
+
+73
+00:07:41,839 --> 00:07:47,420
+So analog sensor converts one energy to another energy.
+
+74
+00:07:47,420 --> 00:07:54,860
+The radiation energy that is the light converted into a voltage, electrical energy.
+
+75
+00:07:54,860 --> 00:08:00,540
+sensor converts temperature the thermal energy into a voltage electrical energy
+
+76
+00:08:01,920 --> 00:08:03,360
+right so likewise
+
+77
+00:08:04,500 --> 00:08:11,980
+sensors transform physical quantities into analog voltages but this analog voltage by measuring
+
+78
+00:08:11,980 --> 00:08:20,860
+these analog voltages, we can have an idea about the actual input, the temperature, light
+
+79
+00:08:20,860 --> 00:08:29,220
+level, pressure, we can have an idea by measuring the voltage. When the temperature is 20 Celsius,
+
+80
+00:08:29,220 --> 00:08:36,500
+the temperature sensor gives one voltage. When the temperature is 25 Celsius, another
+
+81
+00:08:36,500 --> 00:08:43,440
+voltage. When the temperature is 30, another voltage. So, by measuring the voltage, we
+
+82
+00:08:43,440 --> 00:08:51,899
+can have an idea about the temperature that the sensor sensed. The temperature variation
+
+83
+00:08:51,899 --> 00:09:00,340
+is continuous so the voltage variation is also continuous now this voltage input we need to
+
+84
+00:09:00,340 --> 00:09:08,000
+measure to measure that we have to use the cpu but the problem is cpu can process only
+
+85
+00:09:08,960 --> 00:09:17,840
+digital inputs digital data but not analog data so we use adc to convert
+
+86
+00:09:17,840 --> 00:09:23,919
+analog input into a digital input so that cpu can process
+
+87
+00:09:23,919 --> 00:09:33,820
+Now in this diagram you can see ADC. The job of the ADC is to convert analog inputs into
+
+88
+00:09:33,820 --> 00:09:41,080
+discrete numbers so that CPU can process. Is it clear? Any question?
+
+89
+00:09:42,200 --> 00:09:49,139
+All right.
+
+90
+00:09:50,100 --> 00:10:02,519
+Now, the physical quantities, sensors convert physical quantities into voltages. So the
+
+91
+00:10:02,519 --> 00:10:15,820
+input to ADC is a voltage. Typically a voltage between 0 to 5 volts. That is the input to the ADC.
+
+92
+00:10:16,279 --> 00:10:25,399
+From sensors we input a continuous voltage to the ADC. So that input voltage is typically
+
+93
+00:10:25,399 --> 00:10:27,360
+0 to 5 volts.
+
+94
+00:10:28,279 --> 00:10:30,100
+Why 0 to 5 volts?
+
+95
+00:10:30,279 --> 00:10:32,759
+Because operating voltage
+
+96
+00:10:32,759 --> 00:10:34,879
+of the microcontroller is
+
+97
+00:10:34,879 --> 00:10:35,620
+5 volts.
+
+98
+00:10:35,700 --> 00:10:37,340
+If the operating voltage
+
+99
+00:10:37,340 --> 00:10:39,639
+of the microcontroller is 3.3
+
+100
+00:10:39,639 --> 00:10:41,460
+volts, then the input to
+
+101
+00:10:41,460 --> 00:10:43,500
+ADC is 0 to 3.3
+
+102
+00:10:43,500 --> 00:10:44,820
+volts. But here
+
+103
+00:10:44,820 --> 00:10:47,379
+we use 5 volt microcontroller
+
+104
+00:10:47,379 --> 00:10:49,080
+so input
+
+105
+00:10:49,080 --> 00:10:50,960
+voltage to ADC is
+
+106
+00:10:50,960 --> 00:10:52,019
+0 to 5 volts.
+
+107
+00:10:52,600 --> 00:10:59,799
+So, sensors convert physical quantities into a voltage between 0 to 5 volts.
+
+108
+00:11:00,500 --> 00:11:12,480
+Then ADC converts this 0 to 5 volts continuous voltage into a discrete number between 0 to 1023.
+
+109
+00:11:12,899 --> 00:11:24,340
+So, 0 to 5 volt continuous analog voltage ADC converts into a discrete number between 0 to 1023.
+
+110
+00:11:25,399 --> 00:11:27,419
+Why is 1023?
+
+111
+00:11:27,419 --> 00:11:40,700
+The reason is the ADC analog to digital converter in the ATmega 328p microcontroller is a 10-bit ADC.
+
+112
+00:11:40,700 --> 00:11:42,580
+10 bit ADC.
+
+113
+00:11:43,240 --> 00:11:45,580
+10 bit ADC means
+
+114
+00:11:45,580 --> 00:11:47,679
+the maximum value
+
+115
+00:11:47,679 --> 00:11:50,840
+a 10 bit can represent
+
+116
+00:11:50,840 --> 00:11:53,879
+is 1023.
+
+117
+00:11:54,299 --> 00:11:56,820
+A 10 bit can represent any value
+
+118
+00:11:56,820 --> 00:11:58,860
+between 0 to 1023.
+
+119
+00:11:59,200 --> 00:12:00,460
+So that's why
+
+120
+00:12:00,460 --> 00:12:05,200
+this particular ADC in the ATmega328P
+
+121
+00:12:05,200 --> 00:12:12,360
+converts continuous variation of voltage from 0 to 5
+
+122
+00:12:12,360 --> 00:12:17,159
+into a discrete number between 0 to 1023
+
+123
+00:12:17,159 --> 00:12:21,639
+because ADC is a 10-bit ADC
+
+124
+00:12:21,639 --> 00:12:28,139
+using 10-bit ADC, you can represent any value between 0 to 1023.
+
+125
+00:12:28,500 --> 00:12:37,419
+Now, for example, if we use 3.3-volt microcontroller with 8-bit ADC,
+
+126
+00:12:37,419 --> 00:12:57,320
+If we use 3.3 volt microcontroller with 8 bit ADC, then ADC would convert continuous variation of voltage from 0 to 3.3 to a discrete number from 0 to 255.
+
+127
+00:12:57,320 --> 00:13:02,500
+continuous analog voltage from 0 to 3.3 volt,
+
+128
+00:13:03,039 --> 00:13:05,100
+ADC would convert into
+
+129
+00:13:05,100 --> 00:13:10,340
+a discrete number between 0 and 255.
+
+130
+00:13:10,340 --> 00:13:15,899
+Why? Because the microcontroller's operating voltage is 3.3.
+
+131
+00:13:15,899 --> 00:13:21,279
+So ADC input voltage is between 0 and 3.3.
+
+132
+00:13:22,299 --> 00:13:31,019
+So any voltage between 0 and 3.3 would be converted into a discrete number from 0 to 255.
+
+133
+00:13:31,120 --> 00:13:31,299
+Why?
+
+134
+00:13:31,799 --> 00:13:33,799
+ADC is 8-bit ADC.
+
+135
+00:13:33,899 --> 00:13:39,740
+If you use 8 bits, you can represent any value between 0 to 255.
+
+136
+00:13:39,799 --> 00:13:46,639
+So therefore, depending on the microcontroller you use, some microcontrollers have different
+
+137
+00:13:46,639 --> 00:13:49,120
+operating voltages.
+
+138
+00:13:49,120 --> 00:13:51,500
+Some are 5 volts, some are 3.3.
+
+139
+00:13:51,500 --> 00:13:54,539
+Those are the two major voltage levels, right?
+
+140
+00:13:54,539 --> 00:14:01,039
+The microcontrollers or these hardware, the microprocessor and microcontroller chips use
+
+141
+00:14:01,039 --> 00:14:03,860
+3.3 and 5.
+
+142
+00:14:03,860 --> 00:14:08,659
+But different microcontrollers have different ADCs.
+
+143
+00:14:08,659 --> 00:14:13,679
+Some ADCs are 10 bit, some are 8 bit, some are 12 bit.
+
+144
+00:14:13,679 --> 00:14:20,740
+If your microcontrollers ADC is 10 bit, any voltage between 0 to 5, let's say microcontrollers
+
+145
+00:14:20,740 --> 00:14:27,340
+operating voltage is 5 volts, any voltage between 0 to 5 analog voltage converted into
+
+146
+00:14:27,340 --> 00:14:33,100
+a discrete number between 0 to 1023 if the ADC is a 10-bit ADC.
+
+147
+00:14:33,340 --> 00:14:38,299
+If the microcontroller's operating voltage is 5 volts and ADC is an 8-bit ADC,
+
+148
+00:14:38,940 --> 00:14:50,539
+any voltage between 0 to 5 converted into a discrete number between 0 to 255 because it's 8-bit
+
+149
+00:14:50,539 --> 00:15:00,960
+ADC. If the microcontroller is a 3.3 volt microcontroller, any voltage between 3.3,
+
+150
+00:15:00,960 --> 00:15:13,460
+between 0 and 3.3 is converted into a discrete number between 0 and 255 if the ADC is 8 bit ADC.
+
+151
+00:15:13,740 --> 00:15:16,779
+right this input voltage we can change
+
+152
+00:15:17,500 --> 00:15:28,000
+right the maximum input voltage could be the operating voltage
+
+153
+00:15:28,700 --> 00:15:34,139
+Right, I got a small interruption.
+
+154
+00:15:35,840 --> 00:15:39,440
+Can you see my slides and can you hear me?
+
+155
+00:15:39,440 --> 00:15:44,840
+Yes, I can see the slides.
+
+156
+00:15:44,840 --> 00:15:46,799
+the slides all right good
+
+157
+00:15:48,100 --> 00:15:50,500
+okay so
+
+158
+00:15:50,700 --> 00:15:55,419
+the upper the maximum voltage that adc can handle
+
+159
+00:15:55,419 --> 00:15:59,759
+we can change right the maximum one is normally the
+
+160
+00:15:59,759 --> 00:16:06,240
+operating voltage but we can use some other voltage below
+
+161
+00:16:06,240 --> 00:16:15,899
+that. For example, if the microcontroller's operating voltage is 5 volts, typically ADC
+
+162
+00:16:15,899 --> 00:16:24,940
+can convert any voltage between 0 to 5 into a discrete number. But we can, this input voltage
+
+163
+00:16:24,940 --> 00:16:32,840
+range, we can reduce. For example, we can reduce it to 0 to 1.1. Although microcontroller's
+
+164
+00:16:32,840 --> 00:16:42,500
+operating voltage is 5 volts, we can reduce the ADC's input voltage range into 0 to 1.1.
+
+165
+00:16:42,500 --> 00:16:48,059
+Then any voltage between 0 and 1.1 is converted into a discrete number.
+
+166
+00:16:49,059 --> 00:16:58,840
+If ADC is a 10-bit ADC, the discrete number range is 0 to 1023. If ADC is 8-bit ADC,
+
+167
+00:16:58,840 --> 00:17:02,120
+the discrete number range is 0 to 255.
+
+168
+00:17:02,600 --> 00:17:03,700
+Can you understand?
+
+169
+00:17:04,000 --> 00:17:04,839
+Any question?
+
+170
+00:17:08,839 --> 00:17:15,940
+no right let's move on
+
+171
+00:17:18,339 --> 00:17:26,539
+then many many people many students many hobbyists they know
+
+172
+00:17:30,140 --> 00:17:31,599
+yeah
+
+173
+00:17:32,440 --> 00:17:34,440
+yes
+
+174
+00:17:39,480 --> 00:17:43,200
+yes i can hear you
+
+175
+00:17:43,539 --> 00:17:47,140
+Yes, Isuru, any questions?
+
+176
+00:17:54,500 --> 00:17:57,640
+Now can you hear me?
+
+177
+00:17:57,640 --> 00:18:00,640
+Yes, sir.
+
+178
+00:18:00,640 --> 00:18:03,640
+I think they are delayed.
+
+179
+00:18:03,640 --> 00:18:09,640
+Yeah, because this may daytime, there are a lot of may may zoom traffic.
+
+180
+00:18:09,640 --> 00:18:12,640
+That's the problem.
+
+181
+00:18:12,640 --> 00:18:22,259
+Yes, sir. Before slide, to other slide, they have not here properly, sir.
+
+182
+00:18:22,599 --> 00:18:24,799
+Okay, I'll go back to that slide again.
+
+183
+00:18:26,140 --> 00:18:27,180
+Sorry, sir. Thank you.
+
+184
+00:18:28,380 --> 00:18:32,440
+Right. Any question on ADC?
+
+185
+00:18:36,299 --> 00:18:43,799
+Now, for example,
+
+186
+00:18:48,400 --> 00:18:51,859
+Let's say you have.
+
+187
+00:18:51,859 --> 00:18:53,859
+Excuse me sir.
+
+188
+00:18:53,859 --> 00:18:59,140
+About the conditions and the voltages, it was not clear.
+
+189
+00:18:59,140 --> 00:19:01,140
+Okay I'll explain it again.
+
+190
+00:19:03,400 --> 00:19:13,599
+All right.
+
+191
+00:19:13,599 --> 00:19:30,240
+Now, for example, let's say you have 5 volt microcontroller and in that microcontroller you have 10 bit ADC.
+
+192
+00:19:30,240 --> 00:19:39,039
+This microcontroller's ADC you can supply any voltage between 0 to 5.
+
+193
+00:19:39,400 --> 00:19:43,980
+Why? 5 volts because the operating voltage is 5.
+
+194
+00:19:43,980 --> 00:19:55,200
+then that input is converted into any value discrete value between 0 to 1023
+
+195
+00:19:55,200 --> 00:20:05,099
+why 1023 because it's a 10 bit adc using 10 bits you can represent any value between 0 to 1023
+
+196
+00:20:05,099 --> 00:20:11,720
+If the input voltage is 0, the discrete value you get is 0.
+
+197
+00:20:12,000 --> 00:20:18,240
+If the input voltage is 5, the discrete value that you get is 1023.
+
+198
+00:20:19,259 --> 00:20:25,339
+If input voltage is 2.5, the discrete value you get is 5 to L.
+
+199
+00:20:25,339 --> 00:20:34,799
+So, likewise, any continuous voltage U input is converted into a discrete number between
+
+200
+00:20:34,799 --> 00:20:37,700
+0 and 1023.
+
+201
+00:20:37,900 --> 00:20:46,380
+Now, if microcontroller is a 3.3 volt microcontroller and ADC is 8 bit.
+
+202
+00:20:48,839 --> 00:21:00,039
+so input voltage range is 0 to 3.3 and it is converted into a discrete value between 0 to 255.
+
+203
+00:21:00,500 --> 00:21:08,019
+if the input voltage is 0 you get 0 if input voltage is 3.3 you get 255.
+
+204
+00:21:08,019 --> 00:21:15,019
+If the input voltage is 1.65, the discrete value is phi 12.
+
+205
+00:21:15,420 --> 00:21:23,539
+So, any input voltage between 0 to 3.3 is converted into a discrete value between 0 to 255.
+
+206
+00:21:23,539 --> 00:21:32,799
+So, the input voltage and the discrete value range depends on the microcontroller that you use and its ADC.
+
+207
+00:21:33,099 --> 00:21:34,339
+Is it clear now?
+
+208
+00:21:36,500 --> 00:21:37,900
+Yes, sir. Thank you, sir.
+
+209
+00:21:37,900 --> 00:21:38,480
+Okay.
+
+210
+00:21:38,700 --> 00:21:39,900
+Right. Then.
+
+211
+00:21:41,599 --> 00:21:45,240
+Analog to digital conversion.
+
+212
+00:21:45,240 --> 00:21:53,240
+Now many people, right, many students, they know
+
+213
+00:21:56,799 --> 00:22:04,160
+So, let's go.
+

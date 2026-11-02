@@ -1,0 +1,78 @@
+[0:00] Right. Can you see the slides? Yes, sir. Right. Then let's start. Now, today we are going to develop another system to learn how to use analog to digital conversion.
+[0:18] But before that, let's quickly refresh our knowledge. Now, our input is a continuous analog voltage. So, we say VIN and we feed that to analog to digital converter.
+[0:37] An analog digital converter converts this analog input voltage into a discrete number. Now this number is available in ADCW register. ADC word register, this number is available.
+[0:59] And now we want to know this voltage. This is what we want to know. We have this discrete number. We multiply the discrete number by reference voltage and divided by total number of steps.
+[1:17] Actually, more correctly we can say ADC converts analog input voltage into discrete steps, which gives us the analog input voltage VIN.
+[1:34] This reference voltage is for our microcontroller ATmega3285 by default it is 5 volts.
+[1:43] And because our ADC is a 10 bit ADC total number of steps is 1023 sorry 1024.
+[1:51] That means 2 to the power resolution.
+[1:55] And ADCW will give you discrete number of steps that represents the analog input voltage which is between 0 and 1023.
+[2:08] This equation will give us this analog input voltage.
+[2:14] Is that clear?
+[2:15] Before we move further.
+[2:19] Any question?
+[2:20] Okay.
+[2:21] Now the system that we are going to develop.
+[2:25] It's a voltmeter. It can measure and display any voltage between 0 and 5 volts with a set of LEDs. It can measure any voltage between 0 and 5 volts and display the output using a set of LEDs.
+[2:46] Now, any voltage, that means analog.
+[2:53] It could be 1 volt, it could be 2 volts, it could be 2.35, it could be 3.147, any voltage between 0 to 5.
+[3:04] So, that variation of input is continuous between 0 to 5, a continuous variation.
+[3:12] That's why you get any voltage.
+[3:14] right. So, you can have 3.147589 so many many decimal places right. So, it's a any voltage
+[3:24] between 0 to 5. Then we that is the input this is our input. Then output right. So,
+[3:36] we give the output using set of LEDs.
+[3:39] Set of LEDs.
+[3:44] Right.
+[3:45] You know that LED
+[3:47] is a digital device.
+[3:51] You can either turn on or turn off.
+[3:54] That means output is digital. Using set of LEDs
+[3:57] you can give the output. You can measure this voltage,
+[4:01] input voltage and give it
+[4:03] display that voltage using set of LEDs. LEDs are digital. On, off. Discrete output. Output is
+[4:14] discrete. Digital. So, we need ADC. Can you understand? Okay. Right. If so, let's move on.
+[4:26] Right. First we should know the ADC pinout of our microcontroller. So we can find out that from data sheet. Right. Now here this microcontroller, this particular microcontroller, right, has one ADC, one ADC peripheral device.
+[4:50] That peripheral device has six channels. That means six input channels this ADC device inside this microcontroller has. And that ADC device is a 10-bit ADC peripheral. And that ADC device, that peripheral device shares its inputs with general purpose input output bits.
+[5:18] So port C is multiplex, right?
+[5:24] Port C for general purpose IO, input output.
+[5:28] And the same port C we use for analog to digital conversion inputs, ADC inputs.
+[5:37] So we share the same port C for GPIO, general purpose input output, as well as for ADC.
+[5:46] So, these are the six channels of ADC. One, two, three, four, five, six, six channels. So, six input channels, 10-bit ADC inside this microcontroller. Right. Out of these six channels, so you have to keep in your mind, you can use only one channel at a time. At a time, only one channel. Right.
+[6:11] So you can use multiple channels. First you have to use one channel, thereafter the second channel. Not multiple channels at the same time. Right. So you have six channels. Any question? Yes. Right. You have six channels in the ADC peripheral device. These six channels are shared with general purpose IEO pills of port C. Right.
+[6:38] Sir, why can't you step-pots in the same time?
+[6:43] No, I couldn't get your answer.
+[6:46] Question.
+[6:47] So that you told the analog pins,
+[6:50] we can use one pin at once.
+[6:54] Yes.
+[6:55] Why can't you use...
+[6:59] Right.
+[7:01] You mean we have six channel ADC.
+[7:04] why can't use multiple channels, ADC channels at the same time?
+[7:09] Yes.
+[7:10] The reason is we have one ADC peripheral device.
+[7:14] The one analog digital converter we have.
+[7:16] The converter can convert one input to some digital output at a time.
+[7:24] After that, another input it can convert.
+[7:28] We have only one ADC.
+[7:29] If you have multiple ADCs, some microcontrollers,
+[7:32] there are multiple ADCs.
+[7:34] Then you can use multiple channels to get the multiple ADCs you can use to get converted inputs coming from multiple channels at the same time.
+[7:48] Yes, I understand.
+[7:49] Right.
+[7:50] Thank you.
+[7:50] And the other thing is when you are using ADC, your input channels, your input pins are ADC input channels.
+[8:01] Your input pins are ADC input channels when you are using ADC.
+[8:05] At that time, you can't use them as general purpose input output pins.
+[8:10] General purpose GPIO, you can't use them.
+[8:13] Because you share the same set of pins with GPIO as well as for ADC.
+[8:20] When you are using them as for ADC, you can't use them for GPIO.
+[8:25] When you are using them for GPIO, you can't use them for ADC.
+[8:29] Because general purpose input output pins are digital.
+[8:33] So we can multiplex that.
+[8:35] That's what we discuss under input multiplexing.
+[8:38] So we discuss some registers where you can specify which ADC channel you are going to use.
+[8:45] That's input multiplexing.
+[8:47] Okay, now we need to talk about another sensor, another external peripheral device.
+[8:56] Potentiometer, right.
+[8:58] So, we call this device potentiometer because it can measure, it can meter the potential of electrical energy.

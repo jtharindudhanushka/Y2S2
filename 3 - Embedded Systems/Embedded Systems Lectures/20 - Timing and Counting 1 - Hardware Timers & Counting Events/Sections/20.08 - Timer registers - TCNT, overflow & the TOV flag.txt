@@ -1,0 +1,378 @@
+[0:02] These are the external clock pulses.
+[0:05] External clock pulses coming through a sensor.
+[0:07] This TCCR means timer counter control register.
+[0:14] Timer counter control register.
+[0:16] The simple end means there can be multiple timers.
+[0:20] Timer 0, timer 1, timer 2 likewise.
+[0:23] So that's why TCC timer counter control register 0.
+[0:28] That means timer counter control register of timer 0.
+[0:34] Timer counter register of timer 1.
+[0:36] Now, simple length to indicate the timer because you can have multiple timers.
+[0:44] And this is the timer pin. T0 means timer pin of timer 0. T1 means timer pin of timer 1 pin.
+[0:57] Likewise, Tn. N means the number of the timer. That is to provide external clock pulses.
+[1:05] oscillator to provide internal clock pulses.
+[1:09] Using clock select bit, you can select whether you are going to get internal clock pulses.
+[1:17] So external clock pulses.
+[1:19] Right.
+[1:19] Now we are going to talk about the timer.
+[1:22] So we have connected to internal clock pulses.
+[1:27] So using clock select bit, we have selected internal clock pulses.
+[1:32] Right.
+[1:32] So the clock source is the oscillator.
+[1:35] Clock source is the oscillator.
+[1:37] So timer works as a timer.
+[1:40] But if you select the clock source as external,
+[1:44] using clock select bits,
+[1:46] if you select the clock source as external,
+[1:50] then timer becomes a counter.
+[1:53] Because then the clock source is external.
+[1:55] Timer becomes a counter.
+[1:57] Right.
+[1:58] Now for each clock pulse from the oscillator,
+[2:02] the timer increments
+[2:04] this register
+[2:06] for each clock pulses
+[2:08] from the oscillator
+[2:10] the timer from the internal
+[2:12] oscillator or external clock source
+[2:14] whatever right it depends
+[2:16] on the clock select bits you have
+[2:18] used with the internal
+[2:20] the internal clock source or external clock
+[2:22] source whatever you get the
+[2:24] you get pulses every clock
+[2:26] pulse the timer increments
+[2:29] t c and
+[2:30] register. Time counter register.
+[2:34] TCNT means time counter register.
+[2:37] Time increments. Time counter register.
+[2:39] Right. Now that register
+[2:42] is incremented from 0 to
+[2:46] 255. Why? It's 8 bit register.
+[2:50] In an 8 bit register you can have values from 0 to
+[2:53] 255. So the maximum value
+[2:58] that the TCNT register can hold is 255.
+[3:02] For each clock pulse,
+[3:04] the timer increments TCNT register.
+[3:07] The register is incremented from 0 to 255.
+[3:11] And then the next clock pulse,
+[3:16] the TCNT register overflows
+[3:18] because now its value is 255.
+[3:21] If you get another clock pulse,
+[3:23] the register overflows from 255 to 0.
+[3:26] it overflows from 255 to 0.
+[3:30] Now in this picture you can see 0 to 255
+[3:34] then overflows back to 0. Again it
+[3:37] counts from 0 to 255. Every clock pulse
+[3:40] the register is incremented from 0 to 255 then overflows to 0.
+[3:46] When the register overflows from
+[3:49] 255 to 0 the timer sets
+[3:53] TOV flag.
+[3:57] Time overflow flag.
+[3:59] Time overflow flag bit of
+[4:01] TIFR register.
+[4:04] Time interrupt flag register.
+[4:07] When the register overflows from 255 to 0,
+[4:12] this particular bit is set.
+[4:14] What is this bit?
+[4:15] Time overflow bit of
+[4:17] time interrupt flag register.
+[4:22] This bit is set.
+[4:23] So this bit indicates, this bit indicates the time has counted up to 255 and now overflowing.
+[4:33] Time has counted from 0 to 255 and now overflows to 0.
+[4:38] This bit indicates, right.
+[4:41] Now let's say, right, then that signal we can use, the CPU can use that bit to know
+[4:50] how many clock pulses the timer counted.
+[4:54] The first time this bit is set, that means
+[4:57] timer counted 255, 0 to 255.
+[5:00] 0 to 255 means including 0.
+[5:02] How many counts? 256.
+[5:06] And then again start from 0.
+[5:09] Another 256, again the bit is set.
+[5:12] Using that, we can count the number of clock pulses.
+[5:17] If you want to stop the timer,
+[5:19] You can disconnect the clock source from the time.
+[5:24] For that you can use clock select bit.
+[5:27] Both internal and external clock sources we can disconnect using CSV.
+[5:33] When you disconnect the clock sources, the register stops getting incremented.
+[5:40] No more increments.
+[5:42] Then, you can read the register value and know how many clock pulses count.
+[5:51] Now let's say before 255 you want to stop.
+[5:55] Okay, disconnect the clock source and read the register value.
+[5:58] Let's say register value says 100.
+[6:01] That means 101 clock pulses.
+[6:04] Can you understand?
+[6:05] Any questions?
+[6:06] Sir, are you talking about time count register?
+[6:09] Would you explain what?
+[6:10] I was the one nd.
+[6:12] I have a more time-couple, and the one-couple, the one-couple, the one-couple, the one-couple,
+[6:14] [unclear — Sinhala / crosstalk]
+[6:47] So, if we have a TOV, we will set the TOV.
+[6:54] So, do you want to count?
+[6:56] Yes, do you want to count?
+[6:58] So, if we have a TOV, we will count the TOV, and we will count the TOV.
+[7:08] [unclear — Sinhala / crosstalk]
+[8:08] the you a s2
+[8:09] the s1
+[8:10] the s1
+[8:11] s1
+[8:11] 
+[8:11] s1
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] s1
+[8:11] 
+[8:11] 
+[8:11] 
+[8:11] s1
+[8:11] s1
+[8:11] If you count the SPAR, there is a overflow.
+[8:14] So, what do you think about the SPAR in the room?
+[8:18] Yes sir, sir.
+[8:19] But the SPAR is not in the room.
+[8:23] It is not in the room.
+[8:25] It is not in the room.
+[8:27] It is not in the room.
+[8:29] It is not in the room.
+[8:32] If you have a clock source, you can disconnect the clock source.
+[8:37] I'm not sure if you have a time to count.
+[8:41] No.
+[8:42] What do you think about TCNT register?
+[8:45] What do you think about TCNT register?
+[8:47] What do you think about TCNT register?
+[8:49] Do you understand?
+[8:51] Do you have any connection with TOV?
+[8:54] Do you have any connection with TOV?
+[8:57] Time overflow bit.
+[8:59] ToV. Time overflow bit.
+[9:02] Overflow bit is set.
+[9:05] the
+[9:06] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] 
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] the
+[9:07] 
+[9:07] the
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] 
+[9:07] the
+[9:07] hist
+[9:35] [unclear — Sinhala / crosstalk]
+[10:05] o
+[10:06] a
+[10:06] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] a
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] a
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] a
+[10:07] a
+[10:07] 
+[10:07] a
+[10:07] a
+[10:07] 
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] a
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] 
+[10:07] tov btg a kbhgʰaKT.
+[10:08] a w2.
+[10:09] to the TNC-D.
+[10:10] to the in-cdG
+[10:13] 
+[10:13] the
+[10:14] the
+[10:14] the
+[10:14] the
+[10:14] the
+[10:14] the
+[10:14] the
+[10:14] 
+[10:14] 
+[10:14] the
+[10:14] the
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:14] 
+[10:40] Do you have to use the CPU?
+[10:42] Yes, it's a CPU.
+[10:44] You can use the CPU.
+[10:46] No, you don't have to use the CPU.
+[10:48] Yes, I think we have to use the CPU.
+[10:52] We can use the interrupt flag.
+[10:54] We can use the interrupt flag.
+[10:56] We can use the interrupt flag.
+[10:58] We can use the poll.
+[11:00] Okay.
+[11:02] Tov time over flow bit of TIFR.
+[11:06] Time interrupt flag register.
+[11:08] Can you use interrupt flag?
+[11:12] Right.
+[11:14] What else?
+[11:16] Excuse me sir,
+[11:18] what do you need to use the variable to code the CPU?
+[11:24] Oh,
+[11:26] if you set the TOV bit to that count,
+[11:30] that's not the variable.
+[11:32] You can use the polling and interrupts.
+[11:36] So, you have a look, the one- we have a look, the one- the all- the the the.
+[11:40] Let's talk about timing.

@@ -1,0 +1,117 @@
+[0:00] it was Motorola architecture.
+[0:01] Right. Now let's develop
+[0:03] a system
+[0:04] to learn about counters.
+[0:07] Counter base trigger counts five button presses and toggles and LED.
+[0:13] This time, number of button presses we are going to count using a counter, hardware counter, not using software.
+[0:22] We are not going to use software to count the number of button presses, but we use a hardware counter for that.
+[0:29] Right.
+[0:30] Time pinout of microcontroller.
+[0:33] Now here you can see, this is the T0 pin.
+[0:38] So timer 0, timer pin.
+[0:42] If you are connecting external clock source for the timer 0, this is the pin you have to use.
+[0:48] PD4.
+[0:49] If you are connecting external clock source to the timer 0, timer 0 is an 8 bit timer.
+[0:55] Right?
+[0:56] This is the pin you have to use.
+[0:57] And if you are connecting external clock source to timer 1, this is the pin you have to use, PD5, timer 1.
+[1:08] Timer 1 is a 16-bit timer.
+[1:10] External clock source you can connect to this pin, timer 1 pin.
+[1:14] And then these two pins for timer 2, these are for timer 2.
+[1:21] But now we have connected an external crystal oscillator to these two pins.
+[1:27] so we can't use them.
+[1:29] TOSC means
+[1:31] timer count oscillator.
+[1:33] Timer count oscillator.
+[1:35] Right? Those they are for timer
+[1:37] 2. Timer 2 is
+[1:39] also 8 bit timer.
+[1:41] If you want to use timer
+[1:43] 2, you have
+[1:45] you can't use external oscillator.
+[1:48] Then you have to use
+[1:49] internal oscillator of the micrometron.
+[1:51] Because already we have connected
+[1:53] external oscillator to this
+[1:54] these two pins. Right?
+[1:57] Therefore, we cannot use timer 2.
+[2:01] But we can use timer 0 and timer 1 for connecting external clock source.
+[2:07] Clear?
+[2:08] Schematic diagram.
+[2:10] Right.
+[2:10] This is our schematic diagram.
+[2:13] The microcontroller we have.
+[2:15] Reset button.
+[2:17] We have pull up the reset pin using 10 kilo ohm resistor.
+[2:22] And this is the onboard LED connected to Arduino pin number 13.
+[2:26] that is pv5 right one kilo ohm current limiting resistor to onboard smd led right smd led requires
+[2:38] very little current that's why a large resistor not 220 ohm but thousand ohm resistor and the
+[2:45] external clock source right sorry this oscillator crystal oscillator connected to these two pins
+[2:52] power supply right using these two pins to the microcontroller power supply to
+[2:58] adc using these two pins and external pulse source external pulse source is a button now we are going
+[3:06] to count the button presses right we have connected the button to t0 pin t0 pin is the
+[3:16] external timer pin.
+[3:19] Timer pin of timer 0.
+[3:22] So external clock source you can connect to T0 pin.
+[3:25] That is Arduino pin number 4.
+[3:28] AVR terms PD4.
+[3:30] Port D, right?
+[3:32] The pin number 4.
+[3:34] PD4.
+[3:35] T0 pin, the timer 0 pin.
+[3:39] And to debounce the
+[3:41] button, the button presses,
+[3:46] we have used 100 nanofarad
+[3:48] capacitor in parallel
+[3:50] to the button.
+[3:52] This is for input debouse.
+[3:54] Debouse the input.
+[3:55] Now microcontroller counts
+[3:58] how many button presses.
+[4:00] And if the button presses are 5
+[4:02] LED is turned on.
+[4:05] To turn off the LED again
+[4:06] 5 button presses.
+[4:08] Then LED will be turned off.
+[4:10] Again to turn on
+[4:11] 5 button presses
+[4:13] LED turn on.
+[4:16] Again, five button presses, LED turn off. So, by giving five button presses, you can toggle the LED.
+[4:24] Now, in developing this system, we are going to learn how to capture an external clock source.
+[4:34] Now, in this example, we use button presses. If the button is connected to the door frame,
+[4:40] When somebody opens the door, the door is released.
+[4:51] How many times a door is opened, you can detect, you can count.
+[4:58] How many people entered into the room opening the door and you have put a door closer, automatic
+[5:05] door closer to close the door.
+[5:07] But when you open the door, the button is released.
+[5:17] Close the door, button is pressed.
+[5:19] Based on that, you get pulses.
+[5:22] Very simple one.
+[5:23] You don't need IR sensors, blah, blah, blah.
+[5:26] No, not very fancy attachment.
+[5:31] Just a push button.
+[5:33] Fix to the door, between door and the frame.
+[5:36] and based on that you can count how many times
+[5:39] the door is open.
+[5:42] If you want to let only 5 people to enter into the room
+[5:45] you can count 5 times and then lock the door.
+[5:50] You can use the
+[5:52] instead of this LED using a solenoid we discussed
+[5:55] you can lock the door. You can drive a solenoid
+[5:58] using a transistor you can drive a solenoid and lock the door
+[6:01] after 5 counts.
+[6:03] that means we allowed only five people to open the door and enter that's it a
+[6:09] practical exam is that clear any question right then wiring diagram very
+[6:16] simple only the button because LED is already on board only the button
+[6:22] connected now this is the D0 pin R0 pin number four only the button
+[6:26] connected so when we use the buttons we use them diagonally yeah and this is the
+[6:32] what do you call, capacitor to input debousing.
+[6:38] Right, 100 nanofarad capacitor.
+[6:40] Right.
+[6:40] Now let's talk about the firmware design.
+[6:44] First the algorithm.
+[6:45] Main function and main function algorithm.
+[6:49] First we configure PB5,
+[6:52] Arduino pin number 13,
+[6:54] as an output because LED connected to that pin.
+[6:57] PB5 as an output, pin number 13.

@@ -1,0 +1,145 @@
+[0:00] This becomes a university lecture, university learning experience.
+[0:16] If you start thinking beyond what we have discussed.
+[0:21] Right, we'll come to that.
+[0:22] Now, this is the C implementation.
+[0:26] How about can't we implement this polling based trigger system using Arduino platform?
+[0:35] Yes, we can.
+[0:36] But then the algorithm would be a little bit different because we have to use wrapper functions.
+[0:43] Let's see.
+[0:44] Algorithm for Arduino platform.
+[0:46] In the Arduino platform, polling based triggers start.
+[0:51] You declare digital IO pin 8 and 13.
+[0:56] as led pin 1 led pin 2 led pin 1 led pin 2 you declare digital io pin 8 and 13 8 is the external
+[1:06] led connected pin io pin 13 is the onboard led connected pin then declare digital io pin 2 as
+[1:15] switch pin because that is the pin that the switch is connected then Arduino we have setup function
+[1:20] and loop function. Setup. Configure LED pin 1 and LED pin 2 as outputs. Yes, configure them.
+[1:29] Configure switch pin as input pin and pull up because we want to have default state of that pin
+[1:36] high. So pull up. That is the setup function. Then loop function. Toggle state of LED pin 2.
+[1:44] that is pin number 13.
+[1:47] When you toggle the state of LED pin 2,
+[1:51] the onboard LED you blink.
+[1:54] Then wait for 2000 milliseconds.
+[1:57] Wait 2 seconds.
+[1:58] Read the state at switch pin.
+[2:01] Read the state at switch pin.
+[2:03] If it is low, toggle LED pin number 1.
+[2:09] Toggle the state of LED pin number 1.
+[2:11] That means external LED toggle.
+[2:15] Do it again and again because loop runs again and again.
+[2:18] So every iteration we toggle onboard LED, wait two seconds,
+[2:24] check whether switch has been pressed.
+[2:26] If so, if it is pressed, toggle the other LED.
+[2:30] If switch is not pressed, do nothing, go to the next iteration.
+[2:35] That's how the same system we implement using Arduino software platform.
+[2:42] Can you understand this algorithm?
+[2:44] Okay, if so, let's go to the source code, Arduino source code, using Arduino wrapper functions.
+[2:49] Right, in Arduino we have void setup, void loop, two functions.
+[2:54] Then we declare the pins.
+[2:57] Pin number 8, LED pin 1.
+[3:01] Pin number 13, LED pin 2.
+[3:04] pin number 2 switch pin then configure led pin 1 output pin using pin mode function led pin 2
+[3:14] output switch pin input not just input input pull up activate internal resistor internal pull up
+[3:22] resistor and pull up so switch pin default state high right then now we need to toggle
+[3:31] on board led every two seconds that is the main job main task toggle on board led that is led
+[3:41] connected to pin number 13 which is led pin 2 right every two seconds and this is the code
+[3:48] what is this code digital right pin number led pin 2 that is pin number 13
+[3:55] pin number 30. Digital right. That is the pin we want to toggle the state. Then the second
+[4:03] argument of digital right, you have to tell with the high or low pin and the state with the high
+[4:12] or low. Now toggling the state means we need to know the current state. If the current state is
+[4:19] low then we can toggle it to high.
+[4:22] If the current state is high we can toggle it
+[4:26] to low. Then how do we get the current state?
+[4:30] We can read the pin number 13 state
+[4:34] digital read. We can read the pin numbers 13
+[4:38] state. LED pin 2 means pin number 30. We can
+[4:42] read using digital read. If that is low
+[4:46] current state is low
+[4:49] not low
+[4:50] it becomes high. Toggle.
+[4:53] If the current state is high
+[4:55] not high
+[4:57] bitwise not operator
+[4:59] not high. That means
+[5:01] low. You can
+[5:03] toggle the pin very easy.
+[5:05] One line. Can you understand
+[5:07] that line? Or else you
+[5:09] can do
+[5:10] the same thing you can do in a
+[5:13] different way. For example
+[5:15] you can declare a variable
+[5:18] called boolean state
+[5:21] false initialize with false
+[5:24] then here you can say state
+[5:27] assignment operator not
+[5:30] state then instead of this particular part
+[5:33] you can write state this is
+[5:36] another way but then you need extra variable
+[5:39] right so here you can see
+[5:42] the default value of the variable is
+[5:45] false and you
+[5:47] get the
+[5:48] negation of that.
+[5:51] False, not false.
+[5:53] That means true.
+[5:54] Then you put true as the
+[5:57] argument
+[5:59] for digital right.
+[6:00] LED you turn on. Next iteration.
+[6:03] State variable
+[6:04] is true.
+[6:07] Not true. False.
+[6:09] You put false as the
+[6:11] argument for digital
+[6:13] right. You turn off the LED.
+[6:15] Now it's one very important thing is false, low, 0, true, high, 1.
+[6:24] Instead of high you can use true or 1.
+[6:28] Instead of low you can use false or 0.
+[6:30] No problem.
+[6:31] Right.
+[6:32] This is another way of writing the same program.
+[6:38] Right.
+[6:38] So we blink the onboard LED every 2 seconds.
+[6:42] Then we need to check whether switch is pressed or not.
+[6:46] If switch is pressed, toggle the other LED.
+[6:50] We check whether switch is pressed or not.
+[6:52] If switch is pressed, this particular part becomes low.
+[6:56] If switch is pressed, the read state, digital read,
+[7:00] when you switch pin, when you read the state, it is low.
+[7:03] Switch is pressed.
+[7:05] You get the negation, not low, high, if condition is true.
+[7:09] That means switch is pressed.
+[7:11] then toggle the other led same way pin number eight read the state of the pin number eight
+[7:19] if the pin number eight state is low make it high toggle if the pin number eight state is high
+[7:29] toggle make it low the other led you can toggle can you understand this arduino code using wrapper
+[7:37] functions. This is also C,
+[7:39] Arduino based on C language,
+[7:41] but we use wrapper functions.
+[7:43] There is no language called Arduino.
+[7:46] This is C,
+[7:48] but we use wrapper functions.
+[7:49] Then we don't need to worry about the registers.
+[7:52] Can you understand? Any question?
+[7:55] If you want to make a code,
+[7:57] if you want to make a code,
+[7:59] if you want to make a variable,
+[8:00] you want to change the state.
+[8:03] If you want to make a code,
+[8:05] you don't want to make a code.
+[8:06] Can you understand?
+[8:18] Shri Anjit, can you understand?
+[8:22] Yes, sir.
+[8:22] Shani, any question?
+[8:24] No, it's fine.
+[8:26] Right.
+[8:26] Now the time is 11 o'clock.
+[8:28] We have the lecture till 12 o'clock.
+[8:31] But now I am going to stop.
+[8:33] Why?
+[8:34] Right?
+[8:36] I stopped the lecture but you can't stop.
+[8:38] I want you to build these two systems.
+[8:42] You have your kit at home.
+[8:46] Using that, build the first, build the hardware.
+[8:50] Then implement the C firmware and try.
+[8:56] Then implement the Arduino firmware using wrapper functions.

@@ -1,0 +1,1385 @@
+27 - Serial Communication 3 - RS232, USB Bridges, Transmitter & Receiver  (1 Dec 2020 (afternoon))
+
+[0:00] Right, right, turn on recording, let's start. Connection over serial port. Now, how do we connect our embedded system, right, to the serial port, over the serial port, to a PC or some other embedded system?
+[0:22] We use line driver.
+[0:25] Right.
+[0:25] I told you I will explain what is the purpose of using line driver.
+[0:31] Now look at this diagram.
+[0:32] So in this diagram.
+[0:34] Take the laser pointer.
+[0:36] Right.
+[0:36] This is the USB.
+[0:38] Sorry.
+[0:39] Serial port.
+[0:41] Right.
+[0:41] DB9.
+[0:42] Serial port.
+[0:43] DB9 means D shape sub miniature 9 pins.
+[0:50] DB9 means D shape.
+[0:52] This is D like D shape.
+[0:55] Subminiature.
+[0:56] Subminiature from that D you get the B.
+[1:00] Subminiature 9 pins port.
+[1:03] That is the standard serial port.
+[1:08] Now here you can see that serial port.
+[1:10] In that serial port you have the receiver pin and the transmitter pin.
+[1:14] TXD receive data, transmit data.
+[1:18] TSD means transmit data.
+[1:20] RxD means the received data, those two pins you have.
+[1:24] And this is your microcontroller.
+[1:27] Your microcontroller, you have a clock to provide the pulses to the microcontroller.
+[1:33] And you have the reset pin.
+[1:35] Reset pin, there is no reset button.
+[1:37] We have directly connected the reset pin to 5 volt power supply through a 10 kilo ohm resistor.
+[1:46] So the pin is high.
+[1:47] Therefore microcontroller can execute the programs.
+[1:51] There will be no reset.
+[1:53] But if you want you can connect a button right to this pin.
+[1:57] And the other side of the button you can ground.
+[2:00] But I have not shown that part.
+[2:03] And the microcontroller has RxD pin and TxD pin.
+[2:08] Receive data pin.
+[2:10] Transmit data pin.
+[2:11] Actually they are PD0 and PD1.
+[2:14] I.O. pins of
+[2:16] code B. They are I.O.
+[2:19] pins. But in this
+[2:20] case we are going to use them for
+[2:22] data communication not for
+[2:24] general purpose input output.
+[2:27] These two pins we are going to
+[2:28] use for data communication
+[2:30] not for general purpose
+[2:32] input output. These two pins in Arduino
+[2:34] Uno board you can recognize
+[2:36] them from pin 0
+[2:39] and pin 1 of Arduino
+[2:40] Uno board. Now
+[2:42] those two pins we connect to the Lion driver and through the Lion driver we connect, then the Lion
+[2:50] driver we connect to the RxD and TxD pins of the serial port. Serial port at RxD and TxD pins,
+[2:58] we connect the Lion driver to RxD and TxD pins and the Lion driver we connect to the RxD and TxD
+[3:05] pins of the microcontroller. Right. Now the serial port uses RS232 standard, that is recommended
+[3:17] standard 232, that is the standard serial port, standard for the serial port. Now, why not
+[3:29] connect microcontroller directly to the serial port? Why do we connect microcontroller through
+[3:37] a line driver to the serial port? That's the question. Why can't we connect microcontroller
+[3:43] directly to the serial port? Why do we use a line driver in between microcontroller and the serial
+[3:56] The reason is this. This RS 232 standard introduced in 1960s. Introduced in 1960s. Right. Let me switch to the whiteboard. RS recommended standard 232. Right. Introduced in 1960s.
+[4:19] 1960s during the mainframe era during the mainframe era
+[4:25] time at that time in the mainframe computers main frame computers logic high logic high
+[4:39] Logic high means minus 3 to minus 25 volts.
+[4:46] Minus 3 to minus 25 volts we say logic high.
+[4:52] And logic low, right, volt 3 to 25 volts.
+[4:58] Those are the two logic levels we use in the name frame here.
+[5:03] logic high means minus 3 to 25 volts any voltage of a particular beam is between 3 and 25 volts we say logic high
+[5:15] any voltage between plus 3 to plus 25 volts we say logic low
+[5:22] that was the mainframe time 1960s during the mainframe era
+[5:28] logic standard but today we use TPL, transistor transistor logic. In the TPL
+[5:40] standard logic high means 2 to 5 volts. Logic low means 0 to 0.8 volts. This is the
+[5:56] TPL standard transistor transistor machine that is the 1960s main frame stand RS 232 stand RS 232 stand
+[6:08] now the problem is if can you now connect a TTL microcontroller directly to serial port no that
+[6:19] That is not possible. Why? If you connect TPL microcontroller directly to the serial port,
+[6:26] there will be a voltage mismatch.
+[6:29] Now, in the TPL logic, we say 2 to 5 was logic high.
+[6:35] 0 to 0.8 was logic low.
+[6:38] But in the serial port, logic high means minus 3 to minus 25.
+[6:44] Logic low means plus 3 to plus 25.
+[6:47] Therefore we need to match the voltages. We need to match the voltages from TtL to RS232 and also RS232 to TtL. To match the voltages we need a line driver.
+[7:05] We need a line driver.
+[7:07] Now can you understand the purpose of line driver?
+[7:11] Why we need a line driver?
+[7:14] Right.
+[7:14] The line driver is in between the microcontroller and the serial port.
+[7:22] The line driver converts TTL voltages to RS232 voltage levels and also RS232 voltage levels to TTL voltage levels.
+[7:39] Who does that conversion? Line driver.
+[7:42] So one of the popular line driver is MAX232 line driver from MAXIM integrated.
+[7:51] Maxim Integrated is a company, right? They market this chip, Max 232, one of the very popular line driver. So the line driver's job is to convert TTL voltage levels to RS 232 voltage levels and RS 232 voltage levels back into TTL voltage levels. Is that clear? Any question?
+[8:16] Excuse me sir, why was the high voltage?
+[8:22] Your question is why do we use voltage of the CEL to 25 volts?
+[8:30] Yes, negative values why?
+[8:32] That is because those days, 1960s, mainframes were used.
+[8:38] Those mainframes were developed using vacuum tubes.
+[8:41] And they consume a lot of power and a lot of high voltages were used.
+[8:46] Today we use transistor-transistor logic, TPL logic, very low voltages used.
+[8:53] And even now the latest logic circuits use CMOS. CMOS means Complementary Metal Oxide Semiconductor Technology.
+[9:08] CMOS complementary metal oxide semiconductor technology is the latest technology.
+[9:14] If you have a logic circuit, CMOS logic circuit, your logic levels are, for the logic levels you use, much lower voltages.
+[9:23] For example, the 3.3 is the logic high, not 5 volts, right?
+[9:29] But in those days, 1960s, those mainframe computers, serial port introduced for the mainframe computers.
+[9:39] They used very high voltages.
+[9:43] But if you follow the serial port RS-232 standard, you have to follow that old standard.
+[9:49] Same standard.
+[9:50] This serial port was introduced in 1960s by IDM.
+[9:54] At that time, the high voltages were used in the mainframe computers.
+[9:59] Even today, if you have a serial port, that serial port follows the same RS-232 standard.
+[10:09] Is it clear?
+[10:10] My voice, high value is negative and SD2.
+[10:16] That is the standard they developed.
+[10:19] I don't know.
+[10:20] Sorry.
+[10:21] The RS-23 is your standard developed by IBM.
+[10:25] You have to read the IBM documentation to find out those things.
+[10:30] I don't know.
+[10:32] One option is you can read IBM old documentation of RS-232 stand.
+[10:40] That is the only way you can find out the reason.
+[10:44] I have no idea.
+[10:46] Thank you.
+[10:47] Anything else?
+[10:47] Any other question?
+[10:49] Now, we don't use other pins in the serial port.
+[10:52] the pins in the serial code we don't use for the data communication. Other pins are used
+[10:59] for different different purposes. Right. We use only the RXT and TXDPs for the data communication.
+[11:09] Now there is Arduino good code, Arduino server reno, right, which uses serial code. Now in this
+[11:20] slide you can see the Arduino server you know board with max 232 chip, line driver chip. Now
+[11:30] the microcontroller communicates over serial. A line driver converts TTL voltages into RS232
+[11:42] and vice versa. Now this is one of the very first Arduino boards developed in the mid 2000s.
+[11:53] Arduino introduced in the mid 2000s, one of the very first Arduino board developed which
+[11:59] is called Arduino Severino. Severino means in Italian, Serdi. Arduino is the first name,
+[12:08] server you know is the CERT that is in Italian right so this is one of the very
+[12:14] first Arduino board developer that uses serial for communication and the line
+[12:20] driver is to interface microcontroller to the serial right then connection over
+[12:28] USB port now we don't have serial ports in our computers in our computers we
+[12:37] don't have serial ports. We have USB ports. Now, how do we connect a microcontroller to
+[12:46] a PC or some other system over USB port? But we use serial communication. Microcontroller
+[12:55] uses serial communication. But unfortunately serial ports are not available. So, how do
+[13:04] we connect over serial sorry USB port this is the way we have to use UART to USB interface
+[13:14] controller now this time I am using UART not USART why we are talking about a synchronous
+[13:22] communication universal a synchronous receiver and transmitter that is UART universal a synchronous
+[13:31] receiver and transmitter UART. UART is the microcontroller's side and USB is the other side.
+[13:40] Now two sides you need to interface. For that you have to use UART to USB interface controller.
+[13:48] Look at this. In this diagram you can see this is the microcontroller UART,
+[13:55] inside the microcontroller and this is the USB. And to interface the UART to USB, we use USB to UART interface controller. This is again a very popular UART to USB interface controller, FT232.
+[14:14] FT232 is from Future Technology Devices International.
+[14:20] That's a company, Future Technology Devices International.
+[14:23] That's why they call the chip as FT232, Future Technology Devices International.
+[14:30] Right.
+[14:31] So this chip interfaces UR to USB.
+[14:37] UR to USB.
+[14:39] In a USB port, you have four connections.
+[14:42] One is for ground, the other one is to supply 5 volts and these two are the data connections.
+[14:49] D plus and D minus are the data connections.
+[14:53] Now data connections we connect to this chip and then we connect the RxD and DxD fields to this chip.
+[15:02] The chip will do the conversion.
+[15:04] Now serial is a one protocol, USB is another protocol, protocol matching, voltage matching.
+[15:10] everything is done by this chip.
+[15:13] And not only that.
+[15:15] We have two LED sources.
+[15:17] When you transmit, this LED
+[15:19] clicks. When you means
+[15:21] when microcontroller transmits,
+[15:23] this LED clicks.
+[15:25] When microcontroller receives
+[15:27] data, this LED
+[15:28] clicks. So we can
+[15:30] recognize whether, we can
+[15:33] identify whether microcontroller
+[15:35] is transmitting or receiving.
+[15:38] Just looking at these
+[15:39] And there is another advantage. If you go back to the previous one, you have to supply 5 volts to the microcontroller separately. Because this serial port side, you have very high voltage, up to 25 volts.
+[15:57] right this side very high voltage
+[16:01] but for the microcontroller we need 5 volts
+[16:05] and also for this line driver chip you need 5 volts
+[16:08] so you have to supply 5 volts separate
+[16:12] but if you go to the second option that is you are
+[16:17] to USB interface control option you don't need
+[16:21] to supply separate 5 volts separately 5 volts to
+[16:25] microcontroller. Why? The microcontroller draws
+[16:29] the required current from the USB
+[16:33] port. From the USB port, microcontroller can
+[16:37] draw 5 volts. So you don't need to supply, provide
+[16:41] a separate power supply. So microcontroller draws power
+[16:45] from the USB port. That's another advantage.
+[16:49] If you use a serial, direct serial port communication,
+[16:52] you have to supply 5 volts to the microcontroller
+[16:55] secondly. Because serial port size
+[16:58] voltages are very high. But if you use
+[17:02] UR2 USB interface
+[17:04] controller, then
+[17:07] the microcontroller can drop 5 volts from
+[17:10] USB port. And USB ports are
+[17:13] widely available. And our modern computers,
+[17:17] desktops and laptops, USB ports are available.
+[17:19] so you can easily connect microcontroller to the USB port and have serial communication.
+[17:27] For the communication you need the protocol matching, voltage matching, all these things
+[17:32] are done by this UART USB serial interface controller. UART means serial, USB means USB,
+[17:41] universal serial bus. So all this matching is done by this chip, FTE232 chip. So this is very handy.
+[17:49] And a very useful way to communicate with a connected device.
+[18:00] Using this method, microcontroller can communicate with some other device very easily.
+[18:07] But there are downsides.
+[18:09] There are good points we discussed, but there are negative points.
+[18:12] The problem is this method is not plugged in.
+[18:15] When you connect a microcontroller using UR to USB interface controller to a USB port, you have to install device driver for this chip.
+[18:27] You have to install device driver for this chip.
+[18:29] Otherwise, your computer operating system will not recognize the chip.
+[18:35] FT232 chip, your computer's operating system will not recognize.
+[18:41] You have to install device driver.
+[18:43] But that's not a big problem why the device drivers are free from ftdichip.com.
+[18:54] Ftdichip.com.
+[18:57] Let me write it.
+[18:59] www.ftdichip.com.
+[19:07] FTDI is Future Technology Device International.
+[19:11] From this URL you can download the required drivers for this chip.
+[19:21] When only your operating system will recognize the chip.
+[19:26] Right. Any question? Right.
+[19:29] Look at this board.
+[19:31] Are you know Dew Miller No Way?
+[19:34] Are you know Dew Miller No Way?
+[19:37] Right here, Diumilla Nove means 2009.
+[19:41] In Italian, Diumilla Nove means 2009.
+[19:45] This port uses FTDI chip.
+[19:49] You can see FTDI chip, the microcontroller and the USB port.
+[19:54] So, the microcontroller is USAR.
+[19:58] This connection is USB.
+[20:01] The interface matching is done by this FTDI chip.
+[20:06] This is the FTDIC.
+[20:08] You start to USB interface control.
+[20:12] Right.
+[20:12] So in 2009, Arduino released this Arduino DuMilanove board with this tube.
+[20:21] Right.
+[20:21] Now this board is not available.
+[20:24] But Arduino Uno, revision 2 boards are available with this tube.
+[20:30] I ask you not to buy those boards because they are a little bit cheap.
+[20:34] but you have to install device driver for each and every computer you connect the board that's very
+[20:42] inconvenient so that's why i asked you to buy Arduino Uno revision 3. The Arduino Uno boards
+[20:50] before revision 3 they use FTDH you have to install the device driver you have to get the device driver
+[20:58] from the website and install. Otherwise, the operating system will not recognize this. Is that clear? Any question?
+[21:09] Right. Then, connection over USB port, second method. Instead of using UART to USB interface
+[21:19] controller chip, a dedicated USART to USB interface controller chip, without using a dedicated chip,
+[21:27] you can use a microcontroller for that job, for that purpose. Purpose is you are to USB interface
+[21:37] controller. For that job you can use a microcontroller, another microcontroller.
+[21:42] And this is the right. Two microcontrollers. This is the main microcontroller, ATmega328.
+[21:49] This is another microcontroller. ATmega 16U2. This microcontroller acts as UART to USB interface.
+[22:01] Act as UART to USB interface. So this side UART serial, this side USB, this side USB
+[22:12] and this chip, this microcontroller, right, interfaces UR2, USP.
+[22:22] And again, there are two LEDs, right.
+[22:25] So, when the main microcontroller receives data, this RX LED blinks.
+[22:33] When the main microcontroller transmits data, TX LED blinks.
+[22:37] These are the two pins we used to receive and transmit data, RxD and PxD.
+[22:44] Those are IEO pins, but now we have configured them to use as for the data communication.
+[22:53] So we have sacrificed two IEO pins for data communication.
+[22:56] So thanks to serial communication, we need only two pins to sacrifice.
+[23:00] But if you are using parallel communication, you have to sacrifice more IEO pins.
+[23:06] So, that is not acceptable because we need eye-opens for connecting sensors and actuators.
+[23:13] So, that's why in the context of embedded systems, serial communication is, again, the
+[23:21] power required for the microcontroller, it can draw from the USB port.
+[23:28] So, you don't need to supply power separately.
+[23:31] the required power for the microcontroller the microcontroller can grow from USB any question
+[23:38] now this ATmega16U2 microcontroller implements UR2 USB interface controller right this is the
+[23:49] board that you have revision 3 I do you know no revision in this board you have the main
+[23:56] microcontroller, USART and you have the USB port, USB and this is the interface controller
+[24:04] chip. That's a microcontroller. This implements USB to UART interface. This is a microcontroller.
+[24:14] And this crystal is to provide clock pulses for this chip. This microcontroller we need
+[24:22] a crystal to provide clock pulses. If you go back to the schematic diagram, you can see
+[24:27] this is the crystal. 16 megahertz crystal to provide clock pulses to this microcontroller.
+[24:34] And for that we need very accurate clock pulse. Otherwise, this microcontroller cannot implement
+[24:41] USB to UART interfacing. So it needs very accurate clock pulses. That's why we use this.
+[24:50] But this main microcontroller we use a smaller resonator, not a crystal, a ceramic resonator.
+[24:57] Here you can see a 16 megahertz.
+[24:59] Ceramic resonators are small and cheap but not very acute compared to crystals.
+[25:07] So this is called Arduino Puno.
+[25:08] Puno means one in Italian.
+[25:11] Any question?
+[25:12] So how about your experience?
+[25:14] Do you experience some bandwidth problems?
+[25:19] No sir. Sometimes there will be a small one second glitch, something like that, but not a long issue.
+[25:28] This method is okay? Yes sir.
+[25:31] Right. How about others? Nirasha, I think you have this bandwidth issue.
+[25:37] Still not.
+[25:39] Okay, let's see. The idea is we have to come up with some sort of more interactive approach
+[25:55] to conduct lectures online. Because we have to live with this situation, I mean this condition,
+[26:03] I think throughout the next year also. So we have to come up with some sort of mechanism to have more interactive lectures.
+[26:13] So what will be the examination process?
+[26:18] So you know that I am normally I don't involve into those administrative work, right?
+[26:30] So I don't take normally administrative positions and I don't involve into the administrative
+[26:35] decision making, those administrative work, right?
+[26:41] So therefore, I have no idea about those.
+[26:46] Dr. Zurelson.
+[26:47] Yes.
+[26:48] Right, let's continue. Asynchronous Transmitter. In the synchronous serial communication, how
+[26:57] asynchronous transmitter works, that's what we are going to discuss now. Asynchronous
+[27:05] Transmitter. This is the internal block diagram of asynchronous transmits. So at first glance,
+[27:15] You may feel this is very complicated.
+[27:18] Don't worry, I'll explain, right, this, right, these components one by one.
+[27:26] Right.
+[27:27] Let's start with Bode rate generator.
+[27:30] Bode rate generator.
+[27:31] What is Bode rate?
+[27:33] Bode rate means data transfer rate.
+[27:36] The Bode rate generator generates Bode data transfer rate.
+[27:41] clock pulses from the oscillator. Clock pulses from the oscillator means FCP.
+[27:50] Clock pulses from the oscillator means FCP. Frequency of CPU. FCP. One input to the bauderate
+[28:01] generator is FCP. Frequency of CPU. The other input to the bauderate generator is the value
+[28:11] of this register, value of this register. This register is called UBRR. UBRR means USART
+[28:24] BORDERATE register. USART BORDERATE register. Right. Now there are two inputs to the BORDERATE
+[28:33] generator. One is frequency of CPU that is FCPU. The other input is the value of USAT
+[28:44] board rate register. Using these two inputs, board rate generator generates the data transfer
+[28:52] rate. According to this equation, this is the equation for the board rate generation.
+[29:00] So, FCPU divided by 16 multiplied by UBRR plus 1. UBRR means value of this register. So, the value of this register can vary between 0 to 255. 0 to 255 because this is 8 bit register.
+[29:19] So, according to this equation, the baud rate generator generates baud rate, data transfer rate.
+[29:28] Now, if you want to change the baud rate of the transmitter, if you want to change the baud rate or data transfer rate of the transmitter to match with that of the receive, this is the value you need to change.
+[29:46] you have to change. Because you can't change FCPV. That is fixed.
+[29:50] But this value you can change. By changing
+[29:54] this value you can adjust the board rate of the
+[29:57] transmitter to match with the receiver's
+[30:02] board rate. Because you know that both receiver
+[30:05] and the transmitter they have to agree on
+[30:09] the data transfer rate. Because there is no clock signal
+[30:13] between the transmitter and the receiver. The transmission is asynchronous. So, the receiver
+[30:20] and transmitter, they have to agree on the data transfer rate. So, if you want to adjust
+[30:28] the transmitter's data transfer rate to match with the receiver's data transfer rate, what
+[30:36] you have to do is change the value of UDRR. Right. Then the character that you want to
+[30:46] transmit, we transmit characters. The character that you want to transmit, it's an indie character.
+[30:54] You load it to the CPU loads that character to UDR register. The CPU loads the character
+[31:02] that the transmitter you want to transmit into UDR register. UDR means USART data register.
+[31:11] USART data register. Who loads the character to UDR? CPU. CPU loads character to UDR. Right.
+[31:21] Then, then if this is the transmit shift register, transmit shift register. If the transmit shift
+[31:29] register is empty. If the transmit shift register is empty, the character in the UDR is transferred
+[31:42] to the transmit shift register. If the transmit shift register is empty, character in the UDR,
+[31:49] USAT data register, is transferred to transmit shift register. The character's LSB least
+[31:58] significant bit we put it here and the character's MSB we put it there and then the entire character
+[32:08] is sprayed with a start bit which is zero and a stop bit which is one. Character is sprayed
+[32:18] with a start bit and a stop bit. These start bit and stop bits we call synchronization
+[32:25] bips or sync bips. Synchronization bips or sync bips.
+[32:29] Right. And then the character is transmitted
+[32:33] via the TXT pin. Via the TXT pin.
+[32:38] Right. At the board print.
+[32:41] At the board print. At the data transfer rate board print.
+[32:45] The character is transmitted via the
+[32:48] TXT pin at the board print. Up to this point.
+[32:52] any question no right then now when the character in the udr use our data register when that
+[33:03] character is transferred to the transmit shift register udr becomes empty cpu loads the character
+[33:13] udr transfers the character to transmit shift register and then character is framed with the
+[33:20] a start bit and a stop bit and bit by bit transmitted through the DXT pin at the rate
+[33:28] at the board rate. Now when the character in the UDR is transferred to the ship register,
+[33:36] transmit a shift register, UDR becomes empty. When UDR becomes empty, UDRE flag bit is set.
+[33:50] UDRE flag bit. UDRE flag bit means USART data register empty. UDRE means USART data register
+[34:01] empty. That flag bit is set. That flag bit is in UCSRA register. UCSRA means USART control
+[34:16] and status register A. USART control and status register A. In that register you have a flag
+[34:28] bit call UDRE. USART data register empty. This flag bit is set when UDR becomes empty. This
+[34:39] flag bit indicates that UDR is empty. This flag bit indicates that UDR is empty. And
+[34:51] UDR is ready to receive another character. This flag bit indicates UDR is MP and ready to receive another character. So you can pull this flag bit and load character by character to UDR.
+[35:13] CPU can pull this flag bit and load character by character to the UDR.
+[35:21] This flag bit is raised.
+[35:23] Raised means it becomes value 1 when the UDR is empty.
+[35:29] That indicates UDR is empty and UDR is ready to receive another character.
+[35:35] So, by pulling this flag bit, CPU can load character by character to the UDR.
+[35:43] Any question up to this point? When this flag bit is 1, that indicates UDR is empty and UDR is ready to receive another character. So by polling this flag bit, we can load character by character to UDR.
+[36:01] When you load a new character to the UDR, right?
+[36:07] When a new character is written to the UDR, this flag bit is automatically clear.
+[36:15] Automatically clear.
+[36:16] That means it becomes zero.
+[36:19] The flag bit becomes zero automatically when you write a new character to UDR.
+[36:26] Again, the flag bit is set to one.
+[36:30] when UDR is, UDR becomes empty
+[36:33] and UDR is ready to receive a new character.
+[36:38] So you can write a new character to UDR. And then
+[36:41] flag bit will be 0. Therefore, just
+[36:46] pulling this flag bit and when it becomes 1,
+[36:49] we can write a value to the UDR, character to the UDR.
+[36:53] If the flag bit is 0, you have to wait.
+[36:56] If the flag bit is 1, you can write a value to the UDR. Character by character we can write to the UDR.
+[37:03] When you write a character to the UDR, UDR transfers that character to the transmit shift register.
+[37:14] If the transmit shift register is empty, UDR transfers the character to the transmit shift register.
+[37:25] And then the character is framed with the start bit and a stop bit.
+[37:31] And then the bit by bit in the transmit shift register, bit by bit, are transmitted through the TXT pin at both rate.
+[37:43] question up to this point. So what I am explaining is how the transmitter works inside the micro
+[37:53] control. So many people know how to use transmitter but they don't know how transmitter works.
+[38:01] But as university students, you are following a university course module, you must know,
+[38:09] You should know not only how to use the transmitter but also how the transmitter works.
+[38:18] But many people know how to use the transmitter but they don't know how transmitter works.
+[38:29] Right. Then there is another bit which is called UDRIE. UDRIE. Another bit. UDRIE means USAT data register empty interrupt enable.
+[38:47] USAT data register empty interrupt enable.
+[38:53] U D R I E USAT data register empty interrupt enable.
+[39:02] Using this bit you can enable or disable data register empty interrupt.
+[39:11] You can enable or disable data register empty interrupt.
+[39:16] If you write value 1 to this bit, you enable the data register empty interrupt.
+[39:23] If you write value 0 to this bit, you disable the data register empty interrupt.
+[39:30] So, instead of calling this bit, you can use the interrupt.
+[39:36] When UDR becomes empty, if you have enabled the interrupt, the CPU will be interrupted.
+[39:45] right because when UDR becomes empty and ready to receive another character right CPU will be
+[39:55] interrupted because you have enabled USART data register empty interrupt you have enabled so CPU
+[40:04] will be interrupted by USART data register empty interrupt so instead of polling this way you can
+[40:12] use the interrupt and load character by character to UDR. Right now there are two options you have.
+[40:21] One is you can pull this bit using pulling, load character by character to the UDR. Oh,
+[40:29] you can use interrupt. Use our data register in a empty interrupt. Use our data register
+[40:36] empty interrupt you can use and load character by character to UDR. Questions? Right. Then,
+[40:45] now when you win a character transfer to transmit ship register, the character is framed with a
+[40:54] start bit and a stop bit and bit by bit transmitted through the TXT at boundary. When the entire
+[41:05] frame is shifted out, the entire frame is transmitted, transmit shift registry becomes
+[41:15] empty. Transmit shift register becomes empty. When the entire frame is transmitted bit by bit,
+[41:25] transmit shift register becomes empty. When transmit shift register becomes empty, UDR
+[41:33] UDR processes the character in the UDR to transmit shipping. Then transmit ship register, frame the character with start bit and stop bit and bit by bit transmitted through the TXP.
+[41:48] When transmit ship register becomes empty, UDR transfers the character in UDR to transmit ship register. So that happens again and again.
+[41:59] When transmit ship register is empty and UDR is also empty, if UDR contains a character, when transmit ship register becomes empty, UDR will transfer that character to the transmit ship register.
+[42:15] But if transmit shift register is empty and UDR is also empty, both empty.
+[42:23] This is empty and that is also empty.
+[42:26] Then this flag bit is set.
+[42:30] TXT flag bit is set.
+[42:34] TXT flag bit means transmit complete.
+[42:39] TXT means transmit.
+[42:41] C means complete.
+[42:43] Transmit flag bit is set.
+[42:45] Set means 1. TxC flat bit becomes 1. And TxC flat bit is in UCSRA register. UCSRA means USART control and status register A. USART control and status register A.
+[43:05] So, this flag bit is set when transmit ship register, both transmit ship register and UDR, both of them become int. This flag bit is set. You can pull this flag bit and load character by character to UDR.
+[43:28] The second option. First option, you can pull this flag bit, UDRE flag bit, which indicates this UDRE setting and load character by character to the UDR.
+[43:43] The TXC flag bit indicates both transmit shift register and UDRRT.
+[43:50] So, by pulling the TXC flag bit you can load character by character.
+[43:56] This is the second option for transmitting data.
+[44:00] Then, there is another bit called TXCIE bit.
+[44:05] TXCIE bit. The TXCIE means, TX means transmit, complete, interrupt, enable. Transmit, complete, interrupt, enable. Transmit, complete, interrupt, enable.
+[44:21] That bit is in UCSRB register. UCSRB means USAT control and status register B. USAT control and status register B. Using this B you can enable or disable transmit complete interrupt.
+[44:45] you can enable or disable transmit complete. If you write value 1 to this bit, you can enable transmit complete interrupt. If you write value 0 to this bit, you can disable transmit complete interrupt.
+[45:00] Now, instead of calling this transmit complete bit, you can use this interrupt. When both transmit shift register and UDR are become empty, if you have enabled this interrupt, the CPU will be interrupted by transmit complete interrupt.
+[45:23] So when both transmit shift register and UDR are empty, if you have enabled this interrupt, then CPU will be interrupted by transmit complete interrupt.
+[45:37] So instead of calling the transmit complete bit, you can use the transmit complete interrupt and load character by character to UDR.
+[45:48] load character by character. The second way of transmit is that clear. Any question? If you want me to explain it again or if you have any particular question or particular component in this block diagram, now you can answer.
+[46:09] Now, if you have no questions, then I have a question. So what's the answer? Which flag
+[46:17] bit? UDRE, USAR data register, empty flag bit, or transmit complete flag bit? Out of
+[46:30] which one gives maximum
+[46:33] throughput?
+[46:34] Okay? Let's ask
+[46:37] from Shani. Shani,
+[46:41] your idea about this question?
+[46:43] You can come up with some idea.
+[46:46] It doesn't matter whether it's correct
+[46:47] or wrong. So, what do you
+[46:49] think? Which flag bit
+[46:51] would give you maximum
+[46:52] throughput? Shani?
+[46:55] No idea.
+[46:58] So, I can't
+[46:59] hear you. It's okay.
+[47:00] Could you please speak a little bit louder? No idea sir. No idea? Come on. So what is the
+[47:09] difference between these two plant bits? So what is the difference? Okay, let's say you have no
+[47:16] idea about the throughput Kim? Like what is the difference between these two flag bits?
+[47:21] UDRE interrupt used. UDRE sorry? UDRE interrupt used. No, no, no, no, no. I'm not talking about
+[47:35] the interrupts. I'm talking about these flag bits. We can use these flag bits for polling.
+[47:39] So UDRE flag bit is set when?
+[47:44] UDRE flag bit is set when?
+[47:49] Okay.
+[47:49] TXC flag bit is set when?
+[47:52] Then UDRE
+[47:54] set when?
+[47:58] Ekanidaru, I asked whether if this is not clear,
+[48:02] please let me know. I can explain it again.
+[48:06] But you don't talk.
+[48:08] ultimately
+[48:10] you will be in a big trouble.
+[48:13] You have not got this
+[48:14] understood clearly.
+[48:17] But even you don't
+[48:19] ask questions.
+[48:20] You don't ask me to explain.
+[48:22] At least explain it again.
+[48:25] So,
+[48:26] this opportunity.
+[48:29] Simply I could have
+[48:31] given the lecture, blah, blah, blah,
+[48:33] blah, blah and finish.
+[48:35] But I don't do that.
+[48:37] Right?
+[48:38] I do very slowly and I repeatedly ask you to let me know whether things are not clear.
+[48:47] So what's the benefit of doing that? I could have done the lecture straight away and finish
+[48:57] the entire module. But I don't do that. I have very slowly, I do the lecture and then I ask
+[49:07] questions and I give you the option to, right? Let me know whether things are not clear and if
+[49:15] you say things are not clear and if you want me to explain the things again, I am ready to do that.
+[49:24] Do I get a pay increment? Do I get any benefit? No. But you get a benefit. I don't get any
+[49:37] benefit. But you have a benefit. So why don't you use this opportunity?
+[49:52] opportunity okay right so what is the difference between UDRE and TXC flags
+[50:01] Madusha now could you please tell me when UDRE flag is set sir when UDRE flag is set
+[50:13] Sir, data is transmitted by placing the UDR register.
+[50:26] Not clear. Could you speak a little bit louder?
+[50:31] Data is transmitted by placing the UDR register.
+[50:37] when UDR register is empty, UDRE flag bit is sent.
+[50:45] This register empty means this register is ready to receive another character.
+[50:54] This register is ready to receive another character.
+[50:58] How do we know that this register is ready to receive another character?
+[51:03] If this flag bit is 1, that means this register is ready to receive another character.
+[51:11] If this flag bit is 0, that means this register contains a character.
+[51:18] So, it is not ready to receive another character.
+[51:23] May flag bit take a dihae, malala, we can design whether to load a new character to UDR or not.
+[51:31] So, when UDR is empty, UDR is empty means UDR is ready to receive another character.
+[51:43] Then TXC flag.
+[51:45] Mahusha, when does TXC flag be seen?
+[51:49] in the transmit shift register has been shift out and there are no new data currently, so it's safe.
+[52:11] When the transmit shift register is empty, UDR will transfer the character to transmit
+[52:21] shift register.
+[52:22] As soon as transmit shift register becomes empty, UDR transfers character to transmit
+[52:29] shift register.
+[52:30] So this flag is set when both transmit shift register and UDR, both of them are empty.
+[52:41] both of them are ending transmit ship register and UDR both this flag so this flag bit indicates
+[52:51] transmit ship register is empty UDR is empty so you can load another character UDR who indicates
+[53:00] that this flag right now can you tell me out of these two flag bits THC and UDRE which flag
+[53:15] would give you maximum throughput.
+[53:20] For a given period of time, maximum amount of data you can transmit if you use which flag
+[53:38] bit?
+[53:39] UDRE.
+[53:40] UDRE, correct.
+[53:44] Because UDRE is set when the UDR becomes empty.
+[53:48] But TXC flag bit is set when both are in transmit shift register as well as UDR.
+[53:57] When both are empty this is set.
+[53:59] But this is set, UDRE is set when the UDRE is set.
+[54:05] Right.
+[54:06] Therefore, if you use UDRE flag bit, you can have a maximum problem.
+[54:13] [unclear — Sinhala / crosstalk]
+[54:43] shift register, I get a UDR again, you know, so you can transfer another character to use that.
+[54:49] But if you are using this flag, you load a character to UDR, UDR transfers that character
+[54:55] to transmit shift register, transmit shift register transmits bit by bit through TXEP,
+[55:03] and then transmit shift register becomes empty, and there is no character in the UDR, UDR is also empty,
+[55:10] then this flag so you load a character in the UDR transfers that character
+[55:16] transmission transmission transmits the character character by character and
+[55:22] then transmission becomes empty UDR is this
+[55:27] So, maximum throughput you would get with UDR.
+[55:55] the this the the
+[55:58] the
+[55:59] the
+[55:59] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] the
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] 
+[56:00] hist
+[56:25] I have nothing needed
+[56:28] I don't know ABC
+[56:32] to load
+[56:35] no UDR
+[56:37] transfer in our transmit ship register
+[56:41] transmit ship register bit by bit
+[56:43] transmit transmit
+[56:46] I'm a
+[56:48] man
+[56:50] I
+[56:52] I
+[56:54] I
+[56:56] I
+[56:58] I
+[57:00] I
+[57:02] I
+[57:04] I
+[57:06] I
+[57:08] I
+[57:10] I
+[57:12] I
+[57:14] [unclear — Sinhala / crosstalk]
+[57:44] the
+[57:46] to the
+[57:47] the
+[57:48] the
+[57:48] the
+[57:48] the
+[57:49] the
+[57:49] 
+[57:49] the
+[57:49] the
+[57:49] the
+[57:48] the
+[57:48] the
+[57:48] the
+[57:48] the
+[57:48] the
+[57:48] the
+[57:48] the
+[57:48] 
+[57:48] 
+[57:48] the
+[57:48] 
+[57:48] 
+[57:48] 
+[57:48] 
+[57:48] 
+[57:48] 
+[57:48] 
+[58:14] If you use UD or E flag, if you use TXE flag, you have to wait till when both registers
+[58:27] become empty.
+[58:28] Vedima data pramanya dhyati khalaya for a given period of time at a given
+[58:38] board rate maximum amount of data you can transfer you can transmit if you use UDRI
+[58:47] The same thing. If we use UDRI interrupt, that is USAR data register empty interrupt and
+[59:04] transmit complete interrupt. There are two interrupts.
+[59:08] Transmit complete interrupt.
+[59:11] Usad data register empty.
+[59:13] This interrupt is triggered when UDR is in.
+[59:18] This interrupt, transmit complete interrupt
+[59:21] is triggered when both shift register and UDR
+[59:25] both time. So if you ask
+[59:28] which interrupt you should use to get
+[59:31] the maximum throughput. This is the one you have to get. The maximum throughput you can
+[59:37] get if you use USAR data register emptied. Because this interrupt is triggered when UDR
+[59:45] becomes. But transmit complete interrupt is triggered when both register, transmit ship
+[59:52] register and UDR.
+[59:55] When both are empty, this is
+[59:56] clear. So to get a maximum
+[59:58] throughput, this is
+[1:00:00] the interrupt you should use.
+[1:00:02] Is that clear?
+[1:00:04] Is it clear?
+[1:00:06] No feedback? Yes, sir.
+[1:00:09] Right. If it
+[1:00:10] is clear, okay, then I have another
+[1:00:12] question. If you get a
+[1:00:14] maximum, if you can get a maximum
+[1:00:16] throughput using UDR
+[1:00:19] E-flat, what's the
+[1:00:20] purpose of DXC flag.
+[1:00:23] Maximum throughput
+[1:00:24] UDRE flag
+[1:00:25] and the DXC flag.
+[1:00:28] Aruni, any idea?
+[1:00:31] Yes.
+[1:00:34] I can't hear you.
+[1:00:36] Can you please speak a little bit louder?
+[1:00:39] The thing is this,
+[1:00:41] I am not using my
+[1:00:42] headphones in this setup.
+[1:00:45] Right?
+[1:00:46] So you need to speak a little bit louder.
+[1:00:48] Sir, can you hear me?
+[1:00:50] No, I can't hear you.
+[1:00:52] You speak very, very...
+[1:00:54] Okay? Sorry?
+[1:00:56] Can you hear me?
+[1:00:57] No, my question is, what is the purpose of this TXE flag?
+[1:01:01] Wait from
+[1:01:02] starting UR
+[1:01:03] UDR?
+[1:01:05] No, it's not clear. Some disturbance in UR
+[1:01:08] may go communication.
+[1:01:10] It's alright. Okay.
+[1:01:11] Any idea?
+[1:01:14] What's up?
+[1:01:14] What's up?
+[1:01:16] I have a so you the I the gamee
+[1:01:18] a
+[1:01:19] a
+[1:01:19] a
+[1:01:20] a
+[1:01:20] a
+[1:01:20] a
+[1:01:20] 
+[1:01:20] a
+[1:01:20] 
+[1:01:20] a
+[1:01:20] a
+[1:01:20] a
+[1:01:20] a
+[1:01:20] a
+[1:01:20] 
+[1:01:20] a
+[1:01:20] a
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] a
+[1:01:20] 
+[1:01:20] a
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] 
+[1:01:20] a
+[1:01:20] 
+[1:01:46] I have a look you have a DM.
+[1:01:47] I have a DG.
+[1:01:47] [unclear — Sinhala / crosstalk]
+[1:02:17] the
+[1:02:19] the
+[1:02:20] the
+[1:02:21] the
+[1:02:21] the
+[1:02:22] the
+[1:02:22] the
+[1:02:22] the
+[1:02:22] the
+[1:02:22] the
+[1:02:22] the
+[1:02:22] the
+[1:02:22] the
+[1:02:22] 
+[1:02:22] 
+[1:02:22] the
+[1:02:22] the
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:22] the
+[1:02:22] 
+[1:02:22] 
+[1:02:22] 
+[1:02:47] UDRE flag, user data register empty interrupt.
+[1:02:54] UDRE flag or user data register empty interrupt, you can get a maximum throw.
+[1:03:00] Then what is the purpose of having transmit complete flag bit and transmit complete interrupt.
+[1:03:09] Maximum throw puttaka humway nothing, it is a bambu.
+[1:03:14] So they can act like a person.
+[1:03:16] I get a gun.
+[1:03:17] I'm not a practical example.
+[1:03:20] Okay.
+[1:03:21] I'll give you an example.
+[1:03:26] Good.
+[1:03:27] In half duplex communication.
+[1:03:32] So what is half duplex communication?
+[1:03:35] Can you give me an example for half duplex communication?
+[1:03:41] Data can be transferred through only one side at a time?
+[1:03:45] Example?
+[1:03:47] I need to ask you to explain.
+[1:03:50] Walk it off.
+[1:03:52] Walk it off.
+[1:03:53] Walk it off.
+[1:03:55] Walk it off.
+[1:03:58] So when one person talks, other person has to listen.
+[1:04:02] When that person talks, the first person has to listen.
+[1:04:06] One-way communication.
+[1:04:08] In that kind of half duplex communication, we need to know whether the transmit is complete before releasing the channel for the other party to communicate.
+[1:04:22] So that's why when you are using walkie talkies, when you have finished talking, you say over.
+[1:04:29] That is to indicate the other party that you are over.
+[1:04:34] So, the other party can use the communication channel to transmit.
+[1:04:40] And again, the other party comes to the end of whatever his message, then he will say over.
+[1:04:51] That indicates the other party is over and you can communicate.
+[1:04:55] So, likewise, when we are using half-duplex communication,
+[1:05:00] You want to know, you need to know whether the transmit is complete or then only you can give the channel to the other party.
+[1:05:12] That means we need to know we have transmitted everything and nothing is left in the buffer before we releasing the channel.
+[1:05:23] In that case, TXC flag is very useful.
+[1:05:29] Because TXC flag indicates transmit shift register empty, UDR data register empty, both empty.
+[1:05:38] Nothing is left.
+[1:05:39] Nothing is left in the buffer.
+[1:05:41] Nothing is left in the middle.
+[1:05:43] Everything shifted out.
+[1:05:45] So you can give the channel to the other part.
+[1:05:48] It's like the overwork in the walkie-talkie communication.
+[1:05:54] Is that clear?
+[1:05:56] Yes, sir.
+[1:05:56] Another example.
+[1:05:59] Right.
+[1:06:00] A power saving application.
+[1:06:02] Let's say you develop a system.
+[1:06:05] That system has a mode, power saving mode.
+[1:06:09] So in the power saving mode, all the peripheral devices are disabled to save power, including usite.
+[1:06:17] Sometimes you develop an embedded system which has a power saving.
+[1:06:22] Sometimes some embedded systems you have to run using battery power.
+[1:06:27] Using a small battery you have to run the system many hours, sometimes many days, many
+[1:06:32] months and sometimes it is difficult to replace the battery when the battery is run out of
+[1:06:37] power.
+[1:06:38] Think about the military systems.
+[1:06:41] You have some spy device.
+[1:06:44] You have installed that device behind the enemy lines.
+[1:06:48] Using a tiny battery, the device transmits enemy movements.
+[1:06:53] It's a spy device.
+[1:06:55] Right?
+[1:06:56] Now, when the battery is run out of power, can you go behind the enemy lines and replace
+[1:07:02] the battery?
+[1:07:03] No, that is not possible.
+[1:07:05] Therefore, you need a power saving mode.
+[1:07:08] So when the transmission is over, you need to switch the device to the battery saving
+[1:07:14] mode, power saving.
+[1:07:16] When the transmission is over, you need to switch to the power saving mode.
+[1:07:20] In the power saving mode, all the peripheral devices are disabled to save power.
+[1:07:26] But before we switch into the power saving mode, we need to make sure transmission is
+[1:07:33] complete.
+[1:07:34] All the data shifted out.
+[1:07:37] Nothing is left.
+[1:07:38] All the data in the shift register shifted out.
+[1:07:45] Nothing is in the UDR data register.
+[1:07:48] We need to make sure before we turn off the USART peripheral to save power.
+[1:07:56] Another application of TXC flag.
+[1:08:00] Because TXC flag indicates, both TXC flag as well as transmit complete interrupt, they
+[1:08:09] indicate all the data transmitted, nothing is left.
+[1:08:14] So using that indication, you can turn off the user to save the power.
+[1:08:21] Can you do that with UDRE?
+[1:08:24] UDRE indicates UDRE register, USART data register is in, but that doesn't guarantee transmit
+[1:08:34] shift register is in. There may be data in the transmit shift register. If you turn off
+[1:08:40] the USART peripheral, while some data in the transmit shift register, those data will not
+[1:08:47] be transmitted. Therefore, you can't use such situations UDRE flag with O, user data registered
+[1:08:56] empty interrupt. Is that clear? Is that clear? Right?
+[1:09:02] There is no flag.
+[1:09:05] There is no flag.
+[1:09:08] Oh, that's right.
+[1:09:10] You said that you were in the lab and you were in the program.
+[1:09:16] You were in the program and you were in the program.
+[1:09:20] You said you were in the saving and you were in the alert.
+[1:09:25] You were in the alert.
+[1:09:28] [unclear — Sinhala / crosstalk]
+[1:09:58] There may be data in the transmit shipping. Now if you turn off the user to the referral,
+[1:10:16] then you would lose whatever data in the transmission. So that's why we have TXC flag
+[1:10:24] and transmit complete interrupt. So, in the appropriate, the suitable situation, suitable
+[1:10:31] applications, we have to use correct flag with correct input. The maximum throughput you can
+[1:10:38] get with UDRA flag with O, use our data register empty input, you can get maximum throughput. But
+[1:10:46] In fact, some situations, TXC flag transmit complete implant.
+[1:10:53] They become useful.
+[1:10:54] Is it clear?
+[1:10:55] Yes.
+[1:10:56] Right.
+[1:10:58] Now, you can see here the CPU.
+[1:11:03] CPU loads entire character to UDR.
+[1:11:07] CPU loads entire character to UDR.
+[1:11:11] UDR transfers entire character to transmit shippers.
+[1:11:15] Transmit shift register transmits bit by bit from TXV. So input is multiple data, 8 bit character input. Input is 8 bit character. Output is bit by bit. Input parallel, output same.
+[1:11:37] Can you understand? Input parallel, output 0. So, 8-bit character you load to UDR. UDR processes 8-bit character to transmit ship register. Transmit ship register transmits bit by. So, 8-bit means parallel means. Input parallel, output 0.
+[1:12:00] Right. Now let's see how that receiver works. This is how transmitter works. How receiver works. This is the block diagram of receiver.
+[1:12:12] A synchronous receiver block diagram. Right. Again let's start with Bordrade generator.
+[1:12:19] Two inputs to the bode rate generator. One is the oscillator signal from CPU. That is F-CPU, frequency of CPU, clock pulses. One input is clock pulses, F-CPU.
+[1:12:36] The other input is the value of UBRR register, USAT board rate register, UBRR register.
+[1:12:46] According to this formula, fcpu divided by 16 multiplied by UBRR plus 1.
+[1:12:55] According to this formula, board rate generator generates board rate, data transfer rate.
+[1:13:02] Board rate generator generates data transfer rate.
+[1:13:06] If you want to match the receiver's board rate to transmitter's board rate, you can change the value of UBRR.
+[1:13:17] By changing this UBRR, you can change the board rate.
+[1:13:22] Because FCPU is normally fixed.
+[1:13:25] So, this is the register value you can change.
+[1:13:28] This register value you can vary between 0 to 255, 8-bit register.
+[1:13:33] and you can adjust the board rate
+[1:13:36] or data transfer rate
+[1:13:38] to match with the
+[1:13:40] data transfer rate of the
+[1:13:42] transmitter. Now we are in the
+[1:13:44] receiver. Why? That's the first
+[1:13:46] one. The receiver
+[1:13:48] receives data
+[1:13:50] through RxPP.
+[1:13:53] Receiver receives
+[1:13:54] bit by bit. Not
+[1:13:56] parallel bits. Serially
+[1:13:58] bit by bit through RxPP.
+[1:14:01] Receiver receives
+[1:14:02] data through RxDB. RxDB means receive data.
+[1:14:06] Receive data. And then synchronization
+[1:14:09] unit. Synchronization unit recognizes
+[1:14:14] sync bits. That is start bit and
+[1:14:18] stop bit. Synchronization unit recognizes
+[1:14:21] sync bits. Using the board drain.
+[1:14:25] Using the board drain, synchronization unit recognizes
+[1:14:30] start bit and stop bit and load the character to receive shift register. Load the database
+[1:14:41] to receive shift register. Every character is framed with a start bit and a stop bit.
+[1:14:49] Synchronization unit recognizes and loads the character to receive shift register. When
+[1:14:56] When received shift register is full, it transfers character to the UDR, USAT data register.
+[1:15:09] When the shift register is full, the character, not the start bit and stop bit, just the character
+[1:15:16] in between start bit and stop bit.
+[1:15:19] The character is transferred to UDR.
+[1:15:22] When UDR contains an unread character, a character that we have not yet read, RxP flag bit is
+[1:15:36] safe. Receive complete flag bit is safe. Receive complete flag bit. That flag bit is in UCSRA
+[1:15:46] register. User control and status register A. Receive complete flag bit of user control and
+[1:15:57] status register A is set. Also, if you have enabled, receive complete interrupt using this particular
+[1:16:08] bit that is called RxCIEB receive complete interrupt enable using this bit
+[1:16:15] you can either enable or disable receive complete interrupt if you set value 1 to
+[1:16:22] this bit you enable receive complete interrupt if you set value 0 to this bit
+[1:16:28] you disable receive complete interrupt so if you enable the receive complete
+[1:16:33] interrupt. When this flag is set, CPU
+[1:16:37] will be interrupted. When this flag bit is set,
+[1:16:42] it indicates UDR contains
+[1:16:45] a new character. This flag bit is set,
+[1:16:49] it indicates a new character is in the UDR.
+[1:16:54] So you can read the character.
+[1:16:57] So when you read the character, automatically this bit is clear.
+[1:17:01] The flag bit is automatically cleared when you read the character.
+[1:17:05] So by polling this flag bit, you can read character by character.
+[1:17:11] By polling this RxC receive complete flag bit, you can read character by character.
+[1:17:17] Instead of polling this flag bit, you can use the interrupt.
+[1:17:22] Receive complete interrupt.
+[1:17:23] If you have enabled it, right, when there's a new character in UDR, this interrupt is
+[1:17:30] you can use this interrupt to read character by character from UDR is that clear when there's a
+[1:17:42] new character in the UDR flag bit is set interrupt is triggered either interrupt or flag bit you can
+[1:17:49] use to read character by character if the UDR contains an already read character not a new
+[1:17:57] character already red character or UDR is empty. Either UDR is empty or it contains already red
+[1:18:06] character. Then RxC flag is not set. Receive complete interrupt is not triggered. RxC flag is set.
+[1:18:14] Receive complete interrupt is triggered only when there's a new character in the UDR. So you can read.
+[1:18:22] is that clear any question okay let me ask a question now without polling rxc flag oh without
+[1:18:32] using this internet sorry
+[1:18:37] [unclear — Sinhala / crosstalk]
+[1:19:07] I have a here, the tos, the the.
+[1:19:09] [unclear — Sinhala / crosstalk]
+[1:19:17] right now I think another thing thank you coming to a time I make it even after their
+[1:19:26] neck right some onion from a data line with your data line again only some
+[1:19:33] [unclear — Sinhala / crosstalk]
+[1:20:03] the man you that the we have a to a
+[1:20:06] the the the the
+[1:20:07] [unclear — Sinhala / crosstalk]
+[1:20:38] the how we need the the how many top ready the receiver a balapro to you know I cut you
+[1:20:49] not I love any top ready stop stop the window are now the harmony top ready in the only stop
+[1:20:59] bit. If you receive the start bit at time zero, the first second, at the tenth second, you
+[1:21:25] should receive some if the data transfer rate is one bit per second data transfer rate
+[1:21:32] the top rated be taken up all of any top ready start with the car now the how many top ready
+[1:21:40] stop it again the how many top ready the cookie lava now up the the top ready our window the
+[1:21:49] the
+[1:21:51] a
+[1:21:52] a
+[1:21:53] a
+[1:21:53] a
+[1:21:53] a
+[1:21:53] a
+[1:21:54] a
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:21:54] 
+[1:22:19] I have been the target of the very current.
+[1:22:21] I have a question.
+[1:22:23] I have begun.
+[1:22:25] I have to not.
+[1:22:27] But I call I.
+[1:22:29] I have to not.
+[1:22:31] I follow.
+[1:22:33] I say.
+[1:22:35] I got the heart.
+[1:22:37] I got the hand.
+[1:22:39] I can most significant character.
+[1:22:41] This side.
+[1:22:43] The end of the.
+[1:22:45] [unclear — Sinhala / crosstalk]
+[1:23:45] I have a very very very very very mage-gurus, the kakwadhahar, a bithyjhjh, a sqa-bh mb.
+[1:23:51] I do a sdhjh, a tbf, tb.
+[1:23:52] I is a tb.
+[1:23:52] I is a tb.
+[1:23:52] I m1,I.
+[1:23:52] I a tb.
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] 
+[1:23:52] I tb.
+[1:23:52] I tb.
+[1:23:52] the
+[1:23:54] the
+[1:23:55] the
+[1:23:55] the
+[1:23:56] the
+[1:23:56] the
+[1:23:56] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] 
+[1:23:57] the
+[1:23:57] the
+[1:23:57] 
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] 
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] 
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] the
+[1:23:57] 
+[1:24:22] [unclear — Sinhala / crosstalk]
+[1:24:52] If something is not clear, it doesn't matter.
+[1:25:12] it was discussed in a previous slide go in a previous session no even in the
+[1:25:19] last year doesn't matter
+[1:25:31] the idea is to learn don't keep quiet
+[1:25:39] When at night? Right. I am very happy at least half of the batch. We have not much name. Nine or ten people among them. At least half. They talk very well. Right. Compared to last year or last couple of years. Your batch is really good. You guys ask questions. Right.
+[1:25:58] Then, what is this pin control? I will discuss it. Even in the transmitter, we had that pin control. What is this pin control?
+[1:26:13] What is pin control? The pin control role of the pin control. Let's discuss that.
+[1:26:29] So, left pin control. Now, these pins are IO pins, input-output pins. These pins are IO pins. We need to disable their IO functionality. Then only we can use them for data communication.
+[1:26:46] We need to disable their input-output functionality and then only we can use them for data communication.
+[1:26:59] That is done by PIN control.
+[1:27:01] Using the PIN control, we can alternate the PIN functions.
+[1:27:07] PIN has two functions.
+[1:27:09] One is GPIO function, general purpose input-output function.
+[1:27:14] GPIO. The other function is RxD function, receive data function. Between these two functions,
+[1:27:24] RxD function and GPIO function, general purpose input output function, how do we alternate
+[1:27:31] using PIN. Then you receive data bit by bit. You receive data to receive shift register
+[1:27:42] bit by bit, you load data to receive shift register bit by and then as a character, as
+[1:27:51] a whole character, you transfer the character to UDR and then the CPU reads entire 8 bit
+[1:28:01] characters. But the receive shift register is filled with bit by bit. Bit by bit input,
+[1:28:11] entire character output serial in parallel out serial in parallel out then you understand right
+[1:28:22] without shift registers both transmit and receive shift registers you can't implement this function
+[1:28:29] parallel in serial out at the transmitter serial in parallel out at the receiver
+[1:28:37] Those two function
+[1:28:39] you can't implement
+[1:28:41] without chip register.
+[1:28:43] That's why we need chip register.
+[1:28:45] You need transmit chip register to implement
+[1:28:47] parallel in
+[1:28:49] serial out function.
+[1:28:52] You need receive chip register
+[1:28:53] to implement serial
+[1:28:56] in parallel out function.
+[1:28:58] Is that clear?
+[1:29:00] Any question?
+[1:29:01] Now let's talk
+[1:29:04] about USAT registers.
+[1:29:06] USAT registers.
+[1:29:07] The first one is UBRR, USART BORDERATE REGISTROR.
+[1:29:13] USART means universal synchronous receiver and transmit.
+[1:29:22] USART BORDERATE REGISTROR.
+[1:29:25] And what is this simple length?
+[1:29:27] This simple length indicates the USART peripheral number.
+[1:29:32] Because some microcontrollers, there are multiple USART peripherals.
+[1:29:38] Like timers.
+[1:29:39] So, multiple timers.
+[1:29:40] T0, T1, T2.
+[1:29:43] Likewise, some microcontrollers, you can have multiple USART peripherals.
+[1:29:49] Now, in Atmega 328P, the microcontroller in the Arduino Uno board, we have one USART peripheral.
+[1:29:58] One USART peripheral DS.
+[1:30:00] Therefore, N is 0.
+[1:30:03] N is 0.
+[1:30:04] So, in ATMEGA 3280 microcontroller, you have UBRR 0.
+[1:30:10] But some microcontrollers like ATMEGA 2560,
+[1:30:14] ATMEGA 2560, which is on Arduino megaboard,
+[1:30:19] ATMEGA 2650, which is on Arduino megaboard,
+[1:30:24] there are four USART variables.
+[1:30:26] There are four USART variables.
+[1:30:28] So, the bode rate registers of those USART peripherals, you can number UBRR0, UBRR1, UBRR2, UBRR3.
+[1:30:42] So, using this simple N, right, including this simple N number to the register name, you can make your code portable, right.
+[1:30:57] Because only the number you need to change.
+[1:31:01] So you can make your code up.
+[1:31:04] Right.
+[1:31:05] This register we used to set the board rate.
+[1:31:09] And this is a 16-bit register.
+[1:31:12] This is a 16-bit register.
+[1:31:14] But only 12-bit size.
+[1:31:16] Right.
+[1:31:17] Only 12-bit size.
+[1:31:19] And this is the formula to calculate board rate.
+[1:31:24] This is the formula to calculate board rate.
+[1:31:25] From this formula, you can derive UBRR. UBRR equals FCPU divided by 16 multiplied by board rate minus 1. Now, if you know the FCPU, if you know the required board rate, you can calculate the value for UBRR.
+[1:31:47] So, if you know the frequency of C2U, if you know the required goal rate, data transfer rate per second, BPS per BPS, that is bits per second, you can calculate the value for this register.
+[1:32:02] What is the value you need to initialize to this register?
+[1:32:06] You can calculate.
+[1:32:08] How this formula has been derived?
+[1:32:11] Why it is divided by 16?
+[1:32:14] All these things are available in the data sheet.
+[1:32:19] Page 227.
+[1:32:22] In the page 227 data sheet, right?
+[1:32:25] How this formula derived?
+[1:32:28] And why divided by 16?
+[1:32:30] Why not 8?
+[1:32:31] all these things are available. So therefore I am not going to talk about those things.
+[1:32:38] You can read the page 227 of the data sheet. The UDR register, USART data register refers
+[1:32:48] to Transmit data bubble that holds character to be transmitted to the Transmit shift register.
+[1:32:56] UDR refers to a transmissed data buffer that holds the character to be transferred to the
+[1:33:04] transmit shipments. So UDR is a data buffer. It holds the character to be transferred to
+[1:33:12] the transmit shipments. And also UDR refers to the received data buffer that holds the
+[1:33:20] character transferred from received shift register. So both data buffers we refer using the same name
+[1:33:30] UDR. Right UDR. Actually there are two registers but they share the same address. Therefore we refer
+[1:33:44] both registers using same name. Two registers share the same members. So, we refer two registers
+[1:33:53] using the same name. Then will there be conflicts? No. Why? If data is written to UDR,
+[1:34:02] if you write data to UDR, you refer transmit data by. If you read from UDR, you refer
+[1:34:12] receive data
+[1:34:14] so you don't need to worry
+[1:34:16] those things are handled behind this
+[1:34:18] right
+[1:34:19] two data buffers
+[1:34:21] right
+[1:34:22] transmit ship register
+[1:34:24] and receive
+[1:34:26] transmit data buffer
+[1:34:29] and receive data buffer
+[1:34:30] let me drop these two
+[1:34:32] so you can understand
+[1:34:34] sir we can't see the boat
+[1:34:36] sorry
+[1:34:36] we can't see the boat
+[1:34:39] okay
+[1:34:40] Now this is Transmeet data. Transmeet shift resistance.
+[1:34:55] Now, from the cross-piece data buffer to cross-piece shift, parallel link and PXBD serial lock.
+[1:35:07] Then receive shift register, receive data buffer, RSVP, serial P parallel CPU.
+[1:35:29] Right. Now, these two data methods, they share the same address. They share the same address. Therefore, we call them using the same name UDR.
+[1:35:46] Now the question is, will there be conflicts if you use same name for two registers?
+[1:35:54] No. Why? If you assign a value to UDR, if you assign a value to UDR, this is the register
+[1:36:06] refer. If you read
+[1:36:08] from the UDR,
+[1:36:10] if you read from the UDR,
+[1:36:12] receive the register UDR.
+[1:36:14] So those things will be handled
+[1:36:16] behind the scenes. If you write
+[1:36:18] away the UDR, you
+[1:36:20] refer to a cross-sheet data
+[1:36:22] document. If you read
+[1:36:24] from UDR, you
+[1:36:26] refer to receive data document.
+[1:36:28] They shall save address
+[1:36:30] so we use
+[1:36:32] same name. Is that
+[1:36:34] it? If you want more time to
+[1:36:36] see that whiteboard I can switch it to the whiteboard again. What do you say?
+[1:36:43] Sir can you please explain it one more time please.
+[1:36:46] Sure. Now from CPU you load to the transmit data buffer a character. Then character is
+[1:36:54] loaded to the transmit chip register and bit by bit you transmit. That's what we discussed
+[1:37:00] just under transmit of blood data. And you receive data through R-H-T-E-P, right?
+[1:37:07] So then receive data shift register, receive shift register. And from the receive shift
+[1:37:14] register, entire character you get to the receive data buffer. And from the receive
+[1:37:20] data buffer you read the character. Now this receive data buffer and transmit data buffer,
+[1:37:26] They share same memory objects. Therefore we call them using same name UDR. Then we may think that there will be conflicts. No.
+[1:37:40] When you write a value to the UDR, you write a value to the UDR, we refer to Transmit data.
+[1:37:51] When you read a value from UDR, you read a value from UDR to that, you read a value from UDR.
+[1:37:59] You refer to the UDR.
+[1:38:02] So behind the scenes that happens.
+[1:38:05] So you can use the same name. If you write a value to the UDR, that is the register you will. If you read a value from UDR, receive the register you will. Is that clear?
+[1:38:17] Yes sir. Thank you sir. Because we are using only receive or transmit at a time, that's why we are not getting a conflict.
+[1:38:25] Even at the same time we can receive when class B. When you refer, the current, the relevant
+[1:38:34] data buffer is reference. Because two different ones.
+[1:38:40] Okay sir.
+[1:38:41] If you write a letter from UDR, that point is reference. If you read a letter from UDR,
+[1:38:46] this point is reference.
+[1:38:48] Okay sir.
+[1:38:49] No problem.
+[1:38:50] Right.
+[1:38:52] Then,
+[1:38:53] USART control and status register A.
+[1:38:57] It contains receive complete flag.
+[1:39:00] Right.
+[1:39:01] Receive complete flag.
+[1:39:03] This flag is set when UDR contains unread character.
+[1:39:08] When UDR contains unread character, this flag is set.
+[1:39:12] And when you read the character from UDR,
+[1:39:16] when you read the character from UDR,
+[1:39:18] this flag is automatically cleared.
+[1:39:20] It is automatically cleared when you read the character from UDR.
+[1:39:24] So you can use this flag bit and poll it, read character by character.
+[1:39:31] By polling this flag bit, you can read character by character.
+[1:39:35] Then we have transmit complete flag bit, bit number 6, transmit complete flag.
+[1:39:41] This flag bit is set when the entire frame in the transmit shift register has been shifted out and UDR is empty. Both shift register and UDR are empty. This flag bit is set.
+[1:39:55] Then the third flag bit, UDRE flag bit.
+[1:40:01] This is set when UDR becomes set.
+[1:40:04] Either this flag bit or that flag bit you can use,
+[1:40:10] pull them and load character by character to UDR for transmission.
+[1:40:19] And if you use UDRE, you can get higher throughput.
+[1:40:22] but you can use THC flag to make sure that everything has been transferred.
+[1:40:28] Nothing is left. Right. The default value of UDRE is 1. Why? At the beginning UDRE is
+[1:40:37] empty. USAR data register is empty at the beginning. So UDRE flag bit is set when UDRE is
+[1:40:45] empty so default value of UDR is one other two flag bits before really we see UDR a flag with
+[1:40:54] default value is what why at the beginning when you turn off the USART paragraph UDR USART data
+[1:41:01] register is empty so UDR USART data register empty flag is one clear right USART control and status
+[1:41:12] register B which contains some bits important bits one is there are two bits
+[1:41:20] important bits Rx C I e receive complete interrupt enable bit receive complete
+[1:41:28] interrupt enable bit and transmit complete interrupt enable it using them
+[1:41:34] you can enable or disable receive complete interrupt or transmit complete
+[1:41:41] interrupt you can enable load is equal then you have udr ie usad data register empty interrupt
+[1:41:50] enable using that you can enable interrupt on udre flag right you can enable you can interrupt when
+[1:41:59] udr usad data register is empty you can enable it and finally you have rx en flag sorry rx in
+[1:42:08] a EN bit and TXEN bit. So, whether you want to enable the transmitter and receiver, you
+[1:42:16] can use these two bits. Because by default, the receiver and the transmitter both are
+[1:42:23] disabled to save power. If you want to enable them, these are the two bits you have to save.
+[1:42:29] These are the two bits you have to save. If you set RXEN bit, receiver you can enable.
+[1:42:34] if you set TXEN, you can enable the transmit. And interrupts you can enable either UDRE user data
+[1:42:45] register empty interrupt, transmit complete interrupt, receive complete interrupt. These
+[1:42:50] interrupts you can enable disable using these three bits. And this particular UCSZ we'll discuss
+[1:43:00] in the next slide.
+[1:43:02] Sorry, in the next slide.
+[1:43:03] This is the UCSZ bit number 2.
+[1:43:07] So before we move into the next slide,
+[1:43:09] any questions?
+[1:43:10] And again, these are the two bits
+[1:43:13] you need to set to enable
+[1:43:14] and disable transmit and receive.
+[1:43:17] When you enable the receive,
+[1:43:19] RXDP,
+[1:43:21] right, RXDP
+[1:43:22] becomes the receive,
+[1:43:25] data receive,
+[1:43:26] disabling its GPIO function.
+[1:43:30] PIN control, right?
+[1:43:31] If you enable the receiver, the relevant GPIOP, general purpose IOP, becomes data received
+[1:43:40] RxDB, received data.
+[1:43:43] And when you enable the transmitter, the relevant GPIOP, general purpose input output pin, becomes
+[1:43:51] TxDB, transmit data.
+[1:43:53] So you can enable receiver and transmitter and then you can enable TXD and RXD pins.
+[1:44:04] So then those pins provide the functionality for data communication.
+[1:44:10] But if you disable receiver and transmitter, the relevant pins you can use for general purpose input output, GPI.
+[1:44:20] That's important.
+[1:44:22] Let's say you are developing an embedded system and you don't want to do any data in English.
+[1:44:28] But you need some pins to connect sensors and actuators.
+[1:44:32] Disable receiver, disable transmitter, TXV and RxV pins used for GPIO, general purpose input.
+[1:44:41] That is possible. Right. So this is what I discussed.
+[1:44:46] The need of enabling, disabling RxQ.
+[1:44:49] One need is to save power.
+[1:44:52] The second need is, right, to override the GPIO functionality of relevant pins.
+[1:45:02] That's why we enable, disable, receive and transfer.
+[1:45:05] The one reason is we can save power by disabling receiver and transfer.
+[1:45:10] The another reason is by enabling the receiver and transmitter, we can override the GPIO functionality, general purpose input output functionality we can override with data communication function.
+[1:45:26] Right. Then USART, control and status register C, the third register. Control and status register C. And that register we have two important bits. UCSZ bit 1, UCSZ bit 0 and the previous register we saw, UCSZ bit number 2.
+[1:45:51] What are they? They are called USART character size bits. USART character size bits. Now using these three bits, you can specify the character size. I told you the character size could vary between five bits to nine bits. This is the default character size, eight bit.
+[1:46:12] This is the default. Right? UCSZ 0 bit 1, UCSZ 1 bit 1 and UCSZ 2 bit 0. That is the default.
+[1:46:25] But if you want, you can have other character sizes. For example, 8 bit character with a
+[1:46:31] one parity bit, you can have 9 bit characters or you can have 5 bit character sizes. If
+[1:46:38] If you want to communicate just hexadecimal numbers, 4 bit for the number and 1 for the
+[1:46:45] paradigm.
+[1:46:46] So likewise, you can have different character sizes for different purposes.
+[1:46:53] But generally, typically we use 8 bit character.
+[1:46:56] With that we come to the end of theory part.
+[1:47:00] The next part is to develop a system to understand how USAT works, serial data communication
+[1:47:09] works.
+[1:47:10] Before we move into that practical part, any question on theory part?
+[1:47:15] Right.
+[1:47:16] If so, you better go through all these theory things again and we'll discuss the practical
+[1:47:27] thing, the system development
+[1:47:29] part in the next
+[1:47:31] so that's all for today
+[1:47:33] and also
+[1:47:34] right
+[1:47:36] let me know, right, you can write
+[1:47:39] emails, let me know
+[1:47:40] your experience, right
+[1:47:42] on this new setup
+[1:47:44] right, whether you prefer
+[1:47:46] this new setup or the old
+[1:47:49] way of conducting
+[1:47:51] online lectures
+[1:47:52] sometimes the slides
+[1:47:55] going blurred
+[1:47:56] sometimes just after switching to a video to slides sometimes it blows then you experience
+[1:48:08] that in long time oh it's a today's okay we'll see i also have the recording i will go through the
+[1:48:16] recording and see whether it's right it's not a very big issue sir but sometimes
+[1:48:26] after a few times it cannot do the normal way just after switching to the slide from video it
+[1:48:37] seems sometimes okay i'll i'll go through the recording then i can see the see that problem
+[1:48:44] Okay, the idea is now if we have to conduct lectures in this manner for next several months,
+[1:48:55] we need to come up with some sort of mechanism to make the lectures more interactive.
+[1:49:02] So that's why we are thinking about these different different options.
+[1:49:07] But I don't know whether all these things will be useful or practically feasible.
+[1:49:13] My preferred method is how lectures, physical lectures, that means have personal touch,
+[1:49:25] so you are in front of me, you can see me, I can see you, even I can come to you.
+[1:49:32] So unfortunately with this situation, those things are not possible.
+[1:49:37] So let's see.
+[1:49:38] So at least some sort of method we can figure out.
+[1:49:44] We'll see.
+[1:49:45] Right.
+[1:49:46] Okay.
+[1:49:47] Thank you very much.
+[1:49:48] Sir, small thing.
+[1:49:49] Yeah.
+[1:49:50] This is not relevant to embedded systems.
+[1:49:54] No, not.
+[1:49:55] Family problem.
+[1:49:56] No, not.
+[1:49:57] Family problem.
+[1:49:58] No, not.
+[1:49:59] No, not.
+[1:50:00] No, not.
+[1:50:01] I have a very very very very say-
+[1:50:03] I have a very very say-
+[1:50:03] I have a very very time
+[1:50:03] to go to a very very very Yin-Ce.
+[1:50:04] I have a very very and and a very so-
+[1:50:04] I have a very say-
+[1:50:04] I have a very at-
+[1:50:04] I have a very so-
+[1:50:05] I have a very and a really
+[1:50:05] you

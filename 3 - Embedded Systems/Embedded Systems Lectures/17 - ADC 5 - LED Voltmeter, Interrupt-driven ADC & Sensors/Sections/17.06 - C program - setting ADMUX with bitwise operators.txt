@@ -1,0 +1,224 @@
+[0:00] move into source code. Right.
+[0:02] This is the typical C function,
+[0:04] main function. And we
+[0:06] need avr slash
+[0:08] io dot h because it
+[0:10] contains io definitions
+[0:12] that header file.
+[0:14] First of all, we need to configure
+[0:16] pb0 to
+[0:18] PB4 pins as
+[0:20] output pins.
+[0:22] Because our LEDs are connected
+[0:24] to these 5 pins.
+[0:26] PB0 to PB4.
+[0:28] So what we do is we set
+[0:30] bit 0 to bit 4
+[0:32] of port B
+[0:34] registered. Right. We set those
+[0:36] 5 bits.
+[0:38] Bit 0 to bit 4.
+[0:41] Without
+[0:42] disturbing to other bits.
+[0:44] That's why we have used bitwise
+[0:46] O operator.
+[0:48] Then we need to configure PC0 which is the ADC0 as an input.
+[0:55] Because our input the potentiometer middle pin we have connected to PC0.
+[1:01] That is our input.
+[1:03] So that pin we need to configure as an input pin.
+[1:07] But that is not necessary.
+[1:09] Why?
+[1:11] The default value of the port C bits are 0.
+[1:17] Right.
+[1:17] any port, the default
+[1:19] bit value is 0.
+[1:23] That means by default
+[1:25] all IEO pins are input pins.
+[1:28] So you don't need to explicitly configure
+[1:32] them as input because by default
+[1:34] all pins are input pins because
+[1:37] the bit values of all IEO registers
+[1:40] are 0 by default. However,
+[1:43] this is a good practice. Then which makes your
+[1:46] program is more readable and understandable.
+[1:49] Right. So anybody go through your program can
+[1:52] quickly understand. So you have
+[1:55] configured PC0 as
+[1:59] an input because you have set the bit 0
+[2:02] of port C. You have cleared
+[2:05] bit 0 of port C. You have cleared.
+[2:08] You have put 0 to bit 0 of port C.
+[2:11] That indicates PC0
+[2:13] you are going to use as an input pin.
+[2:15] But this line is, line number 6 is not necessary but a good practice.
+[2:22] Not necessary, good practice.
+[2:23] Which improves understandability of your code.
+[2:27] On the other hand, it consumes one extra clock cycle.
+[2:32] So if you are so concerned about the performance, you don't need that line.
+[2:38] Then, we need to set the reference voltage.
+[2:42] In this example, we set the ADC reference voltage to ADC supply voltage.
+[2:51] AVCC is the ADC supply voltage, which is 5 volt.
+[2:55] But to do that, we need to set reference selection bits, ref S0 and ref S1.
+[3:06] Reference selection bits of admox register.
+[3:10] Admax means ADC multiplexer selection register.
+[3:14] We need to set refs0 bit and we need to clear refs1 bit.
+[3:23] That's what we have done here.
+[3:24] Now you can see we have cleared refs1 bit and then we have set refs0 bit.
+[3:32] This part is to clear the bit 7.
+[3:34] this part is to set
+[3:37] bit 6
+[3:38] of AdMux register.
+[3:41] Can you understand this line?
+[3:43] If not, please let me know.
+[3:45] I can explain.
+[3:47] Sir?
+[3:48] Yes.
+[3:48] Sir, can you explain?
+[3:50] Sure.
+[3:55] Let's take this part.
+[3:57] Now let's assume
+[3:58] AdMux is 8-bit register
+[4:01] which contains
+[4:02] XXX
+[4:04] x, x, x, x, x.
+[4:08] x could be either 0 or 1.
+[4:11] And with that value,
+[4:12] we take end operation
+[4:14] 0, 1, 1, 1,
+[4:18] 1, 1, 1, 1.
+[4:21] This part.
+[4:22] Now x and 0,
+[4:25] end operation.
+[4:26] x and 0, no matter the value.
+[4:28] x could be 1 or 0.
+[4:29] x could be
+[4:32] 1 O 0.
+[4:36] No matter the value of X, if you take
+[4:39] end operation with 0, it is 0. It will be 0.
+[4:42] Then X and 1.
+[4:45] The outcome depends on value of X.
+[4:49] If X is 1, 1 1. 1 and 1 1.
+[4:53] If X is 0, 0 and 1 0.
+[4:57] So X and 1 means X.
+[5:00] outcome depends on x.
+[5:03] Likewise, so this is
+[5:05] the result of this particular
+[5:07] part. So we have
+[5:09] cleared the bit number 7.
+[5:11] We have cleared the bit. Then
+[5:13] operator
+[5:14] this value.
+[5:16] 0 1 0
+[5:19] 0 0
+[5:21] 0 0 0.
+[5:22] Right. 0 0 0
+[5:25] 0. X
+[5:27] O 1.
+[5:28] X could be either 1 or 0.
+[5:31] X or 1.
+[5:32] If X is 1, 1 or 1, 1.
+[5:36] If X is 0, 0 or 1, 1.
+[5:40] So no matter the value of X.
+[5:42] X or 1, 1.
+[5:44] Outcome is 1.
+[5:46] X or 0.
+[5:48] X or 0.
+[5:49] If X is 1, 1 or 0, that is 1.
+[5:54] If x is 0, 0, 0, 0.
+[5:59] That means outcome depends on x.
+[6:03] x, 0, 0, x.
+[6:05] Now this is the value that we've assigned to Admax.
+[6:11] Now we have not touched these 6 bits of Admax.
+[6:16] We have cleared the 7th bit and set the 6th bit.
+[6:21] Other bits we have not touched.
+[6:24] Without disturbing to the other bits, we have set RE reference FS 0 bit and we have cleared RE FS 1 bit.
+[6:45] By doing that we have set the reference voltage, right, V ref to 5 volts.
+[6:53] That is AVCC, analog input voltage, sorry, analog power supply to ADC, supply voltage, supply voltage to ADC.
+[7:12] Can you understand?
+[7:15] without disturbing other bits,
+[7:20] this bit we have set, this bit we have cleared.
+[7:27] Is it clear now? If not, let me know.
+[7:39] If it is still not clear, please let me know.
+[7:42] Can you explain it?
+[7:43] Right. This is the register.
+[7:49] Admax ADC multiplexer selection register.
+[7:52] These are the two bits we want to handle.
+[7:56] Reference selection 1, reference selection 0.
+[8:00] What is their meaning? By setting different values
+[8:03] to these two bits, we can set the reference voltage.
+[8:07] If you clear this bit and set this bit
+[8:11] Right. Bit number 6, 1. Bit number 7, 0. This is the situation. 0 and 1. We set reference voltage to AVCC. AVCC is the ADC supply voltage. The voltage you supply to ADC. And that supply voltage is typically 5 volt. So, we set that to set that as reference voltage.
+[8:38] 0, 1.
+[8:39] For that, you have to clear the bit number 7 and set the bit number 6.
+[8:46] Right.
+[8:47] Bit 7, you have to clear.
+[8:48] Bit 6, you have to set.
+[8:50] Then you can set the reference voltage to ABCC.
+[8:55] ABCC means supply voltage to ADC.
+[9:00] Right.
+[9:02] Right.
+[9:03] This is the ABCC bit.
+[9:05] Supply voltage to ADC.
+[9:07] That is 5 volts. Supply voltage to ADC. Right. Again. Now if you use this 0 and 0, this setting, bit 7 you clear, bit 6 you clear, then reference voltage is set to VARF supplied externally.
+[9:26] Reference voltage is set to externally supplied voltage. Externally supplied voltage to which pin?
+[9:36] A ref pin. If you set 0, 0 for these two bits, reference voltage is set to V A ref,
+[9:45] supplied externally. Reference voltage is set to externally supplied voltage to A ref pin.
+[9:54] What is ARFP?
+[9:56] Now in this example, we are not going to supply externally a voltage to ARFP.
+[10:03] So we have not used that.
+[10:06] Now in the ADMUX register, we need to clear bit 7.
+[10:10] We need to set bit 6 without disturbing to other bits.
+[10:15] Right.
+[10:16] So this particular part, because there is bracket.
+[10:19] So this particular part executed first.
+[10:21] Admax register.
+[10:24] Let's assume.
+[10:25] It contains the default.
+[10:27] It contains values.
+[10:29] [unclear — Sinhala / crosstalk]
+[10:34] 8 bit register.
+[10:35] X could be either.
+[10:38] X could be 1, O, 0.
+[10:42] Any X could be either 1 or 0.
+[10:44] And with that.
+[10:46] This is the value of Admax.
+[10:49] And operation.
+[10:50] [unclear — Sinhala / crosstalk]
+[10:56] This particular value.
+[10:58] Now let's take the bitwise end operation.
+[11:00] X and 0 bitwise.
+[11:03] Start from your left side.
+[11:06] X and 0.
+[11:08] No matter the value of X, outcome is 0.
+[11:12] Because if you take end operation with a 0, outcome is 0.
+[11:16] Then X and 1, bit number 6, X and 1.
+[11:21] If X is 1, 1 and 1, outcome is 1.
+[11:26] If X is 0, 0 and 1, outcome is 0.
+[11:32] So outcome depends on X.
+[11:35] X and 1 means outcome is X.
+[11:39] If X is 1, this is 1.
+[11:41] If X is 0, this is 0.
+[11:43] Outcome depends on X.
+[11:45] Similarly, this is the answer you get when you perform this operation.
+[11:52] Then with that result, we take the operation of another value.
+[12:00] O, another value.
+[12:02] 0, 1, 0, 0, 0, 0, 0.
+[12:06] Now 0, O, 0, which is 0.
+[12:11] X, O, 1.
+[12:13] X, O, 1.
+[12:15] If X is 1, 1 O 1, 1.
+[12:19] If X is 0, 0 O 1, 1.
+[12:23] That means no matter the value of X, X O 1 outcome would be 1.
+[12:30] Then X O 0.
+[12:33] If X is 1, 1 O 0, 1.
+[12:37] If X is 0, 0 O 0, 0.
+[12:41] Then that means if you take the cooperation with x and 0 outcome depends on x.
+[12:49] Same way.
+[12:51] This is the answer you get.
+[12:53] That answer you assign to at max.
+[12:57] At max.
+[12:58] So what we have done is we have set reference selection bit 0.
+[13:05] We have cleared reference selection bit 1.
+[13:11] As a result, we have set V ref to AVCC. AVCC means 5 volts. Is that clear now? Still, if it is not clear, please let me know. Is that okay now?
+[13:32] Before the last diagram, block diagram,
+[13:46] No sir, that ADC block diagram last we did in that there was a control and status register

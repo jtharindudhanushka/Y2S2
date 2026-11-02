@@ -1,0 +1,135 @@
+[0:03] pins. We can tell the microcontroller. So we need to give instruction to the microcontroller
+[0:09] to override the I.O. functionality, GP I.O. functionality of these two pins right as
+[0:16] data communication pins. Now in the Arduino Uno board these two pins are numbered as 0 and 1.
+[0:23] 0 pin for receive data.
+[0:27] Then number 1 pin is for transmit data.
+[0:31] Now we discussed last week how to enable receiver using a bit in a register.
+[0:40] Now when you enable the receiver of this microcontroller, USART receiver,
+[0:45] when you enable using a bit in a control register, USART control and status register,
+[0:51] if you enable the receiver,
+[0:54] then this pin, the PD0 becomes receive data pin.
+[0:59] When you enable the transmitter, right,
+[1:04] in the control register,
+[1:05] a bit in the control register,
+[1:08] PD1 pin becomes transmit data pin, right.
+[1:13] When you are using these two pins for data communication,
+[1:16] you can't use them for general purpose input output.
+[1:20] That means if you have connected any actuator or sensor to these two pins while you are trying to communicate data, those sensors and actuators may interfere with the communication.
+[1:36] So therefore, don't connect any actuator, any sensor to these two pins if you are planning to use these two pins for data communication.
+[1:47] Otherwise, those actuators, sensors, they may interfere the data communication operation, right?
+[1:55] If there's a data communication problem in your system, the first thing you should look, these two pins.
+[2:04] Whether these two pins, right, whether some sensors, some actuators connected to these two pins.
+[2:12] first check. If there's a data
+[2:14] communication problem, check these two
+[2:16] pins are free.
+[2:18] Nothing connected.
+[2:20] If any sensor actuator
+[2:22] connected, then you may not
+[2:24] be able to do data communication.
+[2:26] But in some systems, you don't need
+[2:28] to do data communication.
+[2:30] In such systems, you can use
+[2:32] these two pins as general
+[2:34] purpose IO pins, input-output
+[2:36] pin. Is it clear? Any question?
+[2:39] Now the time is 9.16.
+[2:40] Still internet is available.
+[2:42] Let's see.
+[2:44] Then schematic diagram.
+[2:47] This is our ATmega328P microcontroller.
+[2:51] The crystal oscillator to provide clock pulses to the processor.
+[2:56] CPU.
+[2:58] Reset button.
+[3:00] 10K resistor to keep the reset pin high.
+[3:03] Right.
+[3:04] And power supply to the microcontroller through pin number 7.
+[3:09] And the ground power supply to pin number 8.
+[3:12] Ground power supply to ADC, 5V power supply to ADC.
+[3:19] Then, this is the USAR to USB interface controller.
+[3:26] So, USAR to USB interface controller, this could be FT232 chip or some other microcontroller.
+[3:35] We discussed two possible options to communicate over USB port.
+[3:41] one option is you can use
+[3:43] FT232 chip
+[3:45] then the problem is
+[3:47] you need to
+[3:48] install the device driver
+[3:51] or else
+[3:52] as used in Arduino
+[3:54] Uno revision 3 board
+[3:57] you can use some other micro
+[3:59] controller
+[4:00] to implement USAT
+[4:03] to USB interface controller
+[4:05] so whatever it is
+[4:07] this is the USB
+[4:08] interface controller and this is the usb port we we draw power from the usb port for the micro
+[4:16] controllers power supply we draw from the usb port and this is the usr2 usb interface controller
+[4:25] right now in the usr2 usb interface controller we have transmiss data feed receive data feed
+[4:34] one important thing is, when you connect the microcontroller to U-Sart2 USB interface controller,
+[4:42] the transmit data pin of the U-Sart2 USB interface controller, we connect to received data pin of the microcontroller,
+[4:51] and then received data pin of the U-Sart2 USB interface controller, we connect to transmit data pin of microcontroller,
+[5:02] controller so receiver is connected to the transmitter transmitter is connected to the
+[5:08] receiver right that's obvious now when you let's say you communicate over telephone right when you
+[5:15] speak to the mic microphone of the telephone the other party the receiving party right
+[5:23] should listen to that and when that party communicates you have to listen you have to
+[5:30] then you can't use microphone.
+[5:32] Then you have to use the headphone
+[5:34] or whatever the speaker in your mobile phone.
+[5:39] So when you communicate to the microphone of your mobile phone,
+[5:43] the other party, they need to use the speaker.
+[5:46] Then when the other party communicates
+[5:48] to their microphone in the mobile phone,
+[5:51] then you have to use the speaker.
+[5:53] So same thing.
+[5:54] When we transmit data from the microcontroller,
+[5:59] those transmitted data must be received by the USAR to USB interface controller.
+[6:07] That's why transmit data pin connected to receive data pin.
+[6:12] Again, when the USAR to USB controller transmit data,
+[6:17] the microcontroller should receive data.
+[6:21] That's why the transmit data pin of USAR to USB interface controller
+[6:26] connected to the received data pin of microcontroller.
+[6:32] These are the four pins of USB connection,
+[6:35] two pins for the power supply, two pins for data.
+[6:39] Can you understand this schematic diagram?
+[6:42] Right.
+[6:44] Now what happens is,
+[6:46] now from PC side,
+[6:49] you send a character
+[6:51] and that character is received by that microcontroller.
+[6:57] And then microcontroller encloses that character with square bracket.
+[7:03] And microcontroller, right, this is A,
+[7:07] microcontroller transmits enclosed character to the PC.
+[7:13] So whatever character you send to the microcontroller,
+[7:16] microcontroller will enclose that character with square brackets
+[7:21] and transmits it back to the PC.
+[7:24] So that's the functionality of char and closer.
+[7:29] Is it clear?
+[7:30] Yes, sir.
+[7:31] Wiring diagram.
+[7:32] So nothing to wire.
+[7:34] Everything has already been wired on this boot.
+[7:39] Arduino Uno boot.
+[7:40] You have the microcontroller.
+[7:42] You have the microcontroller.
+[7:44] You have the USART USB interface controller.
+[7:49] You have the USB port.
+[7:51] Just connect the USB port through a USB cable to your PC.
+[7:57] That's it.
+[7:58] Everything you need, hardware you need for the char enclosure already on this board.
+[8:04] Already connected on this board.
+[8:07] Right.
+[8:08] So what we do is from the PC.
+[8:12] Let's say this is the PC.
+[8:14] So you connect the PC to USB port.
+[8:17] Right.
+[8:17] You send.
+[8:18] That's the connection.
+[8:19] To the microcontroller side you send a character simple label.
+[8:24] And then you will receive the PC will receive N close capital A.
+[8:30] Sorry N close simple right.
+[8:33] First we need to develop an algorithm for the firmware.
+[8:38] Algorithm for the firmware.
+[8:42] Now this is the firmware algorithm.
+[8:44] main function, char and closer start, char and closer stop.
+[8:51] Then the main function algorithm.
+[8:54] First in the main function, we set the board rate for the data communication.

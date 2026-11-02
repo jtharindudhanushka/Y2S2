@@ -1,0 +1,215 @@
+13 - ADC 1 - Why ADC, Resolution & Reference Voltage  (3 Nov 2020 (afternoon, part 1))
+
+[0:00] Right. Now the next topic is analog to digital conversion. Right. First, let's see the learning outcomes.
+[0:15] Explain the need of ADC on completion of this session. You should be able to explain the
+[0:28] need, why we need analog to digital conversion. Describe how analog to digital converter ADC
+[0:40] converts an analog input into a discrete number. Analog means continuous. Discrete means not
+[0:50] continuous. So describe how you should be able to describe how ADC converts an analog
+[0:59] input, continuous input into a discrete number. How that happens, you should be able to explain.
+[1:08] Not how to use ADC.
+[1:11] That is simple.
+[1:12] How to use analog digital converter is simple.
+[1:15] Many people knows.
+[1:18] But how it works,
+[1:20] how that conversion happens,
+[1:23] you should be able to explain.
+[1:25] Explain the functionality of ADC registers.
+[1:30] Right.
+[1:31] there are some dedicated registers related to ADC what are they and what are their function
+[1:40] construct a microcontroller based system and program it to read an analog input
+[1:47] now you develop a system and program it to read analog input convert that input
+[1:55] into a discrete number then convert it into a discrete number then display it as a digital output
+[2:03] analog input you display as a digital output so that means you need to convert analog to digital
+[2:11] ADC analog input display as a digital output
+[2:14] So, once we finish, you should be able to read any analog input from any analog sensor
+[2:26] and convert it into a digital output and drive digital actuators.
+[2:34] you should be able to get analog input from any analog sensor and drive digital actuators.
+[2:42] So that's the goal of this session.
+[2:45] Okay, let's start with why we need analog to digital conversion.
+[2:51] Answer for that question. Let's see.
+[2:52] In physical world that we live, everything is analog. Now for example if you take temperature,
+[3:03] variation of temperature is continuous. It is not discrete. The light intensity, right?
+[3:11] So from the rise of sun to the nightfall, the variation of light intensity is continuous.
+[3:22] That variation is continuous, not discrete. Distance, if you measure the distance of one
+[3:30] place to another place. Again the variation of the distance. For example, the distance
+[3:38] you traveled, distance you rode your bicycle, it's continuous, not discrete. The pressure,
+[3:51] Atmospheric pressure.
+[3:54] Variation.
+[3:55] At sea level, pressure.
+[3:57] Then when you climb a mountain,
+[4:00] there's a variation of pressure.
+[4:03] That variation is continuous.
+[4:05] Velocity.
+[4:08] The speed, when you ride a bicycle,
+[4:11] the speed, variation of the speed,
+[4:13] continuous, not discrete.
+[4:15] Acceleration.
+[4:16] Contiguous, not discrete. So everything in physical world, continuous, in other words,
+[4:25] analog. But in computers, everything is digital. Right? The variation is discrete. In computers,
+[4:37] is discrete. Actually two discrete steps, one row zero. So using ones and zeros we can
+[4:47] specify variation of digital variation. So variation is discrete in computers. Now this
+[4:55] is the place where ADC comes in. Now we need to capture state of the physical world using
+[5:05] analog sensors. For example temperature we want to capture. The variation of temperature
+[5:11] is continuous so using analog sensor we capture temperature in the physical world that is the
+[5:18] state of physical world and then that input we need to process using a cpu
+[5:27] Now the problem is CPU can process only digital inputs, not analog inputs, discrete inputs,
+[5:38] not continuous inputs.
+[5:40] So there should be someone to transform or convert analog input into a digital input.
+[5:50] That job is done by ADC, analog to digital converter.
+[5:59] Now analog sensors, they transform physical quantities into analog voltages.
+[6:07] The continuous variation of energy is converted into continuous variation of voltage, analog
+[6:17] sensors. For example, if you use a temperature sensor, the continuous variation of temperature
+[6:29] is the thermal energy. Temperature means thermal energy. Continuous variation of thermal energy
+[6:35] is converted by the temperature sensor into a continuous variation of a voltage.
+[6:45] So, we can measure the voltage and by measuring the voltage we can have an idea of the temperature.
+[6:54] temperature is converted into a voltage.
+[6:58] The thermal energy, variation of thermal energy
+[7:01] is converted into a voltage.
+[7:04] Analog sensors. Another one, light
+[7:06] sensor converts
+[7:08] continuous variation of light level.
+[7:13] Continuous variation of light intensity
+[7:16] into a voltage. So light is radiation energy. So the light sensor converts variation of
+[7:27] radiation energy into a voltage, electrical energy. Voltage is electrical energy. One
+[7:33] One energy to another energy, transformation done by sensor.
+[7:41] So analog sensor converts one energy to another energy.
+[7:47] The radiation energy that is the light converted into a voltage, electrical energy.
+[7:54] sensor converts temperature the thermal energy into a voltage electrical energy
+[8:01] right so likewise
+[8:04] sensors transform physical quantities into analog voltages but this analog voltage by measuring
+[8:11] these analog voltages, we can have an idea about the actual input, the temperature, light
+[8:20] level, pressure, we can have an idea by measuring the voltage. When the temperature is 20 Celsius,
+[8:29] the temperature sensor gives one voltage. When the temperature is 25 Celsius, another
+[8:36] voltage. When the temperature is 30, another voltage. So, by measuring the voltage, we
+[8:43] can have an idea about the temperature that the sensor sensed. The temperature variation
+[8:51] is continuous so the voltage variation is also continuous now this voltage input we need to
+[9:00] measure to measure that we have to use the cpu but the problem is cpu can process only
+[9:08] digital inputs digital data but not analog data so we use adc to convert
+[9:17] analog input into a digital input so that cpu can process
+[9:23] Now in this diagram you can see ADC. The job of the ADC is to convert analog inputs into
+[9:33] discrete numbers so that CPU can process. Is it clear? Any question?
+[9:42] All right.
+[9:50] Now, the physical quantities, sensors convert physical quantities into voltages. So the
+[10:02] input to ADC is a voltage. Typically a voltage between 0 to 5 volts. That is the input to the ADC.
+[10:16] From sensors we input a continuous voltage to the ADC. So that input voltage is typically
+[10:25] 0 to 5 volts.
+[10:28] Why 0 to 5 volts?
+[10:30] Because operating voltage
+[10:32] of the microcontroller is
+[10:34] 5 volts.
+[10:35] If the operating voltage
+[10:37] of the microcontroller is 3.3
+[10:39] volts, then the input to
+[10:41] ADC is 0 to 3.3
+[10:43] volts. But here
+[10:44] we use 5 volt microcontroller
+[10:47] so input
+[10:49] voltage to ADC is
+[10:50] 0 to 5 volts.
+[10:52] So, sensors convert physical quantities into a voltage between 0 to 5 volts.
+[11:00] Then ADC converts this 0 to 5 volts continuous voltage into a discrete number between 0 to 1023.
+[11:12] So, 0 to 5 volt continuous analog voltage ADC converts into a discrete number between 0 to 1023.
+[11:25] Why is 1023?
+[11:27] The reason is the ADC analog to digital converter in the ATmega 328p microcontroller is a 10-bit ADC.
+[11:40] 10 bit ADC.
+[11:43] 10 bit ADC means
+[11:45] the maximum value
+[11:47] a 10 bit can represent
+[11:50] is 1023.
+[11:54] A 10 bit can represent any value
+[11:56] between 0 to 1023.
+[11:59] So that's why
+[12:00] this particular ADC in the ATmega328P
+[12:05] converts continuous variation of voltage from 0 to 5
+[12:12] into a discrete number between 0 to 1023
+[12:17] because ADC is a 10-bit ADC
+[12:21] using 10-bit ADC, you can represent any value between 0 to 1023.
+[12:28] Now, for example, if we use 3.3-volt microcontroller with 8-bit ADC,
+[12:37] If we use 3.3 volt microcontroller with 8 bit ADC, then ADC would convert continuous variation of voltage from 0 to 3.3 to a discrete number from 0 to 255.
+[12:57] continuous analog voltage from 0 to 3.3 volt,
+[13:03] ADC would convert into
+[13:05] a discrete number between 0 and 255.
+[13:10] Why? Because the microcontroller's operating voltage is 3.3.
+[13:15] So ADC input voltage is between 0 and 3.3.
+[13:22] So any voltage between 0 and 3.3 would be converted into a discrete number from 0 to 255.
+[13:31] Why?
+[13:31] ADC is 8-bit ADC.
+[13:33] If you use 8 bits, you can represent any value between 0 to 255.
+[13:39] So therefore, depending on the microcontroller you use, some microcontrollers have different
+[13:46] operating voltages.
+[13:49] Some are 5 volts, some are 3.3.
+[13:51] Those are the two major voltage levels, right?
+[13:54] The microcontrollers or these hardware, the microprocessor and microcontroller chips use
+[14:01] 3.3 and 5.
+[14:03] But different microcontrollers have different ADCs.
+[14:08] Some ADCs are 10 bit, some are 8 bit, some are 12 bit.
+[14:13] If your microcontrollers ADC is 10 bit, any voltage between 0 to 5, let's say microcontrollers
+[14:20] operating voltage is 5 volts, any voltage between 0 to 5 analog voltage converted into
+[14:27] a discrete number between 0 to 1023 if the ADC is a 10-bit ADC.
+[14:33] If the microcontroller's operating voltage is 5 volts and ADC is an 8-bit ADC,
+[14:38] any voltage between 0 to 5 converted into a discrete number between 0 to 255 because it's 8-bit
+[14:50] ADC. If the microcontroller is a 3.3 volt microcontroller, any voltage between 3.3,
+[15:00] between 0 and 3.3 is converted into a discrete number between 0 and 255 if the ADC is 8 bit ADC.
+[15:13] right this input voltage we can change
+[15:17] right the maximum input voltage could be the operating voltage
+[15:28] Right, I got a small interruption.
+[15:35] Can you see my slides and can you hear me?
+[15:39] Yes, I can see the slides.
+[15:44] the slides all right good
+[15:48] okay so
+[15:50] the upper the maximum voltage that adc can handle
+[15:55] we can change right the maximum one is normally the
+[15:59] operating voltage but we can use some other voltage below
+[16:06] that. For example, if the microcontroller's operating voltage is 5 volts, typically ADC
+[16:15] can convert any voltage between 0 to 5 into a discrete number. But we can, this input voltage
+[16:24] range, we can reduce. For example, we can reduce it to 0 to 1.1. Although microcontroller's
+[16:32] operating voltage is 5 volts, we can reduce the ADC's input voltage range into 0 to 1.1.
+[16:42] Then any voltage between 0 and 1.1 is converted into a discrete number.
+[16:49] If ADC is a 10-bit ADC, the discrete number range is 0 to 1023. If ADC is 8-bit ADC,
+[16:58] the discrete number range is 0 to 255.
+[17:02] Can you understand?
+[17:04] Any question?
+[17:08] no right let's move on
+[17:18] then many many people many students many hobbyists they know
+[17:30] yeah
+[17:32] yes
+[17:39] yes i can hear you
+[17:43] Yes, Isuru, any questions?
+[17:54] Now can you hear me?
+[17:57] Yes, sir.
+[18:00] I think they are delayed.
+[18:03] Yeah, because this may daytime, there are a lot of may may zoom traffic.
+[18:09] That's the problem.
+[18:12] Yes, sir. Before slide, to other slide, they have not here properly, sir.
+[18:22] Okay, I'll go back to that slide again.
+[18:26] Sorry, sir. Thank you.
+[18:28] Right. Any question on ADC?
+[18:36] Now, for example,
+[18:48] Let's say you have.
+[18:51] Excuse me sir.
+[18:53] About the conditions and the voltages, it was not clear.
+[18:59] Okay I'll explain it again.
+[19:03] All right.
+[19:13] Now, for example, let's say you have 5 volt microcontroller and in that microcontroller you have 10 bit ADC.
+[19:30] This microcontroller's ADC you can supply any voltage between 0 to 5.
+[19:39] Why? 5 volts because the operating voltage is 5.
+[19:43] then that input is converted into any value discrete value between 0 to 1023
+[19:55] why 1023 because it's a 10 bit adc using 10 bits you can represent any value between 0 to 1023
+[20:05] If the input voltage is 0, the discrete value you get is 0.
+[20:12] If the input voltage is 5, the discrete value that you get is 1023.
+[20:19] If input voltage is 2.5, the discrete value you get is 5 to L.
+[20:25] So, likewise, any continuous voltage U input is converted into a discrete number between
+[20:34] 0 and 1023.
+[20:37] Now, if microcontroller is a 3.3 volt microcontroller and ADC is 8 bit.
+[20:48] so input voltage range is 0 to 3.3 and it is converted into a discrete value between 0 to 255.
+[21:00] if the input voltage is 0 you get 0 if input voltage is 3.3 you get 255.
+[21:08] If the input voltage is 1.65, the discrete value is phi 12.
+[21:15] So, any input voltage between 0 to 3.3 is converted into a discrete value between 0 to 255.
+[21:23] So, the input voltage and the discrete value range depends on the microcontroller that you use and its ADC.
+[21:33] Is it clear now?
+[21:36] Yes, sir. Thank you, sir.
+[21:37] Okay.
+[21:38] Right. Then.
+[21:41] Analog to digital conversion.
+[21:45] Now many people, right, many students, they know
+[21:56] So, let's go.

@@ -1,0 +1,4016 @@
+1
+00:00:00,000 --> 00:00:03,000
+Right. Can you see my slides?
+
+2
+00:00:03,000 --> 00:00:04,000
+Yes, sir.
+
+3
+00:00:04,000 --> 00:00:05,000
+Yes, sir. We can.
+
+4
+00:00:05,000 --> 00:00:12,000
+This is where we stopped last time. Last time we discussed about external interrupts.
+
+5
+00:00:12,000 --> 00:00:19,000
+Today the topic is pin change interrupts. One limitation of external interrupts.
+
+6
+00:00:19,000 --> 00:00:41,000
+Now when you take ATmega328P microcontroller, only two pins, only two IEO pins support for external interrupts. PD2 and PD3 would be pin 2 and pin 3. Only they support for external interrupts.
+
+7
+00:00:41,000 --> 00:01:04,299
+Now the question is this, if you have to connect, if you want to connect more sensors, right, and if you want to get the CPU interrupted with these sensors, more than two sensors, then what can we do?
+
+8
+00:01:04,299 --> 00:01:11,060
+Because we have only two external, two pins supporting external interrupts.
+
+9
+00:01:11,379 --> 00:01:14,920
+That means you can connect two sensors, like so.
+
+10
+00:01:15,599 --> 00:01:22,700
+But if you have more than two sensors to connect and you want to use interrupts,
+
+11
+00:01:22,700 --> 00:01:30,159
+then there is a problem because we have only two external interrupts supported pins.
+
+12
+00:01:30,159 --> 00:01:36,420
+Now, in that situation, we can use pin change interrupt, right?
+
+13
+00:01:36,760 --> 00:01:44,439
+Using pin change interrupts, virtually all IO pins you can use as interrupt pins.
+
+14
+00:01:44,760 --> 00:01:51,959
+That means you can connect sensors to any IO pin and interrupt the CPU, right?
+
+15
+00:01:52,700 --> 00:01:57,480
+Whenever that particular sensor needs CPU service.
+
+16
+00:01:57,480 --> 00:02:06,900
+So virtually you can make all IO pins interrupt enable using pin change interrupts.
+
+17
+00:02:06,959 --> 00:02:13,800
+So that's the flexibility, that's the advantage of using pin change interrupts.
+
+18
+00:02:13,979 --> 00:02:14,120
+Right.
+
+19
+00:02:14,360 --> 00:02:18,639
+Now let's talk about pin change interrupt registers.
+
+20
+00:02:19,300 --> 00:02:19,520
+Right.
+
+21
+00:02:19,620 --> 00:02:24,060
+This is one of the important registers that you have to use.
+
+22
+00:02:26,000 --> 00:02:27,240
+PCICR register.
+
+23
+00:02:27,479 --> 00:02:47,199
+PIN change interrupt control register. PIN change interrupt control register. Right now when you deal with these registers you don't need to worry about their names. Don't try to memorize their names because even for the exam you get all these names.
+
+24
+00:02:47,199 --> 00:02:57,680
+So in the practical exam, you get a summarized data sheet and even the final written exam, you get all these names.
+
+25
+00:02:57,800 --> 00:03:00,800
+So you don't need to worry. So idea is this.
+
+26
+00:03:01,580 --> 00:03:08,020
+Even in the field, even in the industry, when you are working on a project, you have the access to data sheet.
+
+27
+00:03:08,699 --> 00:03:13,300
+So that is OK. You don't need to memorize the contents of data sheet.
+
+28
+00:03:13,719 --> 00:03:16,960
+You should know how to refer the data sheet.
+
+29
+00:03:17,199 --> 00:03:22,919
+And after referring the data sheet, you should be able to do the task at hand.
+
+30
+00:03:23,780 --> 00:03:24,139
+Right.
+
+31
+00:03:25,000 --> 00:03:30,360
+Whatever the task in your hand, you should be able to do by referring the data sheet.
+
+32
+00:03:30,360 --> 00:03:33,419
+So no need to memorize these things.
+
+33
+00:03:33,560 --> 00:03:33,819
+Right.
+
+34
+00:03:34,280 --> 00:03:35,719
+So everything will be given.
+
+35
+00:03:36,280 --> 00:03:37,819
+So only thing you should know.
+
+36
+00:03:38,080 --> 00:03:40,539
+This is the important register that I have to use.
+
+37
+00:03:40,639 --> 00:03:42,979
+These are the bits I have to work on.
+
+38
+00:03:43,340 --> 00:03:43,580
+Right.
+
+39
+00:03:43,580 --> 00:03:52,800
+Now this register has three important bits related to pin change interrupts.
+
+40
+00:03:53,340 --> 00:03:59,340
+Now those bits are PCIe0, PCIe1, PCIe2.
+
+41
+00:03:59,719 --> 00:04:00,400
+What are they?
+
+42
+00:04:00,400 --> 00:04:01,159
+Let's see.
+
+43
+00:04:03,599 --> 00:04:05,039
+PCIe2.
+
+44
+00:04:06,020 --> 00:04:11,099
+PCIe2 means pin change interrupt enable to.
+
+45
+00:04:11,099 --> 00:04:16,300
+So, PCIe 1 means pin change interrupt enable 1.
+
+46
+00:04:16,839 --> 00:04:22,360
+So, likewise PCIe 0 means pin change interrupt enable 0.
+
+47
+00:04:22,980 --> 00:04:30,000
+So, using these bits you can enable pin change interrupts not external interrupts.
+
+48
+00:04:30,500 --> 00:04:35,660
+Pin change interrupts on port B, port B, port C and port B.
+
+49
+00:04:36,220 --> 00:04:37,259
+So, what does that mean?
+
+50
+00:04:37,259 --> 00:04:45,899
+Now, for example, if you set PCIe to that particular bit, this particular bit you set, right?
+
+51
+00:04:45,959 --> 00:04:48,579
+That means you store value 1 in this bit.
+
+52
+00:04:48,740 --> 00:04:56,500
+That means you enable all pins in the port D, pin change interrupt enable.
+
+53
+00:04:56,660 --> 00:05:03,860
+You make all pins, IO pins in the port D, pin change interrupt enable by setting this bit.
+
+54
+00:05:03,860 --> 00:05:06,939
+If you clear this bit, that means zero.
+
+55
+00:05:07,639 --> 00:05:13,079
+You disable pin change interrupts on all IO pins in port D.
+
+56
+00:05:13,699 --> 00:05:20,980
+Similarly, if you want to enable pin change interrupts on IO pins of port B,
+
+57
+00:05:21,720 --> 00:05:23,259
+then you have to set this.
+
+58
+00:05:23,480 --> 00:05:28,060
+Then you can enable pin change interrupts on port B.
+
+59
+00:05:29,079 --> 00:05:30,139
+All IO pins.
+
+60
+00:05:30,360 --> 00:05:32,240
+There are eight IO pins in port B.
+
+61
+00:05:32,240 --> 00:05:36,540
+all IEO pins you can enable for pin change interrupts.
+
+62
+00:05:36,540 --> 00:05:40,220
+If you clear this bit, by default it is clear 0.
+
+63
+00:05:40,860 --> 00:05:44,540
+That means port B, IEO pins
+
+64
+00:05:44,540 --> 00:05:48,100
+pin change interrupts disable. Right.
+
+65
+00:05:48,579 --> 00:05:52,540
+Is that clear? Okay. Then, now the question is
+
+66
+00:05:52,540 --> 00:05:56,420
+we can enable entire port for
+
+67
+00:05:56,420 --> 00:05:59,420
+pin change interrupts using this PCIE
+
+68
+00:05:59,420 --> 00:06:02,839
+bits of PCIC
+
+69
+00:06:02,839 --> 00:06:06,779
+are registered, we can enable, disable
+
+70
+00:06:06,779 --> 00:06:10,839
+entire port for pin change in front. Now entire
+
+71
+00:06:10,839 --> 00:06:15,160
+port is enabled. Then how do we enable, disable
+
+72
+00:06:15,160 --> 00:06:19,100
+individual pins of a particular
+
+73
+00:06:19,100 --> 00:06:23,040
+port? The entire port you can enable or disable for
+
+74
+00:06:23,040 --> 00:06:27,100
+pin change in front. Now you know that. Now can
+
+75
+00:06:27,100 --> 00:06:36,620
+we enable, disable individual pins of a particular port, already enabled, the entire port enabled,
+
+76
+00:06:36,620 --> 00:06:44,620
+now we are going to enable, disable individual IO bits. For that we need to use another register.
+
+77
+00:06:44,620 --> 00:06:53,740
+Actually not one register, three registers. Those registers are called PCMSK. The meaning is pin
+
+78
+00:06:53,740 --> 00:07:08,959
+change mask. 0, 1, 2. PC MSK 0 register for the port B. PC MSK 1 register for port C. PC MSK 2
+
+79
+00:07:08,959 --> 00:07:19,519
+register for port D. Right. Now, using these bits, we can enable, disable individual pins
+
+80
+00:07:19,519 --> 00:07:26,800
+of enabled port, already enabled port. For example, let's say the port B already enabled.
+
+81
+00:07:27,279 --> 00:07:33,420
+Now, how do we enable port B? So, you have to go back to the previous slide. We set this particular
+
+82
+00:07:33,420 --> 00:07:43,439
+bit, PCIE bit, so that we enable port B for pin change interrupt, entire port enabled. Then,
+
+83
+00:07:43,439 --> 00:07:53,259
+in the next slide, right, this particular bit we set PCINT0, that is pin change interrupt,
+
+84
+00:07:53,959 --> 00:08:03,839
+INT means interrupt. If you set this bit, TB0 pin is enabled for interrupts, pin change interrupts.
+
+85
+00:08:03,839 --> 00:08:12,319
+If you set this particular bit, then you enable PB5.
+
+86
+00:08:12,639 --> 00:08:20,139
+PB5 in the Arduino terms, pin number 13 on UNO board for pin change interrupts.
+
+87
+00:08:20,139 --> 00:08:30,139
+If you set this bit, you enable Arduino pin number 8, PB0 for pin change interrupts.
+
+88
+00:08:30,139 --> 00:08:36,240
+First you have to enable the entire port, then you have to enable individual bits.
+
+89
+00:08:36,779 --> 00:08:43,580
+So likewise you can enable the individual bits for pin change interrupts.
+
+90
+00:08:44,879 --> 00:08:53,480
+So using these individual bits you can enable disable pins, individual pins of enabled port.
+
+91
+00:08:53,480 --> 00:08:59,600
+First you enable the port, whether port C enable, port D enable or port B.
+
+92
+00:09:00,139 --> 00:09:06,519
+right in our microcontroller we have only three ports b c d but some microcontrollers you have
+
+93
+00:09:06,519 --> 00:09:14,799
+more ports port a b c d e g h it depends on the microcontroller there can be more ports whatever
+
+94
+00:09:14,799 --> 00:09:22,100
+it is the concept is this first you enable the port then you enable the individual pins of that
+
+95
+00:09:22,100 --> 00:09:23,559
+port. Right.
+
+96
+00:09:23,980 --> 00:09:25,940
+Then you enable the individual pins
+
+97
+00:09:25,940 --> 00:09:26,940
+of that port.
+
+98
+00:09:27,559 --> 00:09:29,639
+To do that, you have to set
+
+99
+00:09:29,639 --> 00:09:31,080
+the particular bit
+
+100
+00:09:31,080 --> 00:09:34,019
+of this pin change
+
+101
+00:09:34,019 --> 00:09:35,799
+mask register. Actually, there are
+
+102
+00:09:35,799 --> 00:09:37,039
+three registers. Why?
+
+103
+00:09:37,519 --> 00:09:39,620
+Because three ports. Port B,
+
+104
+00:09:40,259 --> 00:09:42,019
+Port C, Port D.
+
+105
+00:09:42,580 --> 00:09:43,200
+Is it clear?
+
+106
+00:09:44,419 --> 00:09:45,220
+Any question?
+
+107
+00:09:46,519 --> 00:09:46,960
+Right.
+
+108
+00:09:47,960 --> 00:09:48,440
+Yes, Isuru.
+
+109
+00:09:48,440 --> 00:09:49,039
+Sir.
+
+110
+00:09:49,039 --> 00:09:57,039
+Sir, why that bit of PCMSK1 is...
+
+111
+00:09:57,039 --> 00:10:00,679
+I can't hear your question very clearly.
+
+112
+00:10:00,840 --> 00:10:02,000
+Can you repeat it again?
+
+113
+00:10:02,700 --> 00:10:07,039
+Sir, in the second row, why it's in the bit of 70...
+
+114
+00:10:08,039 --> 00:10:10,139
+Second row means?
+
+115
+00:10:11,240 --> 00:10:12,200
+PCMSK1.
+
+116
+00:10:13,039 --> 00:10:14,480
+PCMSK1 for port C.
+
+117
+00:10:14,960 --> 00:10:15,559
+Right.
+
+118
+00:10:15,679 --> 00:10:18,600
+Your question is, this bit number 7.
+
+119
+00:10:19,039 --> 00:10:34,419
+Yes, sir. Because in the PCMSK1, that's a good question, right? Good question, but I think I should not answer because you should be able to find out the answer. Okay, anyway, I'll answer because you asked, right?
+
+120
+00:10:34,419 --> 00:10:37,639
+Now, this
+
+121
+00:10:37,639 --> 00:10:41,279
+TCMSK1
+
+122
+00:10:41,279 --> 00:10:43,759
+register represents
+
+123
+00:10:43,759 --> 00:10:45,440
+port C. In
+
+124
+00:10:45,440 --> 00:10:48,039
+ATmega 328p microcontroller
+
+125
+00:10:48,039 --> 00:10:49,120
+in the port C,
+
+126
+00:10:49,700 --> 00:10:51,240
+you don't have 8
+
+127
+00:10:51,240 --> 00:10:53,419
+IOPs. You have only 7.
+
+128
+00:10:54,000 --> 00:10:55,659
+Typically, in an 8-bit
+
+129
+00:10:55,659 --> 00:10:57,440
+architecture, every port
+
+130
+00:10:57,440 --> 00:10:59,559
+has 8
+
+131
+00:10:59,559 --> 00:11:01,419
+pins. But this particular
+
+132
+00:11:01,419 --> 00:11:03,679
+one, that is not always.
+
+133
+00:11:03,679 --> 00:11:21,679
+This is what one good example, right? The port C has only seven pins. That's why there is no meaning for this particular bit. Because there is no corresponding IO pin for this bit. Is it clear? Is it not?
+
+134
+00:11:21,679 --> 00:11:51,659
+Okay, right.
+
+135
+00:11:51,679 --> 00:11:54,320
+Let's go back to the diagram.
+
+136
+00:11:56,480 --> 00:11:57,440
+Right.
+
+137
+00:11:58,220 --> 00:12:00,639
+Your question is the difference.
+
+138
+00:12:01,120 --> 00:12:10,240
+Now, external interrupts, you can interrupt the CPU, right, when there's a logic change,
+
+139
+00:12:10,799 --> 00:12:18,700
+when the interrupt pin is held a logic low, when on the falling edge of the interrupt pin,
+
+140
+00:12:18,700 --> 00:12:23,580
+on the rising edge of the interrupt pin, you can interrupt the CPU.
+
+141
+00:12:23,580 --> 00:12:29,159
+But when you take the PCINT, that is pin change interrupts,
+
+142
+00:12:29,779 --> 00:12:33,659
+you can interrupt the CPU only on logic change.
+
+143
+00:12:34,279 --> 00:12:39,320
+Logic change means either pin goes from high to low or low to high.
+
+144
+00:12:39,860 --> 00:12:41,980
+But here you have four choices.
+
+145
+00:12:42,799 --> 00:12:44,720
+But here you have only one choice.
+
+146
+00:12:45,100 --> 00:12:45,820
+That's the difference.
+
+147
+00:12:45,820 --> 00:12:50,279
+The other thing is external interrupts are supported by only two pins.
+
+148
+00:12:50,840 --> 00:12:59,820
+But using pin change interrupts, you can make all IO pins virtually supported for interrupts.
+
+149
+00:13:00,919 --> 00:13:03,000
+So those are the differences.
+
+150
+00:13:03,720 --> 00:13:03,919
+Clear?
+
+151
+00:13:04,519 --> 00:13:05,039
+Okay, sir.
+
+152
+00:13:05,500 --> 00:13:06,899
+They do the same thing.
+
+153
+00:13:07,519 --> 00:13:13,700
+When you fix INT, INT what has logic change.
+
+154
+00:13:13,700 --> 00:13:20,639
+It's doing the same thing in the PCI-TO service.
+
+155
+00:13:20,639 --> 00:13:32,120
+This particular option, logic change option of external interrupts and PCI pin change interrupt option are similar.
+
+156
+00:13:32,700 --> 00:13:37,159
+But external interrupt, only two pins supported.
+
+157
+00:13:38,000 --> 00:13:40,460
+Pin change interrupts, any port pin.
+
+158
+00:13:40,460 --> 00:14:00,460
+Right. Now again, now here you can see the port C has only seven IO pins, not eight. One, two, three, four, five, six, seven. Not eight IO pins like other ports.
+
+159
+00:14:00,460 --> 00:14:19,860
+That's why this particular register which corresponds to port C, you don't have a bit for this. There is no meaning for this bit because only 7 IO pins, not 8 for port C.
+
+160
+00:14:19,860 --> 00:14:28,379
+Right. Now, based on pin change interrupts, let's try to develop the same system.
+
+161
+00:14:28,700 --> 00:14:39,320
+So, system, this system toggles an LED on user input while blinking another LED in every two seconds using pin change interrupts.
+
+162
+00:14:39,320 --> 00:14:43,740
+Now, two tasks, the main task blinking an LED every two seconds.
+
+163
+00:14:43,740 --> 00:14:50,539
+While doing that, if you got an input, you have to toggle another LED.
+
+164
+00:14:51,240 --> 00:14:52,299
+Now, there are two LEDs.
+
+165
+00:14:53,000 --> 00:14:56,440
+One is the onboard LED connected to pin number 30.
+
+166
+00:14:57,120 --> 00:15:00,679
+There is another external LED connected to pin number 8.
+
+167
+00:15:01,059 --> 00:15:03,919
+We blink the onboard LED every two seconds.
+
+168
+00:15:03,919 --> 00:15:11,899
+While doing that, if you got an input using a push button, then you have to toggle the external LED.
+
+169
+00:15:12,500 --> 00:15:13,559
+The same system.
+
+170
+00:15:13,740 --> 00:15:16,840
+But this time we use pin change interrupt.
+
+171
+00:15:17,179 --> 00:15:17,360
+Right.
+
+172
+00:15:17,580 --> 00:15:19,580
+The system we develop using polling.
+
+173
+00:15:20,539 --> 00:15:24,059
+And then we develop the same system using external interrupts.
+
+174
+00:15:24,480 --> 00:15:28,480
+Now we are going to develop the same system using pin change interrupts.
+
+175
+00:15:28,480 --> 00:15:28,840
+Right.
+
+176
+00:15:29,320 --> 00:15:32,179
+Now here you can see the.
+
+177
+00:15:33,419 --> 00:15:35,200
+So there was a small interruption.
+
+178
+00:15:35,580 --> 00:15:36,820
+Can you see my slides?
+
+179
+00:15:37,340 --> 00:15:37,620
+No, sir.
+
+180
+00:15:38,120 --> 00:15:39,100
+Now can you see?
+
+181
+00:15:39,679 --> 00:15:40,059
+Yes, sir.
+
+182
+00:15:40,620 --> 00:15:40,980
+Right.
+
+183
+00:15:41,379 --> 00:15:42,320
+So let's continue.
+
+184
+00:15:42,320 --> 00:15:49,360
+Now here you can see every IEO pin has pin change interrupt number.
+
+185
+00:15:50,019 --> 00:15:57,259
+Now for example, PB0, the pin change interrupt number is PCINT0.
+
+186
+00:15:57,940 --> 00:16:00,799
+PB5, pin change interrupt 5.
+
+187
+00:16:01,539 --> 00:16:05,840
+PD2, which supports external interrupts as well.
+
+188
+00:16:07,000 --> 00:16:10,519
+In 0 is the external interrupt name for this particular pin.
+
+189
+00:16:10,519 --> 00:16:13,080
+but pin change interrupt 18.
+
+190
+00:16:13,720 --> 00:16:13,860
+Right.
+
+191
+00:16:14,620 --> 00:16:16,679
+So, the IO port,
+
+192
+00:16:16,820 --> 00:16:19,879
+if you use this particular pin as an IO port,
+
+193
+00:16:20,080 --> 00:16:21,440
+you use PD2.
+
+194
+00:16:22,340 --> 00:16:25,980
+If you use this pin as for external interrupts,
+
+195
+00:16:26,080 --> 00:16:27,179
+you use int 0.
+
+196
+00:16:27,840 --> 00:16:31,820
+If you use this pin for pin change interrupts,
+
+197
+00:16:31,820 --> 00:16:34,539
+then you can use PCINT 18.
+
+198
+00:16:35,159 --> 00:16:36,799
+All these are labels
+
+199
+00:16:36,799 --> 00:16:39,440
+and all these labels,
+
+200
+00:16:39,440 --> 00:16:43,899
+they direct to one particular number.
+
+201
+00:16:44,559 --> 00:16:47,240
+Different labels for our convenience.
+
+202
+00:16:47,840 --> 00:16:52,039
+So, these are labels. All these labels represent
+
+203
+00:16:52,039 --> 00:16:55,639
+one particular number. That number represents the PIN.
+
+204
+00:16:56,159 --> 00:16:59,440
+So, our convenience based on the
+
+205
+00:16:59,440 --> 00:17:03,899
+technique that we use, there are different
+
+206
+00:17:03,899 --> 00:17:08,039
+labels. If you use this particular PIN, PIN number 44IO
+
+207
+00:17:08,039 --> 00:17:11,119
+input output so you can use
+
+208
+00:17:11,119 --> 00:17:14,900
+PD2. If you use this particular pin for external
+
+209
+00:17:14,900 --> 00:17:18,319
+interrupts then more meaningful if you use int 0
+
+210
+00:17:18,319 --> 00:17:22,960
+rather than PD2 because then your program
+
+211
+00:17:22,960 --> 00:17:25,839
+becomes more readable, understandable because
+
+212
+00:17:25,839 --> 00:17:30,640
+any reader who reads your code can immediately
+
+213
+00:17:30,640 --> 00:17:34,640
+understand you are using this particular pin for
+
+214
+00:17:34,640 --> 00:17:37,119
+external interrupts because int 0
+
+215
+00:17:37,119 --> 00:17:39,079
+they know the meaning
+
+216
+00:17:39,079 --> 00:17:41,200
+for external interrupts.
+
+217
+00:17:41,200 --> 00:17:43,119
+And if you are using the same
+
+218
+00:17:43,119 --> 00:17:45,160
+pin for pin change interrupts
+
+219
+00:17:45,160 --> 00:17:47,220
+it's better to use
+
+220
+00:17:47,220 --> 00:17:49,220
+this label PCIAT
+
+221
+00:17:49,220 --> 00:17:51,279
+AT rather than using
+
+222
+00:17:51,279 --> 00:17:53,140
+int 0. If you
+
+223
+00:17:53,140 --> 00:17:54,900
+use int 0 then the reader
+
+224
+00:17:54,900 --> 00:17:56,980
+may be right
+
+225
+00:17:56,980 --> 00:17:59,220
+misled. Reader may think
+
+226
+00:17:59,220 --> 00:18:01,019
+you are using external interrupts. No
+
+227
+00:18:01,019 --> 00:18:03,140
+actually you are using pin change interrupts.
+
+228
+00:18:03,140 --> 00:18:05,259
+So, better to use this label.
+
+229
+00:18:05,599 --> 00:18:10,819
+And when you are using Arduino wrapper functions, right, that means just number two.
+
+230
+00:18:11,400 --> 00:18:18,019
+All these are labels for given pin of micro control.
+
+231
+00:18:18,559 --> 00:18:19,339
+Can you understand?
+
+232
+00:18:20,140 --> 00:18:20,380
+Right.
+
+233
+00:18:20,380 --> 00:18:25,279
+You have to use the proper label at the proper place.
+
+234
+00:18:25,859 --> 00:18:27,000
+It is free.
+
+235
+00:18:27,140 --> 00:18:29,279
+You are free to use any label.
+
+236
+00:18:29,279 --> 00:18:33,640
+then your code name
+
+237
+00:18:33,640 --> 00:18:37,500
+mislead the reader. One good example is
+
+238
+00:18:37,500 --> 00:18:41,279
+your code, in the code you are using pin change interrupts
+
+239
+00:18:41,279 --> 00:18:45,359
+but you use external interrupt label. Then it's
+
+240
+00:18:45,359 --> 00:18:49,400
+misleading. So if you are using pin change interrupts
+
+241
+00:18:49,400 --> 00:18:53,440
+better to use pin change interrupt label. If you are using external
+
+242
+00:18:53,440 --> 00:18:57,519
+interrupts better to use external interrupt label. If you are
+
+243
+00:18:57,519 --> 00:19:05,660
+using the pin for io use avr pin label for io that is pd2 if you are using audio no use audio
+
+244
+00:19:05,660 --> 00:19:11,160
+labels right then let's move into algorithm because hardware we have already designed
+
+245
+00:19:11,160 --> 00:19:16,660
+design developed the same hardware right the hardware that we use for
+
+246
+00:19:16,660 --> 00:19:23,180
+pulling hardware that we use for external interrupts the same hardware that we are going
+
+247
+00:19:23,180 --> 00:19:46,980
+So we don't need to talk about the schematic diagram or wiring diagram, no. Same hardware, right? The external interrupts, we develop hardware and then to devouse the input, we use a capacitor in parallel to the input switch, the same hardware.
+
+248
+00:19:46,980 --> 00:19:51,900
+But now we are going to use different types of interrupts.
+
+249
+00:19:52,339 --> 00:19:54,079
+So the firmware would be different.
+
+250
+00:19:54,740 --> 00:19:57,240
+But the same hardware algorithm.
+
+251
+00:19:57,779 --> 00:20:00,380
+So we start the flowchart.
+
+252
+00:20:00,720 --> 00:20:02,559
+Pin change in truck base trigger.
+
+253
+00:20:02,819 --> 00:20:04,019
+Then the main function.
+
+254
+00:20:04,920 --> 00:20:07,099
+Any C program you have this function.
+
+255
+00:20:08,039 --> 00:20:08,599
+And start.
+
+256
+00:20:09,180 --> 00:20:11,619
+Now let's talk about this main function.
+
+257
+00:20:11,799 --> 00:20:13,819
+Our flowchart for this main function.
+
+258
+00:20:13,819 --> 00:20:14,500
+Right.
+
+259
+00:20:14,500 --> 00:20:21,299
+So as usual, we configure PB0 and PB5 as outputs.
+
+260
+00:20:21,779 --> 00:20:27,000
+So these are the two IO pins that we use to connect LEDs.
+
+261
+00:20:28,000 --> 00:20:37,079
+The PB0 we have connected the external LED on the breadboard and PB5 onboard LED connected.
+
+262
+00:20:37,599 --> 00:20:40,680
+Arduino pin number 8, Arduino pin number 13.
+
+263
+00:20:40,680 --> 00:20:49,079
+Then we configure PD2 as an input because the switch connected to PD2.
+
+264
+00:20:49,259 --> 00:20:54,180
+Actually, the PD2 means PCINT18.
+
+265
+00:20:54,740 --> 00:20:57,160
+PD2 means PCINT18.
+
+266
+00:20:57,359 --> 00:20:58,880
+Pin change interrupt 2.
+
+267
+00:20:59,480 --> 00:21:00,619
+Pin change interrupt 2.
+
+268
+00:21:01,119 --> 00:21:05,660
+So, we configure that pin as an input because the switch connected to that pin.
+
+269
+00:21:06,519 --> 00:21:08,480
+Then we pull up that pin.
+
+270
+00:21:08,480 --> 00:21:14,500
+Idea is the default state of the pin is now high when you pull up.
+
+271
+00:21:15,000 --> 00:21:18,119
+We activate the internal pull up resistance.
+
+272
+00:21:18,619 --> 00:21:20,319
+So we pull up the pin.
+
+273
+00:21:20,480 --> 00:21:22,839
+So the default state of the pin is high.
+
+274
+00:21:23,579 --> 00:21:24,119
+PD2.
+
+275
+00:21:24,220 --> 00:21:26,559
+PD2 means PCI NT18.
+
+276
+00:21:27,160 --> 00:21:31,640
+Then we enable pin change interrupt on port D.
+
+277
+00:21:31,819 --> 00:21:35,799
+We enable the entire port D for pin change interrupts.
+
+278
+00:21:35,799 --> 00:21:38,880
+Entire port D we enable for pin change interrupt.
+
+279
+00:21:39,380 --> 00:21:42,480
+Then in that port individual pin.
+
+280
+00:21:43,200 --> 00:21:49,000
+We enable pin change interrupt on PD2 that is PCI and E80.
+
+281
+00:21:49,700 --> 00:21:52,980
+The individual pin where the switch connected.
+
+282
+00:21:53,700 --> 00:21:56,519
+We enable that pin for pin change interrupt.
+
+283
+00:21:56,920 --> 00:21:59,220
+Then we enable global interrupt.
+
+284
+00:21:59,640 --> 00:22:02,180
+SEI function set interrupt function.
+
+285
+00:22:02,180 --> 00:22:04,859
+Then we enter into the endless loop.
+
+286
+00:22:04,859 --> 00:22:09,180
+And we start doing the main task.
+
+287
+00:22:09,680 --> 00:22:13,420
+Tuggling onboard LED every two seconds.
+
+288
+00:22:13,759 --> 00:22:14,759
+That is the main task.
+
+289
+00:22:15,019 --> 00:22:16,619
+Keep reading the newspaper.
+
+290
+00:22:17,259 --> 00:22:24,640
+Tuggling PB5 that is onboard LED connected to PB5 pin number 30 every two seconds.
+
+291
+00:22:25,019 --> 00:22:25,940
+That's the main task.
+
+292
+00:22:26,859 --> 00:22:33,140
+While we are doing the main task, if input, if somebody presses the button,
+
+293
+00:22:33,140 --> 00:22:35,599
+then we will be interrupted.
+
+294
+00:22:36,059 --> 00:22:39,619
+So till then we can do the main task.
+
+295
+00:22:39,960 --> 00:22:41,259
+When you got interrupted
+
+296
+00:22:41,259 --> 00:22:43,819
+then you have to attend to the input.
+
+297
+00:22:44,240 --> 00:22:44,460
+Right.
+
+298
+00:22:44,900 --> 00:22:47,400
+So when there is an interrupt
+
+299
+00:22:47,400 --> 00:22:51,519
+we have to handle the relevant interrupt handling routine.
+
+300
+00:22:51,519 --> 00:22:55,559
+So this is the interrupt handling routine for pin change interrupt.
+
+301
+00:22:55,960 --> 00:23:00,019
+Now in that routine we have to toggle the external LED.
+
+302
+00:23:01,019 --> 00:23:02,700
+Externally connected LED
+
+303
+00:23:02,700 --> 00:23:10,779
+we have to toggle. But unlike in the previous example, we can't simply do that. We have to
+
+304
+00:23:10,779 --> 00:23:20,319
+check a condition. Why? The reason is this. The pin change interrupts occur when the state of
+
+305
+00:23:20,319 --> 00:23:28,279
+a particular pin, when the state of a particular pin change. The pin change, that's why we call
+
+306
+00:23:28,279 --> 00:23:37,039
+pin change. When the state change, pin change interrupt happens. Now state change means the
+
+307
+00:23:37,039 --> 00:23:46,240
+state could go from high to low as well as from low to high. There can be two state changes.
+
+308
+00:23:46,240 --> 00:23:54,720
+High to low, low to high. Right. What does that mean? By default, the pin is high. When
+
+309
+00:23:54,720 --> 00:24:02,559
+you press the button, the pin becomes low. That means when you press the button, the state change
+
+310
+00:24:02,559 --> 00:24:11,599
+is high to low. Pin change interrupt happens. Also, when you release the button, then low to high,
+
+311
+00:24:12,000 --> 00:24:18,579
+the pin state is changed from low to high. Again, pin change interrupt happens. When you press the
+
+312
+00:24:18,579 --> 00:24:20,440
+button, interrupt happens.
+
+313
+00:24:20,440 --> 00:24:22,039
+When you release the button,
+
+314
+00:24:22,500 --> 00:24:24,220
+interrupt happens. But we
+
+315
+00:24:24,220 --> 00:24:26,460
+want to toggle the LED
+
+316
+00:24:26,460 --> 00:24:28,079
+only when
+
+317
+00:24:28,079 --> 00:24:30,140
+we press the button,
+
+318
+00:24:30,599 --> 00:24:32,299
+not when we
+
+319
+00:24:32,299 --> 00:24:34,359
+release the button. So, we want
+
+320
+00:24:34,359 --> 00:24:36,200
+to toggle the LED when we
+
+321
+00:24:36,200 --> 00:24:38,240
+press the button. We don't want to
+
+322
+00:24:38,240 --> 00:24:40,119
+toggle the LED when we release the button.
+
+323
+00:24:40,460 --> 00:24:42,319
+But the pin change interrupt
+
+324
+00:24:42,319 --> 00:24:44,299
+can happen when
+
+325
+00:24:44,299 --> 00:24:46,319
+we press the button as well as when
+
+326
+00:24:46,319 --> 00:24:48,519
+we release the button, because state change
+
+327
+00:24:48,519 --> 00:24:53,880
+happens when you press the button high to low state change when you release the button low to
+
+328
+00:24:53,880 --> 00:25:04,519
+high in our external interrupt example right we use falling edge to trigger to interrupt the cpu
+
+329
+00:25:05,079 --> 00:25:13,880
+falling edge that means the pin state going high to low falling edge only one falling edge there
+
+330
+00:25:13,880 --> 00:25:15,160
+There are no two falling edges.
+
+331
+00:25:15,660 --> 00:25:17,940
+You have one falling edge, one rising edge.
+
+332
+00:25:18,859 --> 00:25:24,299
+So that's why in that example, we didn't encounter this kind of problem.
+
+333
+00:25:24,859 --> 00:25:26,779
+But here we have that problem.
+
+334
+00:25:27,339 --> 00:25:30,440
+When you press the button, CPU is interrupted.
+
+335
+00:25:30,700 --> 00:25:33,099
+When you release the button, again CPU is interrupted.
+
+336
+00:25:33,359 --> 00:25:35,579
+We don't want that to happen.
+
+337
+00:25:35,579 --> 00:25:40,019
+We want to toggle the LED only when we press the button.
+
+338
+00:25:40,279 --> 00:25:43,000
+That's why we check using this condition.
+
+339
+00:25:43,000 --> 00:25:46,400
+if interrupt is on falling edge.
+
+340
+00:25:47,400 --> 00:25:50,480
+If interrupt is on falling edge.
+
+341
+00:25:50,980 --> 00:25:53,000
+That means, falling edge means
+
+342
+00:25:53,000 --> 00:25:55,819
+the state goes from high to low.
+
+343
+00:25:56,420 --> 00:25:59,619
+We check whether state goes from high to low.
+
+344
+00:26:00,119 --> 00:26:02,400
+If so, we toggle the LED.
+
+345
+00:26:03,140 --> 00:26:05,420
+The state goes from high to low
+
+346
+00:26:05,420 --> 00:26:06,700
+when you press the button.
+
+347
+00:26:07,480 --> 00:26:08,980
+Because default state high,
+
+348
+00:26:09,079 --> 00:26:10,940
+when you press the button, it becomes low.
+
+349
+00:26:11,619 --> 00:26:14,839
+So high to low happens when you press the button.
+
+350
+00:26:14,980 --> 00:26:16,400
+That is falling edge.
+
+351
+00:26:16,779 --> 00:26:20,380
+But when you release the button, the state was low.
+
+352
+00:26:21,599 --> 00:26:23,039
+It goes to high.
+
+353
+00:26:23,559 --> 00:26:25,559
+Low to high, that is rising edge.
+
+354
+00:26:26,460 --> 00:26:30,319
+So this condition becomes false when you release the button.
+
+355
+00:26:30,599 --> 00:26:31,940
+So we don't toggle the LED.
+
+356
+00:26:31,940 --> 00:26:37,480
+When this condition is true, then only we toggle the LED.
+
+357
+00:26:37,480 --> 00:26:41,039
+So when you press the button, LED will be toggled.
+
+358
+00:26:41,160 --> 00:26:43,440
+When you release the button, nothing will happen.
+
+359
+00:26:43,940 --> 00:26:50,079
+Although this interrupt routine is executed, nothing will happen because of this condition.
+
+360
+00:26:50,619 --> 00:26:52,200
+Can you understand that?
+
+361
+00:26:55,640 --> 00:26:56,740
+Any question?
+
+362
+00:26:59,099 --> 00:27:02,200
+Can you understand why we need this if condition?
+
+363
+00:27:02,380 --> 00:27:06,940
+Without this if condition, if we use just toggle TB0.
+
+364
+00:27:07,480 --> 00:27:13,079
+in the interrupt handling routine, what would happen is PB0 will be toggled when you press
+
+365
+00:27:13,079 --> 00:27:19,559
+the button as well as when you release the button. So if the LED was off, when you press the button,
+
+366
+00:27:19,559 --> 00:27:24,200
+it will be turned on and when you release the button again, it will be turned off.
+
+367
+00:27:24,920 --> 00:27:31,400
+But we don't want to do that. When you press the button, we want to toggle. If the LED was off,
+
+368
+00:27:31,400 --> 00:27:36,279
+when you press the button, we want to turn on the LED. And when you release the button,
+
+369
+00:27:36,279 --> 00:27:38,680
+nothing should happen.
+
+370
+00:27:39,099 --> 00:27:41,880
+But the problem of pin change interrupts
+
+371
+00:27:41,880 --> 00:27:44,079
+so they interrupt the CPU
+
+372
+00:27:44,079 --> 00:27:46,799
+when the state of the pin is changed.
+
+373
+00:27:47,059 --> 00:27:52,299
+That means this pin change interrupt handling routine
+
+374
+00:27:52,299 --> 00:27:55,619
+is executed when you press the button
+
+375
+00:27:55,619 --> 00:27:57,160
+as well as when you release the button.
+
+376
+00:27:57,680 --> 00:28:00,460
+That's why we have put this if condition.
+
+377
+00:28:00,960 --> 00:28:02,819
+Using that we check whether
+
+378
+00:28:02,819 --> 00:28:05,599
+it's a button press or button release.
+
+379
+00:28:05,599 --> 00:28:09,059
+If it is a button press, toggle the LED.
+
+380
+00:28:09,279 --> 00:28:12,119
+If it is a button release, do nothing.
+
+381
+00:28:12,700 --> 00:28:13,259
+Is it clear?
+
+382
+00:28:13,799 --> 00:28:14,359
+Any question?
+
+383
+00:28:15,059 --> 00:28:15,480
+Right.
+
+384
+00:28:15,920 --> 00:28:18,599
+Then let's move into source code.
+
+385
+00:28:19,140 --> 00:28:19,440
+Right.
+
+386
+00:28:21,119 --> 00:28:26,180
+We need this header file which contains input-output definitions.
+
+387
+00:28:26,900 --> 00:28:27,119
+Right.
+
+388
+00:28:28,079 --> 00:28:32,180
+And we need this fcpu constant.
+
+389
+00:28:32,180 --> 00:28:43,539
+that is the speed of the cpu because delay.h header file requires the speed of cpu to determine
+
+390
+00:28:43,539 --> 00:28:50,819
+delays and also this header file contains definition of underscore delay underscore
+
+391
+00:28:50,819 --> 00:28:58,180
+ms function and we are going to use interrupts so we need this header file interrupt.h then
+
+392
+00:28:58,180 --> 00:29:02,920
+you have main function in main void return 0.
+
+393
+00:29:03,380 --> 00:29:06,859
+First what we do is we configure
+
+394
+00:29:06,859 --> 00:29:12,880
+PB0 and PB5 as outputs.
+
+395
+00:29:12,880 --> 00:29:18,880
+Then we configure PD2 which is PCINT18.
+
+396
+00:29:20,200 --> 00:29:24,880
+PD2 means PCINT18 as an input.
+
+397
+00:29:25,380 --> 00:29:27,559
+Ideally you don't need this line.
+
+398
+00:29:27,559 --> 00:29:33,160
+because by default this particular bit is zero.
+
+399
+00:29:33,619 --> 00:29:35,779
+So you don't need this line actually
+
+400
+00:29:35,779 --> 00:29:39,240
+because by default the register values are zero.
+
+401
+00:29:39,859 --> 00:29:44,539
+That means all pins are input pins by default.
+
+402
+00:29:44,539 --> 00:29:47,559
+So no need to configure them explicitly.
+
+403
+00:29:48,279 --> 00:29:50,579
+However, this is a good practice.
+
+404
+00:29:50,900 --> 00:29:54,660
+That makes your code more understandable, right?
+
+405
+00:29:54,660 --> 00:30:00,019
+But on the other hand, extra one clock cycle.
+
+406
+00:30:00,579 --> 00:30:08,140
+So you waste one clock cycle, but you improve the understandability of your write.
+
+407
+00:30:08,500 --> 00:30:17,740
+Then pull up PD2, that is PCI-NT18, by activating the internal pull-up resistance.
+
+408
+00:30:18,180 --> 00:30:23,079
+We set this bit on port D, so we pull up PD2.
+
+409
+00:30:23,079 --> 00:30:29,940
+Then we need to enable port default pin change interrupts.
+
+410
+00:30:30,200 --> 00:30:32,200
+Port default pin change interrupts.
+
+411
+00:30:32,380 --> 00:30:35,440
+So we set the bit number 2.
+
+412
+00:30:35,559 --> 00:30:38,640
+Bit number 2 is the PCIe2.
+
+413
+00:30:39,119 --> 00:30:42,119
+Pin change interrupt enable 2 bit.
+
+414
+00:30:42,380 --> 00:30:49,180
+We set that bit of PCICR, pin change interrupt control register.
+
+415
+00:30:49,180 --> 00:30:54,599
+to enable the entire port for pin change interrupts.
+
+416
+00:30:54,599 --> 00:31:00,859
+Then we enable the individual pin of port D.
+
+417
+00:31:01,700 --> 00:31:08,940
+The individual pin is the PD2 or PCI-NT18 via the switch connected.
+
+418
+00:31:09,460 --> 00:31:16,799
+To do that, we use PCMSK2 register, pin change mask 2 register
+
+419
+00:31:16,799 --> 00:31:22,400
+because MAS2 register is the corresponding register for 4D.
+
+420
+00:31:23,299 --> 00:31:33,519
+In that register, we set PCINT 18 bit
+
+421
+00:31:33,519 --> 00:31:39,539
+to enable pin change interrupts on this particular pin.
+
+422
+00:31:40,700 --> 00:31:44,799
+Thereafter, we enable global interrupts
+
+423
+00:31:44,799 --> 00:31:53,039
+by calling this function set interrupt. So this function will set bit 7 that is interrupt bit of
+
+424
+00:31:53,039 --> 00:32:00,779
+sreg register status register. Status register bit number 7 that is interrupt bit we set. So we
+
+425
+00:32:00,779 --> 00:32:10,640
+enable global interrupt. Then we enter into endless loop. Right. In the endless loop we start doing
+
+426
+00:32:10,640 --> 00:32:14,680
+our main job. Toggling PB5
+
+427
+00:32:14,680 --> 00:32:18,319
+that is onboard LED connected to PB5.
+
+428
+00:32:19,039 --> 00:32:22,140
+Toggle PB5 every 2 seconds and
+
+429
+00:32:22,140 --> 00:32:26,720
+keep doing that job till you are interrupted.
+
+430
+00:32:27,460 --> 00:32:30,680
+Till you are interrupted keep doing this. If you are
+
+431
+00:32:30,680 --> 00:32:34,559
+interrupted then handle the relevant ISR.
+
+432
+00:32:34,559 --> 00:32:38,700
+If you are interrupted then handle the relevant ISR. So this is
+
+433
+00:32:38,700 --> 00:32:42,839
+the ISR, the relevant ISR. Interrupt service routine.
+
+434
+00:32:43,720 --> 00:32:46,119
+Pin change interrupt two vector.
+
+435
+00:32:46,720 --> 00:32:49,880
+Why pin change interrupt two vector? It is for port D.
+
+436
+00:32:49,880 --> 00:32:52,480
+Pin change interrupts on port D.
+
+437
+00:32:53,420 --> 00:32:58,019
+If the interrupts are on port C, pin change interrupt
+
+438
+00:32:58,019 --> 00:33:01,660
+one vector. If the interrupts are on port B,
+
+439
+00:33:02,400 --> 00:33:06,039
+pin change interrupt zero vector. So different
+
+440
+00:33:06,039 --> 00:33:08,579
+interrupt vectors for different ports.
+
+441
+00:33:08,700 --> 00:33:11,819
+pin change interrupt 2 vector for port D,
+
+442
+00:33:12,339 --> 00:33:15,440
+pin change interrupt 1 vector for port C,
+
+443
+00:33:16,039 --> 00:33:20,339
+pin change interrupt 0 vector for port B.
+
+444
+00:33:20,819 --> 00:33:21,140
+Right.
+
+445
+00:33:21,259 --> 00:33:23,579
+The relevant ISR you have to handle.
+
+446
+00:33:24,180 --> 00:33:29,279
+Now inside the ISR we need to toggle the external LED.
+
+447
+00:33:30,059 --> 00:33:35,220
+You can't do it simply because this ISR is called
+
+448
+00:33:35,220 --> 00:33:43,859
+when the state of the pin goes from high to low as well as it comes from low to high.
+
+449
+00:33:44,380 --> 00:33:50,799
+That means this ISR is called when you press the button as well as when you release the button.
+
+450
+00:33:50,799 --> 00:34:00,960
+But we want to toggle the LED, external LED connected to PB5 only when you press the button.
+
+451
+00:34:00,960 --> 00:34:05,660
+Therefore, we need to check whether it is a button press or button release.
+
+452
+00:34:06,119 --> 00:34:08,699
+To do that, we use an if condition.
+
+453
+00:34:10,440 --> 00:34:16,000
+And this is the if condition that we use to check whether it is a button press or button release.
+
+454
+00:34:16,519 --> 00:34:21,760
+We check the bit 2, right?
+
+455
+00:34:21,900 --> 00:34:23,739
+This is bit 0, bit 1, bit 2.
+
+456
+00:34:23,860 --> 00:34:25,219
+Bit 2 of PIN D.
+
+457
+00:34:25,719 --> 00:34:26,920
+PIN D register.
+
+458
+00:34:26,920 --> 00:34:31,039
+bit 2 we check whether it is equal to 0.
+
+459
+00:34:31,679 --> 00:34:34,679
+When you press the button, the PD2,
+
+460
+00:34:34,940 --> 00:34:38,860
+state of the PD2 becomes low. When you press the button,
+
+461
+00:34:39,039 --> 00:34:43,000
+state of PD2 becomes low. As a result, right?
+
+462
+00:34:43,579 --> 00:34:46,059
+Let me write that. Now,
+
+463
+00:34:46,059 --> 00:34:50,079
+when you press the button, PD2
+
+464
+00:34:50,079 --> 00:34:53,920
+pin becomes low. Right. Now, if this is
+
+465
+00:34:53,920 --> 00:35:02,840
+pin D register. Let's say pin D register has these values. It has these values. 1 XX. Why?
+
+466
+00:35:03,840 --> 00:35:13,059
+This bit is 1 because we have pull up the pin. We have pull up the pin. So that means PD2 is high
+
+467
+00:35:13,059 --> 00:35:21,940
+by default. Bit 0, bit 1, bit 2. Therefore, bit 2 is 1 of the pin D register. But when you press
+
+468
+00:35:21,940 --> 00:35:30,500
+the button, the pin becomes low, right? Now, let's take the end operation with this end,
+
+469
+00:35:31,380 --> 00:35:42,980
+the other part, 0, 0, 0, 0, 0, 1, 0, 0. Now, when you get the end operation of these two values,
+
+470
+00:35:42,980 --> 00:35:45,360
+x and 0x.
+
+471
+00:35:46,199 --> 00:35:46,679
+No, sorry.
+
+472
+00:35:46,760 --> 00:35:47,699
+x and 0, 0.
+
+473
+00:35:48,739 --> 00:35:51,860
+0, 0, 0, 0.
+
+474
+00:35:52,579 --> 00:35:55,639
+0, x, 0, 0.
+
+475
+00:35:56,059 --> 00:35:57,159
+This is the result.
+
+476
+00:35:57,159 --> 00:36:01,679
+So the result of the AND operation depends on x.
+
+477
+00:36:02,760 --> 00:36:03,159
+Right.
+
+478
+00:36:03,619 --> 00:36:05,059
+Let's say this is also x.
+
+479
+00:36:07,340 --> 00:36:09,579
+x and 1, x.
+
+480
+00:36:09,920 --> 00:36:12,619
+So the result of the AND operation depends on x.
+
+481
+00:36:12,980 --> 00:36:14,679
+By default x is 1.
+
+482
+00:36:15,119 --> 00:36:15,480
+Why?
+
+483
+00:36:15,619 --> 00:36:17,880
+We have pull up PD2.
+
+484
+00:36:18,639 --> 00:36:20,880
+By default value of x is 1.
+
+485
+00:36:20,980 --> 00:36:22,400
+We have pull up PD2.
+
+486
+00:36:23,000 --> 00:36:23,179
+Right.
+
+487
+00:36:23,179 --> 00:36:28,159
+So if x is 1, this condition becomes false.
+
+488
+00:36:28,380 --> 00:36:30,239
+1 not equals to 0.
+
+489
+00:36:31,699 --> 00:36:34,179
+If x is 1, 1 means 100.
+
+490
+00:36:34,639 --> 00:36:36,639
+100 means 4.
+
+491
+00:36:37,239 --> 00:36:39,340
+4 is not equal to 0.
+
+492
+00:36:39,500 --> 00:36:41,000
+So if condition false.
+
+493
+00:36:41,000 --> 00:36:50,559
+That means when you have released the button, if nobody has pressed the button, this condition falls, nothing happens.
+
+494
+00:36:50,860 --> 00:36:54,460
+But when you press the button, then X becomes 0.
+
+495
+00:36:55,199 --> 00:36:58,840
+Because PD2 state becomes low.
+
+496
+00:36:59,760 --> 00:37:02,579
+As a result, X becomes PIN D register.
+
+497
+00:37:03,539 --> 00:37:05,880
+The second bit becomes 0.
+
+498
+00:37:06,400 --> 00:37:08,579
+So, entire value would be 0.
+
+499
+00:37:08,579 --> 00:37:10,340
+0 equals to 0.
+
+500
+00:37:10,539 --> 00:37:10,800
+Yes.
+
+501
+00:37:11,000 --> 00:37:13,039
+condition is true
+
+502
+00:37:13,039 --> 00:37:15,159
+we toggle the LED.
+
+503
+00:37:15,719 --> 00:37:17,000
+Right. The idea
+
+504
+00:37:17,000 --> 00:37:19,260
+is this. If this value
+
+505
+00:37:19,260 --> 00:37:20,360
+is zero
+
+506
+00:37:20,360 --> 00:37:22,860
+the pin change interrupt
+
+507
+00:37:22,860 --> 00:37:25,059
+happens when there is a
+
+508
+00:37:25,059 --> 00:37:26,840
+when there is a state
+
+509
+00:37:26,840 --> 00:37:27,940
+change on the pin.
+
+510
+00:37:28,659 --> 00:37:30,440
+When there is a state change on the pin
+
+511
+00:37:30,440 --> 00:37:32,840
+this interrupt, this ISR is
+
+512
+00:37:32,840 --> 00:37:34,960
+executed. Now when the
+
+513
+00:37:34,960 --> 00:37:36,440
+ISR is executed
+
+514
+00:37:36,440 --> 00:37:39,000
+if the value of this bit
+
+515
+00:37:39,000 --> 00:37:39,880
+is zero
+
+516
+00:37:39,880 --> 00:37:53,500
+that means PD2 is low. When the interrupt ISR is executed, if this bit is 0, that means PD2 is low.
+
+517
+00:37:53,500 --> 00:38:06,139
+To happen the interrupt, the PD2 must be high before the interrupt happens. If it was high,
+
+518
+00:38:06,139 --> 00:38:08,440
+now it is low
+
+519
+00:38:08,440 --> 00:38:09,539
+if it was high
+
+520
+00:38:09,539 --> 00:38:12,340
+then there is a state change
+
+521
+00:38:12,340 --> 00:38:13,760
+that's why interrupt happened.
+
+522
+00:38:14,239 --> 00:38:16,559
+So high to low it was high
+
+523
+00:38:16,559 --> 00:38:18,539
+now it is low
+
+524
+00:38:18,539 --> 00:38:19,719
+interrupt happened.
+
+525
+00:38:20,480 --> 00:38:22,280
+That means state change.
+
+526
+00:38:22,840 --> 00:38:24,199
+High to low means
+
+527
+00:38:24,199 --> 00:38:25,659
+falling edge.
+
+528
+00:38:26,239 --> 00:38:28,260
+But when you release the button also
+
+529
+00:38:28,260 --> 00:38:29,300
+interrupt happens.
+
+530
+00:38:29,780 --> 00:38:31,559
+When you release the button
+
+531
+00:38:31,559 --> 00:38:34,400
+the value of x would be
+
+532
+00:38:34,400 --> 00:38:35,980
+1. Why?
+
+533
+00:38:36,139 --> 00:38:38,340
+We have pull up PD2.
+
+534
+00:38:38,920 --> 00:38:40,159
+So, we check the value.
+
+535
+00:38:40,780 --> 00:38:47,519
+If it is one interrupt happen, then its previous state should be low.
+
+536
+00:38:48,000 --> 00:38:50,599
+Because state change, low to high happen.
+
+537
+00:38:51,119 --> 00:38:52,940
+That is rising edge.
+
+538
+00:38:53,579 --> 00:38:57,199
+In the rising edge, we don't toggle the LED, right?
+
+539
+00:38:57,659 --> 00:39:01,900
+Now, in the external interrupts, you have four choices.
+
+540
+00:39:01,900 --> 00:39:07,659
+whether the pin held low, whether state change happened,
+
+541
+00:39:08,300 --> 00:39:13,139
+whether falling edge, whether rising edge.
+
+542
+00:39:14,139 --> 00:39:17,659
+But when it comes to pin change interrupts, you don't have those choices.
+
+543
+00:39:17,920 --> 00:39:20,619
+You have only one choice, logic change.
+
+544
+00:39:21,159 --> 00:39:23,539
+But using a simple if condition,
+
+545
+00:39:24,340 --> 00:39:29,579
+we can determine whether it is on falling edge or rising edge.
+
+546
+00:39:29,579 --> 00:39:31,360
+whether the interrupt happened.
+
+547
+00:39:32,119 --> 00:39:34,639
+When you press the button or release the button,
+
+548
+00:39:34,719 --> 00:39:35,480
+you can determine.
+
+549
+00:39:35,980 --> 00:39:37,199
+In the external interrupts,
+
+550
+00:39:37,219 --> 00:39:38,679
+you don't need to determine that
+
+551
+00:39:38,679 --> 00:39:40,019
+because there are choices.
+
+552
+00:39:40,360 --> 00:39:42,500
+You have to use the correct choice.
+
+553
+00:39:43,000 --> 00:39:44,280
+If you want to determine
+
+554
+00:39:44,280 --> 00:39:48,380
+whether it's a button press,
+
+555
+00:39:48,599 --> 00:39:50,460
+you have to use the falling edge interrupt.
+
+556
+00:39:50,920 --> 00:39:52,239
+If you want to determine
+
+557
+00:39:52,239 --> 00:39:54,019
+whether it's a button release,
+
+558
+00:39:55,059 --> 00:39:57,320
+you can use rising edge interrupt.
+
+559
+00:39:57,679 --> 00:39:59,380
+But in pin change interrupts,
+
+560
+00:39:59,380 --> 00:40:04,159
+you don't have those choices. But using if condition, you can simply determine that.
+
+561
+00:40:04,699 --> 00:40:12,099
+If the current value of the pin is low, an interrupt happened, that means the previous
+
+562
+00:40:12,099 --> 00:40:18,260
+state of the pin must be high. High to low, it happened. That's why interrupt happened.
+
+563
+00:40:18,800 --> 00:40:26,780
+Falling edge. If the current value of the current state of the pin is low, interrupt happened.
+
+564
+00:40:26,780 --> 00:40:29,179
+that means it was
+
+565
+00:40:29,179 --> 00:40:31,679
+current state of the pin is
+
+566
+00:40:31,679 --> 00:40:33,539
+high and interrupt happened
+
+567
+00:40:33,539 --> 00:40:35,760
+that means it was
+
+568
+00:40:35,760 --> 00:40:37,760
+low previously, low to
+
+569
+00:40:37,760 --> 00:40:39,619
+high, rising
+
+570
+00:40:39,619 --> 00:40:41,800
+edge. Based on that
+
+571
+00:40:41,800 --> 00:40:43,679
+we can determine whether it's
+
+572
+00:40:43,679 --> 00:40:45,800
+a button press or button release.
+
+573
+00:40:46,039 --> 00:40:47,599
+If there's a button press
+
+574
+00:40:47,599 --> 00:40:49,519
+we toggle the LED
+
+575
+00:40:49,519 --> 00:40:51,679
+if it is a
+
+576
+00:40:51,679 --> 00:40:53,480
+button release we don't do
+
+577
+00:40:53,480 --> 00:40:55,239
+anything. Can you understand?
+
+578
+00:40:55,639 --> 00:40:56,260
+Any question?
+
+579
+00:40:56,780 --> 00:41:01,179
+In this line we check whether the state of the pin is low.
+
+580
+00:41:01,719 --> 00:41:02,739
+That is current state.
+
+581
+00:41:02,900 --> 00:41:03,619
+Whether it is low.
+
+582
+00:41:04,280 --> 00:41:05,380
+Then interrupt happened.
+
+583
+00:41:06,099 --> 00:41:08,659
+To happen the interrupt there should be a state change.
+
+584
+00:41:09,360 --> 00:41:10,059
+Currently low.
+
+585
+00:41:10,900 --> 00:41:12,780
+Currently low means previously high.
+
+586
+00:41:13,380 --> 00:41:14,900
+If previously also low.
+
+587
+00:41:15,440 --> 00:41:16,739
+Then there is no state change.
+
+588
+00:41:18,099 --> 00:41:20,159
+The ISR would not be executed.
+
+589
+00:41:20,300 --> 00:41:21,300
+ISR executed.
+
+590
+00:41:22,300 --> 00:41:23,199
+Currently low.
+
+591
+00:41:23,199 --> 00:41:24,679
+That means previously high.
+
+592
+00:41:25,079 --> 00:41:25,820
+High to low.
+
+593
+00:41:25,820 --> 00:41:28,619
+button press. If currently high
+
+594
+00:41:28,619 --> 00:41:31,039
+ISR executed currently high
+
+595
+00:41:31,039 --> 00:41:33,000
+that means previously low
+
+596
+00:41:33,000 --> 00:41:34,860
+low to high
+
+597
+00:41:34,860 --> 00:41:37,739
+button release. Is that clear?
+
+598
+00:41:37,940 --> 00:41:39,880
+Can you understand? Any question?
+
+599
+00:41:41,260 --> 00:41:43,500
+Okay. No questions.
+
+600
+00:41:43,980 --> 00:41:44,239
+Right.
+
+601
+00:41:45,920 --> 00:41:47,539
+One problem
+
+602
+00:41:47,539 --> 00:41:49,179
+actually not a problem
+
+603
+00:41:49,179 --> 00:41:51,880
+one
+
+604
+00:41:51,880 --> 00:41:55,800
+issue with this code is
+
+605
+00:41:55,800 --> 00:41:58,739
+when you are writing this code you have to write
+
+606
+00:41:58,739 --> 00:42:00,659
+you have written actually
+
+607
+00:42:00,659 --> 00:42:03,539
+strings of bits
+
+608
+00:42:03,539 --> 00:42:04,840
+strings of bits
+
+609
+00:42:04,840 --> 00:42:06,800
+then when you write strings of bits
+
+610
+00:42:06,800 --> 00:42:07,920
+you have to count them
+
+611
+00:42:07,920 --> 00:42:10,300
+whether it contains 8 bits
+
+612
+00:42:10,300 --> 00:42:12,800
+so it's a little bit inconvenient
+
+613
+00:42:12,800 --> 00:42:14,079
+so therefore
+
+614
+00:42:14,079 --> 00:42:16,500
+some experienced programmers
+
+615
+00:42:16,500 --> 00:42:18,760
+use a different approach
+
+616
+00:42:18,760 --> 00:42:20,980
+rather than writing
+
+617
+00:42:20,980 --> 00:42:23,239
+strings of bits
+
+618
+00:42:23,239 --> 00:42:24,940
+they use a different approach
+
+619
+00:42:24,940 --> 00:42:30,219
+The same program, same firmware, you can write something like this.
+
+620
+00:42:30,559 --> 00:42:32,139
+No strings of bits.
+
+621
+00:42:33,059 --> 00:42:36,199
+Instead of that, you use hexadecimal value.
+
+622
+00:42:36,199 --> 00:42:54,380
+Now, for example, now this particular place, we have to write 0B, 0B, 0, 0, 1, 0, 0, 0, 1.
+
+623
+00:42:54,940 --> 00:43:12,780
+pb 0 and pb 5 we have to set high now this is equivalent to 0x2121 same way this is equivalent to
+
+624
+00:43:12,780 --> 00:43:35,420
+0, B, 1, 1, 1, 1. That is F. Then 1, 0, 1, 1. Right. This is F. This is B. P, D, 2. We need to configure as an input pin. So second bit. We have to clear.
+
+625
+00:43:35,420 --> 00:43:44,460
+Rather than using the binary values, strings of bits, you can use hexadecimal values.
+
+626
+00:43:44,460 --> 00:43:49,260
+If you are very convenient with hexadecimal and binary conversions.
+
+627
+00:43:49,860 --> 00:43:55,860
+So, experienced programmers who are very familiar with hexadecimal notation,
+
+628
+00:43:56,659 --> 00:44:01,500
+they write firmware using these hexadecimal values.
+
+629
+00:44:01,619 --> 00:44:04,639
+This is another way of writing the same code.
+
+630
+00:44:04,639 --> 00:44:18,559
+Now I discuss all these things because when you read books, when you read the firmware developed by others, you may encounter these types of writing.
+
+631
+00:44:18,559 --> 00:44:21,840
+Some people use lengthy binary strings.
+
+632
+00:44:22,320 --> 00:44:24,639
+Some people use hexadecimal constants.
+
+633
+00:44:25,659 --> 00:44:30,760
+Some people use bit shift operators, left shift and right shift operators.
+
+634
+00:44:31,320 --> 00:44:34,219
+And some people use label constants.
+
+635
+00:44:34,639 --> 00:44:38,639
+This is another version of same family.
+
+636
+00:44:38,639 --> 00:44:45,639
+The third version, we have already discussed this, using bitwise shift operators.
+
+637
+00:44:45,639 --> 00:44:48,639
+Sir? Yes.
+
+638
+00:44:48,639 --> 00:44:53,639
+Sir, is it... is it...
+
+639
+00:44:53,639 --> 00:45:06,639
+I have done a lot of the performance in the computer.
+
+640
+00:45:06,639 --> 00:45:09,000
+Now the thing is this.
+
+641
+00:45:09,000 --> 00:45:18,079
+This source code is in C. The compiler translates all these things into machine code.
+
+642
+00:45:18,079 --> 00:45:25,480
+it doesn't matter you write it in ones and zeros or hexadecimal because it is translated
+
+643
+00:45:25,480 --> 00:45:33,119
+by the compiler. For the compiler it is easier if you write it in ones and zeros. Right. But not for
+
+644
+00:45:33,119 --> 00:45:40,440
+the actual there is no effect of that for the actual execution speed because compiler translates
+
+645
+00:45:40,440 --> 00:45:42,519
+it's all these things into machine
+
+646
+00:45:42,519 --> 00:45:42,820
+code.
+
+647
+00:45:44,920 --> 00:45:46,400
+Right. If it is in
+
+648
+00:45:46,400 --> 00:45:48,460
+hexadecimal, the compiler will translate
+
+649
+00:45:48,460 --> 00:45:50,500
+that into machine code. If it
+
+650
+00:45:50,500 --> 00:45:51,900
+is in ones and zeros,
+
+651
+00:45:52,699 --> 00:45:54,340
+so compiler has
+
+652
+00:45:54,340 --> 00:45:55,099
+nothing to do.
+
+653
+00:45:56,460 --> 00:45:58,400
+So there is no effect for the
+
+654
+00:45:58,400 --> 00:46:00,480
+performance. So that's
+
+655
+00:46:00,480 --> 00:46:02,400
+why different programmers use these
+
+656
+00:46:02,400 --> 00:46:04,320
+different styles. There is no
+
+657
+00:46:04,320 --> 00:46:06,539
+big effect for the performance. Actual
+
+658
+00:46:06,539 --> 00:46:08,179
+execution speed, there is no effect.
+
+659
+00:46:08,719 --> 00:46:10,420
+And also there is no effect for the
+
+660
+00:46:10,420 --> 00:46:12,539
+the size of the code.
+
+661
+00:46:13,159 --> 00:46:15,039
+No effect for the space complexity,
+
+662
+00:46:15,179 --> 00:46:16,800
+no effect for the time complexity.
+
+663
+00:46:17,380 --> 00:46:18,920
+Right. So all these
+
+664
+00:46:18,920 --> 00:46:20,340
+things, right,
+
+665
+00:46:20,619 --> 00:46:22,599
+ultimately translated,
+
+666
+00:46:22,900 --> 00:46:24,880
+converted into machine code by the
+
+667
+00:46:24,880 --> 00:46:26,920
+compiler. Right. So this
+
+668
+00:46:26,920 --> 00:46:28,840
+is the third
+
+669
+00:46:28,840 --> 00:46:31,139
+way of using bit shift operators.
+
+670
+00:46:31,559 --> 00:46:32,840
+Using bit shift operators
+
+671
+00:46:32,840 --> 00:46:34,840
+you can write the code. Then again you
+
+672
+00:46:34,840 --> 00:46:36,659
+don't need to write lengthy binary string.
+
+673
+00:46:37,059 --> 00:46:38,559
+Now these approaches
+
+674
+00:46:38,559 --> 00:46:40,300
+are, right,
+
+675
+00:46:40,420 --> 00:46:42,380
+would be very convenient.
+
+676
+00:46:42,539 --> 00:46:44,420
+These approaches would be very convenient
+
+677
+00:46:44,420 --> 00:46:45,900
+when you are dealing with
+
+678
+00:46:45,900 --> 00:46:48,840
+32-bit architecture, micro-metrics.
+
+679
+00:46:49,179 --> 00:46:50,500
+Now, 8-bit architecture,
+
+680
+00:46:50,760 --> 00:46:53,639
+you can write a binary string with 8 bits.
+
+681
+00:46:54,039 --> 00:46:55,980
+There is no big issue, big deal.
+
+682
+00:46:56,679 --> 00:46:58,840
+But think about 32-bit architecture.
+
+683
+00:46:59,559 --> 00:47:01,559
+Then you have to write 32 bits,
+
+684
+00:47:02,000 --> 00:47:05,059
+string of 32 ones and zeros.
+
+685
+00:47:05,599 --> 00:47:06,619
+Then you have to check
+
+686
+00:47:06,619 --> 00:47:09,179
+whether all 32 bits are there.
+
+687
+00:47:09,179 --> 00:47:13,440
+the correct bit value is at the correct position.
+
+688
+00:47:14,079 --> 00:47:14,719
+You have to check.
+
+689
+00:47:15,539 --> 00:47:18,840
+Count the bits, check whether the correct bit values
+
+690
+00:47:18,840 --> 00:47:20,159
+are at the correct position.
+
+691
+00:47:20,820 --> 00:47:24,780
+That is not convenient when you are dealing with lengthy binary string.
+
+692
+00:47:24,780 --> 00:47:28,960
+So in that situation, this would be much handy.
+
+693
+00:47:29,639 --> 00:47:33,039
+Dealing with 32-bit architecture, 64-bit architecture,
+
+694
+00:47:33,159 --> 00:47:35,559
+there are microcontrollers, 64-bit microcontrollers.
+
+695
+00:47:36,019 --> 00:47:38,320
+Not very, very widely available,
+
+696
+00:47:38,320 --> 00:47:42,940
+but there are 32-bit architecture widely available.
+
+697
+00:47:44,000 --> 00:47:45,800
+Especially when you go to the industry,
+
+698
+00:47:45,900 --> 00:47:47,460
+you have to work in the 32-bit architecture,
+
+699
+00:47:47,559 --> 00:47:48,579
+not 8-bit architecture.
+
+700
+00:47:49,360 --> 00:47:53,960
+This is one way of handling lengthy binary strings.
+
+701
+00:47:54,460 --> 00:47:56,320
+And this is another way of handling.
+
+702
+00:47:56,900 --> 00:47:58,099
+And the fourth option,
+
+703
+00:47:58,739 --> 00:48:00,699
+using label cost.
+
+704
+00:48:02,119 --> 00:48:02,639
+Right.
+
+705
+00:48:03,920 --> 00:48:04,719
+Any questions?
+
+706
+00:48:05,320 --> 00:48:05,980
+Any questions?
+
+707
+00:48:05,980 --> 00:48:09,760
+So with that we come to the end of interrupt handling.
+
+708
+00:48:10,420 --> 00:48:11,219
+No questions?
+
+709
+00:48:11,840 --> 00:48:13,940
+Ideally you should have at least one question.
+
+710
+00:48:14,480 --> 00:48:14,699
+Sir.
+
+711
+00:48:15,320 --> 00:48:15,880
+Yes.
+
+712
+00:48:16,300 --> 00:48:16,559
+Sir.
+
+713
+00:48:18,239 --> 00:48:18,880
+Yes.
+
+714
+00:48:19,139 --> 00:48:19,739
+Sir, I have.
+
+715
+00:48:20,239 --> 00:48:21,139
+Yeah, okay, ask.
+
+716
+00:48:21,139 --> 00:48:21,139
+
+
+717
+00:48:21,579 --> 00:48:22,139
+Sir, I have.
+
+718
+00:48:24,840 --> 00:48:26,139
+Prioritizing the interrupt.
+
+719
+00:48:28,360 --> 00:48:29,260
+Interrupt.
+
+720
+00:48:29,260 --> 00:48:29,260
+
+
+721
+00:48:29,260 --> 00:48:29,460
+Interrupt.
+
+722
+00:48:29,900 --> 00:48:30,300
+Vector.
+
+723
+00:48:30,500 --> 00:48:30,500
+
+
+724
+00:48:31,079 --> 00:48:31,719
+Address.
+
+725
+00:48:32,019 --> 00:48:32,719
+And we have.
+
+726
+00:48:33,239 --> 00:48:34,219
+Prioritizing the answer.
+
+727
+00:48:34,599 --> 00:48:35,619
+Sir, it's a good hour.
+
+728
+00:48:35,619 --> 00:48:40,500
+I think the molemming 0, it was intra and it was PCA.
+
+729
+00:48:40,500 --> 00:48:42,500
+How much is it?
+
+730
+00:48:42,500 --> 00:48:43,500
+How much is it?
+
+731
+00:48:43,500 --> 00:48:44,500
+How much is it?
+
+732
+00:48:44,500 --> 00:48:46,500
+How much is it?
+
+733
+00:48:46,500 --> 00:48:48,500
+How much is it?
+
+734
+00:48:48,500 --> 00:48:50,500
+How much is it?
+
+735
+00:48:50,500 --> 00:48:52,500
+How much is it?
+
+736
+00:48:52,500 --> 00:48:54,500
+How much is it?
+
+737
+00:48:54,500 --> 00:48:56,500
+How much is it?
+
+738
+00:48:56,500 --> 00:48:58,500
+But there are many other interrupt vectors.
+
+739
+00:48:58,500 --> 00:49:00,500
+Right?
+
+740
+00:49:00,500 --> 00:49:02,500
+What else?
+
+741
+00:49:02,500 --> 00:49:04,500
+Yes, yes, yes.
+
+742
+00:49:04,500 --> 00:49:07,500
+Can you hear me now?
+
+743
+00:49:07,500 --> 00:49:09,500
+Yes, now it's okay.
+
+744
+00:49:09,500 --> 00:49:16,500
+Sir, if you use the interops in assembly, do you want to use the interops?
+
+745
+00:49:16,500 --> 00:49:19,500
+Yes, sir.
+
+746
+00:49:19,500 --> 00:49:25,500
+Sir, I tried to say that I had a job,
+
+747
+00:49:25,500 --> 00:49:29,500
+but I wanted to meet the interops in the assembly.
+
+748
+00:49:29,500 --> 00:49:32,500
+No, no, no.
+
+749
+00:49:32,500 --> 00:49:36,500
+I have a reference book for this.
+
+750
+00:49:36,500 --> 00:49:40,500
+This is a micro-control in Venice.
+
+751
+00:49:40,500 --> 00:49:44,500
+I have a 32 micro-control in the 328.
+
+752
+00:49:44,500 --> 00:49:52,500
+There are assembly examples in the 328 data sheet.
+
+753
+00:49:52,500 --> 00:49:57,500
+and the idea of this is to run the code in 3 to 8.
+
+754
+00:49:57,500 --> 00:50:06,500
+We have to run the micro-control code in 3 to 8.
+
+755
+00:50:06,500 --> 00:50:10,500
+We use the micro-control in this case.
+
+756
+00:50:10,500 --> 00:50:13,500
+We use the micro-control in Atmega32.
+
+757
+00:50:13,500 --> 00:50:15,500
+We use the one to the one to the one.
+
+758
+00:50:15,500 --> 00:50:19,500
+We use the one to the other.
+
+759
+00:50:19,500 --> 00:50:25,860
+I have a very good thing, I have a very good one, to be very good, to be in a very good de-dour-dou-dou,
+
+760
+00:50:25,860 --> 00:50:29,099
+to be a very good d-dou, a very good d-d-d-c, a very good d-d-c, a very good d-d,
+
+761
+00:50:29,099 --> 00:50:29,980
+[unclear — Sinhala / crosstalk]
+
+762
+00:50:29,980 --> 00:50:31,980
+I can download it with the data sheet.
+
+763
+00:50:31,980 --> 00:50:34,980
+I can compare it with the data sheet and register it.
+
+764
+00:50:34,980 --> 00:50:39,980
+I can't remember the data sheet.
+
+765
+00:50:39,980 --> 00:50:43,980
+But I can't remember the data sheet.
+
+766
+00:50:43,980 --> 00:50:47,980
+I can remember the PCICR,
+
+767
+00:50:47,980 --> 00:50:50,980
+the pin change interrupt control register.
+
+768
+00:50:50,980 --> 00:50:55,980
+I can remember the data sheet with the ATMEGA 32
+
+769
+00:50:55,980 --> 00:50:59,739
+to get a microcontroller right me got three to eight in microcontroller
+
+770
+00:50:59,739 --> 00:51:04,139
+to them register a team they come 8 bit architecture that registers they come
+
+771
+00:51:04,139 --> 00:51:12,300
+8 bit a bag third at mega 32 kill reiki bits still tonight at mega 328
+
+772
+00:51:12,300 --> 00:51:16,539
+peak in register a pc me icr register a bit bit
+
+773
+00:51:16,539 --> 00:51:17,539
+to theose.
+
+774
+00:51:17,539 --> 00:51:18,940
+[unclear — Sinhala / crosstalk]
+
+775
+00:51:47,539 --> 00:52:17,519
+Thank you.
+
+776
+00:52:17,539 --> 00:52:24,539
+Yes, ask any question.
+
+777
+00:52:24,539 --> 00:52:38,539
+About registers, according to the AVR, architecture and assembly language book,
+
+778
+00:52:38,539 --> 00:53:08,539
+[unclear — Sinhala / crosstalk]
+
+779
+00:53:08,539 --> 00:53:11,139
+Read this slide.
+
+780
+00:53:13,059 --> 00:53:16,239
+But why these two locations?
+
+781
+00:53:16,239 --> 00:53:17,400
+One is relative address.
+
+782
+00:53:19,480 --> 00:53:24,360
+Each I.O. register has relative address in comparison to the beginning of I.O. memory.
+
+783
+00:53:24,920 --> 00:53:26,639
+This is called I.O. address.
+
+784
+00:53:26,980 --> 00:53:29,239
+So the memory address is the specific address.
+
+785
+00:53:29,739 --> 00:53:31,260
+This is the relative address.
+
+786
+00:53:31,840 --> 00:53:35,000
+Now the idea is this.
+
+787
+00:53:35,000 --> 00:53:43,179
+Now, when you go to the different architectures, so the memory physical address, you may get a different physical address.
+
+788
+00:53:43,579 --> 00:53:47,639
+If you have more memory, there will be more addresses, physical addresses.
+
+789
+00:53:48,059 --> 00:53:54,920
+But now, this is somewhere related to virtual memory.
+
+790
+00:53:55,599 --> 00:53:58,260
+In the virtual memory also, you have virtual addresses.
+
+791
+00:53:58,760 --> 00:54:03,179
+The virtual addresses are the addresses the programmer use.
+
+792
+00:54:03,179 --> 00:54:10,079
+For the programmer, they think the value or the memory location or the register at this particular address.
+
+793
+00:54:10,480 --> 00:54:15,599
+But when you change the underlying hardware, there may be different physical addresses.
+
+794
+00:54:16,139 --> 00:54:22,880
+So that mapping, virtual address to physical address, that mapping happens behind the scene.
+
+795
+00:54:23,500 --> 00:54:31,519
+So if you are going to use physical addresses, then when you change the hardware, you always have to change your addresses.
+
+796
+00:54:31,519 --> 00:54:33,699
+right that's why
+
+797
+00:54:33,699 --> 00:54:36,059
+now when you
+
+798
+00:54:36,059 --> 00:54:37,960
+create a new project you
+
+799
+00:54:37,960 --> 00:54:39,139
+specify the
+
+800
+00:54:39,139 --> 00:54:41,880
+target hardware the target
+
+801
+00:54:41,880 --> 00:54:43,800
+microcontroller that you are going to use
+
+802
+00:54:43,800 --> 00:54:46,079
+you select that from a list
+
+803
+00:54:46,079 --> 00:54:47,960
+then you get
+
+804
+00:54:47,960 --> 00:54:49,960
+a header file added to
+
+805
+00:54:49,960 --> 00:54:50,400
+your
+
+806
+00:54:50,400 --> 00:54:53,059
+what do you call
+
+807
+00:54:53,059 --> 00:54:56,119
+that header file name let me
+
+808
+00:54:56,119 --> 00:54:56,500
+check
+
+809
+00:54:56,500 --> 00:55:00,300
+IOM
+
+810
+00:55:00,300 --> 00:55:02,860
+328p header file
+
+811
+00:55:02,860 --> 00:55:05,320
+IOM 328p header
+
+812
+00:55:05,320 --> 00:55:07,260
+file added to
+
+813
+00:55:07,260 --> 00:55:08,739
+your solution.
+
+814
+00:55:09,300 --> 00:55:10,880
+If you check in the
+
+815
+00:55:10,880 --> 00:55:15,119
+solution explorer of your
+
+816
+00:55:15,119 --> 00:55:17,219
+development environment, you would find this
+
+817
+00:55:17,219 --> 00:55:19,719
+header file IOM 328p.
+
+818
+00:55:20,119 --> 00:55:21,320
+That header file
+
+819
+00:55:21,320 --> 00:55:22,760
+is specific to
+
+820
+00:55:22,760 --> 00:55:24,920
+ATmega 328p chip
+
+821
+00:55:24,920 --> 00:55:27,320
+and that header file maps
+
+822
+00:55:27,320 --> 00:55:29,360
+your IO addresses
+
+823
+00:55:29,360 --> 00:55:33,159
+with the virtual addresses to physical addresses,
+
+824
+00:55:33,340 --> 00:55:35,300
+relative addresses to physical addresses.
+
+825
+00:55:35,300 --> 00:55:37,860
+So the header file contains physical addresses.
+
+826
+00:55:38,619 --> 00:55:40,380
+io.h header file.
+
+827
+00:55:40,719 --> 00:55:41,840
+Now this header file.
+
+828
+00:55:42,280 --> 00:55:45,719
+io.h header file contains relative addresses.
+
+829
+00:55:46,260 --> 00:55:48,320
+Because this header file, io.h,
+
+830
+00:55:48,460 --> 00:55:51,539
+is common for all microcontrollers of AVR Arctic.
+
+831
+00:55:51,900 --> 00:55:53,480
+Not only for 328p.
+
+832
+00:55:53,480 --> 00:55:59,880
+This is common header file for all AVR chips.
+
+833
+00:56:00,460 --> 00:56:02,699
+So, it uses relative addresses.
+
+834
+00:56:03,199 --> 00:56:04,539
+For example, port B.
+
+835
+00:56:05,380 --> 00:56:07,760
+Address is defined in IOR.h.
+
+836
+00:56:08,440 --> 00:56:18,099
+But that particular port B, where is it actually in the ATmega328P chip?
+
+837
+00:56:18,099 --> 00:56:24,539
+The port B, where is it actually in the ATmega32 chip?
+
+838
+00:56:25,000 --> 00:56:28,940
+Where is it actually in ATtiny chip?
+
+839
+00:56:29,480 --> 00:56:30,699
+That is the physical address.
+
+840
+00:56:31,019 --> 00:56:36,260
+That is defined in IOM328P.h header file.
+
+841
+00:56:38,300 --> 00:56:39,980
+So that's why two addresses.
+
+842
+00:56:40,579 --> 00:56:42,019
+One is the relative address.
+
+843
+00:56:42,219 --> 00:56:43,539
+One is the actual address.
+
+844
+00:56:43,840 --> 00:56:46,599
+So actual address is specific to the hardware.
+
+845
+00:56:46,599 --> 00:56:49,960
+the relative address is for the programmers.
+
+846
+00:56:50,539 --> 00:56:51,059
+Is that clear?
+
+847
+00:56:51,739 --> 00:56:52,340
+Yes, sir.
+
+848
+00:56:53,059 --> 00:56:54,880
+And the R16 and
+
+849
+00:56:54,880 --> 00:56:57,719
+dollar 16 are two different
+
+850
+00:56:57,719 --> 00:56:59,380
+things in the area?
+
+851
+00:57:00,519 --> 00:57:01,260
+Is that?
+
+852
+00:57:01,719 --> 00:57:02,840
+The register 16.
+
+853
+00:57:03,519 --> 00:57:05,760
+Even for the register 16, there are two addresses.
+
+854
+00:57:06,719 --> 00:57:07,800
+One is the actual
+
+855
+00:57:07,800 --> 00:57:09,679
+address. Actual address
+
+856
+00:57:09,679 --> 00:57:11,219
+depends on actual hardware.
+
+857
+00:57:11,860 --> 00:57:12,840
+The relative address.
+
+858
+00:57:13,260 --> 00:57:15,039
+Relative address is in the header file.
+
+859
+00:57:15,039 --> 00:57:21,920
+this right header file the header file relative address is mapped to the actual address
+
+860
+00:57:21,920 --> 00:57:28,980
+based on the the the the there's another header file related to the actual hardware
+
+861
+00:57:28,980 --> 00:57:36,960
+for example in atmega328p iom328p.h header file now let me show you that
+
+862
+00:57:36,960 --> 00:57:40,300
+in the development environment let's go to development
+
+863
+00:57:40,300 --> 00:57:52,440
+right now let me show you this now this is under dependencies you have the hardware dependent header
+
+864
+00:57:52,440 --> 00:57:59,119
+file right and in this header file this is hardware dependent now if you use a different chip you have
+
+865
+00:57:59,119 --> 00:58:09,460
+you get different dependency file right in this one you have defined all these labels right and
+
+866
+00:58:09,460 --> 00:58:18,340
+all these labels they refer a memory address. Right. They refer a memory address. Right.
+
+867
+00:58:18,340 --> 00:58:27,780
+Now if you go to, let's close this solution and open another one. Let's see. Right.
+
+868
+00:58:27,780 --> 00:58:37,739
+And this header file, you can see hardware specific definitions.
+
+869
+00:58:38,340 --> 00:58:43,739
+Now see the memory address, right, and the constant values.
+
+870
+00:58:45,059 --> 00:58:47,639
+So pin B is at this memory address.
+
+871
+00:58:48,039 --> 00:58:51,559
+And these are the, this particular register, different bits.
+
+872
+00:58:51,559 --> 00:58:54,880
+So we, for our convenience, we use the labels.
+
+873
+00:58:55,579 --> 00:58:56,460
+We use the labels.
+
+874
+00:58:56,460 --> 00:59:18,880
+But behind the scene, actually, right. Now, can you see? Yes, sir. Right. Now, what I did was, now this is a small code. And for example, port B, right.
+
+875
+00:59:18,880 --> 00:59:27,760
+right click on that go to implementation then you are directed to iom328p.h header file
+
+876
+00:59:27,760 --> 00:59:36,239
+this is a hardware specific header file and this header file port b is a label actually port b means
+
+877
+00:59:36,239 --> 00:59:47,579
+right this sfr right special function register sfr means special function register right at this
+
+878
+00:59:47,579 --> 00:59:49,039
+particular memory address.
+
+879
+00:59:50,099 --> 00:59:51,659
+And in port B, you
+
+880
+00:59:51,659 --> 00:59:53,460
+have specific bits.
+
+881
+00:59:54,199 --> 00:59:55,760
+Port B0, port
+
+882
+00:59:55,760 --> 00:59:57,739
+B1, these bits you
+
+883
+00:59:57,739 --> 00:59:59,599
+have. This bit
+
+884
+00:59:59,599 --> 01:00:01,780
+0, there's a label. Bit 1, there's
+
+885
+01:00:01,780 --> 01:00:04,019
+a label. For our convenience,
+
+886
+01:00:04,260 --> 01:00:05,119
+we use labels.
+
+887
+01:00:05,699 --> 01:00:07,900
+But actually, the label
+
+888
+01:00:07,900 --> 01:00:09,500
+refers to a memory address.
+
+889
+01:00:09,960 --> 01:00:11,780
+Now think about, you don't have labels
+
+890
+01:00:11,780 --> 01:00:13,380
+and you have only memory addresses.
+
+891
+01:00:14,119 --> 01:00:15,119
+How inconvenient
+
+892
+01:00:15,119 --> 01:00:23,159
+to use them. Thanks to these header files, now you can use very meaningful labels, right? These are
+
+893
+01:00:23,159 --> 01:00:30,199
+hardware specific memory addresses. And if you go to io.h header file, right? That header file,
+
+894
+01:00:30,519 --> 01:00:36,900
+you have relative addresses, common for all AVR architecture hardware. Then these relative
+
+895
+01:00:36,900 --> 01:00:45,900
+addresses and actual addresses you need to map. So that mapping discussed in this book.
+
+896
+01:00:46,659 --> 01:00:56,440
+Right. Each location in IEO memory has two addresses. IEO address and data memory address.
+
+897
+01:00:57,159 --> 01:01:03,800
+Each location in data memory has a unique address called data memory address. Each IEO register
+
+898
+01:01:03,800 --> 01:01:05,380
+has a relative address
+
+899
+01:01:05,380 --> 01:01:07,860
+in comparison
+
+900
+01:01:07,860 --> 01:01:10,000
+to the beginning of IEO memory.
+
+901
+01:01:10,420 --> 01:01:11,820
+This address is called
+
+902
+01:01:11,820 --> 01:01:13,980
+IEO address. So that's
+
+903
+01:01:13,980 --> 01:01:16,119
+why you have two addresses
+
+904
+01:01:16,119 --> 01:01:17,900
+for each and every
+
+905
+01:01:17,900 --> 01:01:19,880
+register. So the actual memory
+
+906
+01:01:19,880 --> 01:01:21,780
+address and the relative address.
+
+907
+01:01:23,619 --> 01:01:24,860
+Is it clear?
+
+908
+01:01:33,800 --> 01:01:45,079
+So anything else?
+
+909
+01:01:48,360 --> 01:01:52,940
+There should be very important question you didn't ask.
+
+910
+01:01:56,139 --> 01:01:57,179
+Now,
+
+911
+01:01:58,320 --> 01:02:02,000
+we discuss about polling,
+
+912
+01:02:02,000 --> 01:02:06,780
+we discuss how to do polling using C programming.
+
+913
+01:02:07,659 --> 01:02:12,719
+We discuss how to do polling using Arduino wrapper functions.
+
+914
+01:02:14,059 --> 01:02:16,000
+Then we discuss about...
+
+915
+01:02:16,000 --> 01:02:16,619
+Yes.
+
+916
+01:02:18,300 --> 01:02:19,300
+Yes.
+
+917
+01:02:28,300 --> 01:02:29,219
+Yes.
+
+918
+01:02:29,219 --> 01:02:29,280
+Yes.
+
+919
+01:02:29,280 --> 01:02:59,260
+Sir, how do you say internal interrupts?
+
+920
+01:02:59,280 --> 01:03:01,239
+interrupt. Then under timer
+
+921
+01:03:01,239 --> 01:03:03,260
+we are going to talk about timers.
+
+922
+01:03:03,400 --> 01:03:04,639
+Under timers we are going to
+
+923
+01:03:04,639 --> 01:03:07,420
+discuss about timer overflow interrupt.
+
+924
+01:03:09,159 --> 01:03:13,380
+So that is not the question. Question is
+
+925
+01:03:13,380 --> 01:03:15,639
+we discuss
+
+926
+01:03:15,639 --> 01:03:16,360
+about polling.
+
+927
+01:03:17,300 --> 01:03:19,260
+And then we discuss how to do
+
+928
+01:03:19,260 --> 01:03:21,179
+polling using POC code.
+
+929
+01:03:21,599 --> 01:03:23,460
+How to do polling using
+
+930
+01:03:23,460 --> 01:03:24,719
+Arduino wrapper functions.
+
+931
+01:03:25,539 --> 01:03:27,019
+Then we discuss about
+
+932
+01:03:27,019 --> 01:03:28,420
+external interrupts.
+
+933
+01:03:29,280 --> 01:03:32,840
+How to do external interrupt using POC code.
+
+934
+01:03:32,840 --> 01:03:37,320
+How to do external interrupts using Arduino wrapper functions.
+
+935
+01:03:37,940 --> 01:03:39,820
+Attach interrupt wrapper function.
+
+936
+01:03:40,300 --> 01:03:42,880
+Then we discuss pin change interrupts.
+
+937
+01:03:43,179 --> 01:03:49,000
+We discuss how to do pin change interrupts using POC code.
+
+938
+01:03:49,500 --> 01:03:55,039
+But we didn't discuss how to do pin change interrupts using Arduino wrapper functions.
+
+939
+01:03:55,400 --> 01:03:55,619
+Why?
+
+940
+01:03:55,619 --> 01:03:59,380
+any idea
+
+941
+01:03:59,380 --> 01:04:10,119
+is that not possible using hardy no platform doesn't support the platform the software
+
+942
+01:04:10,119 --> 01:04:16,159
+hardy no software platform doesn't support for pin change interrupts that means we are left with
+
+943
+01:04:16,159 --> 01:04:24,820
+only two io pins for handling external interrupts right we are left with only two pins because only
+
+944
+01:04:24,820 --> 01:04:33,320
+external interrupts are supported. So, only two pins we are left. But there's a third party library.
+
+945
+01:04:33,699 --> 01:04:42,920
+Third party library available. Right? That library name is pin change int library. Pin change int.
+
+946
+01:04:43,139 --> 01:04:51,019
+It's a one word now. Pin change int library. That library is available. However, it is not officially
+
+947
+01:04:51,019 --> 01:04:57,000
+supported. That's why I didn't discuss. It is not officially supported. A third party
+
+948
+01:04:57,000 --> 01:05:02,019
+library is available. I don't know why it is not officially supported. Could be due to
+
+949
+01:05:02,019 --> 01:05:08,400
+performance issue or could be some security concern. I don't know. Right. There's a library
+
+950
+01:05:08,400 --> 01:05:15,820
+called pin change int library which is third party library not an official library. Right.
+
+951
+01:05:15,820 --> 01:05:19,579
+Using that you can do pin change interrupts
+
+952
+01:05:19,579 --> 01:05:21,679
+in Arduino platform.
+
+953
+01:05:22,739 --> 01:05:24,739
+But it is not officially supported.
+
+954
+01:05:25,400 --> 01:05:28,860
+There is no official support for pin change interrupt
+
+955
+01:05:28,860 --> 01:05:30,539
+in the Arduino software platform.
+
+956
+01:05:31,199 --> 01:05:34,039
+That's a limitation of Arduino.
+
+957
+01:05:34,940 --> 01:05:38,099
+So you are left with only two interrupt pins.
+
+958
+01:05:39,880 --> 01:05:40,559
+Is it clear?
+
+959
+01:05:43,219 --> 01:05:43,980
+Right.
+
+960
+01:05:43,980 --> 01:05:46,920
+if no more questions
+
+961
+01:05:46,920 --> 01:05:48,739
+then the next step is
+
+962
+01:05:48,739 --> 01:05:50,519
+right
+
+963
+01:05:50,519 --> 01:05:53,219
+you have to try this pin change
+
+964
+01:05:53,219 --> 01:05:54,940
+interrupts, practical
+
+965
+01:05:54,940 --> 01:05:57,219
+right, try the pin change
+
+966
+01:05:57,219 --> 01:05:59,019
+interrupts, see how
+
+967
+01:05:59,019 --> 01:06:01,320
+they work and when you
+
+968
+01:06:01,320 --> 01:06:03,019
+have tried all three
+
+969
+01:06:03,019 --> 01:06:04,460
+types of
+
+970
+01:06:04,460 --> 01:06:07,179
+options that
+
+971
+01:06:07,179 --> 01:06:07,920
+we discuss
+
+972
+01:06:07,920 --> 01:06:10,900
+for doing multiple
+
+973
+01:06:10,900 --> 01:06:12,539
+tasks at the same time
+
+974
+01:06:12,539 --> 01:06:19,980
+while seemingly at the same time. Polling, external interrupts and pin change interrupts.
+
+975
+01:06:19,980 --> 01:06:27,519
+If you have done all three practicals, right, and if everything is clear, then we can move
+
+976
+01:06:27,519 --> 01:06:34,280
+into next topic, analog to digital conversion. Under analog to digital conversion, we can
+
+977
+01:06:34,280 --> 01:06:40,199
+talk about internal interrupt, a particular internal interrupt call, analog to digital
+
+978
+01:06:40,199 --> 01:06:47,460
+conversion complete interrupt ADC complete interrupt right so analog to digital conversion
+
+979
+01:06:47,460 --> 01:06:54,099
+is a different subject that is the next topic we have to discuss before that we have to complete
+
+980
+01:06:54,099 --> 01:07:01,719
+this interrupt handling you need to do all practicals and you have to come up with right
+
+981
+01:07:01,719 --> 01:07:08,920
+you have to discuss all the questions that you encounter when you do practicals right before we
+
+982
+01:07:08,920 --> 01:07:19,739
+move into the next topic therefore now it's the time is 10 40 so i stop lecture now so till 12
+
+983
+01:07:19,739 --> 01:07:28,360
+o'clock you can try all these practicals and one o'clock i'm coming back and then you can discuss
+
+984
+01:07:28,360 --> 01:07:36,139
+all the questions that you encountered when you do practicals on interrupted right after discussing
+
+985
+01:07:36,139 --> 01:07:45,239
+those questions, we can move into next topic. Because we can't do practicals, no physical
+
+986
+01:07:45,239 --> 01:07:52,820
+interaction possible to do practicals. Therefore, I urge you to do practicals and come up with
+
+987
+01:07:52,820 --> 01:07:59,840
+questions. Then we can discuss the questions. Once everything is clear, we can move into
+
+988
+01:07:59,840 --> 01:08:05,780
+the next topic. Right. Therefore, I stop now. But you can't stop. You have to do practicals.
+
+989
+01:08:06,139 --> 01:08:10,900
+If you don't do practicals, then ultimately you will be in a big trouble.
+
+990
+01:08:11,239 --> 01:08:17,119
+So therefore, please do the practicals related to interrupt handling.
+
+991
+01:08:17,739 --> 01:08:20,100
+I have uploaded another exercise.
+
+992
+01:08:21,199 --> 01:08:24,319
+Exercise number three, which is related to interrupts.
+
+993
+01:08:24,979 --> 01:08:28,239
+Try that as well and come up with questions.
+
+994
+01:08:29,060 --> 01:08:33,800
+At one o'clock, we'll start discussing questions related to interrupt handling.
+
+995
+01:08:33,800 --> 01:08:37,920
+Once all questions are clear, then we can move to next topic.
+
+996
+01:08:38,800 --> 01:08:40,680
+Analog to digital conversion.
+
+997
+01:08:41,340 --> 01:08:41,880
+Is it clear?
+
+998
+01:08:43,159 --> 01:08:43,899
+Any question?
+
+999
+01:08:46,319 --> 01:08:47,100
+All right.
+
+1000
+01:08:47,319 --> 01:08:49,560
+Then I'll stop now.
+
+1001
+01:08:49,819 --> 01:08:52,659
+See you at 1 o'clock.
+
+1002
+01:08:53,699 --> 01:08:54,380
+Same link.
+
+1003
+01:08:55,699 --> 01:08:56,300
+Okay.
+
+1004
+01:08:57,140 --> 01:08:59,239
+Thank you.
+

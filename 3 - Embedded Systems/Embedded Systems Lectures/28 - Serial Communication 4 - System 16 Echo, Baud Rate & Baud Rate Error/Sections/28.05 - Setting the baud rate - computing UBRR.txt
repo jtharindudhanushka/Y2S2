@@ -1,0 +1,142 @@
+[0:00] Then, set board rate.
+[0:02] How do we set board rate?
+[0:04] Right.
+[0:05] First we need to determine the value we need to assign to UBRR.
+[0:13] Value we need to assign to UBRR we need to determine.
+[0:19] Right.
+[0:20] For that we can use this equation.
+[0:23] We discussed this equation earlier.
+[0:26] The value of UBRR, USAT Bound Rate Register.
+[0:30] we can calculate
+[0:32] FCPU divided by
+[0:34] 16 multiplied by
+[0:36] board rate minus 1.
+[0:38] Using this equation
+[0:40] we can calculate what is the value
+[0:42] we need to assign to
+[0:44] UBRR to get
+[0:46] the required
+[0:48] board rate. To get the required
+[0:50] board rate, what is the value
+[0:52] you need to assign to UBRR?
+[0:55] Right.
+[0:56] FCPU is
+[0:57] 16 MHz.
+[0:59] So we convert that into hertz.
+[1:02] This is in hertz.
+[1:04] FCP.
+[1:05] Divided by 60.
+[1:08] Multiplied by 9600.
+[1:11] That is the bode rate that we need.
+[1:13] Minus 1.
+[1:14] Right.
+[1:15] So when you do this calculation.
+[1:18] Right.
+[1:19] 60.
+[1:21] 9600.
+[1:22] Minus 1.
+[1:23] That will give you.
+[1:26] 103.165.
+[1:29] Can you assign this kind of value to UBRR register?
+[1:36] 103.167.
+[1:39] Can you assign to UBRR?
+[1:41] No.
+[1:42] Why not?
+[1:45] Floating point.
+[1:47] The register is, right, register can accept only integers, not floating point values.
+[1:55] This is not a floating point register.
+[1:57] Floating point registers are different.
+[1:58] This register you can't assign any decimal part.
+[2:03] So what happens is when you try to assign this to register, the register will get only 103.
+[2:12] Register will get only 103.
+[2:16] And approximation happens.
+[2:19] You lose this decimal part.
+[2:22] Only the 103 is assigned to UBRR.
+[2:28] Right.
+[2:30] This results.
+[2:32] An approximation error.
+[2:34] Right.
+[2:35] I will come to that later.
+[2:37] So this.
+[2:38] As a result you get.
+[2:40] A board rate error.
+[2:43] Because the required board rate.
+[2:45] For the required board rate.
+[2:47] This is the value you need to assign to UBRR.
+[2:51] But you are assigning.
+[2:53] Little bit less than.
+[2:55] A value little bit less than.
+[2:57] To that.
+[2:57] as a result there can be
+[3:02] a baud rate error. We will discuss that later
+[3:06] in the next slide. Now what is the purpose
+[3:10] of ul in this equation? I discussed
+[3:14] this earlier the ul
+[3:17] suffix in some other example.
+[3:23] Now can you tell me what is the purpose of
+[3:26] UL in this calculation.
+[3:28] When we define
+[3:29] FCPU4 delay
+[3:32] functions, we use
+[3:34] UL suffix. At that
+[3:36] time I explain the purpose of UL.
+[3:38] Right.
+[3:39] So what is the meaning, what is the purpose
+[3:42] of adding UL
+[3:44] suffix to this equation?
+[3:46] These are the types of questions
+[3:48] you should expect
+[3:50] at the exam.
+[3:52] A UL only.
+[3:53] Exam.
+[3:54] then how do you ask?
+[3:57] I don't ask in the exam
+[3:58] what is board rate?
+[4:00] Which unit board rate is measured?
+[4:03] What do you mean by UBRR?
+[4:05] What do you mean by
+[4:06] FCPU?
+[4:08] No, I don't ask those questions.
+[4:10] Anybody can answer.
+[4:11] But I would ask,
+[4:13] for example,
+[4:14] why all board rates
+[4:16] are multiples of 80?
+[4:19] When you calculate
+[4:20] the value to be assigned
+[4:22] to the UBU,
+[4:24] rr register ubr i but within bracket i will give you the name of the ubrr use art bordered register
+[4:30] when you do that calculation why do we need to add ul suffix to the equation
+[4:39] any idea why do we need to add ul suffix you show a question using a suitable example explain
+[4:51] the purpose of
+[4:53] adding ul suffix
+[4:55] to the equation
+[4:58] given below.
+[4:59] Example.
+[5:01] Example.
+[5:02] Example.
+[5:07] If you have learned
+[5:10] the concepts well,
+[5:12] you can answer very well.
+[5:14] Any idea?
+[5:19] Ul?
+[5:20] Shri Anji?
+[5:21] Come on.
+[5:24] You can't give at least
+[5:25] some idea the purpose
+[5:27] of UL.
+[5:29] What do you mean by UL?
+[5:31] The meaning of the UL?
+[5:33] Unsigned law.
+[5:35] Unsigned law. Why do we need
+[5:37] to add unsigned law suffix
+[5:39] to this equation?
+[5:42] To avoid the errors.
+[5:44] Avoid what?
+[5:46] The error.
+[5:47] Which error? Calculation errors?
+[5:49] or the floating point error.
+[5:54] Unsigned long is an integer.
+[5:55] Unsigned long is an integer.
+[5:57] With that, how can you avoid floating point error?
+[5:59] Because the default value point

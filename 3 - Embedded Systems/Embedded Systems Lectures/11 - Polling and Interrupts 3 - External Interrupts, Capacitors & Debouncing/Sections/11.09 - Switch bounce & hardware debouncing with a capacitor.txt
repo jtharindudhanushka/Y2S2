@@ -1,0 +1,198 @@
+[0:05] you can see in this diagram. Now this built-in LED, onboard LED, it blinks every two seconds.
+[0:13] The other external LED connected to PB0, that is Arduino pin number 8, right?
+[0:22] We toggle that LED when we push the button.
+[0:27] When there's an input, this LED is toggled.
+[0:31] But this LED, it blinks every two seconds.
+[0:35] So that is the main job of the microcurriculum.
+[0:38] that is the main job blinking onboard LED every two seconds while doing that if there is an input
+[0:49] the other LED externally connected LED is toggled this toggle while doing the main job
+[0:58] so while you keep reading the newspaper and if small fellow cries then you have to attend to
+[1:06] small thing. So blink the LED every two seconds. That is the main job. If there is an input,
+[1:13] toggle the other LED, same circuit. But to this circuit, we make a small change.
+[1:22] Actually, it's a small addition, not a change, small addition. Now here you can see
+[1:28] this switch connected to in zero pin, in zero pin. That means we are going to use external
+[1:37] interacts. That's why we have connected the switch to in zero pin. That is PD2, port D,
+[1:44] PD2 pin, Arduino pin number 2. Now we add, we do a small addition to this circuit. That is,
+[1:52] we add a capacitor across the switch. Across the switch we add a capacitor,
+[2:00] 100 nano farad capacitor. Now the question is why do we need this capacitor? In parallel to the switch,
+[2:10] in parallel to the switch there's a 100 nano farad capacitor that is 0.1 micro farad capacitor.
+[2:17] Why do we need it? The purpose of this capacitor is to debounce the input. Now the question is
+[2:29] what do you mean by debounce? Debounce means we are going to handle the input bouncing.
+[2:40] Debounce means we are going to handle the input bouncing. This capacitor is to handle input
+[2:46] bouncing. Input bouncing is a problem. To handle that problem, we use the capacitor. So, we call it
+[2:53] a debounce capacitor. Now, a lot of questions we have. What the meaning of input bouncing?
+[3:01] How a capacitor can debounce the input bouncing? Let's see.
+[3:06] debouncing inputs. Before we move into debouncing, we should know about bouncing.
+[3:16] Contact bounce on mechanical switchers. Now, this is a mechanical switch. The mechanical switchers
+[3:24] have a problem. The problem is contact bounce. What is contact bounce? Right. So, when you press
+[3:34] these switches, when you turn on
+[3:36] off these switches,
+[3:39] their contacts
+[3:40] inside, they have contacts,
+[3:42] they collide together.
+[3:44] They collide together.
+[3:47] Right? To on
+[3:48] and off the switch, the
+[3:50] contacts collide together.
+[3:53] But
+[3:53] instead of producing a single
+[3:57] clean connection,
+[3:59] they bounce
+[4:00] several times very
+[4:02] quickly due to their momentum. The contacts bounce several times very quickly due to their momentum.
+[4:12] So you don't get one single clean connection. You don't get one single clean connection.
+[4:21] You get several bounces right very quickly due to their momentum. Now for example,
+[4:30] If you have pull up a port pin, that means pin is high, voltage 5 volts.
+[4:39] And you have connected the switch to that port pin.
+[4:44] Now, when the switch is in the release position, you have not pressed.
+[4:50] Then the port pin is high because you have pulled up the port pin.
+[4:54] Port pin is high when the switch you have not pressed.
+[4:58] But when you press the switch, right, the other side of the switch you have connected to the ground.
+[5:06] So, when you press the switch, the port becomes low, 0 volts.
+[5:12] And input bouncing happens.
+[5:15] Look at this.
+[5:16] Now, you have pulled up the port pit, 5 volts.
+[5:21] Switch release.
+[5:23] And the other side of the switch you have connected to the ground.
+[5:26] Then you press the switch.
+[5:28] So, the port pin goes low and the port voltage becomes, port pin voltage becomes zero.
+[5:37] So, this is the switch on moment.
+[5:39] So, this is a very clear high to low, very clear high to low state transition.
+[5:49] However, you can't expect this kind of clean connection.
+[5:54] What actually happens is when you press the switch, the contacts, they bounce very rapidly.
+[6:03] And then they settle.
+[6:05] Then they settle.
+[6:07] They bounce, contacts bounce several times very quickly.
+[6:11] And then they settle.
+[6:13] So this is not a clear state change.
+[6:16] And as a result, the microcontroller sees this kind of pulses.
+[6:22] high, low, again high, low, high, low, high, low, high, low, high, low and then low.
+[6:31] Because of this contact bouncing you get this kind of pulses.
+[6:37] Not just one pulse but multiple pulses.
+[6:42] So result a series of rapid voltage changes.
+[6:47] So, you press the button, then voltage of the port pin goes high to low, but that doesn't go very clean. So, what happens is there will be a rapid input bouncing. So, as a result, there will be multiple high-low cycles.
+[7:06] So microcontroller may misinterpret this as not a one state change, but a series of state changes. But actually what happened was one state change. But microcontroller may misinterpret that as a series of state changes.
+[7:29] If the interrupts are enabled, microcontroller may interrupt the CPU multiple times.
+[7:38] You wanted to interrupt the CPU only one time, but microcontroller interrupts the CPU multiple times.
+[7:46] Because microcontroller misinterprets these input bounds as a series of inputs.
+[7:54] Not one input, but multiple inputs.
+[7:55] So, microcontroller will interrupt the CPU multiple times.
+[8:01] Can you understand this problem?
+[8:07] So, it's the kind of error of the body, sir?
+[8:13] That is not an error.
+[8:14] That is the nature of mechanical switches.
+[8:18] When you turn on a switch or turn off a switch,
+[8:21] it is not one clear connection
+[8:24] Because their contacts, when they collide, they bounce several times, very rapidly.
+[8:31] Before they settle, due to their momentum, there is mechanical switch contacts.
+[8:37] When you are on a switch, you expect the contacts to touch each other at once.
+[8:46] No, that doesn't happen. What happens is they touch each other and then bounce several times
+[8:56] before they settle. And again, when you off the switch, you expect the contacts to
+[9:02] right? I mean, move away from each other. But that doesn't happen at once. So, they bounce
+[9:11] several times and then they move away due to their momentum. So this is called input
+[9:19] bouncing. So we want to have one state change but the microcontroller may misinterpret
+[9:28] this input bouncing as multiple state changes. If you have enabled the interrupts,
+[9:36] the microcontroller will interrupt the CPU multiple times.
+[9:41] Now, this is a problem.
+[9:42] The problem is, now let's say you have an LED to toggle when there is an input.
+[9:49] You provided the input by pressing the button.
+[9:52] You expect the LED to toggle.
+[9:55] But LED is toggled multiple times.
+[9:59] Because microcontroller misinterpret your input as not a one input, but a series of inputs.
+[10:05] So LED will be
+[10:07] tugged multiple times.
+[10:09] But you provided only one input.
+[10:11] But LED is tugged multiple times.
+[10:14] Because microcontroller
+[10:16] misinterpreted.
+[10:17] You have single input as
+[10:19] series of inputs.
+[10:22] Due to this
+[10:23] input bounce.
+[10:26] Can you understand?
+[10:28] Any question?
+[10:29] No problem, sir.
+[10:33] Okay.
+[10:34] Good.
+[10:35] Okay, all right. Now how do we solve this problem, input-boucer? So we have to debouse the inputs.
+[10:48] We have to debouse the inputs. How do we do that? So we use a capacity. Right, microcontroller may
+[10:56] misinterpret the input. So we use a capacity. So this is the switch
+[11:02] and this is the capacitor connected parallel to the switch and we pull up the microcontroller
+[11:13] pin using by activating the internal pull-up resistor by activating internal pull-up resistor
+[11:20] we pull up the microcontroller pin right now what happens is when the switch is off
+[11:27] off, when the switch is off, capacitor is charged through the internal pull-up resistor.
+[11:37] Through the internal pull-up resistor capacitor is charged. And when you press the switch
+[11:43] or when you on the switch, input bounce, input bouncing happens. Then capacitor discharges
+[11:54] itself and stabilizes the voltage fluctuation in the input. The capacitor will discharge
+[12:04] itself and fill up the gaps in the voltage fluctuation. So when the switch is off, the
+[12:13] capacitor is charged through the internal pull-up resistor and when you on the switch,
+[12:20] input bouncing happens, there will be voltage fluctuations, those fluctuation gaps will be
+[12:27] filled up, will be filled by the capacitor by discharging itself. So, you get a very clean
+[12:35] state change, high to low, one state change, no gaps, gaps will be filled by the capacitor. So,
+[12:43] that is called input debouncing. Input debouncing. Can you understand? Capacitors like a reservoir,
+[12:54] it will hold the charge and when there is the fluctuation of the voltage,
+[13:01] it will discharge itself and fill up the gas. Can you understand this concept input debouncing?
+[13:13] Okay.
+[13:15] Yes.
+[13:18] Nirasha?
+[13:20] Please, sir.
+[13:21] Right.
+[13:23] Now this is the hardware approach.
+[13:26] Capacitor is external hardware company.
+[13:29] Using hardware, we can debounce the input.
+[13:32] This is the hardware approach.
+[13:34] Right.
+[13:35] Then there's a software approach for debouncing inputs.
+[13:39] Software approach.
+[13:40] Using writing couple of lines of code.
+[13:43] writing couple of lines of code, you can debounce, you can handle this input bouncing problem.
+[13:49] You can handle this input bouncing problem by writing couple of lines of codes.
+[13:53] Now I explained you the hardware approach. Yes, Isurid.
+[13:57] Sir, after the wiring the capacitor, how this graph comes?
+[14:08] Which graph?
+[14:10] This one zero.
+[14:12] This one?
+[14:13] Oh, this one?
+[14:14] No.
+[14:15] Yeah.
+[14:16] This one?
+[14:18] Yeah, is it declining?
+[14:20] It is before the capacitor, before connecting the capacitor.
+[14:25] Yeah, after.
+[14:26] After connecting the capacitor, all these voltage gaps will be filled by the capacitor.
+[14:32] So what happens is, okay, I'll draw that graph.
+[14:37] Right.
+[14:40] then all these gaps will be filled by the capacitor and you get this kind of
+[14:51] clear state change. So the capacitor will discharge itself and fill up all these
+[14:57] gaps and the microcontroller will understand this as one state change. No
+[15:06] more gaps. So it is not a declining graph? Sorry? It not becomes a declining graph. What
+[15:19] do you mean by decline graph? Decline graph, I don't have any sign. I don't have any sign.
+[15:27] [unclear — Sinhala / crosstalk]
+[15:57] So, is that clear?
+[16:13] Okay.
+[16:16] Then we discuss about the hardware approach.
+[16:25] but there's a software approach.
+[16:29] By writing
+[16:30] several lines of
+[16:33] codes
+[16:33] we can debouse
+[16:36] inputs.
+[16:38] I want you to find
+[16:41] out the software approach.
+[16:42] I'm not going to discuss that.
+[16:44] That is for you to find out.
+[16:46] Because you know coding.
+[16:48] So I explain you the hardware approach.
+[16:51] I want you to find out
+[16:53] the software approach.
+[16:54] for input debouncing. Okay. Right. Now, let's go to the wiring diagram. So,
+[17:09] software approach for input debouncing, you have to find out. So, hardware approach,
+[17:14] I explained. Now, this is the wiring diagram. Can you understand this diagram?
+[17:18] Now here you can see the int zero pin that is the Arduino pin number two int zero pin connected to
+[17:28] switch and other side of the switch connected to ground and across the switch there is a capacitor
+[17:37] 100 nanofarad pin number eight connected through the 220 ohm resistor to the external LED
+[17:46] and there is onboard LED.
+[17:51] Right.
+[17:52] This is the hardware design.
+[17:56] When the hardware part is over,
+[17:59] then we have to go for firmware.

@@ -1,0 +1,6640 @@
+1
+00:00:00,000 --> 00:00:22,440
+Right. Now, today we are going to discuss a new topic, pulse width modulation. Right. Last week we discussed about timers and the pulse width modulation is related to timers. So with that knowledge we can proceed.
+
+2
+00:00:22,440 --> 00:00:35,359
+Now, so far we have discussed how to get digital input from a sensor, how to capture a digital input from a sensor.
+
+3
+00:00:35,359 --> 00:00:44,939
+In other words, state of real world, state of physical world, how to capture using a digital sensor, we discussed.
+
+4
+00:00:45,280 --> 00:00:52,140
+Then we discussed how to change the state of physical world with a digital actuator.
+
+5
+00:00:52,439 --> 00:00:55,399
+We turn on a light, turn off a light.
+
+6
+00:00:56,140 --> 00:01:02,159
+So we illuminate the physical world, then we turn the physical world into dark.
+
+7
+00:01:02,759 --> 00:01:10,019
+So it's a change of state of the physical world using a digital actuate.
+
+8
+00:01:10,599 --> 00:01:13,780
+Now capture the state of physical world.
+
+9
+00:01:14,480 --> 00:01:16,159
+For example, push button.
+
+10
+00:01:16,799 --> 00:01:18,900
+When you press the button, one state.
+
+11
+00:01:19,040 --> 00:01:21,180
+When you release the button, a different state.
+
+12
+00:01:21,180 --> 00:01:24,239
+We can capture the state of physical world.
+
+13
+00:01:25,159 --> 00:01:34,700
+And we discuss about some sensors, transducers, to capture state of physical world.
+
+14
+00:01:35,180 --> 00:01:37,540
+The flame sensor, it's a digital sensor.
+
+15
+00:01:39,400 --> 00:01:44,939
+So which using that we can capture whether there's a flame or not in the physical world.
+
+16
+00:01:44,939 --> 00:01:52,939
+Then we discuss about how to capture state of physical world, the variation of the state of physical world.
+
+17
+00:01:53,280 --> 00:01:57,680
+Continuous variation of the state of physical world using analog sensors.
+
+18
+00:01:58,140 --> 00:02:01,739
+The variation of light, variation of temperature.
+
+19
+00:02:02,700 --> 00:02:08,780
+So likewise, the state of physical world state is a variation.
+
+20
+00:02:09,180 --> 00:02:11,560
+It's a continuous variation, not a discrete.
+
+21
+00:02:11,560 --> 00:02:16,000
+Now, how to capture them using analog sensors?
+
+22
+00:02:16,439 --> 00:02:25,319
+For example, using a light dependent resistor or LDR or using LM35 like temperature sensors, right?
+
+23
+00:02:25,659 --> 00:02:39,360
+And also under transducers, we discuss about soil moisture sensor, water level sensor, gas sensor, MQ2 gas sensor for LPG, right?
+
+24
+00:02:39,360 --> 00:02:46,060
+So the gas concentration, the variation of the gas concentration, it's not discrete, it's a continuous.
+
+25
+00:02:46,680 --> 00:02:49,460
+How to capture using analog cells.
+
+26
+00:02:49,780 --> 00:02:59,699
+But so far, we couldn't touch, we couldn't discuss how to change the state of physical world using analog actuator.
+
+27
+00:03:00,159 --> 00:03:02,780
+Now we know how to turn on a light, turn off a light.
+
+28
+00:03:03,560 --> 00:03:05,819
+Doing that, we can change the state of physical world.
+
+29
+00:03:05,819 --> 00:03:09,159
+When you turn off the light, physical world is dark.
+
+30
+00:03:09,300 --> 00:03:11,819
+When you turn on the light, physical world, you can illuminate.
+
+31
+00:03:12,599 --> 00:03:13,539
+Change of state.
+
+32
+00:03:14,139 --> 00:03:18,219
+But can't you do that gradually, continuously?
+
+33
+00:03:19,139 --> 00:03:22,879
+For example, can't we dim a light?
+
+34
+00:03:23,280 --> 00:03:28,439
+Not to turn off, not to turn on, but to dim.
+
+35
+00:03:29,180 --> 00:03:32,500
+If the actuator is a motor,
+
+36
+00:03:32,500 --> 00:03:40,680
+right we know how to turn off the motor we know how to couple a motor interface a high power
+
+37
+00:03:40,680 --> 00:03:49,560
+actuator to a microcontroller using a BJT transistor bipolar junction transistor MOSFET
+
+38
+00:03:49,560 --> 00:03:56,500
+metal oxide semiconductor field effect transistors or relays we have discussed and we know how to
+
+39
+00:03:56,500 --> 00:04:02,759
+turn on the transistor. We know how to turn, sorry, we know how to turn on the motor. We know
+
+40
+00:04:02,759 --> 00:04:09,060
+how to turn off the motor. When you turn on the motor, motor runs at its full speed. When you turn
+
+41
+00:04:09,060 --> 00:04:16,839
+off the motor, motor stops. But can't we reduce the speed, right? Can't we gradually slow down
+
+42
+00:04:16,839 --> 00:04:23,279
+the motor, gradually increase the speed? Now, these things are very important in certain
+
+43
+00:04:23,279 --> 00:04:29,759
+applications for example let's say you are planning to develop you are going to develop
+
+44
+00:04:29,759 --> 00:04:39,519
+an autonomous vehicle a small autonomous vehicle not not like the vehicles that google
+
+45
+00:04:39,519 --> 00:04:46,319
+or tesla develop but a small one for a hacker right a line following car right kind of one
+
+46
+00:04:46,319 --> 00:05:02,439
+Now you want to, when your car, small that car, line following car, when it comes to a bend or junction, now you need to turn it to either right side or left side.
+
+47
+00:05:03,000 --> 00:05:05,839
+But then you need to slow down it, right?
+
+48
+00:05:06,879 --> 00:05:15,000
+Otherwise, if you try to, with the same high speed, if you try to take the bend, right, it would be toppled.
+
+49
+00:05:15,480 --> 00:05:16,660
+So we need to slow down.
+
+50
+00:05:17,199 --> 00:05:18,899
+Now how to slow down the motors?
+
+51
+00:05:19,379 --> 00:05:21,779
+Then after you took the turn,
+
+52
+00:05:22,160 --> 00:05:24,980
+then you want to again increase the speed of the motors.
+
+53
+00:05:25,139 --> 00:05:28,040
+How to gradually increase the speed of the motor?
+
+54
+00:05:28,360 --> 00:05:31,360
+Now let's say you are developing a drone,
+
+55
+00:05:31,560 --> 00:05:34,639
+a flight controller for a drone, right?
+
+56
+00:05:34,680 --> 00:05:35,560
+A codcopter.
+
+57
+00:05:35,560 --> 00:05:40,839
+So we call it a codcopter because it has four propellers.
+
+58
+00:05:41,120 --> 00:05:42,639
+Cod, cod means four.
+
+59
+00:05:42,639 --> 00:05:45,600
+copters, four propellers.
+
+60
+00:05:46,120 --> 00:05:47,740
+These four propellers
+
+61
+00:05:47,740 --> 00:05:49,560
+you drive using four motors.
+
+62
+00:05:50,040 --> 00:05:51,600
+Now you want to gradually
+
+63
+00:05:51,600 --> 00:05:53,339
+land the
+
+64
+00:05:53,339 --> 00:05:55,680
+codcopter. If you suddenly land
+
+65
+00:05:55,680 --> 00:05:57,600
+the codcopter, it will be destroyed.
+
+66
+00:05:58,240 --> 00:05:59,399
+That's a crash landing.
+
+67
+00:06:00,100 --> 00:06:01,680
+If you turn off
+
+68
+00:06:01,680 --> 00:06:03,139
+the motors, then it will
+
+69
+00:06:03,139 --> 00:06:04,899
+crash.
+
+70
+00:06:05,759 --> 00:06:07,879
+But you want to gradually, smoothly
+
+71
+00:06:07,879 --> 00:06:09,579
+land it. Gradually
+
+72
+00:06:09,579 --> 00:06:11,480
+take off it. Gradually
+
+73
+00:06:11,480 --> 00:06:18,660
+move forward, gradually move backward so that you have to adjust the speed of the motors
+
+74
+00:06:18,660 --> 00:06:26,079
+gradually. It's not just a turn on, just a turn off. A gradual increase of power, gradual
+
+75
+00:06:26,079 --> 00:06:34,420
+decrease of power, a continuous analog, not digital. Now the question is how to drive
+
+76
+00:06:34,420 --> 00:06:39,579
+analog actuators using a digital computer.
+
+77
+00:06:40,120 --> 00:06:43,100
+Microcontroller is a computer, single chip computer.
+
+78
+00:06:43,220 --> 00:06:44,699
+It's a digital computer.
+
+79
+00:06:45,379 --> 00:06:46,399
+It has a CPU.
+
+80
+00:06:46,560 --> 00:06:49,819
+The CPU can work on ones and zeros.
+
+81
+00:06:50,319 --> 00:06:52,259
+Process of electricity, absence of electricity.
+
+82
+00:06:52,259 --> 00:06:54,420
+That is the only thing that CPU can understand.
+
+83
+00:06:55,000 --> 00:06:59,459
+But the output we need, analog output, to drive analog actuators.
+
+84
+00:06:59,639 --> 00:07:00,800
+Slow down a motor.
+
+85
+00:07:01,740 --> 00:07:03,259
+Increase the speed of a motor.
+
+86
+00:07:03,480 --> 00:07:04,379
+Dim a light.
+
+87
+00:07:04,420 --> 00:07:11,839
+So how to drive analog actuators using digital computers, right?
+
+88
+00:07:12,240 --> 00:07:17,339
+So that's what we are going to discuss under pulse width modulation.
+
+89
+00:07:17,959 --> 00:07:18,600
+Is that clear?
+
+90
+00:07:19,339 --> 00:07:21,399
+Pulse width modulation is a concept.
+
+91
+00:07:22,240 --> 00:07:31,379
+Using that concept, we are going to get an analog-like output, right?
+
+92
+00:07:31,379 --> 00:07:37,560
+Okay, let's first discuss our learning outcomes.
+
+93
+00:07:38,199 --> 00:07:45,199
+On completion of this session, you should be able to explain the need of PWM.
+
+94
+00:07:45,819 --> 00:07:47,600
+I have already discussed that.
+
+95
+00:07:47,779 --> 00:07:49,240
+Why we need PWM?
+
+96
+00:07:49,639 --> 00:07:52,319
+We need PWM to get analog output.
+
+97
+00:07:52,639 --> 00:07:56,899
+Then we can drive analog actuators using a digital computer.
+
+98
+00:07:57,000 --> 00:07:59,040
+We have a digital computer, right?
+
+99
+00:07:59,040 --> 00:08:02,620
+We have a digital computer, we want to drive analog actuators.
+
+100
+00:08:03,019 --> 00:08:04,980
+So that's why we need PWM.
+
+101
+00:08:05,079 --> 00:08:11,939
+PWM is a technique that we use to get analog outputs from a digital computer.
+
+102
+00:08:12,540 --> 00:08:20,660
+Compare duty cycle, sorry compute, duty cycle, frequency and frequency for PWM outputs.
+
+103
+00:08:21,120 --> 00:08:27,439
+For pulse with modulated outputs, there are two properties.
+
+104
+00:08:27,439 --> 00:08:30,639
+Any PWM output, any pulse with modulated output
+
+105
+00:08:30,639 --> 00:08:31,800
+There are two properties
+
+106
+00:08:31,800 --> 00:08:34,600
+We need to pay our attention
+
+107
+00:08:34,600 --> 00:08:36,740
+One is the duty cycle
+
+108
+00:08:36,740 --> 00:08:39,200
+The other one is the frequency
+
+109
+00:08:39,200 --> 00:08:41,259
+Frequency of the output
+
+110
+00:08:41,259 --> 00:08:43,179
+Duty cycle of the output
+
+111
+00:08:43,179 --> 00:08:45,200
+How to compute them
+
+112
+00:08:45,200 --> 00:08:45,940
+Right
+
+113
+00:08:45,940 --> 00:08:48,700
+We need to determine, we need to calculate them
+
+114
+00:08:48,700 --> 00:08:50,120
+Before generating the output
+
+115
+00:08:50,120 --> 00:08:52,179
+How to calculate them
+
+116
+00:08:52,179 --> 00:08:54,159
+Third, learning outcome
+
+117
+00:08:54,159 --> 00:08:56,940
+Describe how time must generate
+
+118
+00:08:56,940 --> 00:09:00,519
+PWM outputs. We discussed timers last week.
+
+119
+00:09:01,179 --> 00:09:04,639
+Now using timers we can generate
+
+120
+00:09:04,639 --> 00:09:08,240
+pulse with modulated outputs. How?
+
+121
+00:09:08,820 --> 00:09:12,820
+The next learning outcome. Explain the functionality
+
+122
+00:09:12,820 --> 00:09:17,100
+of timer counter registers used for
+
+123
+00:09:17,100 --> 00:09:20,840
+PWM. Now if you are going to use timers
+
+124
+00:09:20,840 --> 00:09:24,820
+to generate PWM outputs, you have to use timer
+
+125
+00:09:24,820 --> 00:09:32,960
+count registers. Then what are the registers we need to use for PWM output? Construct a microcontroller
+
+126
+00:09:32,960 --> 00:09:41,679
+based system and program it to generate a PWM output with varying duty cycle. And finally,
+
+127
+00:09:41,679 --> 00:09:47,440
+we are going to put everything into practice. We are going to construct a microcontroller
+
+128
+00:09:47,440 --> 00:09:55,679
+system and programming to generate a PWN pulse with modulated output with a varying duty cycle
+
+129
+00:09:55,679 --> 00:10:04,159
+duty cycle we vary in that output okay let's start pulse with modulation now this pulse with
+
+130
+00:10:04,159 --> 00:10:11,919
+modulation is a technique right the mathematics behind this but without going into mathematics
+
+131
+00:10:11,919 --> 00:10:17,240
+Right. In very simple terms, I will explain you this concept.
+
+132
+00:10:18,279 --> 00:10:20,980
+Right. Let's see what is this concept.
+
+133
+00:10:21,500 --> 00:10:28,419
+First, it's a technique for getting analog like output by means of digital.
+
+134
+00:10:29,019 --> 00:10:32,220
+This word analog like is very important.
+
+135
+00:10:32,840 --> 00:10:35,879
+It is not analog, but analog like.
+
+136
+00:10:36,220 --> 00:10:40,980
+Not true analog. PWM is not true analog.
+
+137
+00:10:40,980 --> 00:10:44,179
+It gives analog like output.
+
+138
+00:10:44,519 --> 00:10:45,740
+Then what is PWM?
+
+139
+00:10:45,799 --> 00:10:46,940
+PWM is digital.
+
+140
+00:10:47,620 --> 00:10:50,799
+Pulse with modulation is a digital technique.
+
+141
+00:10:51,460 --> 00:10:54,879
+Using digital we can get analog like output.
+
+142
+00:10:55,120 --> 00:10:55,460
+Like.
+
+143
+00:10:55,639 --> 00:10:56,580
+Analog like.
+
+144
+00:10:57,039 --> 00:10:58,899
+The users see.
+
+145
+00:10:59,980 --> 00:11:03,259
+Users feel analog like output.
+
+146
+00:11:03,440 --> 00:11:06,299
+But the output is not true analog.
+
+147
+00:11:06,860 --> 00:11:07,860
+Kind of illusion.
+
+148
+00:11:08,779 --> 00:11:09,279
+As bad.
+
+149
+00:11:09,279 --> 00:11:14,720
+But that is not analog. It's truly digital.
+
+150
+00:11:15,639 --> 00:11:17,259
+But it's analog-like.
+
+151
+00:11:17,700 --> 00:11:20,960
+So at least if we can see it like analog, that's okay.
+
+152
+00:11:21,740 --> 00:11:25,440
+We don't care whether it's true or not.
+
+153
+00:11:26,960 --> 00:11:29,840
+It could be true or something else.
+
+154
+00:11:29,919 --> 00:11:31,000
+We don't care about that.
+
+155
+00:11:31,000 --> 00:11:34,379
+If we can feel it like analog, that's it.
+
+156
+00:11:34,779 --> 00:11:39,039
+If we can reduce the speed of a motor gradually, that's it.
+
+157
+00:11:39,279 --> 00:11:42,679
+If we can dim a light, that's it.
+
+158
+00:11:43,100 --> 00:11:45,320
+We don't care whether it's true analog or not.
+
+159
+00:11:45,879 --> 00:11:50,519
+But you should know PWM is not analog.
+
+160
+00:11:51,039 --> 00:11:51,759
+It's digital.
+
+161
+00:11:52,080 --> 00:11:55,919
+But it will give you analog-like effect.
+
+162
+00:11:56,659 --> 00:11:56,899
+Right.
+
+163
+00:11:57,440 --> 00:11:59,179
+Now let's see how it works.
+
+164
+00:11:59,620 --> 00:12:00,700
+It toggles.
+
+165
+00:12:01,179 --> 00:12:01,379
+Right.
+
+166
+00:12:01,440 --> 00:12:04,039
+We toggle a digital output.
+
+167
+00:12:04,480 --> 00:12:06,720
+A digital output fast enough.
+
+168
+00:12:06,720 --> 00:12:13,940
+we toggle a digital output pin, right, the state of a digital output pin fast enough,
+
+169
+00:12:14,360 --> 00:12:23,039
+making any attached device to that pin, making any attached device to that pin to react
+
+170
+00:12:23,039 --> 00:12:33,360
+not to the individual pulse, but to the percentage of time that the output is high in one cycle,
+
+171
+00:12:33,360 --> 00:12:58,539
+PWM toggles a digital output, digital IOP fast enough, making any attached device to that pin to react not to the individual pulses, but to the percentage of time that the output is high in one cycle.
+
+172
+00:12:58,539 --> 00:13:03,679
+Right. A digital output we toggle high, low, high, low.
+
+173
+00:13:04,360 --> 00:13:09,720
+So digital output is, digital outputs can have two values, either high or low.
+
+174
+00:13:10,320 --> 00:13:14,659
+So we change the digital output state of the digital output very fast.
+
+175
+00:13:14,799 --> 00:13:16,320
+High, low, high, low, high, low.
+
+176
+00:13:16,980 --> 00:13:21,220
+Then what happens is the attached device to that output,
+
+177
+00:13:21,220 --> 00:13:31,820
+It reacts not to the individual pulse but to the percentage of time that the output is high in one cycle.
+
+178
+00:13:32,320 --> 00:13:33,820
+Now the situation is this.
+
+179
+00:13:34,240 --> 00:13:35,940
+Computers are digital device.
+
+180
+00:13:36,360 --> 00:13:37,279
+It's a digital device.
+
+181
+00:13:37,379 --> 00:13:38,620
+Computer is a digital device.
+
+182
+00:13:39,139 --> 00:13:41,779
+So it cannot provide analog output.
+
+183
+00:13:42,500 --> 00:13:46,919
+Now we are going to get analog-like output by means of digital.
+
+184
+00:13:46,919 --> 00:13:53,299
+So to get analog-like output by means of digital, what we do is a digital output,
+
+185
+00:13:53,480 --> 00:13:56,120
+we state of a digital output, we toggle.
+
+186
+00:13:56,899 --> 00:14:00,679
+We change the state high, low, high, low, very fast.
+
+187
+00:14:01,059 --> 00:14:06,360
+Then what happens is the attach, any attach device to that output.
+
+188
+00:14:06,799 --> 00:14:11,820
+Let's say a bulb or motor, whatever, attach device to that output.
+
+189
+00:14:11,820 --> 00:14:16,440
+It reacts not to the individual pulses, right?
+
+190
+00:14:16,919 --> 00:14:23,980
+but to the percentage of time that the output is high in one clock cycle.
+
+191
+00:14:23,980 --> 00:14:28,039
+Now let me give you a very simple example.
+
+192
+00:14:28,600 --> 00:14:31,259
+Rather than going into mathematics or physics,
+
+193
+00:14:31,740 --> 00:14:36,700
+using a very simple example, let me explain you this concept.
+
+194
+00:14:37,039 --> 00:14:39,559
+Let's imagine in your room,
+
+195
+00:14:39,559 --> 00:14:49,659
+you, right, in the ceiling, there is a pit, there is a bulb, right, a typical filament bulb,
+
+196
+00:14:50,159 --> 00:14:57,919
+not a fluorescent bulb, not a CFL, not LED, a typical filament bulb is in the room,
+
+197
+00:14:58,919 --> 00:15:05,559
+hanging from the ceiling. Let's imagine. Probably you actually have that kind of one in your room.
+
+198
+00:15:05,559 --> 00:15:16,779
+Right. Now when you turn on the wall switch, you have learned from the school, the electricity you supply to the bulb.
+
+199
+00:15:17,779 --> 00:15:20,860
+Then the electricity, the current goes through the filament.
+
+200
+00:15:21,460 --> 00:15:27,399
+When current goes through the filament, right, the current heats up the filament.
+
+201
+00:15:28,000 --> 00:15:32,720
+As a result, the filament starts emitting light and the heat.
+
+202
+00:15:32,720 --> 00:15:39,500
+I don't know whether you remember the O level of the small grades lessons.
+
+203
+00:15:39,860 --> 00:15:41,120
+I can still remember.
+
+204
+00:16:02,720 --> 00:16:05,059
+Can you remember?
+
+205
+00:16:05,759 --> 00:16:15,639
+Then only it emits the light and the heat.
+
+206
+00:16:25,700 --> 00:16:26,740
+Right.
+
+207
+00:16:27,360 --> 00:16:30,460
+Now, let's do a simple experiment.
+
+208
+00:16:30,460 --> 00:16:35,679
+Now you have a filament bulb hanging from the ceiling.
+
+209
+00:16:35,940 --> 00:16:37,379
+You have a wall switch.
+
+210
+00:16:38,080 --> 00:16:39,299
+You turn on the switch.
+
+211
+00:16:40,000 --> 00:16:45,379
+Then we supply electrical current to the bulb.
+
+212
+00:16:46,019 --> 00:16:48,700
+You turn on the bulb using the switch.
+
+213
+00:16:49,519 --> 00:16:57,200
+But these filament bulbs take very small time to fully turn on.
+
+214
+00:16:57,200 --> 00:17:00,019
+Fully turn on means fully illuminate.
+
+215
+00:17:00,460 --> 00:17:26,859
+The light. It takes small time. It takes small time. It takes small time. It takes time to heat up the filament. It takes time. That's not a big time.
+
+216
+00:17:26,859 --> 00:17:31,200
+A fraction of seconds or couple of seconds very quickly.
+
+217
+00:17:32,180 --> 00:17:32,299
+Right?
+
+218
+00:17:32,779 --> 00:17:34,640
+That happens but it takes some time.
+
+219
+00:17:34,980 --> 00:17:35,660
+Small time.
+
+220
+00:17:36,259 --> 00:17:38,519
+Now our experiment is we turn on the light.
+
+221
+00:17:38,980 --> 00:17:44,859
+Then light takes more time to fully illuminate or fully turn on.
+
+222
+00:17:45,380 --> 00:17:50,460
+So then what we do is before bulb becomes fully turned on.
+
+223
+00:17:50,960 --> 00:17:53,940
+Before bulb becomes fully turned on.
+
+224
+00:17:54,380 --> 00:17:55,400
+We turn off the bulb.
+
+225
+00:17:55,400 --> 00:17:56,839
+We turn off the bulb.
+
+226
+00:17:56,859 --> 00:18:03,900
+using the switch right again bulb takes small time to fully turn off right
+
+227
+00:18:17,980 --> 00:18:25,180
+it takes small amount of time to fully turn off but before it becomes fully turned off
+
+228
+00:18:25,180 --> 00:18:30,180
+Before it becomes fully turned off, we turn on the bulb again.
+
+229
+00:18:30,859 --> 00:18:33,819
+Then it takes little time to fully turn on.
+
+230
+00:18:34,339 --> 00:18:39,319
+But before it becomes fully turned on, we turn off the light again.
+
+231
+00:18:39,940 --> 00:18:43,220
+Then bulb takes more time to fully turn off.
+
+232
+00:18:43,619 --> 00:18:48,220
+But before it becomes fully turned off, we turn on the light again.
+
+233
+00:18:48,740 --> 00:18:54,579
+Now if you do this again very rapidly, switch on off, on off, on off.
+
+234
+00:18:55,180 --> 00:18:56,440
+Very rapidly.
+
+235
+00:18:56,900 --> 00:19:00,440
+Now can you tell me the brightness of the bulb?
+
+236
+00:19:01,440 --> 00:19:03,980
+Is that full brightness?
+
+237
+00:19:04,700 --> 00:19:06,799
+Or no brightness at all?
+
+238
+00:19:07,319 --> 00:19:08,920
+What is the brightness of the bulb?
+
+239
+00:19:09,579 --> 00:19:10,140
+Any answer?
+
+240
+00:19:10,680 --> 00:19:11,960
+You turn on the bulb.
+
+241
+00:19:12,539 --> 00:19:15,259
+Before it becomes fully turned on.
+
+242
+00:19:15,579 --> 00:19:16,920
+That means full bright.
+
+243
+00:19:17,480 --> 00:19:19,380
+Before it comes to that state.
+
+244
+00:19:19,480 --> 00:19:20,119
+We turn off.
+
+245
+00:19:20,119 --> 00:19:24,400
+Then it takes some small time to fully turn off.
+
+246
+00:19:24,400 --> 00:19:31,380
+full dark. But before it comes to that state, we again turn on. And before it comes to full
+
+247
+00:19:31,380 --> 00:19:39,380
+bright state, we turn off. And before it comes fully dark state, we turn on. And we do this
+
+248
+00:19:39,380 --> 00:19:46,619
+again and again very rapidly, turn on, turn off. Now my question is, then what would be the
+
+249
+00:19:46,619 --> 00:19:53,960
+brightness of the bulb? Full brightness, no brightness or something in between? What is
+
+250
+00:19:53,960 --> 00:20:03,519
+your answer? Something in between? Yes. Here you can see that. Turn on, turn off, turn on, turn off,
+
+251
+00:20:03,519 --> 00:20:13,359
+turn on, turn off. Now these are pulses. On, off pulses. You turn on and you keep the switch on
+
+252
+00:20:13,359 --> 00:20:21,299
+small time before bulb comes to the full brightness you turn off. Then you keep the switch off small
+
+253
+00:20:21,299 --> 00:20:27,680
+amount of time. Before bulb comes to the fully turn off state, you turn on. Then you keep the
+
+254
+00:20:27,680 --> 00:20:35,799
+switch on small time. Before bulb comes to the fully turn on, we turn off. And again we keep the
+
+255
+00:20:35,799 --> 00:20:43,279
+switch turn off. Before bulb comes fully turn off, we turn it on. This is the bright. Then we
+
+256
+00:20:43,279 --> 00:20:46,839
+turn on the bulb. Keep the bulb
+
+257
+00:20:46,839 --> 00:20:49,759
+turn on little bit more time.
+
+258
+00:20:50,319 --> 00:20:52,960
+Keep the bulb turn on little bit more time. But
+
+259
+00:20:52,960 --> 00:20:57,259
+before it comes to the fully turn on state we turn it off.
+
+260
+00:20:57,259 --> 00:20:59,819
+Then we keep the switch turn off.
+
+261
+00:21:00,440 --> 00:21:04,599
+But before it comes fully turn off we turn it on.
+
+262
+00:21:05,160 --> 00:21:08,359
+And then we keep the switch turn on little bit more time
+
+263
+00:21:08,359 --> 00:21:10,480
+compared to the previous example.
+
+264
+00:21:10,480 --> 00:21:14,440
+but before it comes to fully turn on
+
+265
+00:21:14,440 --> 00:21:18,420
+we turn it off and keep the light turn off
+
+266
+00:21:18,420 --> 00:21:22,319
+and before it comes fully turn off we turn it on.
+
+267
+00:21:22,880 --> 00:21:26,279
+You can see the brightness. Brightness is little bit more
+
+268
+00:21:26,279 --> 00:21:30,140
+compared to the previous example. Why?
+
+269
+00:21:30,759 --> 00:21:34,539
+The turn on time is more. Now earlier
+
+270
+00:21:34,539 --> 00:21:38,400
+turn on time is less. Now turn on time is
+
+271
+00:21:38,400 --> 00:21:48,180
+more and the third example you can see much brighter the bulb is illuminating much brighter
+
+272
+00:21:48,180 --> 00:21:58,119
+why the turn on time is more and turn off time is less what does that mean when you toggle
+
+273
+00:21:58,119 --> 00:22:06,400
+a digital output very fast the attached device that is the bulb it reacts not to the individual
+
+274
+00:22:06,400 --> 00:22:08,519
+pulses. It doesn't react to individual
+
+275
+00:22:08,519 --> 00:22:10,539
+pulses. If it reacts to the
+
+276
+00:22:10,539 --> 00:22:12,279
+individual pulses, bulb should be
+
+277
+00:22:12,279 --> 00:22:14,460
+on-off. But no,
+
+278
+00:22:14,619 --> 00:22:16,680
+that doesn't happen. What happens
+
+279
+00:22:16,680 --> 00:22:18,500
+is, it reacts to the
+
+280
+00:22:18,500 --> 00:22:19,960
+percentage of time.
+
+281
+00:22:20,480 --> 00:22:22,779
+Amount of time, the output
+
+282
+00:22:22,779 --> 00:22:24,440
+is high in one cycle.
+
+283
+00:22:24,960 --> 00:22:26,720
+Output is high in one
+
+284
+00:22:26,720 --> 00:22:28,299
+cycle. Percentage of time,
+
+285
+00:22:28,680 --> 00:22:30,559
+output is high in one
+
+286
+00:22:30,559 --> 00:22:32,740
+cycle. When you take one cycle,
+
+287
+00:22:33,079 --> 00:22:33,859
+one cycle,
+
+288
+00:22:34,559 --> 00:22:35,900
+the first one,
+
+289
+00:22:36,400 --> 00:22:40,740
+Let's say it's about 20% of time high.
+
+290
+00:22:41,440 --> 00:22:44,359
+The second example 40% of time high.
+
+291
+00:22:45,339 --> 00:22:49,400
+Third one 90% of time high in one cycle.
+
+292
+00:22:50,180 --> 00:22:53,039
+One cycle means you need to start from here.
+
+293
+00:22:53,819 --> 00:22:55,680
+The cycle starts from here.
+
+294
+00:22:56,460 --> 00:22:58,279
+And this is one cycle.
+
+295
+00:22:59,720 --> 00:23:01,500
+Let me draw it.
+
+296
+00:23:02,000 --> 00:23:03,059
+That's a one cycle.
+
+297
+00:23:03,059 --> 00:23:06,559
+This square wave, in the square wave, one cycle.
+
+298
+00:23:07,440 --> 00:23:11,000
+Percentage of time, output is high in one cycle.
+
+299
+00:23:11,420 --> 00:23:14,599
+So 90%, roughly 90% of time, output is high.
+
+300
+00:23:15,059 --> 00:23:17,059
+So the brightness also 90%.
+
+301
+00:23:17,619 --> 00:23:20,160
+40% of time, output is high.
+
+302
+00:23:20,859 --> 00:23:23,799
+Brightness 40%, roughly about 40% brightness.
+
+303
+00:23:24,700 --> 00:23:26,839
+20% of time, output is high.
+
+304
+00:23:26,940 --> 00:23:29,420
+80% of time, output is low.
+
+305
+00:23:30,099 --> 00:23:31,779
+Brightness is proportional to that.
+
+306
+00:23:31,779 --> 00:23:54,839
+Now, when you look at these signals, what are these signals? These are digital signals. On-off. We turn on the switch, we turn off the switch. On-off, digital. But when you look at the bulb, you see a gradual adjustment of the light, the illumination or the brightness, gradual adjustment.
+
+307
+00:23:54,839 --> 00:23:57,460
+That means you have dimmed the light.
+
+308
+00:23:58,000 --> 00:23:59,500
+You have brightened the light.
+
+309
+00:24:00,019 --> 00:24:04,920
+When you look at the bulb, it's like analog.
+
+310
+00:24:05,539 --> 00:24:07,019
+It looks like analog.
+
+311
+00:24:07,819 --> 00:24:11,180
+But actually the output is digital.
+
+312
+00:24:12,059 --> 00:24:16,700
+We got analog-like output by means of digital.
+
+313
+00:24:17,220 --> 00:24:20,759
+We got analog-like output by means of digital.
+
+314
+00:24:21,079 --> 00:24:21,940
+Is that clear?
+
+315
+00:24:22,420 --> 00:24:23,440
+Can you understand?
+
+316
+00:24:23,440 --> 00:24:24,420
+Any question?
+
+317
+00:24:24,839 --> 00:24:26,359
+If not, please let me know.
+
+318
+00:24:26,880 --> 00:24:28,140
+I'm ready to explain again.
+
+319
+00:24:29,319 --> 00:24:29,579
+Isuru?
+
+320
+00:24:30,220 --> 00:24:30,859
+Yes, sir.
+
+321
+00:24:31,220 --> 00:24:31,559
+Binuri?
+
+322
+00:24:32,240 --> 00:24:32,880
+I'm Kisan.
+
+323
+00:24:33,579 --> 00:24:34,059
+Good.
+
+324
+00:24:35,240 --> 00:24:35,720
+Right.
+
+325
+00:24:35,819 --> 00:24:37,160
+This is PWM.
+
+326
+00:24:37,640 --> 00:24:40,740
+You don't need any rocket science to understand PWM.
+
+327
+00:24:41,160 --> 00:24:41,339
+Right.
+
+328
+00:24:42,079 --> 00:24:47,480
+But if you try to read a book on PWM, you would see a lot of mathematics, blah, blah, blah.
+
+329
+00:24:48,980 --> 00:24:53,400
+But using this simple example, very easily you can understand.
+
+330
+00:24:53,400 --> 00:24:55,240
+It's a digital output.
+
+331
+00:24:55,400 --> 00:24:56,579
+It's a digital technique.
+
+332
+00:24:57,039 --> 00:24:59,420
+But we can get analog-like output.
+
+333
+00:25:00,200 --> 00:25:02,140
+Not true analog, but analog-like.
+
+334
+00:25:02,980 --> 00:25:06,220
+Now to get that kind of analog-like output,
+
+335
+00:25:06,220 --> 00:25:11,240
+we have to toggle the output, digital output very fast.
+
+336
+00:25:11,779 --> 00:25:12,519
+Very fast.
+
+337
+00:25:12,660 --> 00:25:13,519
+Fast enough.
+
+338
+00:25:14,119 --> 00:25:14,779
+How fast?
+
+339
+00:25:15,119 --> 00:25:16,079
+The next question.
+
+340
+00:25:16,200 --> 00:25:16,819
+How fast?
+
+341
+00:25:17,119 --> 00:25:19,599
+You have to toggle the output fast enough.
+
+342
+00:25:19,700 --> 00:25:21,740
+You have to turn on off the wall switch.
+
+343
+00:25:22,220 --> 00:25:22,940
+Very fast.
+
+344
+00:25:23,400 --> 00:25:29,019
+If you turn on the switch lazily and then turn off the switch again,
+
+345
+00:25:29,640 --> 00:25:32,819
+you would see light turn on, light turn off.
+
+346
+00:25:32,900 --> 00:25:34,000
+Then it's digital.
+
+347
+00:25:34,880 --> 00:25:36,680
+You have to do it very fast.
+
+348
+00:25:36,680 --> 00:25:43,240
+Then only the light would react to the percentage of time that the output is high in one cycle.
+
+349
+00:25:43,599 --> 00:25:47,119
+To get that effect, you have to do it very fast.
+
+350
+00:25:47,579 --> 00:25:48,920
+The question is how fast?
+
+351
+00:25:49,339 --> 00:25:49,599
+Right.
+
+352
+00:25:49,599 --> 00:26:00,400
+faster than human eye can see any flicker. It should be faster than human eye can see any flicker.
+
+353
+00:26:00,400 --> 00:26:05,920
+We have a guess in the middle of a big waging window.
+
+354
+00:26:06,400 --> 00:26:09,160
+We have a light that goes off and on.
+
+355
+00:26:09,460 --> 00:26:10,299
+Off and on.
+
+356
+00:26:10,440 --> 00:26:12,240
+So we have a guess in the middle of a blink.
+
+357
+00:26:13,039 --> 00:26:15,660
+We have a guess in the middle of a big waging window.
+
+358
+00:26:15,720 --> 00:26:17,400
+We have a headache.
+
+359
+00:26:17,400 --> 00:26:26,640
+accurate now so we have to toggle the output faster than a human eye can see any flicker
+
+360
+00:26:26,640 --> 00:26:38,299
+flicker what does that mean that means let's say for leds the frequency on off frequency
+
+361
+00:26:38,299 --> 00:26:45,720
+must be greater than 100 hertz must be greater than 100 hertz for leds 100 hertz
+
+362
+00:26:45,720 --> 00:26:49,559
+or whatever adukaluk, you would see that flickering effect.
+
+363
+00:26:50,079 --> 00:26:53,819
+That flashing effect you would see. You are going to dim
+
+364
+00:26:53,819 --> 00:26:57,099
+the LED but you would see the flashing effect.
+
+365
+00:26:57,720 --> 00:27:01,400
+Flickering effect. But if you increase the frequency,
+
+366
+00:27:01,400 --> 00:27:04,680
+on off frequency greater than 100 hertz,
+
+367
+00:27:05,359 --> 00:27:09,119
+then you would not see the flickering effect. You would see
+
+368
+00:27:09,119 --> 00:27:13,720
+a gradually fading LED. You can dim the LED.
+
+369
+00:27:13,720 --> 00:27:19,599
+You can brighten the LED without showing any flickering effect.
+
+370
+00:27:20,059 --> 00:27:33,640
+So for LED, right, the frequency, right, the speed you turn on, turn off must be greater than 100 Hz.
+
+371
+00:27:33,980 --> 00:27:34,859
+That is for LEDs.
+
+372
+00:27:35,500 --> 00:27:36,880
+How about some other device?
+
+373
+00:27:37,359 --> 00:27:40,779
+The same theory, greater than 100 Hz?
+
+374
+00:27:40,920 --> 00:27:41,119
+No.
+
+375
+00:27:41,119 --> 00:27:44,920
+The frequency depends on the device that we use.
+
+376
+00:27:45,880 --> 00:27:54,119
+For some devices, if you toggle the output very fast, the device cannot react to the change.
+
+377
+00:27:54,720 --> 00:28:00,140
+If you toggle the output very fast, device would not be able to react to the change.
+
+378
+00:28:00,779 --> 00:28:04,279
+There are some devices, they are very slow.
+
+379
+00:28:04,859 --> 00:28:06,559
+A good example is a motor.
+
+380
+00:28:06,559 --> 00:28:18,559
+Now you know that when you start a motor, when you supply the power to start a motor, the motor would take small time to start.
+
+381
+00:28:19,039 --> 00:28:20,759
+It takes small time to start.
+
+382
+00:28:21,339 --> 00:28:22,259
+Because it's slow.
+
+383
+00:28:22,500 --> 00:28:24,160
+The reaction is very slow.
+
+384
+00:28:24,819 --> 00:28:24,940
+Right.
+
+385
+00:28:25,359 --> 00:28:31,339
+So as soon as you connect the power to the motor, motor doesn't run at the full speed.
+
+386
+00:28:31,500 --> 00:28:33,880
+It takes small time to start.
+
+387
+00:28:33,880 --> 00:28:38,000
+then it takes more time to increase the speed
+
+388
+00:28:38,000 --> 00:28:42,680
+because the motor's reaction time is comparatively large.
+
+389
+00:28:43,119 --> 00:28:44,240
+So it's slow, slow.
+
+390
+00:28:44,599 --> 00:28:45,000
+Start.
+
+391
+00:28:45,619 --> 00:28:47,500
+Take some time to start.
+
+392
+00:28:47,960 --> 00:28:51,420
+So such a device, slow device, right?
+
+393
+00:28:51,420 --> 00:28:58,299
+If you supply a PWM signal
+
+394
+00:28:58,299 --> 00:29:01,519
+by toggling the output very fast,
+
+395
+00:29:01,519 --> 00:29:04,920
+the motor would not react to the change.
+
+396
+00:29:05,460 --> 00:29:07,079
+Motor would not start.
+
+397
+00:29:07,539 --> 00:29:08,619
+It would not start.
+
+398
+00:29:08,920 --> 00:29:11,140
+Because you turn on and quickly turn off.
+
+399
+00:29:11,279 --> 00:29:12,539
+Turn on, quickly turn on.
+
+400
+00:29:13,119 --> 00:29:17,299
+Then it would, it doesn't get the time to start.
+
+401
+00:29:17,539 --> 00:29:20,180
+Because you turn on and immediately you turn off.
+
+402
+00:29:20,640 --> 00:29:22,880
+Because it needs some time to start.
+
+403
+00:29:23,319 --> 00:29:30,200
+For such devices, you have to toggle the output not very fast.
+
+404
+00:29:30,200 --> 00:29:39,119
+That means the toggled output slower than the maximum speed that the device can react to a change.
+
+405
+00:29:39,720 --> 00:29:46,920
+Right. Toggle the output slower than the maximum speed that the device can react to a change.
+
+406
+00:29:47,299 --> 00:29:53,980
+If the output is toggled too fast, device may not start at all.
+
+407
+00:29:53,980 --> 00:30:03,079
+if the output is toggled too fast device may not start at all because these devices slow devices
+
+408
+00:30:03,079 --> 00:30:10,680
+they take time to start small time to start in such situations when you are toggling the output
+
+409
+00:30:10,680 --> 00:30:17,819
+for PWM outputs you need to toggle them slower than the maximum speed that the device can react
+
+410
+00:30:17,819 --> 00:30:20,019
+to a change. Then how do we know
+
+411
+00:30:20,019 --> 00:30:21,539
+these maximum speed
+
+412
+00:30:21,539 --> 00:30:23,460
+or the PWM
+
+413
+00:30:23,460 --> 00:30:25,400
+supported frequency?
+
+414
+00:30:26,259 --> 00:30:27,400
+How do we know?
+
+415
+00:30:28,059 --> 00:30:30,079
+Datasheet. Each and every
+
+416
+00:30:30,079 --> 00:30:31,960
+electronic device, there's
+
+417
+00:30:31,960 --> 00:30:33,619
+a datasheet. Unfortunately,
+
+418
+00:30:34,039 --> 00:30:35,839
+the devices that we buy from
+
+419
+00:30:35,839 --> 00:30:38,200
+the local market, manufactured
+
+420
+00:30:38,200 --> 00:30:39,960
+in China, you
+
+421
+00:30:39,960 --> 00:30:41,140
+can't find the datasheet.
+
+422
+00:30:41,140 --> 00:30:43,160
+But a reliable,
+
+423
+00:30:43,500 --> 00:30:45,500
+good electronic
+
+424
+00:30:45,500 --> 00:30:47,460
+components available
+
+425
+00:30:47,460 --> 00:30:49,599
+from reliable suppliers.
+
+426
+00:30:50,059 --> 00:30:51,220
+Each and every, even
+
+427
+00:30:51,220 --> 00:30:53,299
+for a resistor, there's a
+
+428
+00:30:53,299 --> 00:30:55,500
+data sheet. The data sheet explains
+
+429
+00:30:55,500 --> 00:30:56,359
+all the
+
+430
+00:30:56,359 --> 00:30:59,440
+entire specification of the component.
+
+431
+00:31:00,019 --> 00:31:01,380
+Now, I remember
+
+432
+00:31:01,380 --> 00:31:02,319
+the other day I
+
+433
+00:31:02,319 --> 00:31:05,380
+gave you that kind of website
+
+434
+00:31:05,380 --> 00:31:06,980
+Sparkfun, right?
+
+435
+00:31:07,180 --> 00:31:09,099
+Reliable suppliers, Sparkfun.
+
+436
+00:31:09,440 --> 00:31:11,539
+Online supplier, right?
+
+437
+00:31:12,539 --> 00:31:13,380
+There each and
+
+438
+00:31:13,380 --> 00:31:15,420
+every device they have in
+
+439
+00:31:15,420 --> 00:31:23,380
+their website there's a data sheet from the manufacturer that data sheet explains everything
+
+440
+00:31:23,380 --> 00:31:31,839
+that you need physical dimension of the device operating current operating voltage the how much
+
+441
+00:31:31,839 --> 00:31:40,779
+heat emitted by the device the pwm supported frequency everything with the some hazardous
+
+442
+00:31:40,779 --> 00:31:47,660
+materials used to manufacture the device right like mercury or cadmium kind of materials used
+
+443
+00:31:47,660 --> 00:31:55,039
+in the device everything explained in the data sheet right now what we can do is when we buy
+
+444
+00:31:55,039 --> 00:32:04,720
+the cheap components without data sheet from the local market you can find this the the identical
+
+445
+00:32:04,720 --> 00:32:12,000
+the component that we bought from the local market, you can find an identical clone of that component
+
+446
+00:32:12,000 --> 00:32:20,440
+from that SparkFun website. Because normally what the China, the Chinese manufacturers, what they do
+
+447
+00:32:20,440 --> 00:32:29,200
+is they manufacture all these components in bulk. And for the low cost for Asian countries like
+
+448
+00:32:29,200 --> 00:32:39,440
+Sri Lanka, they send only the device. No packing, no data sheets, nothing. But developed countries
+
+449
+00:32:39,440 --> 00:32:48,640
+like US, Australia, Europe, then they send the device with the package, the packing and the
+
+450
+00:32:48,640 --> 00:32:56,000
+data sheet. Same device. Now what we can do is we can find the identical clone in the SparkFun
+
+451
+00:32:56,000 --> 00:33:02,619
+site and from that we can download the data sheet. Get the cheap device from the PETA,
+
+452
+00:33:03,240 --> 00:33:09,880
+get the data sheet from the Spark one, then learn about the device. Right. So using the data sheet,
+
+453
+00:33:09,880 --> 00:33:19,680
+you can find out different devices that you use. What is the suitable PWM supported frequency?
+
+454
+00:33:19,680 --> 00:33:25,819
+Based on that, you can adjust the PWM frequency in your system, right?
+
+455
+00:33:26,039 --> 00:33:31,720
+So therefore, without any trouble, you can operate your devices.
+
+456
+00:33:32,140 --> 00:33:38,839
+For example, if you operate your device very fast, right?
+
+457
+00:33:38,960 --> 00:33:43,660
+If the device is a slow device, it would not react, right?
+
+458
+00:33:43,740 --> 00:33:45,299
+It would not start at all.
+
+459
+00:33:45,299 --> 00:34:01,059
+If the device is a fast device like LED and if you try to operate it using a slow feed up lever frequency, then you would see that flickering effect.
+
+460
+00:34:01,539 --> 00:34:03,500
+So it should not be slow.
+
+461
+00:34:03,619 --> 00:34:05,079
+It should not be very fast.
+
+462
+00:34:05,539 --> 00:34:12,260
+The proper speed we can find from the data sheet of the device that we are going to use.
+
+463
+00:34:12,539 --> 00:34:13,280
+Is that clear?
+
+464
+00:34:13,860 --> 00:34:14,519
+Any question?
+
+465
+00:34:14,519 --> 00:34:15,679
+Any question?
+
+466
+00:34:16,199 --> 00:34:22,079
+Sir, how do we find the reaction time by the maximum?
+
+467
+00:34:22,639 --> 00:34:23,579
+From the data sheet.
+
+468
+00:34:24,099 --> 00:34:25,880
+The data sheet provides you.
+
+469
+00:34:26,980 --> 00:34:28,699
+So what is the minimum frequency?
+
+470
+00:34:29,159 --> 00:34:30,780
+What is the maximum frequency?
+
+471
+00:34:31,980 --> 00:34:37,900
+That the PWM frequency, this device can react from the data sheet.
+
+472
+00:34:38,320 --> 00:34:41,559
+The rough idea we can give based on our experience.
+
+473
+00:34:41,559 --> 00:34:48,400
+For example, LEDs, the frequency must be greater than 100 Hz, right?
+
+474
+00:34:48,880 --> 00:35:00,179
+And normally for LEDs, we use a frequency between 500 kHz to 1 kHz, right?
+
+475
+00:35:00,260 --> 00:35:07,239
+Normally, sometimes we use 1 kHz frequency, sometimes we use 500 Hz frequency, right?
+
+476
+00:35:07,239 --> 00:35:09,219
+1 kilohertz means 1000 hertz.
+
+477
+00:35:09,800 --> 00:35:15,340
+500 to 1000 hertz we use for LEDs, right, usually, right,
+
+478
+00:35:15,400 --> 00:35:16,679
+practically that's how we use.
+
+479
+00:35:17,199 --> 00:35:22,619
+But for a given LED, so what is the minimum PWM supported frequency?
+
+480
+00:35:22,739 --> 00:35:25,159
+What is the maximum PWM supported frequency?
+
+481
+00:35:25,380 --> 00:35:27,000
+Sometimes there is no maximum one.
+
+482
+00:35:27,639 --> 00:35:28,960
+So upper bound is not a problem.
+
+483
+00:35:29,960 --> 00:35:34,980
+Then all these things you can find from the data sheet, right,
+
+484
+00:35:34,980 --> 00:35:38,699
+of that LED. The manufacturer of the LED releases the data sheet.
+
+485
+00:35:39,179 --> 00:35:43,079
+Different manufacturers, if you take a red LED, different manufacturers,
+
+486
+00:35:44,280 --> 00:35:47,039
+right, when they manufacture, they do slight
+
+487
+00:35:47,039 --> 00:35:50,960
+changes and their data sheet should be a little bit different. But rough idea
+
+488
+00:35:50,960 --> 00:35:53,219
+you can have with a data sheet.
+
+489
+00:35:53,780 --> 00:35:56,920
+What else? Anything else? Right.
+
+490
+00:35:58,059 --> 00:36:01,159
+Now let's talk about duty cycle. Duty cycle
+
+491
+00:36:01,159 --> 00:36:05,099
+means percentage of time that output
+
+492
+00:36:05,099 --> 00:36:09,159
+is high in one cycle. Now we know that the device
+
+493
+00:36:09,159 --> 00:36:13,039
+reacts to the percentage of time
+
+494
+00:36:13,039 --> 00:36:17,199
+that the output is high in one cycle. Here you saw the device
+
+495
+00:36:17,199 --> 00:36:20,920
+attached device react not to the individual pulses
+
+496
+00:36:20,920 --> 00:36:25,300
+but to the percentage of time that the output is high in one
+
+497
+00:36:25,300 --> 00:36:29,460
+cycle, the last line. Now for that last line we have
+
+498
+00:36:29,460 --> 00:36:36,119
+a term. The term is duty cycle. Percentage of time that the output is high in one cycle
+
+499
+00:36:36,119 --> 00:36:42,639
+we call that is the to that the device reacts. Percentage of time that the output is high
+
+500
+00:36:42,639 --> 00:36:50,239
+in one cycle. Right. For that we have a term called duty cycle. Now here you can see a
+
+501
+00:36:50,239 --> 00:36:57,099
+couple of pulses. The cycle time you can see you start from here and one cycle is over
+
+502
+00:36:57,099 --> 00:36:59,800
+end from here. This is one cycle.
+
+503
+00:37:00,059 --> 00:37:02,340
+Start from the top, go down,
+
+504
+00:37:02,880 --> 00:37:04,420
+down, go up,
+
+505
+00:37:04,980 --> 00:37:06,260
+go up. Keep
+
+506
+00:37:06,260 --> 00:37:07,820
+right, the
+
+507
+00:37:07,820 --> 00:37:10,340
+output high. Then
+
+508
+00:37:10,340 --> 00:37:12,360
+before you go down, you
+
+509
+00:37:12,360 --> 00:37:14,059
+come to the end of one cycle.
+
+510
+00:37:14,699 --> 00:37:16,679
+This is one cycle. And that cycle
+
+511
+00:37:16,679 --> 00:37:18,599
+time, the time you need
+
+512
+00:37:18,599 --> 00:37:20,619
+for one cycle, we call cycle
+
+513
+00:37:20,619 --> 00:37:22,679
+time. Another term, period.
+
+514
+00:37:23,300 --> 00:37:24,579
+Period of the
+
+515
+00:37:24,579 --> 00:37:26,679
+wave. This is a
+
+516
+00:37:26,679 --> 00:37:46,679
+square wave period. And this is the time where the pulse is low. This is the time where the pulse is high. Now the attached device reacts to the percentage of time that the output is high.
+
+517
+00:37:46,679 --> 00:37:58,280
+Now in one clock cycle, this is one clock cycle, in this clock cycle roughly 30% of time output is high, 70% of time output is low.
+
+518
+00:37:59,300 --> 00:38:07,320
+This is roughly, now in one clock cycle roughly 30% of time output is high, 70% of time output is low.
+
+519
+00:38:07,920 --> 00:38:12,860
+That percentage of time that the output is high, we call duty cycle.
+
+520
+00:38:12,860 --> 00:38:17,599
+Duty cycle is percentage of time that the output is high.
+
+521
+00:38:18,300 --> 00:38:19,679
+How do we calculate that?
+
+522
+00:38:20,119 --> 00:38:21,800
+Time output is high.
+
+523
+00:38:22,000 --> 00:38:23,340
+Time output is high.
+
+524
+00:38:23,719 --> 00:38:27,320
+Time output is high plus time output is low.
+
+525
+00:38:28,280 --> 00:38:30,059
+High time, low time.
+
+526
+00:38:30,659 --> 00:38:31,059
+Both.
+
+527
+00:38:32,119 --> 00:38:35,320
+Divide the high time by total time.
+
+528
+00:38:36,300 --> 00:38:37,559
+Multiplied by 100.
+
+529
+00:38:37,559 --> 00:38:42,460
+Then you get percentage of time that the output is high.
+
+530
+00:38:42,860 --> 00:38:50,900
+Percentage of time that the output is high, that is to what the device reacts, we call duty cycle.
+
+531
+00:38:51,480 --> 00:38:53,699
+And high time plus low time.
+
+532
+00:38:54,320 --> 00:38:56,059
+High time, low time.
+
+533
+00:38:56,119 --> 00:38:58,860
+When you add them together, that is the cycle time.
+
+534
+00:38:59,440 --> 00:39:02,179
+Time, the output is high.
+
+535
+00:39:02,480 --> 00:39:04,000
+Time, the output is low.
+
+536
+00:39:04,099 --> 00:39:06,480
+When you add them together, that is cycle time.
+
+537
+00:39:06,980 --> 00:39:08,460
+Cycle time means period.
+
+538
+00:39:08,460 --> 00:39:14,440
+So high time divided by period multiplied by 100 you get the duty cycle.
+
+539
+00:39:14,739 --> 00:39:17,940
+High time means pulse width.
+
+540
+00:39:18,559 --> 00:39:24,300
+This pulse width, width of the pulse that is the high time which is called pulse width.
+
+541
+00:39:24,800 --> 00:39:31,920
+So duty cycle means pulse width divided by cycle time period multiplied by 100.
+
+542
+00:39:32,340 --> 00:39:35,760
+Pulse width divided by period multiplied by 100.
+
+543
+00:39:35,760 --> 00:39:41,559
+For a given frequency, cycle time, that is period, is fixed.
+
+544
+00:39:41,559 --> 00:39:45,360
+For a given frequency, the period is fixed.
+
+545
+00:39:45,480 --> 00:39:45,699
+Why?
+
+546
+00:39:46,480 --> 00:39:50,539
+Frequency equals 1 divided by time.
+
+547
+00:39:51,340 --> 00:39:54,780
+If the frequency is fixed, time is fixed.
+
+548
+00:39:55,239 --> 00:40:01,239
+For a given frequency, the cycle time for period, another word, period is fixed.
+
+549
+00:40:01,780 --> 00:40:01,920
+Right.
+
+550
+00:40:01,920 --> 00:40:04,179
+Therefore if this is fixed
+
+551
+00:40:04,179 --> 00:40:06,639
+When you adjust the pulse width
+
+552
+00:40:06,639 --> 00:40:09,079
+When you can increase the pulse width
+
+553
+00:40:09,079 --> 00:40:11,079
+Or decrease when you adjust the pulse width
+
+554
+00:40:11,079 --> 00:40:12,679
+You can adjust
+
+555
+00:40:12,679 --> 00:40:14,960
+The percentage of time
+
+556
+00:40:14,960 --> 00:40:16,900
+That the output is high
+
+557
+00:40:16,900 --> 00:40:17,860
+In one cycle
+
+558
+00:40:17,860 --> 00:40:19,719
+When you adjust the pulse width
+
+559
+00:40:19,719 --> 00:40:21,719
+Either increase or decrease
+
+560
+00:40:21,719 --> 00:40:23,760
+That means you adjust
+
+561
+00:40:23,760 --> 00:40:25,820
+The percentage of time
+
+562
+00:40:25,820 --> 00:40:28,159
+That the output is high in one cycle
+
+563
+00:40:28,159 --> 00:40:29,280
+That means
+
+564
+00:40:29,280 --> 00:40:31,800
+You are changing
+
+565
+00:40:31,800 --> 00:40:40,920
+duty cycle. So by varying the pulse width, you can vary the duty cycle accordingly, right?
+
+566
+00:40:41,659 --> 00:40:49,940
+You can vary the reaction of the attached device. Why? Attached device reacts to the percentage of
+
+567
+00:40:49,940 --> 00:40:54,780
+time that the output is high. Attached device reacts to the percentage of time that the output
+
+568
+00:40:54,780 --> 00:41:01,380
+is high in one cycle. Percentage of time that the output is high in one cycle is the pulse width.
+
+569
+00:41:01,380 --> 00:41:10,920
+By adjusting the pulse width, you can adjust the percentage of time that the output is high in one cycle because period is fixed for a given frequency.
+
+570
+00:41:11,340 --> 00:41:19,400
+That means by changing, by varying the pulse width, you can vary the percentage of time that the output is high in one cycle.
+
+571
+00:41:20,159 --> 00:41:22,960
+That means you can vary the duty cycle.
+
+572
+00:41:23,719 --> 00:41:28,320
+Doing that, you can vary the reaction of the attached device.
+
+573
+00:41:28,320 --> 00:41:34,880
+If the attached device is a bulb, whether to brighten the bulb or dim the bulb.
+
+574
+00:41:35,559 --> 00:41:39,920
+If it is attached device is a motor, slow down the motor or increase the speed.
+
+575
+00:41:40,679 --> 00:41:44,360
+You can do by varying the pulse, right?
+
+576
+00:41:44,860 --> 00:41:48,619
+Changing the pulse or modulating the pulse.
+
+577
+00:41:48,960 --> 00:41:51,320
+That's why we call it pulse with modulation.
+
+578
+00:41:51,699 --> 00:41:52,360
+Is that clear?
+
+579
+00:41:52,739 --> 00:41:53,840
+If not, let me know.
+
+580
+00:41:54,219 --> 00:41:55,079
+I can explain it.
+
+581
+00:41:55,480 --> 00:41:56,039
+Any question?
+
+582
+00:41:56,039 --> 00:41:56,159
+No.
+
+583
+00:41:58,320 --> 00:42:28,320
+[unclear — Sinhala / crosstalk]
+
+584
+00:42:28,320 --> 00:42:29,039
+modulation.
+
+585
+00:42:29,599 --> 00:42:33,599
+Right. Good.
+
+586
+00:42:34,099 --> 00:42:36,280
+Then, let's talk about
+
+587
+00:42:36,280 --> 00:42:38,480
+average voltage.
+
+588
+00:42:39,119 --> 00:42:40,320
+Now, to
+
+589
+00:42:40,320 --> 00:42:41,900
+measure the voltage,
+
+590
+00:42:42,940 --> 00:42:44,239
+we can use two
+
+591
+00:42:44,239 --> 00:42:46,320
+instruments. One is well
+
+592
+00:42:46,320 --> 00:42:47,739
+known voltmeter.
+
+593
+00:42:48,460 --> 00:42:50,260
+Right. One instrument is well
+
+594
+00:42:50,260 --> 00:42:52,179
+known. It's called voltmeter.
+
+595
+00:42:52,500 --> 00:42:54,659
+And it is a part of the multimeters.
+
+596
+00:42:55,500 --> 00:42:56,239
+Probably you have
+
+597
+00:42:56,239 --> 00:43:02,980
+used or you have seen multimeters. The multimeter means it can measure three things. It can measure
+
+598
+00:43:02,980 --> 00:43:12,900
+volt. It has a voltmeter. It has a meter using that you can measure current and it has a ohm
+
+599
+00:43:12,900 --> 00:43:20,519
+meter or it can measure the resistance. It has ohm meter, a meter and a voltmeter. When you put
+
+600
+00:43:20,519 --> 00:43:26,599
+them together you get multimeter. So using a multimeter you can select either voltmeter,
+
+601
+00:43:26,599 --> 00:43:33,059
+emmeter or ohm meter. So you can measure voltage, current and the resistance. Now in the modern
+
+602
+00:43:33,059 --> 00:43:40,360
+multimeters there are other functionalities as well. In addition to these three basic
+
+603
+00:43:40,360 --> 00:43:49,719
+functionalities the modern multimeters can measure capacitance of a capacitor. They can
+
+604
+00:43:49,719 --> 00:43:53,639
+measure inductance of inductor coil. They can
+
+605
+00:43:53,639 --> 00:43:57,320
+measure frequency. Various other
+
+606
+00:43:57,320 --> 00:44:01,800
+functionalities they provide. But to call them
+
+607
+00:44:01,800 --> 00:44:05,599
+as a multimeter, they must provide those
+
+608
+00:44:05,599 --> 00:44:09,400
+three basic functionalities. Voltmeter functionality,
+
+609
+00:44:10,039 --> 00:44:13,300
+emeter functionality and ohmmeter functionality.
+
+610
+00:44:13,300 --> 00:44:16,019
+And also there are separate voltmeters.
+
+611
+00:44:16,019 --> 00:44:31,619
+But we usually use multimeters because, right, they are very useful because we can use them to measure different properties of an electronic circuit.
+
+612
+00:44:32,340 --> 00:44:36,579
+Current, voltage, resistance, we can measure.
+
+613
+00:44:37,099 --> 00:44:38,699
+And there's another device.
+
+614
+00:44:39,280 --> 00:44:45,460
+Using that, we can visualize the voltage change against the time, right?
+
+615
+00:44:45,460 --> 00:44:49,760
+Sometimes voltage is fixed against the time, no change.
+
+616
+00:44:50,400 --> 00:44:55,019
+But in most cases, voltage varies against the time, right?
+
+617
+00:44:55,440 --> 00:45:05,760
+The variation of voltage against the time, we can visualize using an instrument called oscilloscope.
+
+618
+00:45:06,380 --> 00:45:10,179
+The oscilloscope shows voltage versus time.
+
+619
+00:45:10,179 --> 00:45:36,760
+A graph. The x-axis is the time. Y-axis is the voltage. It shows how voltage varies against the time. Oscilloscope. Oscilloscope is expensive instrument. Right. A good multimeter you can buy less than 10,000 rupees. Good multimeter means very accurate. Right. Reliable one. Right.
+
+620
+00:45:36,760 --> 00:45:44,699
+For example, Japanese made, not Chinese, Japanese made very reliable, right?
+
+621
+00:45:44,920 --> 00:45:51,840
+An accurate multimeter you can buy for 7,000, 8,000, less than 10,000 rupees.
+
+622
+00:45:52,159 --> 00:45:55,679
+The Chinese ones you can buy for even 1,000 rupees or less than 1,000.
+
+623
+00:45:56,119 --> 00:45:59,280
+They are not very accurate and not very reliable.
+
+624
+00:45:59,280 --> 00:46:12,480
+But compared to multimeter, if you are trying to buy an oscilloscope, even a cheap Chinese oscilloscope is about 40,000, 50,000 rupees.
+
+625
+00:46:12,980 --> 00:46:14,019
+Cheap Chinese one.
+
+626
+00:46:14,480 --> 00:46:21,019
+A good Japanese one, if you try to buy, right, you may have to spend a lot of money.
+
+627
+00:46:21,880 --> 00:46:24,460
+Probably 500,000 Lakshapahakwitha.
+
+628
+00:46:24,900 --> 00:46:27,980
+So it's a very expensive equipment.
+
+629
+00:46:27,980 --> 00:46:28,820
+Right.
+
+630
+00:46:29,280 --> 00:46:45,960
+Now, I am going to show you few voltages, actually not few voltages, few PWM outputs measured using an oscilloscope as well as multimeter.
+
+631
+00:46:46,460 --> 00:46:48,139
+Right, look at this one.
+
+632
+00:46:48,579 --> 00:46:56,440
+The oscilloscope shows you the voltage against the time, x-axis time, y-axis voltage.
+
+633
+00:46:56,440 --> 00:47:00,460
+The voltage is zero against the time.
+
+634
+00:47:00,619 --> 00:47:02,519
+No variation of the voltage.
+
+635
+00:47:02,960 --> 00:47:04,860
+Against the time it is zero.
+
+636
+00:47:05,139 --> 00:47:08,539
+And the multimeter, I have selected multimeter volt.
+
+637
+00:47:09,179 --> 00:47:11,139
+There are three things multimeter can measure.
+
+638
+00:47:11,300 --> 00:47:13,179
+Ampere, volt and resistance.
+
+639
+00:47:13,780 --> 00:47:15,239
+But here voltage selected.
+
+640
+00:47:15,980 --> 00:47:18,719
+Voltmeter also says zero volts.
+
+641
+00:47:19,059 --> 00:47:22,639
+So both instruments say zero volts.
+
+642
+00:47:23,059 --> 00:47:23,219
+Right.
+
+643
+00:47:23,219 --> 00:47:34,139
+That means the output we get from the embedded system, the voltage of the output we get from the embedded system is 0.
+
+644
+00:47:34,619 --> 00:47:37,219
+Against the time, it is 0. Fix.
+
+645
+00:47:38,059 --> 00:47:44,219
+The oscilloscope shows voltage against the time is 5 volts.
+
+646
+00:47:45,239 --> 00:47:49,000
+The multimeter voltmeter also shows 5 volts.
+
+647
+00:47:49,000 --> 00:47:55,360
+That means the output we get from the embedded system, the voltage of the output is 5.
+
+648
+00:47:56,619 --> 00:48:01,800
+Oscilloscope shows the variation of the voltage against the type.
+
+649
+00:48:02,460 --> 00:48:13,599
+The voltage 0 then goes to 5, remains 5, then goes to 0 again and remains at 0, goes to 5,
+
+650
+00:48:13,599 --> 00:48:15,400
+remains at 5
+
+651
+00:48:15,400 --> 00:48:17,320
+goes to 0
+
+652
+00:48:17,320 --> 00:48:19,519
+remains at 0
+
+653
+00:48:19,519 --> 00:48:20,559
+goes to 5
+
+654
+00:48:20,559 --> 00:48:22,260
+remains at 5
+
+655
+00:48:22,260 --> 00:48:23,460
+goes to 0
+
+656
+00:48:23,460 --> 00:48:25,159
+remains at 0
+
+657
+00:48:25,159 --> 00:48:27,500
+how voltage variation
+
+658
+00:48:27,500 --> 00:48:30,059
+happens against the time
+
+659
+00:48:30,059 --> 00:48:31,300
+oscilloscope shows
+
+660
+00:48:31,300 --> 00:48:32,900
+square wave
+
+661
+00:48:32,900 --> 00:48:34,940
+now there is that same output
+
+662
+00:48:34,940 --> 00:48:37,980
+that you can see on the
+
+663
+00:48:37,980 --> 00:48:39,079
+oscilloscope
+
+664
+00:48:39,079 --> 00:48:41,300
+if you measure the same output
+
+665
+00:48:41,300 --> 00:48:49,500
+using a volt meter. What would be the reading of volt meter? Now if you, this is one clock cycle.
+
+666
+00:48:49,860 --> 00:48:58,360
+Start, this is one clock cycle. One cycle. One cycle. In a one cycle, how much time output is high?
+
+667
+00:48:58,780 --> 00:49:08,260
+How much time output is low? Right? Using this grid, you can count how many grid points high,
+
+668
+00:49:08,260 --> 00:49:17,000
+two grid points high, two grid points low. That means percentage of 50% of time, this is the time
+
+669
+00:49:17,000 --> 00:49:25,780
+axis, 50% of time output is high, 50% of time output is low in one clock cycle. In one clock
+
+670
+00:49:25,780 --> 00:49:36,300
+cycle, 50% of output high, 50% of output low. That means duty cycle is 50%. If the 50% of
+
+671
+00:49:36,300 --> 00:49:39,659
+out time cycle is high.
+
+672
+00:49:40,380 --> 00:49:43,619
+Right. What is the voltage at that output?
+
+673
+00:49:44,019 --> 00:49:46,920
+Now here you can see in this example
+
+674
+00:49:46,920 --> 00:49:51,099
+50% of time output is high.
+
+675
+00:49:51,579 --> 00:49:54,980
+Another 50% of time output is low.
+
+676
+00:49:54,980 --> 00:49:58,139
+Right. Now in one clock cycle.
+
+677
+00:49:58,559 --> 00:50:01,300
+Right. In one cycle. In one cycle. Right.
+
+678
+00:50:01,739 --> 00:50:05,679
+50% of time high. 50% of time low.
+
+679
+00:50:06,300 --> 00:50:13,739
+right in one clock side now the question is voltage at output how do we calculate
+
+680
+00:50:13,739 --> 00:50:24,219
+voltage at height multiplied by percentage of time output is high voltage at high is 5 volts
+
+681
+00:50:24,780 --> 00:50:35,739
+percentage of time output is high is 50 so what is the voltage at this output 2.5 volts because
+
+682
+00:50:35,739 --> 00:50:46,139
+percentage 50 of time voltage is 5 other 50 of time voltage is 0.50 of time voltage is 5.50
+
+683
+00:50:46,139 --> 00:50:55,980
+percent of time voltage is 0. so what is the voltage at output 50 of voltage at high voltage
+
+684
+00:50:55,980 --> 00:51:04,460
+at high is 5 how long you get that output 50 of time then what is the voltage 2.5 if you measure
+
+685
+00:51:04,460 --> 00:51:13,760
+using a multimeter, you get this 2.5. Can you understand? The output is digital. You get 5050
+
+686
+00:51:13,760 --> 00:51:21,659
+voltage. But we rapidly toggle that output. High, low, high, low. 5 volt, 0 volt. 5 volt, 0 volt.
+
+687
+00:51:21,900 --> 00:51:29,559
+Rapidly. As a result, even multimeter cannot recognize it as a digital output. The voltmeter
+
+688
+00:51:29,559 --> 00:51:36,599
+as 2.5 but oscilloscope if you connect oscilloscope oscilloscope will tell you the truth
+
+689
+00:51:37,239 --> 00:51:45,719
+it won't show you 2.5 volt output it will tell you this is 50 of time this is 5 volt
+
+690
+00:51:45,719 --> 00:51:52,199
+50 of time this is zero volts this is digital oscilloscope shows you the truth
+
+691
+00:51:52,199 --> 00:51:58,460
+but multimeter or the voltmeter cannot recognize the true situation.
+
+692
+00:51:59,000 --> 00:52:02,780
+The multimeter or the voltmeter is like human beings, right?
+
+693
+00:52:03,059 --> 00:52:07,699
+We see that voltage has reduced to 2.5.
+
+694
+00:52:08,159 --> 00:52:10,920
+That's why the connected bulb got dimmed.
+
+695
+00:52:11,539 --> 00:52:14,239
+We feel like that is analog output.
+
+696
+00:52:14,780 --> 00:52:18,820
+Even the multimeter or the voltmeter says it's 2.5.
+
+697
+00:52:18,820 --> 00:52:19,980
+But that's not the truth.
+
+698
+00:52:19,980 --> 00:52:29,900
+the the real the truth the true situation the true output is it's a digital output it's high
+
+699
+00:52:29,900 --> 00:52:37,659
+and low 50 of time only the oscilloscope can tell us the truth can you understand any question no
+
+700
+00:52:38,219 --> 00:52:48,219
+right then now let's say you want to get not 2.5 you want to get 1.25 volts then what is the duty
+
+701
+00:52:48,219 --> 00:52:55,860
+cycle that you sent. Now in this example your duty cycle is 50. 50% duty cycle. You got 2.5.
+
+702
+00:52:56,179 --> 00:53:03,199
+If you want to get 1.25 volts what should be your duty cycle or what should be the percentage of
+
+703
+00:53:03,199 --> 00:53:14,360
+time that the output is high to get 1.25. 25% very good. If you want to get if the duty cycle
+
+704
+00:53:14,360 --> 00:53:24,099
+Oh, if the due cycle is 75% and if you measure the output using a voltmeter, what would be the voltage?
+
+705
+00:53:24,739 --> 00:53:25,659
+3.75.
+
+706
+00:53:26,059 --> 00:53:27,000
+3.75.
+
+707
+00:53:27,420 --> 00:53:29,320
+Can others understand?
+
+708
+00:53:31,260 --> 00:53:32,639
+If not, please tell me.
+
+709
+00:53:32,679 --> 00:53:33,119
+Don't hesitate.
+
+710
+00:53:33,760 --> 00:53:34,199
+That's your end.
+
+711
+00:53:34,719 --> 00:53:36,460
+Aruni, is that okay?
+
+712
+00:53:37,119 --> 00:53:38,960
+Aruni, I couldn't hear you.
+
+713
+00:53:40,219 --> 00:53:41,599
+No, sorry, I don't hear you.
+
+714
+00:53:44,360 --> 00:53:48,400
+And now I just now heard your sound, right?
+
+715
+00:53:48,539 --> 00:53:52,539
+But still not clear whether you can understand this or not.
+
+716
+00:53:53,539 --> 00:53:55,019
+Can you understand this?
+
+717
+00:53:55,400 --> 00:53:55,960
+Yes, sir.
+
+718
+00:53:56,039 --> 00:53:56,460
+All right.
+
+719
+00:53:56,519 --> 00:53:56,719
+Okay.
+
+720
+00:53:57,099 --> 00:53:57,920
+So how about others?
+
+721
+00:53:58,480 --> 00:53:59,019
+Excuse me, sir.
+
+722
+00:53:59,320 --> 00:53:59,519
+Yeah.
+
+723
+00:53:59,519 --> 00:54:02,940
+Sir, I have a multimeter.
+
+724
+00:54:04,320 --> 00:54:07,519
+I have a voltage.
+
+725
+00:54:07,519 --> 00:54:11,559
+I have a very claser, the would the only one?
+
+726
+00:54:11,539 --> 00:54:13,559
+I have a very go-kid, the hec-ball,
+
+727
+00:54:13,559 --> 00:54:14,179
+the on-fac-ball,
+
+728
+00:54:14,179 --> 00:54:14,360
+the in-c-ball,
+
+729
+00:54:14,360 --> 00:54:14,420
+the in-c-ball,
+
+730
+00:54:14,420 --> 00:54:14,420
+
+
+731
+00:54:14,420 --> 00:54:14,500
+the the.
+
+732
+00:54:14,500 --> 00:54:14,420
+the.
+
+733
+00:54:14,420 --> 00:54:14,420
+
+
+734
+00:54:14,420 --> 00:54:14,420
+
+
+735
+00:54:14,420 --> 00:54:14,420
+
+
+736
+00:54:14,420 --> 00:54:14,420
+
+
+737
+00:54:14,420 --> 00:54:14,420
+
+
+738
+00:54:14,420 --> 00:54:14,420
+
+
+739
+00:54:14,420 --> 00:54:14,420
+
+
+740
+00:54:14,420 --> 00:54:14,420
+
+
+741
+00:54:14,420 --> 00:54:14,420
+
+
+742
+00:54:14,420 --> 00:54:14,420
+
+
+743
+00:54:14,420 --> 00:54:14,420
+
+
+744
+00:54:14,420 --> 00:54:14,420
+
+
+745
+00:54:14,420 --> 00:54:14,420
+
+
+746
+00:54:14,420 --> 00:54:14,420
+
+
+747
+00:54:14,420 --> 00:54:14,420
+
+
+748
+00:54:14,420 --> 00:54:14,420
+
+
+749
+00:54:14,420 --> 00:54:14,420
+
+
+750
+00:54:14,420 --> 00:54:14,420
+
+
+751
+00:54:14,420 --> 00:54:14,420
+
+
+752
+00:54:14,420 --> 00:54:14,420
+
+
+753
+00:54:14,420 --> 00:54:14,420
+
+
+754
+00:54:14,420 --> 00:54:14,420
+
+
+755
+00:54:14,420 --> 00:54:14,420
+
+
+756
+00:54:14,420 --> 00:54:14,420
+
+
+757
+00:54:14,420 --> 00:54:14,420
+
+
+758
+00:54:14,420 --> 00:54:14,420
+
+
+759
+00:54:14,420 --> 00:54:14,420
+
+
+760
+00:54:14,420 --> 00:54:14,420
+
+
+761
+00:54:14,420 --> 00:54:14,420
+
+
+762
+00:54:14,420 --> 00:54:14,420
+
+
+763
+00:54:14,420 --> 00:54:14,420
+
+
+764
+00:54:14,420 --> 00:54:14,420
+
+
+765
+00:54:14,420 --> 00:54:14,420
+
+
+766
+00:54:14,420 --> 00:54:14,420
+
+
+767
+00:54:14,420 --> 00:54:14,420
+
+
+768
+00:54:14,420 --> 00:54:44,420
+[unclear — Sinhala / crosstalk]
+
+769
+00:54:44,420 --> 00:54:46,420
+Sir, what do you mean?
+
+770
+00:54:46,420 --> 00:54:52,420
+The output voltage is LED, so you can supply the voltage.
+
+771
+00:54:52,420 --> 00:54:54,420
+No, sir.
+
+772
+00:54:54,420 --> 00:55:01,420
+If you use the diffuser and LED bulbs, you can supply the main supply.
+
+773
+00:55:01,420 --> 00:55:12,420
+So, if you use the output voltage, you can use the voltage.
+
+774
+00:55:12,420 --> 00:55:13,800
+I have a say, the right wot�
+
+775
+00:55:13,800 --> 00:55:13,360
+to the shat, the rs, the mame, sot, a t
+
+776
+00:55:13,360 --> 00:55:14,360
+I have a look.
+
+777
+00:55:14,360 --> 00:55:14,599
+I have a look.
+
+778
+00:55:14,599 --> 00:55:14,860
+I have a look.
+
+779
+00:55:14,860 --> 00:55:15,019
+I have a look.
+
+780
+00:55:15,019 --> 00:55:15,239
+I have a look.
+
+781
+00:55:15,239 --> 00:55:15,360
+I have a look.
+
+782
+00:55:15,360 --> 00:55:15,619
+I have a look.
+
+783
+00:55:15,619 --> 00:55:15,760
+I have a look.
+
+784
+00:55:15,760 --> 00:55:15,940
+I have a look.
+
+785
+00:55:15,940 --> 00:55:16,079
+I have a look.
+
+786
+00:55:16,079 --> 00:55:16,219
+I have a look.
+
+787
+00:55:16,219 --> 00:55:16,320
+I have a look.
+
+788
+00:55:16,320 --> 00:55:16,420
+I have a look.
+
+789
+00:55:16,420 --> 00:55:16,519
+I have a look.
+
+790
+00:55:16,519 --> 00:55:16,639
+I have a look.
+
+791
+00:55:16,639 --> 00:55:16,739
+I have a look.
+
+792
+00:55:16,739 --> 00:55:16,860
+I have a look.
+
+793
+00:55:16,860 --> 00:55:17,000
+I have a look.
+
+794
+00:55:17,000 --> 00:55:17,079
+I have a look.
+
+795
+00:55:17,079 --> 00:55:17,179
+I have a look.
+
+796
+00:55:17,179 --> 00:55:17,280
+I have a look.
+
+797
+00:55:17,280 --> 00:55:17,380
+I have a look.
+
+798
+00:55:17,380 --> 00:55:17,519
+I have a look.
+
+799
+00:55:17,519 --> 00:55:17,639
+I have a look.
+
+800
+00:55:17,639 --> 00:55:17,699
+I have a look.
+
+801
+00:55:17,699 --> 00:55:17,800
+I have a look.
+
+802
+00:55:17,800 --> 00:55:17,940
+I have a look.
+
+803
+00:55:17,940 --> 00:55:18,079
+I have a look.
+
+804
+00:55:18,079 --> 00:55:18,239
+I have a look.
+
+805
+00:55:18,239 --> 00:55:18,400
+I have a look.
+
+806
+00:55:18,400 --> 00:55:18,539
+I have a look.
+
+807
+00:55:18,539 --> 00:55:18,679
+I have a look.
+
+808
+00:55:43,360 --> 00:55:46,360
+If you don't have a problem, you can't get it.
+
+809
+00:55:46,360 --> 00:55:48,360
+This is what it is.
+
+810
+00:55:48,360 --> 00:55:56,360
+The average, percentage of time that the output is high in one clock cycle, not to individual pulses.
+
+811
+00:55:56,360 --> 00:56:05,360
+Not to the individual pulses but to the percentage of time that the output is high in one cycle.
+
+812
+00:56:05,360 --> 00:56:10,360
+If you don't have a cycle, you can't get it high.
+
+813
+00:56:10,360 --> 00:56:37,360
+I said this is an illusion.
+
+814
+00:56:37,360 --> 00:56:50,960
+Anything else? Any other question? Right. Then how PWM outputs are generated? The next question.
+
+815
+00:56:50,960 --> 00:56:58,599
+Now we know what is PWM. We know how to get the average voltage calculated. If you know the duty
+
+816
+00:56:58,599 --> 00:57:03,920
+cycle, if you know the percentage of time that the output is high in one clock cycle, you can
+
+817
+00:57:03,920 --> 00:57:09,800
+multiply that with the voltage when the output is high. If the voltage when the
+
+818
+00:57:09,800 --> 00:57:15,800
+output is high is 5 and the percentage of time that the output is high is 50%
+
+819
+00:57:15,800 --> 00:57:23,360
+then the voltage if you measure using a volt meter you get 2.5. If the voltage
+
+820
+00:57:23,360 --> 00:57:30,099
+when output is high is 5 and the percentage of time that the
+
+821
+00:57:30,099 --> 00:57:37,079
+output is high in one clock cycle is 25%. That means if you measure the output using a multimeter
+
+822
+00:57:37,079 --> 00:57:45,400
+voltage, output would be 1.25. If the voltage when the output is high is 5 volts and the
+
+823
+00:57:45,400 --> 00:57:50,800
+percentage of time that the output is high in one clock cycle is 75%, that is duty cycle,
+
+824
+00:57:50,800 --> 00:57:57,739
+if you multiply them, you get 3.75 volts. We know that. Now the next question,
+
+825
+00:57:57,739 --> 00:58:02,360
+how these PWM outputs are generated.
+
+826
+00:58:02,960 --> 00:58:05,579
+How the PWM outputs are generated.
+
+827
+00:58:06,360 --> 00:58:06,780
+Let's see.
+
+828
+00:58:07,300 --> 00:58:11,219
+We use timers to generate PWM outputs.
+
+829
+00:58:11,940 --> 00:58:14,739
+We use, let's say we use 8-bit time.
+
+830
+00:58:15,440 --> 00:58:16,920
+And this is the 8-bit time.
+
+831
+00:58:17,579 --> 00:58:17,679
+Right?
+
+832
+00:58:18,400 --> 00:58:19,360
+It's the 8-bit time.
+
+833
+00:58:19,360 --> 00:58:24,659
+Now we know that the oscillator generates clock pulses.
+
+834
+00:58:25,000 --> 00:58:26,880
+Oscillator generates clock pulses.
+
+835
+00:58:26,880 --> 00:58:34,039
+internal oscillator generates clock pulse and that oscillator frequency we can reduce using a
+
+836
+00:58:34,039 --> 00:58:39,900
+prescaler so this is the oscillator oscillator generates clock pulses the oscillate output
+
+837
+00:58:39,900 --> 00:58:49,760
+frequency we can scale down using a prescaler and then we feed that scale down pulses clock pulses
+
+838
+00:58:49,760 --> 00:58:51,280
+to the timer.
+
+839
+00:58:51,980 --> 00:58:53,480
+TCNT register.
+
+840
+00:58:53,800 --> 00:58:55,519
+Timer counter register.
+
+841
+00:58:56,039 --> 00:58:57,280
+TCNT register.
+
+842
+00:58:57,559 --> 00:58:59,880
+We know that for each clock pulse
+
+843
+00:58:59,880 --> 00:59:01,840
+TCNT register
+
+844
+00:59:01,840 --> 00:59:02,719
+increments.
+
+845
+00:59:03,219 --> 00:59:05,699
+Each clock pulse TCNT register
+
+846
+00:59:05,699 --> 00:59:07,539
+increments. TCNT
+
+847
+00:59:07,539 --> 00:59:09,860
+register counts for each
+
+848
+00:59:09,860 --> 00:59:11,539
+clock pulse from
+
+849
+00:59:11,539 --> 00:59:13,639
+0 to 255
+
+850
+00:59:13,639 --> 00:59:14,900
+because 8 bit time.
+
+851
+00:59:15,960 --> 00:59:17,420
+This is 8 bit register.
+
+852
+00:59:17,420 --> 00:59:21,280
+Maximum value the register can hold 255.
+
+853
+00:59:21,579 --> 00:59:24,039
+It counts from 0 to 255.
+
+854
+00:59:24,340 --> 00:59:30,360
+And then it overflows back to 0 and again starts counting from 0.
+
+855
+00:59:30,840 --> 00:59:32,440
+That's how timers work.
+
+856
+00:59:33,000 --> 00:59:36,199
+Now depending on the duty cycle you require.
+
+857
+00:59:36,400 --> 00:59:44,179
+Duty cycle means percentage of time that output is high in one clock cycle.
+
+858
+00:59:44,179 --> 00:59:52,199
+Depending on the duty cycle you need, you assign a value to this register, OCR register.
+
+859
+00:59:52,659 --> 00:59:53,940
+OCR register.
+
+860
+00:59:54,300 --> 00:59:57,219
+OCR means output compare register.
+
+861
+00:59:57,760 --> 00:59:59,300
+Output compare register.
+
+862
+00:59:59,679 --> 01:00:03,699
+Here I have used the simple N to indicate the timer number.
+
+863
+01:00:04,480 --> 01:00:06,960
+If it is timer 0, OCR 0.
+
+864
+01:00:08,119 --> 01:00:09,300
+TCNT 0.
+
+865
+01:00:09,559 --> 01:00:12,420
+If it is timer 1, OCR 1.
+
+866
+01:00:12,420 --> 01:00:14,440
+T, C and T1.
+
+867
+01:00:15,159 --> 01:00:17,139
+Timer number. OCR A
+
+868
+01:00:17,139 --> 01:00:19,059
+means there is another OCR
+
+869
+01:00:19,059 --> 01:00:20,659
+register called OCR B.
+
+870
+01:00:21,280 --> 01:00:22,179
+Every timer
+
+871
+01:00:22,179 --> 01:00:25,199
+there are two OCR registers.
+
+872
+01:00:25,380 --> 01:00:26,920
+Output compare registers.
+
+873
+01:00:27,420 --> 01:00:29,139
+OCR A, OCR
+
+874
+01:00:29,139 --> 01:00:31,280
+B. Right. In this example
+
+875
+01:00:31,280 --> 01:00:33,019
+I have used only OCR
+
+876
+01:00:33,019 --> 01:00:35,219
+A. Output compare
+
+877
+01:00:35,219 --> 01:00:37,219
+register A of timer
+
+878
+01:00:37,219 --> 01:00:39,260
+N. Timer N means timer number.
+
+879
+01:00:39,260 --> 01:00:41,239
+So the depending on
+
+880
+01:00:41,239 --> 01:00:43,360
+the duty cycle required.
+
+881
+01:00:43,960 --> 01:00:45,780
+We assign a value to OCR.
+
+882
+01:00:46,400 --> 01:00:49,119
+For example, if you need 50% duty cycle,
+
+883
+01:00:49,639 --> 01:00:53,860
+that means you want to get 2.5 volts from the output pin.
+
+884
+01:00:54,860 --> 01:00:57,159
+50% duty cycle means 2.5 volts.
+
+885
+01:00:57,559 --> 01:01:00,179
+Because normally when the output is high, it is 5 volts.
+
+886
+01:01:00,739 --> 01:01:03,739
+50% of time output is high means 2.5 volts.
+
+887
+01:01:03,739 --> 01:01:09,320
+So if you want to get 2.5 volts output or 50% duty cycle,
+
+888
+01:01:09,320 --> 01:01:13,380
+we load 127 to the OCR.
+
+889
+01:01:13,760 --> 01:01:16,880
+The maximum value OCR register can hold is
+
+890
+01:01:16,880 --> 01:01:21,460
+255 because 8 bit register.
+
+891
+01:01:22,739 --> 01:01:25,380
+255. 50% of that
+
+892
+01:01:25,380 --> 01:01:29,559
+127. If you want to get 50% UD cycle
+
+893
+01:01:29,559 --> 01:01:33,719
+we load 127 to OCR register. If you want to get
+
+894
+01:01:33,719 --> 01:01:37,739
+25% UD cycle, 1.25
+
+895
+01:01:37,739 --> 01:01:40,059
+volts output. 25%
+
+896
+01:01:40,059 --> 01:01:41,000
+duty cycle low.
+
+897
+01:01:41,659 --> 01:01:43,619
+1.25 volts output.
+
+898
+01:01:44,300 --> 01:01:45,360
+Then we elude
+
+899
+01:01:45,360 --> 01:01:47,820
+63 to OCR.
+
+900
+01:01:48,400 --> 01:01:49,739
+25% means
+
+901
+01:01:49,739 --> 01:01:50,900
+one quad.
+
+902
+01:01:51,420 --> 01:01:53,679
+One quad of 255 means
+
+903
+01:01:53,679 --> 01:01:54,519
+63.
+
+904
+01:01:55,239 --> 01:01:57,239
+So what is the formula?
+
+905
+01:01:57,239 --> 01:01:59,119
+Let me write it.
+
+906
+01:01:59,500 --> 01:02:00,420
+Duty cycle
+
+907
+01:02:00,420 --> 01:02:03,639
+equals OCR value
+
+908
+01:02:03,639 --> 01:02:04,860
+plus 1
+
+909
+01:02:04,860 --> 01:02:06,980
+multiplied by 100
+
+910
+01:02:06,980 --> 01:02:17,420
+divided by n plus 1 where n means maximum value timer can count.
+
+911
+01:02:17,739 --> 01:02:18,559
+This is the formula.
+
+912
+01:02:19,420 --> 01:02:23,659
+So if it is 80 time, what is the maximum value timer can count?
+
+913
+01:02:24,139 --> 01:02:24,820
+251.
+
+914
+01:02:24,820 --> 01:02:29,139
+So if you want to get a required duty cycle,
+
+915
+01:02:29,619 --> 01:02:35,599
+what you have to do is OCR value plus 1 multiplied by 100
+
+916
+01:02:35,599 --> 01:02:38,579
+divided by n plus 1.
+
+917
+01:02:38,679 --> 01:02:42,719
+n is the maximum value that the timer can count.
+
+918
+01:02:43,280 --> 01:02:45,179
+Let's do a simple calculation.
+
+919
+01:02:45,840 --> 01:02:46,219
+POT.
+
+920
+01:02:47,000 --> 01:02:51,039
+OCR value, let's say 127 plus 1.
+
+921
+01:02:51,719 --> 01:02:57,219
+Maximum timer can count up to 255 plus 1 multiplied by 100.
+
+922
+01:02:58,119 --> 01:03:01,119
+128, 256, 50%.
+
+923
+01:03:01,119 --> 01:03:05,280
+If you put 127 for OCR, you get 50% UD cycle.
+
+924
+01:03:05,599 --> 01:03:09,719
+If you put 63 to OCR, you get 25% duty cycle.
+
+925
+01:03:09,719 --> 01:03:17,019
+So likewise, depending on the duty cycle you need, you have to put a value.
+
+926
+01:03:17,139 --> 01:03:21,159
+You have to assign a value to OCR, output compare register.
+
+927
+01:03:21,699 --> 01:03:21,880
+Right.
+
+928
+01:03:22,440 --> 01:03:24,079
+Then there's a comparator.
+
+929
+01:03:24,739 --> 01:03:26,219
+Comparator can compare.
+
+930
+01:03:26,860 --> 01:03:28,179
+That's why we call it comparative.
+
+931
+01:03:28,840 --> 01:03:29,119
+Right.
+
+932
+01:03:29,940 --> 01:03:31,480
+Now here you can see the comparator.
+
+933
+01:03:31,960 --> 01:03:33,219
+Comparator can compare.
+
+934
+01:03:33,860 --> 01:03:34,639
+Compare what?
+
+935
+01:03:34,639 --> 01:03:37,099
+TCNT register value
+
+936
+01:03:37,099 --> 01:03:38,860
+and the OCR register value.
+
+937
+01:03:39,440 --> 01:03:40,280
+It can compare.
+
+938
+01:03:41,480 --> 01:03:42,539
+These two values,
+
+939
+01:03:43,300 --> 01:03:44,179
+the comparator
+
+940
+01:03:44,179 --> 01:03:46,940
+compares. Whenever
+
+941
+01:03:46,940 --> 01:03:49,280
+a compare match occurs,
+
+942
+01:03:49,760 --> 01:03:51,420
+when the comparator compares
+
+943
+01:03:51,420 --> 01:03:53,500
+OCR value and the TCNT
+
+944
+01:03:53,500 --> 01:03:55,400
+value, now you know
+
+945
+01:03:55,400 --> 01:03:57,440
+that OCR value is fixed.
+
+946
+01:03:58,079 --> 01:03:59,559
+We put 187
+
+947
+01:03:59,559 --> 01:04:01,460
+if we need 50%,
+
+948
+01:04:01,460 --> 01:04:02,599
+we resign.
+
+949
+01:04:02,599 --> 01:04:05,300
+we put 63 if you need
+
+950
+01:04:05,300 --> 01:04:08,300
+25% unit cycle. Likewise, you put some
+
+951
+01:04:08,300 --> 01:04:11,500
+value into OCR which is fixed. But the
+
+952
+01:04:11,500 --> 01:04:13,960
+TCNT register value is not fixed.
+
+953
+01:04:14,679 --> 01:04:17,579
+Because every clock cycle TCNT counts.
+
+954
+01:04:18,119 --> 01:04:20,219
+TCNT in three months. And the
+
+955
+01:04:20,219 --> 01:04:22,960
+comparator compares the two registers. When
+
+956
+01:04:22,960 --> 01:04:26,139
+comparator compares two registers, in one
+
+957
+01:04:26,139 --> 01:04:29,400
+moment, the value of the OCR
+
+958
+01:04:29,400 --> 01:04:31,980
+register and the TCNT register
+
+959
+01:04:31,980 --> 01:04:34,199
+they match. For example,
+
+960
+01:04:34,320 --> 01:04:36,079
+if you put 127 to OCR,
+
+961
+01:04:36,300 --> 01:04:38,219
+let's assume a TCNT
+
+962
+01:04:38,219 --> 01:04:40,219
+counts from 0, 1, 2,
+
+963
+01:04:40,380 --> 01:04:42,300
+3, it counts for every clock cycle.
+
+964
+01:04:42,400 --> 01:04:44,599
+When it comes to 127,
+
+965
+01:04:45,780 --> 01:04:46,400
+TCNT
+
+966
+01:04:46,400 --> 01:04:47,679
+comes to the 127,
+
+967
+01:04:48,059 --> 01:04:49,739
+a compare match occurs.
+
+968
+01:04:50,360 --> 01:04:52,039
+A match occurs.
+
+969
+01:04:52,500 --> 01:04:53,519
+The comparator
+
+970
+01:04:53,519 --> 01:04:55,800
+compares two registers
+
+971
+01:04:55,800 --> 01:04:58,519
+and whenever a match occurs,
+
+972
+01:04:59,099 --> 01:05:00,519
+comparator sets
+
+973
+01:05:00,519 --> 01:05:02,519
+OCF bit.
+
+974
+01:05:03,059 --> 01:05:04,619
+OCF bit of
+
+975
+01:05:04,619 --> 01:05:07,000
+TIFR register.
+
+976
+01:05:07,420 --> 01:05:09,059
+When there's a match occurs
+
+977
+01:05:09,059 --> 01:05:11,000
+between two registers,
+
+978
+01:05:11,739 --> 01:05:12,840
+comparator sets
+
+979
+01:05:12,840 --> 01:05:14,619
+OCF bit.
+
+980
+01:05:15,179 --> 01:05:16,440
+OCF bit means
+
+981
+01:05:16,440 --> 01:05:18,840
+output compare
+
+982
+01:05:18,840 --> 01:05:20,440
+match flag.
+
+983
+01:05:21,059 --> 01:05:22,900
+OCF means output
+
+984
+01:05:22,900 --> 01:05:24,880
+compare match flag.
+
+985
+01:05:25,460 --> 01:05:26,699
+Output compare
+
+986
+01:05:26,699 --> 01:05:27,659
+match flag.
+
+987
+01:05:28,500 --> 01:05:30,300
+That flag bit is set.
+
+988
+01:05:30,519 --> 01:05:32,059
+Where is that flag bit?
+
+989
+01:05:32,880 --> 01:05:37,539
+That flag is in TIFR register.
+
+990
+01:05:38,019 --> 01:05:41,920
+Interrupt, time interrupt flag register.
+
+991
+01:05:42,139 --> 01:05:45,219
+TIFR means time interrupt flag register.
+
+992
+01:05:45,320 --> 01:05:46,679
+We have used that register earlier.
+
+993
+01:05:46,679 --> 01:05:52,059
+The TIFR register, time interrupt flag register contains a special flag bit,
+
+994
+01:05:52,639 --> 01:05:56,780
+which is called OCF, output compare match flag.
+
+995
+01:05:56,940 --> 01:05:58,119
+That bit is set.
+
+996
+01:05:58,119 --> 01:06:03,440
+That bit tells the CPU a compare match occurred.
+
+997
+01:06:04,219 --> 01:06:06,639
+It tells the CPU a compare match occurred.
+
+998
+01:06:06,980 --> 01:06:14,260
+And not only that, comparator sets this bit and triggers waveform generator.
+
+999
+01:06:14,719 --> 01:06:21,360
+And comparator sets the bit and also it triggers waveform generator.
+
+1000
+01:06:21,360 --> 01:06:27,900
+Waveform generator generates pulses with the required pulse.
+
+1001
+01:06:28,440 --> 01:06:32,980
+Waveform generator generates pulses with required pulse.
+
+1002
+01:06:33,400 --> 01:06:35,159
+That means required due recycle.
+
+1003
+01:06:35,599 --> 01:06:42,699
+And the generated PWM output is available through OCP.
+
+1004
+01:06:43,460 --> 01:06:44,199
+OCP.
+
+1005
+01:06:44,880 --> 01:06:47,880
+Output compare pin of the microcontroller.
+
+1006
+01:06:48,360 --> 01:06:48,960
+OCP.
+
+1007
+01:06:48,960 --> 01:06:52,719
+So here I have used simple N to indicate the timer number.
+
+1008
+01:06:53,500 --> 01:06:55,820
+If the timer is 0, this is 0.
+
+1009
+01:06:55,980 --> 01:06:58,079
+If the timer is 1, simple N is 1.
+
+1010
+01:06:58,300 --> 01:07:02,900
+Likewise, A means there are two pins, OC pins.
+
+1011
+01:07:03,360 --> 01:07:06,780
+OC A, OC B for each time.
+
+1012
+01:07:07,320 --> 01:07:12,380
+For example, timer 0 has OC 0 A, OC 0 B.
+
+1013
+01:07:13,480 --> 01:07:17,719
+Timer 1 has OC 1 A, OC 1 B.
+
+1014
+01:07:17,719 --> 01:07:23,420
+Likewise, two pins, OC pins, output compare pins for each time.
+
+1015
+01:07:23,880 --> 01:07:29,400
+So the PWM, generated PWM output is available through OC pin.
+
+1016
+01:07:29,739 --> 01:07:44,820
+Now if the OCR value is 127 and if you measure the voltage at OC pin, OC pin voltage if you measure using a voltmeter, it would show you 2.5 volts.
+
+1017
+01:07:44,820 --> 01:07:46,260
+Why? This is 127.
+
+1018
+01:07:46,260 --> 01:07:49,380
+127 means 50% duty cycle.
+
+1019
+01:07:49,820 --> 01:07:55,139
+50% duty cycle means 50% of time output is high in one clock cycle.
+
+1020
+01:07:55,980 --> 01:07:58,420
+When output is high, voltage is 5.
+
+1021
+01:07:58,920 --> 01:08:01,519
+5 into 50%, 2.5.
+
+1022
+01:08:01,619 --> 01:08:07,340
+So when you measure the voltage, if you measure the voltage of OCP, you would get 2.5 volts.
+
+1023
+01:08:07,340 --> 01:08:15,260
+If you put 63 to OCR, then when you measure the voltage at OCP, you get 1.25 volts.
+
+1024
+01:08:15,260 --> 01:08:21,760
+Because if you put 63 to OCR, that means you get 25% duty cycle.
+
+1025
+01:08:21,920 --> 01:08:25,300
+25% duty cycle means 1.25 volts.
+
+1026
+01:08:25,520 --> 01:08:27,979
+Because when output is high, it's 5 volts.
+
+1027
+01:08:28,420 --> 01:08:30,840
+5 into 25%, 1.25.
+
+1028
+01:08:31,340 --> 01:08:34,659
+So the comparator compares two registers.
+
+1029
+01:08:35,979 --> 01:08:39,819
+When a match occurs, it sets this bit OCF,
+
+1030
+01:08:40,380 --> 01:08:44,500
+output compare match flag bit of timer interrupt flag register.
+
+1031
+01:08:44,500 --> 01:08:46,539
+and also it triggers
+
+1032
+01:08:46,539 --> 01:08:47,779
+waveform generator.
+
+1033
+01:08:48,399 --> 01:08:50,220
+The waveform generator generates
+
+1034
+01:08:50,220 --> 01:08:52,340
+pulses with required
+
+1035
+01:08:52,340 --> 01:08:54,420
+pulse width and the
+
+1036
+01:08:54,420 --> 01:08:56,479
+generated PWM
+
+1037
+01:08:56,479 --> 01:08:58,539
+output is available through
+
+1038
+01:08:58,539 --> 01:09:00,439
+output compare pin
+
+1039
+01:09:00,439 --> 01:09:01,479
+OCP.
+
+1040
+01:09:02,180 --> 01:09:02,979
+Every time
+
+1041
+01:09:02,979 --> 01:09:06,100
+there are two OCR
+
+1042
+01:09:06,100 --> 01:09:08,199
+registers, OCR A
+
+1043
+01:09:08,199 --> 01:09:09,119
+OCR B.
+
+1044
+01:09:09,880 --> 01:09:12,500
+Therefore, every time I can
+
+1045
+01:09:12,500 --> 01:09:14,119
+compare two
+
+1046
+01:09:14,119 --> 01:09:18,199
+compare values. Every timer can compare two values
+
+1047
+01:09:18,199 --> 01:09:22,399
+with the TC and T register. Because there are two
+
+1048
+01:09:22,399 --> 01:09:26,579
+OCR registers. OCR A, OCR B. So every timer
+
+1049
+01:09:26,579 --> 01:09:30,800
+can compare two values against TC and T register.
+
+1050
+01:09:31,199 --> 01:09:34,020
+And then every timer can generate
+
+1051
+01:09:34,020 --> 01:09:38,260
+two pulse width modulated outputs. And those two pulse width
+
+1052
+01:09:38,260 --> 01:09:42,659
+modulated outputs the timer can make available
+
+1053
+01:09:42,659 --> 01:09:45,659
+through OCA and OCD pins.
+
+1054
+01:09:46,460 --> 01:09:49,539
+Because there are two OCA and OCD pins.
+
+1055
+01:09:49,539 --> 01:09:52,979
+So through them, the two PWM outputs,
+
+1056
+01:09:53,680 --> 01:09:55,159
+the timer can make available.
+
+1057
+01:09:55,819 --> 01:09:59,539
+Now we know that ATmega328P microcontroller
+
+1058
+01:09:59,539 --> 01:10:00,659
+has three timers.
+
+1059
+01:10:01,119 --> 01:10:03,359
+Timer 0, timer 1, timer 2.
+
+1060
+01:10:03,960 --> 01:10:06,539
+Every timer, two OCR registers,
+
+1061
+01:10:07,439 --> 01:10:10,479
+two waveform generators, two OC pins.
+
+1062
+01:10:10,479 --> 01:10:14,380
+That means every timer can generate two PWM outputs.
+
+1063
+01:10:14,840 --> 01:10:17,460
+ATmega 328p microcontroller has three timers.
+
+1064
+01:10:17,600 --> 01:10:26,579
+That means ATmega 328p microcontroller can generate six PWM outputs.
+
+1065
+01:10:27,020 --> 01:10:27,699
+Three timers.
+
+1066
+01:10:28,579 --> 01:10:31,340
+Each timer, two PWM outputs you can get.
+
+1067
+01:10:31,800 --> 01:10:37,640
+That means ATmega 328p microcontroller can provide six PWM outputs.
+
+1068
+01:10:37,640 --> 01:10:38,659
+That's right.
+
+1069
+01:10:38,659 --> 01:10:42,880
+Arduino UNO board has six PWM supported pins.
+
+1070
+01:10:43,260 --> 01:10:46,819
+On the UNO board, the PWM supported pins are
+
+1071
+01:10:46,819 --> 01:10:50,880
+denoted using a
+
+1072
+01:10:50,880 --> 01:10:54,939
+small symbol, the tilt character, Panwa character
+
+1073
+01:10:54,939 --> 01:10:58,359
+using, it is denoted on the board.
+
+1074
+01:10:58,859 --> 01:11:02,859
+If you check the board, you would see there are six PWM supported pins
+
+1075
+01:11:02,859 --> 01:11:06,939
+on the board. Why? The chip, the microcontroller
+
+1076
+01:11:06,939 --> 01:11:17,659
+can support six PWM outputs. Why? The microcontroller has three timers. Each timer can provide two PWM outputs.
+
+1077
+01:11:18,300 --> 01:11:25,819
+So altogether six. Because each timer has two OCR registers, two OC pins, two waveform generators.
+
+1078
+01:11:25,819 --> 01:11:28,000
+Is that clear? Any question?
+
+1079
+01:11:36,939 --> 01:11:43,939
+Yes, it is the time to calculate the formula.
+
+1080
+01:11:43,939 --> 01:11:46,939
+Excuse me sir.
+
+1081
+01:11:46,939 --> 01:11:52,939
+Why there is time account control registers too?
+
+1082
+01:11:52,939 --> 01:11:54,939
+Why there is two of them?
+
+1083
+01:11:54,939 --> 01:11:57,939
+Not related to this.
+
+1084
+01:11:57,939 --> 01:11:59,939
+Can you ask question again?
+
+1085
+01:11:59,939 --> 01:12:05,939
+In the previous, the time account control register,
+
+1086
+01:12:05,939 --> 01:12:09,840
+Only one time account register.
+
+1087
+01:12:10,460 --> 01:12:12,579
+Only one TCNT register.
+
+1088
+01:12:13,060 --> 01:12:15,060
+But you have two OCR registers.
+
+1089
+01:12:15,800 --> 01:12:16,640
+Two comparators.
+
+1090
+01:12:17,359 --> 01:12:18,539
+Two waveform generators.
+
+1091
+01:12:19,039 --> 01:12:20,020
+Two OCRs.
+
+1092
+01:12:20,579 --> 01:12:21,399
+For each time.
+
+1093
+01:12:21,979 --> 01:12:24,819
+But time has only one time account register.
+
+1094
+01:12:25,359 --> 01:12:26,100
+So what's your question?
+
+1095
+01:12:26,659 --> 01:12:28,899
+Sir, time account controller register?
+
+1096
+01:12:29,460 --> 01:12:30,380
+Why there are two?
+
+1097
+01:12:30,859 --> 01:12:31,159
+No.
+
+1098
+01:12:31,500 --> 01:12:33,960
+There's no two time account registers.
+
+1099
+01:12:33,960 --> 01:12:35,680
+Oh, you are talking about?
+
+1100
+01:12:35,939 --> 01:12:48,939
+TCCR, timer counter controller register. TCCR A, TCCR B. The reason is there are a lot
+
+1101
+01:12:48,939 --> 01:12:55,939
+of bits, different bits for different purposes. There are a lot of control bits. To keep them,
+
+1102
+01:12:55,939 --> 01:13:03,939
+one 8-bit register is not enough. Waveform generation bits, clock select bits. Likewise,
+
+1103
+01:13:03,939 --> 01:13:08,380
+Likewise, there are a number of the interrupt enable bits.
+
+1104
+01:13:09,079 --> 01:13:11,680
+So different bits, control bits.
+
+1105
+01:13:12,279 --> 01:13:14,699
+To keep them, one 8-bit register is not enough.
+
+1106
+01:13:14,880 --> 01:13:17,579
+So they have used two 8-bit registers.
+
+1107
+01:13:18,260 --> 01:13:20,760
+TCCR A, TCCR B.
+
+1108
+01:13:21,359 --> 01:13:21,979
+What else?
+
+1109
+01:13:22,500 --> 01:13:22,859
+Right.
+
+1110
+01:13:23,460 --> 01:13:27,039
+Now, we learned that we put a value to OCR.
+
+1111
+01:13:27,699 --> 01:13:28,939
+TCNT counts.
+
+1112
+01:13:29,479 --> 01:13:30,399
+Comparator compares.
+
+1113
+01:13:30,399 --> 01:13:42,000
+When there's a compare match, comparator sets this bit, OCF bit, right, to tell the CPU that match occurred.
+
+1114
+01:13:42,779 --> 01:13:47,899
+And also comparator generates, triggers waveform generator.
+
+1115
+01:13:48,460 --> 01:13:53,300
+And the waveform generator generates the pulses with required bit.
+
+1116
+01:13:53,640 --> 01:13:57,899
+How waveform generator generates pulses with required?
+
+1117
+01:13:57,899 --> 01:13:59,359
+We didn't discuss.
+
+1118
+01:13:59,359 --> 01:14:05,319
+Up to this point, we discussed very in detail and then I said simply,
+
+1119
+01:14:06,140 --> 01:14:08,840
+comparator triggers waveform generator.
+
+1120
+01:14:09,039 --> 01:14:16,279
+Waveform generator generates pulses with required width or PWM output in other words.
+
+1121
+01:14:16,560 --> 01:14:21,399
+How waveform generator generates pulses with required width?
+
+1122
+01:14:21,800 --> 01:14:23,079
+Let's see, right?
+
+1123
+01:14:23,720 --> 01:14:27,619
+To use PWM, you don't need to know all these things, right?
+
+1124
+01:14:27,619 --> 01:14:29,920
+You can simply use PWM.
+
+1125
+01:14:30,159 --> 01:14:37,399
+But as university students, you should know how timers are used to generate pulse width modulated output.
+
+1126
+01:14:37,699 --> 01:14:40,119
+What is the need of OCR register?
+
+1127
+01:14:40,680 --> 01:14:46,399
+And when the waveform generator is triggered, how waveform generator generates PWM output.
+
+1128
+01:14:46,859 --> 01:14:50,180
+You should know all bits and bytes.
+
+1129
+01:14:50,659 --> 01:14:51,840
+Everything you should know.
+
+1130
+01:14:51,840 --> 01:14:57,840
+Then only we can say we followed Embering Systems at the University.
+
+1131
+01:14:57,840 --> 01:15:10,840
+If you follow a diploma or certificate course, you can see it.
+
+1132
+01:15:10,840 --> 01:15:21,600
+But when it comes to graduate course, bachelor's degree, you should know the subject from A
+
+1133
+01:15:21,600 --> 01:15:35,939
+to Z. At least you should be able to learn the subject by yourself from A to Z. At least
+
+1134
+01:15:35,939 --> 01:15:38,579
+You should have that ability, caliber.
+
+1135
+01:15:39,199 --> 01:15:40,539
+Caliber is not a problem.
+
+1136
+01:15:41,319 --> 01:15:41,939
+It is a problem.
+
+1137
+01:15:42,720 --> 01:15:47,300
+Let's say you couldn't find time to discuss everything from A to Z.
+
+1138
+01:15:47,479 --> 01:15:49,939
+We stopped from A to S.
+
+1139
+01:15:50,479 --> 01:15:53,779
+Now after S, T, U, V, W, X, Y, Z,
+
+1140
+01:15:53,779 --> 01:15:57,880
+there are many things we couldn't discuss because of the time limitation.
+
+1141
+01:15:58,079 --> 01:16:00,659
+But at least when you graduate,
+
+1142
+01:16:00,659 --> 01:16:10,260
+You should have the capability, caliber, capacity to self-learn the things that we couldn't
+
+1143
+01:16:10,260 --> 01:16:11,260
+discuss.
+
+1144
+01:16:11,260 --> 01:16:16,260
+Then only we can say we have successfully completed the curriculum.
+
+1145
+01:16:16,260 --> 01:16:42,819
+how waveform generation is done let's see right look at this tag two oscilloscope screens you can
+
+1146
+01:16:42,819 --> 01:16:44,859
+see. OCR
+
+1147
+01:16:44,859 --> 01:16:46,859
+NX. N means
+
+1148
+01:16:46,859 --> 01:16:49,000
+the timer number.
+
+1149
+01:16:49,739 --> 01:16:50,840
+If the timer is
+
+1150
+01:16:50,840 --> 01:16:52,640
+0, OCR N.
+
+1151
+01:16:53,159 --> 01:16:54,619
+OCR 0X.
+
+1152
+01:16:55,319 --> 01:16:56,659
+If the timer is 1,
+
+1153
+01:16:57,260 --> 01:16:58,640
+OCR 1X.
+
+1154
+01:16:59,159 --> 01:17:00,840
+Output compare register.
+
+1155
+01:17:01,479 --> 01:17:01,840
+OCR.
+
+1156
+01:17:02,399 --> 01:17:04,619
+Simple N means the timer number.
+
+1157
+01:17:05,439 --> 01:17:05,840
+X.
+
+1158
+01:17:06,359 --> 01:17:08,460
+X could be either AOB.
+
+1159
+01:17:08,460 --> 01:17:10,319
+We know there are two OCR
+
+1160
+01:17:10,319 --> 01:17:12,380
+registers. X could be either
+
+1161
+01:17:12,380 --> 01:17:19,420
+AOB. So I have used the generic term X. It could be OCR A, it could be OCR B. Right.
+
+1162
+01:17:19,420 --> 01:17:32,140
+Some timers can count from 0 to 255. Some timers can count from 0 to 65,535. 16 bit timer.
+
+1163
+01:17:32,539 --> 01:17:37,300
+And probably when you go to industry, when you are working with a 32 bit microcontroller,
+
+1164
+01:17:37,300 --> 01:17:44,979
+your timer would count much higher than because then timer register is 32 if it is 8 bit 255
+
+1165
+01:17:45,539 --> 01:17:58,579
+maximum value timer can count if it is 16 bit 6 uh 16 535 sorry if it is 16 bit uh 32 535
+
+1166
+01:17:58,579 --> 01:18:03,239
+35, no, no, 32 is 65,000.
+
+1167
+01:18:03,399 --> 01:18:08,140
+Sorry. If it is 16-bit timer, 65,535.
+
+1168
+01:18:08,680 --> 01:18:12,180
+If it is 32-bit timer, much higher than big value.
+
+1169
+01:18:12,560 --> 01:18:16,199
+You can calculate it. It's not a big problem.
+
+1170
+01:18:16,880 --> 01:18:19,380
+Therefore, I use generic term.
+
+1171
+01:18:20,159 --> 01:18:23,439
+The maximum value the timer can count.
+
+1172
+01:18:24,079 --> 01:18:27,359
+The minimum value of the timer,
+
+1173
+01:18:27,359 --> 01:18:34,500
+button. TC and T register. Here I show you the TC and T register. For each clock pulse,
+
+1174
+01:18:35,020 --> 01:18:41,779
+timer increments TC and T register. Timer increments TC and T register for each clock
+
+1175
+01:18:41,779 --> 01:18:49,899
+pulse. From bottom to top, increment is bottom to top. For simplicity, let's take 8-bit time.
+
+1176
+01:18:49,899 --> 01:18:57,520
+For each clock pulse, the 8-bit timer increments, TCNP register from 0 to 255.
+
+1177
+01:18:58,060 --> 01:19:01,739
+0 bottom, 255 top, 0 to 255.
+
+1178
+01:19:02,079 --> 01:19:04,920
+Then overflows to 0.
+
+1179
+01:19:05,600 --> 01:19:07,739
+When overflows? Overflows to 0.
+
+1180
+01:19:08,180 --> 01:19:12,300
+Starts again from 0 and counts to 255.
+
+1181
+01:19:12,960 --> 01:19:17,859
+When it is at 255, next clock pulse, overflows to 0.
+
+1182
+01:19:17,859 --> 01:19:22,239
+counts again from 0 to 255.
+
+1183
+01:19:22,520 --> 01:19:26,319
+Overflows to 0, counts again from
+
+1184
+01:19:26,319 --> 01:19:30,220
+0 to 255. That's how timer works.
+
+1185
+01:19:30,640 --> 01:19:33,579
+Now, depending on the duty cycle that you need,
+
+1186
+01:19:34,199 --> 01:19:37,560
+you assign a value to OCR register.
+
+1187
+01:19:38,020 --> 01:19:42,060
+OCR register is again 8-bit register according to our example.
+
+1188
+01:19:42,060 --> 01:19:46,460
+So, your value would be between 0 and 255.
+
+1189
+01:19:46,460 --> 01:19:49,560
+So OCR register value is between bottom and top.
+
+1190
+01:19:50,020 --> 01:19:52,140
+Output compare register, you assign a value.
+
+1191
+01:19:52,619 --> 01:19:59,760
+Comparator compares the value of OCR register and value of TZ entry register.
+
+1192
+01:20:00,220 --> 01:20:01,140
+Comparator compare.
+
+1193
+01:20:01,560 --> 01:20:07,779
+Now we are going to learn about how waveform generator generates the pulse with modulated wave.
+
+1194
+01:20:09,020 --> 01:20:13,340
+When a compare match occurs, this is the place where a compare match occurs.
+
+1195
+01:20:13,340 --> 01:20:15,380
+timer increments the
+
+1196
+01:20:15,380 --> 01:20:16,880
+register one by one
+
+1197
+01:20:16,880 --> 01:20:18,800
+1, 2, 3, 4 likewise
+
+1198
+01:20:18,800 --> 01:20:21,039
+let's say OCR is 127
+
+1199
+01:20:21,039 --> 01:20:23,380
+right? This is
+
+1200
+01:20:23,380 --> 01:20:25,560
+the place where compare match occurs
+
+1201
+01:20:25,560 --> 01:20:27,420
+TCNT register value
+
+1202
+01:20:27,420 --> 01:20:29,060
+and OCR register value
+
+1203
+01:20:29,060 --> 01:20:31,260
+they match. Whenever a
+
+1204
+01:20:31,260 --> 01:20:32,500
+compare match occurs
+
+1205
+01:20:32,500 --> 01:20:34,539
+waveform generator
+
+1206
+01:20:34,539 --> 01:20:37,579
+clears OCP
+
+1207
+01:20:37,579 --> 01:20:39,359
+clears OCP
+
+1208
+01:20:39,359 --> 01:20:40,840
+clears OCP means
+
+1209
+01:20:40,840 --> 01:20:43,159
+waveform generator
+
+1210
+01:20:43,159 --> 01:20:46,899
+sets OC pin low. Clear means low.
+
+1211
+01:20:47,600 --> 01:20:50,500
+In the second graph you can see OC pin.
+
+1212
+01:20:51,119 --> 01:20:55,079
+Output compare P. It could be AOB.
+
+1213
+01:20:55,239 --> 01:20:58,279
+X could be AOB. OC pin is high.
+
+1214
+01:20:58,279 --> 01:21:02,460
+But when a compare match occurs, as soon as
+
+1215
+01:21:02,460 --> 01:21:06,220
+a compare match occurs, waveform generator sets
+
+1216
+01:21:06,220 --> 01:21:08,260
+OC pin low.
+
+1217
+01:21:08,260 --> 01:21:12,119
+OCP. And it clears
+
+1218
+01:21:12,119 --> 01:21:15,460
+OCP low. And then it sets OCP.
+
+1219
+01:21:15,659 --> 01:21:19,619
+It sets OCP when
+
+1220
+01:21:19,619 --> 01:21:23,699
+TCNT overflows to zero. When
+
+1221
+01:21:23,699 --> 01:21:27,539
+TCNT register overflows to bottom, OCP
+
+1222
+01:21:27,539 --> 01:21:31,359
+is set. That means high. Who does that waveform
+
+1223
+01:21:31,359 --> 01:21:35,800
+generate? Right. Draw it and show
+
+1224
+01:21:35,800 --> 01:21:43,939
+you. Right? Time counts, counts, counts, increments. Kampaya match occurs. As soon as a Kampaya
+
+1225
+01:21:43,939 --> 01:21:50,720
+match occurs, this is the place. OC pin is cleared. That means it becomes low. And then
+
+1226
+01:21:50,720 --> 01:22:02,060
+OC pin is set. That means it becomes high. When time overflows to bottom. Right. Then
+
+1227
+01:22:02,060 --> 01:22:03,819
+again timer increments
+
+1228
+01:22:03,819 --> 01:22:05,539
+for each clock pass.
+
+1229
+01:22:06,239 --> 01:22:08,180
+Again a compare match
+
+1230
+01:22:08,180 --> 01:22:09,619
+occurs. OC pin
+
+1231
+01:22:09,619 --> 01:22:11,640
+clears
+
+1232
+01:22:11,640 --> 01:22:13,439
+zero low.
+
+1233
+01:22:14,060 --> 01:22:16,060
+And then timer counts to maximum
+
+1234
+01:22:16,060 --> 01:22:18,260
+overflow. OC pin
+
+1235
+01:22:18,260 --> 01:22:19,960
+is set. Again
+
+1236
+01:22:19,960 --> 01:22:21,920
+timer increments from zero.
+
+1237
+01:22:22,539 --> 01:22:23,720
+Compare match occurs.
+
+1238
+01:22:24,279 --> 01:22:26,199
+Power form generator clears OC pin
+
+1239
+01:22:26,199 --> 01:22:28,279
+low. Timer continues.
+
+1240
+01:22:28,279 --> 01:22:30,159
+Go to 255
+
+1241
+01:22:30,159 --> 01:22:31,439
+and overflow.
+
+1242
+01:22:32,060 --> 01:22:52,560
+When it overflows to bottom, waveform generator sets OCP in high. So this is the waveform you get from OCP, a digital waveform. This waveform, the percentage of time that the pulse is high, you can adjust.
+
+1243
+01:22:52,560 --> 01:23:02,479
+How? When you increase OCR or decrease OCR between top and bottom, you can adjust the pulse.
+
+1244
+01:23:02,720 --> 01:23:10,539
+By increasing or decreasing the value of OCR register, you can adjust the pulse.
+
+1245
+01:23:13,680 --> 01:23:22,020
+Pulsate adjustment means you are changing the percentage of time that the output is high in one flux.
+
+1246
+01:23:22,560 --> 01:23:31,520
+In other words, you get pulse width modulated output from output compatibility. Is that clear?
+
+1247
+01:23:31,520 --> 01:23:39,760
+If not, don't hesitate. Please let me know. I know many people doesn't know about these things.
+
+1248
+01:23:39,760 --> 01:23:43,680
+There are many good embedded system programmers. They know how to use
+
+1249
+01:23:44,960 --> 01:23:52,000
+PWM, but they don't know how waveform generator works, how pulse width modulated output is
+
+1250
+01:23:52,000 --> 01:23:59,840
+generated they don't know now you should know that but still if this is not clear please let me know
+
+1251
+01:23:59,840 --> 01:24:12,000
+i'll explain okay let's start again ocr register tc and d register now the top part of the graph
+
+1252
+01:24:12,960 --> 01:24:21,119
+you can see the increment of the tc and d register from bottom usually this value zero
+
+1253
+01:24:22,000 --> 01:24:30,079
+If the 8-bit time, top is 255, TCND register increments to 255.
+
+1254
+01:24:30,079 --> 01:24:33,359
+For each clock pulse, it increments.
+
+1255
+01:24:34,100 --> 01:24:41,760
+And then it overflows to zero and increments again one by one to 255.
+
+1256
+01:24:42,460 --> 01:24:44,199
+Overflows to zero.
+
+1257
+01:24:44,920 --> 01:24:46,260
+Increments again.
+
+1258
+01:24:47,000 --> 01:24:48,079
+Overflows to zero.
+
+1259
+01:24:48,760 --> 01:24:49,600
+Increments again.
+
+1260
+01:24:50,199 --> 01:24:51,479
+That's how time works.
+
+1261
+01:24:51,479 --> 01:24:55,239
+Last week we discussed. Then depending on the duty cycle
+
+1262
+01:24:55,239 --> 01:24:59,359
+you need, you assign a value
+
+1263
+01:24:59,359 --> 01:25:02,979
+to OCR register. A value is between
+
+1264
+01:25:02,979 --> 01:25:07,319
+bottom and top. In 8 bit timer between 0 and 255.
+
+1265
+01:25:08,060 --> 01:25:11,100
+A value you assign to OCR. Now for example
+
+1266
+01:25:11,100 --> 01:25:14,859
+if you assign 127 to OCR, you get
+
+1267
+01:25:14,859 --> 01:25:18,800
+50% duty cycle. If you assign 63 to OCR,
+
+1268
+01:25:18,800 --> 01:25:19,680
+you get
+
+1269
+01:25:19,680 --> 01:25:22,180
+25% due design
+
+1270
+01:25:22,180 --> 01:25:23,899
+with 8 bit time.
+
+1271
+01:25:25,439 --> 01:25:26,920
+So some value
+
+1272
+01:25:26,920 --> 01:25:28,800
+between bottom and top
+
+1273
+01:25:28,800 --> 01:25:30,000
+you assign to OCR.
+
+1274
+01:25:30,340 --> 01:25:32,840
+Timer increments. TCNT register
+
+1275
+01:25:32,840 --> 01:25:34,600
+increments. Comparator
+
+1276
+01:25:34,600 --> 01:25:36,619
+compares. Comparator compares
+
+1277
+01:25:36,619 --> 01:25:38,579
+what? Value of
+
+1278
+01:25:38,579 --> 01:25:40,699
+TCNT register against
+
+1279
+01:25:40,699 --> 01:25:42,500
+value of
+
+1280
+01:25:42,500 --> 01:25:44,699
+OCR register. OCR means
+
+1281
+01:25:44,699 --> 01:25:46,779
+output compare register. Those two
+
+1282
+01:25:46,779 --> 01:25:48,239
+values are compared. Who?
+
+1283
+01:25:48,800 --> 01:26:07,500
+And if a compare match occurs, comparator triggers waveform generator. That's the job of comparator. Now you can see in this graph, in this particular place, you can see a compare match occurs, where I put the red dot.
+
+1284
+01:26:07,500 --> 01:26:11,279
+The two values of the two registers, they match.
+
+1285
+01:26:12,039 --> 01:26:18,420
+The comparator compares and a match occurs at this moment.
+
+1286
+01:26:18,939 --> 01:26:21,000
+So comparator triggers waveform.
+
+1287
+01:26:21,340 --> 01:26:27,359
+Then what the waveform degenerate does is, it clears OCP.
+
+1288
+01:26:28,020 --> 01:26:29,300
+It clears OCP.
+
+1289
+01:26:29,439 --> 01:26:32,279
+OCP was high, 5 volts.
+
+1290
+01:26:33,239 --> 01:26:34,199
+It was high.
+
+1291
+01:26:34,199 --> 01:26:36,659
+and waveform generator clears
+
+1292
+01:26:36,659 --> 01:26:38,579
+that at that
+
+1293
+01:26:38,579 --> 01:26:39,579
+moment it clears.
+
+1294
+01:26:40,359 --> 01:26:42,539
+So OC pin becomes low, 0.
+
+1295
+01:26:42,840 --> 01:26:43,840
+Who does that?
+
+1296
+01:26:44,279 --> 01:26:46,779
+Waveform generator. The timer continues.
+
+1297
+01:26:47,439 --> 01:26:48,300
+Timer continues,
+
+1298
+01:26:48,479 --> 01:26:49,159
+it's counting.
+
+1299
+01:26:50,100 --> 01:26:52,079
+Timer continues, it's counting
+
+1300
+01:26:52,079 --> 01:26:54,260
+to 255, top value.
+
+1301
+01:26:55,279 --> 01:26:56,279
+And then timer
+
+1302
+01:26:56,279 --> 01:26:56,899
+overflows.
+
+1303
+01:26:57,619 --> 01:27:00,399
+When timer overflows to 0,
+
+1304
+01:27:00,539 --> 01:27:02,220
+TCNT register overflows
+
+1305
+01:27:02,220 --> 01:27:12,779
+to zero, waveform generator sets OCP. Sets means high. Clear means low. Set means high. OCP,
+
+1306
+01:27:13,819 --> 01:27:22,380
+right, waveform generator sets when timer overflows. Then timer again starts counting from zero.
+
+1307
+01:27:22,380 --> 01:27:29,539
+For every clock pulse, timer increases. Another compare match occurs. As soon as a compare match
+
+1308
+01:27:29,539 --> 01:27:33,539
+occurs, waveform generator clears
+
+1309
+01:27:33,539 --> 01:27:37,180
+OCP. OCP becomes low.
+
+1310
+01:27:37,640 --> 01:27:41,359
+Timer continues its counting to
+
+1311
+01:27:41,359 --> 01:27:45,340
+255, top value. Then time overflows. When time
+
+1312
+01:27:45,340 --> 01:27:49,319
+overflows, waveform generator sets OCP.
+
+1313
+01:27:49,539 --> 01:27:53,380
+OCP becomes high. Timer increments again
+
+1314
+01:27:53,380 --> 01:27:57,399
+from zero and Kampaya match occurs. As soon as
+
+1315
+01:27:57,399 --> 01:27:58,779
+the crumb damage occurs.
+
+1316
+01:27:59,180 --> 01:28:01,640
+Waveform generator clears
+
+1317
+01:28:01,640 --> 01:28:03,619
+OC pin. OC pin goes low.
+
+1318
+01:28:04,220 --> 01:28:05,659
+And timer continues
+
+1319
+01:28:05,659 --> 01:28:07,039
+increment.
+
+1320
+01:28:07,619 --> 01:28:09,359
+It increments to 255.
+
+1321
+01:28:09,460 --> 01:28:10,659
+It continues its job.
+
+1322
+01:28:11,520 --> 01:28:13,880
+And when it comes to top 255,
+
+1323
+01:28:14,000 --> 01:28:15,699
+it overflows. When time
+
+1324
+01:28:15,699 --> 01:28:17,659
+overflows, OC pin,
+
+1325
+01:28:18,539 --> 01:28:19,779
+the waveform generator
+
+1326
+01:28:19,779 --> 01:28:21,399
+sets OC pin.
+
+1327
+01:28:21,399 --> 01:28:22,899
+Sets means high.
+
+1328
+01:28:23,439 --> 01:28:25,039
+So when you look at the
+
+1329
+01:28:25,039 --> 01:28:27,140
+OC pin in the
+
+1330
+01:28:27,140 --> 01:28:29,180
+At the OC pin you get a waveform.
+
+1331
+01:28:29,960 --> 01:28:31,039
+You get a square wave.
+
+1332
+01:28:31,560 --> 01:28:38,819
+That square wave, the percentage of time that one clock cycle is high.
+
+1333
+01:28:39,520 --> 01:28:40,840
+One cycle is high.
+
+1334
+01:28:41,380 --> 01:28:44,680
+Percentage of time that the output is high in one cycle.
+
+1335
+01:28:45,479 --> 01:28:47,840
+That percentage of time that the output is high.
+
+1336
+01:28:47,840 --> 01:28:48,880
+You can adjust.
+
+1337
+01:28:49,199 --> 01:28:49,380
+How?
+
+1338
+01:28:49,920 --> 01:28:51,260
+When you adjust the OCR.
+
+1339
+01:28:51,960 --> 01:28:52,159
+Right?
+
+1340
+01:28:52,159 --> 01:28:59,359
+When you adjust the OCR, the percentage of time that the OC pin is high, you can adjust.
+
+1341
+01:28:59,619 --> 01:29:06,159
+For example, if the OCR is at the bottom, OCR is at the bottom, when timer starts counting,
+
+1342
+01:29:06,979 --> 01:29:08,140
+the compound H occurs.
+
+1343
+01:29:08,539 --> 01:29:13,239
+Then waveform generator clears the OC pin.
+
+1344
+01:29:13,739 --> 01:29:14,939
+OC pin becomes low.
+
+1345
+01:29:15,539 --> 01:29:18,460
+Timer goes to the maximum value and overflows.
+
+1346
+01:29:18,460 --> 01:29:26,039
+When O flows, waveform generator sets OCPIN but at the same time timer becomes 0.
+
+1347
+01:29:26,680 --> 01:29:29,680
+Then OCR was 0 so compare match occurs.
+
+1348
+01:29:30,380 --> 01:29:32,300
+So OCPIN is again clear.
+
+1349
+01:29:32,899 --> 01:29:44,199
+So that means OCPIN would maintain 0 volts throughout the time if OCR is at bottom.
+
+1350
+01:29:44,199 --> 01:29:52,699
+If OCR is at top, OCP maintains 5 volts throughout the time.
+
+1351
+01:29:52,939 --> 01:29:59,619
+If OCR is between top and bottom, you get this kind of scale.
+
+1352
+01:30:00,140 --> 01:30:09,140
+The percentage of time that one pulse is high, you can adjust by varying the value of OCR.
+
+1353
+01:30:09,819 --> 01:30:11,199
+This is your pulse modulator.
+
+1354
+01:30:12,100 --> 01:30:12,819
+Can you understand?
+
+1355
+01:30:12,819 --> 01:30:32,899
+still if it is not no issue at all not feeling is that okay okay how about others oh okay okay
+
+1356
+01:30:32,899 --> 01:30:34,100
+I have a look.
+
+1357
+01:30:34,100 --> 01:30:34,659
+I have a look.
+
+1358
+01:30:34,659 --> 01:30:35,020
+I have a look.
+
+1359
+01:30:35,020 --> 01:30:35,279
+I have a look.
+
+1360
+01:30:35,279 --> 01:30:35,479
+I have a look.
+
+1361
+01:30:35,479 --> 01:30:35,619
+I have a look.
+
+1362
+01:30:35,619 --> 01:30:35,739
+I have a look.
+
+1363
+01:30:35,739 --> 01:30:35,880
+I have a look.
+
+1364
+01:30:35,880 --> 01:30:35,979
+I have a look.
+
+1365
+01:30:35,979 --> 01:30:36,100
+I have a look.
+
+1366
+01:30:36,100 --> 01:30:36,220
+I have a look.
+
+1367
+01:30:36,220 --> 01:30:36,399
+I have a look.
+
+1368
+01:30:36,399 --> 01:30:36,579
+I have a look.
+
+1369
+01:30:36,579 --> 01:30:36,680
+I have a look.
+
+1370
+01:30:36,680 --> 01:30:36,779
+I have a look.
+
+1371
+01:30:36,779 --> 01:30:36,920
+I have a look.
+
+1372
+01:30:36,920 --> 01:30:37,039
+I have a look.
+
+1373
+01:30:37,039 --> 01:30:37,140
+I have a look.
+
+1374
+01:30:37,140 --> 01:30:37,199
+I have a look.
+
+1375
+01:30:37,199 --> 01:30:37,260
+I have a look.
+
+1376
+01:30:37,260 --> 01:30:37,340
+I have a look.
+
+1377
+01:30:37,340 --> 01:30:37,439
+I have a look.
+
+1378
+01:30:37,439 --> 01:30:37,520
+I have a look.
+
+1379
+01:30:37,520 --> 01:30:37,640
+I have a look.
+
+1380
+01:30:37,640 --> 01:30:37,779
+I have a look.
+
+1381
+01:30:37,779 --> 01:30:37,899
+I have a look.
+
+1382
+01:30:37,899 --> 01:30:38,000
+I have a look.
+
+1383
+01:30:38,000 --> 01:30:38,079
+I have a look.
+
+1384
+01:30:38,079 --> 01:30:38,180
+I have a look.
+
+1385
+01:30:38,180 --> 01:30:38,279
+I have a look.
+
+1386
+01:30:38,279 --> 01:30:38,399
+I have a look.
+
+1387
+01:30:38,399 --> 01:30:38,500
+I have a look.
+
+1388
+01:31:02,899 --> 01:31:32,899
+[unclear — Sinhala / crosstalk]
+
+1389
+01:31:32,899 --> 01:31:34,899
+I'm not going to be a low.
+
+1390
+01:31:34,899 --> 01:31:36,899
+OCR value is not going to be a low.
+
+1391
+01:31:36,899 --> 01:31:40,899
+Time is going to be a high time.
+
+1392
+01:31:40,899 --> 01:31:44,899
+If you have a low and high time,
+
+1393
+01:31:44,899 --> 01:31:48,899
+you will have a low and high time.
+
+1394
+01:31:48,899 --> 01:31:50,899
+That's high.
+
+1395
+01:31:50,899 --> 01:31:52,899
+Low and high time is high.
+
+1396
+01:31:52,899 --> 01:31:54,899
+That's high.
+
+1397
+01:31:54,899 --> 01:31:56,899
+That's high.
+
+1398
+01:31:56,899 --> 01:31:58,899
+Low and high time is high.
+
+1399
+01:31:58,899 --> 01:32:00,899
+That's high.
+
+1400
+01:32:00,899 --> 01:32:08,020
+you will get this kind of
+
+1401
+01:32:08,020 --> 01:32:13,180
+OCR value.
+
+1402
+01:32:13,180 --> 01:32:19,560
+The percentage of time that the pulse is high is more.
+
+1403
+01:32:19,560 --> 01:32:28,300
+If the OCR value is more towards bottom, percentage of time that the pulse is high is less.
+
+1404
+01:32:28,300 --> 01:32:36,199
+So, depending on the value you assign to the OCR, you can get the pulse with modulated output with required due result.
+
+1405
+01:32:36,399 --> 01:32:36,960
+Is that clear?
+
+1406
+01:32:37,520 --> 01:32:37,819
+Right.
+
+1407
+01:32:38,300 --> 01:32:42,560
+In any waveform generator, there are two modes.
+
+1408
+01:32:43,180 --> 01:32:45,779
+Non-inverted mode and inverted mode.
+
+1409
+01:32:46,260 --> 01:32:49,140
+Now, we discussed the non-inverted mode.
+
+1410
+01:32:49,579 --> 01:32:51,739
+But there is another mode called inverted.
+
+1411
+01:32:52,380 --> 01:32:56,840
+Inverted mode, the opposite of the non-inverted mode happens.
+
+1412
+01:32:56,840 --> 01:32:57,420
+Right.
+
+1413
+01:32:57,420 --> 01:33:02,859
+In the inverted mode, the opposite of the non-inverted mode happens.
+
+1414
+01:33:03,039 --> 01:33:04,060
+What does that mean?
+
+1415
+01:33:04,619 --> 01:33:05,020
+Let's see.
+
+1416
+01:33:05,399 --> 01:33:09,800
+Now, in the inverted mode, the difference is very simple.
+
+1417
+01:33:10,439 --> 01:33:18,460
+The timer increments and when a compare match occurred, waveform generator sets OCD.
+
+1418
+01:33:19,140 --> 01:33:22,920
+In the non-inverted mode, waveform generator cleared OCD.
+
+1419
+01:33:22,920 --> 01:33:27,220
+But in the inverted mode, waveform generator sets.
+
+1420
+01:33:27,420 --> 01:33:35,659
+and when overflow when the waveform generator overflows then right when the
+
+1421
+01:33:35,659 --> 01:33:41,880
+time overflows sorry when the time overflows waveform generator clears OC
+
+1422
+01:33:41,880 --> 01:33:51,420
+then OC pin is lower. It is still a lot of flow when OC pin is higher. Then OC pin is lower and then it is clear.
+
+1423
+01:33:51,420 --> 01:33:54,380
+That's it. Same. All other things are.
+
+1424
+01:33:54,380 --> 01:33:58,100
+That is the only difference. When there's a compare match
+
+1425
+01:33:58,100 --> 01:34:02,359
+in the non-inverted mode, OC pin is
+
+1426
+01:34:02,359 --> 01:34:05,760
+clear, low. And when there's an overflow,
+
+1427
+01:34:06,579 --> 01:34:10,579
+OC pin is set, high. In the non-inverted.
+
+1428
+01:34:10,819 --> 01:34:14,300
+In the inverted mode, when there's a compare match,
+
+1429
+01:34:14,920 --> 01:34:18,520
+OC pin is set, high, opposite. And in the
+
+1430
+01:34:18,520 --> 01:34:20,920
+inverted mode. When there's an
+
+1431
+01:34:20,920 --> 01:34:22,520
+O flow, O C
+
+1432
+01:34:22,520 --> 01:34:24,140
+pin is clear. Low.
+
+1433
+01:34:24,739 --> 01:34:26,619
+That's the difference.
+
+1434
+01:34:26,979 --> 01:34:28,500
+Is that clear? Inverted
+
+1435
+01:34:28,500 --> 01:34:29,840
+mode than non-inverted.
+
+1436
+01:34:30,279 --> 01:34:31,000
+Any question?
+
+1437
+01:34:32,420 --> 01:34:33,800
+Excuse me. Yes.
+
+1438
+01:34:34,340 --> 01:34:36,119
+How to change
+
+1439
+01:34:36,119 --> 01:34:38,779
+between non-inverted
+
+1440
+01:34:38,779 --> 01:34:40,260
+and inverted mode? Sorry.
+
+1441
+01:34:40,439 --> 01:34:42,359
+I couldn't get your question.
+
+1442
+01:34:42,359 --> 01:34:43,880
+How to change between
+
+1443
+01:34:43,880 --> 01:34:46,340
+non-inverted and inverted
+
+1444
+01:34:46,340 --> 01:34:46,899
+mode? Yeah.
+
+1445
+01:34:46,899 --> 01:35:00,619
+Yeah, right. We are going to discuss that. There are some control bits using them. You can change from non-inverted to inverted or inverted to non-inverted. Some control bits we have to use. We are going to discuss.
+
+1446
+01:35:00,619 --> 01:35:20,340
+Right. Now we have discussed the duty cycle. We have discussed how PWM outputs are generated, right, using timers. Now we have that. So far, we didn't discuss PWM, how to compute PWM frequency.
+
+1447
+01:35:20,340 --> 01:35:23,539
+We know that PWM frequency is very important.
+
+1448
+01:35:24,119 --> 01:35:28,439
+If the frequency is low, it's a low, low frequency.
+
+1449
+01:35:28,579 --> 01:35:37,579
+PWM frequencies, if it is low, too much low, then there will be some flickering effects.
+
+1450
+01:35:37,579 --> 01:35:42,779
+But if it is too high, devices may not react to the change.
+
+1451
+01:35:43,479 --> 01:35:46,340
+So it should not be low, it should not be high.
+
+1452
+01:35:46,340 --> 01:35:50,359
+that depends on the device that we are going to use.
+
+1453
+01:35:50,760 --> 01:35:53,119
+And using the data sheet of the device,
+
+1454
+01:35:53,819 --> 01:35:58,239
+we can find out the PWM supported frequency range.
+
+1455
+01:35:58,819 --> 01:36:01,619
+What is the minimum PWM supported frequency?
+
+1456
+01:36:01,760 --> 01:36:04,340
+What is the maximum PWM supported frequency?
+
+1457
+01:36:04,340 --> 01:36:10,600
+For a given device, we can find out from the device data sheet.
+
+1458
+01:36:10,600 --> 01:36:20,359
+Then accordingly we need to adjust the PWM frequency of our embedded system.
+
+1459
+01:36:20,859 --> 01:36:35,619
+Let's say a particular data sheet of a particular device says, let's say, minimum PWM frequency is 100 Hz and the maximum PWM frequency is 300 Hz.
+
+1460
+01:36:35,619 --> 01:36:43,439
+Then you have to set the pulsed modulated output frequency of your system,
+
+1461
+01:36:44,060 --> 01:36:47,880
+of the output pin that is connected to the device.
+
+1462
+01:36:48,239 --> 01:36:52,939
+You have to set the frequency between 100 to 300 Hz,
+
+1463
+01:36:53,300 --> 01:36:55,159
+probably 200 or 250.
+
+1464
+01:36:55,640 --> 01:36:56,199
+You have to set.
+
+1465
+01:36:56,500 --> 01:36:59,779
+So you can properly operate the connected device.
+
+1466
+01:36:59,779 --> 01:37:05,600
+To do that, you should know how to change the PWM frequency.
+
+1467
+01:37:05,619 --> 01:37:09,100
+Now, that is what we are going to discuss.
+
+1468
+01:37:09,399 --> 01:37:11,079
+P, W, N, Frequent.
+
+1469
+01:37:11,439 --> 01:37:11,800
+Right.
+
+1470
+01:37:11,800 --> 01:37:16,479
+So, I use non-inverted mode because it is easier to understand.
+
+1471
+01:37:17,359 --> 01:37:23,060
+Later, the same concept you can apply for the inverted mode.
+
+1472
+01:37:23,699 --> 01:37:26,800
+And then you can get the opposite of the non-inverted mode.
+
+1473
+01:37:26,920 --> 01:37:27,079
+Right.
+
+1474
+01:37:27,399 --> 01:37:30,880
+So, for this example, I use non-inverted mode.
+
+1475
+01:37:30,880 --> 01:37:41,319
+In the non-inverted mode, you can see while time counts from zero to maximum value.
+
+1476
+01:37:42,520 --> 01:37:42,680
+Right?
+
+1477
+01:37:43,060 --> 01:37:44,460
+Zero to maximum value.
+
+1478
+01:37:44,600 --> 01:37:47,020
+From bottom to top, while time counts.
+
+1479
+01:37:47,640 --> 01:37:52,100
+If a compare match occurs, you can see this is the place where compare match occurs.
+
+1480
+01:37:52,760 --> 01:37:56,840
+Waveform generator clears the output compare up in.
+
+1481
+01:37:57,380 --> 01:38:00,260
+Waveform generator clears output compare up in.
+
+1482
+01:38:00,260 --> 01:38:05,680
+and sets output compare pin when timer overflows.
+
+1483
+01:38:06,060 --> 01:38:11,619
+So, timer starts from 0 and increments to 2550, whatever the top value.
+
+1484
+01:38:12,020 --> 01:38:15,899
+It could be 65,535 if it is a 16-bit timer.
+
+1485
+01:38:16,600 --> 01:38:22,140
+And in between, a compare match can occur depending on the value of OCR.
+
+1486
+01:38:22,560 --> 01:38:27,399
+When a compare match occurs, as soon as a compare match occurs,
+
+1487
+01:38:27,399 --> 01:38:29,100
+waveform generator
+
+1488
+01:38:29,100 --> 01:38:31,380
+clears OCP.
+
+1489
+01:38:32,140 --> 01:38:34,020
+OCP becomes
+
+1490
+01:38:34,020 --> 01:38:35,899
+low. And again
+
+1491
+01:38:35,899 --> 01:38:38,039
+OCP is set.
+
+1492
+01:38:38,600 --> 01:38:39,500
+It goes to high.
+
+1493
+01:38:40,560 --> 01:38:41,680
+When time
+
+1494
+01:38:41,680 --> 01:38:42,479
+overcomes.
+
+1495
+01:38:43,939 --> 01:38:46,260
+We discussed that in the previous
+
+1496
+01:38:46,260 --> 01:38:48,220
+slide. By doing that
+
+1497
+01:38:48,220 --> 01:38:50,159
+waveform generator
+
+1498
+01:38:50,159 --> 01:38:51,199
+generates
+
+1499
+01:38:51,199 --> 01:38:53,819
+one PWM cycle.
+
+1500
+01:38:53,819 --> 01:38:55,140
+By doing that
+
+1501
+01:38:55,140 --> 01:38:57,260
+waveform generator generates
+
+1502
+01:38:57,260 --> 01:39:00,899
+1 PWM pulse with modulated cycle.
+
+1503
+01:39:01,380 --> 01:39:03,819
+Now here you can see 1 PWM cycle.
+
+1504
+01:39:04,340 --> 01:39:06,159
+1 PWM cycle.
+
+1505
+01:39:06,539 --> 01:39:09,800
+Now what is frequency?
+
+1506
+01:39:10,899 --> 01:39:14,979
+Frequency means number of cycles
+
+1507
+01:39:14,979 --> 01:39:17,260
+per second. That is frequency.
+
+1508
+01:39:17,260 --> 01:39:19,319
+Time for 1 clock cycle.
+
+1509
+01:39:19,699 --> 01:39:22,340
+1 clock cycle. Time for 1 cycle.
+
+1510
+01:39:22,760 --> 01:39:24,520
+1 divided by 4.
+
+1511
+01:39:24,520 --> 01:39:44,840
+Time for one clock cycle is 1 divided by 2. Now I need some white space. Let me get some white space. Now time accounts from bottom. So which is 0 to top and overflows to bottom. That is 0.
+
+1512
+01:39:44,840 --> 01:40:08,439
+Overflow to zero. Zero to top and again overflow to zero. How many timer cycles? How many timer cycles? Zero to top and then overflow to zero. How many timer cycles? Let's say top piece three. For simplicity let's say top piece three. How many timer cycles there?
+
+1513
+01:40:08,439 --> 01:40:14,960
+0 to 1, 1 to 2, 2 to 3, 3 to again overflow 0.
+
+1514
+01:40:15,159 --> 01:40:16,720
+How many time cycles? 4.
+
+1515
+01:40:17,340 --> 01:40:20,640
+If top is 3, how many time cycles? 4 cycles.
+
+1516
+01:40:20,899 --> 01:40:23,199
+Why? 0 to 1, 1 cycle.
+
+1517
+01:40:23,680 --> 01:40:25,140
+1 to 2, another cycle.
+
+1518
+01:40:25,600 --> 01:40:27,079
+2 to 3, another cycle.
+
+1519
+01:40:27,579 --> 01:40:30,899
+And 3 to 0, another cycle. 4 cycles.
+
+1520
+01:40:30,899 --> 01:40:44,840
+That means if timer comes from 0 to top and overflows to 0 again, number of timer cycles is top plus 1.
+
+1521
+01:40:45,840 --> 01:40:59,539
+Now when timer goes from 0 to top and again overflows to 0, during that time, how many PWM cycles you get?
+
+1522
+01:40:59,539 --> 01:41:02,760
+Timer goes from 0 to top.
+
+1523
+01:41:03,420 --> 01:41:06,340
+Overflows again to 0.
+
+1524
+01:41:07,300 --> 01:41:08,579
+And during that time.
+
+1525
+01:41:09,359 --> 01:41:11,699
+You get 1 PWM cycle.
+
+1526
+01:41:12,239 --> 01:41:13,260
+That means.
+
+1527
+01:41:13,819 --> 01:41:17,800
+Top plus 1 timer cycles.
+
+1528
+01:41:18,239 --> 01:41:21,960
+Give 1 PWM cycle.
+
+1529
+01:41:22,420 --> 01:41:24,380
+Top plus 1 timer cycles.
+
+1530
+01:41:24,539 --> 01:41:26,420
+Give 1 PWM cycle.
+
+1531
+01:41:26,420 --> 01:41:28,539
+Can you understand this line?
+
+1532
+01:41:29,159 --> 01:41:29,380
+Right.
+
+1533
+01:41:29,539 --> 01:41:32,539
+Even in this picture you can see that.
+
+1534
+01:41:32,880 --> 01:41:37,399
+The timer goes from bottom to top and then again overflow to bottom.
+
+1535
+01:41:37,520 --> 01:41:38,340
+How many cycles?
+
+1536
+01:41:38,600 --> 01:41:40,020
+Top plus one cycles.
+
+1537
+01:41:40,479 --> 01:41:47,159
+During the top one plus cycles, the PWM you get one PWM cycle.
+
+1538
+01:41:47,159 --> 01:41:52,159
+Top plus one timer cycles give you one PWM cycle.
+
+1539
+01:41:52,539 --> 01:41:53,399
+Is that clear?
+
+1540
+01:41:53,680 --> 01:41:54,939
+If not, let me know.
+
+1541
+01:41:55,460 --> 01:41:56,439
+Before we proceed.
+
+1542
+01:41:56,439 --> 01:42:01,760
+So we can form an equation.
+
+1543
+01:42:02,340 --> 01:42:12,520
+Time for top plus 1 timer cycles equals time 1 PWM cycle.
+
+1544
+01:42:12,520 --> 01:42:18,520
+If top plus 1 timer cycles give you 1 PWM cycle,
+
+1545
+01:42:19,100 --> 01:42:24,800
+time for top plus 1 timer cycles equals 2.
+
+1546
+01:42:24,800 --> 01:42:27,680
+time for one PWM cycle.
+
+1547
+01:42:28,220 --> 01:42:30,920
+So, time for
+
+1548
+01:42:30,920 --> 01:42:34,579
+one timer cycle equals
+
+1549
+01:42:34,579 --> 01:42:38,659
+time for one PWM
+
+1550
+01:42:38,659 --> 01:42:42,380
+cycle divided by
+
+1551
+01:42:42,380 --> 01:42:46,319
+top plus one. Can you understand?
+
+1552
+01:42:46,760 --> 01:42:50,460
+Time for top plus one timer cycles equals
+
+1553
+01:42:50,460 --> 01:42:53,479
+time for one PWM cycle.
+
+1554
+01:42:53,479 --> 01:43:01,659
+So, that figure if you divide by top plus one, when you get time for one timer cycle,
+
+1555
+01:43:01,659 --> 01:43:08,760
+timer cycles top plus one pramaana, PWM cycle is not going to be the PWM cycle.
+
+1556
+01:43:08,760 --> 01:43:17,760
+If you have a PWM cycle, top plus one will be the timer cycle, you can get it.
+
+1557
+01:43:17,760 --> 01:43:18,260
+Right.
+
+1558
+01:43:23,260 --> 01:43:23,760
+Right.
+
+1559
+01:43:25,060 --> 01:43:25,760
+Then
+
+1560
+01:43:26,960 --> 01:43:29,760
+time for one timer cycle equals
+
+1561
+01:43:30,359 --> 01:43:33,760
+time for one PWM cycle divided by the plus one.
+
+1562
+01:43:34,260 --> 01:43:34,760
+Right.
+
+1563
+01:43:36,659 --> 01:43:39,260
+Now time for one timer cycle.
+
+1564
+01:43:39,760 --> 01:43:44,060
+Time for one cycle means one divided by frequency.
+
+1565
+01:43:44,260 --> 01:43:45,260
+So we can
+
+1566
+01:43:45,760 --> 01:43:47,760
+introduce frequency here.
+
+1567
+01:43:47,760 --> 01:44:02,819
+Right. That means time for one timer cycle means one divided by one divided by timer frequency.
+
+1568
+01:44:02,819 --> 01:44:05,159
+Timer frequency means F timer.
+
+1569
+01:44:06,300 --> 01:44:12,159
+Because we know that time for one cycle equals one divided by frequency.
+
+1570
+01:44:12,159 --> 01:44:22,920
+If so, time for one timer cycle, we can replace with 1 divided by timer frequency.
+
+1571
+01:44:23,260 --> 01:44:38,960
+1 divided by timer frequency means 1 divided by the other side of the equation, top plus 1 multiplied by time for 1 PWM cycle.
+
+1572
+01:44:38,960 --> 01:44:46,020
+Time for 1 PWM cycle means again cycle type we can relate to frequency.
+
+1573
+01:44:46,659 --> 01:44:54,039
+Time for 1 PWM cycle means 1 divided by PWM frequency.
+
+1574
+01:44:54,239 --> 01:44:55,720
+F PWM.
+
+1575
+01:44:56,119 --> 01:45:03,380
+So we can replace time for 1 PWM cycle with 1 divided by PWM frequency.
+
+1576
+01:45:03,680 --> 01:45:06,779
+Can you understand this part up to this point?
+
+1577
+01:45:06,779 --> 01:45:11,260
+If not, don't hesitate. Please tell me.
+
+1578
+01:45:11,539 --> 01:45:15,060
+So last line, not understanding.
+
+1579
+01:45:15,920 --> 01:45:17,619
+This equation part?
+
+1580
+01:45:18,359 --> 01:45:18,640
+Yes.
+
+1581
+01:45:19,420 --> 01:45:22,420
+Right. Now, look at here.
+
+1582
+01:45:23,060 --> 01:45:26,739
+Time for one clock cycle means one divided by frequency.
+
+1583
+01:45:26,920 --> 01:45:35,539
+Time for one time clock cycle.
+
+1584
+01:45:35,539 --> 01:45:43,300
+Time for one time cycle means then 1 divided by time of frequency.
+
+1585
+01:45:43,619 --> 01:45:48,560
+Time for one cycle equals 1 divided by frequency.
+
+1586
+01:45:48,819 --> 01:45:54,979
+If so, time for one time cycle means 1 divided by time of frequency.
+
+1587
+01:45:55,340 --> 01:45:56,800
+Then other side of the equation.
+
+1588
+01:45:57,819 --> 01:46:03,340
+1 divided by top plus 1 multiplied by time for one PWM cycle.
+
+1589
+01:46:03,340 --> 01:46:11,279
+Time for 1 PWM cycle means 1 divided by frequency of PWM.
+
+1590
+01:46:11,659 --> 01:46:22,539
+Because here we have found that time for 1 cycle equals 1 divided by frequency.
+
+1591
+01:46:22,680 --> 01:46:26,340
+1 cycle is equal to 2 times.
+
+1592
+01:46:26,340 --> 01:46:35,060
+How about now?
+
+1593
+01:46:35,760 --> 01:46:36,319
+Okay, sir.
+
+1594
+01:46:36,319 --> 01:46:37,140
+Right.
+
+1595
+01:46:37,899 --> 01:46:43,579
+Then from this equation, we can get FPWM.
+
+1596
+01:46:44,100 --> 01:46:47,079
+Frequency of PWM.
+
+1597
+01:46:47,920 --> 01:46:53,260
+Pulse with modulation frequency equals timer frequency.
+
+1598
+01:46:53,779 --> 01:46:54,960
+F timer.
+
+1599
+01:46:54,960 --> 01:46:59,960
+I use F timer because we are familiar with F CPU.
+
+1600
+01:47:00,760 --> 01:47:05,739
+F timer divided by top plus 1.
+
+1601
+01:47:06,340 --> 01:47:11,399
+PWM frequency equals timer frequency divided by top plus 1.
+
+1602
+01:47:11,899 --> 01:47:12,600
+Is that clear?
+
+1603
+01:47:13,199 --> 01:47:13,479
+Right.
+
+1604
+01:47:13,960 --> 01:47:17,720
+If clear, now I am going to erase all these things.
+
+1605
+01:47:18,239 --> 01:47:18,960
+Right.
+
+1606
+01:47:20,399 --> 01:47:22,159
+This is the equation.
+
+1607
+01:47:22,739 --> 01:47:23,760
+Look at this equation.
+
+1608
+01:47:23,760 --> 01:47:30,520
+We know that time of frequency equals fCPU divided by prescaler.
+
+1609
+01:47:30,960 --> 01:47:31,600
+We know that.
+
+1610
+01:47:32,640 --> 01:47:38,039
+CPU frequency we scale down using a prescaler and feed to the timer.
+
+1611
+01:47:38,319 --> 01:47:39,520
+That is the time of frequency.
+
+1612
+01:47:40,340 --> 01:47:44,439
+And on the other hand, we just derived this equation.
+
+1613
+01:47:45,020 --> 01:47:50,800
+PWM frequency equals time of frequency divided by top plus 1.
+
+1614
+01:47:50,800 --> 01:47:54,939
+If it is 8 bit timer, top could be 255.
+
+1615
+01:47:55,439 --> 01:48:00,220
+If it is a 16 bit timer, top could be 65,535.
+
+1616
+01:48:00,979 --> 01:48:02,760
+This equation we just derived.
+
+1617
+01:48:04,439 --> 01:48:07,859
+We previously know this equation.
+
+1618
+01:48:08,619 --> 01:48:08,640
+Right?
+
+1619
+01:48:09,119 --> 01:48:10,720
+Make a culling that now.
+
+1620
+01:48:11,579 --> 01:48:16,359
+Because if CPU frequency will scale down and feed to the timer.
+
+1621
+01:48:16,359 --> 01:48:21,659
+So time of frequency is CPU frequency divided by prescale.
+
+1622
+01:48:22,220 --> 01:48:26,600
+PWM frequency equals time of frequency divided by top plus 1.
+
+1623
+01:48:26,699 --> 01:48:28,199
+We just derived that equation.
+
+1624
+01:48:28,920 --> 01:48:34,800
+When you combine these two equations, the time of frequency you can replace with this part.
+
+1625
+01:48:35,300 --> 01:48:37,439
+FCPU divided by prescale.
+
+1626
+01:48:37,739 --> 01:48:40,760
+You can replace time of frequency with this part.
+
+1627
+01:48:40,859 --> 01:48:41,699
+Then you get this.
+
+1628
+01:48:42,340 --> 01:48:45,699
+PWM frequency equals FCPU.
+
+1629
+01:48:46,359 --> 01:48:51,979
+CPU frequency divided by top plus 1 multiplied by prescale.
+
+1630
+01:48:52,619 --> 01:48:57,739
+So whatever the PWM frequency you need, now you can calculate.
+
+1631
+01:48:58,359 --> 01:48:59,760
+You know FCPU.
+
+1632
+01:48:59,760 --> 01:49:04,239
+That is your clock speed of the processor.
+
+1633
+01:49:04,960 --> 01:49:09,079
+And based on the timer that you are using, you know that the top.
+
+1634
+01:49:09,300 --> 01:49:12,819
+If the timer is 8 bit, this is 255.
+
+1635
+01:49:12,939 --> 01:49:14,899
+Then top plus 1 is 256.
+
+1636
+01:49:14,899 --> 01:49:20,140
+If the timer is 16 bit, this is 65,535.
+
+1637
+01:49:20,520 --> 01:49:23,840
+Then top plus one is 65,536.
+
+1638
+01:49:24,420 --> 01:49:29,359
+And the pre-scale, you know what is the pre-scale that you use.
+
+1639
+01:49:29,800 --> 01:49:34,399
+You know whether it's 64, whether 128, whatever the pre-scale you use, you know.
+
+1640
+01:49:35,100 --> 01:49:40,899
+Based on that, you can calculate the required PWM frequency.
+
+1641
+01:49:40,899 --> 01:49:48,699
+So PWM frequency should be high enough to minimize any flicker.
+
+1642
+01:49:49,199 --> 01:49:52,100
+Should be high enough to minimize any flicker.
+
+1643
+01:49:52,460 --> 01:49:59,939
+And also PWM frequency should be low enough to device to react for a change.
+
+1644
+01:50:00,420 --> 01:50:07,859
+The proper range of the PWM frequency that the device supports, you can find out from the data sheet.
+
+1645
+01:50:07,859 --> 01:50:17,979
+And then you can determine what is the prescaler that you have to use to get that frequency.
+
+1646
+01:50:18,119 --> 01:50:23,960
+For example, let's say you want 200 hertz as the PWM frequency.
+
+1647
+01:50:23,960 --> 01:50:33,880
+And if your CPU frequency is 16 megahertz and the timer is 8-bit timer, then this part is 256.
+
+1648
+01:50:33,880 --> 01:50:35,779
+six to get 200
+
+1649
+01:50:35,779 --> 01:50:37,920
+around 200 to 300
+
+1650
+01:50:37,920 --> 01:50:40,180
+between 100 to 300 frequency
+
+1651
+01:50:40,180 --> 01:50:42,220
+around 200
+
+1652
+01:50:42,220 --> 01:50:43,939
+if you want to get what is
+
+1653
+01:50:43,939 --> 01:50:45,840
+the prescaler you should use
+
+1654
+01:50:45,840 --> 01:50:47,060
+you can calculate
+
+1655
+01:50:47,060 --> 01:50:55,119
+any question
+
+1656
+01:50:55,119 --> 01:50:57,859
+right if this is clear
+
+1657
+01:50:57,859 --> 01:51:00,000
+that's all for the
+
+1658
+01:51:00,000 --> 01:51:01,420
+morning session right
+
+1659
+01:51:01,420 --> 01:51:03,600
+so we'll continue this
+
+1660
+01:51:03,600 --> 01:51:14,239
+in the afternoon right so see you at one o'clock thank you thank you
+

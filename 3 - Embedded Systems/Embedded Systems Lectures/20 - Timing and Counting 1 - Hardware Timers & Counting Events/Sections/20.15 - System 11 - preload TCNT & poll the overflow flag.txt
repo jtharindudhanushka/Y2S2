@@ -1,0 +1,180 @@
+[0:00] is that clear
+[0:00] any question
+[0:02] right but the requirement
+[0:05] of the system's requirement
+[0:07] is the client says
+[0:09] we want to toggle the LED
+[0:11] exactly on 500 pesos
+[0:13] not greater than
+[0:15] or equal 500 pesos that is the system
+[0:17] requirement then how can we
+[0:19] address that if the system requirement
+[0:21] says requirement specification of the system says the led should be toggled exactly on five button
+[0:29] presses not less than five button presses not more than five button presses but exactly on five
+[0:35] button presses then what that's the next system five button count five button presses using an
+[0:41] alternate approach and toggles and led exactly by five button presser not less than not more than
+[0:48] how do we do that you can't use equality operator simply right i mean configure pb5 as an output pb4
+[0:57] that is t0 as an input pull up t0 select the clock source as external connected to t0 pin
+[1:04] set the counter to 251 set the counter to 251 every clock pulse counter counts first clock
+[1:12] pulse 252 second clock pulse 253 third clock pulse 254 fourth clock pulse 255 fifth clock
+[1:24] pulse overflow now we monitor whether there is an overflow if there is an overflow toggle the led
+[1:32] reset the counter clear the tov flag now it doesn't matter due to a voltage spike at the input
+[1:41] due to input bouncing or whether the user pressed the button very quickly two times,
+[1:47] whatever it is.
+[1:49] If the five, if the overflow happens after five button, five pulses,
+[1:55] when overflow happens, the TOE flag is raised and we monitor that flag.
+[2:03] As soon as that flag raised, we double the LED.
+[2:06] Now, we are not going to look at the count, the value of the count,
+[2:10] the value of the counter variable.
+[2:12] No.
+[2:13] Tov flag.
+[2:14] We look at the Tov flag.
+[2:15] We know that the Tov flag would be raised
+[2:18] after five pulses,
+[2:21] five external pulses.
+[2:23] Why?
+[2:23] Initial value of the TC and D register is 251.
+[2:28] The first pulse 252.
+[2:30] Second pulse 253.
+[2:32] Third pulse 254.
+[2:34] Fourth pulse 255.
+[2:37] Fifth pulse overflow.
+[2:39] So then flag is raised.
+[2:41] Toe flag is raised.
+[2:42] We are looking at the flag.
+[2:44] As soon as flag raised, we toggle the LVD.
+[2:47] Can you understand this?
+[2:49] Exactly 5 button.
+[2:50] Any question?
+[2:52] Here reset counter means we again set the counter to 251.
+[2:57] Resetting to original value 251.
+[3:00] Not to 0.
+[3:02] Any question?
+[3:03] Right.
+[3:04] Then C program.
+[3:05] Up to this point, it is similar to the previous program.
+[3:10] First, we set the PB5 as line number 7, PB5 as an output.
+[3:16] Then we configure PD4 as an input.
+[3:22] That line is not necessary, line number 8.
+[3:25] Then we pull up PD4.
+[3:27] Then we use the clock select bits of timer counter control register B.
+[3:35] We set the clock source as T0, external clock source, on falling edge.
+[3:40] Then timer becomes a counter.
+[3:42] And it will count the external clock pulses on the falling edge.
+[3:48] Then set the counter to 251, initial value, 251.
+[3:54] Endless loop.
+[3:55] Inside the loop, we check whether this flag, Tov flag race, the Tov flag bit set, right?
+[4:05] We check whether Tov flag bit is set.
+[4:07] For example, let's say TIFR means time interrupt flag register.
+[4:16] [unclear — Sinhala / crosstalk]
+[4:25] With that, we take the end operation of this value.
+[4:29] [unclear — Sinhala / crosstalk]
+[4:33] x and 0, 0.
+[4:37] [unclear — Sinhala / crosstalk]
+[4:43] x and 1, x.
+[4:45] If the x is 1, this is a positive value, condition true.
+[4:50] If x is 0, condition false.
+[4:54] So depending on the value of x, that is,
+[4:58] Tov bit, this condition either becomes false or true.
+[5:03] We look at the TOV bit.
+[5:06] If TOV bit is set, condition true, then we toggle the LED.
+[5:12] Reset the counter to original value.
+[5:15] Reset the counter.
+[5:16] And then clear the TOV bit.
+[5:19] To clear the TOV bit, we set it.
+[5:22] This is very important.
+[5:24] We use the operator and value 1.
+[5:26] That means we are going to set.
+[5:28] We set the TOV bit to clear it.
+[5:31] Clear the TOV flag.
+[5:33] to set it right this is very important this is a flag bit now led will be tugged exactly on five
+[5:42] button presser not less than five not greater than five right now how do we determine this
+[5:48] initial value how do we determine this initial right tcnt register right tcnt register could be
+[5:58] either Tc and T0
+[6:00] 1 over 2 so I put in
+[6:02] maximum value
+[6:04] minus whatever the value
+[6:06] you want to count plus 1
+[6:08] in our example
+[6:10] Tc and
+[6:12] T0 maximum
+[6:14] value 255
+[6:16] minus we want to count 5
+[6:18] 5 times
+[6:20] plus 1
+[6:21] that means 251
+[6:24] that's how we determine
+[6:26] this value
+[6:27] Why plus 1? Because flag is set when overflow happens. 255 to 0 overflow happens, then only the flag is set. The TOV bit is set. That's why we use another one to count the overflow.
+[6:47] maximum value the register can have minus
+[6:51] the count that you want plus 1. Plus 1 is
+[6:55] the value that you need you account for the overflow.
+[7:00] Then you get the initial value. Based on this equation
+[7:03] you can determine the initial value for the register
+[7:07] depending on the count that you want to write.
+[7:12] Is that clear? Any question?
+[7:15] If this is not clear, please let me know.
+[7:18] Oh, if you have any question, you can ask now.
+[7:21] Yes, Thirinan.
+[7:23] The calling system,
+[7:25] is that the condition of the condition of the condition?
+[7:32] The condition of the condition of the condition is not the condition of the condition.
+[7:40] Oh, that's not the condition.
+[7:41] the
+[7:43] the
+[7:44] the
+[7:44] the
+[7:45] the
+[7:45] the
+[7:45] the
+[7:45] the
+[7:45] the
+[7:45] the
+[7:45] 
+[7:45] the
+[7:45] 
+[7:45] the
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[7:45] 
+[8:11] [unclear — Sinhala / crosstalk]
+[9:11] So, we can use polling.
+[9:14] So, we can interrupt the flag to race.
+[9:17] Oh, that's right.
+[9:19] So, we can use polling to race.
+[9:23] So, we can use polling to race.
+[9:26] So, we can practically use that question.
+[9:30] Logically, we can use algorithm to make a mistake.
+[9:35] It's like we are equal to the same condition, logically we are not in the algorithm.
+[9:43] If we can't miss it, we can't miss it.
+[9:47] Then we can't do the algorithm logically.
+[9:51] Then we can't do the algorithm logically.
+[9:54] Practically, we use polling.
+[10:01] We use the polling event.
+[10:05] We use the interrupt.
+[10:08] If we use the flag, we interrupt.
+[10:12] If we use the polling, we waste it.
+[10:16] Because you are repeatedly checking TOV bit.
+[10:20] repeatedly checking right so repeatedly checking to obt is a waste so the the next example is
+[10:29] how to do the same using interrupts very good question you raise can others also understand
+[10:35] his question actually this is what you should do you have to think beyond what we have discussed
+[10:42] right if you talk to the seniors i'm sure they have told you this subject is difficult and
+[10:50] And it's very difficult to get a good grade.
+[10:53] That's the normal perception among the students.
+[10:56] The reason is in the exam, right, when I sent the papers, some questions I put to check whether you have, you are thinking beyond the concepts that we have discussed.

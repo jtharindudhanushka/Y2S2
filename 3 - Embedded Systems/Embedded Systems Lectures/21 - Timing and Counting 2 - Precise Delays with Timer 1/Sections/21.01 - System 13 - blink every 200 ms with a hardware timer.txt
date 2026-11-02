@@ -1,0 +1,52 @@
+[0:00] Okay, this is where we stop in the morning session. We completed our discussion on counting. Next one, timing. To learn about timing, how to use timers to measure time.
+[0:20] We develop a system.
+[0:21] The system is a simple blinker.
+[0:24] To blink an LED every 200 milliseconds.
+[0:27] But this time, the difference is,
+[0:29] we are not going to use delay loop.
+[0:33] We don't use delay loop.
+[0:35] Is it all that?
+[0:36] To measure the 200 milliseconds,
+[0:39] we use a timer, hardware timer.
+[0:41] That means,
+[0:43] while during that 200 milliseconds,
+[0:46] you could use CPU for doing something else.
+[0:52] Right?
+[0:52] We blink the LED every 200 milliseconds.
+[0:55] So, between the toggling,
+[1:00] let's say the LED is on,
+[1:05] then after 200 milliseconds, LED is off.
+[1:08] Now, there's a 200 milliseconds duration.
+[1:10] During that duration,
+[1:12] CPU is free for doing something else.
+[1:16] why we don't tie up cpu to do busy wait running the loop cpu is free we use separate
+[1:27] hardware for a timer to measure 200 milliseconds is that clear right if so okay let's see the
+[1:38] schematic diagram right just the board why a ladies already they are connected to pin number 30
+[1:45] reset button and this pull-up resistor, the crystal
+[1:49] already connected on the board, just the board, just the UNO board.
+[1:53] Using UNO board, now we are going to write a program,
+[1:57] a firmware for the microcontroller, right? That firmware would use
+[2:01] timers to measure 200 milliseconds. We are going to
+[2:05] blink this LED every 200 milliseconds. The advantage, one
+[2:09] advantage of using timers over software
+[2:13] delay functions is while you are measuring the time or during the 200 milliseconds delay
+[2:21] you could use cpu to do something else that's one advantage the second advantage the time
+[2:29] measurements using hardware is highly precise compared to time measurement using software
+[2:37] Compared to using delay loops or other software time functions, the hardware time measurements are very precise.
+[2:46] So if you are worried about the precision of your time measurements, if the system is a critical system, which depends on the time measurements, you better use hardware time.
+[2:59] Because compared to software timers, hardware timers are very precise.
+[3:04] That's another advice.
+[3:05] And also you can delegate the job for the hardware timers to measure time and use the CPU for something else at the same time.
+[3:15] So get that right.
+[3:16] Right.
+[3:16] Now how do we calculate 200 milliseconds delay?
+[3:21] Let's see.
+[3:22] Calculating time register value.
+[3:25] Right.
+[3:26] We know that time for one clock cycle is 1 divided by frequency of CPU divided by prescale.
+[3:39] What does that mean?
+[3:40] How did we get this equation?
+[3:43] Let's see.
+[3:43] We know that frequency is 1 divided by time.
+[3:49] That means time equals 1 divided by frequency.
+[3:54] If you reduce the frequency using a prescaler, the time for one clock cycle is frequency divided by the prescaler.

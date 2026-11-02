@@ -1,0 +1,93 @@
+[0:05] Transmitter. This is the internal block diagram of asynchronous transmits. So at first glance,
+[0:15] You may feel this is very complicated.
+[0:18] Don't worry, I'll explain, right, this, right, these components one by one.
+[0:26] Right.
+[0:27] Let's start with Bode rate generator.
+[0:30] Bode rate generator.
+[0:31] What is Bode rate?
+[0:33] Bode rate means data transfer rate.
+[0:36] The Bode rate generator generates Bode data transfer rate.
+[0:41] clock pulses from the oscillator. Clock pulses from the oscillator means FCP.
+[0:50] Clock pulses from the oscillator means FCP. Frequency of CPU. FCP. One input to the bauderate
+[1:01] generator is FCP. Frequency of CPU. The other input to the bauderate generator is the value
+[1:11] of this register, value of this register. This register is called UBRR. UBRR means USART
+[1:24] BORDERATE register. USART BORDERATE register. Right. Now there are two inputs to the BORDERATE
+[1:33] generator. One is frequency of CPU that is FCPU. The other input is the value of USAT
+[1:44] board rate register. Using these two inputs, board rate generator generates the data transfer
+[1:52] rate. According to this equation, this is the equation for the board rate generation.
+[2:00] So, FCPU divided by 16 multiplied by UBRR plus 1. UBRR means value of this register. So, the value of this register can vary between 0 to 255. 0 to 255 because this is 8 bit register.
+[2:19] So, according to this equation, the baud rate generator generates baud rate, data transfer rate.
+[2:28] Now, if you want to change the baud rate of the transmitter, if you want to change the baud rate or data transfer rate of the transmitter to match with that of the receive, this is the value you need to change.
+[2:46] you have to change. Because you can't change FCPV. That is fixed.
+[2:50] But this value you can change. By changing
+[2:54] this value you can adjust the board rate of the
+[2:57] transmitter to match with the receiver's
+[3:02] board rate. Because you know that both receiver
+[3:05] and the transmitter they have to agree on
+[3:09] the data transfer rate. Because there is no clock signal
+[3:13] between the transmitter and the receiver. The transmission is asynchronous. So, the receiver
+[3:20] and transmitter, they have to agree on the data transfer rate. So, if you want to adjust
+[3:28] the transmitter's data transfer rate to match with the receiver's data transfer rate, what
+[3:36] you have to do is change the value of UDRR. Right. Then the character that you want to
+[3:46] transmit, we transmit characters. The character that you want to transmit, it's an indie character.
+[3:54] You load it to the CPU loads that character to UDR register. The CPU loads the character
+[4:02] that the transmitter you want to transmit into UDR register. UDR means USART data register.
+[4:11] USART data register. Who loads the character to UDR? CPU. CPU loads character to UDR. Right.
+[4:21] Then, then if this is the transmit shift register, transmit shift register. If the transmit shift
+[4:29] register is empty. If the transmit shift register is empty, the character in the UDR is transferred
+[4:42] to the transmit shift register. If the transmit shift register is empty, character in the UDR,
+[4:49] USAT data register, is transferred to transmit shift register. The character's LSB least
+[4:58] significant bit we put it here and the character's MSB we put it there and then the entire character
+[5:08] is sprayed with a start bit which is zero and a stop bit which is one. Character is sprayed
+[5:18] with a start bit and a stop bit. These start bit and stop bits we call synchronization
+[5:25] bips or sync bips. Synchronization bips or sync bips.
+[5:29] Right. And then the character is transmitted
+[5:33] via the TXT pin. Via the TXT pin.
+[5:38] Right. At the board print.
+[5:41] At the board print. At the data transfer rate board print.
+[5:45] The character is transmitted via the
+[5:48] TXT pin at the board print. Up to this point.
+[5:52] any question no right then now when the character in the udr use our data register when that
+[6:03] character is transferred to the transmit shift register udr becomes empty cpu loads the character
+[6:13] udr transfers the character to transmit shift register and then character is framed with the
+[6:20] a start bit and a stop bit and bit by bit transmitted through the DXT pin at the rate
+[6:28] at the board rate. Now when the character in the UDR is transferred to the ship register,
+[6:36] transmit a shift register, UDR becomes empty. When UDR becomes empty, UDRE flag bit is set.
+[6:50] UDRE flag bit. UDRE flag bit means USART data register empty. UDRE means USART data register
+[7:01] empty. That flag bit is set. That flag bit is in UCSRA register. UCSRA means USART control
+[7:16] and status register A. USART control and status register A. In that register you have a flag
+[7:28] bit call UDRE. USART data register empty. This flag bit is set when UDR becomes empty. This
+[7:39] flag bit indicates that UDR is empty. This flag bit indicates that UDR is empty. And
+[7:51] UDR is ready to receive another character. This flag bit indicates UDR is MP and ready to receive another character. So you can pull this flag bit and load character by character to UDR.
+[8:13] CPU can pull this flag bit and load character by character to the UDR.
+[8:21] This flag bit is raised.
+[8:23] Raised means it becomes value 1 when the UDR is empty.
+[8:29] That indicates UDR is empty and UDR is ready to receive another character.
+[8:35] So, by pulling this flag bit, CPU can load character by character to the UDR.
+[8:43] Any question up to this point? When this flag bit is 1, that indicates UDR is empty and UDR is ready to receive another character. So by polling this flag bit, we can load character by character to UDR.
+[9:01] When you load a new character to the UDR, right?
+[9:07] When a new character is written to the UDR, this flag bit is automatically clear.
+[9:15] Automatically clear.
+[9:16] That means it becomes zero.
+[9:19] The flag bit becomes zero automatically when you write a new character to UDR.
+[9:26] Again, the flag bit is set to one.
+[9:30] when UDR is, UDR becomes empty
+[9:33] and UDR is ready to receive a new character.
+[9:38] So you can write a new character to UDR. And then
+[9:41] flag bit will be 0. Therefore, just
+[9:46] pulling this flag bit and when it becomes 1,
+[9:49] we can write a value to the UDR, character to the UDR.
+[9:53] If the flag bit is 0, you have to wait.
+[9:56] If the flag bit is 1, you can write a value to the UDR. Character by character we can write to the UDR.
+[10:03] When you write a character to the UDR, UDR transfers that character to the transmit shift register.
+[10:14] If the transmit shift register is empty, UDR transfers the character to the transmit shift register.
+[10:25] And then the character is framed with the start bit and a stop bit.
+[10:31] And then the bit by bit in the transmit shift register, bit by bit, are transmitted through the TXT pin at both rate.
+[10:43] question up to this point. So what I am explaining is how the transmitter works inside the micro
+[10:53] control. So many people know how to use transmitter but they don't know how transmitter works.
+[11:01] But as university students, you are following a university course module, you must know,
+[11:09] You should know not only how to use the transmitter but also how the transmitter works.
+[11:18] But many people know how to use the transmitter but they don't know how transmitter works.
+[11:29] Right. Then there is another bit which is called UDRIE. UDRIE. Another bit. UDRIE means USAT data register empty interrupt enable.
+[11:47] USAT data register empty interrupt enable.
+[11:53] U D R I E USAT data register empty interrupt enable.

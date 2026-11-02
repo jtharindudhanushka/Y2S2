@@ -1,0 +1,161 @@
+[0:00] In the ADC multiplexer selection register, you have two bits.
+[0:06] Ref S1, Ref S0.
+[0:09] So the Ref S1, Ref S0 means reference selection 1, reference selection 0.
+[0:17] Using them, you can change the VREF.
+[0:20] You can change VREF.
+[0:22] Use to specify the step size.
+[0:25] When you change the VREF, that means you adjust the step size.
+[0:28] Step size means size of one step in volts.
+[0:33] In Arduino, you can use a, there's a function called analog reference, wrapper function.
+[0:40] By using this analog reference function, you can change the step size.
+[0:45] VREF you can change.
+[0:46] using analog reference. In C, you have to access these two bits and change. These are the possible
+[0:53] values. If you put 00 for these two bits, right, the reference voltage is set to Varef supplied
+[1:04] externally. Varef means voltage supplied to Aref pin. In the microcontroller, you have a pin called
+[1:13] AREF, analog reference pin.
+[1:16] For that pin you can
+[1:18] supply a voltage externally.
+[1:20] That voltage
+[1:21] becomes VREF. For example
+[1:23] AREF pin if you supply 3 volts
+[1:26] you can set VREF
+[1:28] to 3 volts.
+[1:29] But to do that you have to set
+[1:31] 0, 0
+[1:33] for these two bits. In Arduino
+[1:35] you have to use analog
+[1:37] reference external
+[1:39] argument.
+[1:41] Externally you can set
+[1:43] the reference voltage. To set the external
+[1:46] reference voltage, you have to use the ARF pin.
+[1:50] Analog reference pin in the microdenture.
+[1:52] Externally, you can give a voltage to ARF pin
+[1:55] and that voltage will be used as the
+[1:59] reference voltage. If you use 0 and 1,
+[2:02] this is 0, this is 1. VREF is set
+[2:06] to AVCC. AVCC
+[2:09] means analog input voltage
+[2:12] supply, sorry, supply voltage to ADC, supply voltage to ADC. Supply voltage to ADC is usually
+[2:19] the supply voltage to microcontroller, that is 5 volts. So, that is the RdNR default, right? AVCC
+[2:26] means supply voltage to ADC. Usually, the supply voltage to ADC equals to supply voltage to the
+[2:35] microcontroller. So, if the supply voltage to microcontroller is 5 volts, AVCC is also 5 volts.
+[2:41] Then reference voltage is set to AVCC.
+[2:46] That is supply voltage to ADC.
+[2:49] That is the default setting of Arduino.
+[2:52] Then this particular, these two combination reserve, we don't use it.
+[2:58] Then one one.
+[2:59] These two bits, if you use one one, you can set reference voltage to 1.1.
+[3:06] If you are using analog reference function of Arduino,
+[3:09] Then you have to use internal parameter.
+[3:14] You have to pass internal parameter.
+[3:17] Is that clear?
+[3:18] This is how we change reference voltage.
+[3:21] Typically we use the second setting.
+[3:24] This is the one typically we use.
+[3:27] That is the default Arduino setting.
+[3:29] And even C programming we typically use this.
+[3:33] Right?
+[3:33] Because we use the reference voltage as 5 volts.
+[3:36] Right?
+[3:36] 5 volt means ADC supply voltage.
+[3:40] That is the typical reference voltage. But for more
+[3:44] accuracy you can change reference voltage. How?
+[3:49] If you want let's say your sensor input voltage is
+[3:52] sensor voltage is 0 to 1
+[3:56] then better to use 1.1 as the reference voltage.
+[4:00] If the sensor voltage is 0 to
+[4:04] 3. Then externally
+[4:07] supply 3 volts
+[4:08] to AFP and use
+[4:11] this city for
+[4:12] better accuracy. When your
+[4:14] sensor output
+[4:16] voltage is 0 to 1
+[4:18] or when your sensor output voltage
+[4:21] is 0 to 3, you
+[4:22] can use 5 volt as the reference
+[4:24] voltage. It works
+[4:26] but less accurate.
+[4:29] Your conversions are less
+[4:30] accurate. For better accuracy
+[4:32] you have to change the reference voltage to suit to your input voltage range.
+[4:39] If your input voltage range is 0 to 1, this is the ideal reference voltage.
+[4:45] If your input voltage range is 0 to 3, then you have to supply 3 volts to a ref pin
+[4:52] and use this setting to change the reference voltage.
+[4:56] Now, then only you can have more accurate conversions.
+[5:01] Can you understand? So depending on your input, you have to decide the proper reference voltage because the resolution you can't change. That is fixed. But the reference voltage you can change. By changing the reference voltage, you can adjust the step size. Is it clear? If not, let me know. Any questions?
+[5:22] Sir, can we use two different VREF for two different input sensors?
+[5:28] Yes. The way is, now let's say the first sensor, if you want to use default 5 volts,
+[5:38] right, then you set these two bits, 0 and 1, and then you read the value. I'll use Arduino terms.
+[5:47] first you
+[5:49] you don't need to do anything
+[5:52] if you are going to use the default
+[5:54] reference voltage. Then you
+[5:56] using the analog read you read the value.
+[5:59] Thereafter
+[6:00] you change the reference voltage
+[6:02] using analog reference function
+[6:04] and read using again
+[6:06] using analog read you can read the second
+[6:08] sensor. First you have to change
+[6:10] the reference voltage then read the
+[6:12] conversion result.
+[6:14] You can do that.
+[6:16] What else?
+[6:17] Unfortunately, I have seen in many examples, right, even in some of the industry applications, right, the developers, they don't touch the reference voltage.
+[6:31] They use the default reference voltage and then they get the conversion results, right.
+[6:38] Some sensors, they give voltage between 0 to 1.5.
+[6:43] But ideally, you have to reduce the reference voltage closer to 1.5 at least.
+[6:50] Then only you can get a better conversion result.
+[6:53] But they simply use the default reference voltage 5 volt.
+[6:58] Even with a sensor which provides voltages between 0 and 1.5.
+[7:04] Right. But now you know the importance of changing the step size,
+[7:09] importance of the reference voltage.
+[7:11] So now you are better equipped with this knowledge
+[7:15] so that depending on the situation,
+[7:18] now you can change the reference voltage.
+[7:21] Sir, when we use external one, what is the maximum Vref we can?
+[7:27] Always, even when you are supplying externally voltage,
+[7:34] The maximum you can go is up to the supply voltage to the microcontroller.
+[7:41] That means 5.
+[7:42] Maximum 5.
+[7:43] Okay, sir.
+[7:44] But you can have lesser number of voltages.
+[7:47] For example, 3.3, 1, 1.1, 2.
+[7:52] These voltages you can externally supply.
+[7:54] To ARF pin and you can get the VREF change.
+[7:59] Are you seeing just two?
+[8:00] Yes.
+[8:01] Yes, Isuru.
+[8:02] Yes, Isuru.
+[8:04] How the accuracy depends on...
+[8:07] Not clear.
+[8:10] Please ask again.
+[8:12] I can't clearly hear you.
+[8:15] Please ask again.
+[8:17] How the
+[8:18] accuracy of the
+[8:23] final results depends on
+[8:25] the
+[8:25] VREF?
+[8:29] So that's what I
+[8:30] explained in the previous
+[8:33] slide.
+[8:34] Now here the sensor output is 0 to 1. Let's assume if you use reference voltage as 5, the minimum, the smallest voltage that the ADC can convert is 4.88.
+[8:49] Let's assume sensor output is 0 to 1.
+[8:52] And in a particular moment, sensor gives 501 millivolts.
+[8:58] And in the next moment, sensor gives 503 millivolts.
+[9:02] The difference is 2 millivolts.
+[9:04] ADC cannot recognize the change.
+[9:07] Why?
+[9:07] ADC requires at least 4.88 millivolts.
+[9:11] So for these two voltages, ADC will give you same discrete number.
+[9:16] But if you use the reference voltage 1.1, then the smallest voltage that the ADC can convert is 1.07.
+[9:24] The sensor gives 501 millivolts a particular moment, then 503 millivolts in another moment.
+[9:32] The difference is 2 millivolts.
+[9:34] 2 millivolts is greater than this.
+[9:37] So, ADC can recognize and give you two discrete numbers, more accurate.
+[9:43] Is it clear?
+[9:44] Thank you.
+[9:46] Right. More ADC registers. Right. The same ADMUX register that is ADC multiplexer selection register. Now we are going to talk about ADLAR bit. ADC left adjust result bit. That bit specifies whether the conversion result is left justified or not.

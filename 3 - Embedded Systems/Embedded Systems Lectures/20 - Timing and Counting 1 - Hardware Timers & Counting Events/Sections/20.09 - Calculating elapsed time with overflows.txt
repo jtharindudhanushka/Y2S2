@@ -1,0 +1,71 @@
+[0:08] Now this is the way we calculate the elapsed time.
+[0:13] The oscillator provides clock pulses.
+[0:16] TNCT register counts the clock pulses.
+[0:19] It is incremented from 0 to 255.
+[0:24] Let's assume before it overflows, you stop the clock.
+[0:30] You disconnect the clock source.
+[0:32] Before the register overflows, you stop the, disconnect the clock source.
+[0:39] Then starting number of the register, which is 0 usually.
+[0:45] And the end number, end value of the register.
+[0:48] Now you measure the, you check the value of the register.
+[0:51] It says 100.
+[0:52] 100 minus 0, 100.
+[0:55] Divided by frequency.
+[0:58] You get the ellipse time.
+[0:59] You get the ellipse time.
+[1:00] Now if the register overflows, Tov bit is set.
+[1:06] Now you have to keep a separate count of how many times Tov bit is set.
+[1:13] And then finally when you disconnect the clock source, you get the stop number and the start number.
+[1:22] And you have separated, you have separate count of number of times Tov bit is set.
+[1:28] And using that and the frequency, you can determine the ellipse time.
+[1:36] Is that clear?
+[1:37] Right.
+[1:38] But one problem of this method is the frequency of the oscillator is very fast.
+[1:44] Oscillator is very fast.
+[1:45] So you get a higher frequencies.
+[1:48] And the TCNT register is a small register.
+[1:50] Register would be over.
+[1:53] It can count up to maximum and then it overflows.
+[1:57] Now what is the solution? You can use a prescaler and cut down the frequency by a factor, some number. Now the increment is slow. Look at it. So very fast. Now it's slow. The increment is slow because you have cut down the frequency by a prescaler.
+[2:17] Then you can, the TCNT register counts and when you disconnect the clock source, the counting stops.
+[2:28] Then you get the end number, starting number multiplied by the prescaler divided by the frequency.
+[2:38] You get the elapsed.
+[2:39] Is that clear?
+[2:39] Now, for example, let's say frequency is 1 hertz.
+[2:44] Every one second you get a clock pulse.
+[2:48] Starting value 0.
+[2:50] End value 60.
+[2:53] 60 minus 0 divided by 1.
+[2:58] Elapsed time is 60 seconds.
+[3:01] That means 1 minute.
+[3:03] The second example.
+[3:04] Frequency let's say 10 hertz.
+[3:07] That means every second you get 10 pulses.
+[3:11] And the prescaler is, let's say, n is 10.
+[3:17] You divide by 10.
+[3:19] 0, n times 60.
+[3:22] 60.
+[3:23] You don't get, yes, 60, 0.
+[3:28] That is 10 multiplied.
+[3:31] Divided by frequency, 10.
+[3:34] Again, 1 minute.
+[3:36] Right?
+[3:36] Now if the frequency is high, if the frequency is high, this register would be filled very soon.
+[3:48] To avoid that, we can use a prescaler and divide the frequency by a fixed number.
+[3:56] And then we can use that number for the calculation.
+[3:59] That's how we determine the elapsed type, measuring type.
+[4:03] Is that clear?
+[4:04] Any question?
+[4:07] Can you understand this?
+[4:10] Measuring elapsed time?
+[4:11] Is it?
+[4:13] Right. That's how we measure elapsed time.
+[4:16] Now let's talk about time counter registers.
+[4:20] The first register TCCRNB.
+[4:25] Time counter control register NB.
+[4:30] Right.
+[4:31] And simple N indicates the timer.
+[4:35] Timer 0, timer 1, timer 2, likewise the number of the time.
+[4:41] The B indicates, B means there are multiple TCCR registers.
+[4:50] Timer counter control register A, timer counter control register B, timer counter control register C, likewise multiple timer counter registers.
+[4:59] for a given timer.

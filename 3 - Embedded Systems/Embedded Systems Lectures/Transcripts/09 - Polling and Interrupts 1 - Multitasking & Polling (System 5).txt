@@ -1,0 +1,1168 @@
+09 - Polling and Interrupts 1 - Multitasking & Polling (System 5)  (20 Oct 2020 (morning))
+
+[0:00] Sir, Atkinson, Jamatka said that he went to the hospital because of unavoidable circumstances. So, he will come to the lecture after he comes.
+[0:16] That's alright. He can attend during the lecture. No issue at all.
+[0:20] Thank you, sir.
+[0:22] Right. Today is a new lesson. The topic is polling and interrupt handling. One of the powerful concepts in computing, not just in embedded systems, in computing and sometimes a little bit difficult concept to understand.
+[0:49] So therefore, pay your attention. Polling is very straightforward. Interrupt parties, some people, they say it's a bit complicated. But anyway, it's a very powerful facility, a concept available in computing, not just for embedded systems.
+[1:08] Right. As usual, let's look at the learning outcomes of this session. Right. On completion of this session, you should be able to compare and contrast polling versus interrupts.
+[1:27] Now actually, the two mechanisms, one is polling, one is interrupts, we use in computing to perform more than one task at the same time.
+[1:44] Now we want our computers to do more than one task at the same time, right?
+[1:51] So in operating systems terminology, we call it multitasking.
+[1:57] Now, to achieve that goal, execute multiple tasks at the same time.
+[2:05] We use, in computing, we use, not just in embedded systems, in computing, we use two approaches.
+[2:14] One is pooling, the other one is interrupts.
+[2:17] Now, they have their pros and cons, strengths and weaknesses.
+[2:23] So, you should be able to compare and contrast them.
+[2:26] So, these learning objectives, learning outcomes are very important because at the end of the module, when we set the exam paper, we set exam paper to assess whether you have achieved these learning outcomes.
+[2:44] So, if you are more concerned about your exam, so this is the most important slide in the entire slide set.
+[2:54] Because exam is based on this slide.
+[2:56] We set the paper to assess whether students have achieved these learning outcomes.
+[3:04] Right.
+[3:04] So, one learning outcome is you should be able to compare and contrast polling versus interrupts.
+[3:13] The two mechanisms that we use to perform more than one task at the same time.
+[3:22] Two alternative approaches.
+[3:24] The second learning outcome, construct a microcontroller based system and program it to perform more than one task seemingly at the same time using polling.
+[3:39] Then we use polling to perform more than one task.
+[3:44] Now here the word seemingly is very important.
+[3:50] Now you know that even in operating systems, even in modern operating systems,
+[3:55] multitasking is an illusion as bamboo.
+[4:00] Because the multiple tasks are not executed actually at the same time.
+[4:06] Only one task is executed and then we switch the processor among the task very fast.
+[4:14] We switch the processor among the task very fast so that the users, they feel multiple tasks are executed at the same time.
+[4:26] However, only one task is executed at a time.
+[4:31] But we feel multiple tasks are executed at the same time.
+[4:36] So it is seemingly, seemingly at the same time.
+[4:41] Not truly at the same time.
+[4:43] If you want to execute multiple tasks at the same time truly, you need multiple CPUs.
+[4:53] Right.
+[4:54] We need multiple CPUs.
+[4:57] Right.
+[4:57] Now, right.
+[5:00] Right. We need multiple CPUs to execute multiple tasks truly at the same time.
+[5:09] Multiple CPUs may come in one chip.
+[5:15] They may come in one chip.
+[5:16] If they come in one chip, we call it a multi-core processor.
+[5:23] You use dual-core, quad-core processors these days.
+[5:28] So they are multiple, the processor with multiple CPUs, not just one central processing unit, but multiple central processing units in the same chip, same die, multi-core processors.
+[5:44] When you have a multi-core processor, you can allocate one CPU to do one task and another CPU to do another task.
+[5:55] And the both CPUs can execute those two tasks at the same time truly.
+[6:02] That is possible.
+[6:03] If you have two CPUs, let's say you have a dual core processor.
+[6:07] At dual core processor, you want one CPU, you can assign one task to execute.
+[6:12] And another CPU, you can assign another task to execute.
+[6:17] So both tasks you can execute at the same time, truly.
+[6:22] That's not an illusion, right?
+[6:24] Even in the microcontroller world, there are microcontrollers with multico microcontrollers, multiple CPUs.
+[6:34] There are microcontrollers, right?
+[6:35] Multico microcontrollers are available.
+[6:40] So if you use multi-core microcontrollers with multiple CPUs, you can do, you can perform multiple tasks truly at the same time.
+[6:51] In operating systems, we call this multiprocessing.
+[6:56] True execution at the same time, we call multiprocessing, not multitasking.
+[7:02] Multitasking is an illusion.
+[7:03] In multitasking, one task is executed, a certain time contact, and then the processor is switched to another task, and then processor executes that task another certain time contact, and again processor is switched to another task.
+[7:21] Likewise, we switch the processor among the tasks rapidly.
+[7:27] We switch the processor among the tasks rapidly.
+[7:30] So very fast we switch the processor.
+[7:32] As a result, we see the users feel multiple tasks are executed at the same time.
+[7:41] However, only one task is executed at a time.
+[7:46] But we see, we feel multiple tasks are executed at the same time.
+[7:51] Now, for example, one good example is you may have seen in some circus events, sometimes the people throw multiple bowls at the same time.
+[8:11] They throw up multiple bowls at the same time and then catch them repeatedly.
+[8:17] They do it very fast.
+[8:20] But at a time, only one ball in their hand.
+[8:24] The other balls are in the air.
+[8:26] But you see multiple balls are throwing and catching at the same time.
+[8:32] The reason is they do it very fast.
+[8:35] So our eyes are not that accurate.
+[8:38] As a result, we see, we feel that multiple balls are thrown
+[8:44] and multiple poles are catch at the same time. No, that is an illusion. So multitasking is
+[8:52] illusion, but we like that illusion, right? In our life, we like illusions, right? So many
+[8:59] illusions we like. So therefore we are very happy with illusions. So now in multitasking
+[9:06] also, we do word processing at the same time we download something from using the web browser.
+[9:13] at the same time we play a music at the same time we send a printout to the printer
+[9:19] but so we we are very happy with that multitasking concept and the question is how can we
+[9:27] implement multitasking in microcontrollers very very tiny
+[9:35] low power microcontrollers small computer single chip how can we do these things if
+[9:42] If you have an operating system, yes, you can delegate this, the responsibility for
+[9:47] the operating system, then operating system has to execute multiple tasks.
+[9:53] Operating system has to switch the processor among the multiple tasks.
+[9:57] So you can delegate that to operating systems in general purpose PCs, personal computers.
+[10:03] So that's why we don't need to worry about this because operating system takes care of
+[10:07] all these things.
+[10:10] system handles multitasking so we call it context switching then various technical terms we use we
+[10:19] discussed that in our pre the previous semester under data computer architecture and operating
+[10:25] systems how multitasking happens how uh context switching happens all these things we discuss
+[10:34] Now, in this tiny microcontrollers, we don't have that luxury.
+[10:40] The operating system luxury we don't have.
+[10:42] Now, as programmers, firmware developers, now multitasking has become our responsibility.
+[10:53] We can't delegate it to operating system and we can't focus on only the functionality of our firmware.
+[11:00] Now, we have to worry about the multitasking part as well.
+[11:04] You can't simply delegate that to operating system because there is no operating system.
+[11:10] You have to do it.
+[11:11] If you want to execute multiple tasks seemingly at the same time, it is your responsibility.
+[11:18] Right.
+[11:19] Can you understand that?
+[11:21] Now it is your responsibility.
+[11:23] Right.
+[11:23] Achieving multitasking is your responsibility because there is no operating system to handle that.
+[11:31] Right.
+[11:32] Now one approach is polling.
+[11:34] The second learning outcome is we construct a microcontroller based system and program it to perform more than one task seemingly.
+[11:44] Seemingly means looks like tenavidhiata, right?
+[11:48] Seemingly at the same time using polling.
+[11:52] How to do that?
+[11:53] Practically, it is our responsibility, right?
+[11:56] How do we do that?
+[11:58] That is the second learning outcome.
+[12:01] Then the third learning outcome, explain how interrupt handling works.
+[12:09] This is another mechanism, actually hardware mechanism.
+[12:12] Interrupt is a hardware mechanism, right?
+[12:15] How interrupt handling works in computing, not just in embedded systems,
+[12:22] but generally computing how interrupt handling works.
+[12:25] So you should be able to explain.
+[12:27] Explain the functionality of interrupt registers.
+[12:31] As usual, if you want to handle interrupts, you have to deal with interrupt registers because we are using C programming language.
+[12:42] If you are using Arduino platforms, then you have wrapper functions.
+[12:48] You don't need to worry about the registers.
+[12:51] Using wrapper functions, you can do the job.
+[12:54] You can handle interrupts.
+[12:55] But we use C.
+[12:56] Therefore, we should know about the functionality of the interrupt registers that we have to use.
+[13:03] And at the end of this session, you should be able to construct a microcontroller based system and program it to perform more than one task seemingly at the same time using interrupts.
+[13:18] Right.
+[13:19] Using interrupts, how can we achieve multitasking?
+[13:23] Right.
+[13:24] How to do that?
+[13:25] These are the learning outcomes.
+[13:27] Any questions on learning outcomes?
+[13:29] I have learned learning outcomes.
+[13:32] I have learned how to do it.
+[13:34] No, right.
+[13:35] Polling and interrupt.
+[13:37] Two approaches to perform more than one task seemingly at the same time.
+[13:44] Right.
+[13:45] Now, again, you have to be very clear.
+[13:48] More than one task are executed not truly at the same time.
+[13:53] If you want to execute multiple tasks truly at the same time, you need multi-core processor.
+[14:00] Now here we talk about single-core primitive microcontrollers.
+[14:05] So therefore, but we can achieve, we can execute multiple tasks seemingly at the same time.
+[14:12] So that illusion, that's an illusion and we are very happy with that illusion.
+[14:17] Right. Now in PCs, in general purpose computers, operating system performs multiple tasks at the same time.
+[14:27] We call it multitasking. Now here we don't have operating system.
+[14:32] So we have to deal that problem, multitasking problem by ourselves.
+[14:40] Right. Used to provide. What is the purpose of executing multiple tasks at the same time?
+[14:46] The idea is used to provide polling and interrupts are used to provide CPUs, central processing unit service to peripheral devices.
+[14:59] When CPU is busy with one task, right, CPU is busy with one particular task.
+[15:07] That means CPU is doing one task.
+[15:10] While CPU is busy with one task, how can we do another task?
+[15:17] While CPU is busy with another task, how to provide our service, CPU service to peripheral devices?
+[15:28] Now, what are peripheral devices?
+[15:30] There can be external peripheral devices and internal peripheral devices.
+[15:35] For example, an external peripheral device could be a sensor.
+[15:40] External peripheral device could be a button.
+[15:43] Because which is external to the microcontroller.
+[15:47] A sensor, a button.
+[15:49] So those are external peripheral devices.
+[15:52] Internal peripheral devices.
+[15:54] The devices inside the microcontroller.
+[15:57] It's a single chip computer.
+[16:00] Not just the CPU.
+[16:02] There are other components inside the microcontroller.
+[16:06] For example, inside the microcontroller we have timers.
+[16:10] to measure the time inside the microcontrollers we have adc and lock to digital converter
+[16:17] to convert analog signals into digital inside the microcontroller we have you want universal
+[16:27] asynchronous serial receiver and transmitter right for serial communication now these are
+[16:37] internal peripherals. Now when CPU is busy with one task, if a peripheral device wants CPU service,
+[16:48] how do we provide that service? When CPU is busy with one task, if a peripheral device,
+[16:56] it could be external peripheral device or internal peripheral device, wants CPU service,
+[17:03] then CPU has to provide the CPU service to the peripheral device.
+[17:07] But the problem is CPU is busy with another task.
+[17:11] How can we provide, how can CPU provide its service to peripheral devices
+[17:18] when it is busy with another task?
+[17:22] Two tasks at the same time.
+[17:25] To handle that, we can use either polling or interrupt.
+[17:29] Is that clear? Any question?
+[17:33] First we have to sort it out.
+[17:39] All these problems before we move into.
+[17:42] Right.
+[17:43] More complicated thing.
+[17:45] If you have questions please ask.
+[17:49] Right.
+[17:50] Then.
+[17:52] Polling.
+[17:53] Now let's talk about polling.
+[17:54] CPU keeps on checking the status of peripheral devices at regular intervals repeatedly while performing another task.
+[18:07] Now in polling, CPU keeps on checking.
+[18:11] Keeps on checking means monitoring status of peripheral devices at regular intervals.
+[18:19] Repeatedly, again and again, while performing another task.
+[18:25] While doing another task, CPU again and again checks the status of peripheral devices.
+[18:35] When the status condition of a device is met, right?
+[18:40] Now when CPU checks the status of peripheral devices,
+[18:44] if the status change, CPU provides its service to the device
+[18:50] and resumes the task it was doing again.
+[18:55] CPU then starts again monitoring the status of devices, right?
+[19:03] Now you can see multiple tasks.
+[19:05] One is the task that the CPU was doing.
+[19:10] The other task is the peripheral device service.
+[19:14] So what the CPU does is CPU keeps on checking the status of peripheral devices at regular intervals repeatedly while performing another task while doing another task.
+[19:29] When the status condition of a device is met, CPU provides its service to the device.
+[19:36] After that, CPU resumes the task it was doing.
+[19:41] CPU then starts again monitoring the status of the devices.
+[19:45] Right.
+[19:46] Now, let's take a simple example.
+[19:49] Right.
+[19:50] Now, we have, let's say, we have a security system, home security system.
+[19:57] Now in that home security system, system monitors, the task system is doing.
+[20:06] Is a system, let's say, let's take simple day-to-day example, forget about computers.
+[20:15] Then you can easily understand this.
+[20:17] Let's assume, right, you all are married and you have a kid.
+[20:23] Right.
+[20:24] I know you are not married.
+[20:27] But let's assume.
+[20:28] You are married and you have a kid.
+[20:30] Small kid.
+[20:31] Small.
+[20:32] Very small kid.
+[20:33] Now, as a parent.
+[20:36] Right.
+[20:37] So you have to take care of that small fellow.
+[20:40] Right.
+[20:41] Now you are reading the newspaper.
+[20:44] That is the task you are performing currently.
+[20:50] You are reading the newspaper.
+[20:52] And you are small fellow.
+[20:53] Small kid.
+[20:54] is on the floor playing with his or her toys.
+[21:01] Right.
+[21:01] So near to you, he or she is playing his or her toys.
+[21:09] And you could be either mother or father.
+[21:13] You are reading the newspaper.
+[21:15] So you are doing one task.
+[21:17] Right.
+[21:17] But as a responsible parent, you have to be.
+[21:21] This is a small fellow.
+[21:23] Let's say one or two years old.
+[21:26] Let's say one year old.
+[21:28] Now you have to regularly check whether his nappy is wet.
+[21:36] If the small fellow's nappy is wet, you have to change it.
+[21:40] That is the peripheral device.
+[21:41] So small fellow's nappy is the peripheral device.
+[21:45] You have to check that regularly while reading the newspaper.
+[21:50] You read the newspaper.
+[21:52] Let's say you start reading the newspaper.
+[21:55] You read the first article in the newspaper.
+[21:59] Right.
+[21:59] Then you touch the nappy of small fellow and check whether it is wet.
+[22:04] No.
+[22:05] You read the second story in the newspaper.
+[22:08] Then again you see whether the nappy is wet.
+[22:12] No.
+[22:13] You read the third story in the newspaper.
+[22:17] You check whether the nappy is wet.
+[22:18] ah nappy is wet
+[22:20] then you stop
+[22:22] reading the newspaper
+[22:24] you attend to the child
+[22:27] you chain the nappy
+[22:29] and again you
+[22:31] start reading the newspaper
+[22:32] from the fourth story
+[22:34] after reading the fourth story
+[22:36] in the newspaper you check whether
+[22:38] nappy is wet
+[22:39] then you know then you again
+[22:42] read the fifth story
+[22:45] in the newspaper check whether
+[22:46] nappy is wet yes it's wet
+[22:48] so you stop reading the newspaper you attend to the small fellow chain the nappy and then again
+[22:57] you start the again you resume what you were doing that is reading the newspaper so both tasks you do
+[23:08] seemingly at the same time so you regularly check whether small fellows nappy is wet that is the
+[23:15] peripheral device if it is wet that means the peripheral device requires your service
+[23:22] provide the service to the peripheral device after doing that resume the work that was doing
+[23:30] reading the newspaper can you understand mom make you a katan the rate a runada
+[23:35] They have mastered that.
+[23:43] Pulling.
+[23:45] Especially
+[23:46] they are doing
+[23:49] multiple tasks.
+[23:51] They are doing
+[23:53] telephone call.
+[23:58] So they do all these things.
+[24:02] Right?
+[24:03] Therefore, they know
+[24:04] the concept of pulling. Very well. Right. Another example, the computing example, ABS,
+[24:15] anti-lock braking system. Now the car has four wheels. The anti-lock braking system has to
+[24:22] monitor the rotational speed of each and every wheel. If one wheel, when you apply brake,
+[24:30] if one wheel is slower than the others
+[24:34] the ABS has to release the brake of that wheel
+[24:39] and bring the rotational speed of that wheel
+[24:43] equal to the rotational speed of other wheels
+[24:47] so that you can avoid
+[24:49] going the car off direction.
+[24:54] If one wheel is slower than the others
+[24:57] we release the brake of that wheel
+[25:00] to avoid the car going off direction.
+[25:06] That is the job of ABS,
+[25:09] anti-lock braking system.
+[25:10] Now there are four wheels to monitor.
+[25:13] So that is the job of the main task of ABS.
+[25:20] So ABS monitors the first wheel rotational speed,
+[25:23] then monitors the second wheel rotational speed,
+[25:27] then monitors the third wheel rotational speed,
+[25:29] Then monitors the fourth wheel rotational speed.
+[25:33] Again it monitors the first wheel rotational speed.
+[25:36] So likewise ABS monitors each and every wheel rotational speed again and again.
+[25:44] While monitoring these rotational speeds regularly.
+[25:49] If ABS finds that one particular wheel is slower than the others.
+[25:56] Then ABS has to attend to that wheel.
+[26:00] ABS has to attend to that wheel.
+[26:03] And ABS will release the brake of that wheel.
+[26:06] Right.
+[26:07] To bring the rotational speed of that wheel up to the speed of other three wheels.
+[26:14] And after that, ABS again starts monitoring the rotational speed of other wheels.
+[26:21] Again and again.
+[26:23] Right.
+[26:23] So ABS monitoring the rotational speed of each and every wheel repeatedly.
+[26:31] If it encounters, if it finds one wheel is slower than others, then ABS has to attend to that wheel.
+[26:42] ABS has to release the brake of that wheel to bring its speed up to the speed of other three wheels.
+[26:49] and thereafter again ABS can resume
+[26:54] the task it was doing.
+[26:57] The task it was doing is monitoring the
+[27:00] rotational speed of each and every wheel.
+[27:04] In our day-to-day example, you are reading the newspaper,
+[27:08] you read the first article, you check the small fellow
+[27:12] snapping. You read the second article, check the small fellow
+[27:16] nappy whether it is wet.
+[27:18] Read the third article.
+[27:20] Check the small fellow's nappy whether it is wet.
+[27:23] It is wet.
+[27:24] Then can you read the fourth article?
+[27:26] No. You have to attend to the small fellow.
+[27:29] And you change the nappy
+[27:30] of the small fellow.
+[27:32] Thereafter you resume
+[27:34] the job that
+[27:36] was doing. What is the job
+[27:38] that was doing?
+[27:40] Reading the newspaper.
+[27:42] You start again reading the
+[27:44] newspaper and regularly
+[27:46] check the small fellow's neppy whether it is wet or not. This is the concept of poli.
+[27:55] Is it clear? Any question? Ask anything if you have. Don't keep quiet. If you have any
+[28:07] doubts please ask.
+[28:11] Right. No questions. Then let's move on. System number five. Polling based trigger. Right. This system toggles an LED on user input while blinking another LED in every two seconds. Right. Now there are two tasks.
+[28:32] The main task is blinking an LED every two seconds.
+[28:37] That is the main task.
+[28:38] Blinking an LED every two seconds.
+[28:41] That is the main task.
+[28:46] That is similar to the reading of the newspaper.
+[28:49] Main task, reading of the newspaper.
+[28:51] Then the second task is, right, when there is a user input, toggle another LED.
+[28:59] another second led you have to toggle on user input that means while doing the main task that
+[29:07] is blinking an led every two seconds while doing it you have to monitor whether there is an input
+[29:15] you have to monitor whether there is an input if there is an input you toggle another led
+[29:21] now let's see there are two leds red and green the red one is the main led so you blink it every
+[29:28] seconds. While blinking
+[29:30] that LED, you monitor
+[29:32] whether there is an input.
+[29:34] Whether there is an input. If there
+[29:36] is an input, you
+[29:38] toggle the green LED.
+[29:40] Toggle that green LED means if the
+[29:42] green LED was off,
+[29:45] you turn on.
+[29:46] If it was on, you
+[29:48] turn it off. That means toggle.
+[29:51] You do that
+[29:52] only when there is an input.
+[29:55] If there is no input,
+[29:56] you simply blink
+[29:58] the red LED every two seconds.
+[30:01] That is the main task.
+[30:02] You simply read the newspaper.
+[30:04] But you monitor
+[30:05] whether the small fellow's
+[30:09] nappy is wet.
+[30:10] You monitor that.
+[30:11] You are not going to change the nappy.
+[30:14] You just monitor it whether it is wet
+[30:16] while reading the newspaper.
+[30:18] If it is wet,
+[30:20] then only you change it.
+[30:22] So in this system,
+[30:23] we blink the main LED
+[30:26] every two seconds.
+[30:28] While doing that, we monitor whether there is an input.
+[30:32] If there is an input, we toggle the other LDD.
+[30:36] We read the newspaper while monitoring small fellow's nappy.
+[30:42] If it is wet, then only we change the nappy.
+[30:47] And thereafter, we again continue what we were doing, that is reading the newspaper.
+[30:53] This polling based trigger blinks one LED every two seconds.
+[31:01] Main task.
+[31:02] While doing that, it monitors whether there is an input.
+[31:05] If there is an input, it toggles another LED and again continues the task it was doing.
+[31:15] That is blinking the first LED every two seconds.
+[31:20] Can you understand this system?
+[31:23] the functionality of the system polling based trigger any question any question madusha no sir
+[31:33] anything right if no questions let's move into hardware design right so we design hardware
+[31:42] using a schematic diagram schematic diagram so schematic diagram shows how components are connected
+[31:50] using standard symbols right using symbols how components are connected we can show
+[31:57] using schematic diagram right now this is the schematic diagram right now here you can see
+[32:06] the microcontroller the reset button the pull-up resistor 10 kilo ohm pull-up resistor for the
+[32:16] reset pin, the clock source, 16 MHz
+[32:20] clock source and an LED
+[32:24] connected to PB5
+[32:27] pin. The PB5 pin is Arduino pin
+[32:32] number 30. On Arduino Uno board, you know
+[32:36] that there is an LED connected to pin number 30.
+[32:39] There is an onboard LED connected
+[32:44] to pin number 30 so this is that led so we don't need to connect anything extra everything is
+[32:54] already connected the led already connected on board the clock source the ceramic resonator
+[33:02] already connected the reset button and the pull-up resistor already connected all these
+[33:08] components are already connected on the Arduino Uno boot. So you don't need to connect them
+[33:16] externally. However, the second LED, this is the first LED, this LED we need to blink every two
+[33:24] seconds. The LED connected to the digital IO pin 13 of Arduino Uno boot. Digital IO pin 13 is
+[33:34] PB5. In AVR
+[33:37] terms PB5.
+[33:39] Port B, pin number 5.
+[33:41] Right. That is
+[33:42] the LED we are going to blink
+[33:44] every 2 seconds. The second
+[33:47] LED that we want to
+[33:48] toggle. When there is an input
+[33:51] we need to toggle another
+[33:52] LED. Right. First we need
+[33:55] a switch to give the input.
+[33:57] Now here you can see the switch
+[33:59] right. We
+[34:01] used to give the input. So
+[34:03] So this switch, a push button switch, we have connected to PD2, port D, pin number 2.
+[34:12] PD2 is Arduino Uno board, digital IO pin 2.
+[34:18] In Arduino Uno board, PD2 means digital IO pin number 2.
+[34:23] To that we have connected a switch, a push button switch to give the input.
+[34:30] Right.
+[34:31] then if there is an input we need to toggle another led so we need another led so that led
+[34:40] as usual we connect to digital io pin 8 of arduino uno right that is tb0 port b pin 0 right now this
+[34:53] microcontroller or this microcontroller blinks this led i think you can see my uh
+[35:02] mouse pointer right blinks this led every two seconds
+[35:12] while blinking this led every two seconds microcontroller monitors this switch this is
+[35:21] the peripheral device the main task and the peripheral device while doing the main task
+[35:28] the microcontroller monitors peripheral device this is external peripheral device it monitors
+[35:35] the switch if switch is pressed then microcontroller attends to the second led the microcontroller
+[35:43] attends to the second LED and toggles the second LED. After doing that, microcontroller resumes
+[35:51] the task it was doing. That is blinking the first LED every two seconds and monitoring the
+[36:00] peripheral device. If switch is pressed, microcontroller toggles the second LED,
+[36:06] Attends to the second LED and toggles it.
+[36:10] After that microcontroller again resumes the task it was doing.
+[36:16] Blinking the first LED every two seconds.
+[36:19] And monitoring the peripheral device.
+[36:22] Status of peripheral device.
+[36:24] Now two tasks.
+[36:26] Blinking one LED and toggling another LED on user input.
+[36:31] Blinking one LED every two seconds.
+[36:34] That is the main task.
+[36:35] The second task is toggling another LED on user input.
+[36:41] Right.
+[36:42] Now, how do we do those two tasks seemingly at the same time?
+[36:50] For that we use polling.
+[36:53] Any question?
+[36:54] Right.
+[36:55] If you don't have questions, I have questions.
+[36:58] Now look at this schematic diagram.
+[37:01] The onboard LED.
+[37:04] Are you on a board?
+[37:05] pin 13 there is an led connected on board led for the on board led we limit the current using
+[37:12] one kilo ohm resistor yes on the arduino uno board the on board led right the current is
+[37:21] limited to the on board led using one kilo ohm resistor however the external led we connected
+[37:29] to the pin number 8. We limit the current using 220 ohm resistor. Why? Why don't you use 1 kilo
+[37:38] ohm resistor for the external LED or why don't you use 220 ohm resistor for the onboard LED?
+[37:47] I am talking about these two resistors. One is 1 kilo ohm, this is the onboard resistor,
+[37:53] on board LED.
+[37:55] So you don't need to do anything.
+[37:57] Those are already connected on Arduino
+[37:59] on board. These are externally
+[38:01] connected resistor
+[38:02] and LED. This is to 1 and
+[38:05] to end your off. What is the reason
+[38:07] for the difference?
+[38:09] Any answer?
+[38:13] Yes, Thilina.
+[38:15] I can't clearly hear you.
+[38:18] Yes, Thilina.
+[38:19] Yes, Thilina.
+[38:23] No, Tilina, I can't hear you. Sorry.
+[38:33] One thing I can...
+[38:35] Can you send me using chat your answer, Tilina?
+[38:42] Okay.
+[38:43] Anybody else? Any other answer?
+[38:46] Aruni?
+[38:46] Can you give any answer to this question? Yes, Aruni? Yes. Why two different resistors? Any idea?
+[39:03] Sir, inside the board LED is very small so it takes very low current.
+[39:11] Correct. Correct. Very good. Right. So it's very good. Correct answer. Only problem is you didn't use the technical terms, but I would give you full marks. Right.
+[39:28] Now the technical term, onboard LED.
+[39:33] Onboard LED is SMD LED.
+[39:37] SMD, surface mounted device.
+[39:42] Surface mounted device, SMD.
+[39:45] Right.
+[39:46] Surface mounted, small, tiny LED.
+[39:51] Which requires a tiny current.
+[39:54] So, to limit the current, you have to use a large resistor.
+[39:59] 1000 kilo ohm resistor, in other words, 1 kilo ohm resistor,
+[40:04] we use because we have to limit lot of current.
+[40:09] Otherwise, this tiny SMD LED would be destroyed.
+[40:13] However, the external LED that we use is a through hole LED.
+[40:19] Through hole, through hole, through hole.
+[40:22] Why through hole? Because it's leads.
+[40:26] You can insert through the holes of the circuit board.
+[40:31] Right?
+[40:32] So we insert the leads of the LED through the holes in the circuit board.
+[40:46] And from underside we can solder them.
+[40:49] So it is called through hole LED.
+[40:51] Through hole.
+[40:52] Right? Through hole device. Not surface mounted device. Through hole device. Through hole devices are large. They consume more current. They need more current to illuminate.
+[41:08] unlike SMD LEDs.
+[41:11] SMD LEDs, they need very little
+[41:13] current to illuminate.
+[41:15] But through all LEDs, they take
+[41:17] fairly large
+[41:19] current to illuminate.
+[41:21] So to give larger
+[41:23] current, we have to use smaller
+[41:25] resistor, 220
+[41:27] Ohm. But
+[41:29] SMD LED, a
+[41:31] very tiny current, so
+[41:33] a larger resistor. Now is that
+[41:35] clear? Right.
+[41:36] Then let's move into wiring diagram. Now wiring diagram is a simplified pictorial representation of an electronic circuit. Right. This is a pictorial pictures. Right. Simplified pictorial representation of an electronic circuits.
+[41:54] circuits. It shows
+[41:57] relative position and
+[41:58] arrangement of components.
+[42:01] It shows relative
+[42:02] position and arrangement of
+[42:05] components using realistic pictures.
+[42:08] Not symbols.
+[42:09] Schematic diagram, symbols.
+[42:11] Wiring diagram, pictures.
+[42:13] Realistic pictures.
+[42:15] Now relative arrangement,
+[42:18] relative
+[42:18] position and arrangement you can see.
+[42:21] Now here you can see
+[42:22] this is the
+[42:24] pin 13 led led connected to digital iopin 13 right you don't need to do anything
+[42:31] it's already on board right and this is the switch the switch one side connected to pd2 that is iopin
+[42:42] number two the other side of the switch connected to the ground power supply ground power supply
+[42:48] Then the second LED, the cathode is connected to ground power supply, cathode.
+[42:57] An anode through a 220 ohm current limiting resistor connected to digital IO pin 8, which is PB5.
+[43:10] Sorry, PB0. This is PB0, right?
+[43:13] It is connected to IO pin number 8 through the current limiting resistor.
+[43:19] This is the wiring diagram.
+[43:22] Can you understand?
+[43:24] Then required functionality.
+[43:26] The required functionality is the microcontroller has to blink this LED every 2 seconds.
+[43:35] When the LED is a blink.
+[43:40] While monitoring this switch.
+[43:43] Whether it is press or release while monitoring this switch.
+[43:49] External peripheral device monitor and do a task.
+[43:55] You are doing a task while monitoring external peripheral device.
+[44:00] If switch is press, you toggle this LED and then you resume the task that was doing.
+[44:09] That is blinking the LED and monitoring the switch.
+[44:15] If switch press, toggles this.
+[44:18] Multiple tasks.
+[44:20] We try to perform seemingly at the same time.
+[44:25] Is that clear?
+[44:26] Can you understand?
+[44:28] Okay, right.
+[44:29] Then the hardware design part is over.
+[44:33] Design and development.
+[44:34] Hardware part over.
+[44:36] Then the firmware.
+[44:37] Before we develop firmware, we have to design firmware.
+[44:44] Now first, let's design firmware.
+[44:47] To design the firmware, we have to first come up with an algorithm.
+[44:52] Then algorithm you have to represent.
+[44:55] To represent algorithms, we know two approaches, two methods.
+[45:01] One is using pseudocode.
+[45:04] The other approach is using flowchart.
+[45:06] But we know that a picture is worth than 1000 words.
+[45:12] So we prefer flowcharts because easier to understand.
+[45:16] So let's design our algorithm using flowcharts.
+[45:21] Right.
+[45:22] This is the algorithm.
+[45:24] Polling based trigger start of the flowchart.
+[45:28] The main function because we use C programming language.
+[45:32] In the C programming language, every program is executed.
+[45:37] Every program starts execution from main function.
+[45:41] Then we have stop, end of the algorithm, end of the flowchart.
+[45:45] Now, main function algorithm or main function flowchart.
+[45:50] In the main function, first we configure PB0 and PB5 as output pins.
+[45:59] because two LEDs are connected to these two pins.
+[46:05] The built-in LED connected to onboard LED connected to PB5,
+[46:11] that is Arduino pin number 13.
+[46:14] The external LED on the breadboard connected to PB0,
+[46:18] which is Arduino Uno pin number 8.
+[46:20] Right.
+[46:21] So therefore, now we want to turn on of these LEDs.
+[46:26] So those two pins we have to configure as output pins.
+[46:31] Right.
+[46:32] We know that to configure those two pins as output pins.
+[46:35] What we have to do is.
+[46:37] Right.
+[46:38] What we have to do is.
+[46:39] We have to set the relevant bits of the port B DDR register.
+[46:50] Data direction register of port B.
+[46:53] We have to set the relevant bits.
+[46:54] Then configure PD2 port D pin number 2 which is Arduino pin number 2.
+[47:05] Arduino digital IO pin number 2.
+[47:08] PD2 AVR terms.
+[47:10] Configure it as input pin Y as the switch is connected to that pin.
+[47:16] Now using the switch we are going to provide an input.
+[47:20] So configure this IOPin, digital IOPin as input pin.
+[47:25] Right.
+[47:26] Now when you press the switch, this pin, the logic state of this pin becomes low.
+[47:33] Why?
+[47:34] The other side of the switch connected to ground.
+[47:38] When you press the switch, that means you turn on the switch, PD2 logic state becomes low.
+[47:45] To recognize that state change, we need the PD2 by default high.
+[47:53] We need to keep PD2 by default high.
+[47:57] Then when you press the switch, it becomes low.
+[48:00] A clear state change.
+[48:02] The microcontroller can recognize that clear state change.
+[48:06] If you keep PD2 high by default and when the switch is pressed, PD2 becomes low.
+[48:13] so that we can clearly identify the state change.
+[48:18] Now, how do we keep PD2 by default high?
+[48:22] The logic state of the PD2, we need to keep high by default.
+[48:28] For that, we pull up PD2.
+[48:31] We pull up PD2.
+[48:33] Right.
+[48:33] So that PD2 is high by default.
+[48:36] When you press the switch, PD2 becomes low
+[48:40] so that microcontroller can recognize the state change.
+[48:44] Then we have endless loop.
+[48:46] Inside the endless loop, we toggle PB5.
+[48:50] We toggle PB5.
+[48:52] That means we toggle the onboard LED.
+[48:56] If the onboard LED is off, we turn it on.
+[49:00] If it is on, we turn it off.
+[49:02] We wait two seconds.
+[49:06] We wait two seconds.
+[49:07] Thereafter we check whether switch has been pressed.
+[49:11] If PD2 is low we check whether the switch is pressed.
+[49:15] We know that if the switch is pressed PD2 becomes low.
+[49:19] We check whether PD2 is low.
+[49:22] If it is low the second LED we toggle.
+[49:28] The second LED we toggle that is PB0.
+[49:31] We toggle the second LED.
+[49:33] If the second LED is off, we turn it on.
+[49:37] If it is on, we turn it off.
+[49:40] After that, we go to the next iteration of the loop.
+[49:44] And again, we toggle onboard LED.
+[49:48] Wait two seconds.
+[49:50] Check whether there is an input.
+[49:52] If so, toggle the second LED.
+[49:56] Go again for the next iteration.
+[49:59] And toggle the onboard LED.
+[50:01] Wait 2 seconds and check whether there is an input.
+[50:07] If no input, do nothing.
+[50:10] Go to the top of the loop again.
+[50:13] Toggle onboard LED.
+[50:15] Wait 2 seconds.
+[50:16] Check whether there is an input.
+[50:18] No input.
+[50:19] Do nothing.
+[50:21] Go to the top of the loop.
+[50:23] Toggle onboard LED.
+[50:25] Wait 2 seconds.
+[50:26] Check whether there is an input.
+[50:27] Yes, there is an input.
+[50:29] Toggle the second LED.
+[50:31] and go to the next item.
+[50:33] Now let's take our day-to-day example.
+[50:35] Right?
+[50:36] You are reading the newspaper.
+[50:39] You are reading the newspaper.
+[50:40] And every two seconds,
+[50:43] you check small fellow's nappy is wet.
+[50:46] If it is not wet,
+[50:47] you continue reading the newspaper.
+[50:50] Every two seconds,
+[50:51] you check whether small fellow's nappy is wet.
+[50:53] No, it is not wet.
+[50:56] Then you continue reading the newspaper.
+[50:58] Every two seconds,
+[51:00] [unclear — Sinhala / crosstalk]
+[51:30] Attend to the small fellow, chain the nappy, continue reading the newspaper.
+[51:35] Can you understand this algorithm?
+[51:38] Any questions?
+[51:39] Sir?
+[51:39] Yes.
+[51:40] Sir, what is the difference between the previous one and this one?
+[51:49] Isn't that one also polling?
+[51:53] What do you mean by previous one?
+[51:54] The switch on, off, off.
+[52:00] Last week application we developed. Yes sir. Yes. We didn't mention that we were using polling but it
+[52:09] is it was it was based on polling. No difference. Thank you. Right. Very good. Good question. That
+[52:15] means you have compared this with the last time work. That's why you could you got that question.
+[52:23] Last time also, right, we developed a system, right, if there is no input, we blink the LED every half a second.
+[52:37] If there is an input, we blink the same LED every 200 milliseconds, right.
+[52:45] Now, two tasks.
+[52:47] One is blinking the LED, whatever the rate,
+[52:51] and monitoring the external switch, the second task.
+[52:55] So if there is no input, you blink the LED every half a second.
+[53:00] If there is an input, you blink the LED every 200 milliseconds.
+[53:05] Right?
+[53:06] So we use polling.
+[53:07] But at that time, we didn't mention that.
+[53:11] So, idea of polling is you regularly monitor the peripheral devices.
+[53:19] Now, here you can see the loop, the endless loop.
+[53:25] Every iteration of endless loop, right?
+[53:29] We monitor whether PD2 is low.
+[53:33] That means we monitor the peripheral device again and again.
+[53:38] status of the peripheral device we monitor again and again.
+[53:43] At regular intervals, in this example the regular interval is two seconds.
+[53:49] Every two seconds we monitor the state of peripheral device.
+[53:54] If the state is low then we attend to the second task.
+[54:00] If the state is not low we don't do anything we do the first task.
+[54:07] Reading the newspaper we do while monitoring whether the nappy is wet.
+[54:14] If the nappy is not wet, keep reading the newspaper.
+[54:19] Don't do anything.
+[54:20] Keep reading the newspaper if nappy is not wet.
+[54:23] Why?
+[54:24] One hour, two hour, three hour nappy is not wet.
+[54:27] Keep reading the newspaper.
+[54:29] But monitor whether nappy is wet regularly.
+[54:32] If nappy is wet, then stop reading the newspaper.
+[54:37] Attend to the small fellow, change the nappy.
+[54:42] After that, keep reading the newspaper and monitoring whether the nappy is wet.
+[54:48] Right.
+[54:49] Now here, this loop, this loop runs again and again.
+[54:54] Now this part is the reading newspaper.
+[54:58] This is the regular interval.
+[55:00] and this is the part you check whether nappy is wet.
+[55:04] If it is not wet, keep reading the newspaper.
+[55:08] And if it is wet, attend to the small fellow,
+[55:12] change the nappy.
+[55:13] After that, keep reading the newspaper.
+[55:16] But at regular intervals, check whether nappy is wet.
+[55:23] Now in day-to-day life,
+[55:24] If you can think about many examples that you have used polling.
+[55:31] If you have polling used examples, you can use polling examples.
+[55:39] You can use polling examples.
+[55:42] You can tell us about polling.
+[55:47] That is the main task.
+[55:50] But regularly you monitor the buzzword, whether that girl has come.
+[55:57] Interested girl, regularly monitor her.
+[56:01] But while talking with your friend, if she has come, then you start doing something else.
+[56:09] The second task.
+[56:10] Holy!
+[56:11] You have to give a little bit of a question.
+[56:13] You have to give a little bit of a question.
+[56:15] Right?
+[56:16] Right?
+[56:16] Listening to the lecture, that is the main task.
+[56:21] You regularly look at the screen of your smartphone.
+[56:32] Message.
+[56:35] Regularly check.
+[56:37] Then you reply to that text.
+[56:41] And again you start resuming your work.
+[56:45] That is listening to the lecture.
+[56:48] The main task is attending to this lecture online.
+[56:55] While doing that, have you done any other task?
+[56:59] Have you checked whether something has happened regularly?
+[57:04] That means you have done polling.
+[57:07] Is that clear?
+[57:08] Right.
+[57:09] If the design is clear, then the development.
+[57:13] Firmware development in C.
+[57:15] Right. So this is the C program. We have main function.
+[57:20] And first, we include the necessary header files.
+[57:24] avr.io.h, which contains all the input-output definitions.
+[57:32] Then the speed of the CPU, 16 MHz.
+[57:38] f cpu constant we define.
+[57:41] Then we include delay.h header file because we are going to use underscore delay underscore ms function.
+[57:51] And delay.h header file uses fcpu constant.
+[57:56] Right.
+[57:56] Then the next step.
+[57:58] Configure PB0 and PB5 as outputs.
+[58:04] Right.
+[58:04] So in the DDRB register, PB0 and PB5, right?
+[58:12] Bit 0 and bit 5 we set to make PB0 and PB5 as outputs.
+[58:21] Then PD2 we need to configure as an input.
+[58:25] So we need to clear bit 2 of DDRB, port D register.
+[58:34] bit number 2, bit number 0, bit number 1, bit number 2.
+[58:39] We need to clear so that PD2 becomes an input.
+[58:45] Right.
+[58:46] Configured because PD2 we have connected the switch.
+[58:50] PB0 and PB5 we have connected LEDs.
+[58:54] Then we need to pull up PD2.
+[58:57] Why?
+[58:58] The default state of PD2 we want to have default state as I.
+[59:03] So we need to pull up.
+[59:06] How do we do that?
+[59:07] In the port D.
+[59:09] The register.
+[59:11] Bit number 2 we set.
+[59:14] So doing that we can pull up.
+[59:16] We can activate the internal pull up resistor.
+[59:20] And default state of the PD2.
+[59:22] We can set as high.
+[59:25] Now PD2 default state high.
+[59:29] When you press the switch.
+[59:31] PD2 becomes low.
+[59:32] a clear state change.
+[59:35] If you have released the switch,
+[59:37] the PD2 is high
+[59:38] because it's default state high.
+[59:41] We activated the
+[59:42] internal pull-up resistor
+[59:44] by setting the bit
+[59:46] number 2 of port D
+[59:48] register. Up to this point.
+[59:51] Any question?
+[59:52] No. Right.
+[59:56] Then.
+[59:58] Endless loop.
+[59:59] In the endless loop,
+[1:00:00] The main job, main task, blinking LED connected to PB5, that is onboard LED.
+[1:00:11] Blink that LED every two seconds.
+[1:00:14] So just toggle the state of PB5, state of PB5.
+[1:00:22] Toggle it.
+[1:00:23] To toggle, we use the exclusive O operator.
+[1:00:28] This is the XO operator.
+[1:00:29] Using exclusive O operator we can toggle the bit number 5.
+[1:00:35] If the bit number 5 is 0 we set it to 1.
+[1:00:39] If it is 1 we set it to 0.
+[1:00:42] Toggle.
+[1:00:42] That means we blink the LED connected to PB5 which is the onboard LED connected to Arduino pin number 30.
+[1:00:52] Wait 200 milliseconds.
+[1:00:54] 2000 milliseconds that is 2 seconds.
+[1:00:57] That is the regular interval.
+[1:00:59] thereafter check whether switch is press right this is the if condition we use to check whether
+[1:01:07] switch has been pressed we use the port d pin d register and this constant value we check we get
+[1:01:19] the bitwise and operation now let's uh i mean let's pin d this port input register
+[1:01:29] [unclear — Sinhala / crosstalk]
+[1:01:42] be either 1 or 0. Then the constant 0 0 0 0 0 1 double 0. Let's take the end operation.
+[1:01:57] X and 0.
+[1:02:00] X and 0, 0.
+[1:02:02] No matter the value of X, the outcome is 0.
+[1:02:07] X and 0, 0.
+[1:02:10] 0, 0, 0, 0, 0.
+[1:02:13] X and 1.
+[1:02:15] X and 1.
+[1:02:17] Right?
+[1:02:17] Outcome depends on X.
+[1:02:19] If X is 1, 1 and 1, 1.
+[1:02:23] If X is 0, 0 and 1, 0.
+[1:02:26] So x and 1 outcome is x.
+[1:02:30] Other two 0.
+[1:02:32] 0 x and 0.
+[1:02:33] 0 x and 0 0.
+[1:02:36] So this is the if condition.
+[1:02:38] Now we have.
+[1:02:39] If we check this value equals to 0.
+[1:02:42] Right here you can see if condition.
+[1:02:44] Now if switch has not been pressed.
+[1:02:48] Switch is released.
+[1:02:50] Then the default state of PD2 is high.
+[1:02:55] the false state of the PD2 pin is high.
+[1:02:59] That means x is 1.
+[1:03:02] This value not p equals to 0.
+[1:03:05] If this is 1, the if condition is false.
+[1:03:09] So nothing happens, we go to the next iteration.
+[1:03:13] If switch is released,
+[1:03:15] we don't perform the second task,
+[1:03:18] we simply go to the next iteration.
+[1:03:20] But if the switch is pressed,
+[1:03:22] Then PD2 logic state is low.
+[1:03:27] PD2 logic state low means the corresponding bit is 0.
+[1:03:33] Then 0 equals 0.
+[1:03:36] If condition becomes true.
+[1:03:39] If condition is true then we toggle the LED connected to PB0.
+[1:03:46] The second task.
+[1:03:47] We perform the second task if the if condition is true.
+[1:03:51] If condition true means switch is press.
+[1:03:55] So we do the second task.
+[1:03:57] After doing the second task, we go to the next iteration and we start, we resume the task that was doing.
+[1:04:08] That is blinking the onboard elite.
+[1:04:12] Can you understand this algorithm?
+[1:04:14] Sorry, this is so scored.
+[1:04:16] If not, let me know.
+[1:04:17] I think it's a big thing.
+[1:04:19] I think it's important to see the on-board LED
+[1:04:21] that blink on the board.
+[1:04:23] If you switch to the switch,
+[1:04:25] you can toggle the pin number 8
+[1:04:27] to the high LED.
+[1:04:29] Then,
+[1:04:31] the on-board LED will blink on the board.
+[1:04:33] If you switch to the on-board LED,
+[1:04:35] you can toggle the pin number 8
+[1:04:37] and you can toggle the pin number 8.
+[1:04:39] Can you understand this source code?
+[1:04:41] Sir, during the delay,
+[1:04:43] Sir, during the delay, if we pressed and released the button, did they catch, if they can catch that input?
+[1:04:55] Very good. You are far ahead. Yes, there's a problem. We'll come to that later.
+[1:05:03] Sir, if you have a connection, you can't get a connection.
+[1:05:08] Now, what you mentioned is very correct.
+[1:05:16] Right.
+[1:05:17] Now, actually, you have...
+[1:05:21] Please wait, there's a call.
+[1:05:29] Right.
+[1:05:31] There's a problem.
+[1:05:32] Problem in this polling method.
+[1:05:35] We are going to discuss that.
+[1:05:37] That is what Telina mentioned.
+[1:05:40] During the delay, if you press the switch, our input may go undetected.
+[1:05:48] Because the delay is considerably large delay, lengthy delay, 2 seconds delay.
+[1:05:57] During the 2 seconds, if you press the switch and release, your input may go undetected.
+[1:06:04] So as a result, the second task you may not perform.
+[1:06:10] If you take the day-to-day example, you read the newspaper, but at the same time you monitor the smell of nappy is wet at every one hour.
+[1:06:24] Every one hour.
+[1:06:31] You read the newspaper.
+[1:06:33] While reading the newspaper,
+[1:06:35] you monitor small fellow's
+[1:06:37] nappies, whether wet or not.
+[1:06:40] Every one hour.
+[1:06:41] One hour is a large duration.
+[1:06:46] During that
+[1:06:47] one hour's time,
+[1:06:50] right,
+[1:06:51] nappy can be wet
+[1:06:52] and it can be dried again.
+[1:06:57] So you may miss that event.
+[1:07:03] It can be wet and also it can get dry
+[1:07:06] because one hour is large time duration.
+[1:07:10] So you may miss that event.
+[1:07:12] The same thing can happen here.
+[1:07:15] During the delay, if you press the button and release,
+[1:07:19] Your input may go undetected.
+[1:07:23] That's a problem of polling.
+[1:07:26] Right.
+[1:07:27] But you can reduce that problem.
+[1:07:30] By reducing the monitoring time.
+[1:07:33] Now in this example the monitoring time.
+[1:07:36] The monitoring interval is 2 seconds.
+[1:07:39] So fairly large interval.
+[1:07:41] But if you reduce the monitoring interval to let's say 100 milliseconds.
+[1:07:47] seconds, then there's a high chance that all your inputs will be detected.
+[1:07:53] Rather than checking the state of the button every two seconds, if you check the state
+[1:08:00] of the button every 100 milliseconds, then there's a high chance that all your inputs,
+[1:08:05] button inputs will be detected.
+[1:08:08] But on the other hand, if you increase the monitoring interval rather than two seconds,
+[1:08:14] say you go for five seconds then there's a high chance your inputs button inputs may go undetected.
+[1:08:22] So the blinking time also blinking speed also changes? Yes correct correct right these are the
+[1:08:31] things you have to think about right so the polling has its inherited weaknesses right we
+[1:08:38] will come to that later now can you understand this how this source code works very good i'm
+[1:08:47] very happy some of you are thinking far ahead right this becomes a university course module
+[1:08:59] This becomes a university lecture, university learning experience.
+[1:09:16] If you start thinking beyond what we have discussed.
+[1:09:21] Right, we'll come to that.
+[1:09:22] Now, this is the C implementation.
+[1:09:26] How about can't we implement this polling based trigger system using Arduino platform?
+[1:09:35] Yes, we can.
+[1:09:36] But then the algorithm would be a little bit different because we have to use wrapper functions.
+[1:09:43] Let's see.
+[1:09:44] Algorithm for Arduino platform.
+[1:09:46] In the Arduino platform, polling based triggers start.
+[1:09:51] You declare digital IO pin 8 and 13.
+[1:09:56] as led pin 1 led pin 2 led pin 1 led pin 2 you declare digital io pin 8 and 13 8 is the external
+[1:10:06] led connected pin io pin 13 is the onboard led connected pin then declare digital io pin 2 as
+[1:10:15] switch pin because that is the pin that the switch is connected then Arduino we have setup function
+[1:10:20] and loop function. Setup. Configure LED pin 1 and LED pin 2 as outputs. Yes, configure them.
+[1:10:29] Configure switch pin as input pin and pull up because we want to have default state of that pin
+[1:10:36] high. So pull up. That is the setup function. Then loop function. Toggle state of LED pin 2.
+[1:10:44] that is pin number 13.
+[1:10:47] When you toggle the state of LED pin 2,
+[1:10:51] the onboard LED you blink.
+[1:10:54] Then wait for 2000 milliseconds.
+[1:10:57] Wait 2 seconds.
+[1:10:58] Read the state at switch pin.
+[1:11:01] Read the state at switch pin.
+[1:11:03] If it is low, toggle LED pin number 1.
+[1:11:09] Toggle the state of LED pin number 1.
+[1:11:11] That means external LED toggle.
+[1:11:15] Do it again and again because loop runs again and again.
+[1:11:18] So every iteration we toggle onboard LED, wait two seconds,
+[1:11:24] check whether switch has been pressed.
+[1:11:26] If so, if it is pressed, toggle the other LED.
+[1:11:30] If switch is not pressed, do nothing, go to the next iteration.
+[1:11:35] That's how the same system we implement using Arduino software platform.
+[1:11:42] Can you understand this algorithm?
+[1:11:44] Okay, if so, let's go to the source code, Arduino source code, using Arduino wrapper functions.
+[1:11:49] Right, in Arduino we have void setup, void loop, two functions.
+[1:11:54] Then we declare the pins.
+[1:11:57] Pin number 8, LED pin 1.
+[1:12:01] Pin number 13, LED pin 2.
+[1:12:04] pin number 2 switch pin then configure led pin 1 output pin using pin mode function led pin 2
+[1:12:14] output switch pin input not just input input pull up activate internal resistor internal pull up
+[1:12:22] resistor and pull up so switch pin default state high right then now we need to toggle
+[1:12:31] on board led every two seconds that is the main job main task toggle on board led that is led
+[1:12:41] connected to pin number 13 which is led pin 2 right every two seconds and this is the code
+[1:12:48] what is this code digital right pin number led pin 2 that is pin number 13
+[1:12:55] pin number 30. Digital right. That is the pin we want to toggle the state. Then the second
+[1:13:03] argument of digital right, you have to tell with the high or low pin and the state with the high
+[1:13:12] or low. Now toggling the state means we need to know the current state. If the current state is
+[1:13:19] low then we can toggle it to high.
+[1:13:22] If the current state is high we can toggle it
+[1:13:26] to low. Then how do we get the current state?
+[1:13:30] We can read the pin number 13 state
+[1:13:34] digital read. We can read the pin numbers 13
+[1:13:38] state. LED pin 2 means pin number 30. We can
+[1:13:42] read using digital read. If that is low
+[1:13:46] current state is low
+[1:13:49] not low
+[1:13:50] it becomes high. Toggle.
+[1:13:53] If the current state is high
+[1:13:55] not high
+[1:13:57] bitwise not operator
+[1:13:59] not high. That means
+[1:14:01] low. You can
+[1:14:03] toggle the pin very easy.
+[1:14:05] One line. Can you understand
+[1:14:07] that line? Or else you
+[1:14:09] can do
+[1:14:10] the same thing you can do in a
+[1:14:13] different way. For example
+[1:14:15] you can declare a variable
+[1:14:18] called boolean state
+[1:14:21] false initialize with false
+[1:14:24] then here you can say state
+[1:14:27] assignment operator not
+[1:14:30] state then instead of this particular part
+[1:14:33] you can write state this is
+[1:14:36] another way but then you need extra variable
+[1:14:39] right so here you can see
+[1:14:42] the default value of the variable is
+[1:14:45] false and you
+[1:14:47] get the
+[1:14:48] negation of that.
+[1:14:51] False, not false.
+[1:14:53] That means true.
+[1:14:54] Then you put true as the
+[1:14:57] argument
+[1:14:59] for digital right.
+[1:15:00] LED you turn on. Next iteration.
+[1:15:03] State variable
+[1:15:04] is true.
+[1:15:07] Not true. False.
+[1:15:09] You put false as the
+[1:15:11] argument for digital
+[1:15:13] right. You turn off the LED.
+[1:15:15] Now it's one very important thing is false, low, 0, true, high, 1.
+[1:15:24] Instead of high you can use true or 1.
+[1:15:28] Instead of low you can use false or 0.
+[1:15:30] No problem.
+[1:15:31] Right.
+[1:15:32] This is another way of writing the same program.
+[1:15:38] Right.
+[1:15:38] So we blink the onboard LED every 2 seconds.
+[1:15:42] Then we need to check whether switch is pressed or not.
+[1:15:46] If switch is pressed, toggle the other LED.
+[1:15:50] We check whether switch is pressed or not.
+[1:15:52] If switch is pressed, this particular part becomes low.
+[1:15:56] If switch is pressed, the read state, digital read,
+[1:16:00] when you switch pin, when you read the state, it is low.
+[1:16:03] Switch is pressed.
+[1:16:05] You get the negation, not low, high, if condition is true.
+[1:16:09] That means switch is pressed.
+[1:16:11] then toggle the other led same way pin number eight read the state of the pin number eight
+[1:16:19] if the pin number eight state is low make it high toggle if the pin number eight state is high
+[1:16:29] toggle make it low the other led you can toggle can you understand this arduino code using wrapper
+[1:16:37] functions. This is also C,
+[1:16:39] Arduino based on C language,
+[1:16:41] but we use wrapper functions.
+[1:16:43] There is no language called Arduino.
+[1:16:46] This is C,
+[1:16:48] but we use wrapper functions.
+[1:16:49] Then we don't need to worry about the registers.
+[1:16:52] Can you understand? Any question?
+[1:16:55] If you want to make a code,
+[1:16:57] if you want to make a code,
+[1:16:59] if you want to make a variable,
+[1:17:00] you want to change the state.
+[1:17:03] If you want to make a code,
+[1:17:05] you don't want to make a code.
+[1:17:06] Can you understand?
+[1:17:18] Shri Anjit, can you understand?
+[1:17:22] Yes, sir.
+[1:17:22] Shani, any question?
+[1:17:24] No, it's fine.
+[1:17:26] Right.
+[1:17:26] Now the time is 11 o'clock.
+[1:17:28] We have the lecture till 12 o'clock.
+[1:17:31] But now I am going to stop.
+[1:17:33] Why?
+[1:17:34] Right?
+[1:17:36] I stopped the lecture but you can't stop.
+[1:17:38] I want you to build these two systems.
+[1:17:42] You have your kit at home.
+[1:17:46] Using that, build the first, build the hardware.
+[1:17:50] Then implement the C firmware and try.
+[1:17:56] Then implement the Arduino firmware using wrapper functions.
+[1:18:01] Try.
+[1:18:01] With that experience, only we can proceed.
+[1:18:07] When you build and try these two systems using Arduino as well as C,
+[1:18:13] the functionality is almost the same.
+[1:18:15] Only difference is Arduino implementation.
+[1:18:18] It takes more than 1100 bytes from the source code size.
+[1:18:25] But the C program is just 180 bytes.
+[1:18:28] 180 you can compare with more than 1100.
+[1:18:33] So huge difference.
+[1:18:36] The performance wise also there is a huge difference.
+[1:18:40] Other than that functionality wise same.
+[1:18:43] Implement these two systems.
+[1:18:46] Try them.
+[1:18:47] When you try them you will realize the problem that Tilina pointed out.
+[1:18:53] During the delay if you press and release the button.
+[1:18:57] your input will go undetected.
+[1:19:01] Your input will go undetected.
+[1:19:03] To solve that problem
+[1:19:05] what you can do is
+[1:19:07] the monitoring interval
+[1:19:09] you can reduce.
+[1:19:11] So very frequently
+[1:19:14] monitor the switch state.
+[1:19:16] If you take long
+[1:19:17] time duration to monitor
+[1:19:19] then your input will go undetected.
+[1:19:22] If you check whether the nappy
+[1:19:23] is wet or not every one hour
+[1:19:25] the nappy can be wet and it can go, it can get
+[1:19:30] dry within the one hour. You will not notice that.
+[1:19:35] But if you, every five minutes if you
+[1:19:38] check whether nappy is wet or not, then you can detect
+[1:19:41] whether nappy is wet. You won't miss the event.
+[1:19:47] So you can understand these
+[1:19:50] the strengths and weaknesses of bowling
+[1:19:53] when you implement these two
+[1:19:56] firmware and try.
+[1:19:58] For that, I will give you one
+[1:20:00] hour, 11 to 12.
+[1:20:03] And then have
+[1:20:04] your lunch.
+[1:20:05] We will meet again at 1 o'clock.
+[1:20:08] Right. Before you leave,
+[1:20:10] any question?
+[1:20:12] Is there any questions?
+[1:20:14] Is there any questions?
+[1:20:16] Is there any questions?
+[1:20:17] Right.
+[1:20:19] Then develop
+[1:20:22] the system and try it.
+[1:20:25] Right. Increase the
+[1:20:26] monitoring duration
+[1:20:28] from 2 seconds to
+[1:20:30] 5 seconds. See
+[1:20:32] what happens. Decrease
+[1:20:34] the monitoring duration from
+[1:20:36] 2 seconds to half a second.
+[1:20:39] See what happens.
+[1:20:41] Experiment.
+[1:20:42] With that experience,
+[1:20:44] we'll meet at 1 o'clock.
+[1:20:46] Okay. Right.
+[1:20:48] So, we'll meet at
+[1:20:50] 1 o'clock. Thank you.
+[1:20:52] Thank you.

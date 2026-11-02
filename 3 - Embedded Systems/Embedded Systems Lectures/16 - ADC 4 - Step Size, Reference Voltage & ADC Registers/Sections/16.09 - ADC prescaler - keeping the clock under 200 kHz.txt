@@ -1,0 +1,58 @@
+[0:00] So ADC cannot run at processor clock speed.
+[0:05] ADC cannot run at CPU clock speed.
+[0:09] ADC must run at a lower clock speed because ADC takes time.
+[0:14] ADC needs time for the successive approximation.
+[0:17] So it cannot run at very fast.
+[0:19] It must run at a lower clock speed. Right. So what we do is we scale down the processor clock speed, CPU clock speed by a prescaler. This is called prescaler, a factor and feed to the ADC.
+[0:37] The pre-scaler we use to scale down the CPU clock speed to suit for the ADC.
+[0:46] So the CPU speed we scaled out to suit for the ADC because ADC runs at a slower speed.
+[0:55] Because it needs time for successive approximation.
+[0:58] Any question up to this point?
+[1:01] Excuse me, sir.
+[1:02] Yes.
+[1:02] What is the default speed in the ADPS2?
+[1:08] Default values are 0, 0, 0 which is reserved.
+[1:12] You have to set a particular prescaler before you start ADC.
+[1:18] Anything else? Any other question?
+[1:21] So here FADC means frequency of ADC.
+[1:25] Frequency of ADC we get by dividing frequency of CPU by a factor.
+[1:32] pre-scaler because ADC cannot run at the CPU speed.
+[1:38] But how do we know the suitable speed for ADC?
+[1:44] That's a very good question.
+[1:45] So according to the data sheet of this microcontroller
+[1:49] or this particular ADC,
+[1:51] ADC must run less than 200 kilohertz speed.
+[1:57] must run less than 200 kilohertz speed for better accuracy. So, depending on your CPU clock speed,
+[2:07] you have to use suitable prescaler to achieve a speed less than 200 kilohertz. For example,
+[2:17] if you are using 16 megahertz CPU speed, 16 megahertz means 16 million hertz. 16 million
+[2:25] hertz divided by 128, you get 125 kilohertz as the ADC speed, which is less than 200 kilohertz.
+[2:36] Good for accuracy, right? It depends on the ADC, it depends on the microcontroller.
+[2:41] So, you need to read the data sheet. So, the data sheet will guide you, right? It will tell you
+[2:48] the better speed for the ADC.
+[2:54] So, according to this ATmega3D,
+[2:56] 8P microcontrollers, 10-bit ADC.
+[2:59] So, ADC should run less than 200 kHz speed
+[3:03] to get better conversion results.
+[3:07] You can run it higher than that frequency,
+[3:10] but then your results,
+[3:11] conversions are not very accurate.
+[3:13] If you want to get accurate conversion results,
+[3:16] ADC you have to run
+[3:18] less than 200 kHz speed.
+[3:21] To 200 kHz speed
+[3:22] you can achieve
+[3:24] by dividing
+[3:25] the CPU clock speed
+[3:28] by a factor, a prescale.
+[3:31] Is this function
+[3:32] available for Arduino IDE
+[3:35] as well?
+[3:36] In the Arduino IDE you can't change the
+[3:38] prescaler. The default
+[3:40] prescaler Arduino
+[3:42] uses 128.
+[3:45] It is fixed.
+[3:46] You can't change. When you use analog read function,
+[3:51] you use this prescale 128.
+[3:54] It is fixed. You can't change. But if you use C programming, you have
+[3:58] the control. You can use different prescales. Those

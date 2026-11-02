@@ -1,0 +1,130 @@
+[0:00] and the clock pre-scale. What are the duties of these two?
+[0:11] to the status register.
+[0:14] Yeah, control and the purpose of that register.
+[0:17] Yes, sir.
+[0:18] Last week we discussed that.
+[0:20] Not related to this.
+[0:23] It's the control and status register bits, right?
+[0:29] So you can enable ADC, you can start ADC, right?
+[0:35] The ADC interrupt flag.
+[0:37] When the ADC is over, this flag is raised and ADC interrupt enable bit.
+[0:43] And then the prescalers, right?
+[0:46] Prescaler select bits.
+[0:48] Using these prescaler select bits, you can select various prescalers.
+[0:52] You can scale down the CPU frequency to suit to ADC.
+[0:59] So for that, you have to use the bits of ADC control and status register.
+[1:06] And in the diagram, right, this is that register, control and status register.
+[1:12] This is the ADMAX register, multiplexes election register, ADMAX.
+[1:17] This is the control and status register.
+[1:19] And this is the data register, ADCW.
+[1:22] You got the answer?
+[1:24] Yes, I have. Thank you.
+[1:25] Right. Anything else?
+[1:28] Right.
+[1:29] Then, reference voltage we set.
+[1:32] thereafter we need to select the ADC input channel. We need to select the ADC input channel. So,
+[1:41] we have to use at max register and set the ADC input channel. Now, in this example,
+[1:50] we have connected the potentiometer middle pin, right, where you get analog input voltage to
+[1:59] TC0 or ADC0 channel. Now we have to select this particular channel as our input channel.
+[2:14] ADC0 channel you want to select. Then what you have to do is set clear all the MUX bits.
+[2:22] 0, 0, 0 of AdMux register.
+[2:26] 0, 0.
+[2:27] That means you are selecting this input chat.
+[2:30] 0, 0, 0.
+[2:31] Now here that's what we have done.
+[2:34] We have cleared
+[2:35] Max 0, Max 1, Max 2 bits
+[2:38] without disturbing to other bits.
+[2:41] Is that clear?
+[2:42] Without disturbing to other bits
+[2:44] of the AdMux register,
+[2:45] we have cleared first 3 bits.
+[2:48] Now without disturbing to other bits,
+[2:50] if you want to set or clear bits,
+[2:52] You have to use bitwise logical operators.
+[2:56] You can't do simple assignment.
+[2:58] Can you understand this line number 8?
+[3:01] If not, let me know.
+[3:03] Okay.
+[3:04] Then clock speed.
+[3:06] ADC clock speed you have to set.
+[3:08] You have to use a proper prescaler and scale down the CPU frequency.
+[3:13] Right.
+[3:14] Now, in this example, we use the prescale 1 to 8.
+[3:21] That means CPU frequency we divided by 128.
+[3:26] To use this prescaler, we have to set or clear some bits of this control and status register.
+[3:36] ADC control and status register.
+[3:37] Let's go to that register.
+[3:39] If you want to divide by 128, this is the prescaler that I am going to use.
+[3:44] you need to set
+[3:46] ADC
+[3:48] ADPS 0
+[3:50] ADPS 1
+[3:52] ADPS 2
+[3:53] all 3 bits you have to set
+[3:55] ADPS means
+[3:57] ADC prescaler select
+[4:00] all 3 bits you have to set
+[4:01] in the controller status register
+[4:04] these are the bits you have to set
+[4:06] these are the bits you have
+[4:08] and that's what we have done here
+[4:10] first 3 bits we have set
+[4:12] by doing that
+[4:13] we have selected this prescaler and we have scaled out CPU frequency by dividing it 128.
+[4:24] When you divide CPU frequency which is 16 million hertz, 16 million hertz means 16,000 kilohertz.
+[4:40] If you divide it by 128, you get 125 kilohertz.
+[4:46] This is the ADC frequency.
+[4:49] In this example, we have selected 125 kilohertz.
+[4:53] According to the data sheet, this particular microcontroller, this particular ADC can give you a fairly accurate result.
+[5:04] If the ADC frequency is less than 200 kilohertz, if the ADC frequency is less than 200 kilohertz, this ADC can give you an accurate conversion result.
+[5:17] If the ADC frequency is greater than, faster than 200 kilohertz, still it will give you a result, but the accuracy is not that high.
+[5:28] Conversion accuracy is not that high.
+[5:31] If the ADC speed is less than 200 kilohertz, according to the data sheet, you read the data sheet, accuracy would be very high.
+[5:40] So that's why I have used 128 pre-scale.
+[5:44] When you divide 16 MHz by 128, you get 125 kHz as the ADC speed, which is less than 200 kHz.
+[5:55] So, I can get a fairly good accurate result. Is that clear? Any question?
+[6:02] Sir, that means most of the time we have to use, we have to divide from 1 to 8.
+[6:09] if your CPU clock speed is 16 megahertz if your CPU clock speed is 8 megahertz or 4 megahertz
+[6:18] then you can use different pre-scale yes it depends on your CPU clock speed that's why you
+[6:26] have set of pre-scales not what Sarah set of pre-scales you have right depending on your
+[6:33] Now CPU clock speed you have to use proper prescale.
+[6:39] Right.
+[6:41] And if you are concerned about the accuracy.
+[6:45] Try to keep ADC clock speed less than 200 kilohertz.
+[6:49] If you are not worrying about the accuracy and if you want the speed.
+[6:54] Quick conversion but not very accurate.
+[6:57] But quick conversion.
+[6:59] You can go.
+[7:00] Right.
+[7:01] You can go for higher speeds, higher than 200 kilohertz.
+[7:06] You can go. No problem. Right.
+[7:08] In some cases, the conversion results accuracy is not very important.
+[7:14] You get fairly good result. Right.
+[7:17] You won't get a totally 100 percent inaccurate result.
+[7:20] No, you get a good result.
+[7:23] But more than the accuracy, you are concerned about the speed.
+[7:31] Then you can use a frequency higher than 200 kHz.
+[7:36] And you can use some other pre-scale to scale down the CPU clock speed.
+[7:44] Is that clear, Tilna?
+[7:46] Yes, sir.
+[7:47] Good.
+[7:48] Right.
+[7:48] That's why here you have number of prescale.
+[7:53] Depending on your clock speed, you have to use suitable prescale.
+[7:58] Depending on your clock speed.
+[8:00] And also depending on your requirement, whether you want the accuracy or the speed.
+[8:05] Right.
+[8:06] Then we enable ADC.
+[8:09] So the control and status register bit 7, we set to enable ADC.
+[8:14] Because ADC is disabled by default to save power.
+[8:18] So that is the normal, the usual practice of microcontrollers.
+[8:27] All the unnecessary peripherals turn off by default to save power.
+[8:33] Whenever you need, you turn it on.
+[8:35] Get the job done, then turn it off.
+[8:37] So in this case, ADC turn off by default.
+[8:41] We enable ADC.
+[8:42] To do that, in the controller status register, bit number 7, right?
+[8:50] Bit number 7 is the ADC enable bit, ADEN bit, right?
+[8:54] Reset, ADEN bit, right?
+[8:57] Then, I'm in the wrong place, right?

@@ -1,0 +1,1644 @@
+1
+00:00:00,000 --> 00:00:20,000
+Okay, this is where we stop in the morning session. We completed our discussion on counting. Next one, timing. To learn about timing, how to use timers to measure time.
+
+2
+00:00:20,000 --> 00:00:21,440
+We develop a system.
+
+3
+00:00:21,820 --> 00:00:24,399
+The system is a simple blinker.
+
+4
+00:00:24,820 --> 00:00:26,879
+To blink an LED every 200 milliseconds.
+
+5
+00:00:27,739 --> 00:00:29,820
+But this time, the difference is,
+
+6
+00:00:29,820 --> 00:00:33,259
+we are not going to use delay loop.
+
+7
+00:00:33,700 --> 00:00:34,759
+We don't use delay loop.
+
+8
+00:00:35,119 --> 00:00:35,820
+Is it all that?
+
+9
+00:00:36,700 --> 00:00:38,560
+To measure the 200 milliseconds,
+
+10
+00:00:39,420 --> 00:00:41,299
+we use a timer, hardware timer.
+
+11
+00:00:41,880 --> 00:00:42,579
+That means,
+
+12
+00:00:43,600 --> 00:00:46,820
+while during that 200 milliseconds,
+
+13
+00:00:46,820 --> 00:00:51,640
+you could use CPU for doing something else.
+
+14
+00:00:52,159 --> 00:00:52,299
+Right?
+
+15
+00:00:52,740 --> 00:00:55,119
+We blink the LED every 200 milliseconds.
+
+16
+00:00:55,719 --> 00:00:59,740
+So, between the toggling,
+
+17
+00:01:00,179 --> 00:01:04,379
+let's say the LED is on,
+
+18
+00:01:05,079 --> 00:01:07,659
+then after 200 milliseconds, LED is off.
+
+19
+00:01:08,099 --> 00:01:10,019
+Now, there's a 200 milliseconds duration.
+
+20
+00:01:10,980 --> 00:01:12,500
+During that duration,
+
+21
+00:01:12,840 --> 00:01:16,459
+CPU is free for doing something else.
+
+22
+00:01:16,819 --> 00:01:27,939
+why we don't tie up cpu to do busy wait running the loop cpu is free we use separate
+
+23
+00:01:27,939 --> 00:01:38,180
+hardware for a timer to measure 200 milliseconds is that clear right if so okay let's see the
+
+24
+00:01:38,180 --> 00:01:45,219
+schematic diagram right just the board why a ladies already they are connected to pin number 30
+
+25
+00:01:45,219 --> 00:01:49,400
+reset button and this pull-up resistor, the crystal
+
+26
+00:01:49,400 --> 00:01:52,680
+already connected on the board, just the board, just the UNO board.
+
+27
+00:01:53,299 --> 00:01:56,879
+Using UNO board, now we are going to write a program,
+
+28
+00:01:57,260 --> 00:02:01,480
+a firmware for the microcontroller, right? That firmware would use
+
+29
+00:02:01,480 --> 00:02:05,560
+timers to measure 200 milliseconds. We are going to
+
+30
+00:02:05,560 --> 00:02:09,460
+blink this LED every 200 milliseconds. The advantage, one
+
+31
+00:02:09,460 --> 00:02:13,360
+advantage of using timers over software
+
+32
+00:02:13,360 --> 00:02:21,719
+delay functions is while you are measuring the time or during the 200 milliseconds delay
+
+33
+00:02:21,719 --> 00:02:29,879
+you could use cpu to do something else that's one advantage the second advantage the time
+
+34
+00:02:29,879 --> 00:02:37,000
+measurements using hardware is highly precise compared to time measurement using software
+
+35
+00:02:37,000 --> 00:02:45,659
+Compared to using delay loops or other software time functions, the hardware time measurements are very precise.
+
+36
+00:02:46,000 --> 00:02:58,979
+So if you are worried about the precision of your time measurements, if the system is a critical system, which depends on the time measurements, you better use hardware time.
+
+37
+00:02:59,240 --> 00:03:04,319
+Because compared to software timers, hardware timers are very precise.
+
+38
+00:03:04,599 --> 00:03:05,639
+That's another advice.
+
+39
+00:03:05,639 --> 00:03:14,599
+And also you can delegate the job for the hardware timers to measure time and use the CPU for something else at the same time.
+
+40
+00:03:15,080 --> 00:03:15,800
+So get that right.
+
+41
+00:03:16,280 --> 00:03:16,520
+Right.
+
+42
+00:03:16,819 --> 00:03:20,860
+Now how do we calculate 200 milliseconds delay?
+
+43
+00:03:21,900 --> 00:03:22,419
+Let's see.
+
+44
+00:03:22,879 --> 00:03:25,340
+Calculating time register value.
+
+45
+00:03:25,960 --> 00:03:26,300
+Right.
+
+46
+00:03:26,300 --> 00:03:39,300
+We know that time for one clock cycle is 1 divided by frequency of CPU divided by prescale.
+
+47
+00:03:39,539 --> 00:03:40,340
+What does that mean?
+
+48
+00:03:40,860 --> 00:03:42,500
+How did we get this equation?
+
+49
+00:03:43,080 --> 00:03:43,500
+Let's see.
+
+50
+00:03:43,800 --> 00:03:48,960
+We know that frequency is 1 divided by time.
+
+51
+00:03:49,439 --> 00:03:54,759
+That means time equals 1 divided by frequency.
+
+52
+00:03:54,759 --> 00:04:06,780
+If you reduce the frequency using a prescaler, the time for one clock cycle is frequency divided by the prescaler.
+
+53
+00:04:07,180 --> 00:04:11,479
+We have slashed out the CPU frequency using a prescaler.
+
+54
+00:04:11,819 --> 00:04:13,960
+This is the time for one clock cycle.
+
+55
+00:04:14,400 --> 00:04:16,420
+Now can you understand this equation?
+
+56
+00:04:16,959 --> 00:04:18,899
+Shani, can you understand?
+
+57
+00:04:19,519 --> 00:04:20,060
+Yes, sir.
+
+58
+00:04:20,459 --> 00:04:20,839
+Shani?
+
+59
+00:04:21,399 --> 00:04:22,120
+Yes, sir.
+
+60
+00:04:22,660 --> 00:04:22,959
+Okay.
+
+61
+00:04:23,579 --> 00:04:24,019
+Right.
+
+62
+00:04:24,019 --> 00:04:27,759
+So that gives us this equation.
+
+63
+00:04:28,720 --> 00:04:35,360
+Time for one clock cycle equals prescale divided by frequency of the CPU.
+
+64
+00:04:35,779 --> 00:04:41,439
+Frequency divided by prescale means prescale divided by frequency because this is one over.
+
+65
+00:04:42,139 --> 00:04:42,439
+Right.
+
+66
+00:04:42,959 --> 00:04:48,160
+If required delay can be achieved with n clock cycles.
+
+67
+00:04:48,160 --> 00:04:52,199
+This is for one clock cycle time for one clock cycle.
+
+68
+00:04:52,199 --> 00:05:22,199
+[unclear — Sinhala / crosstalk]
+
+69
+00:05:22,199 --> 00:05:26,699
+For example, we don't know the time for one clock cycle.
+
+70
+00:05:27,079 --> 00:05:31,480
+The time for one clock cycle depends on pre-scale divided by fcp.
+
+71
+00:05:31,819 --> 00:05:38,680
+And if the required delay you can achieve with n clock cycle, this is the equation.
+
+72
+00:05:38,959 --> 00:05:44,399
+Now let's replace time with this pre-scale divided by fcp.
+
+73
+00:05:44,399 --> 00:05:48,399
+So the required delay you can achieve with this equation.
+
+74
+00:05:48,399 --> 00:05:55,500
+equation. Prescale divided by FCPU multiplied by number of clock cycles required. Can you
+
+75
+00:05:55,500 --> 00:06:02,220
+understand this equation? Aruni? Yes, sir. It is clear to me. How about others? Right.
+
+76
+00:06:02,660 --> 00:06:13,120
+Now, from this equation, we can derive N. N equals FCPU divided by prescale multiplied
+
+77
+00:06:13,120 --> 00:06:15,240
+by delay. Now you know
+
+78
+00:06:15,240 --> 00:06:17,259
+FCPU. You know the
+
+79
+00:06:17,259 --> 00:06:18,540
+pre-scale you have used.
+
+80
+00:06:19,139 --> 00:06:20,579
+You know the required delay.
+
+81
+00:06:21,040 --> 00:06:23,180
+So you can calculate number
+
+82
+00:06:23,180 --> 00:06:25,120
+of clock cycles that you need.
+
+83
+00:06:25,120 --> 00:06:26,579
+You know the frequency.
+
+84
+00:06:27,139 --> 00:06:28,199
+You know the pre-scale.
+
+85
+00:06:28,899 --> 00:06:30,779
+You know the delay required.
+
+86
+00:06:31,439 --> 00:06:33,220
+So number of clock cycles
+
+87
+00:06:33,220 --> 00:06:35,240
+required to achieve the delay.
+
+88
+00:06:36,360 --> 00:06:37,139
+You can calculate.
+
+89
+00:06:37,540 --> 00:06:39,420
+Then you can initialize
+
+90
+00:06:39,420 --> 00:06:41,120
+the timer with
+
+91
+00:06:41,120 --> 00:06:48,360
+this equation which we discussed earlier. The initial value of the timer counter register
+
+92
+00:06:48,360 --> 00:06:56,779
+equals maximum value that the register can handle minus number of clock cycles in plus
+
+93
+00:06:56,779 --> 00:07:05,899
+one for the overflow. Right. Can you understand these equations? Any question? Right. Now
+
+94
+00:07:05,899 --> 00:07:11,899
+our example we need 200 milliseconds really 200 milliseconds delay we can't achieve with
+
+95
+00:07:11,899 --> 00:07:25,660
+8 bit time so we select 16 bit time that means we we use timer 1 timer 1 is a 16 bit time so a 16 bit
+
+96
+00:07:25,660 --> 00:07:39,620
+timer can count 0 to 65,535. Right. Now let's calculate the time for one clock cycle. Time.
+
+97
+00:07:40,300 --> 00:07:46,500
+Prescale. I'm using this equation. Prescale. Let's say I am using 64 as the prescale.
+
+98
+00:07:46,500 --> 00:07:49,259
+Divided by FCPU.
+
+99
+00:07:49,459 --> 00:07:52,500
+Frequency of CPU in hertz.
+
+100
+00:07:53,040 --> 00:07:55,220
+16 kilohertz.
+
+101
+00:07:56,060 --> 00:07:57,899
+Then megahertz.
+
+102
+00:07:58,220 --> 00:07:58,480
+Right.
+
+103
+00:07:58,939 --> 00:07:59,819
+Then N.
+
+104
+00:08:00,100 --> 00:08:01,420
+I am using this equation.
+
+105
+00:08:01,759 --> 00:08:01,959
+N.
+
+106
+00:08:02,439 --> 00:08:06,060
+16 kilohertz megahertz.
+
+107
+00:08:06,399 --> 00:08:07,839
+Divided by 60.
+
+108
+00:08:08,519 --> 00:08:11,379
+Multiplied by 200 milliseconds.
+
+109
+00:08:12,339 --> 00:08:14,300
+Now the delay you have to give in seconds.
+
+110
+00:08:14,300 --> 00:08:20,379
+that means 200 multiplied by 10 to the power minus 3.
+
+111
+00:08:21,019 --> 00:08:22,720
+Then the delay is in seconds.
+
+112
+00:08:23,139 --> 00:08:26,120
+200 milliseconds you have to convert into seconds.
+
+113
+00:08:27,120 --> 00:08:31,579
+So if CPU is in hertz and this is in seconds.
+
+114
+00:08:31,959 --> 00:08:33,259
+Delay is in seconds.
+
+115
+00:08:33,740 --> 00:08:34,000
+Right.
+
+116
+00:08:34,000 --> 00:08:43,220
+Now when you calculate this you get initial value N as 50,000.
+
+117
+00:08:43,220 --> 00:08:47,419
+So 50,000 initial value.
+
+118
+00:08:47,659 --> 00:08:50,039
+Can you put it into 8 bit timer?
+
+119
+00:08:50,539 --> 00:08:50,720
+No.
+
+120
+00:08:51,399 --> 00:08:53,659
+You need 16 bit timer.
+
+121
+00:08:54,120 --> 00:08:54,259
+Right.
+
+122
+00:08:54,399 --> 00:08:56,039
+You need a 16 bit timer.
+
+123
+00:08:56,320 --> 00:08:57,299
+A 16 bit timer.
+
+124
+00:08:57,639 --> 00:08:58,419
+Initial value.
+
+125
+00:08:58,840 --> 00:08:59,700
+Not the initial value.
+
+126
+00:08:59,779 --> 00:09:00,460
+This is the end.
+
+127
+00:09:00,940 --> 00:09:02,399
+Number of clock cycles you need.
+
+128
+00:09:02,480 --> 00:09:02,639
+Sorry.
+
+129
+00:09:03,200 --> 00:09:04,899
+Number of clock cycles you need.
+
+130
+00:09:05,539 --> 00:09:06,240
+50,000.
+
+131
+00:09:06,559 --> 00:09:10,279
+50,000 clock cycles you can't count with 8 bit timer.
+
+132
+00:09:10,779 --> 00:09:11,019
+Right.
+
+133
+00:09:11,019 --> 00:09:13,600
+not possible
+
+134
+00:09:13,600 --> 00:09:16,960
+to count
+
+135
+00:09:16,960 --> 00:09:19,159
+with 8 bit
+
+136
+00:09:19,159 --> 00:09:21,220
+timer. So you have to go
+
+137
+00:09:21,220 --> 00:09:22,700
+for 16 bit timer. No
+
+138
+00:09:22,700 --> 00:09:25,100
+choice. Then initial
+
+139
+00:09:25,100 --> 00:09:27,039
+value of the 16 bit
+
+140
+00:09:27,039 --> 00:09:27,879
+timer that is
+
+141
+00:09:27,879 --> 00:09:30,820
+TCNT1
+
+142
+00:09:30,820 --> 00:09:32,720
+Why? We are using
+
+143
+00:09:32,720 --> 00:09:34,860
+T1 timer. Timer 1
+
+144
+00:09:34,860 --> 00:09:37,120
+We use timer 1. 16 bit
+
+145
+00:09:37,120 --> 00:09:38,279
+timer 1.
+
+146
+00:09:39,179 --> 00:09:40,600
+TCNT1 equals
+
+147
+00:09:40,600 --> 00:09:43,580
+Maximum value that the timer can count.
+
+148
+00:09:44,139 --> 00:09:50,299
+65,535 minus number of clock cycles needed.
+
+149
+00:09:50,659 --> 00:09:53,220
+50,000 plus one for the overflow.
+
+150
+00:09:54,039 --> 00:09:59,500
+You get 15,536.
+
+151
+00:10:00,019 --> 00:10:07,440
+This is the initial value you have to set for TCNT1 register of timer 1.
+
+152
+00:10:07,440 --> 00:10:17,440
+If you set this value to TCNT 1 register of timer 1, when timer overflows, 200 milliseconds has elapsed.
+
+153
+00:10:18,500 --> 00:10:23,620
+So, time overflow you can detect using TOV, time overflow flag.
+
+154
+00:10:24,279 --> 00:10:34,440
+When timer overflows, that means 200 milliseconds, right, milliseconds gone, elapsed.
+
+155
+00:10:34,440 --> 00:10:42,419
+that's how we measure 200 milliseconds time we set the initial value to 15,536
+
+156
+00:10:42,419 --> 00:10:50,679
+and every clock cycle time accounts and we need 50,000 clock cycles to get the 200 milliseconds
+
+157
+00:10:50,679 --> 00:10:57,980
+delay then after 50,000 clock cycles the time overflows the time overflow we can detect using
+
+158
+00:10:57,980 --> 00:11:09,820
+Tov flat bit. At that moment, timer has counted 50,000 clock cycles and 200 milliseconds elapsed.
+
+159
+00:11:10,460 --> 00:11:14,940
+Can you understand? If not, let me know. I can explain again.
+
+160
+00:11:16,620 --> 00:11:18,940
+Yes sir. How about others?
+
+161
+00:11:18,940 --> 00:11:19,879
+I have a look.
+
+162
+00:11:19,879 --> 00:11:26,419
+[unclear — Sinhala / crosstalk]
+
+163
+00:11:26,419 --> 00:11:28,419
+I can't calculate the flow.
+
+164
+00:11:28,419 --> 00:11:34,419
+Yes, that is, you can maintain the flow of the flow.
+
+165
+00:11:34,419 --> 00:11:36,419
+That is, you can do it.
+
+166
+00:11:36,419 --> 00:11:42,419
+If you have 50,000 clock cycles, you can use the flow of the flow.
+
+167
+00:11:42,419 --> 00:11:46,419
+You can use the flow of the flow.
+
+168
+00:11:46,419 --> 00:11:48,419
+It is used in 16-bit time.
+
+169
+00:11:48,419 --> 00:11:50,419
+You can do it.
+
+170
+00:11:50,419 --> 00:11:58,960
+Now this is also possible for 200 milliseconds delay.
+
+171
+00:11:59,519 --> 00:12:04,779
+How about it is, let's say 400 milliseconds delay.
+
+172
+00:12:05,419 --> 00:12:09,860
+400 milliseconds delay, to get the 400 milliseconds delay, how many clock cycles do you need?
+
+173
+00:12:10,360 --> 00:12:12,279
+You need 100,000 clock cycles.
+
+174
+00:12:12,779 --> 00:12:15,340
+200 milliseconds, you need 50,000 clock cycles.
+
+175
+00:12:16,019 --> 00:12:18,840
+400 milliseconds delay, you need 100,000 clock cycles.
+
+176
+00:12:18,840 --> 00:12:28,519
+100,000 you can't count with a 16-bit timer because 16-bit timer can go up to 65,535.
+
+177
+00:12:29,000 --> 00:12:31,659
+That is the maximum value it can count.
+
+178
+00:12:32,139 --> 00:12:33,679
+So, 100,000 it cannot count.
+
+179
+00:12:34,080 --> 00:12:38,179
+Then we have to use the method that Nirasa suggested.
+
+180
+00:12:38,179 --> 00:12:48,259
+So, you have to keep a variable to track how many times the timer overflowed from maximum value to zero.
+
+181
+00:12:48,840 --> 00:12:51,899
+And then you can calculate the delay.
+
+182
+00:12:52,460 --> 00:12:56,519
+Sir, can't we handle with increase the pre-scale?
+
+183
+00:12:57,580 --> 00:12:59,179
+Yes, another way.
+
+184
+00:12:59,340 --> 00:12:59,840
+That's good.
+
+185
+00:12:59,940 --> 00:13:00,460
+Good, good.
+
+186
+00:13:00,500 --> 00:13:01,039
+Very good.
+
+187
+00:13:01,200 --> 00:13:01,860
+I'm very happy.
+
+188
+00:13:02,500 --> 00:13:02,740
+Yes.
+
+189
+00:13:03,100 --> 00:13:12,679
+Rather than dividing by 64, you divide by a larger pre-scale, 2560, 1024, larger pre-scale.
+
+190
+00:13:12,679 --> 00:13:16,879
+But even with that, you come to a certain limit.
+
+191
+00:13:17,379 --> 00:13:17,559
+Right?
+
+192
+00:13:18,340 --> 00:13:19,960
+Let's say you need a big delay,
+
+193
+00:13:20,799 --> 00:13:22,980
+a big time measurement you need to calculate.
+
+194
+00:13:23,259 --> 00:13:25,500
+Even the largest prescale available,
+
+195
+00:13:25,659 --> 00:13:28,519
+that is 1024, as I remember.
+
+196
+00:13:29,000 --> 00:13:31,340
+The number of clock cycles that you need,
+
+197
+00:13:31,960 --> 00:13:35,840
+you may not be able to count that number of clock cycles
+
+198
+00:13:35,840 --> 00:13:38,360
+with a 16-bit time.
+
+199
+00:13:38,740 --> 00:13:40,840
+Then you have to go for that method again.
+
+200
+00:13:41,419 --> 00:13:42,159
+Is that clear, Dilma?
+
+201
+00:13:42,779 --> 00:13:43,200
+Yes, sir.
+
+202
+00:13:43,740 --> 00:13:44,960
+Yes, of course.
+
+203
+00:13:44,960 --> 00:13:54,559
+we can we can using a different scale we can handle the situation but up to a certain limit
+
+204
+00:13:54,559 --> 00:13:59,919
+these are the things you have to think about right again if you are building hardware from scratch
+
+205
+00:13:59,919 --> 00:14:09,120
+you can use a slow crystal for the clock frequency you can reduce fcpu then then you
+
+206
+00:14:09,120 --> 00:14:16,399
+have to modify hardware without using 16 megahertz clock you can use 8 megahertz clock or 4 megahertz
+
+207
+00:14:16,399 --> 00:14:23,360
+clock another option right then you have to adjust hardware likewise there are various ways to
+
+208
+00:14:24,960 --> 00:14:30,240
+right do the adjustments one is the pre-scale another one is the fcpu
+
+209
+00:14:31,200 --> 00:14:38,559
+another one is using a variable to keep the track of number of times time overflow
+
+210
+00:14:39,120 --> 00:14:45,659
+So using these various methods, you can measure the time that you need.
+
+211
+00:14:46,159 --> 00:14:46,480
+Right.
+
+212
+00:14:46,980 --> 00:14:47,639
+Anything else?
+
+213
+00:14:47,720 --> 00:14:48,539
+Any other question?
+
+214
+00:14:49,820 --> 00:14:50,200
+Right.
+
+215
+00:14:50,659 --> 00:14:51,379
+Firmware.
+
+216
+00:14:51,700 --> 00:14:53,080
+Timer-based blinker.
+
+217
+00:14:53,559 --> 00:15:00,179
+Configure PB5 as an output pin because LED connected, onboard LED connected to PB5.
+
+218
+00:15:00,539 --> 00:15:05,259
+Set the clock source as FCPU divided by 64.
+
+219
+00:15:05,379 --> 00:15:06,259
+That is the free scale.
+
+220
+00:15:06,620 --> 00:15:07,240
+Set the clock source.
+
+221
+00:15:07,240 --> 00:15:14,440
+Set the timer to 15,536 initial value.
+
+222
+00:15:15,179 --> 00:15:17,600
+We calculated in the previous slide.
+
+223
+00:15:17,960 --> 00:15:18,620
+Endless loop.
+
+224
+00:15:19,740 --> 00:15:22,379
+Then monitor whether time overflows.
+
+225
+00:15:23,100 --> 00:15:23,940
+Tov flag.
+
+226
+00:15:24,559 --> 00:15:25,639
+Monitor the Tov flag.
+
+227
+00:15:25,980 --> 00:15:28,100
+If the bit is set, Tov bit is set.
+
+228
+00:15:28,659 --> 00:15:29,720
+Toggle the LED.
+
+229
+00:15:30,600 --> 00:15:33,639
+Reset the timer to original value.
+
+230
+00:15:33,639 --> 00:15:36,960
+That is 15,536.
+
+231
+00:15:37,240 --> 00:15:40,740
+Clear the TOV flag, repeat.
+
+232
+00:15:41,320 --> 00:15:45,659
+So you can blink the LED every 200 milliseconds.
+
+233
+00:15:45,960 --> 00:15:49,039
+Very accurately, very precise.
+
+234
+00:15:49,279 --> 00:15:50,320
+Your measurements, why?
+
+235
+00:15:50,720 --> 00:15:56,120
+Now time measurements is done by a timer, hardware timer, not a software based timer.
+
+236
+00:15:56,580 --> 00:16:03,340
+And also during that 200 milliseconds time, you can use CPU to do some other task.
+
+237
+00:16:03,340 --> 00:16:08,480
+Because now the CPU is not tied up with running a busy loop.
+
+238
+00:16:08,960 --> 00:16:10,460
+Can you understand the algorithm?
+
+239
+00:16:10,759 --> 00:16:11,240
+Any question?
+
+240
+00:16:11,879 --> 00:16:12,059
+No.
+
+241
+00:16:12,240 --> 00:16:12,519
+Right.
+
+242
+00:16:13,019 --> 00:16:13,500
+Source code.
+
+243
+00:16:14,039 --> 00:16:14,799
+Main function.
+
+244
+00:16:15,500 --> 00:16:17,679
+Configure PB5 as an output.
+
+245
+00:16:18,299 --> 00:16:25,440
+Can set the clock source using the timer counter control register B but timer 1.
+
+246
+00:16:25,600 --> 00:16:26,480
+This time timer 1.
+
+247
+00:16:26,600 --> 00:16:27,379
+16 bit timer.
+
+248
+00:16:27,820 --> 00:16:31,580
+Set the clock source as FCPU divided by 64.
+
+249
+00:16:31,580 --> 00:16:34,159
+The clock select bits, these 3 bits
+
+250
+00:16:34,159 --> 00:16:36,620
+CS0, CS1, CS2
+
+251
+00:16:36,620 --> 00:16:38,259
+Using these 3 bits
+
+252
+00:16:38,259 --> 00:16:40,399
+Select the clock source as
+
+253
+00:16:40,399 --> 00:16:42,139
+FCPU
+
+254
+00:16:42,139 --> 00:16:43,399
+Divided by 64
+
+255
+00:16:43,399 --> 00:16:46,419
+This is the setting
+
+256
+00:16:46,419 --> 00:16:47,460
+We are going to use
+
+257
+00:16:47,460 --> 00:16:49,340
+So for that you need
+
+258
+00:16:49,340 --> 00:16:50,860
+011
+
+259
+00:16:50,860 --> 00:16:53,620
+CS2 0, CS1 1
+
+260
+00:16:53,620 --> 00:16:54,840
+CS0 1
+
+261
+00:16:54,840 --> 00:16:57,500
+011 clock select bit
+
+262
+00:16:57,500 --> 00:16:59,700
+Now the clock source is internal
+
+263
+00:16:59,700 --> 00:17:00,840
+Now timer
+
+264
+00:17:00,840 --> 00:17:03,980
+works as a timer.
+
+265
+00:17:04,920 --> 00:17:06,200
+It doesn't become a
+
+266
+00:17:06,200 --> 00:17:08,279
+counter because clock source
+
+267
+00:17:08,279 --> 00:17:10,380
+entered. Then initial value
+
+268
+00:17:10,380 --> 00:17:11,779
+earlier we calculated.
+
+269
+00:17:12,579 --> 00:17:13,980
+Set the TCT
+
+270
+00:17:13,980 --> 00:17:15,720
+timer counter register 1
+
+271
+00:17:15,720 --> 00:17:17,640
+because timer 1 to
+
+272
+00:17:17,640 --> 00:17:20,539
+15,506. Endless loop.
+
+273
+00:17:21,019 --> 00:17:22,500
+Inside the loop we check
+
+274
+00:17:22,500 --> 00:17:23,940
+the TOV flag.
+
+275
+00:17:24,579 --> 00:17:26,240
+In the timer interrupt flag
+
+276
+00:17:26,240 --> 00:17:28,200
+register with 0 is the
+
+277
+00:17:28,200 --> 00:17:30,299
+TOV flag. We check that
+
+278
+00:17:30,299 --> 00:17:37,460
+flag. Whether the flag, the value is 1, that particular bit is 1. If it is 1, that means
+
+279
+00:17:37,460 --> 00:17:46,940
+an overflow, that means 200 milliseconds elapse. Chuggle the LED. Set the initial value to
+
+280
+00:17:46,940 --> 00:17:53,539
+the timer again. Reset the timer. Clear the DOV flag. To clear the DOV flag, you have
+
+281
+00:17:53,539 --> 00:18:00,940
+to set it. You have to set it. To clear the TOE flag, you have to set it. Very important.
+
+282
+00:18:00,940 --> 00:18:07,460
+Because the next time when time overflows, again the hardware sets TOE flag. To enable
+
+283
+00:18:07,460 --> 00:18:12,960
+hardware to set TOE flag, we need to clear it. Can you understand this also? Any question?
+
+284
+00:18:13,480 --> 00:18:17,400
+Sir, can you explain the part inside the if condition?
+
+285
+00:18:17,400 --> 00:18:40,400
+Right. Let's assume ti, you say ti fr1 and operator 00000001. Let's assume the value of ti fr, I might interrupt flag register is xxxxx.
+
+286
+00:18:40,400 --> 00:18:57,660
+[unclear — Sinhala / crosstalk]
+
+287
+00:18:57,660 --> 00:19:06,859
+operation bitwise and x and 0 one operand is 0 no matter the value of other operand if you take
+
+288
+00:19:06,859 --> 00:19:10,799
+end operation, outcome would be 0. X and 0.
+
+289
+00:19:11,660 --> 00:19:14,859
+One operand is 0. So no matter the value of other
+
+290
+00:19:14,859 --> 00:19:18,440
+operand, when you take end operation, outcome is 0.
+
+291
+00:19:18,880 --> 00:19:22,599
+Likewise, then the last bit. X and 1.
+
+292
+00:19:23,279 --> 00:19:26,859
+Now if X is 1, 1 and 1, outcome is
+
+293
+00:19:26,859 --> 00:19:30,900
+1. If X is 0, 0 and 1
+
+294
+00:19:30,900 --> 00:19:34,740
+outcome is 0. So the outcome depends on
+
+295
+00:19:34,740 --> 00:19:40,539
+x because this operand is already 1. So the outcome of the end operation depends on x.
+
+296
+00:19:40,539 --> 00:19:51,539
+Now this is the if condition expression we evaluate. x means here x means tov1 flag
+
+297
+00:19:51,539 --> 00:19:54,740
+flag bit. This bit is set
+
+298
+00:19:54,740 --> 00:19:57,720
+when time overflows. That means
+
+299
+00:19:57,720 --> 00:20:00,240
+right when
+
+300
+00:20:00,240 --> 00:20:03,460
+timer 1 overflows
+
+301
+00:20:03,460 --> 00:20:06,640
+if condition is something like this. If
+
+302
+00:20:06,640 --> 00:20:11,240
+00000001
+
+303
+00:20:11,240 --> 00:20:13,880
+that means condition true
+
+304
+00:20:13,880 --> 00:20:17,859
+if time overflows. When timer 1
+
+305
+00:20:17,859 --> 00:20:19,599
+does not overflow.
+
+306
+00:20:20,200 --> 00:20:22,140
+If condition is something like this.
+
+307
+00:20:22,240 --> 00:20:24,299
+If 1, 2,
+
+308
+00:20:24,460 --> 00:20:25,099
+3, 4,
+
+309
+00:20:25,799 --> 00:20:28,099
+then if condition falls,
+
+310
+00:20:28,640 --> 00:20:30,059
+so this part is not executed.
+
+311
+00:20:30,319 --> 00:20:32,259
+This part is executed only when
+
+312
+00:20:32,259 --> 00:20:33,740
+time overflows.
+
+313
+00:20:34,220 --> 00:20:35,619
+While x becomes 1.
+
+314
+00:20:36,119 --> 00:20:37,180
+If x is 0,
+
+315
+00:20:37,180 --> 00:20:39,299
+this part is not executed.
+
+316
+00:20:39,619 --> 00:20:40,140
+Is that clear?
+
+317
+00:20:41,460 --> 00:20:42,460
+What else?
+
+318
+00:20:42,900 --> 00:20:44,259
+Any other question? Ask.
+
+319
+00:20:44,839 --> 00:20:47,319
+If you have any question, simply ask.
+
+320
+00:20:47,859 --> 00:20:54,700
+Don't worry. Even if it is a simple question, you may probably think that that's a stupid question.
+
+321
+00:20:54,700 --> 00:20:59,579
+Doesn't matter because you all are here to learn. So you can ask any question.
+
+322
+00:21:00,140 --> 00:21:05,839
+Right. In this system, we poll time overflow bit.
+
+323
+00:21:06,480 --> 00:21:12,220
+We check time overflow bit repeatedly to see whether timer is overflowing.
+
+324
+00:21:12,960 --> 00:21:16,259
+So that's not a good approach. Why we know that?
+
+325
+00:21:16,259 --> 00:21:25,640
+polling consumes CPU type that could have been used for some some other purpose and also right
+
+326
+00:21:25,640 --> 00:21:33,940
+so while you are polling certain things may go undetected so the best way is to handle this kind
+
+327
+00:21:33,940 --> 00:21:41,759
+of situation is using intervibs. So before we move into that let's try to write the same firmware
+
+328
+00:21:41,759 --> 00:21:44,779
+using labeled constants.
+
+329
+00:21:45,180 --> 00:21:47,420
+The same firmware using label constants
+
+330
+00:21:47,420 --> 00:21:49,000
+and with shift operators.
+
+331
+00:21:49,420 --> 00:21:50,660
+Now more understandable,
+
+332
+00:21:51,500 --> 00:21:52,920
+the code is more understandable.
+
+333
+00:21:53,440 --> 00:21:55,079
+And you don't need to write lengthy
+
+334
+00:21:55,079 --> 00:21:56,740
+binary strings.
+
+335
+00:21:57,339 --> 00:21:57,539
+Right.
+
+336
+00:21:57,980 --> 00:22:01,220
+The same system using interrupts
+
+337
+00:22:01,220 --> 00:22:03,420
+instead of using polling, a better way
+
+338
+00:22:03,420 --> 00:22:04,700
+using interrupts.
+
+339
+00:22:04,700 --> 00:22:05,839
+Same hardware
+
+340
+00:22:05,839 --> 00:22:08,460
+but different firmware.
+
+341
+00:22:08,700 --> 00:22:09,660
+So different algorithm.
+
+342
+00:22:09,900 --> 00:22:10,579
+Main function.
+
+343
+00:22:11,759 --> 00:22:13,420
+Main function algorithm.
+
+344
+00:22:13,960 --> 00:22:15,940
+Set PB5 as an output.
+
+345
+00:22:16,140 --> 00:22:19,940
+Set the clock source as FCPU divided by 64.
+
+346
+00:22:20,599 --> 00:22:24,180
+Set the time initial value 15,536.
+
+347
+00:22:25,259 --> 00:22:27,799
+Enable time overflow interrupt.
+
+348
+00:22:28,059 --> 00:22:30,039
+Time overflow interrupt enable.
+
+349
+00:22:30,299 --> 00:22:31,559
+Enable global interrupt.
+
+350
+00:22:31,559 --> 00:22:34,380
+In the endless loop, there is nothing.
+
+351
+00:22:35,039 --> 00:22:39,599
+But you can use this to do some other task.
+
+352
+00:22:39,599 --> 00:22:46,319
+but in this example we don't have any other data so we keep it empty then when time overflows
+
+353
+00:22:46,960 --> 00:22:54,720
+the timer interrupt cpu so we have to handle that interrupt this is the intro toggle pb5 that is
+
+354
+00:22:55,759 --> 00:23:04,480
+toggle the led reset the timer to initial value this is 500 50 536. can you understand this
+
+355
+00:23:04,480 --> 00:23:06,579
+algorithm.
+
+356
+00:23:07,420 --> 00:23:07,539
+Okay.
+
+357
+00:23:08,539 --> 00:23:10,660
+Then let's go more into source code.
+
+358
+00:23:11,000 --> 00:23:12,180
+Now we are going to use interrupt.
+
+359
+00:23:12,319 --> 00:23:13,720
+So you're doing interrupt.h.
+
+360
+00:23:14,259 --> 00:23:16,319
+Set PB5 as an output.
+
+361
+00:23:16,319 --> 00:23:18,400
+Set the clock source as
+
+362
+00:23:18,400 --> 00:23:20,539
+FCPU divided by 64.
+
+363
+00:23:21,440 --> 00:23:22,640
+Right. Using clock select
+
+364
+00:23:22,640 --> 00:23:24,720
+bits of timer counter
+
+365
+00:23:24,720 --> 00:23:26,460
+control register B.
+
+366
+00:23:27,160 --> 00:23:28,259
+Timer 1 via UOC.
+
+367
+00:23:28,700 --> 00:23:29,559
+16 bit timer.
+
+368
+00:23:30,660 --> 00:23:31,559
+Initial value
+
+369
+00:23:31,559 --> 00:23:34,240
+15,536.
+
+370
+00:23:34,480 --> 00:23:37,720
+enable time overflow interrupt
+
+371
+00:23:37,720 --> 00:23:41,980
+set this bit of time interrupt mask
+
+372
+00:23:41,980 --> 00:23:46,079
+register 1 timer 1 so enable the time
+
+373
+00:23:46,079 --> 00:23:49,980
+overflow interrupts enable global interrupts set interrupts
+
+374
+00:23:49,980 --> 00:23:53,839
+function endless loop you can use it to perform
+
+375
+00:23:53,839 --> 00:23:57,400
+another task but in this example we don't have any other task
+
+376
+00:23:57,400 --> 00:24:01,940
+but you can use it to perform some other task because we are not
+
+377
+00:24:01,940 --> 00:24:08,880
+going to use CPU for timing. Timing is done by the timer, independent peripheral device.
+
+378
+00:24:09,880 --> 00:24:16,859
+Then handle the time overflow interrupt. When time overflows, this interrupt service routine
+
+379
+00:24:16,859 --> 00:24:24,059
+is automatically called. Right. So the vector is timer1. We are using timer1 overflow vector.
+
+380
+00:24:24,059 --> 00:24:31,700
+Inside this, right, then we set, reset the timer to its initial value.
+
+381
+00:24:32,220 --> 00:24:33,279
+Can you understand this code?
+
+382
+00:24:33,920 --> 00:24:34,440
+Any question?
+
+383
+00:24:35,039 --> 00:24:36,299
+Yes, sir.
+
+384
+00:24:36,880 --> 00:24:37,720
+Right.
+
+385
+00:24:38,019 --> 00:24:43,099
+Same program using label constants and bit shift operators.
+
+386
+00:24:43,539 --> 00:24:48,240
+Okay, with that, we come to end of timing and counting.
+
+387
+00:24:48,779 --> 00:24:49,839
+Any questions?
+
+388
+00:24:50,759 --> 00:24:51,160
+Sir?
+
+389
+00:24:51,579 --> 00:24:51,839
+Yes.
+
+390
+00:24:51,839 --> 00:24:52,680
+Yes, sir.
+
+391
+00:24:52,680 --> 00:25:04,059
+About pre-scaling, is the 1 over 64 is the optimal value for the pre-scaling of CPU?
+
+392
+00:25:04,680 --> 00:25:04,880
+No.
+
+393
+00:25:06,619 --> 00:25:07,559
+I just use that.
+
+394
+00:25:07,980 --> 00:25:09,319
+You can use any pre-scale value.
+
+395
+00:25:09,960 --> 00:25:11,920
+In this example, I just use 64.
+
+396
+00:25:13,339 --> 00:25:14,799
+Because I like 64.
+
+397
+00:25:15,339 --> 00:25:16,640
+Is there any optimal value?
+
+398
+00:25:16,640 --> 00:25:18,400
+No, there is no such optimal value.
+
+399
+00:25:18,519 --> 00:25:20,539
+Because I use it because I like 64.
+
+400
+00:25:20,539 --> 00:25:24,059
+because you guys can play 64 tricks.
+
+401
+00:25:24,900 --> 00:25:29,099
+I don't know.
+
+402
+00:25:31,599 --> 00:25:34,140
+Any pre-scale value you can use.
+
+403
+00:25:34,559 --> 00:25:38,960
+The idea of the pre-scale is we scale down the clock frequency
+
+404
+00:25:38,960 --> 00:25:41,460
+to suit our requirements.
+
+405
+00:25:41,940 --> 00:25:44,660
+The CPU frequency is very high
+
+406
+00:25:44,660 --> 00:25:47,079
+because CPU running at very high speed.
+
+407
+00:25:47,079 --> 00:25:53,440
+right some some peripheral devices cannot work at that speed for example adc we have to scale down
+
+408
+00:25:53,440 --> 00:26:03,180
+the speed so we use a prescaler and in this timer this with timers if you connect the clock the cpu
+
+409
+00:26:03,180 --> 00:26:11,400
+clock source directly to timer the timer will quickly fill up a count to its maximum value
+
+410
+00:26:11,400 --> 00:26:20,680
+an overflow if you want to slow down the counting so we scale down the frequency of cpu using a
+
+411
+00:26:20,680 --> 00:26:33,480
+non-factor that is the pre-scale any other question okay right that's enough time timing and counting
+

@@ -1,0 +1,3520 @@
+1
+00:00:00,000 --> 00:00:10,000
+Right, this is where we stop at the end of morning session PWM Frequence. Before we move forward, do you have any question?
+
+2
+00:00:10,000 --> 00:00:17,000
+Sorry. Right, no questions. Let's move on.
+
+3
+00:00:17,000 --> 00:00:27,000
+Timer counter registers. Now we saw that PWM, pulse width modulation depends on timers. PWM uses timers.
+
+4
+00:00:27,000 --> 00:00:34,439
+So we need to talk about timer counter registers that are related to pulse width modulation.
+
+5
+00:00:35,100 --> 00:00:35,380
+Right.
+
+6
+00:00:35,820 --> 00:00:36,119
+Okay.
+
+7
+00:00:36,219 --> 00:00:41,619
+We are going to talk about timer counter control register, TCCRB.
+
+8
+00:00:41,920 --> 00:00:47,380
+Now there are two registers, TCCR, TCCR A, TCCR B.
+
+9
+00:00:48,259 --> 00:00:55,000
+Now here simple N denotes the timer number with the timer 0, timer 1, timer 2 like that.
+
+10
+00:00:55,000 --> 00:01:13,500
+There are two registers TCCR-A and TCCR-B. Not only for timers, some other peripherals also. For example, universal, synchronous, synchronous, receiver and transmitter, USART.
+
+11
+00:01:13,500 --> 00:01:29,359
+It also has two registers, TCCRA, that is not TCC, it is something like U, starting with U, I can't exactly remember the term.
+
+12
+00:01:30,120 --> 00:01:32,939
+Now, two control and status registers.
+
+13
+00:01:32,939 --> 00:01:47,700
+The reason is if there are more control bits, if the 8 bit register is not enough to accommodate more control bits, then there can be multiple registers with control bits.
+
+14
+00:01:48,060 --> 00:01:50,659
+Sometimes three registers.
+
+15
+00:01:51,540 --> 00:01:52,459
+A, B, C.
+
+16
+00:01:53,959 --> 00:01:57,319
+So in this case TCCR A, TCCR B.
+
+17
+00:01:57,519 --> 00:01:59,700
+Now let's talk about TCCR B.
+
+18
+00:02:00,299 --> 00:02:06,159
+Now in the TCCRB register, some of the bits we have already, some of the control bits we have already discussed.
+
+19
+00:02:06,159 --> 00:02:11,139
+For example, CS bits, clock select bits we have already discussed.
+
+20
+00:02:11,500 --> 00:02:17,419
+But let's talk about them again in relation to PWM.
+
+21
+00:02:17,960 --> 00:02:22,460
+Now using clock select bits, you can set the pre-scale.
+
+22
+00:02:22,879 --> 00:02:24,039
+We already know that.
+
+23
+00:02:24,580 --> 00:02:25,479
+We have learned that.
+
+24
+00:02:25,620 --> 00:02:27,520
+Last week we discussed that part.
+
+25
+00:02:27,520 --> 00:02:32,800
+Using clock select bits we can set the pre-scale.
+
+26
+00:02:33,879 --> 00:02:39,659
+If you put 0, 0, 0 to 3 clock select bits you can disconnect the clock source.
+
+27
+00:02:40,020 --> 00:02:41,919
+Then timer won't count.
+
+28
+00:02:42,460 --> 00:02:50,080
+If you put 0, 0, 1 for the clock select bits that means you directly connect internal clock to the timer.
+
+29
+00:02:50,219 --> 00:02:54,460
+That means then the timer would run at the speed of CPU.
+
+30
+00:02:54,460 --> 00:02:57,900
+frequency would be fCPU
+
+31
+00:02:57,900 --> 00:03:01,340
+timer frequency would be equal to
+
+32
+00:03:01,340 --> 00:03:03,099
+frequency of the CPU
+
+33
+00:03:03,099 --> 00:03:05,719
+but if you want to run the timer
+
+34
+00:03:05,719 --> 00:03:07,080
+the counting part
+
+35
+00:03:07,080 --> 00:03:09,719
+if you want to do that slower
+
+36
+00:03:09,719 --> 00:03:13,419
+you can use a prescaler
+
+37
+00:03:13,419 --> 00:03:17,819
+to scale down the frequency of the CPU
+
+38
+00:03:17,819 --> 00:03:20,039
+right you know that
+
+39
+00:03:20,039 --> 00:03:21,139
+we discussed that
+
+40
+00:03:21,139 --> 00:03:27,199
+Another important control bit in this register is WGM.
+
+41
+00:03:28,800 --> 00:03:31,719
+WGM bit.
+
+42
+00:03:32,560 --> 00:03:38,780
+Again, simple and in all the timer, whether it's a timer 0, timer 1, timer 2, timer 3, like that.
+
+43
+00:03:38,780 --> 00:03:45,580
+And number 2 indicates that there are two bits at least.
+
+44
+00:03:45,580 --> 00:03:52,219
+O3 means WGM0, WGM1 and WGM2.
+
+45
+00:03:52,340 --> 00:03:54,280
+Here you have only WGM2.
+
+46
+00:03:55,419 --> 00:04:01,659
+Then somewhere else there should be WGM1 and WGM0.
+
+47
+00:04:02,360 --> 00:04:03,719
+We will come to that later.
+
+48
+00:04:04,259 --> 00:04:09,379
+Here WGM means waveform generation mode.
+
+49
+00:04:09,979 --> 00:04:12,180
+Wave form generation mode.
+
+50
+00:04:12,180 --> 00:04:17,019
+W for waveform, G for generation, M for mode.
+
+51
+00:04:17,519 --> 00:04:18,519
+Bit number 2.
+
+52
+00:04:19,160 --> 00:04:21,579
+Now where are bit number 1 and bit number 0?
+
+53
+00:04:22,319 --> 00:04:22,839
+Let's see.
+
+54
+00:04:23,379 --> 00:04:27,180
+They are in another register, another control register.
+
+55
+00:04:27,560 --> 00:04:33,040
+That is TCCRA, timer counter control register A.
+
+56
+00:04:33,839 --> 00:04:40,879
+In the timer counter control register A, you can find WGM0 and WGM1.
+
+57
+00:04:40,879 --> 00:04:48,079
+So actually there are three bits, three control bits, WGM0, WGM1 and WGM2.
+
+58
+00:04:48,160 --> 00:04:52,579
+WGM2 is in other register, TCCRB register.
+
+59
+00:04:52,980 --> 00:04:53,220
+Right.
+
+60
+00:04:53,800 --> 00:05:02,399
+These waveform generation mode bits, we can use to specify the waveform generation mode.
+
+61
+00:05:02,920 --> 00:05:05,259
+There are a number of waveform generation modes.
+
+62
+00:05:05,259 --> 00:05:15,879
+Normal mode, phase correct PWM mode, clear time on compare, that is CTC mode, and finally fast PWM mode.
+
+63
+00:05:16,319 --> 00:05:18,800
+What are they? Let's discuss.
+
+64
+00:05:19,339 --> 00:05:23,259
+Right. The first one is normal mode.
+
+65
+00:05:23,259 --> 00:05:37,180
+If you set 0004, WGM0, WGM1 and WGM2, three waveform generation modes, bits, if you set 0, you get the normal mode.
+
+66
+00:05:37,180 --> 00:05:52,560
+In the normal mode, timer increments, TCNT register, that is timer counter register, timer increments, timer counter register in the normal mode, right?
+
+67
+00:05:53,259 --> 00:05:59,819
+normal mode timer implements timer counter register right from 0 to 255 and then
+
+68
+00:06:00,699 --> 00:06:10,939
+overflows into 0 and again implements from 0 to 255 whenever the tcnt register overflows
+
+69
+00:06:11,500 --> 00:06:21,420
+from 255 to 0 now i'm i'm taking 255 assuming that this is an 8 bit timer right so if it is a
+
+70
+00:06:21,420 --> 00:06:25,620
+16 bit timer different value that is
+
+71
+00:06:25,620 --> 00:06:30,180
+65535 you have to use.
+
+72
+00:06:30,180 --> 00:06:34,259
+Now whenever the timer counter register
+
+73
+00:06:34,259 --> 00:06:37,699
+TCNT register overflows from
+
+74
+00:06:37,699 --> 00:06:41,959
+255 to 0 the timer sets
+
+75
+00:06:41,959 --> 00:06:46,560
+TOV bit time overflow
+
+76
+00:06:46,560 --> 00:06:50,240
+flag bit TOV bit of
+
+77
+00:06:50,240 --> 00:06:52,120
+TIFR
+
+78
+00:06:52,120 --> 00:06:54,560
+timer interrupt flag
+
+79
+00:06:54,560 --> 00:06:56,680
+register. What does that
+
+80
+00:06:56,680 --> 00:06:58,540
+mean? That's what we discussed
+
+81
+00:06:58,540 --> 00:07:00,699
+last week. In the
+
+82
+00:07:00,699 --> 00:07:02,660
+normal mode, timer
+
+83
+00:07:02,660 --> 00:07:04,560
+behaves as timer
+
+84
+00:07:04,560 --> 00:07:06,699
+or a counter. That's why we call
+
+85
+00:07:06,699 --> 00:07:08,600
+it normal mode. That's what we
+
+86
+00:07:08,600 --> 00:07:10,439
+discussed last week. Timer
+
+87
+00:07:10,439 --> 00:07:10,920
+counter.
+
+88
+00:07:12,040 --> 00:07:14,420
+Timers we discuss.
+
+89
+00:07:15,079 --> 00:07:15,879
+Timer
+
+90
+00:07:15,879 --> 00:07:18,300
+behaves as a timer or timer
+
+91
+00:07:18,300 --> 00:07:19,540
+behaves as a counter.
+
+92
+00:07:19,540 --> 00:07:21,660
+when the mode is normal.
+
+93
+00:07:22,360 --> 00:07:23,839
+So the default value for these
+
+94
+00:07:23,839 --> 00:07:25,899
+WGM1,
+
+95
+00:07:26,019 --> 00:07:27,939
+WGM0, WGM2,
+
+96
+00:07:28,180 --> 00:07:30,019
+these bits, default value is 0.
+
+97
+00:07:31,000 --> 00:07:31,779
+And that's why
+
+98
+00:07:31,779 --> 00:07:33,819
+without talking about those
+
+99
+00:07:33,819 --> 00:07:36,100
+bits, we used counters
+
+100
+00:07:36,100 --> 00:07:38,000
+and timers last week because
+
+101
+00:07:38,000 --> 00:07:40,519
+their default value is 0, 0, 0.
+
+102
+00:07:40,680 --> 00:07:42,339
+So they are in the normal mode.
+
+103
+00:07:43,100 --> 00:07:44,240
+Timers, counters, they are
+
+104
+00:07:44,240 --> 00:07:45,060
+in the normal mode.
+
+105
+00:07:45,899 --> 00:07:47,480
+So that's why we didn't discuss
+
+106
+00:07:47,480 --> 00:07:48,680
+those bits
+
+107
+00:07:48,680 --> 00:07:50,379
+last week.
+
+108
+00:07:50,899 --> 00:07:53,720
+When they are 0, the timer is a timer
+
+109
+00:07:53,720 --> 00:07:54,779
+or a counter.
+
+110
+00:07:55,399 --> 00:07:57,740
+If the timer is
+
+111
+00:07:57,740 --> 00:08:00,079
+fed with internal clock,
+
+112
+00:08:00,279 --> 00:08:00,920
+it's a timer.
+
+113
+00:08:01,600 --> 00:08:03,500
+If the timer is fed with
+
+114
+00:08:03,500 --> 00:08:05,540
+external clock pulses,
+
+115
+00:08:06,339 --> 00:08:07,199
+it's a counter.
+
+116
+00:08:07,740 --> 00:08:08,819
+Last week we discussed.
+
+117
+00:08:09,180 --> 00:08:10,980
+Is that clear? Any question?
+
+118
+00:08:11,680 --> 00:08:11,980
+Right.
+
+119
+00:08:13,040 --> 00:08:16,160
+Then let's talk about the third one.
+
+120
+00:08:16,620 --> 00:08:17,199
+CTC.
+
+121
+00:08:17,199 --> 00:08:19,779
+clear timer on compare
+
+122
+00:08:19,779 --> 00:08:22,300
+CDC means
+
+123
+00:08:22,300 --> 00:08:23,819
+clear timer on compare
+
+124
+00:08:23,819 --> 00:08:26,000
+not Ceylon Tobago Corporation
+
+125
+00:08:26,000 --> 00:08:28,740
+clear timer on compare
+
+126
+00:08:28,740 --> 00:08:29,860
+the third mode
+
+127
+00:08:29,860 --> 00:08:32,419
+in this mode if you set this mode
+
+128
+00:08:32,419 --> 00:08:34,200
+timer increments
+
+129
+00:08:34,200 --> 00:08:36,200
+TCNT register
+
+130
+00:08:36,200 --> 00:08:38,360
+timer counter register from 0
+
+131
+00:08:38,360 --> 00:08:39,919
+to 255
+
+132
+00:08:39,919 --> 00:08:41,419
+assuming 8 bit timer
+
+133
+00:08:41,419 --> 00:08:43,840
+so timer increments
+
+134
+00:08:43,840 --> 00:08:46,399
+TCNT register from 0
+
+135
+00:08:46,399 --> 00:08:57,820
+to 255. Then overflows to 0, starts again from 0. We load a value between 0 to 255 to OCR,
+
+136
+00:08:58,440 --> 00:09:06,440
+output compare register. To the output compare register, we load a value between 0 to 255.
+
+137
+00:09:06,440 --> 00:09:13,159
+Whenever a compare match occurs, timer clears TCNT register.
+
+138
+00:09:13,460 --> 00:09:15,860
+Timer clears TCNT register.
+
+139
+00:09:16,340 --> 00:09:21,340
+And sets OCF bit of TIFR.
+
+140
+00:09:21,899 --> 00:09:26,139
+OCF bit means output compare match flag.
+
+141
+00:09:26,379 --> 00:09:31,539
+Output compare match flag bit of timer interrupt flag register.
+
+142
+00:09:31,879 --> 00:09:32,480
+That is set.
+
+143
+00:09:32,759 --> 00:09:33,019
+Right.
+
+144
+00:09:33,440 --> 00:09:34,820
+Let me explain it again.
+
+145
+00:09:34,820 --> 00:09:37,460
+I need some space to write.
+
+146
+00:09:37,940 --> 00:09:45,779
+Now CTC, normal mode we don't need to discuss because we have discussed that last week.
+
+147
+00:09:46,259 --> 00:09:49,320
+Now let's talk about CTC mode.
+
+148
+00:09:49,320 --> 00:09:58,320
+In the CTC mode, time increments, right, time increments TCNT from 0 to 255.
+
+149
+00:09:59,139 --> 00:10:03,179
+Then starts again from 0.
+
+150
+00:10:03,179 --> 00:10:14,539
+Load a value between 0 and 255 to OZR, output compare register.
+
+151
+00:10:14,940 --> 00:10:27,240
+Whenever a match occurs, timer clears TCNT and sets OCF bit of TIFR.
+
+152
+00:10:27,240 --> 00:10:43,360
+Whenever compare match occurs, timer clears TCNT, timer count register and sets OCF, output compare match flag, output compare match flag bit of timer interrupt flag register.
+
+153
+00:10:43,740 --> 00:10:43,940
+Right.
+
+154
+00:10:44,399 --> 00:10:46,860
+So this is different to the normal mode.
+
+155
+00:10:47,299 --> 00:10:48,980
+This is different to the normal mode.
+
+156
+00:10:48,980 --> 00:10:58,399
+For example, now let's say you want to trigger something when timer or counter counted 5.
+
+157
+00:10:58,940 --> 00:11:06,860
+So what you can do is, right, you can assign TCNT 0.
+
+158
+00:11:07,539 --> 00:11:13,960
+Then you can check if, right, TCNT equals 5.
+
+159
+00:11:13,960 --> 00:11:18,720
+If TCNT equals 5, you can trigger whatever the activity you want to do.
+
+160
+00:11:18,980 --> 00:11:20,879
+You can use the CDC mode.
+
+161
+00:11:21,919 --> 00:11:26,679
+In the CDC mode, when the compare match occurred, sorry, sorry, sorry.
+
+162
+00:11:27,299 --> 00:11:29,559
+This is the normal way we do the job.
+
+163
+00:11:30,480 --> 00:11:37,039
+In the CDC mode, what we do is TCNT 0, OCR, you assign 5.
+
+164
+00:11:37,500 --> 00:11:41,759
+Then you check if OCF is set.
+
+165
+00:11:42,200 --> 00:11:43,120
+That is what you check.
+
+166
+00:11:43,120 --> 00:11:50,480
+If there is a compare match occurred, TCNT counts 5 times, then there is a compare match occurred, OCF is set.
+
+167
+00:11:51,259 --> 00:11:54,620
+You can trigger whatever the activity you want to do.
+
+168
+00:11:55,279 --> 00:12:00,559
+And after that, do you have to set that TCNT again to 0? No.
+
+169
+00:12:01,700 --> 00:12:04,980
+Timer clears TCNT to 0 automatically.
+
+170
+00:12:05,779 --> 00:12:07,139
+Again, timer counts.
+
+171
+00:12:07,139 --> 00:12:12,659
+When it counted to 5, match occurs, OCF flag is raised.
+
+172
+00:12:13,120 --> 00:12:17,259
+If the OC flag is set, you can trigger the activity again.
+
+173
+00:12:17,879 --> 00:12:21,779
+This mode is, again in this mode, CDC mode,
+
+174
+00:12:22,139 --> 00:12:26,580
+we use the timer as a timer or counter as a counter.
+
+175
+00:12:27,820 --> 00:12:28,120
+Right?
+
+176
+00:12:28,639 --> 00:12:32,220
+But little bit different to normal mode.
+
+177
+00:12:32,220 --> 00:12:37,580
+In the normal mode, right, we don't assign any value to OCR.
+
+178
+00:12:37,820 --> 00:12:40,179
+But here you assign a value to OCR.
+
+179
+00:12:40,179 --> 00:12:44,759
+If there is a match, then OCF flag is set.
+
+180
+00:12:45,240 --> 00:12:50,059
+Using the OCF flag, we can determine whether a match occurred or not.
+
+181
+00:12:50,559 --> 00:12:53,220
+But still the timer is a timer or counter.
+
+182
+00:12:53,720 --> 00:12:56,960
+No, there is no relationship to PWM.
+
+183
+00:12:57,480 --> 00:12:58,080
+Is that clear?
+
+184
+00:12:58,919 --> 00:13:00,899
+We didn't discuss this part last week.
+
+185
+00:13:01,480 --> 00:13:02,559
+But now you know.
+
+186
+00:13:03,039 --> 00:13:03,620
+Is that clear?
+
+187
+00:13:04,139 --> 00:13:04,740
+Any question?
+
+188
+00:13:05,019 --> 00:13:05,659
+Yes, sir.
+
+189
+00:13:06,039 --> 00:13:06,320
+Yes.
+
+190
+00:13:06,320 --> 00:13:09,639
+At what time do we need CTC?
+
+191
+00:13:10,179 --> 00:13:11,980
+Now, the thing is this.
+
+192
+00:13:12,580 --> 00:13:16,019
+Now, if you want to, let's say,
+
+193
+00:13:16,860 --> 00:13:25,840
+now, the task that you are doing with CTZ mode,
+
+194
+00:13:25,840 --> 00:13:28,620
+you can do with the normal mode as well.
+
+195
+00:13:29,620 --> 00:13:31,620
+And the task you do with the normal mode,
+
+196
+00:13:31,700 --> 00:13:33,720
+you can do with the CTZ mode as well.
+
+197
+00:13:34,559 --> 00:13:34,759
+Right?
+
+198
+00:13:36,299 --> 00:13:39,559
+So, these are two different modes available with the timer.
+
+199
+00:13:40,179 --> 00:13:57,159
+Right. So I cannot give you exact answer now why actually we need CDZ mode. Right. It's a very good question. Right. But I cannot give you answer right now. I'll check and let you know.
+
+200
+00:13:57,159 --> 00:14:06,580
+At the moment, what I can see is both modes can be used, right, to do the same thing.
+
+201
+00:14:06,580 --> 00:14:16,679
+But there should be, as you asked the question, there should be some specific reason to have a CDC mode.
+
+202
+00:14:17,159 --> 00:14:17,399
+Right.
+
+203
+00:14:17,919 --> 00:14:19,980
+I'll try to find out it and let you know.
+
+204
+00:14:20,460 --> 00:14:20,960
+Thank you.
+
+205
+00:14:21,500 --> 00:14:22,679
+That's a very good question.
+
+206
+00:14:23,179 --> 00:14:23,360
+Right.
+
+207
+00:14:23,440 --> 00:14:23,899
+What else?
+
+208
+00:14:24,259 --> 00:14:24,820
+Anything else?
+
+209
+00:14:24,820 --> 00:14:45,320
+Now is that clear how CTZ mode works? The CTZ mode is not very widely used. I don't know again why. I need to find out that. It is not widely used. The normal mode is widely used. Again there should be a reason for that. Why normal mode is preferred over CTZ mode when the timers and counters are used.
+
+210
+00:14:45,320 --> 00:14:52,740
+Right. Now if CTZ mode is clear, then let's move into the second mode.
+
+211
+00:14:52,899 --> 00:14:58,700
+That is phase correct mode. Phase correct PWM.
+
+212
+00:14:59,120 --> 00:15:03,659
+Right. Phase correct PWM. What is that? Let's see.
+
+213
+00:15:04,000 --> 00:15:10,299
+This is in this mode. Timer increments TCNT register.
+
+214
+00:15:10,299 --> 00:15:15,299
+We know that. Timer increments TCNT register.
+
+215
+00:15:15,320 --> 00:15:40,580
+from 0 to 255 assuming 8 bit time and then there is no overflow. That's the interesting part. No overflow. The timer after that, right, increments from 0 to 255 and then decrements from 255 to 0.
+
+216
+00:15:40,580 --> 00:15:55,320
+So when you feed pulses to the timer, timer increments TCNT register from 0 to 255 and then increments TCNT register from 255 to 0.
+
+217
+00:15:55,960 --> 00:15:56,899
+No overflow.
+
+218
+00:15:57,559 --> 00:15:59,840
+It goes to the maximum value then increments.
+
+219
+00:15:59,840 --> 00:16:10,100
+We load a value between 0 and 255 to OCR.
+
+220
+00:16:10,580 --> 00:16:13,340
+Fout compare register, load available.
+
+221
+00:16:14,340 --> 00:16:14,379
+Right.
+
+222
+00:16:14,919 --> 00:16:24,620
+Whenever a compare match occurs, right, whenever a compare match occurs, during increment,
+
+223
+00:16:25,100 --> 00:16:31,820
+during increment, that is very important, during increment, then waveform generator,
+
+224
+00:16:31,820 --> 00:16:39,000
+right, then waveform generator clears, clears, clears means low.
+
+225
+00:16:39,000 --> 00:16:43,240
+OC pin and sets.
+
+226
+00:16:43,240 --> 00:16:44,799
+Sets means high.
+
+227
+00:16:45,460 --> 00:16:49,639
+OC pin when sets the OC pin.
+
+228
+00:16:49,919 --> 00:16:56,740
+If compare match occurs during decrement.
+
+229
+00:16:57,519 --> 00:17:01,379
+So what we do is in this mode.
+
+230
+00:17:02,019 --> 00:17:05,960
+Phase correct PWM mode.
+
+231
+00:17:06,599 --> 00:17:06,720
+Right.
+
+232
+00:17:07,000 --> 00:17:08,799
+Phase correct PWM mode.
+
+233
+00:17:09,000 --> 00:17:14,599
+Timer increments, TC and T register from 0 to 255.
+
+234
+00:17:15,099 --> 00:17:19,359
+Then no overflow but decrements from 255 to 0.
+
+235
+00:17:20,079 --> 00:17:22,240
+We load a value to OZR.
+
+236
+00:17:22,980 --> 00:17:26,039
+Whenever compare match occurs during increment,
+
+237
+00:17:26,819 --> 00:17:35,839
+waveform generator clears OCP and sets OCP in if compare match occurs during decrement.
+
+238
+00:17:35,839 --> 00:18:02,480
+Right. Using a graph, let me show this. Right. Right. I'll erase all these things and draw a graph. Right. Right. Draw a line. Then again, I lost everything. Right. Now what happens is this is zero and this is top. Top piece 255.
+
+239
+00:18:02,480 --> 00:18:06,799
+Then, it's very difficult.
+
+240
+00:18:07,599 --> 00:18:13,400
+Time counter register is increments from zero to...
+
+241
+00:18:13,400 --> 00:18:14,440
+Oh, come on.
+
+242
+00:18:14,539 --> 00:18:14,960
+It will work.
+
+243
+00:18:15,779 --> 00:18:19,359
+Now you can understand how useful the whiteboard is.
+
+244
+00:18:20,799 --> 00:18:23,799
+You know, technology is better than...
+
+245
+00:18:23,799 --> 00:18:24,640
+Increment.
+
+246
+00:18:25,140 --> 00:18:25,859
+Decrement.
+
+247
+00:18:26,279 --> 00:18:26,740
+Zero.
+
+248
+00:18:27,279 --> 00:18:28,619
+Then again increment.
+
+249
+00:18:29,240 --> 00:18:30,759
+Again decrement.
+
+250
+00:18:30,759 --> 00:18:33,400
+decrement about elevating
+
+251
+00:18:33,400 --> 00:18:34,400
+right
+
+252
+00:18:34,400 --> 00:18:37,519
+let's take another color
+
+253
+00:18:37,519 --> 00:18:39,200
+this is OCR
+
+254
+00:18:39,200 --> 00:18:40,299
+right
+
+255
+00:18:40,299 --> 00:18:43,480
+let's get the previous color
+
+256
+00:18:43,480 --> 00:18:44,160
+right
+
+257
+00:18:44,160 --> 00:18:46,880
+then we need to draw another graph
+
+258
+00:18:46,880 --> 00:18:47,920
+OCP
+
+259
+00:18:47,920 --> 00:18:50,140
+I need to show you the OCP
+
+260
+00:18:50,140 --> 00:18:52,259
+OCP 5 volt
+
+261
+00:18:52,259 --> 00:18:53,740
+0 volt
+
+262
+00:18:53,740 --> 00:18:56,240
+now you can see
+
+263
+00:18:56,240 --> 00:18:57,819
+this is the place where
+
+264
+00:18:57,819 --> 00:19:00,680
+compare match occurs
+
+265
+00:19:00,680 --> 00:19:04,119
+during increment. Ozypin is high.
+
+266
+00:19:04,720 --> 00:19:07,779
+When a compare match occurred during increment,
+
+267
+00:19:08,680 --> 00:19:12,160
+it goes low. It goes low. Let me take another color.
+
+268
+00:19:12,700 --> 00:19:16,200
+It's high and it goes
+
+269
+00:19:16,200 --> 00:19:20,359
+low when a compare match occurs. It goes low. And then
+
+270
+00:19:20,359 --> 00:19:24,460
+timer increments and decrement. During the decrement
+
+271
+00:19:24,460 --> 00:19:28,539
+also compare match occurs. And then what happens is
+
+272
+00:19:28,539 --> 00:19:30,940
+waveform generator sets
+
+273
+00:19:30,940 --> 00:19:32,500
+OC pin high
+
+274
+00:19:32,500 --> 00:19:33,380
+right
+
+275
+00:19:33,380 --> 00:19:36,420
+then again compare match occurs
+
+276
+00:19:36,420 --> 00:19:37,440
+during increment
+
+277
+00:19:37,440 --> 00:19:40,200
+then what happens is
+
+278
+00:19:40,200 --> 00:19:41,940
+OC pin goes low
+
+279
+00:19:41,940 --> 00:19:44,339
+and again decrement
+
+280
+00:19:44,339 --> 00:19:45,940
+compare match occurs
+
+281
+00:19:45,940 --> 00:19:48,079
+OC pin becomes high
+
+282
+00:19:48,079 --> 00:19:51,079
+now this is the PWM
+
+283
+00:19:51,079 --> 00:19:52,940
+signal on OC pin
+
+284
+00:19:52,940 --> 00:19:53,839
+right
+
+285
+00:19:53,839 --> 00:19:56,359
+when a compare match occurs
+
+286
+00:19:56,359 --> 00:19:57,599
+during the increment
+
+287
+00:19:57,599 --> 00:20:01,720
+waveform generator sets OC pin low
+
+288
+00:20:01,720 --> 00:20:06,640
+and when the compare match occur during the decrement
+
+289
+00:20:06,640 --> 00:20:08,940
+OC pin is set high
+
+290
+00:20:08,940 --> 00:20:13,619
+you get this PWM signal
+
+291
+00:20:13,619 --> 00:20:16,099
+can you understand any question
+
+292
+00:20:16,099 --> 00:20:19,720
+this is called phase correct PWM
+
+293
+00:20:19,720 --> 00:20:22,299
+timer increment with the match
+
+294
+00:20:22,299 --> 00:20:24,559
+pin low OC pin
+
+295
+00:20:24,559 --> 00:20:27,660
+timer decrement with the match
+
+296
+00:20:27,660 --> 00:20:31,299
+no overflow
+
+297
+00:20:31,299 --> 00:20:33,859
+then the next mode
+
+298
+00:20:33,859 --> 00:20:35,539
+fast PWL
+
+299
+00:20:35,539 --> 00:20:36,319
+let's see
+
+300
+00:20:36,319 --> 00:20:38,720
+in the past again I will draw a graph
+
+301
+00:20:38,720 --> 00:20:40,680
+top 0
+
+302
+00:20:40,680 --> 00:20:41,740
+right
+
+303
+00:20:41,740 --> 00:20:44,019
+timer increments to top
+
+304
+00:20:44,019 --> 00:20:45,019
+then overflow
+
+305
+00:20:45,019 --> 00:20:47,000
+timer increments to top
+
+306
+00:20:47,000 --> 00:20:48,440
+then overflow
+
+307
+00:20:48,440 --> 00:20:50,500
+timer increments to top
+
+308
+00:20:50,500 --> 00:20:51,559
+then overflow
+
+309
+00:20:51,559 --> 00:20:52,240
+right
+
+310
+00:20:52,240 --> 00:20:56,380
+Then another color
+
+311
+00:20:56,380 --> 00:20:57,559
+OCR
+
+312
+00:20:57,559 --> 00:21:01,420
+Then OC pin graph
+
+313
+00:21:01,420 --> 00:21:06,200
+5 volts, 0 volts
+
+314
+00:21:06,200 --> 00:21:07,640
+OC pin is high
+
+315
+00:21:07,640 --> 00:21:10,440
+Whenever compare match occurs
+
+316
+00:21:10,440 --> 00:21:14,480
+Waveform generator sets OC pin low
+
+317
+00:21:14,480 --> 00:21:18,720
+And then whenever an overflow happens
+
+318
+00:21:18,720 --> 00:21:22,480
+Waveform generator sets OZ pin high
+
+319
+00:21:22,480 --> 00:21:26,299
+Again whenever there's a compare match occurs
+
+320
+00:21:26,299 --> 00:21:29,859
+Waveform generator sets OZ pin low
+
+321
+00:21:29,859 --> 00:21:30,720
+Right?
+
+322
+00:21:30,720 --> 00:21:33,259
+When there's an overflow
+
+323
+00:21:33,259 --> 00:21:37,119
+Waveform generator sets OZ pin high
+
+324
+00:21:37,119 --> 00:21:39,640
+When there's a compare match occurs
+
+325
+00:21:39,640 --> 00:21:41,579
+OZ pin goes low
+
+326
+00:21:41,579 --> 00:21:45,339
+When there's an overflow OZ pin goes high
+
+327
+00:21:45,339 --> 00:21:49,140
+This is what we discussed today morning
+
+328
+00:21:49,140 --> 00:21:54,559
+Which is called fast PWM
+
+329
+00:21:54,559 --> 00:22:00,819
+This is called phase correct PWM
+
+330
+00:22:00,819 --> 00:22:02,660
+OCP
+
+331
+00:22:02,660 --> 00:22:07,759
+Fast correct PWM we discussed today morning
+
+332
+00:22:07,759 --> 00:22:10,759
+In the fast correct PWM
+
+333
+00:22:10,759 --> 00:22:14,500
+When the timer increments from 0 to 255
+
+334
+00:22:14,500 --> 00:22:20,400
+and then overflows. During the increment, when there's a compare match occurred, whenever
+
+335
+00:22:20,400 --> 00:22:29,299
+compare match occurred, OC pin is set to low. OC pin goes low. And then when time overflows
+
+336
+00:22:29,299 --> 00:22:38,420
+from 255 to 0, OC pin goes high. Again, when a compare match occurs, OC pin goes low. And
+
+337
+00:22:38,420 --> 00:22:41,539
+And when timer overflows, OZ pin goes high.
+
+338
+00:22:42,059 --> 00:22:48,920
+In the phase correct mode, timer increments from 0 to maximum value and then decrements to 0.
+
+339
+00:22:49,619 --> 00:22:52,259
+Again increments to maximum value, then decrements.
+
+340
+00:22:52,759 --> 00:22:56,940
+During the increment, during the timer increment, compare match occurred.
+
+341
+00:22:56,940 --> 00:23:01,339
+If compare match occurs during the increment, OZ pin goes low.
+
+342
+00:23:02,099 --> 00:23:08,019
+If during the decrement, compare match occurs, then OZ pin goes high.
+
+343
+00:23:08,420 --> 00:23:18,720
+During the increment, Kampriyameh chokers, Ozypene goes low. During the decrement, Kampriyameh chokers, Ozypene goes high. Can you understand? Any question?
+
+344
+00:23:18,720 --> 00:23:36,920
+No questions?
+
+345
+00:23:36,920 --> 00:23:38,920
+Come on.
+
+346
+00:23:38,920 --> 00:23:40,339
+You should have a question.
+
+347
+00:23:41,059 --> 00:23:44,759
+Why we need two different modes for PWM?
+
+348
+00:23:44,759 --> 00:23:46,220
+Now you just
+
+349
+00:23:46,220 --> 00:23:48,500
+Few minutes ago you asked me
+
+350
+00:23:48,500 --> 00:23:50,940
+Why we need CTC and normal modes
+
+351
+00:23:50,940 --> 00:23:51,559
+For divers
+
+352
+00:23:51,559 --> 00:23:54,000
+So then why don't you ask
+
+353
+00:23:54,000 --> 00:23:55,160
+That question
+
+354
+00:23:55,160 --> 00:23:58,119
+Two PWM modes, why
+
+355
+00:23:58,119 --> 00:23:59,559
+There is a reason
+
+356
+00:23:59,559 --> 00:24:01,599
+I know answer for that
+
+357
+00:24:01,599 --> 00:24:04,680
+Why we need CTC I will find out
+
+358
+00:24:04,680 --> 00:24:05,500
+And let you know
+
+359
+00:24:05,500 --> 00:24:07,519
+But this one I know
+
+360
+00:24:07,519 --> 00:24:09,599
+There is a very valid reason
+
+361
+00:24:09,599 --> 00:24:11,740
+Just look at these two graphs
+
+362
+00:24:11,740 --> 00:24:13,039
+Maybe I am a lesson
+
+363
+00:24:13,039 --> 00:24:25,519
+but you can have a rough idea right in the fast PWM mode so you get more pulses PWM pulses right
+
+364
+00:24:25,519 --> 00:24:33,500
+because timer goes to high then overflow again goes to high then over you get lot of PWM pulses
+
+365
+00:24:33,500 --> 00:24:37,140
+in a given period of time.
+
+366
+00:24:37,140 --> 00:24:41,720
+A lot of PWM pulses in a given period of time
+
+367
+00:24:41,720 --> 00:24:45,140
+you get in the fast PWM mode.
+
+368
+00:24:45,579 --> 00:24:49,359
+In the phase correct PWM mode, you get
+
+369
+00:24:49,359 --> 00:24:53,680
+lesser number of pulses in a
+
+370
+00:24:53,680 --> 00:24:57,440
+given period of time. The same
+
+371
+00:24:57,440 --> 00:25:01,339
+if you take a particular time period, within that time
+
+372
+00:25:01,339 --> 00:25:03,740
+period you get more PWM
+
+373
+00:25:03,740 --> 00:25:05,380
+pulses if you
+
+374
+00:25:05,380 --> 00:25:07,920
+select fast PWM
+
+375
+00:25:07,920 --> 00:25:09,660
+mode. If you select
+
+376
+00:25:09,660 --> 00:25:11,660
+phase correct PWM mode
+
+377
+00:25:11,660 --> 00:25:13,700
+you get lesser number
+
+378
+00:25:13,700 --> 00:25:15,680
+of pulses within that time
+
+379
+00:25:15,680 --> 00:25:17,539
+frame. Just looking at these
+
+380
+00:25:17,539 --> 00:25:19,480
+two graphs you can get that idea.
+
+381
+00:25:20,059 --> 00:25:21,519
+Can you? Can you
+
+382
+00:25:21,519 --> 00:25:23,660
+understand that? Can you see
+
+383
+00:25:23,660 --> 00:25:25,440
+that difference? Yes sir.
+
+384
+00:25:25,759 --> 00:25:27,559
+Right good. Now what
+
+385
+00:25:27,559 --> 00:25:29,559
+does that mean? More
+
+386
+00:25:29,559 --> 00:25:30,700
+pulses means
+
+387
+00:25:30,700 --> 00:25:37,700
+Within a given time more pulses that means more frequency, high frequency.
+
+388
+00:25:37,700 --> 00:25:44,700
+Within a given period of time less pulses means less cycles.
+
+389
+00:25:44,700 --> 00:25:49,700
+Less pulses means less cycles. Less cycles means low frequency.
+
+390
+00:25:49,700 --> 00:25:57,700
+Fast PWM will give you high frequency pulse with modulated output.
+
+391
+00:25:57,700 --> 00:26:10,180
+Now, phase correct PWM will give you low frequency pulse with modulated output for a given prescalar you have set.
+
+392
+00:26:10,180 --> 00:26:18,559
+For a given prescalar, let's say you have used 128 prescalar and fixed FCPU.
+
+393
+00:26:19,660 --> 00:26:24,839
+Your FCPU is fixed, you have selected a particular prescalar, right?
+
+394
+00:26:24,839 --> 00:26:27,680
+PWM frequency depends on
+
+395
+00:26:27,680 --> 00:26:29,460
+Prescaler and the
+
+396
+00:26:29,460 --> 00:26:31,740
+Clock frequency
+
+397
+00:26:31,740 --> 00:26:33,519
+Of CPU that's what
+
+398
+00:26:33,519 --> 00:26:35,319
+We discussed in the previous slide
+
+399
+00:26:35,319 --> 00:26:39,180
+Right yes
+
+400
+00:26:39,180 --> 00:26:41,740
+PWM frequency depends on
+
+401
+00:26:41,740 --> 00:26:43,880
+CPU frequency and prescaler
+
+402
+00:26:43,880 --> 00:26:45,779
+Right for a given timer this is
+
+403
+00:26:45,779 --> 00:26:47,799
+Fixed CPU frequency also
+
+404
+00:26:47,799 --> 00:26:49,180
+Fixed because
+
+405
+00:26:49,180 --> 00:26:50,960
+You have to change the crystal
+
+406
+00:26:50,960 --> 00:26:53,700
+Of the development board if you want to
+
+407
+00:26:53,700 --> 00:26:54,500
+Change the frequency
+
+408
+00:26:54,500 --> 00:26:56,599
+Prescaler you can adjust
+
+409
+00:26:56,599 --> 00:26:59,019
+Now given prescaler
+
+410
+00:26:59,019 --> 00:27:01,319
+In a given prescaler
+
+411
+00:27:01,319 --> 00:27:02,799
+Fast PWM
+
+412
+00:27:02,799 --> 00:27:03,980
+Will give you
+
+413
+00:27:03,980 --> 00:27:06,039
+Higher frequency
+
+414
+00:27:06,039 --> 00:27:08,339
+And phase correct
+
+415
+00:27:08,339 --> 00:27:10,960
+Will give you lower frequency
+
+416
+00:27:10,960 --> 00:27:13,059
+So fast PWM
+
+417
+00:27:13,059 --> 00:27:14,579
+Is suitable
+
+418
+00:27:14,579 --> 00:27:17,220
+For devices that require
+
+419
+00:27:17,220 --> 00:27:19,140
+High frequency
+
+420
+00:27:19,140 --> 00:27:20,799
+PWM signals
+
+421
+00:27:20,799 --> 00:27:21,740
+Like LEDs
+
+422
+00:27:21,740 --> 00:27:26,079
+because if you give low frequency PWM signal for an LED
+
+423
+00:27:26,079 --> 00:27:28,700
+you would see the flickering effect.
+
+424
+00:27:29,240 --> 00:27:31,539
+So you have to give high frequency, right?
+
+425
+00:27:32,140 --> 00:27:36,380
+PWM signal for LEDs kind of devices.
+
+426
+00:27:37,240 --> 00:27:39,920
+This is suitable for those devices.
+
+427
+00:27:40,759 --> 00:27:45,400
+At the same time, without changing the prescaler
+
+428
+00:27:45,400 --> 00:27:49,299
+you can get a low frequency PWM signal
+
+429
+00:27:49,299 --> 00:27:51,299
+Using phase correct PWM.
+
+430
+00:27:52,019 --> 00:27:55,259
+That is suitable for low frequency devices.
+
+431
+00:27:55,839 --> 00:27:56,759
+Like motors.
+
+432
+00:27:57,700 --> 00:27:59,640
+Preferable for driving motors.
+
+433
+00:28:00,000 --> 00:28:01,519
+Phase correct PWM.
+
+434
+00:28:01,740 --> 00:28:02,640
+Can you understand?
+
+435
+00:28:02,980 --> 00:28:05,839
+Because if you give high frequency PWM signal for a motor.
+
+436
+00:28:06,359 --> 00:28:07,799
+Even motor can't start.
+
+437
+00:28:08,420 --> 00:28:08,759
+So you.
+
+438
+00:28:08,960 --> 00:28:10,579
+Because it takes time to start.
+
+439
+00:28:10,680 --> 00:28:11,700
+You have to give time.
+
+440
+00:28:12,259 --> 00:28:14,140
+For a given prescale.
+
+441
+00:28:14,539 --> 00:28:17,299
+You can have two different frequencies.
+
+442
+00:28:17,299 --> 00:28:34,160
+For example, let's say for a given prescale, this frequency is 1 kilohertz or 1000 hertz, let's assume, then this would be 500 at the same time, half of that.
+
+443
+00:28:34,440 --> 00:28:40,539
+Without changing the prescaler, you will get 500 hertz PWM signal with this.
+
+444
+00:28:40,539 --> 00:28:53,799
+So just changing the mode, you can drive high frequency supported PWM devices as well as low frequency supported PWM.
+
+445
+00:28:53,799 --> 00:29:02,519
+So the phase correct is traditionally, as usually, it is preferred mode for driving motors.
+
+446
+00:29:02,519 --> 00:29:12,460
+And fast PWM mode is the preferred mode for driving high frequency supported devices like LEDs.
+
+447
+00:29:12,799 --> 00:29:14,319
+Is that clear? Questions?
+
+448
+00:29:14,960 --> 00:29:15,940
+Sir, excuse me sir.
+
+449
+00:29:16,240 --> 00:29:16,440
+Yeah.
+
+450
+00:29:16,440 --> 00:29:28,440
+If we want to drive an AC bulb, which means a normal bulb, we want to have a relay.
+
+451
+00:29:28,440 --> 00:29:34,440
+If you use a relay, just on and off. You can't use relays with PWM.
+
+452
+00:29:34,440 --> 00:29:38,440
+Because you cannot quickly turn on and off relays.
+
+453
+00:29:38,440 --> 00:29:43,440
+So how can we drive a normal bulb as dimmen?
+
+454
+00:29:43,440 --> 00:29:50,519
+Yes, there is a device called TRIAC, right, electronic device called, let me write it, TRIAC.
+
+455
+00:29:51,720 --> 00:29:57,960
+A three pin device, right, it's a three pin device, like transistor, there are three pins.
+
+456
+00:29:58,519 --> 00:30:02,960
+One is the gate and other two pins are T1 and T2.
+
+457
+00:30:02,960 --> 00:30:18,299
+So you supply a signal to the gate and these two T1 and T2 pins, they can, right, you can connect the bulk to these two pins and the power supply.
+
+458
+00:30:19,400 --> 00:30:27,859
+Depending on the signal you supply to the gate, right, these two pins can control 230 volts high voltage.
+
+459
+00:30:27,859 --> 00:30:36,039
+that is called TRIAC. If you just search TRIAC circuits with microcontrollers or something like
+
+460
+00:30:36,039 --> 00:30:42,079
+that you can find out many many schematic diagrams but I don't encourage you to use TRIACs
+
+461
+00:30:42,079 --> 00:30:52,180
+because the risk for an electrical shock is high if you are going to use domestic power supply.
+
+462
+00:30:52,180 --> 00:31:03,180
+If you know what you are doing and if you have previous experience, then only move forward.
+
+463
+00:31:03,180 --> 00:31:06,180
+the Nislea�p the T1-2LB.
+
+464
+00:31:33,180 --> 00:32:03,180
+[unclear — Sinhala / crosstalk]
+
+465
+00:32:03,180 --> 00:32:25,299
+You should know at least there are possibilities.
+
+466
+00:32:25,299 --> 00:32:27,299
+Sir, what did you do?
+
+467
+00:32:27,299 --> 00:32:29,299
+What did you do?
+
+468
+00:32:29,299 --> 00:32:33,299
+You can't go to the self-checkout library.
+
+469
+00:32:33,299 --> 00:32:37,299
+You can't go to the recording.
+
+470
+00:32:37,299 --> 00:32:39,299
+You can't go to the self-checkout library.
+
+471
+00:32:39,299 --> 00:32:41,299
+You can't go to the RFID.
+
+472
+00:32:41,299 --> 00:32:45,299
+So you take the book to the counter,
+
+473
+00:32:45,299 --> 00:32:49,299
+but there is no librarian or staff member at the counter.
+
+474
+00:32:49,299 --> 00:32:51,299
+You can't go to the counter.
+
+475
+00:32:51,299 --> 00:32:53,299
+So you have to do everything.
+
+476
+00:32:53,299 --> 00:32:59,980
+countries you have these libraries. My mother named PhD currently, my experience I make
+
+477
+00:32:59,980 --> 00:33:05,480
+here. So you have to go to the library, get the book from the shelf, go to the counter
+
+478
+00:33:05,480 --> 00:33:11,740
+at the counter. There is RFID reading. A reader covered in a bottom because of the tag in
+
+479
+00:33:11,740 --> 00:33:17,819
+the book, book, a tag, book, a spine, a tag, a dollar, the middle one, because of the tag,
+
+480
+00:33:17,819 --> 00:33:19,819
+The reader automatically detects the book.
+
+481
+00:33:19,819 --> 00:33:32,819
+When I come closer to the reader, it automatically detects my ID.
+
+482
+00:33:32,819 --> 00:33:34,819
+When I come closer to the reader, it automatically detects my ID.
+
+483
+00:33:34,819 --> 00:33:40,819
+If I get a little receipt, I get a little receipt, and I get a little receipt.
+
+484
+00:33:40,819 --> 00:33:42,880
+the ina a g ld2 mc8aqT8A3.0
+
+485
+00:33:42,880 --> 00:33:43,039
+the
+
+486
+00:33:43,039 --> 00:33:43,140
+the
+
+487
+00:33:43,140 --> 00:33:43,140
+
+
+488
+00:33:43,140 --> 00:33:43,099
+the
+
+489
+00:33:43,099 --> 00:33:43,059
+the
+
+490
+00:33:43,059 --> 00:33:43,019
+the
+
+491
+00:33:43,019 --> 00:33:42,980
+the
+
+492
+00:33:42,980 --> 00:33:42,960
+the
+
+493
+00:33:42,960 --> 00:33:42,960
+
+
+494
+00:33:42,960 --> 00:33:42,940
+the
+
+495
+00:33:42,940 --> 00:33:42,920
+the
+
+496
+00:33:42,920 --> 00:33:42,920
+
+
+497
+00:33:42,920 --> 00:33:42,920
+
+
+498
+00:33:42,920 --> 00:33:42,900
+the
+
+499
+00:33:42,900 --> 00:33:42,900
+
+
+500
+00:33:42,900 --> 00:33:42,900
+
+
+501
+00:33:42,900 --> 00:33:42,900
+
+
+502
+00:33:42,900 --> 00:33:42,900
+
+
+503
+00:33:42,900 --> 00:33:42,900
+
+
+504
+00:33:42,900 --> 00:33:42,900
+
+
+505
+00:33:42,900 --> 00:33:42,900
+
+
+506
+00:33:42,900 --> 00:33:42,900
+
+
+507
+00:33:42,900 --> 00:33:42,900
+
+
+508
+00:33:42,900 --> 00:33:42,900
+
+
+509
+00:33:42,900 --> 00:33:42,900
+
+
+510
+00:33:42,900 --> 00:33:42,900
+
+
+511
+00:33:42,900 --> 00:33:42,900
+
+
+512
+00:33:42,900 --> 00:33:42,920
+the
+
+513
+00:33:42,920 --> 00:33:42,900
+the
+
+514
+00:33:42,900 --> 00:33:42,920
+the
+
+515
+00:33:42,920 --> 00:33:42,920
+
+
+516
+00:33:42,920 --> 00:33:42,920
+
+
+517
+00:33:42,920 --> 00:33:42,920
+
+
+518
+00:33:42,920 --> 00:33:42,900
+the
+
+519
+00:33:42,900 --> 00:33:42,920
+the
+
+520
+00:33:42,920 --> 00:33:42,920
+
+
+521
+00:33:42,920 --> 00:33:42,920
+
+
+522
+00:33:42,920 --> 00:33:42,920
+
+
+523
+00:33:42,920 --> 00:33:42,920
+
+
+524
+00:33:42,920 --> 00:33:42,920
+
+
+525
+00:33:42,920 --> 00:33:42,920
+
+
+526
+00:33:42,920 --> 00:33:42,920
+
+
+527
+00:33:42,920 --> 00:33:42,920
+
+
+528
+00:33:42,920 --> 00:33:42,920
+
+
+529
+00:33:42,920 --> 00:33:42,920
+
+
+530
+00:33:42,920 --> 00:33:42,920
+
+
+531
+00:33:42,920 --> 00:33:42,920
+
+
+532
+00:33:42,920 --> 00:33:42,920
+
+
+533
+00:33:42,920 --> 00:33:42,920
+
+
+534
+00:33:42,920 --> 00:33:42,920
+
+
+535
+00:33:42,920 --> 00:33:42,920
+
+
+536
+00:33:42,920 --> 00:33:42,920
+
+
+537
+00:33:42,920 --> 00:33:42,920
+
+
+538
+00:33:42,920 --> 00:33:42,920
+
+
+539
+00:33:42,920 --> 00:33:42,920
+
+
+540
+00:33:42,920 --> 00:33:42,920
+
+
+541
+00:33:42,920 --> 00:33:42,920
+
+
+542
+00:33:42,920 --> 00:33:42,920
+
+
+543
+00:33:42,920 --> 00:33:42,920
+
+
+544
+00:33:42,920 --> 00:33:42,920
+
+
+545
+00:33:42,920 --> 00:33:42,920
+
+
+546
+00:33:42,920 --> 00:33:42,920
+
+
+547
+00:33:42,920 --> 00:33:42,920
+
+
+548
+00:33:42,920 --> 00:33:42,920
+
+
+549
+00:33:42,920 --> 00:33:42,920
+
+
+550
+00:33:42,920 --> 00:33:42,920
+
+
+551
+00:33:42,920 --> 00:33:43,440
+hist
+
+552
+00:34:10,820 --> 00:34:16,260
+You can make the security guard as you can use it.
+
+553
+00:34:16,260 --> 00:34:23,320
+If you take the printer to print out, it's a technical problem.
+
+554
+00:34:23,320 --> 00:34:25,760
+You do the process well.
+
+555
+00:34:25,760 --> 00:34:29,079
+You go to the reader and the reader recognizes the book.
+
+556
+00:34:29,079 --> 00:34:33,340
+Reader recognizes your library membership and the book is issued to you.
+
+557
+00:34:33,340 --> 00:34:34,500
+Process is clear.
+
+558
+00:34:34,500 --> 00:34:36,139
+You have done the job well.
+
+559
+00:34:36,139 --> 00:34:37,539
+I do a when-bill-a, a you-a, a.
+
+560
+00:34:37,539 --> 00:34:38,039
+the.
+
+561
+00:34:38,039 --> 00:34:38,440
+the.
+
+562
+00:34:38,440 --> 00:34:38,539
+the.
+
+563
+00:34:38,539 --> 00:34:38,539
+
+
+564
+00:34:38,539 --> 00:34:38,539
+
+
+565
+00:34:38,539 --> 00:34:38,539
+
+
+566
+00:34:38,539 --> 00:34:38,539
+
+
+567
+00:34:38,539 --> 00:34:38,539
+
+
+568
+00:34:38,539 --> 00:34:38,539
+
+
+569
+00:34:38,539 --> 00:34:38,539
+
+
+570
+00:34:38,539 --> 00:34:38,539
+
+
+571
+00:34:38,539 --> 00:34:38,539
+
+
+572
+00:34:38,539 --> 00:34:38,539
+
+
+573
+00:34:38,539 --> 00:34:38,539
+
+
+574
+00:34:38,539 --> 00:34:38,539
+
+
+575
+00:34:38,539 --> 00:34:38,539
+
+
+576
+00:34:38,539 --> 00:34:38,539
+
+
+577
+00:34:38,539 --> 00:34:38,539
+
+
+578
+00:34:38,539 --> 00:34:38,539
+
+
+579
+00:34:38,539 --> 00:34:38,539
+
+
+580
+00:34:38,539 --> 00:34:38,539
+
+
+581
+00:34:38,539 --> 00:34:38,539
+
+
+582
+00:34:38,539 --> 00:34:38,539
+
+
+583
+00:34:38,539 --> 00:34:38,539
+
+
+584
+00:34:38,539 --> 00:34:38,539
+
+
+585
+00:34:38,539 --> 00:34:38,539
+
+
+586
+00:34:38,539 --> 00:34:38,539
+
+
+587
+00:34:38,539 --> 00:34:38,539
+
+
+588
+00:34:38,539 --> 00:34:38,539
+
+
+589
+00:34:38,539 --> 00:34:38,539
+
+
+590
+00:34:38,539 --> 00:34:38,539
+
+
+591
+00:34:38,539 --> 00:34:38,539
+
+
+592
+00:34:38,539 --> 00:34:38,539
+
+
+593
+00:34:38,539 --> 00:34:38,539
+
+
+594
+00:34:38,539 --> 00:34:38,539
+
+
+595
+00:34:38,539 --> 00:34:38,539
+
+
+596
+00:34:38,539 --> 00:34:38,539
+
+
+597
+00:34:38,539 --> 00:34:38,539
+
+
+598
+00:34:38,539 --> 00:34:38,539
+
+
+599
+00:34:38,539 --> 00:34:38,539
+
+
+600
+00:34:38,539 --> 00:34:38,539
+
+
+601
+00:34:38,539 --> 00:34:38,539
+
+
+602
+00:34:38,539 --> 00:34:38,539
+
+
+603
+00:34:38,539 --> 00:34:38,539
+
+
+604
+00:34:38,539 --> 00:34:38,539
+
+
+605
+00:34:38,539 --> 00:34:38,539
+
+
+606
+00:34:38,539 --> 00:34:38,539
+
+
+607
+00:34:38,539 --> 00:34:38,539
+
+
+608
+00:34:38,539 --> 00:34:38,539
+
+
+609
+00:34:38,539 --> 00:34:38,539
+
+
+610
+00:34:38,539 --> 00:34:38,539
+
+
+611
+00:34:38,539 --> 00:35:08,539
+[unclear — Sinhala / crosstalk]
+
+612
+00:35:08,539 --> 00:35:09,500
+you?
+
+613
+00:35:09,500 --> 00:35:10,019
+I have a people.
+
+614
+00:35:10,019 --> 00:35:10,360
+I do.
+
+615
+00:35:10,360 --> 00:35:10,780
+I do.
+
+616
+00:35:10,780 --> 00:35:11,139
+I do.
+
+617
+00:35:11,139 --> 00:35:11,320
+I do.
+
+618
+00:35:11,320 --> 00:35:11,420
+I do.
+
+619
+00:35:11,420 --> 00:35:11,539
+I do.
+
+620
+00:35:11,539 --> 00:35:11,639
+I do.
+
+621
+00:35:11,639 --> 00:35:11,679
+I do.
+
+622
+00:35:11,679 --> 00:35:11,699
+I do.
+
+623
+00:35:11,699 --> 00:35:11,739
+I do.
+
+624
+00:35:11,739 --> 00:35:11,739
+
+
+625
+00:35:11,739 --> 00:35:11,760
+I do.
+
+626
+00:35:11,760 --> 00:35:11,780
+I do.
+
+627
+00:35:11,780 --> 00:35:11,820
+I do.
+
+628
+00:35:11,820 --> 00:35:11,860
+I do.
+
+629
+00:35:11,860 --> 00:35:11,900
+I do.
+
+630
+00:35:11,900 --> 00:35:11,980
+I do.
+
+631
+00:35:11,980 --> 00:35:12,039
+I do.
+
+632
+00:35:12,039 --> 00:35:12,099
+I do.
+
+633
+00:35:12,099 --> 00:35:12,139
+I do.
+
+634
+00:35:12,139 --> 00:35:12,179
+I do.
+
+635
+00:35:12,179 --> 00:35:12,219
+I do.
+
+636
+00:35:12,219 --> 00:35:12,239
+I do.
+
+637
+00:35:12,239 --> 00:35:12,260
+I do.
+
+638
+00:35:12,260 --> 00:35:12,300
+I do.
+
+639
+00:35:12,300 --> 00:35:12,340
+I do.
+
+640
+00:35:12,340 --> 00:35:12,400
+I do.
+
+641
+00:35:12,400 --> 00:35:12,460
+I do.
+
+642
+00:35:12,460 --> 00:35:12,519
+I do.
+
+643
+00:35:12,519 --> 00:35:12,579
+I do.
+
+644
+00:35:12,579 --> 00:35:12,659
+I do.
+
+645
+00:35:12,659 --> 00:35:12,699
+I do.
+
+646
+00:35:12,699 --> 00:35:12,760
+I do.
+
+647
+00:35:12,760 --> 00:35:12,760
+
+
+648
+00:35:12,760 --> 00:35:12,780
+I do.
+
+649
+00:35:12,780 --> 00:35:12,800
+I do.
+
+650
+00:35:12,800 --> 00:35:12,800
+
+
+651
+00:35:12,800 --> 00:35:12,800
+
+
+652
+00:35:12,800 --> 00:35:12,800
+
+
+653
+00:35:12,800 --> 00:35:12,800
+
+
+654
+00:35:12,800 --> 00:35:12,800
+
+
+655
+00:35:12,800 --> 00:35:12,800
+
+
+656
+00:35:12,800 --> 00:35:19,800
+If you have any of these nbooks, you can't register.
+
+657
+00:35:19,800 --> 00:35:20,800
+You can't register.
+
+658
+00:35:20,800 --> 00:35:28,800
+If you have any sensors, you can't use RFID sensors.
+
+659
+00:35:28,800 --> 00:35:33,800
+If you have any sensors, you can't detect the sensor.
+
+660
+00:35:33,800 --> 00:35:35,800
+It's a simple method.
+
+661
+00:35:35,800 --> 00:35:41,800
+If you have any current, you can't use any current.
+
+662
+00:35:41,800 --> 00:35:43,800
+like
+
+663
+00:35:43,800 --> 00:35:45,800
+the thing is that
+
+664
+00:35:45,800 --> 00:35:47,800
+the
+
+665
+00:35:47,800 --> 00:35:49,800
+the
+
+666
+00:35:49,800 --> 00:35:51,800
+the
+
+667
+00:35:51,800 --> 00:35:53,800
+the
+
+668
+00:35:53,800 --> 00:35:55,800
+the
+
+669
+00:35:55,800 --> 00:35:57,800
+the
+
+670
+00:35:57,800 --> 00:35:59,800
+the
+
+671
+00:35:59,800 --> 00:36:01,800
+the
+
+672
+00:36:01,800 --> 00:36:03,800
+the
+
+673
+00:36:03,800 --> 00:36:05,800
+the
+
+674
+00:36:05,800 --> 00:36:07,800
+the
+
+675
+00:36:07,800 --> 00:36:09,800
+the
+
+676
+00:36:09,800 --> 00:36:13,800
+If you have a RFID signal, you can conceal it.
+
+677
+00:36:13,800 --> 00:36:19,800
+If you have aluminum foil, you can use it.
+
+678
+00:36:19,800 --> 00:36:23,800
+If you have a camera, you can use it.
+
+679
+00:36:23,800 --> 00:36:26,800
+If you have aluminum foil, you can use it.
+
+680
+00:36:26,800 --> 00:36:35,800
+Depending on the system, some systems, it checks the metal detectors and all these facilities are used.
+
+681
+00:36:35,800 --> 00:37:05,800
+[unclear — Sinhala / crosstalk]
+
+682
+00:37:05,800 --> 00:37:06,800
+I have a time.
+
+683
+00:37:06,800 --> 00:37:13,940
+[unclear — Sinhala / crosstalk]
+
+684
+00:37:13,940 --> 00:37:32,500
+Let's go back to the lesson.
+
+685
+00:37:32,500 --> 00:37:42,000
+Right. Then, Combits.
+
+686
+00:37:42,760 --> 00:37:44,840
+Compare output mode bits.
+
+687
+00:37:45,360 --> 00:37:49,760
+Com A1, Com A0, Com B1, Com B0.
+
+688
+00:37:50,320 --> 00:37:58,280
+Using these bits, you can specify the output compare mode, whether inverted or non-inverted.
+
+689
+00:37:58,280 --> 00:38:00,400
+Today morning, we discussed two modes.
+
+690
+00:38:00,579 --> 00:38:02,219
+Inverted mode, non-inverted mode.
+
+691
+00:38:02,500 --> 00:38:04,579
+We can specify that using com mode.
+
+692
+00:38:05,119 --> 00:38:11,039
+Com bits of the time counter control register A.
+
+693
+00:38:11,880 --> 00:38:12,940
+TCCR A.
+
+694
+00:38:13,440 --> 00:38:13,639
+Right.
+
+695
+00:38:13,639 --> 00:38:23,800
+I told you there are two OCR registers, two comparators, two waveform generators, two OC bits.
+
+696
+00:38:24,300 --> 00:38:26,619
+That's why you have four com bits.
+
+697
+00:38:27,219 --> 00:38:27,380
+Right.
+
+698
+00:38:27,820 --> 00:38:30,920
+So inverted and uninverded mode you can specify.
+
+699
+00:38:31,300 --> 00:38:31,539
+Right.
+
+700
+00:38:31,539 --> 00:38:35,320
+Then OCR output compare register
+
+701
+00:38:35,320 --> 00:38:37,400
+Again two registers
+
+702
+00:38:37,400 --> 00:38:38,380
+Right
+
+703
+00:38:38,380 --> 00:38:44,820
+So you can use these registers to hold values to be compared against time account register
+
+704
+00:38:44,820 --> 00:38:47,340
+And if register is 8 bit
+
+705
+00:38:47,340 --> 00:38:53,039
+OCR can hold any value between 0 to 2 to the power of 8 minus 1
+
+706
+00:38:53,039 --> 00:38:54,559
+That means 0 to 255
+
+707
+00:38:54,559 --> 00:38:57,659
+If the timer is 16 bit
+
+708
+00:38:57,659 --> 00:38:59,780
+the register can hold
+
+709
+00:38:59,780 --> 00:39:02,159
+any value between 2 to the power
+
+710
+00:39:02,159 --> 00:39:03,679
+60, 0 to 2 to the power
+
+711
+00:39:03,679 --> 00:39:05,900
+16 minus 1. 0 to
+
+712
+00:39:05,900 --> 00:39:07,820
+65,535.
+
+713
+00:39:08,539 --> 00:39:10,199
+Then, timer interrupt
+
+714
+00:39:10,199 --> 00:39:12,099
+flag register. In the timer
+
+715
+00:39:12,099 --> 00:39:13,920
+interrupt flag register, we already
+
+716
+00:39:13,920 --> 00:39:15,659
+discussed timer overflow bit.
+
+717
+00:39:16,179 --> 00:39:18,119
+Today we are going to discuss two more
+
+718
+00:39:18,119 --> 00:39:19,519
+bits, OCF bits.
+
+719
+00:39:19,960 --> 00:39:22,019
+These OCF bits are
+
+720
+00:39:22,019 --> 00:39:23,800
+set when compare
+
+721
+00:39:23,800 --> 00:39:26,219
+match occurs between OCR
+
+722
+00:39:26,219 --> 00:39:26,860
+and
+
+723
+00:39:26,860 --> 00:39:29,260
+TC and T registers.
+
+724
+00:39:29,739 --> 00:39:31,820
+OCF output compare match
+
+725
+00:39:31,820 --> 00:39:33,239
+flag bits are sent.
+
+726
+00:39:33,880 --> 00:39:35,039
+There are two bits. Why?
+
+727
+00:39:35,239 --> 00:39:37,579
+Two OCR registers. Therefore, there are
+
+728
+00:39:37,579 --> 00:39:39,179
+two bits. OCFA
+
+729
+00:39:39,179 --> 00:39:41,780
+OCFB. If you want
+
+730
+00:39:41,780 --> 00:39:43,019
+to clear these bits,
+
+731
+00:39:43,400 --> 00:39:45,639
+you need to send them because they are
+
+732
+00:39:45,639 --> 00:39:46,860
+flag bits. Last week
+
+733
+00:39:46,860 --> 00:39:48,780
+we discussed.
+
+734
+00:39:49,440 --> 00:39:51,539
+The flag bits, if you want to clear the flag
+
+735
+00:39:51,539 --> 00:39:52,820
+bits, you have to send them.
+
+736
+00:39:53,659 --> 00:39:55,539
+When a compare match occur,
+
+737
+00:39:55,539 --> 00:39:57,679
+they are automatically
+
+738
+00:39:57,679 --> 00:39:58,900
+same. Is that clear?
+
+739
+00:39:59,559 --> 00:40:01,920
+You have to know whether compare match occurred
+
+740
+00:40:01,920 --> 00:40:03,719
+or not. We can use
+
+741
+00:40:03,719 --> 00:40:05,820
+these flag bits. If the flag bit is
+
+742
+00:40:05,820 --> 00:40:07,659
+1, that means
+
+743
+00:40:07,659 --> 00:40:08,559
+compare match occurred.
+
+744
+00:40:09,159 --> 00:40:11,659
+If the flag bit is 0, no
+
+745
+00:40:11,659 --> 00:40:13,019
+compare match occurred yet.
+
+746
+00:40:13,639 --> 00:40:15,019
+Now these bits are very important.
+
+747
+00:40:15,820 --> 00:40:17,340
+So you can determine, you can
+
+748
+00:40:17,340 --> 00:40:19,920
+check whether compare match
+
+749
+00:40:19,920 --> 00:40:20,900
+occurred or not.
+
+750
+00:40:21,659 --> 00:40:23,219
+Just looking at these bits.
+
+751
+00:40:23,219 --> 00:40:25,599
+Now if the bit value is 1, that means
+
+752
+00:40:25,599 --> 00:40:27,599
+Compartment occurred. Then you need to
+
+753
+00:40:27,599 --> 00:40:29,860
+Clear it. Then only again
+
+754
+00:40:29,860 --> 00:40:31,739
+It will be set. So to clear
+
+755
+00:40:31,739 --> 00:40:33,599
+It, you have to set. Because
+
+756
+00:40:33,599 --> 00:40:35,199
+It's a flag bit. It's not
+
+757
+00:40:35,199 --> 00:40:37,119
+A simple control bit.
+
+758
+00:40:37,579 --> 00:40:39,679
+To clear the bit, that means to set
+
+759
+00:40:39,679 --> 00:40:41,280
+0 to the bit
+
+760
+00:40:41,280 --> 00:40:43,699
+You have to assign value
+
+761
+00:40:43,699 --> 00:40:45,719
+1 to the bit. When you assign value
+
+762
+00:40:45,719 --> 00:40:47,539
+1, the bit becomes
+
+763
+00:40:47,539 --> 00:40:49,599
+0. Because
+
+764
+00:40:49,599 --> 00:40:51,119
+It's a flag bit. Right.
+
+765
+00:40:51,119 --> 00:40:53,239
+then interrupt registers
+
+766
+00:40:53,239 --> 00:40:55,159
+timer interrupt mass register
+
+767
+00:40:55,159 --> 00:40:57,199
+we already discussed this bit
+
+768
+00:40:57,199 --> 00:40:59,599
+TOIE timer overflow
+
+769
+00:40:59,599 --> 00:41:00,960
+interrupt enable bit
+
+770
+00:41:00,960 --> 00:41:03,500
+now we are going to discuss these two bits
+
+771
+00:41:03,500 --> 00:41:04,840
+OCIE
+
+772
+00:41:04,840 --> 00:41:07,480
+output compare interrupt enable
+
+773
+00:41:07,480 --> 00:41:09,559
+output compare match interrupt enable
+
+774
+00:41:09,559 --> 00:41:11,440
+A output compare
+
+775
+00:41:11,440 --> 00:41:13,199
+match interrupt enable
+
+776
+00:41:13,199 --> 00:41:15,619
+B so these two bits
+
+777
+00:41:15,619 --> 00:41:17,159
+enable or disable
+
+778
+00:41:17,159 --> 00:41:19,480
+timer counter compare
+
+779
+00:41:19,480 --> 00:41:26,480
+match A, match B interrupts. When there is a match between the TC and the register and OCR register,
+
+780
+00:41:27,079 --> 00:41:34,079
+you can trigger an interrupt. If the OCR register is A, then you need to enable the interrupt,
+
+781
+00:41:34,199 --> 00:41:41,019
+you need to set this bit. If the OCR register is B, then to enable interrupts, you need to set this
+
+782
+00:41:41,019 --> 00:41:47,559
+bit. So when there is a match, you can trigger an interrupt by using these two bits. You can
+
+783
+00:41:47,559 --> 00:41:55,280
+enable the interrupts. Can you understand? Any question? Before we move into a practical example?
+
+784
+00:41:56,039 --> 00:42:07,519
+No. Right. System 15, fade. Gradually fades the light of an LED again and again. We are going to
+
+785
+00:42:07,519 --> 00:42:15,780
+dim an LED. That's an analog effect. Gradually we are going to dim an LED. To do that we need to
+
+786
+00:42:15,780 --> 00:42:19,679
+reduce the voltage supplied to the LED. If you
+
+787
+00:42:19,679 --> 00:42:23,880
+supply the proper operating voltage to the LED, LHD will
+
+788
+00:42:23,880 --> 00:42:27,500
+illuminate with the full brightness. But if you
+
+789
+00:42:27,500 --> 00:42:30,940
+gradually decrease the voltage supplied to the LED
+
+790
+00:42:30,940 --> 00:42:35,679
+then you can dim the LED. That means you need to
+
+791
+00:42:35,679 --> 00:42:39,820
+get a varying, continuously varying voltage
+
+792
+00:42:39,820 --> 00:42:43,840
+from an output pin. We know how to get 0 or 5
+
+793
+00:42:43,840 --> 00:42:47,599
+that is digital. Now we are going to get
+
+794
+00:42:47,599 --> 00:42:51,500
+a continuously varying voltage
+
+795
+00:42:51,500 --> 00:42:55,360
+from an output. Analog-like output
+
+796
+00:42:55,360 --> 00:42:58,619
+by means of digital using PWM.
+
+797
+00:42:58,619 --> 00:43:01,519
+First we should know
+
+798
+00:43:01,519 --> 00:43:06,280
+what are the IOPs that support
+
+799
+00:43:06,280 --> 00:43:10,539
+for PWM. Not all IOPs supported
+
+800
+00:43:10,539 --> 00:43:18,079
+for PWM. Right. So in this micro control only 6 pins are PWM supported. They are right.
+
+801
+00:43:19,179 --> 00:43:27,300
+This is one of those pins. OC2 pin. Output compare pin number 2. In Arduino Uno board
+
+802
+00:43:27,300 --> 00:43:37,559
+that is pin number 3 with this tilt character. OC2B. OC0B, OC0A. These are related to timer
+
+803
+00:43:37,559 --> 00:43:49,360
+0, 5 and 6 pin. These two are related to timer 1. OC1, OC1A, OC1B. Output compare 1A, output
+
+804
+00:43:49,360 --> 00:43:57,739
+compare 1B. And these two pins, OC2A and OC2B related to timer 2. There are three timers.
+
+805
+00:43:57,739 --> 00:44:06,239
+Each timer, you have two OCR registers, two comparators, two waveform generators, two OC
+
+806
+00:44:06,239 --> 00:44:13,960
+pins. That's why you have 6 OC. These two pins related to timer 0, 8 bit timer. These two pins
+
+807
+00:44:13,960 --> 00:44:22,900
+related to timer 1, 16 bit timer. And this pin and that pin, they are related to timer 2, again 8 bit
+
+808
+00:44:22,900 --> 00:44:30,760
+timer. In the Arduino Uno board, these PWM supported pins are denoted using this tilt character. So
+
+809
+00:44:30,760 --> 00:44:39,159
+other pins, other IOPs are not PWM supported. So analog like output by means of digital you can get
+
+810
+00:44:39,159 --> 00:44:48,500
+using PWM supported pin. Okay. Right. Now let's talk about the hardware design of our system.
+
+811
+00:44:48,500 --> 00:44:59,980
+Schematic diagram. This is the LED we are going to dim. That LED I have connected to OCAP. OC0A.
+
+812
+00:45:00,760 --> 00:45:05,239
+Output compare A pin of timer 0.
+
+813
+00:45:05,699 --> 00:45:06,440
+8 bit time.
+
+814
+00:45:07,000 --> 00:45:09,760
+That is PD6 Arduino pin number 6.
+
+815
+00:45:10,079 --> 00:45:11,659
+Uno pin number 6.
+
+816
+00:45:12,019 --> 00:45:15,019
+Can we connect the LED to pin number 8?
+
+817
+00:45:15,159 --> 00:45:15,400
+No.
+
+818
+00:45:15,639 --> 00:45:17,579
+Because that is not PWM supported.
+
+819
+00:45:18,059 --> 00:45:20,159
+You have to use PWM supported pin.
+
+820
+00:45:20,460 --> 00:45:23,579
+This is one of the common mistakes we make.
+
+821
+00:45:23,579 --> 00:45:27,199
+We connect the device to some other pin.
+
+822
+00:45:27,619 --> 00:45:29,340
+Which is not PWM supported.
+
+823
+00:45:29,340 --> 00:45:33,659
+But then we try to get analog like effect from the device.
+
+824
+00:45:33,840 --> 00:45:33,940
+No.
+
+825
+00:45:34,420 --> 00:45:38,760
+You have to connect the device to PWM supported pin.
+
+826
+00:45:38,820 --> 00:45:45,219
+In this case I have connected the LED to OCA pin of timer 0.
+
+827
+00:45:45,400 --> 00:45:46,940
+Timer 0 is 8 bit timer.
+
+828
+00:45:47,400 --> 00:45:48,440
+OCA pin.
+
+829
+00:45:49,300 --> 00:45:50,980
+Output compare A pin.
+
+830
+00:45:51,500 --> 00:45:51,719
+Right.
+
+831
+00:45:52,219 --> 00:45:54,119
+So all other things are pre-connected.
+
+832
+00:45:54,119 --> 00:45:55,360
+Oscillator pre-connected.
+
+833
+00:45:55,420 --> 00:45:56,119
+Reset button.
+
+834
+00:45:56,260 --> 00:45:56,920
+This resistor.
+
+835
+00:45:57,079 --> 00:45:57,659
+Pull up resistor.
+
+836
+00:45:57,659 --> 00:46:02,860
+all are pre-connected on the UNO board. So externally on the breadboard you need to connect
+
+837
+00:46:02,860 --> 00:46:10,519
+this LED with a current limiting resistor to pin number 6 Arduino pin number 6. Right.
+
+838
+00:46:10,880 --> 00:46:18,079
+So in the wiring diagram you can see pin number 6 which is a PWM supported pin. Right. Denoted
+
+839
+00:46:18,079 --> 00:46:26,519
+by this tilt character. Here digital PWM means tilt character and you connect the LED
+
+840
+00:46:26,519 --> 00:46:32,519
+through a resistor to the anode of the LED, cathode connected to the ground power supply.
+
+841
+00:46:32,519 --> 00:46:42,039
+Right. Then firmware design algorithm. Main function. The main function algorithm. Start.
+
+842
+00:46:42,579 --> 00:46:52,260
+Configure PD6 as an output. PD6 means OC0AP. Where the LED connected. Configure that pin as an output
+
+843
+00:46:52,260 --> 00:46:54,219
+because LED connected to that pin.
+
+844
+00:46:54,539 --> 00:46:59,679
+Specify waveform generation mode as fast PWM.
+
+845
+00:47:00,019 --> 00:47:04,139
+We use fast PWM while we need high frequencies
+
+846
+00:47:04,139 --> 00:47:07,119
+to avoid any flickering effect.
+
+847
+00:47:07,619 --> 00:47:10,119
+So we use fast PWM.
+
+848
+00:47:10,440 --> 00:47:13,920
+So waveform generation mode we said fast PWM.
+
+849
+00:47:14,099 --> 00:47:18,980
+Then specify compare output mode as non-inverted.
+
+850
+00:47:18,980 --> 00:47:19,820
+Right?
+
+851
+00:47:19,820 --> 00:47:22,619
+Compact output mode as non-inverted
+
+852
+00:47:22,619 --> 00:47:25,539
+Which is the widely used mode
+
+853
+00:47:25,539 --> 00:47:27,739
+If you like you can go for inverted mode
+
+854
+00:47:27,739 --> 00:47:32,659
+Set the PWM frequency as 1 kilohertz or 1000 hertz
+
+855
+00:47:32,659 --> 00:47:33,360
+High frequency
+
+856
+00:47:33,360 --> 00:47:36,159
+Then enter into the endless loop
+
+857
+00:47:36,159 --> 00:47:39,960
+Inside the endless loop
+
+858
+00:47:39,960 --> 00:47:42,699
+Set the pulse width to 255
+
+859
+00:47:42,699 --> 00:47:44,739
+Set the pulse width to 255
+
+860
+00:47:44,739 --> 00:47:49,199
+That means assign 255 to OZR register
+
+861
+00:47:49,199 --> 00:47:50,480
+Set the pulse width.
+
+862
+00:47:50,840 --> 00:47:57,139
+If the pulse width is greater than 0, set the output compare value to pulse width.
+
+863
+00:47:57,480 --> 00:48:00,440
+Set the pulse width to OCR register.
+
+864
+00:48:01,360 --> 00:48:08,420
+Here we initialize a variable to 255 and then we check whether pulse width is greater than 0.
+
+865
+00:48:08,800 --> 00:48:13,980
+If so, we assign pulse width to output compare register OCR.
+
+866
+00:48:13,980 --> 00:48:16,719
+30 milliseconds delay
+
+867
+00:48:16,719 --> 00:48:19,619
+decrement pulse width by 5
+
+868
+00:48:19,619 --> 00:48:20,780
+go again
+
+869
+00:48:20,780 --> 00:48:22,599
+so this is a loop
+
+870
+00:48:22,599 --> 00:48:24,480
+within the endless loop
+
+871
+00:48:24,480 --> 00:48:25,679
+we run another loop
+
+872
+00:48:25,679 --> 00:48:28,099
+every iteration of the loop
+
+873
+00:48:28,099 --> 00:48:30,500
+we decrement the pulse width by 5
+
+874
+00:48:30,500 --> 00:48:32,300
+starting from 255
+
+875
+00:48:32,300 --> 00:48:33,920
+starting from 255
+
+876
+00:48:33,920 --> 00:48:36,619
+every iteration we decrement the pulse width
+
+877
+00:48:36,619 --> 00:48:39,000
+and that decremented value
+
+878
+00:48:39,000 --> 00:48:41,119
+we assign to the OCR register
+
+879
+00:48:41,119 --> 00:48:43,239
+that means we gradually
+
+880
+00:48:43,239 --> 00:48:45,239
+reduce the volume.
+

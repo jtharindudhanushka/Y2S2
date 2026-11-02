@@ -1,0 +1,403 @@
+[0:02] Is it called ISR?
+[0:03] Is it called ISR?
+[0:05] No.
+[0:06] It is outside the loop.
+[0:08] It is in outside the loop.
+[0:10] If it comes to the loop,
+[0:11] then it will be called.
+[0:13] We don't know when it will be called.
+[0:14] It comes outside the loop.
+[0:17] It comes even outside the main function.
+[0:20] Then it comes to the main function.
+[0:22] If it comes to the main function,
+[0:24] we cannot pass a value.
+[0:26] We cannot get a value return.
+[0:28] So ISR is called automatically.
+[0:31] So from where we pass a parameter, no, we can't, we don't know.
+[0:36] And also where to return a return value, we don't know.
+[0:41] Therefore, no return value, no parameter passing, except interrupt vector.
+[0:47] Right.
+[0:49] But if you really need to pass some data to an ISR, how can we do that?
+[0:57] If you want to process some data inside the ISR, that means you need to pass some data into the ISR.
+[1:06] But we can't pass arguments because no parameter is accepted except interrupt vector.
+[1:12] And we can't get any process data out from the ISR because no return value.
+[1:18] But we want to pass some data into the ISR and we want to get some data returned from the ISR.
+[1:27] Global? Yeah, very good. Very good. Using global variables you can do that. Because global variables are accessible from any function. Using global variables you can do that. You can pass values into the ISR as well as you can get the values out from the ISR. Right.
+[1:49] But when you use global variables, you have to declare them as volatile global variable, not simple global variables.
+[2:01] You have to use the keyword volatile, volatile global variables.
+[2:06] Using volatile global variables, you can pass values data into the ISR and also you can get data out from the ISR.
+[2:16] Now the question is why do we need to specify the word volatile?
+[2:22] Right.
+[2:23] We need to specify the word volatile when you declare global variables that are to be used within ISR.
+[2:31] Any global variable to be used within ISR you have to declare them as volatile.
+[2:37] Why?
+[2:38] Right.
+[2:38] What is the meaning of the term volatile?
+[2:41] We say run is volatile.
+[2:43] What does that mean?
+[2:44] It's changing.
+[2:45] Yes.
+[2:45] volatile means the value can change.
+[2:50] It can change that means volatile.
+[2:53] Now using the keyword volatile
+[2:57] we tell the compiler the global variable
+[3:02] value can change. When you declare global variable
+[3:06] we use the volatile keyword and using the
+[3:10] keyword we tell the compiler the value of this global
+[3:14] variable can change.
+[3:16] Why do we tell that to the compiler?
+[3:18] Because, let's assume
+[3:20] you declare global variable.
+[3:23] And the global variable,
+[3:24] the value of the global variable would
+[3:26] be changed within the ISR.
+[3:29] Inside the ISR
+[3:30] we change the value of the global variable.
+[3:32] Right. At the time
+[3:34] of compilation,
+[3:36] we don't know when the
+[3:38] ISR would be called.
+[3:40] We don't know. So the compiler
+[3:42] doesn't know. When ISR
+[3:44] would be called.
+[3:46] Compiler doesn't know at the time of compilation.
+[3:48] The compiler will
+[3:49] consider ISR as
+[3:52] a function
+[3:54] that would
+[3:56] never execute it. At the time
+[3:58] of compilation, compiler will
+[4:00] consider ISR as
+[4:01] a function which
+[4:04] is never executed.
+[4:06] Why? There is no calling statement.
+[4:08] There is no calling statement.
+[4:10] If there is a function, there should be a calling statement.
+[4:12] but no calling statement
+[4:14] the ISR is called automatically.
+[4:17] So compiler doesn't know when it will be called.
+[4:19] So compiler will recognize
+[4:21] ISR
+[4:22] will consider ISR as
+[4:25] a function that is
+[4:27] never called. Then your
+[4:29] global variable is
+[4:30] accessed and changed
+[4:33] the value of the global variable is
+[4:35] changed within the ISR.
+[4:37] So compiler will think
+[4:39] this global
+[4:41] variable value would never
+[4:42] be changed because
+[4:44] ISR is never executed.
+[4:46] So the global variable value would never be
+[4:49] changed. So compiler
+[4:50] will replace that global
+[4:53] variable value with
+[4:54] a constant. If it is not going
+[4:56] to change, compiler
+[4:58] will optimize the code
+[5:00] by replacing the variable
+[5:03] value with a constant.
+[5:05] So it set to
+[5:07] default value as constant.
+[5:08] Now let's say you have a global variable,
+[5:11] integer global variable
+[5:12] and you have a default value
+[5:15] initialized with value 5.
+[5:17] And inside the ISR,
+[5:19] you increment the global variable
+[5:21] value by 1. That means value
+[5:23] becomes 6 inside the ISR.
+[5:25] But the compiler,
+[5:27] at the compilation time,
+[5:29] compiler sees,
+[5:30] ISR is a function
+[5:33] that is never called. So inside
+[5:35] the ISR, global variable is
+[5:37] incremented but compiler
+[5:39] right compiler
+[5:41] thinks this
+[5:42] increment will never
+[5:45] happen. So the global
+[5:47] variable value 5
+[5:48] it will remain as 5
+[5:51] forever if it is
+[5:53] not incremented inside
+[5:55] the ISR and if
+[5:57] ISR is not executed
+[5:59] the value of the global variable
+[6:01] will remain 5 forever.
+[6:04] So
+[6:04] the compiler will
+[6:06] replace the global variable with constant fun.
+[6:10] That is called compiler optimization.
+[6:13] Why? Why do we need a variable?
+[6:15] If it is not going to change,
+[6:18] so use a constant.
+[6:20] Why do we reserve memory for a variable,
+[6:23] for a value that is not going to be changed?
+[6:29] That is the argument of the compiler.
+[6:31] That will result wrong answers in our code.
+[6:36] So how can we a constant variable is optimized than the normal variable?
+[6:43] Not a constant variable, it's a literal constant.
+[6:47] Constant, yeah.
+[6:48] Literal constant.
+[6:49] Constant variable and a normal variable, they both require memory.
+[6:56] But literal constants, literal constants are associated with the source code.
+[7:00] Literal constants means, right.
+[7:06] int x 5. This is a variable.
+[7:10] Const, const int y 5.
+[7:15] This is a constant. Right. Just 5.
+[7:19] Literal constant. Now in your code, let's say you have
+[7:23] equation. X assignment operator.
+[7:28] Right. Let's say you have this kind of expression.
+[7:31] x, x plus
+[7:33] y plus
+[7:35] 5. This is literal
+[7:37] constant. This is variable
+[7:39] constant. This is a variable.
+[7:41] Variable,
+[7:43] variable constant.
+[7:46] This is literal.
+[7:48] Literal constant.
+[7:49] Literal constant is just a number.
+[7:51] So now memory reserved.
+[7:53] Is it clear?
+[7:55] Yes sir.
+[7:57] The compiler will replace
+[7:59] the entire global variable
+[8:01] with a literal constant.
+[8:03] If it is not going to be changed
+[8:05] so the result of our
+[8:07] program would be wrong
+[8:09] then. To prevent that
+[8:11] we have to tell the compiler
+[8:12] this variable
+[8:15] can be changed
+[8:17] even though there is no
+[8:19] calling statement for the routine
+[8:21] even though at the
+[8:23] compilation time we don't know
+[8:25] when it will be changed
+[8:26] when the ISR will be called
+[8:29] we don't know at the compilation time.
+[8:31] We don't know at the
+[8:33] compilation time when the value
+[8:35] of the global variable would be changed.
+[8:37] We don't know. However,
+[8:39] the value of the global variable will be
+[8:41] changed. It can be
+[8:43] changed. Therefore, don't
+[8:44] optimize it. We need to tell
+[8:47] the compiler. So how do we
+[8:49] tell it to the compiler?
+[8:50] We use volatile keyword.
+[8:53] We declare the variable
+[8:55] as volatile global
+[8:57] variable, then compile
+[8:58] knows somewhere in the program sometimes at somewhere the value of the global variable will
+[9:07] be changed so compiler will not optimize the variable with a constant can you understand
+[9:13] I don't know if you are talking about the monke.
+[9:17] Is it a reference type or study?
+[9:23] No, I don't know.
+[9:26] It's a global variable.
+[9:28] Isr is not a value of the values.
+[9:31] If you have arguments passed,
+[9:34] if you have a parameter,
+[9:36] if you have a parameter,
+[9:38] if you have a value of ISR,
+[9:41] If you want to add value to the ISR, there is no return value.
+[9:45] If you want to add value to the ISR,
+[9:48] if you want to add value to the ISR,
+[9:52] then you will use global variables.
+[9:54] As you will use global variables,
+[9:57] it will be declared as a global variable.
+[10:01] At the time of compilation,
+[10:03] there is no ISR calling statement in the compiler.
+[10:08] in the code, there is no calling state, I have a time to go.
+[10:11] I have a time to go, to the first to the 2-0, the one to the one-pun.
+[10:14] to the right-ish, the more the there-sit-e-call, the one-hur, the all-futat, the that-e-call, the
+[10:17] the to-e-call, the thet,e-call, the a-call, the
+[10:17] I have a very good thing, to be out.
+[10:20] I have a very good thing, to be out, to be in a very contiging, to be in a very very very very intre mh,
+[10:24] I have a very good thing, to be in a very good thing, the one I have a very good thing,
+[10:28] the one I have a very good thing, the one I have a very good thing,
+[10:30] the one I have a very good thing, the one I have a very good thing,
+[10:31] the one I have a very good thing, the one I have a very good thing,
+[10:32] the one I have a very good thing, the one I have a thing,
+[10:32] the one I have a really good thing, the one I have a really good thing,
+[10:33] the one I have a really good thing, the one I have a really good thing,
+[10:33] the one I have a really good thing, the one I have a really good thing,
+[10:34] the one I have a really good thing, the one I have a really good thing,
+[10:34] the one I have a really good thing, the one I have a really good thing,
+[10:35] the one I have a really good thing, the one I have a really good thing,
+[10:54] If you want to call it, you can optimize it.
+[11:00] If you want to compile it, you can use the memory of the program.
+[11:06] Try to optimize the execution time and try to optimize the memory consumption.
+[11:13] This is the compile optimization.
+[11:15] I have a now-gall.
+[11:16] to theher.
+[11:17] I have a say, to theher, the ct, the in-cg, the t,p,
+[11:19] [unclear — Sinhala / crosstalk]
+[11:22] the of the iso, the the the.
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:23] 
+[11:49] It can be change.
+[11:56] We use the volatile key.
+[12:03] Can you understand?
+[12:08] Is that clear?
+[12:11] [unclear — Sinhala / crosstalk]
+[12:41] complete it is our cp
+[12:43] around time
+[12:45] of low
+[12:47] it is our cp
+[12:49] it is our
+[12:51] code
+[12:53] it is
+[12:55] complete
+[12:57] we will
+[12:59] pop up
+[13:01] adc
+[13:03] cp
+[13:05] cp
+[13:07] cp
+[13:09] the isaqa
+[13:10] the I mekoui
+[13:10] the I mEaG
+[13:11] sHG
+[13:11] a
+[13:10] a
+[13:10] 
+[13:10] a
+[13:10] a
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] a
+[13:11] a
+[13:11] 
+[13:11] a
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] a
+[13:11] a
+[13:11] a
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] 
+[13:11] to the Tm.
+[13:12] [unclear — Sinhala / crosstalk]
+[13:45] when the sudden interrupt happens
+[13:47] over right
+[13:49] over right
+[13:51] over right
+[13:53] over right
+[13:55] over right
+[13:57] object oriented
+[13:59] function over id
+[14:01] oh
+[14:03] oh
+[14:05] vector
+[14:07] the return value
+[14:09] Other thing is these are not only for the embedded systems are these are hard computer science
+[14:32] even in a general purpose
+[14:35] PC
+[14:35] if you are going to write an OS
+[14:38] if you are a system
+[14:42] program, if you are going to write an
+[14:44] operating system, you should have
+[14:46] this knowledge
+[14:47] what else?
+[14:54] what are the other questions you have?
+[14:56] Thilina, Sri Anjit
+[14:57] any questions?
+[14:59] no sir

@@ -1,0 +1,267 @@
+[0:00] then we have to go for firmware.
+[0:02] The firmware development,
+[0:03] you have to start with designing the firmware
+[0:06] using an algorithm.
+[0:08] Firmware algorithm.
+[0:11] Right.
+[0:11] This is our flowchamp.
+[0:13] External interrupt based trigger
+[0:15] start. Main function, stop external
+[0:19] interrupt based trigger. So the C programming we use
+[0:23] so main function. Then the main functions flow chart.
+[0:29] Now here you can see the main functions
+[0:31] flow chart. Start the main function. Configure
+[0:35] PB0 that is pin number 8
+[0:39] Arduino pin number 8. PB5 Arduino pin number
+[0:43] 13, port B as outputs.
+[0:48] Why? Two LED is connected to these two pins. Arduino
+[0:51] pin number 8, Arduino pin number 13, onboard LED,
+[0:56] external LED. So, those two pins we configure as
+[0:59] outputs. Then, configure PD2. PD2
+[1:04] is int 0 pin. Arduino pin number 2.
+[1:08] PD2 is int 0 pin as an input. Why?
+[1:11] switch is connected to that pin in 0 pin.
+[1:16] PD2 as input.
+[1:18] Configure.
+[1:19] Pull up PD2.
+[1:21] So the default state of PD2, high.
+[1:23] Pull up PD2.
+[1:25] Activate internal pull up resistance.
+[1:28] Pull up PD2.
+[1:29] That is in 0 pin.
+[1:32] Configure to interrupt on falling edge of in 0 pin.
+[1:38] Then configure to interrupt.
+[1:41] When to interrupt? On the falling edge of in zero pin. Falling edge of in zero pin means when in
+[1:50] zero pin is going low, interrupt the CPU. When in zero pin is going low, falling, interrupt the CPU.
+[2:03] Enable external interrupt on IN-0P. Enable external interrupt on IN-0P. Enable global interrupts using SEI function, set interrupt function. Enable global interrupts.
+[2:20] Then endless loop. Inside the endless loop, toggle PB5, that is pin number 13, Arduino pin number 13, toggle. State of the PB5, toggle. Where? Two seconds. Do it again.
+[2:37] So, what happens is the onboard LED is blink every two seconds.
+[2:46] So, the system blinks onboard LED every two seconds.
+[2:51] So, this is the main function.
+[2:54] Right.
+[2:54] Now, when there is an input, we need to toggle the external LED.
+[3:00] When there is an input, we need to toggle external LED.
+[3:04] When there is an input, an interrupt will be triggered.
+[3:11] An interrupt will be triggered.
+[3:13] So we have to handle the interrupt.
+[3:16] This is the interrupt service routine.
+[3:19] Handle external interrupt.
+[3:21] When there is an input, this is automatically called.
+[3:25] This function is automatically, this interrupt service routine is automatically called.
+[3:31] when there is an interrupt, when there is an input.
+[3:34] Inside the interrupt service routine, toggle the external LED pin.
+[3:40] External LED connected pin, toggle. Can you understand this algorithm?
+[3:52] Any question?
+[4:01] Can you hear me clearly?
+[4:04] Yes, sir.
+[4:05] Okay.
+[4:07] Right.
+[4:07] If the algorithm is clear, then let's go to source code.
+[4:14] Right.
+[4:16] This is the C program.
+[4:18] As usual, we have included IO.h header file,
+[4:25] which contains the definitions for input-output registers,
+[4:29] port B, port C registers.
+[4:33] And then we are going to,
+[4:35] we need to, we are planning to use
+[4:38] underscore delay ms underscore function.
+[4:42] So that function defined in delay.h header file.
+[4:45] So we got that file included.
+[4:49] And that header file, we have to give
+[4:51] the speed of our CPU.
+[4:55] Frequency of CPU, 16 megahertz, right?
+[4:59] We define that.
+[5:00] So this constant will be used by the delay.h header file.
+[5:05] Right.
+[5:07] Then in the main function, right, we set PB0 and PB5 pins as outputs.
+[5:18] We set the bit 0 and bit 5 of DDRB register.
+[5:24] and we configure PB0 and PB5 pins as outputs.
+[5:31] Then we configure PD2 pin,
+[5:36] which is the int0 pin, PD2 pin as an input pin.
+[5:41] So how do we do that?
+[5:42] We clear the bit number 2, bit 0, 1, 2, bit number 2 of DDRD.
+[5:49] We clear the bit number 2 of DDRD register
+[5:52] and we configure PD2 as PD2 is in zero pin as input pin
+[5:58] because switch connected to that pin.
+[6:01] Then we want to activate the internal pull-up resistor
+[6:05] connected to that pin.
+[6:07] To do that, we use the port deregister
+[6:10] and we set the bit number 2 of port deregister
+[6:16] and we pull up PD2.
+[6:19] We pull up the PD2 pin.
+[6:21] So the state of the PD2 pin, which is in zero pin, is high.
+[6:25] That means voltage is 5 volts.
+[6:27] That is the default state of the pin.
+[6:31] But when you press the button, the state of the pin will go low.
+[6:36] But by default, it is high.
+[6:38] Then configure to input on falling edge of in zero pin.
+[6:44] Right.
+[6:45] Now we need to set and clear several two bits of two bits.
+[6:54] Actually, these are ISC bits, interrupt sense control bits, interrupt sense control bit 0 and interrupt sense control bit 1 of external interrupt control register A.
+[7:09] this register.
+[7:12] There are two bits.
+[7:13] Those are
+[7:13] ISC0
+[7:17] and ISC1.
+[7:20] ISC0
+[7:21] bit we need to clear.
+[7:23] And ISC1
+[7:25] bit we need to set.
+[7:27] First we clear the
+[7:29] ISC0 bit using
+[7:31] bitwise and operator.
+[7:33] Then we set
+[7:35] ISC1 bit.
+[7:39] First we clear the ISC 0 bit and then we set ISC 1 bit.
+[7:46] To set the ISC 1 bit, we use bitwise O operator.
+[7:51] To clear the ISC 0 bit, we use bitwise and double.
+[7:57] So because of the bracket, this happens first.
+[7:59] And thereafter, we take the result of this operation,
+[8:04] bitwise O operator
+[8:07] and this constant value.
+[8:11] Can you understand this line?
+[8:14] Line number 13.
+[8:16] Any question
+[8:17] on line number 13?
+[8:22] So when to interrupt
+[8:24] on the falling
+[8:26] edge of in 0.
+[8:27] right then we need to enable external interrupts on int 0p how do we do that
+[8:42] right external interrupt mask register external interrupt mask register
+[8:50] has int 0 bit. The int 0 bit of the external interrupt mass register we set, right? Int 0 bit of
+[9:02] external interrupt mass register we set. By doing that, we enable external interrupt on int 0 bit.
+[9:10] Then global interrupts, we enable global interrupts, right, using set interrupt function.
+[9:20] Then we come to the endless loop.
+[9:22] In the endless loop, we toggle PB5P, state of the PB5P.
+[9:30] That means we toggle the bit 5 of code B register.
+[9:36] Bit 5 of code B register using XO operator.
+[9:40] we toggle. Every two seconds we toggle. That means onboard LED we blink every two seconds.
+[9:49] That is the main task. If there is an input, if int zero pin is going low, if int zero pin is going
+[9:58] low, then CPU will be interrupted. If int zero pin is going low, that means falling edge,
+[10:07] automatically CPU will be interrupted. We don't know what will happen, when that will happen.
+[10:12] We don't know. We have no idea when that will happen. Whenever right user presses the switch
+[10:21] that will happen. At that moment CPU will be interrupted. So handle the interrupt. To handle
+[10:27] the interrupt we have to handle the relevant ISR, interrupt service routine. This is the ISR,
+[10:35] interrupt service routine. And the correct interrupt vector you have to use.
+[10:40] In zero vector you have to use. Why? We are handling external interrupts on in zero
+[10:46] B. In zero vector. Inside the ISR, we have to do the second task. Second task is to
+[10:56] toggle the external input. If there is an interrupt, if there is an input,
+[11:01] code, then there will be interrupt. If there is an interrupt, toggle the external LED.
+[11:07] How do we do that? Toggle the bit 0 of code B. That means toggle the state of PB0P. So
+[11:18] external LED will be toggled. We have no idea when this ISR will be called. We don't know.
+[11:26] At the time of writing the program, at the time of compiling the code, we have no idea.
+[11:33] But that will be executed somewhere during the life of the system.
+[11:39] When user presses the button, the inch zero pin will go low.
+[11:45] That means falling edge.
+[11:47] Interrupt is triggered.
+[11:49] CPU will be interrupted.
+[11:51] And then this ISR is executed.
+[11:53] At that time, we toggle the external link.
+[11:57] But we don't monitor when that will happen.
+[12:00] Without monitoring, we do our main task repeatedly.
+[12:06] It's like keep reading the newspaper.
+[12:09] While, right, keep reading the newspaper
+[12:12] till the small fellow cries.
+[12:15] If small fellow cries, then attend to small fellow.
+[12:20] Otherwise, keep reading the newspaper.
+[12:22] Can you understand this source? Any question?
+[12:25] Sir, in this EIMSK, they're enabling the external interrupt line.
+[12:36] Which line you are talking about?
+[12:39] Fourteenth line.
+[12:40] Fourteenth line. That is to enable external interrupts on in zero pin.
+[12:46] Because by default, all interrupts are disabled to save power.
+[12:49] Now we need to enable a particular interrupt. So we enable interrupt external interruptor in 0 bit. To do that external interrupt mass register with 0 we set.
+[13:02] So in EICR we are using 2 bits. Why only changing only 1 bit in EICR?
+[13:17] This particular register, using the two bits of this particular register, we specify when to interrupt.
+[13:27] There are four choices.
+[13:29] When the pin is held low, when there's a logic change, when falling edge, when rising edge.
+[13:36] Four choices.
+[13:38] But that doesn't mean you have enabled the interrupts.
+[13:41] Those are four choices.
+[13:42] Then you have to separately enable the interrupts.
+[13:45] Let's go back to that register. These are the two bits of that register. By default,
+[14:02] both bits contain zero. That means all interrupts disabled. But if you set this bit, you enable
+[14:10] int 0 pin interrupts. If you set this bit, you enable int 1 pin interrupts. But in this
+[14:18] example, we don't need to enable int 1 pin interrupt because no switch or no sensor connected
+[14:23] to int 1 pin. The sensor connected to int 0 pin. So, we enable only the int 0 pin interrupts.
+[14:29] And when you enable the int 0 pin interrupt, then when to interrupt on int 0 pin? The second
+[14:35] First you enable the interrupts on int 0P, then when to interrupt on int 0P. Four choices.
+[14:44] These are the four choices. When to interrupt on int 0P. For that you have to use these
+[14:50] two bits of EICRA register. Is that clear? Yes, sir. Anything else? Can all of you understand
+[15:01] understand this source code? If not, please ask. Don't keep quiet. Right. Now this is using registers,
+[15:13] using the microcontroller registers, using C programming language. We can manipulate the
+[15:20] registers and we can handle external interrupts. Right. Now to do all these things, we need another
+[15:30] header file. That is this particular header file. Interrupt.h header file. You need to include this
+[15:38] header file. Otherwise, your program will not be able to compile your program. Interrupt.h header
+[15:45] file you have to include. Why? This header file contains the definition of interrupt registers,
+[15:51] definition of ISR, definition of interrupt vectors, interrupt vectors, ISR, and also
+[16:02] interrupt registers, definition of interrupt registers, they are in this header file.
+[16:08] So, if you are going to use interrupts, you have to use this header file.
+[16:12] You have to get that included into YASO's code file.
+[16:16] That is very important.
+[16:17] And also this SCI function, this SCI set interrupt function defined in interrupt.h header file.
+[16:25] So interrupt.h header file contains the definition for interrupt registers, SCI function, and ISR.
+[16:32] So you will not be able to compile your code if this file not included.
+[16:38] So one time exam question.
+[16:41] some source code was given using interrupts
+[16:46] and there were some blanks to fill. And here
+[16:49] the line was not there. And none of the students
+[16:54] detected that missing line.
+[16:57] But they filled other blanks in the code.
+[17:01] This is very important. Otherwise your code will not work.
+[17:05] You won't be able to compile.
+[17:07] Right.
+[17:08] Yes. In here, port B is a variable or something, sir.
+[17:20] Port B is a register. 8-bit register.
+[17:25] Yeah, last line. This line.
+[17:30] I have a
+[17:32] a
+[17:32] a
+[17:32] a
+[17:33] a
+[17:33] a
+[17:33] a
+[17:33] a
+[17:34] a
+[17:34] a
+[17:34] a
+[17:34] a
+[17:34] a
+[17:34] a
+[17:34] 
+[17:34] a
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] a
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[17:34] 
+[18:00] If you have a memory address, you can use port B.
+[18:08] If you have a memory address, you can use port B.
+[18:14] You can use the header file.
+[18:19] If you have a header file, you can tell the memory address, hexadecimal memory address.
+[18:27] This is so complicated.
+[18:30] So, what is the problem with the header file?
+[18:34] Is it a problem with the header file?
+[18:38] No, I don't have to write the port and register.
+[18:42] The register defined header file.
+[18:45] We define variable.
+[18:51] We define a global with the header.
+[18:54] We don't need to worry.
+[18:56] We don't need to use header file.

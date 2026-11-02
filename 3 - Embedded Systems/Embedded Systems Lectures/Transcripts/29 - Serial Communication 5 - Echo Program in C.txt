@@ -1,0 +1,238 @@
+29 - Serial Communication 5 - Echo Program in C  (8 Dec 2020 (afternoon, part 1))
+
+[0:00] Okay, this is where we stop at the end of morning session. Right, before we talk about source code of our Cha and Close system, do you have any question before we start?
+[0:17] No, right.
+[0:18] Then the source code of the CHA enclose.
+[0:21] Idea is from a PC, we send a character to this CHA enclose system.
+[0:28] The CHA enclose system, which is a microcontroller-based system,
+[0:31] it receives the character, encloses the character with square brackets
+[0:36] and transmits character back to the PC
+[0:39] the enclosed character transmits back to the PC.
+[0:44] And this is your main function.
+[0:48] We have iordert edge header file included.
+[0:51] It contains input output definitions.
+[0:54] First we need to set the data transfer rate or boot rate to 9600 BPS, the most widely
+[1:07] used standard data transfer rate.
+[1:11] So what we do is we divide FCPU by 16 and 9600 which is the boot rate we need and then from
+[1:21] that results we deduct 1.
+[1:25] So the outcome is 103 point something but 103 is assigned to UBRR.
+[1:32] USART boot rate register 0.
+[1:38] Right?
+[1:38] The 0 indicates USART peripheral number.
+[1:42] Now in the ATmega328P microcontroller,
+[1:45] we have only one USART peripheral.
+[1:49] So the number is 0.
+[1:51] But some other microcontrollers,
+[1:53] there may be multiple USART peripherals.
+[1:57] then you can have USART UBRR0, UBRR1, UBRR2 likewise.
+[2:03] For example, the microcontroller in the Arduino megaboard,
+[2:07] there are multiple USART peripherals for serial communication.
+[2:12] Now we set the board rate register to get the required board rate,
+[2:19] that is 9600 BPS.
+[2:22] Right.
+[2:23] Now, the next step is to specify the character size.
+[2:28] Now, standard character size, the default character size is 8.
+[2:32] So actually, you don't need these two lines.
+[2:34] Right.
+[2:35] You don't need these two lines because the default character size is 8-bit characters.
+[2:39] But it's a good practice to specify the character size.
+[2:43] then your code becomes more understandable, right?
+[2:47] More meaningful.
+[2:48] So to do that, you have to use USAT control and status register B
+[2:54] and USAT control and status register C.
+[2:58] Actually, there are three registers for USAT control and status.
+[3:03] USAT control and status register A,
+[3:06] USAT control and status register B,
+[3:08] use add control and state as register C. Now in this case we use
+[3:13] register B and register C. In the register
+[3:16] B the bit number 2
+[3:18] bit number 0, bit number 1, bit number 2. Bit number 2 we clear.
+[3:23] Bit number 2 is the
+[3:25] UCSZ02 bit. This is the
+[3:30] UCSZ02 bit.
+[3:34] That is USART character size bit number 2.
+[3:39] We clear that.
+[3:40] And then we set bit number 1 and bit number 2 of USART control and status register C.
+[3:49] These two bits are actually USART character size bit 1, USART character size bit 0.
+[3:58] u c s z 0 1 u c s z 0 0 now these two bits set this particular bit we clear as a result we specify
+[4:12] character size as 8 bit characters i see characters are 8 bit so we specify the the most widely used
+[4:21] character size 8 bit characters but you know that there can be different sizes of characters
+[4:26] you can use serial communication for communicate such characters also right then
+[4:34] we need to enable receiver and transmitter of the usart peripheral
+[4:43] universal, synchronous,
+[4:45] asynchronous, receiver and
+[4:47] transmitter peripheral.
+[4:49] We need to enable
+[4:51] receiver and
+[4:53] transmitter. By default, they are to switch
+[4:55] off.
+[4:56] Because to save power, you can
+[4:58] enable them.
+[5:00] To enable them, you
+[5:01] can use these two bits
+[5:03] of USAT
+[5:05] control and status register
+[5:07] B. USAT
+[5:08] control and stasis register B. Bit number 3 and bit number 4 you can use. Right. So,
+[5:16] one bit, bit number 3 and bit number 4 you can use. One is Rxen bit, that is receiver
+[5:24] enable bit or XEN bit. The other one is TXEN bit. Transmit enable bit. TXEN bit. Transmit
+[5:37] enable bit. Using these two bits, you can enable the receiver and transmitter. Right.
+[5:44] So, when you enable the receiver and transmitter, the relevant IO pins, they are GPIO functionality, general purpose input-output functionality will be overridden by the data communication functionality.
+[6:03] Right.
+[6:03] Then, we enter into endless loop.
+[6:07] Inside the endless loop, we poll RxC bit, receive complete bit.
+[6:16] We poll receive complete bit.
+[6:20] Receive complete bit is the bit number 7 of UCSR A register.
+[6:28] USAT control and status A register.
+[6:30] Bit number 7 is receive complete bit.
+[6:35] We poll that bit.
+[6:37] The bit value is usually 0.
+[6:40] But when the receive operation is complete,
+[6:45] the bit value would be 1.
+[6:47] RxC bit flag bit is raise.
+[6:50] Right?
+[6:50] Bit value would be 1.
+[6:51] so we check whether receive
+[6:54] is
+[6:55] not yet over
+[6:57] we repeatedly
+[6:58] check
+[6:59] now this while loop
+[7:01] this is the body of the while loop
+[7:03] null statement in the body
+[7:05] right
+[7:06] so this condition is repeatedly
+[7:08] checked
+[7:09] now
+[7:10] now let's say
+[7:11] this register. Let us assume the initial value of this register is xxxxxxxxx. Let us assume.
+[7:26] And with that we take the end operation.
+[7:28] [unclear — Sinhala / crosstalk]
+[7:34] Now when you take the end operation, x and 1.
+[7:38] If x is 1, outcome is 1.
+[7:41] If x is 0, outcome is 0, x and 1.
+[7:46] So when you take x and 1, the outcome is x.
+[7:51] x and 0 because one operand is 0,
+[7:56] no matter the value of other operand, outcome is 0.
+[8:00] Right.
+[8:01] Now this is the value you get when you perform this bitwise end operation between this register and this value.
+[8:12] This is the outcome you get.
+[8:14] You get its negation.
+[8:16] You get its negation.
+[8:19] Now you should, by default, that is the RxC flag.
+[8:23] This is the R X C flag.
+[8:26] It is 0.
+[8:27] That means entire thing is 0.
+[8:30] If you get the negation of that, you get 1.
+[8:33] While 1, loop condition is true.
+[8:37] Right?
+[8:37] Body is executed, which is the null statement.
+[8:40] Then again the condition is checked.
+[8:43] If R X C flag is 0, entire thing is 0.
+[8:47] negation of that 1. Condition 1.
+[8:52] Again the null statement of the body is executed.
+[8:57] So likewise this loop would be repeated again and again.
+[9:01] When the data receive operation is over
+[9:05] RxC flag would be 1. This particular bit would be 1.
+[9:10] Then 1 0 0 0 0 0.
+[9:14] If you take the negation of that, it will be 0.
+[9:19] Right?
+[9:20] So negation will be 0.
+[9:22] Then while loop condition becomes false.
+[9:26] Right?
+[9:26] When the receive operation is over or receive operation is complete,
+[9:33] the while loop terminates.
+[9:35] and then we read
+[9:37] the value, the character
+[9:39] in the USART data register
+[9:41] to
+[9:42] CH variable.
+[9:45] CH variable is of
+[9:46] chart type. To that variable
+[9:49] we read the
+[9:50] value in the USART
+[9:52] data register. When you read
+[9:54] a value from the USART data
+[9:56] register, automatically
+[9:58] RSC flag is clear.
+[10:01] When you read a character
+[10:03] from udr rxc flag is automatically clear right now we got the character sent from
+[10:12] pc we read the characters and from pc right
+[10:18] now without
+[10:20] pulling
+[10:21] RxC flag
+[10:23] without
+[10:24] pulling RxC flag
+[10:25] if you try to read
+[10:27] if you try to read
+[10:29] the UDR
+[10:31] register
+[10:32] then what would happen is
+[10:34] you would read the same
+[10:37] character again and again
+[10:39] but we don't need to do that
+[10:40] we want to read a new character
+[10:43] always
+[10:43] we don't want to read the same character
+[10:46] that's why we pull
+[10:47] RxC flag
+[10:49] till the receive operation
+[10:52] is over
+[10:53] then we read
+[10:55] the new character
+[10:57] in UDR
+[10:58] that is USAT data register
+[11:01] to this variable
+[11:03] right
+[11:04] after doing that
+[11:05] we call
+[11:06] transmit char function
+[11:08] right transmits
+[11:09] char function we call
+[11:11] and first when we
+[11:13] call the transmit char function we
+[11:15] use
+[11:15] opening square bracket as
+[11:18] the argument
+[11:19] that means we transmit
+[11:21] opening square bracket
+[11:23] then we transmit
+[11:24] the character that we receive
+[11:26] which is in the ch variable
+[11:28] the character that we receive
+[11:30] then we transmit
+[11:31] Then we transmit the closing square bracket.
+[11:37] So when these three statements, execution of entry, these three statements are over,
+[11:42] we have transmitted one enclosed character.
+[11:47] One enclosed character.
+[11:48] Now, where is this function?
+[11:52] Transmit cha function.
+[11:54] Yes.
+[11:54] this is the transmit
+[11:56] cha function
+[11:56] in the transmit cha function
+[11:58] we have
+[11:59] a parameter
+[12:01] to that parameter
+[12:02] we pass arguments
+[12:04] first time
+[12:05] we pass opening curly bracket
+[12:07] second time when we call
+[12:09] the transmit cha function we pass
+[12:11] the character that we receive
+[12:13] and third time
+[12:16] when we call the transmit cha function
+[12:17] we pass closing curly bracket.
+[12:20] And inside the transmit
+[12:22] function, again we pull.
+[12:27] This time we pull UDRE flag.
+[12:30] For that we use USAT status
+[12:33] and control register A. USAT
+[12:36] control and status register A. In the USAT control
+[12:40] status register A, we have UDRE flag. This is the UDRE flag. UDRE flag. Right? Let's
+[12:52] assume. Right? If you take this one. U C S R 0 A N.
+[13:04] Let us assume the initial value is xxxxxxxxxxx and 0.
+[13:14] X and 0 outcome is 0. X and 0 outcome is 0. X and 1 outcome is X. Likewise you get this
+[13:24] result. And then you take the negation of that. Now this is the UDRE flag. USAR data
+[13:34] register empty flag right if the data register udr register is empty this will be one if the udr
+[13:43] is not empty this is zero now when you

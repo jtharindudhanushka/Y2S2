@@ -1,0 +1,944 @@
+1
+00:00:00,000 --> 00:00:17,100
+Okay, this is where we stop at the end of morning session. Right, before we talk about source code of our Cha and Close system, do you have any question before we start?
+
+2
+00:00:17,100 --> 00:00:17,980
+No, right.
+
+3
+00:00:18,100 --> 00:00:21,280
+Then the source code of the CHA enclose.
+
+4
+00:00:21,440 --> 00:00:27,899
+Idea is from a PC, we send a character to this CHA enclose system.
+
+5
+00:00:28,199 --> 00:00:31,480
+The CHA enclose system, which is a microcontroller-based system,
+
+6
+00:00:31,800 --> 00:00:36,740
+it receives the character, encloses the character with square brackets
+
+7
+00:00:36,740 --> 00:00:39,600
+and transmits character back to the PC
+
+8
+00:00:39,600 --> 00:00:44,679
+the enclosed character transmits back to the PC.
+
+9
+00:00:44,679 --> 00:00:48,219
+And this is your main function.
+
+10
+00:00:48,219 --> 00:00:51,600
+We have iordert edge header file included.
+
+11
+00:00:51,600 --> 00:00:54,619
+It contains input output definitions.
+
+12
+00:00:54,619 --> 00:01:07,480
+First we need to set the data transfer rate or boot rate to 9600 BPS, the most widely
+
+13
+00:01:07,480 --> 00:01:11,859
+used standard data transfer rate.
+
+14
+00:01:11,859 --> 00:01:21,760
+So what we do is we divide FCPU by 16 and 9600 which is the boot rate we need and then from
+
+15
+00:01:21,760 --> 00:01:25,159
+that results we deduct 1.
+
+16
+00:01:25,159 --> 00:01:32,939
+So the outcome is 103 point something but 103 is assigned to UBRR.
+
+17
+00:01:32,939 --> 00:01:37,659
+USART boot rate register 0.
+
+18
+00:01:38,000 --> 00:01:38,540
+Right?
+
+19
+00:01:38,819 --> 00:01:41,939
+The 0 indicates USART peripheral number.
+
+20
+00:01:42,599 --> 00:01:45,819
+Now in the ATmega328P microcontroller,
+
+21
+00:01:45,939 --> 00:01:49,000
+we have only one USART peripheral.
+
+22
+00:01:49,260 --> 00:01:50,859
+So the number is 0.
+
+23
+00:01:51,359 --> 00:01:53,560
+But some other microcontrollers,
+
+24
+00:01:53,680 --> 00:01:57,459
+there may be multiple USART peripherals.
+
+25
+00:01:57,459 --> 00:02:03,239
+then you can have USART UBRR0, UBRR1, UBRR2 likewise.
+
+26
+00:02:03,540 --> 00:02:07,239
+For example, the microcontroller in the Arduino megaboard,
+
+27
+00:02:07,739 --> 00:02:12,159
+there are multiple USART peripherals for serial communication.
+
+28
+00:02:12,699 --> 00:02:19,379
+Now we set the board rate register to get the required board rate,
+
+29
+00:02:19,379 --> 00:02:22,159
+that is 9600 BPS.
+
+30
+00:02:22,400 --> 00:02:22,919
+Right.
+
+31
+00:02:23,159 --> 00:02:28,180
+Now, the next step is to specify the character size.
+
+32
+00:02:28,400 --> 00:02:32,360
+Now, standard character size, the default character size is 8.
+
+33
+00:02:32,439 --> 00:02:34,340
+So actually, you don't need these two lines.
+
+34
+00:02:34,500 --> 00:02:34,919
+Right.
+
+35
+00:02:35,000 --> 00:02:39,439
+You don't need these two lines because the default character size is 8-bit characters.
+
+36
+00:02:39,979 --> 00:02:43,919
+But it's a good practice to specify the character size.
+
+37
+00:02:43,919 --> 00:02:47,879
+then your code becomes more understandable, right?
+
+38
+00:02:47,939 --> 00:02:48,520
+More meaningful.
+
+39
+00:02:48,800 --> 00:02:54,879
+So to do that, you have to use USAT control and status register B
+
+40
+00:02:54,879 --> 00:02:58,080
+and USAT control and status register C.
+
+41
+00:02:58,500 --> 00:03:03,219
+Actually, there are three registers for USAT control and status.
+
+42
+00:03:03,400 --> 00:03:06,099
+USAT control and status register A,
+
+43
+00:03:06,099 --> 00:03:08,800
+USAT control and status register B,
+
+44
+00:03:08,800 --> 00:03:13,199
+use add control and state as register C. Now in this case we use
+
+45
+00:03:13,199 --> 00:03:16,080
+register B and register C. In the register
+
+46
+00:03:16,080 --> 00:03:18,740
+B the bit number 2
+
+47
+00:03:18,740 --> 00:03:23,120
+bit number 0, bit number 1, bit number 2. Bit number 2 we clear.
+
+48
+00:03:23,780 --> 00:03:25,400
+Bit number 2 is the
+
+49
+00:03:25,400 --> 00:03:30,000
+UCSZ02 bit. This is the
+
+50
+00:03:30,000 --> 00:03:34,780
+UCSZ02 bit.
+
+51
+00:03:34,780 --> 00:03:39,120
+That is USART character size bit number 2.
+
+52
+00:03:39,939 --> 00:03:40,800
+We clear that.
+
+53
+00:03:40,919 --> 00:03:49,060
+And then we set bit number 1 and bit number 2 of USART control and status register C.
+
+54
+00:03:49,580 --> 00:03:58,439
+These two bits are actually USART character size bit 1, USART character size bit 0.
+
+55
+00:03:58,439 --> 00:04:12,939
+u c s z 0 1 u c s z 0 0 now these two bits set this particular bit we clear as a result we specify
+
+56
+00:04:12,939 --> 00:04:21,339
+character size as 8 bit characters i see characters are 8 bit so we specify the the most widely used
+
+57
+00:04:21,339 --> 00:04:26,720
+character size 8 bit characters but you know that there can be different sizes of characters
+
+58
+00:04:26,720 --> 00:04:34,399
+you can use serial communication for communicate such characters also right then
+
+59
+00:04:34,399 --> 00:04:43,019
+we need to enable receiver and transmitter of the usart peripheral
+
+60
+00:04:43,019 --> 00:04:45,519
+universal, synchronous,
+
+61
+00:04:45,800 --> 00:04:47,600
+asynchronous, receiver and
+
+62
+00:04:47,600 --> 00:04:48,680
+transmitter peripheral.
+
+63
+00:04:49,560 --> 00:04:51,660
+We need to enable
+
+64
+00:04:51,660 --> 00:04:53,800
+receiver and
+
+65
+00:04:53,800 --> 00:04:55,720
+transmitter. By default, they are to switch
+
+66
+00:04:55,720 --> 00:04:56,040
+off.
+
+67
+00:04:56,439 --> 00:04:58,920
+Because to save power, you can
+
+68
+00:04:58,920 --> 00:04:59,959
+enable them.
+
+69
+00:05:00,199 --> 00:05:01,720
+To enable them, you
+
+70
+00:05:01,720 --> 00:05:03,500
+can use these two bits
+
+71
+00:05:03,500 --> 00:05:05,319
+of USAT
+
+72
+00:05:05,319 --> 00:05:07,160
+control and status register
+
+73
+00:05:07,160 --> 00:05:08,519
+B. USAT
+
+74
+00:05:08,519 --> 00:05:15,779
+control and stasis register B. Bit number 3 and bit number 4 you can use. Right. So,
+
+75
+00:05:16,779 --> 00:05:24,620
+one bit, bit number 3 and bit number 4 you can use. One is Rxen bit, that is receiver
+
+76
+00:05:24,620 --> 00:05:37,300
+enable bit or XEN bit. The other one is TXEN bit. Transmit enable bit. TXEN bit. Transmit
+
+77
+00:05:37,300 --> 00:05:44,779
+enable bit. Using these two bits, you can enable the receiver and transmitter. Right.
+
+78
+00:05:44,779 --> 00:06:03,040
+So, when you enable the receiver and transmitter, the relevant IO pins, they are GPIO functionality, general purpose input-output functionality will be overridden by the data communication functionality.
+
+79
+00:06:03,339 --> 00:06:03,699
+Right.
+
+80
+00:06:03,899 --> 00:06:06,939
+Then, we enter into endless loop.
+
+81
+00:06:07,100 --> 00:06:16,500
+Inside the endless loop, we poll RxC bit, receive complete bit.
+
+82
+00:06:16,699 --> 00:06:19,420
+We poll receive complete bit.
+
+83
+00:06:20,120 --> 00:06:27,839
+Receive complete bit is the bit number 7 of UCSR A register.
+
+84
+00:06:28,079 --> 00:06:30,959
+USAT control and status A register.
+
+85
+00:06:30,959 --> 00:06:35,319
+Bit number 7 is receive complete bit.
+
+86
+00:06:35,699 --> 00:06:37,120
+We poll that bit.
+
+87
+00:06:37,779 --> 00:06:39,680
+The bit value is usually 0.
+
+88
+00:06:40,199 --> 00:06:44,379
+But when the receive operation is complete,
+
+89
+00:06:45,459 --> 00:06:47,100
+the bit value would be 1.
+
+90
+00:06:47,540 --> 00:06:49,660
+RxC bit flag bit is raise.
+
+91
+00:06:50,220 --> 00:06:50,439
+Right?
+
+92
+00:06:50,639 --> 00:06:51,740
+Bit value would be 1.
+
+93
+00:06:51,740 --> 00:06:54,199
+so we check whether receive
+
+94
+00:06:54,199 --> 00:06:55,019
+is
+
+95
+00:06:55,019 --> 00:06:57,420
+not yet over
+
+96
+00:06:57,420 --> 00:06:58,800
+we repeatedly
+
+97
+00:06:58,800 --> 00:06:59,399
+check
+
+98
+00:06:59,399 --> 00:07:01,500
+now this while loop
+
+99
+00:07:01,500 --> 00:07:03,300
+this is the body of the while loop
+
+100
+00:07:03,300 --> 00:07:05,759
+null statement in the body
+
+101
+00:07:05,759 --> 00:07:06,480
+right
+
+102
+00:07:06,480 --> 00:07:08,579
+so this condition is repeatedly
+
+103
+00:07:08,579 --> 00:07:09,220
+checked
+
+104
+00:07:09,220 --> 00:07:10,040
+now
+
+105
+00:07:10,040 --> 00:07:11,560
+now let's say
+
+106
+00:07:11,560 --> 00:07:26,459
+this register. Let us assume the initial value of this register is xxxxxxxxx. Let us assume.
+
+107
+00:07:26,459 --> 00:07:28,899
+And with that we take the end operation.
+
+108
+00:07:28,899 --> 00:07:34,060
+[unclear — Sinhala / crosstalk]
+
+109
+00:07:34,060 --> 00:07:38,100
+Now when you take the end operation, x and 1.
+
+110
+00:07:38,100 --> 00:07:41,980
+If x is 1, outcome is 1.
+
+111
+00:07:41,980 --> 00:07:46,240
+If x is 0, outcome is 0, x and 1.
+
+112
+00:07:46,240 --> 00:07:51,860
+So when you take x and 1, the outcome is x.
+
+113
+00:07:51,899 --> 00:07:55,980
+x and 0 because one operand is 0,
+
+114
+00:07:56,160 --> 00:07:59,899
+no matter the value of other operand, outcome is 0.
+
+115
+00:08:00,800 --> 00:08:01,379
+Right.
+
+116
+00:08:01,379 --> 00:08:12,079
+Now this is the value you get when you perform this bitwise end operation between this register and this value.
+
+117
+00:08:12,800 --> 00:08:13,959
+This is the outcome you get.
+
+118
+00:08:14,319 --> 00:08:15,779
+You get its negation.
+
+119
+00:08:16,100 --> 00:08:18,220
+You get its negation.
+
+120
+00:08:19,339 --> 00:08:23,000
+Now you should, by default, that is the RxC flag.
+
+121
+00:08:23,000 --> 00:08:25,800
+This is the R X C flag.
+
+122
+00:08:26,180 --> 00:08:26,939
+It is 0.
+
+123
+00:08:27,399 --> 00:08:29,860
+That means entire thing is 0.
+
+124
+00:08:30,060 --> 00:08:32,720
+If you get the negation of that, you get 1.
+
+125
+00:08:33,299 --> 00:08:36,419
+While 1, loop condition is true.
+
+126
+00:08:37,460 --> 00:08:37,679
+Right?
+
+127
+00:08:37,840 --> 00:08:40,080
+Body is executed, which is the null statement.
+
+128
+00:08:40,360 --> 00:08:42,720
+Then again the condition is checked.
+
+129
+00:08:43,000 --> 00:08:47,340
+If R X C flag is 0, entire thing is 0.
+
+130
+00:08:47,340 --> 00:08:51,759
+negation of that 1. Condition 1.
+
+131
+00:08:52,620 --> 00:08:56,700
+Again the null statement of the body is executed.
+
+132
+00:08:57,039 --> 00:09:00,500
+So likewise this loop would be repeated again and again.
+
+133
+00:09:01,440 --> 00:09:05,279
+When the data receive operation is over
+
+134
+00:09:05,279 --> 00:09:10,720
+RxC flag would be 1. This particular bit would be 1.
+
+135
+00:09:10,720 --> 00:09:14,220
+Then 1 0 0 0 0 0.
+
+136
+00:09:14,220 --> 00:09:19,320
+If you take the negation of that, it will be 0.
+
+137
+00:09:19,659 --> 00:09:19,960
+Right?
+
+138
+00:09:20,440 --> 00:09:22,120
+So negation will be 0.
+
+139
+00:09:22,500 --> 00:09:25,840
+Then while loop condition becomes false.
+
+140
+00:09:26,240 --> 00:09:26,519
+Right?
+
+141
+00:09:26,899 --> 00:09:33,019
+When the receive operation is over or receive operation is complete,
+
+142
+00:09:33,759 --> 00:09:35,840
+the while loop terminates.
+
+143
+00:09:35,840 --> 00:09:37,519
+and then we read
+
+144
+00:09:37,519 --> 00:09:39,659
+the value, the character
+
+145
+00:09:39,659 --> 00:09:41,899
+in the USART data register
+
+146
+00:09:41,899 --> 00:09:42,940
+to
+
+147
+00:09:42,940 --> 00:09:44,879
+CH variable.
+
+148
+00:09:45,460 --> 00:09:46,820
+CH variable is of
+
+149
+00:09:46,820 --> 00:09:49,240
+chart type. To that variable
+
+150
+00:09:49,240 --> 00:09:50,379
+we read the
+
+151
+00:09:50,379 --> 00:09:52,879
+value in the USART
+
+152
+00:09:52,879 --> 00:09:54,659
+data register. When you read
+
+153
+00:09:54,659 --> 00:09:56,740
+a value from the USART data
+
+154
+00:09:56,740 --> 00:09:58,860
+register, automatically
+
+155
+00:09:58,860 --> 00:10:00,960
+RSC flag is clear.
+
+156
+00:10:01,820 --> 00:10:03,000
+When you read a character
+
+157
+00:10:03,000 --> 00:10:11,840
+from udr rxc flag is automatically clear right now we got the character sent from
+
+158
+00:10:12,620 --> 00:10:17,899
+pc we read the characters and from pc right
+
+159
+00:10:18,519 --> 00:10:20,279
+now without
+
+160
+00:10:20,279 --> 00:10:21,639
+pulling
+
+161
+00:10:21,639 --> 00:10:23,460
+RxC flag
+
+162
+00:10:23,460 --> 00:10:24,360
+without
+
+163
+00:10:24,360 --> 00:10:25,940
+pulling RxC flag
+
+164
+00:10:25,940 --> 00:10:27,740
+if you try to read
+
+165
+00:10:27,740 --> 00:10:29,539
+if you try to read
+
+166
+00:10:29,539 --> 00:10:31,399
+the UDR
+
+167
+00:10:31,399 --> 00:10:32,139
+register
+
+168
+00:10:32,139 --> 00:10:34,259
+then what would happen is
+
+169
+00:10:34,259 --> 00:10:37,220
+you would read the same
+
+170
+00:10:37,220 --> 00:10:39,200
+character again and again
+
+171
+00:10:39,200 --> 00:10:40,559
+but we don't need to do that
+
+172
+00:10:40,559 --> 00:10:43,279
+we want to read a new character
+
+173
+00:10:43,279 --> 00:10:43,919
+always
+
+174
+00:10:43,919 --> 00:10:46,360
+we don't want to read the same character
+
+175
+00:10:46,360 --> 00:10:47,740
+that's why we pull
+
+176
+00:10:47,740 --> 00:10:49,519
+RxC flag
+
+177
+00:10:49,519 --> 00:10:52,620
+till the receive operation
+
+178
+00:10:52,620 --> 00:10:53,899
+is over
+
+179
+00:10:53,899 --> 00:10:55,379
+then we read
+
+180
+00:10:55,379 --> 00:10:57,059
+the new character
+
+181
+00:10:57,059 --> 00:10:58,879
+in UDR
+
+182
+00:10:58,879 --> 00:11:01,120
+that is USAT data register
+
+183
+00:11:01,120 --> 00:11:03,519
+to this variable
+
+184
+00:11:03,519 --> 00:11:04,419
+right
+
+185
+00:11:04,419 --> 00:11:05,460
+after doing that
+
+186
+00:11:05,460 --> 00:11:06,559
+we call
+
+187
+00:11:06,559 --> 00:11:08,360
+transmit char function
+
+188
+00:11:08,360 --> 00:11:09,960
+right transmits
+
+189
+00:11:09,960 --> 00:11:11,360
+char function we call
+
+190
+00:11:11,360 --> 00:11:13,480
+and first when we
+
+191
+00:11:13,480 --> 00:11:15,399
+call the transmit char function we
+
+192
+00:11:15,399 --> 00:11:15,860
+use
+
+193
+00:11:15,860 --> 00:11:18,559
+opening square bracket as
+
+194
+00:11:18,559 --> 00:11:19,460
+the argument
+
+195
+00:11:19,460 --> 00:11:21,379
+that means we transmit
+
+196
+00:11:21,379 --> 00:11:23,120
+opening square bracket
+
+197
+00:11:23,120 --> 00:11:24,639
+then we transmit
+
+198
+00:11:24,639 --> 00:11:26,659
+the character that we receive
+
+199
+00:11:26,659 --> 00:11:28,500
+which is in the ch variable
+
+200
+00:11:28,500 --> 00:11:30,659
+the character that we receive
+
+201
+00:11:30,659 --> 00:11:31,919
+then we transmit
+
+202
+00:11:31,919 --> 00:11:37,139
+Then we transmit the closing square bracket.
+
+203
+00:11:37,399 --> 00:11:42,700
+So when these three statements, execution of entry, these three statements are over,
+
+204
+00:11:42,940 --> 00:11:47,179
+we have transmitted one enclosed character.
+
+205
+00:11:47,460 --> 00:11:48,799
+One enclosed character.
+
+206
+00:11:48,799 --> 00:11:51,919
+Now, where is this function?
+
+207
+00:11:52,360 --> 00:11:53,720
+Transmit cha function.
+
+208
+00:11:54,039 --> 00:11:54,279
+Yes.
+
+209
+00:11:54,279 --> 00:11:56,059
+this is the transmit
+
+210
+00:11:56,059 --> 00:11:56,779
+cha function
+
+211
+00:11:56,779 --> 00:11:58,720
+in the transmit cha function
+
+212
+00:11:58,720 --> 00:11:59,799
+we have
+
+213
+00:11:59,799 --> 00:12:01,360
+a parameter
+
+214
+00:12:01,360 --> 00:12:02,860
+to that parameter
+
+215
+00:12:02,860 --> 00:12:04,700
+we pass arguments
+
+216
+00:12:04,700 --> 00:12:05,500
+first time
+
+217
+00:12:05,500 --> 00:12:07,200
+we pass opening curly bracket
+
+218
+00:12:07,200 --> 00:12:09,559
+second time when we call
+
+219
+00:12:09,559 --> 00:12:11,820
+the transmit cha function we pass
+
+220
+00:12:11,820 --> 00:12:13,879
+the character that we receive
+
+221
+00:12:13,879 --> 00:12:16,019
+and third time
+
+222
+00:12:16,019 --> 00:12:17,940
+when we call the transmit cha function
+
+223
+00:12:17,940 --> 00:12:20,620
+we pass closing curly bracket.
+
+224
+00:12:20,960 --> 00:12:22,919
+And inside the transmit
+
+225
+00:12:22,919 --> 00:12:26,279
+function, again we pull.
+
+226
+00:12:27,120 --> 00:12:30,360
+This time we pull UDRE flag.
+
+227
+00:12:30,500 --> 00:12:33,440
+For that we use USAT status
+
+228
+00:12:33,440 --> 00:12:36,200
+and control register A. USAT
+
+229
+00:12:36,200 --> 00:12:40,759
+control and status register A. In the USAT control
+
+230
+00:12:40,759 --> 00:12:52,960
+status register A, we have UDRE flag. This is the UDRE flag. UDRE flag. Right? Let's
+
+231
+00:12:52,960 --> 00:13:04,600
+assume. Right? If you take this one. U C S R 0 A N.
+
+232
+00:13:04,600 --> 00:13:14,600
+Let us assume the initial value is xxxxxxxxxxx and 0.
+
+233
+00:13:14,600 --> 00:13:24,139
+X and 0 outcome is 0. X and 0 outcome is 0. X and 1 outcome is X. Likewise you get this
+
+234
+00:13:24,139 --> 00:13:34,659
+result. And then you take the negation of that. Now this is the UDRE flag. USAR data
+
+235
+00:13:34,659 --> 00:13:43,559
+register empty flag right if the data register udr register is empty this will be one if the udr
+
+236
+00:13:43,559 --> 00:13:48,399
+is not empty this is zero now when you
+

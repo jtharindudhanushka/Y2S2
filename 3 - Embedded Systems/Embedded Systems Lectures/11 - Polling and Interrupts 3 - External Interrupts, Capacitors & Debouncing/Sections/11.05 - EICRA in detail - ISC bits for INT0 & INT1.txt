@@ -1,0 +1,179 @@
+[0:04] Let's start with external interrupts.
+[0:06] Thereafter, we can go to pin change interrupts.
+[0:11] So, we'll start with external interrupts.
+[0:15] External interrupt registers.
+[0:17] The first register is External Interrupt Control Register A. EICRA Register. External Interrupt Control Register A. And this is that register. That register has two important bits.
+[0:37] two important bits. ISC01, ISC00. These are the two important bits in this register. Now,
+[0:51] these bits, ISC01, that means interrupt, sense, control 01. And the other bit, ISC00,
+[1:02] interrupt sense control
+[1:04] 0 0. These two
+[1:06] bits specify when to
+[1:09] interrupt on
+[1:10] int 0 bit.
+[1:13] When to interrupt on
+[1:14] int 0 bit. There are
+[1:16] four possible choices.
+[1:19] These are the possible choices.
+[1:21] If the both
+[1:22] bits are 0.
+[1:24] If the both bits are 0 0 0
+[1:27] CPU will be
+[1:28] interrupted when
+[1:30] int 0 pin is held low.
+[1:35] When int 0 pin is held logic low,
+[1:38] CPU will be interrupted if these two bits are
+[1:42] 0, 0. Right? So held low means
+[1:46] the pin you have to
+[1:48] hold the pin low until the current
+[1:54] instruction completes its execution.
+[1:57] right so held low means
+[2:00] the pin we have to hold
+[2:02] low until
+[2:04] the current instruction
+[2:06] currently running instruction
+[2:08] completes
+[2:10] its execution right
+[2:12] if you
+[2:12] keep holding
+[2:18] the pin low
+[2:19] in zero pin keep holding the
+[2:22] in zero pin you keep
+[2:24] holding low
+[2:25] until the current instruction completes its execution,
+[2:31] CPU will be interrupted.
+[2:32] But to do that, you have to set these two bits 0, 0.
+[2:36] The second option, 0, 1.
+[2:40] This bit 0, this bit 1.
+[2:43] Then CPU will be interrupted on logic change.
+[2:49] Will be interrupted, right?
+[2:52] on the logic change of int 0 pin.
+[2:55] Let's say int 0 pin is high
+[2:58] and it becomes low.
+[3:00] Logic change.
+[3:01] CPU will be interrupted.
+[3:04] Or int 0 pin is low
+[3:08] and it becomes high.
+[3:10] Logic change.
+[3:11] CPU will be interrupted.
+[3:13] Right.
+[3:14] But to do that,
+[3:15] you have to set these two bits,
+[3:17] 0 and 1.
+[3:19] 0 and 1.
+[3:21] The third option.
+[3:22] 1, 0. This bit 1, this bit 0.
+[3:25] I see ISE 0, 1 bit 1.
+[3:29] ISE 0, 0 bit 0. This is the third option.
+[3:34] CPU will be interrupted, right?
+[3:37] When int 0 pin is going low.
+[3:42] Int 0 pin is going low. In 0 pin
+[3:46] going low means int 0 pin was high.
+[3:49] Now it is going low and in next moment it will be low.
+[3:55] Next moment it will be low but at the moment it is going low.
+[4:00] It is not low.
+[4:01] It is not high.
+[4:03] It is going low.
+[4:04] It was high.
+[4:05] It is going low.
+[4:07] That means falling edge of the pulse.
+[4:10] CPU will be interrupted.
+[4:11] Then the last option if you set the both bits 1-1.
+[4:14] CPU will be interrupted when int 0 pin is going high.
+[4:21] When int 0 pin is going high.
+[4:25] Int 0 pin going high means int 0 pin was low.
+[4:29] And now it is going high.
+[4:32] And very soon it will be high.
+[4:35] But now it is not high.
+[4:38] It is not low.
+[4:39] It was low.
+[4:40] Now it is going high.
+[4:42] And very soon it will be high.
+[4:44] rising edge of the pulse,
+[4:47] CPU will be interrupted.
+[4:48] Can you understand?
+[4:52] Right.
+[4:52] These are the four possible choices.
+[4:55] You can specify
+[4:57] when to interrupt
+[4:58] on int 0p.
+[5:02] When to interrupt
+[5:03] on int 0p.
+[5:05] Right.
+[5:06] Excuse me.
+[5:07] Yes.
+[5:08] What about the other 5 bits
+[5:11] of the EICR register?
+[5:13] Good question. Now, during in my slides, when you see the registers, sometimes you will see
+[5:24] two particular bits or one particular couple of bits with some symbolic names. That means we are
+[5:33] going to discuss about these bits in the slide. And some bits you will see not applicable. That
+[5:41] means these two bits are not applicable for this particular slide but they will be discussed
+[5:49] in another slide. So these two bits will be discussed in another slide but for this slide
+[5:58] they are not applicable. Now there are symbolic names that means we are going to discuss we
+[6:03] discuss them in the current slide and these bits will be discussed in the future slides
+[6:10] and these bits will be discussed
+[6:13] not in this slide set
+[6:16] but could be in a different slide set.
+[6:20] That's why some hypers.
+[6:23] These two will be discussed
+[6:25] in the next couple of slides
+[6:26] and these two we have already discussed
+[6:30] in the current slide
+[6:31] and these will not be discussed
+[6:34] in the current slide set
+[6:37] but maybe they may be discussed in a different slide set.
+[6:42] But if you are interested about these bits,
+[6:45] why don't you refer the data sheet?
+[6:53] And in the data sheet, all the bits are explained.
+[6:57] But in my lecture, sometimes certain information
+[7:03] I don't discuss
+[7:06] because then it becomes
+[7:09] more complicated.
+[7:11] Certain information will be
+[7:13] discussed later, not
+[7:14] immediately.
+[7:18] To make
+[7:19] the things much
+[7:21] simpler so that students
+[7:23] can learn easily.
+[7:25] But if you go to the data sheet,
+[7:27] data sheet will give you everything at once.
+[7:29] Right? So in
+[7:31] teaching, we normally
+[7:33] try to make the things
+[7:36] simple. Therefore,
+[7:38] certain things
+[7:39] we discuss, certain things we discuss
+[7:42] later, certain things
+[7:44] we don't discuss
+[7:45] throughout the slide.
+[7:48] To make
+[7:50] the things simple.
+[7:52] That's a way of teaching.
+[7:54] It's a teaching strategy.
+[7:56] But students, you are university students,
+[7:58] so it's very good you are keen on
+[8:00] these things. Then what you have to do
+[8:02] is go to the data sheet, read about these four bits, one, two, three, four, these four bits.
+[8:11] And these two bits, don't worry, in the next couple of slides you will learn. So that's the,
+[8:19] these are the notations that I use in my slides. If the particular bits are with symbolic names,
+[8:26] they will be discussed in the current slide. If the if particular bits with not applicable,
+[8:32] that means not applicable to the current slide, but they will be discussed very soon.
+[8:37] If there are hypers, they will not be discussed throughout this particular slide set. But they
+[8:44] may be discussed in a different slide set. But if you are very keen, go to the data sheet and read.
+[8:52] Anything else? Very good question you asked. Right. Now these are the four choices when to interrupt on int 0 pin. But not int 0 pin. There are other int pins. For example, ATmega328P microcontroller has two int pins. int 0 and int 1. Two int pins.
+[9:14] So what about INT1 pin? Let's see. Same register, external interrupt control register A. Now we discuss the next two bits. ISC11, ISC10. Next two bits. Interrupt sense control 11. Interrupt sense control 10 bits.
+[9:37] These specify when to interrupt on INT1 pin. Again, the same set of choices, right? Same set of choices. The microcontroller has two external interrupt pins. They are INT0 and INT1.
+[9:54] So, these int 0 and int 1 pins you can use to connect external sensors, external peripheral devices.
+[10:03] And then you can specify when to interrupt the CPU.
+[10:07] If the pin is held low, if there's a logic change on the pin, if the pin is going low, if the pin is going high, when to interrupt the CPU.
+[10:20] Any question?
+[10:21] So, there are no difference between INT1 and INT0, no?
+[10:29] Yes.
+[10:30] Same kind of?
+[10:33] Yeah. Both pins are similar, right? You can connect two different sensors to these two pins,
+[10:40] IN0 and IN1. Both pins can handle external interaction, right? But you can specify,
+[10:48] For example, logic change for int 0 pin and rising edge for int 1 pin.
+[10:53] Different choices you can set for two different pins.
+[10:56] That is possible.
+[10:57] Right.
+[10:58] Then we need to enable, disable interrupts on these pins.

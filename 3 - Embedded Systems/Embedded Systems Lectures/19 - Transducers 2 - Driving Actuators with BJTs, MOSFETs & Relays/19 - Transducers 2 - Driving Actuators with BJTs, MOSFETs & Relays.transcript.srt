@@ -1,0 +1,2832 @@
+1
+00:00:00,000 --> 00:00:29,980
+Right. This is where we stopped last time. We were discussing about sensors and actuators, that means transducers, common name, and we saw that most of the actuators require higher voltages or they draw higher currents than an I-O port pin of this time.
+
+2
+00:00:30,000 --> 00:00:32,920
+any microcontroller can deliver, right?
+
+3
+00:00:33,439 --> 00:00:34,479
+So that's a problem.
+
+4
+00:00:34,600 --> 00:00:39,539
+That means those actuators, you cannot directly connect
+
+5
+00:00:39,539 --> 00:00:44,500
+to an IOP enough a microcontroller, right?
+
+6
+00:00:45,060 --> 00:00:47,759
+So basically some microcontrollers,
+
+7
+00:00:47,859 --> 00:00:50,700
+there are basically two voltages, they operate.
+
+8
+00:00:51,179 --> 00:00:54,479
+Some microcontrollers operate at five volts.
+
+9
+00:00:54,479 --> 00:00:58,240
+Some microcontrollers, we supply 3.3 volts.
+
+10
+00:00:58,240 --> 00:01:02,619
+So, that depends on the microcontroller. You have to find out that from the data sheet.
+
+11
+00:01:03,259 --> 00:01:11,739
+Right. Let's say your microcontroller is a 5 volt operated microcontroller like 80 mega 328p.
+
+12
+00:01:12,459 --> 00:01:21,519
+That kind of microcontroller can provide you 5 volts from its IO port pins.
+
+13
+00:01:21,519 --> 00:01:32,719
+from its I.O. port pins you can get 5 volts. If the microcontroller is a 3.3 microcontroller,
+
+14
+00:01:32,719 --> 00:01:42,219
+3.3 volt operated microcontroller, its I.O. pins can give you 3.3 volts. But you know that,
+
+15
+00:01:42,659 --> 00:01:48,500
+you saw that some actuators, for example, these thermoelectric coolers,
+
+16
+00:01:48,500 --> 00:01:55,040
+They require 12 volts power supply. The microcontroller I.O. pin can deliver maximum 5 volts.
+
+17
+00:01:55,560 --> 00:02:00,120
+Now, how can we provide 12 volts to this thermoelectric cooler?
+
+18
+00:02:00,840 --> 00:02:13,539
+Oh, another way. A microcontroller output pin, the I.O. port pin, input output port pin can deliver typically a very tiny amount of current.
+
+19
+00:02:13,539 --> 00:02:19,599
+Again, that depends on the microcontroller. The actual maximum current that the microcontroller
+
+20
+00:02:19,599 --> 00:02:28,080
+I.O. port pin can deliver, you have to find out from the data sheet. For example, 80 mega 328p
+
+21
+00:02:28,080 --> 00:02:34,759
+microcontroller can deliver an I.O. port pin of 80 mega 328p microcontroller can deliver
+
+22
+00:02:34,759 --> 00:02:45,460
+maximum of 40 milliampere. 40 milliampere. Right. Now even a small motor, right, very toy motor,
+
+23
+00:02:45,460 --> 00:02:56,539
+which is in your kit, I ask you to buy 9 volt small motor, that motor even without any load,
+
+24
+00:02:56,539 --> 00:02:58,539
+I mean, no loads condition.
+
+25
+00:02:59,080 --> 00:03:01,659
+That is the free running state.
+
+26
+00:03:02,280 --> 00:03:06,860
+The motor draws more than 75 million.
+
+27
+00:03:07,340 --> 00:03:09,439
+It draws more than 75 million.
+
+28
+00:03:09,780 --> 00:03:13,460
+But the IO port pin can deliver maximum 40 million.
+
+29
+00:03:13,919 --> 00:03:16,580
+So this 40 is not a universal value.
+
+30
+00:03:16,819 --> 00:03:19,280
+That depends on the microcontroller you use.
+
+31
+00:03:19,340 --> 00:03:21,840
+You have to get that from the data sheet.
+
+32
+00:03:21,840 --> 00:03:25,180
+I'm talking about the ATmega 328p microcontroller.
+
+33
+00:03:25,180 --> 00:03:32,520
+its I.O. port pins can deliver maximum 40 million. Now small motor, small toy motor in your kit
+
+34
+00:03:32,520 --> 00:03:40,800
+that requires when there is no load, when it is free running about 75 million. If you put a load
+
+35
+00:03:40,800 --> 00:03:49,360
+to the motor, I mean if you fix a fan, if you fix a wheel, if you fix a belt, some load if you put
+
+36
+00:03:49,360 --> 00:03:54,599
+onto the motor, the motor would draw more current, probably 100 mAh.
+
+37
+00:03:55,099 --> 00:04:03,000
+So the question is, if you directly connect the motor to an IO port pin of a microcontroller,
+
+38
+00:04:03,520 --> 00:04:10,340
+then the motor would try to draw whatever the current it requires.
+
+39
+00:04:11,199 --> 00:04:17,160
+It doesn't care whether the microcontroller, IO port pin can deliver that or not.
+
+40
+00:04:17,160 --> 00:04:18,199
+It doesn't care.
+
+41
+00:04:18,199 --> 00:04:25,000
+It tries to draw whatever it requires, whatever the amount of current it requires.
+
+42
+00:04:26,000 --> 00:04:35,860
+In this example, this tiny small motor that would try to draw 75 milliampere from IEO port pin.
+
+43
+00:04:36,360 --> 00:04:39,060
+Because you have to connect the motor directly to IEO port pin.
+
+44
+00:04:39,600 --> 00:04:41,800
+It would try to draw 75 milliampere.
+
+45
+00:04:41,800 --> 00:04:48,720
+Then micro control IO pin also tries to deliver 75 mA.
+
+46
+00:04:49,139 --> 00:04:50,300
+It tries to deliver.
+
+47
+00:04:50,860 --> 00:04:52,300
+The motor tries to draw.
+
+48
+00:04:53,300 --> 00:04:55,899
+The IO port pin tries to deliver.
+
+49
+00:04:56,660 --> 00:05:01,720
+But the maximum current that the IO port pin can deliver is 40 mA.
+
+50
+00:05:02,240 --> 00:05:02,779
+Right.
+
+51
+00:05:03,100 --> 00:05:06,399
+For this example, the 80 mega 328 P micro.
+
+52
+00:05:06,399 --> 00:05:11,600
+But it tries to deliver 75, 35 mA greater than its maximum.
+
+53
+00:05:11,800 --> 00:05:18,860
+As a result, it would be heated and locked and will soon burn out.
+
+54
+00:05:19,519 --> 00:05:21,800
+So how do we prevent this?
+
+55
+00:05:22,079 --> 00:05:26,160
+If the microcontroller cannot supply the required voltage,
+
+56
+00:05:26,579 --> 00:05:30,939
+if the microcontroller cannot deliver the required current,
+
+57
+00:05:31,399 --> 00:05:34,980
+how can we drive high power actuators?
+
+58
+00:05:35,259 --> 00:05:37,399
+That's what we are going to discuss today.
+
+59
+00:05:37,959 --> 00:05:38,579
+Is that clear?
+
+60
+00:05:39,120 --> 00:05:39,459
+Right.
+
+61
+00:05:39,459 --> 00:05:55,980
+Now, if the device is a high power device and the microcontroller is a low power very computing device, then the high power device and the low power device when you are connecting together, you need to interface them.
+
+62
+00:05:55,980 --> 00:05:59,699
+Right. You need some interface in between them. Right.
+
+63
+00:06:01,439 --> 00:06:08,819
+Driving with BJT. Driving high power actuator with BJT.
+
+64
+00:06:09,459 --> 00:06:21,480
+What is BJT? BJT stands for bipolar, bipolar, B-I-P-O-L-A-R, bipolar junction transistor.
+
+65
+00:06:21,480 --> 00:06:28,319
+Because this transistor has two junctions, right? Two polarized junctions. That's why we call it
+
+66
+00:06:28,319 --> 00:06:36,819
+bipolar, two poles, two polarized junctions, right? Although we call it BJT, it's a typical
+
+67
+00:06:36,819 --> 00:06:46,379
+transistor. Right. Now, in this small diagram, you can see this, how this transistor works.
+
+68
+00:06:46,800 --> 00:06:55,259
+The transistor is a semiconductor device and it has three pins, base, collector and emitter.
+
+69
+00:06:55,920 --> 00:07:02,779
+When you flow a small current in the base emitter circuit like this, you flow a small
+
+70
+00:07:02,779 --> 00:07:08,459
+current in the base emitter circuit. That current we measure using a micro emitter.
+
+71
+00:07:09,019 --> 00:07:14,540
+It's a very tiny current. That's why we use a micro emitter, right? And the battery provides
+
+72
+00:07:14,540 --> 00:07:20,620
+that current. And we have limited that current using a resistor. Here you can see that resistor
+
+73
+00:07:20,620 --> 00:07:28,220
+also. So the base emitter circuit current we have limited to micro ampere. Micro emitter we have used
+
+74
+00:07:28,220 --> 00:07:33,980
+to measure and the battery supplies the current. Small tiny current goes in the base.
+
+75
+00:07:35,339 --> 00:07:41,980
+When a small current flows in the base emitter circuit, the transistor will allow to flow
+
+76
+00:07:42,620 --> 00:07:48,939
+a larger current in the collector emitter circuit. It allows to flow a larger current
+
+77
+00:07:48,939 --> 00:07:55,500
+in the collector emitter circuit and that current we measure using milli-ammeter. So milli-ammeter,
+
+78
+00:07:55,500 --> 00:08:02,779
+milliampere, the 1000 microampere, 1 milliampere. So, 1000 times higher current compared to
+
+79
+00:08:03,660 --> 00:08:10,379
+the current flows in the base emitter circuit, the current flows in the collector emitter circuit
+
+80
+00:08:10,379 --> 00:08:19,100
+is 1000 times higher. So, it is a larger current. Right. Now, if you stop this current, the base
+
+81
+00:08:19,100 --> 00:08:26,060
+emitter circuit current if you stop, transistor will stop flowing collector emitter current.
+
+82
+00:08:26,060 --> 00:08:32,779
+So transistor is like an electronic switch then. To trigger the switch, collector emitter switch,
+
+83
+00:08:32,779 --> 00:08:37,100
+if you want to trigger you have to flow a current in the base emitter circuit.
+
+84
+00:08:37,740 --> 00:08:44,059
+If you flow a small current in the base emitter circuit, you can turn on the transistor and the
+
+85
+00:08:44,059 --> 00:08:48,059
+a large current will go through collector emitter circuit.
+
+86
+00:08:48,059 --> 00:08:56,059
+If you want to turn off that transistor, you stop flowing small current in the base emitter circuit.
+
+87
+00:08:56,059 --> 00:09:00,059
+As soon as you stop flowing the base emitter circuit current,
+
+88
+00:09:00,059 --> 00:09:08,059
+the transistor will immediately stop flowing the current in the collector emitter circuit also.
+
+89
+00:09:08,059 --> 00:09:12,059
+If you increase the flow, current flow in the base emitter circuit,
+
+90
+00:09:12,059 --> 00:09:18,279
+if you increase, the transistor will increase current flow in the collector emitter circuit.
+
+91
+00:09:18,539 --> 00:09:24,659
+If you decrease the current flow in the base emitter circuit, the transistor will decrease
+
+92
+00:09:24,659 --> 00:09:31,759
+the current flow in the collector emitter circuit. In other words, to control a larger current
+
+93
+00:09:31,759 --> 00:09:38,960
+using a smaller current, we can use transistor. Transistor is a device, using that you can control
+
+94
+00:09:38,960 --> 00:09:46,879
+a larger current using a smaller current. Right. So, this transistor operated with the current.
+
+95
+00:09:46,879 --> 00:09:53,279
+Therefore, BJT, bipolar junction transistors, we call current driven, current driven.
+
+96
+00:09:53,919 --> 00:10:02,080
+This transistor is driven by a current. So, we call it current driven. Right. Now, in this animation,
+
+97
+00:10:02,080 --> 00:10:10,379
+you can see how this BJT transistors work. Now you can see this base emitter small current
+
+98
+00:10:10,379 --> 00:10:17,360
+flow. That base emitter small current flow operates this gate. So using that base emitter
+
+99
+00:10:17,360 --> 00:10:25,399
+small current flow we can operate the collector emitter current flow. We can adjust. If you
+
+100
+00:10:25,399 --> 00:10:28,299
+you can see, you can do a small water flow to the them.
+
+101
+00:10:28,299 --> 00:10:29,379
+And, you can do a small but what a very great e-dent.
+
+102
+00:10:29,379 --> 00:10:30,139
+And, you can do.
+
+103
+00:10:30,139 --> 00:10:33,960
+small water in the base of the channel, you can flow.
+
+104
+00:10:33,960 --> 00:10:36,700
+a small, but relatively large,
+
+105
+00:10:36,700 --> 00:10:40,460
+a water flow in the collect-emeter-channel, if you flow,
+
+106
+00:10:40,460 --> 00:10:43,120
+a little bit large a water flow, in the base, in the channel,
+
+107
+00:10:43,120 --> 00:10:43,899
+proportion to that, you can love, a large.
+
+108
+00:10:43,899 --> 00:10:44,279
+a water flow, in the collect-emeter, in theemeter, in the...
+
+109
+00:10:44,279 --> 00:10:44,580
+a very the s, a more, a more, a more, a more, a more, a...
+
+110
+00:10:44,580 --> 00:10:46,039
+[unclear — Sinhala / crosstalk]
+
+111
+00:10:46,039 --> 00:10:46,440
+a more, a more, a more, a...
+
+112
+00:10:46,440 --> 00:10:46,759
+a more, a more, a more, a...
+
+113
+00:10:46,759 --> 00:10:47,039
+a more, a more, a...
+
+114
+00:10:47,039 --> 00:10:47,340
+a more, a...
+
+115
+00:10:47,340 --> 00:10:47,539
+a...
+
+116
+00:10:47,539 --> 00:10:47,759
+a...
+
+117
+00:11:00,139 --> 00:11:04,019
+a larger waterfall. That's how a BJT,
+
+118
+00:11:04,240 --> 00:11:07,019
+bipolar junction transistor works.
+
+119
+00:11:07,019 --> 00:11:10,679
+Right. So move forward, you should be
+
+120
+00:11:10,679 --> 00:11:14,659
+very well understood the concept of
+
+121
+00:11:14,659 --> 00:11:18,059
+transistor. Is that clear? How the transistor works.
+
+122
+00:11:18,279 --> 00:11:20,960
+Sir, can we input
+
+123
+00:11:20,960 --> 00:11:25,460
+ampere, no, milliampere
+
+124
+00:11:25,460 --> 00:11:29,299
+kind of current to base
+
+125
+00:11:29,299 --> 00:11:30,580
+and then get
+
+126
+00:11:30,580 --> 00:11:32,759
+ampere
+
+127
+00:11:32,759 --> 00:11:35,519
+current from the
+
+128
+00:11:35,519 --> 00:11:37,200
+collector? Yes.
+
+129
+00:11:37,759 --> 00:11:39,220
+Some transistors
+
+130
+00:11:39,220 --> 00:11:41,200
+are power transistors.
+
+131
+00:11:41,580 --> 00:11:42,620
+They can flow
+
+132
+00:11:42,620 --> 00:11:45,259
+ampere current. For example,
+
+133
+00:11:45,399 --> 00:11:47,600
+even 5 ampere, 10 ampere
+
+134
+00:11:47,600 --> 00:11:49,399
+in the collector
+
+135
+00:11:49,399 --> 00:11:51,679
+emitter circuit. Such transistors,
+
+136
+00:11:51,980 --> 00:11:53,779
+right, to operate
+
+137
+00:11:53,779 --> 00:11:55,419
+it, you have
+
+138
+00:11:55,419 --> 00:11:57,320
+to flow a milliampere
+
+139
+00:11:57,320 --> 00:11:59,120
+current in the base in the circuit.
+
+140
+00:11:59,299 --> 00:12:04,059
+You are correct. So how much ampere a transistor can handle?
+
+141
+00:12:04,639 --> 00:12:07,659
+So that means collector emitter continuous current.
+
+142
+00:12:08,620 --> 00:12:11,659
+How much current the collector emitter circuit can flow?
+
+143
+00:12:12,220 --> 00:12:16,159
+Right. You can find out from the data sheet of the transistor,
+
+144
+00:12:16,460 --> 00:12:20,059
+which is called collector emitter continuous current.
+
+145
+00:12:20,059 --> 00:12:23,700
+Okay. Anything else? Any other question?
+
+146
+00:12:24,899 --> 00:12:28,779
+Right. I am going to show you a data sheet.
+
+147
+00:12:29,299 --> 00:12:40,659
+of BC 546, 547, 548 series of transistors. So these are very cheap, widely used transistors.
+
+148
+00:12:40,659 --> 00:12:48,860
+Very cheap and widely used, right? The cost is about 350 rupees per transistor. Now this
+
+149
+00:12:48,860 --> 00:12:57,059
+is what the question Thilin asked. Continuous collector current. This transistor can handle
+
+150
+00:12:57,059 --> 00:13:04,899
+maximum of 100 milliampere right it can handle maximum of 100 milliampere and between its
+
+151
+00:13:04,899 --> 00:13:12,980
+collector and emitter you can have a voltage difference up to 45 volts if you are using
+
+152
+00:13:12,980 --> 00:13:20,740
+bc547 that is the transistor i ask you to buy 45 volts voltage difference you can have across the
+
+153
+00:13:20,740 --> 00:13:26,500
+collector and emitter. And the collector emitter circuit can flow maximum 100 milliamp.
+
+154
+00:13:27,700 --> 00:13:36,100
+And this is the physical shape of the transistor and the pin number one is the collector,
+
+155
+00:13:36,100 --> 00:13:43,779
+pin number two is the base, pin number three is the emitter. There are a lot of details you can
+
+156
+00:13:43,779 --> 00:13:52,740
+find in this data sheet, right, related to this particular transistor. Right. Then when you take BJT,
+
+157
+00:13:53,460 --> 00:14:03,220
+there are two kinds of BJT, NPN and PNP. So you have heard probably NPN transistors, PNP transistor.
+
+158
+00:14:03,220 --> 00:14:10,419
+Right. What is the meaning? In the NPN type, you know that there are two types of semiconductors,
+
+159
+00:14:10,419 --> 00:14:16,899
+positive semiconductors and negative semiconductor. Positive semiconductors we call p-type semiconductors,
+
+160
+00:14:17,940 --> 00:14:23,860
+negative semiconductors we call n-type semiconductor, right. So these semiconductors are made
+
+161
+00:14:24,500 --> 00:14:33,059
+by adding some impurities to the silicon, right. In the O-level science or A-level physics, I'm sure
+
+162
+00:14:33,059 --> 00:14:42,320
+you have learned, right, the P-N junctions, how to create a P-N junction. When you combine
+
+163
+00:14:42,320 --> 00:14:48,200
+two P-type and N-type semiconductors together, you get a P-N junction. And how semiconductors
+
+164
+00:14:48,200 --> 00:14:56,440
+are made using silicon by adding some impurities, right. Now, I'm not going to talk about that
+
+165
+00:14:56,440 --> 00:15:08,320
+theory part, right? You have learned that in the school. Now NPN transistor means a P-type
+
+166
+00:15:08,320 --> 00:15:17,799
+semiconductor sandwiched between two N-type semiconductors. So between two N-type semiconductors,
+
+167
+00:15:17,799 --> 00:15:25,360
+right, we have got a P-type semiconductor sandwich. So that kind of transistor we call
+
+168
+00:15:25,360 --> 00:15:35,919
+NPN. P sandwiched by two N-type semiconductors. In such transistors, we have to flow a small
+
+169
+00:15:35,919 --> 00:15:43,259
+current in the base emitter circuit to get a larger current flow in the collector emitter
+
+170
+00:15:43,259 --> 00:15:50,320
+circuit. That's what we discuss. Then we have slightly different transistor type called PNP.
+
+171
+00:15:50,320 --> 00:15:56,159
+N-type semiconductor sandwiched between two P-type semiconductors.
+
+172
+00:15:56,460 --> 00:16:01,039
+N-type semiconductor sandwiched between two P-type semiconductors.
+
+173
+00:16:01,399 --> 00:16:03,700
+In such a transistor, how can we identify that?
+
+174
+00:16:04,039 --> 00:16:04,779
+The symbol.
+
+175
+00:16:05,399 --> 00:16:08,779
+In the symbol, the arrow towards the base.
+
+176
+00:16:09,600 --> 00:16:15,480
+In the N-type NPN transistor, the arrow in the emitter arrow towards emitter.
+
+177
+00:16:16,139 --> 00:16:18,759
+Arrow indicates the current flow.
+
+178
+00:16:18,759 --> 00:16:21,840
+Arrow indicates the current flow, direction of current flow.
+
+179
+00:16:22,379 --> 00:16:29,480
+Now in the PNP type transistor, we have to flow a current from emitter to base.
+
+180
+00:16:29,960 --> 00:16:30,659
+Other way around.
+
+181
+00:16:31,299 --> 00:16:32,620
+Emitter to base.
+
+182
+00:16:33,080 --> 00:16:37,759
+And then a larger current flow will go through emitter to collector.
+
+183
+00:16:38,379 --> 00:16:43,519
+The arrow indicates the direction, flow of the current flow direction.
+
+184
+00:16:44,120 --> 00:16:44,779
+Is that clear?
+
+185
+00:16:45,799 --> 00:16:48,440
+Difference between NPN and PNP.
+
+186
+00:16:48,759 --> 00:17:08,900
+Right. Then here you can see some physical appearance, physical appearance of some transistor. Some are very small. So this is a surface mount device, SMD. These are typical through hole devices that we use.
+
+187
+00:17:08,900 --> 00:17:17,619
+right? And some transistors are fairly large and they have a small hole where you can put a
+
+188
+00:17:17,619 --> 00:17:25,799
+bolt and nut and fix the transistor to some aluminum heat sink. Because these transistors,
+
+189
+00:17:25,960 --> 00:17:31,859
+these are called power transistors, right? When they operate, they generate a lot of heat.
+
+190
+00:17:31,859 --> 00:17:39,160
+unless you remove that heat the transistor will burn out very soon. So to remove the heat what
+
+191
+00:17:39,160 --> 00:17:47,579
+we do is we mount the transistor to a heat sink. To do that you can use this hole. You can put a
+
+192
+00:17:47,579 --> 00:17:54,400
+bolt and nut and fix the transistor, mount the transistor to an aluminium heat sink to remove
+
+193
+00:17:54,400 --> 00:18:02,319
+the heat from the transistor. So they are called power transistors. So they can flow ampere current,
+
+194
+00:18:02,319 --> 00:18:08,720
+large ampere current, 10 ampere, 5 ampere, large currents they can flow. But these small tire
+
+195
+00:18:08,720 --> 00:18:15,119
+transistors, they can handle only milli amperes. So they don't generate much heat. So therefore,
+
+196
+00:18:15,119 --> 00:18:18,539
+You don't need to have heat sinks for them.
+
+197
+00:18:20,480 --> 00:18:25,259
+Some physical appearance of some transistor.
+
+198
+00:18:25,599 --> 00:18:25,839
+Right.
+
+199
+00:18:25,839 --> 00:18:30,119
+Now with all these things, let's come to our problem.
+
+200
+00:18:30,279 --> 00:18:37,779
+Our problem is how to drive a high power device using a microcontroller.
+
+201
+00:18:38,299 --> 00:18:42,099
+Driving a high power actuator from an I-O port.
+
+202
+00:18:42,460 --> 00:18:43,059
+We know that.
+
+203
+00:18:43,059 --> 00:18:50,579
+the microcontroller that we use, ATmega328P, can deliver a small current through its IO port.
+
+204
+00:18:51,680 --> 00:19:02,759
+Maximum 40 mAh. But the small motor in our kit requires 75 mAh here, even at the no load
+
+205
+00:19:02,759 --> 00:19:11,220
+condition. So that even small motor, we cannot drive directly from the IO port. So we need to
+
+206
+00:19:11,220 --> 00:19:19,400
+interface. To interface the high power actuator to the microcontroller, we can use the BJT,
+
+207
+00:19:19,680 --> 00:19:28,859
+bipolar junction for our system. I will show you the interfacing circuit. Now here you have the
+
+208
+00:19:28,859 --> 00:19:34,240
+microcontroller. This is the I.O. port pin. This is the ground pin of microcontroller,
+
+209
+00:19:34,460 --> 00:19:40,660
+power supply pin, 5 volts and these are I.O. port pins. One of the I.O. port pins we have used
+
+210
+00:19:40,660 --> 00:19:46,220
+and we have connected the transistor's base to the IO port P.
+
+211
+00:19:46,660 --> 00:19:49,220
+The emitter we have connected to the ground.
+
+212
+00:19:49,799 --> 00:19:52,759
+To the collector we have connected the motor
+
+213
+00:19:52,759 --> 00:19:57,240
+and the other side of the motor we have connected to 9 volt power supply,
+
+214
+00:19:57,339 --> 00:20:01,900
+whatever the power supply you need to drive the motor, right?
+
+215
+00:20:01,900 --> 00:20:05,319
+In our case, we have 9 volt small motors,
+
+216
+00:20:05,460 --> 00:20:09,579
+so 9 volt power supply using a 9 volt battery, whatever, right?
+
+217
+00:20:09,579 --> 00:20:15,960
+Now, even that 9 volt battery ground, the negative terminal we connect to the ground.
+
+218
+00:20:16,400 --> 00:20:23,299
+So, common ground, right, microcontroller runs at 5 volts and the motor runs at 9 volts,
+
+219
+00:20:23,420 --> 00:20:26,319
+but their ground are common, common ground.
+
+220
+00:20:26,819 --> 00:20:31,480
+9 volt battery, negative terminal, we connect to the same ground, right.
+
+221
+00:20:32,000 --> 00:20:36,420
+Two different voltages, microcontroller operates at very low voltage.
+
+222
+00:20:36,420 --> 00:20:40,460
+The motor is operated at very high voltage 9 volts.
+
+223
+00:20:40,839 --> 00:20:43,619
+Now how does this work?
+
+224
+00:20:43,940 --> 00:20:44,339
+Let's see.
+
+225
+00:20:44,700 --> 00:20:52,420
+Now writing a firmware code, you can set this IO port pin high.
+
+226
+00:20:53,039 --> 00:20:56,619
+You can set this IO port pin high.
+
+227
+00:20:57,059 --> 00:20:58,259
+This IO port pin high.
+
+228
+00:20:58,700 --> 00:21:04,619
+Then the voltage at this pin becomes 5 volts because it is logic high.
+
+229
+00:21:04,619 --> 00:21:25,200
+You can do that using code. Then voltage at the base becomes 5 volts as a result. Now between base and emitter there is a voltage difference. Why? Emitter voltage is 0 volts. Now there is a voltage difference between base and emitter.
+
+230
+00:21:25,200 --> 00:21:44,200
+That creates a small voltage difference between base and emitter. As a result, small current flows in the base emitter circuit. We make sure this is a small current using a current limiting resistor. Using a current limiting resistor, typically 1 kilo ohm.
+
+231
+00:21:44,200 --> 00:21:52,200
+In this situation we use 1 kilo ohm resistor to limit the current in the base emitter circuit.
+
+232
+00:21:52,200 --> 00:21:58,740
+When there is a small current flows in the base emitter circuit, transistor allows to
+
+233
+00:21:58,740 --> 00:22:02,480
+flow a larger current in the collector emitter circuit.
+
+234
+00:22:02,480 --> 00:22:05,599
+A larger current goes through the collector emitter circuit.
+
+235
+00:22:05,599 --> 00:22:09,299
+Now this larger current goes through the motor.
+
+236
+00:22:09,299 --> 00:22:15,819
+When the larger current flows in the collectivity circuit from 9-volt battery to the ground,
+
+237
+00:22:15,819 --> 00:22:17,059
+that goes through the motor.
+
+238
+00:22:17,059 --> 00:22:25,480
+Right, when there is a current flow through the motor, motor starts rotating.
+
+239
+00:22:25,480 --> 00:22:31,279
+To rotate the motor, the voltage that the motor requires, motor gets that voltage from
+
+240
+00:22:31,279 --> 00:22:33,019
+the 9-volt battery.
+
+241
+00:22:33,019 --> 00:22:39,779
+the current required for the motor, let's say 75 milliampere, the motor draws that current
+
+242
+00:22:39,779 --> 00:22:47,400
+through the transistor from the battery. The microcontroller provides a very small microampere
+
+243
+00:22:47,400 --> 00:22:54,960
+current to turn on the transistor. So, there is no load on that microcontroller IO port
+
+244
+00:22:54,960 --> 00:23:01,799
+pin because it delivers just a tiny microampere current to turn on the transistor. Thereafter,
+
+245
+00:23:01,799 --> 00:23:07,740
+The transistor delivers whatever the current the motor requires to run the motor.
+
+246
+00:23:07,740 --> 00:23:14,500
+Now in our example we can use BC547 as the transistor.
+
+247
+00:23:14,500 --> 00:23:18,980
+We can use BC547 as the transistor.
+
+248
+00:23:18,980 --> 00:23:19,980
+Why?
+
+249
+00:23:19,980 --> 00:23:21,799
+It can handle 100 milliampere.
+
+250
+00:23:21,799 --> 00:23:25,799
+We know that motor draws 75 milliampere.
+
+251
+00:23:25,799 --> 00:23:31,920
+Okay, there's a 25 milliampere buffer load also.
+
+252
+00:23:31,920 --> 00:23:35,720
+So transistor can handle 75 milliampere, definitely.
+
+253
+00:23:36,500 --> 00:23:41,519
+So using this small BC547, we can drive 75 milliampere transistor.
+
+254
+00:23:41,960 --> 00:23:48,400
+Now in this situation, microcontroller even does not deliver 40 milliampere that it is capable of.
+
+255
+00:23:48,400 --> 00:23:58,400
+It delivers just a micro ampere current to what you call turn on the transistor.
+
+256
+00:23:58,400 --> 00:24:01,400
+Is that clear? Any question?
+
+257
+00:24:01,400 --> 00:24:08,400
+Now if you want to stop the motor, you set the micro control IO port pin logic low.
+
+258
+00:24:08,400 --> 00:24:14,400
+As a result, the voltage of the pin becomes 0 volts.
+
+259
+00:24:14,400 --> 00:24:19,839
+The voltage of the transistor's base becomes 0 volts.
+
+260
+00:24:21,400 --> 00:24:26,079
+Now there is no voltage difference between the base and emitter.
+
+261
+00:24:26,220 --> 00:24:27,259
+No voltage difference.
+
+262
+00:24:27,460 --> 00:24:31,099
+If no voltage difference, there will be no current flow.
+
+263
+00:24:31,619 --> 00:24:32,339
+No current flow.
+
+264
+00:24:32,579 --> 00:24:34,720
+No voltage difference means no current flow.
+
+265
+00:24:35,099 --> 00:24:39,160
+As a result, now there is no current flow in the base emitter circuit.
+
+266
+00:24:39,160 --> 00:24:46,059
+So, transistor will stop flowing the larger current in the collector emission.
+
+267
+00:24:46,619 --> 00:24:48,940
+Now, there is no current flow through the motor.
+
+268
+00:24:49,940 --> 00:24:53,039
+Ideally, motor should stop rotating.
+
+269
+00:24:53,740 --> 00:25:00,240
+But you know that because of the momentum, motor takes small time to stop.
+
+270
+00:25:00,240 --> 00:25:09,299
+Even if you cut off the power, it rotates couple of revolutions because of the momentum.
+
+271
+00:25:10,200 --> 00:25:15,640
+Now, motor is like a dynamo.
+
+272
+00:25:16,099 --> 00:25:16,380
+Why?
+
+273
+00:25:16,880 --> 00:25:21,059
+In the motor, you have a magnet and a coil.
+
+274
+00:25:21,059 --> 00:25:29,740
+Now, we know that in a magnetic field, if you move a coil, current is generated in the
+
+275
+00:25:29,740 --> 00:25:29,960
+coil.
+
+276
+00:25:30,240 --> 00:25:37,799
+So it's a dynamo now because now motor is rotating because of the momentum but there is no current flow.
+
+277
+00:25:38,180 --> 00:25:39,400
+But there is a magnetic field.
+
+278
+00:25:40,039 --> 00:25:45,640
+So in a magnetic field now a coil is rotating.
+
+279
+00:25:46,359 --> 00:25:47,799
+Now it's like a generator.
+
+280
+00:25:48,359 --> 00:25:49,359
+Oh sorry dynamo.
+
+281
+00:25:49,359 --> 00:25:54,599
+So as a result the motor can generate a voltage spike.
+
+282
+00:25:55,059 --> 00:25:56,920
+So this is called self induction.
+
+283
+00:25:57,539 --> 00:25:58,720
+Right not only in motors.
+
+284
+00:25:59,660 --> 00:25:59,859
+Right.
+
+285
+00:26:00,240 --> 00:26:07,440
+any inductor if you suddenly stop the power through an inductor due to self-induction it
+
+286
+00:26:07,440 --> 00:26:15,119
+can generate voltage spikes now we need to protect the transistor from those voltage spikes
+
+287
+00:26:15,119 --> 00:26:22,400
+right otherwise that voltage spike will destroy this transistor because typically those
+
+288
+00:26:22,400 --> 00:26:28,160
+sudden voltage spikes are very high they are very high voltage spikes suddenly generated
+
+289
+00:26:28,160 --> 00:26:36,400
+by the inductors. To protect the transistor, we should give that voltage spike an alternate
+
+290
+00:26:36,400 --> 00:26:44,960
+path to flow. So, we connect parallelly a diode to the motor. The diode will provide
+
+291
+00:26:44,960 --> 00:26:54,240
+that high voltage spike to get discharge itself. So, this diode we call flyback diode,
+
+292
+00:26:54,240 --> 00:26:59,599
+which it will allow that high voltage spike to fly back.
+
+293
+00:27:00,079 --> 00:27:01,740
+So, we call it flyback diode.
+
+294
+00:27:01,980 --> 00:27:04,220
+Another application of diode.
+
+295
+00:27:04,900 --> 00:27:07,119
+In this case, it's very important.
+
+296
+00:27:07,579 --> 00:27:10,119
+You have to connect the diode parallel to the motor
+
+297
+00:27:10,119 --> 00:27:14,880
+and its anode should be connected to the collector
+
+298
+00:27:14,880 --> 00:27:18,460
+and cathode to the positive power supply.
+
+299
+00:27:18,460 --> 00:27:21,640
+If you connect the diode the other way,
+
+300
+00:27:21,640 --> 00:27:25,339
+you go and get the protection that you need.
+
+301
+00:27:25,880 --> 00:27:29,640
+That is very important. And this diode again should be
+
+302
+00:27:29,640 --> 00:27:33,740
+able to flow high voltage and relatively
+
+303
+00:27:33,740 --> 00:27:37,140
+high current. So just a simple LEDO
+
+304
+00:27:37,140 --> 00:27:40,980
+small diode you can't use. Typically we use
+
+305
+00:27:40,980 --> 00:27:44,619
+1N4001
+
+306
+00:27:44,619 --> 00:27:48,619
+1N4001 diode.
+
+307
+00:27:48,619 --> 00:27:55,619
+So 1N4001 diode can handle relatively high current and a high voltage.
+
+308
+00:27:55,619 --> 00:28:05,240
+For further details of the flyback diodes and the self induction, you can read, I have
+
+309
+00:28:05,240 --> 00:28:11,079
+uploaded a link for leisure reading into the camera, right?
+
+310
+00:28:11,079 --> 00:28:12,279
+Applications of diodes.
+
+311
+00:28:12,279 --> 00:28:14,380
+So read that article.
+
+312
+00:28:14,380 --> 00:28:22,700
+that article it explains different applications of diodes. One such application is flyback
+
+313
+00:28:22,700 --> 00:28:31,059
+diode. Is that clear? Any question? And also I have uploaded the data sheet of 1N 4001 diode.
+
+314
+00:28:31,900 --> 00:28:41,500
+Right. So you can see how much current and voltage. Now here this is the 4000N series
+
+315
+00:28:41,500 --> 00:28:52,059
+diodes here you can see right 4000 n can handle 50 volts 1 ampere so fairly large and fairly high
+
+316
+00:28:52,059 --> 00:29:03,420
+voltage they can have right and this is a cheap diode one rupee 150 rupee is the cost any question
+
+317
+00:29:03,420 --> 00:29:09,819
+Excuse me, how the spike is handled by the diode?
+
+318
+00:29:10,779 --> 00:29:15,339
+Diode provides an alternative path to flow that current.
+
+319
+00:29:16,299 --> 00:29:23,660
+Now, when the motor is operated, the current flow is in this direction.
+
+320
+00:29:24,539 --> 00:29:25,039
+Let me show you.
+
+321
+00:29:25,259 --> 00:29:28,779
+When the motor is operated, current flow is in this direction.
+
+322
+00:29:28,779 --> 00:29:29,420
+Right?
+
+323
+00:29:29,420 --> 00:29:33,380
+positive terminal to negative terminal through the transistor.
+
+324
+00:29:33,740 --> 00:29:38,960
+But when the transistor is off, the motor, due to self-induction,
+
+325
+00:29:39,960 --> 00:29:43,200
+the generated current is in the other direction.
+
+326
+00:29:44,539 --> 00:29:45,000
+Right.
+
+327
+00:29:45,539 --> 00:29:47,339
+Not this direction.
+
+328
+00:29:47,900 --> 00:29:51,799
+If that current tries to go through the transistor,
+
+329
+00:29:51,980 --> 00:29:53,259
+transistor will be destroyed.
+
+330
+00:29:53,579 --> 00:29:57,299
+Because with that current, you get a high voltage spike.
+
+331
+00:29:57,299 --> 00:30:03,200
+transistor may not be able to handle that. Now what we do is we provide a diode. We know that
+
+332
+00:30:03,200 --> 00:30:10,000
+the current can flow through the diode from anode to cathode. Yes, this current can flow through
+
+333
+00:30:10,000 --> 00:30:18,579
+the diode anode to cathode, right? And it can discharge itself. But in the normal scenario,
+
+334
+00:30:18,579 --> 00:30:25,519
+when the motor is operated, current will not go through cathode to anode. Current cannot flow
+
+335
+00:30:25,519 --> 00:30:27,380
+through cathode to an order, right?
+
+336
+00:30:27,619 --> 00:30:29,339
+Then it has to go through the motor.
+
+337
+00:30:29,779 --> 00:30:31,119
+When it goes through the motor,
+
+338
+00:30:31,299 --> 00:30:33,420
+motor starts rotating. But due
+
+339
+00:30:33,420 --> 00:30:35,759
+to self-induction, the current generated
+
+340
+00:30:35,759 --> 00:30:37,519
+which will not go through
+
+341
+00:30:37,519 --> 00:30:39,640
+the motor, it will try
+
+342
+00:30:39,640 --> 00:30:41,619
+to go through the transistor to the ground.
+
+343
+00:30:42,299 --> 00:30:43,460
+If it goes, if it
+
+344
+00:30:43,460 --> 00:30:45,579
+could go through the, if you
+
+345
+00:30:45,579 --> 00:30:47,279
+let it to go through the
+
+346
+00:30:47,279 --> 00:30:49,559
+transistor to the ground, the
+
+347
+00:30:49,559 --> 00:30:51,319
+transistor will be destroyed because
+
+348
+00:30:51,319 --> 00:30:53,500
+with that current you may
+
+349
+00:30:53,500 --> 00:31:01,059
+get, not always, you may get high voltage spike. So what we do is we provide alternative path
+
+350
+00:31:01,059 --> 00:31:06,440
+to that current to flow, alternative path, fly back. Is that clear?
+
+351
+00:31:06,940 --> 00:31:10,259
+Isn't that growing high current from the microcontroller?
+
+352
+00:31:11,019 --> 00:31:18,799
+No, there is no, nothing. Now what the microcontroller does is, it provides a tiny
+
+353
+00:31:18,799 --> 00:31:24,559
+current to turn on the transistor. That's it. This is one circuit. Base emitter circuit
+
+354
+00:31:24,559 --> 00:31:30,680
+is one circuit. Collector emitter circuit is another circuit. Two circuits. The microcontroller
+
+355
+00:31:30,680 --> 00:31:37,640
+provides current in the base emitter circuit. It's a microampere small current. The collector
+
+356
+00:31:37,640 --> 00:31:42,759
+emitter current is a larger current. It's a different circuit. Using this base emitter
+
+357
+00:31:42,759 --> 00:31:48,000
+circuit we operate collect emitter circuit. That doesn't mean they have a connection.
+
+358
+00:31:48,759 --> 00:31:53,440
+They are two circuits. This is one circuit. This is another circuit. Right. The whatever
+
+359
+00:31:53,440 --> 00:32:03,440
+the current flow in this circuit collect emitter circuit. Right. So it cannot make any impact on
+
+360
+00:32:03,440 --> 00:32:09,839
+base emitter circuit. But using the base emitter circuit we operate collect emitter circuit.
+
+361
+00:32:09,839 --> 00:32:25,859
+Two different circuits. Clear? Yes. Anything else? Typically, now in your case, you can use 9 volt battery and 9 volt motor. Anything else? Any other question?
+
+362
+00:32:25,859 --> 00:32:32,839
+Sir, if you have to stop the motor, you can't stop the motor.
+
+363
+00:32:32,839 --> 00:32:36,839
+I think that's a problem with self-induction.
+
+364
+00:32:36,839 --> 00:32:42,839
+Self-induction is what is the current flow of the coil.
+
+365
+00:32:42,839 --> 00:32:44,839
+The motor is the same.
+
+366
+00:32:44,839 --> 00:32:47,839
+The coil of the inductor is what is the current flow of the coil.
+
+367
+00:32:47,839 --> 00:32:49,839
+It is the same.
+
+368
+00:32:49,839 --> 00:32:56,839
+The current flow of the coil is the magnetic field.
+
+369
+00:32:56,839 --> 00:32:58,839
+I don't know what physics is.
+
+370
+00:32:58,839 --> 00:33:00,839
+The magnetic field is generated.
+
+371
+00:33:00,839 --> 00:33:05,839
+When we are in the current, this magnetic field collapses.
+
+372
+00:33:05,839 --> 00:33:10,839
+This magnetic field collapses and strength is the strength of the magnetic field.
+
+373
+00:33:10,839 --> 00:33:13,839
+This energy is the same as the energy.
+
+374
+00:33:13,839 --> 00:33:15,839
+We don't know how to do this.
+
+375
+00:33:15,839 --> 00:33:19,839
+This energy is the same as the current.
+
+376
+00:33:19,839 --> 00:33:22,839
+When it is generated in the coil, it is the same.
+
+377
+00:33:22,839 --> 00:33:25,839
+It is the same as the current flow.
+
+378
+00:33:25,839 --> 00:33:27,839
+We are in the same way.
+
+379
+00:33:27,839 --> 00:33:29,839
+It is a very difficult time.
+
+380
+00:33:29,839 --> 00:33:31,839
+It is a high voltage spike.
+
+381
+00:33:31,839 --> 00:33:41,839
+For example, if there is a voltage variation, it is a spike.
+
+382
+00:33:41,839 --> 00:33:45,839
+And if you have a high voltage spike, you can see the transistor.
+
+383
+00:33:45,839 --> 00:33:49,839
+The transistor is not a maximum voltage.
+
+384
+00:33:49,839 --> 00:33:56,839
+So, you can see the B-C-5-0-7 data sheet, the collect meter and the other one.
+
+385
+00:33:56,839 --> 00:34:00,839
+You can see the other one, the transistor.
+
+386
+00:34:00,839 --> 00:34:06,839
+So, the current flow, the alternative path.
+
+387
+00:34:06,839 --> 00:34:10,840
+The other one is the tube light.
+
+388
+00:34:10,840 --> 00:34:12,840
+The tube light is a chock.
+
+389
+00:34:12,840 --> 00:34:14,840
+The chock is a coil.
+
+390
+00:34:14,840 --> 00:34:17,840
+The start is a bimetal strip.
+
+391
+00:34:17,840 --> 00:34:18,840
+the with a l S.
+
+392
+00:34:18,840 --> 00:34:22,199
+to the on-off-tripe, the on-off-tripe, the in-famac, the pll-d to the re-d.
+
+393
+00:34:22,199 --> 00:34:22,860
+on-off, the bimitl someo-d-d-.
+
+394
+00:34:22,860 --> 00:34:23,099
+the cb-d-.
+
+395
+00:34:23,099 --> 00:34:29,099
+And the bimetal strip switch is a coil.
+
+396
+00:34:29,099 --> 00:34:35,099
+The coil is a coil and the tube light is a filament.
+
+397
+00:34:35,099 --> 00:34:39,099
+The tube light is a mercury washboard.
+
+398
+00:34:39,099 --> 00:34:42,099
+The mercury vapor is a tube light.
+
+399
+00:34:42,099 --> 00:34:47,099
+The bimetal strip is a bimetal strip.
+
+400
+00:34:47,099 --> 00:34:52,099
+The switch is a power disconnect.
+
+401
+00:34:52,099 --> 00:35:52,099
+[unclear — Sinhala / crosstalk]
+
+402
+00:35:52,099 --> 00:35:54,599
+We can protect the current and then we can drive the diode.
+
+403
+00:35:54,599 --> 00:36:01,599
+We can generate the current and then we can block the diode.
+
+404
+00:36:01,599 --> 00:36:21,599
+We can drive high power actuators using a different type of transistor called MOSFET.
+
+405
+00:36:21,599 --> 00:36:28,599
+MOSFET means metal oxide semiconductor field effect transistor.
+
+406
+00:36:28,599 --> 00:36:33,599
+Metal oxide semiconductor field effect transistor.
+
+407
+00:36:33,599 --> 00:36:34,599
+Right.
+
+408
+00:36:34,599 --> 00:36:37,599
+This is the latest trend.
+
+409
+00:36:37,599 --> 00:36:47,599
+So, even today also BJT are used, but that is not the latest way of interfacing high
+
+410
+00:36:47,599 --> 00:36:50,599
+power actuators to microcontroller.
+
+411
+00:36:50,599 --> 00:36:58,000
+In the modern embedded systems, you will find MOSFETs, not BJT.
+
+412
+00:36:58,519 --> 00:37:09,699
+In your kit also, you have a MOSFET 2N7000, a transistor called 2N7000, which is fairly expensive compared to BJT.
+
+413
+00:37:09,699 --> 00:37:21,420
+BJT, BC547, I think you might have got for 350 rupees and then 2N7000 probably between 10 to 15
+
+414
+00:37:21,420 --> 00:37:28,179
+rupees, right? So, MOSFETs are expensive, right? The reason is this, the MOSFET switching,
+
+415
+00:37:28,980 --> 00:37:38,940
+on-off switching is very fast compared to BJT. The switching speed is very high, right? And
+
+416
+00:37:38,940 --> 00:37:45,639
+Then the BJT bipolar junction transistors are current driven. Using a current flow you
+
+417
+00:37:45,639 --> 00:37:53,539
+can drive the transistor. But MOSFET, they are voltage driven, no current flow, only
+
+418
+00:37:53,539 --> 00:38:00,639
+voltage. As a result, they generate less heat. They generate less heat. That is very important
+
+419
+00:38:00,639 --> 00:38:06,940
+for modern electronics because most of the modern electronics are wearable, portable,
+
+420
+00:38:06,940 --> 00:38:16,900
+very small, compact. So, heat generation is a big problem. So, if the device can generate,
+
+421
+00:38:17,000 --> 00:38:24,820
+if the transistor can generate less heat, that would be ideal. However, these MOSFETs are
+
+422
+00:38:24,820 --> 00:38:32,199
+expensive compared to BJT. They are expensive. Right. Now, let's see how MOSFET works. Now,
+
+423
+00:38:32,199 --> 00:38:39,280
+a MOSFET, this is the symbol, again has three pins, but they are not called base collect
+
+424
+00:38:39,280 --> 00:38:51,039
+emitter. They are called gate, drain and source. Gate, G for gate, D for drain, S for source.
+
+425
+00:38:51,639 --> 00:39:01,179
+Now, like the base of BJT, we provide a voltage to gate, but not a current. That's why we call
+
+426
+00:39:01,179 --> 00:39:08,139
+it voltage driven. In the BJT you provide a current to the base but here we provide a voltage.
+
+427
+00:39:09,260 --> 00:39:16,219
+Voltage to the gate. When you provide a voltage to the gate right then the transistor will flow
+
+428
+00:39:16,219 --> 00:39:23,500
+a current in the drain source circuit. It will flow a current in the drain source. So this is
+
+429
+00:39:23,500 --> 00:39:32,460
+voltage drill. Again, like BJT, there are two types of MOSFET, N channel and P channel.
+
+430
+00:39:33,420 --> 00:39:40,699
+N channel and P channel. In the N channel MOSFET, you have to give a positive voltage to the gate.
+
+431
+00:39:41,980 --> 00:39:49,019
+You have to give a positive voltage to the gate to turn on drain source circuit.
+
+432
+00:39:49,019 --> 00:39:55,179
+So if you give a positive voltage to the gate, the current, the transistor will allow to flow
+
+433
+00:39:55,980 --> 00:40:03,500
+a current from drain to source. From drain to source, current will flow a current according
+
+434
+00:40:03,500 --> 00:40:11,179
+to this diagram, right? You have to provide a positive voltage to the gate. Then the transistor
+
+435
+00:40:11,179 --> 00:40:13,039
+will allow you to flow a larger
+
+436
+00:40:13,039 --> 00:40:15,059
+current in drain to
+
+437
+00:40:15,059 --> 00:40:15,480
+source.
+
+438
+00:40:16,980 --> 00:40:19,159
+In the P channel MOSFET
+
+439
+00:40:19,159 --> 00:40:21,059
+you have to give a
+
+440
+00:40:21,059 --> 00:40:22,519
+negative current to the gate.
+
+441
+00:40:23,079 --> 00:40:24,699
+A negative current to the gate.
+
+442
+00:40:25,119 --> 00:40:27,119
+When you give a negative current to the gate
+
+443
+00:40:27,119 --> 00:40:29,239
+the transistor will allow
+
+444
+00:40:29,239 --> 00:40:31,119
+you to flow a larger
+
+445
+00:40:31,119 --> 00:40:33,019
+current from source
+
+446
+00:40:33,019 --> 00:40:34,960
+to drain the other way around.
+
+447
+00:40:35,639 --> 00:40:36,420
+The other direction.
+
+448
+00:40:37,099 --> 00:40:37,780
+Source to drain.
+
+449
+00:40:38,719 --> 00:40:40,760
+If you provide a negative current to the gate
+
+450
+00:40:40,760 --> 00:40:48,599
+the transistor will flow a larger current in source to drain circuit, source to drain.
+
+451
+00:40:48,599 --> 00:40:54,639
+That is P channel MOSFET, right? In the N channel, you provide a positive current to
+
+452
+00:40:54,639 --> 00:40:59,539
+the gate and transistor will allow you to flow a larger current in the drain to source
+
+453
+00:40:59,539 --> 00:41:07,719
+circuit, this type and there. P channel, when you flow, when you provide a negative voltage
+
+454
+00:41:07,719 --> 00:41:14,380
+to the gate, negative voltage to the gate, the transistor will flow a larger current
+
+455
+00:41:14,380 --> 00:41:20,019
+in source to drain circuit, source to drain circuit. Now this diagram shows N channel
+
+456
+00:41:20,019 --> 00:41:26,739
+MOSFET and in the animation I will show you a P channel MOSFET. Now you can see there
+
+457
+00:41:26,739 --> 00:41:35,340
+is no gate to drain flow, only a pressure. Pressure is a voltage. If there is a flow
+
+458
+00:41:35,340 --> 00:41:43,500
+it's a current. Now there is no flow. You can see G to D there is no flow. The water
+
+459
+00:41:43,500 --> 00:41:51,920
+coming through G channel creates a pressure and that pressure opens the gate. Pressure
+
+460
+00:41:51,920 --> 00:42:00,960
+means a voltage. We discuss. The flow is the current. Pressure required to flow. Electrons
+
+461
+00:42:00,960 --> 00:42:09,519
+is the voltage. Now this is, this animation shows you a P channel MOSFET, a negative voltage we
+
+462
+00:42:09,519 --> 00:42:15,440
+apply to the gate. As a result, proportionate to that negative voltage, proportionate to that
+
+463
+00:42:15,440 --> 00:42:22,079
+negative voltage, the transistor will flow a larger current in the source to drain circuit.
+
+464
+00:42:22,079 --> 00:42:29,960
+That negative current operates the barrier in the channel, open or close.
+
+465
+00:42:30,599 --> 00:42:39,619
+If you stop the voltage you provide to the gate, the transistor will stop the current flow in the source drain circuit.
+
+466
+00:42:40,079 --> 00:42:48,920
+If you reduce the voltage in the gate, the current transistor will reduce the current flow in the source drain circuit.
+
+467
+00:42:48,920 --> 00:42:57,440
+If you increase the voltage in the gate, the transistor will increase the current flow in the source drain circuit.
+
+468
+00:42:58,199 --> 00:43:05,840
+So, whatever the current flow in the source drain circuit is proportional to the voltage applied at the gate.
+
+469
+00:43:06,340 --> 00:43:12,400
+So, using a voltage, we can control a current flow in another circuit, right?
+
+470
+00:43:12,400 --> 00:43:14,500
+There are two circuits here you can see.
+
+471
+00:43:14,639 --> 00:43:16,880
+One is the gate source circuit.
+
+472
+00:43:17,300 --> 00:43:19,559
+The other one is the drain source circuit.
+
+473
+00:43:20,619 --> 00:43:30,559
+Using the voltage applied at the gate, we can operate the current flow in the drain source circuit.
+
+474
+00:43:30,980 --> 00:43:31,659
+Is that clear?
+
+475
+00:43:32,159 --> 00:43:32,840
+Any question?
+
+476
+00:43:33,559 --> 00:43:33,860
+Right.
+
+477
+00:43:34,340 --> 00:43:40,039
+Now, like BJT, there are two types, N channel and P channel.
+
+478
+00:43:40,039 --> 00:43:42,460
+and the symbol you can see here.
+
+479
+00:43:43,059 --> 00:43:44,619
+If you are using P channel,
+
+480
+00:43:44,780 --> 00:43:47,039
+you have to provide a negative voltage to the gate
+
+481
+00:43:47,039 --> 00:43:49,539
+and the current flow is source to drain.
+
+482
+00:43:50,039 --> 00:43:51,340
+If you are using N channel,
+
+483
+00:43:51,480 --> 00:43:53,880
+you have to provide a positive voltage to the gate.
+
+484
+00:43:54,559 --> 00:43:56,300
+Current flow is drain to source.
+
+485
+00:43:57,380 --> 00:44:00,400
+And again, the outer appearance,
+
+486
+00:44:00,579 --> 00:44:04,559
+physical appearance is similar to the BJP.
+
+487
+00:44:05,139 --> 00:44:07,119
+It is very hard to identify
+
+488
+00:44:07,119 --> 00:44:09,739
+just looking at the transistor physically
+
+489
+00:44:09,739 --> 00:44:14,619
+whether it's a BJT or MOSFET, you need the data sheet.
+
+490
+00:44:15,000 --> 00:44:21,460
+Because both BJT and MOSFET, they share the same physical appearance.
+
+491
+00:44:22,460 --> 00:44:29,519
+Unless you can remember the part number, you would not be able to recognize
+
+492
+00:44:29,519 --> 00:44:33,440
+whether a given transistor is BJT or MOSFET,
+
+493
+00:44:33,559 --> 00:44:37,719
+just looking at the physical appearance of that drone.
+
+494
+00:44:38,019 --> 00:44:38,980
+You need the data sheet.
+
+495
+00:44:39,739 --> 00:44:44,860
+But that's not a big deal because the data sheets are freely available from the manufacturer.
+
+496
+00:44:45,260 --> 00:44:45,519
+Right.
+
+497
+00:44:46,019 --> 00:44:52,179
+Now, driving a high power actuator from an IO port.
+
+498
+00:44:52,300 --> 00:44:55,239
+This time we are going to use a MOSFET.
+
+499
+00:44:55,579 --> 00:44:59,099
+The modern way of driving high power actuators.
+
+500
+00:44:59,539 --> 00:45:04,599
+Now, we know that the microcontroller IO port pin can deliver maximum 40 mA.
+
+501
+00:45:04,599 --> 00:45:09,880
+but the motor that we have requires 75 mA.
+
+502
+00:45:10,219 --> 00:45:10,539
+Right.
+
+503
+00:45:10,659 --> 00:45:13,539
+So that we cannot directly connect motor to the micro control.
+
+504
+00:45:13,940 --> 00:45:14,199
+Right.
+
+505
+00:45:14,780 --> 00:45:16,880
+Now this is the interfacing circuit.
+
+506
+00:45:17,519 --> 00:45:23,260
+Now this time there is no resistor between micro control and the transistor.
+
+507
+00:45:23,800 --> 00:45:24,500
+No resistor.
+
+508
+00:45:24,780 --> 00:45:26,300
+No current limiting resistor.
+
+509
+00:45:26,980 --> 00:45:28,139
+Because no current flow.
+
+510
+00:45:28,659 --> 00:45:30,380
+If there is no current flow, what to limit?
+
+511
+00:45:31,380 --> 00:45:32,440
+Nothing to limit.
+
+512
+00:45:32,920 --> 00:45:33,179
+Right.
+
+513
+00:45:33,179 --> 00:45:55,039
+So, different connection. Now, using the code you are firmware, you set the microcontroller pin high. Then the pin voltage becomes 5 volts. As a result, you provide a positive voltage, 5 volt is positive, to the n channel MOSFET, gate of n channel MOSFET.
+
+514
+00:45:55,039 --> 00:46:01,599
+When you provide a positive voltage to the gate of the N-channel MOSFET,
+
+515
+00:46:02,659 --> 00:46:08,659
+then the transistor flows a larger current in the drain source circuit.
+
+516
+00:46:09,119 --> 00:46:10,800
+Let's say this is 9 volt.
+
+517
+00:46:10,800 --> 00:46:13,380
+That current goes through the motor.
+
+518
+00:46:14,039 --> 00:46:15,500
+The motor starts rotating.
+
+519
+00:46:16,099 --> 00:46:19,940
+And then you change the logic state of the pin to low.
+
+520
+00:46:20,559 --> 00:46:24,380
+And the voltage at the pin becomes 0 volts.
+
+521
+00:46:24,380 --> 00:46:30,280
+That means you have removed the positive voltage at the gate.
+
+522
+00:46:30,460 --> 00:46:31,320
+You have removed.
+
+523
+00:46:31,579 --> 00:46:38,360
+You have removed now the positive voltage at the gate of N channel MOSC.
+
+524
+00:46:38,780 --> 00:46:41,219
+No positive voltage at the gate.
+
+525
+00:46:41,800 --> 00:46:43,760
+Transistor will immediately stops.
+
+526
+00:46:44,139 --> 00:46:48,559
+Transistor immediately stops the current flow through the drain source.
+
+527
+00:46:49,260 --> 00:46:51,360
+Current flow through the drain source.
+
+528
+00:46:51,360 --> 00:46:59,099
+But due to self-induction, motor generates a current and a high voltage, probably high voltage spikes.
+
+529
+00:46:59,519 --> 00:47:10,340
+But due to self-induction generated current, we can flow through the diode to the other way around and protect the traces.
+
+530
+00:47:10,719 --> 00:47:12,480
+So we have used a flyback diode.
+
+531
+00:47:12,920 --> 00:47:15,920
+Now the circuit is very straightforward, right?
+
+532
+00:47:15,920 --> 00:47:30,780
+We can use flyback diode something like 1N4001 and motor 9 volt motor and transistor 2N7000.
+
+533
+00:47:33,460 --> 00:47:42,920
+Again, if you look at the data sheet of the 2N7000, yes, 2N7000 data sheet.
+
+534
+00:47:42,920 --> 00:47:51,860
+Now this is how the pins are, grain, gate, source, middle pin gate, right?
+
+535
+00:47:51,860 --> 00:48:01,059
+Grain and source, how the pins and this is the important factor.
+
+536
+00:48:01,059 --> 00:48:11,920
+The maximum drain continuous current, 200 million, ah, 2 and 7,000 can handle 200 million.
+
+537
+00:48:11,920 --> 00:48:19,860
+Our motor requires only 75 milliampere, so more than enough.
+
+538
+00:48:19,860 --> 00:48:24,059
+And the drain source voltage, 16.
+
+539
+00:48:24,059 --> 00:48:28,119
+We are using 9 volt, well below that.
+
+540
+00:48:28,119 --> 00:48:33,860
+Drain source voltage, 16, the transistor can handle.
+
+541
+00:48:33,860 --> 00:48:37,500
+Maximum drain current continuous, 200.
+
+542
+00:48:37,500 --> 00:48:39,539
+Continuous current 200 milliampere.
+
+543
+00:48:39,539 --> 00:48:55,539
+Right. Now in our circuit, we use between the drain and source 9 volts and we flow only 75 milliampere. Transistor can handle quite easily the voltage and the current.
+
+544
+00:48:55,539 --> 00:49:01,300
+Right, that's how we decide which transistor we have to use.
+
+545
+00:49:01,300 --> 00:49:08,260
+Depending on the current and the voltage requirement, looking at the data sheets, we pick the relevant
+
+546
+00:49:08,260 --> 00:49:12,059
+transistor, most suitable transistor, right.
+
+547
+00:49:12,059 --> 00:49:21,099
+Now you can pick a larger transistor which is capable of flowing 5 ampere and can handle
+
+548
+00:49:21,099 --> 00:49:29,739
+200 volts, but then it would be very expensive. So, we pick the transistor which is fairly
+
+549
+00:49:29,739 --> 00:49:35,920
+large enough to handle whatever the voltage or the current that we require, right? And
+
+550
+00:49:35,920 --> 00:49:44,380
+it should be inexpensive. So, therefore, we don't go for very powerful transistor. We
+
+551
+00:49:44,380 --> 00:49:51,900
+select the transistor which is appropriate for the situation, right? That is okay for the situation.
+
+552
+00:49:51,900 --> 00:49:58,460
+27000 is okay for this situation, right? Because it can handle 200 milliampere continuous current
+
+553
+00:49:58,460 --> 00:50:03,900
+in the drain source circuit and between drain source, the voltage difference it can handle up
+
+554
+00:50:03,900 --> 00:50:12,219
+to 60 volts. We are using 9 volts, much below 60. And we are using 75 milliampere to run the motor.
+
+555
+00:50:12,219 --> 00:50:18,519
+Again, much below the 200 millivolts, a milliampere that the transistor can handle.
+
+556
+00:50:19,000 --> 00:50:19,159
+Right.
+
+557
+00:50:19,260 --> 00:50:24,500
+And the transistor is also fairly relatively inexpensive, 10 rupees, 12 rupees.
+
+558
+00:50:24,880 --> 00:50:27,500
+That's how we select transistors.
+
+559
+00:50:28,460 --> 00:50:29,119
+Is that clear?
+
+560
+00:50:29,639 --> 00:50:30,260
+Any question?
+
+561
+00:50:32,840 --> 00:50:33,320
+Right.
+
+562
+00:50:33,500 --> 00:50:34,219
+No questions.
+
+563
+00:50:35,360 --> 00:50:42,179
+Then sometimes we have to handle, we have to drive actuators that require.
+
+564
+00:50:42,219 --> 00:50:51,440
+very large voltages that grow very high current like the AC motors. You need 230 volts power
+
+565
+00:50:51,440 --> 00:50:57,079
+summit and probably they require very large currents like 5 ampere, 10 ampere, right?
+
+566
+00:50:57,500 --> 00:51:04,360
+Let's say in an industrial system, you are developing an embedded system to control a
+
+567
+00:51:04,360 --> 00:51:12,139
+conveyor belt. That belt is operated using a very large motor, a high horsepower motor.
+
+568
+00:51:13,119 --> 00:51:20,420
+The motor would be supplied 230 volts, domestic power supply. And that motor, because of the
+
+569
+00:51:20,420 --> 00:51:27,039
+high horsepower, it would draw more than 5 ampere, probably 10 ampere. Then that kind
+
+570
+00:51:27,039 --> 00:51:36,639
+of actuators, how can we drive? That is our next topic. Switching with relays, switching
+
+571
+00:51:36,639 --> 00:51:44,940
+actuators with relays. Now what's a relay? Relay is a spring-loaded electromagnetic switch.
+
+572
+00:51:45,599 --> 00:51:53,579
+Spring-loaded electromagnetic switch, right? You can turn on the switch when you supply
+
+573
+00:51:53,579 --> 00:52:00,280
+power to the relay. When you supply power to the relay, you can turn on the switch. You can generate
+
+574
+00:52:00,280 --> 00:52:07,000
+a magnetic field. As a result, the switch will be turned on. And when you disconnect the power to
+
+575
+00:52:07,000 --> 00:52:15,659
+the relay, right, the magnetic field will be collapsed. And because of the spring tension,
+
+576
+00:52:15,840 --> 00:52:22,320
+because it's a spring loaded switch, because of the spring tension of the spring, the switch will
+
+577
+00:52:22,320 --> 00:52:34,179
+move back and turn off. So it's a spring loaded electromagnetic switch. Right. Now switches,
+
+578
+00:52:34,179 --> 00:52:45,860
+these relays we use to control much high voltage and high current, control high voltages and
+
+579
+00:52:45,860 --> 00:52:56,900
+high currents for example domestic power supply 230 volts right we can operate a higher voltage
+
+580
+00:52:56,900 --> 00:53:04,340
+we can control a higher voltage and a higher current using a small voltage and a current
+
+581
+00:53:05,059 --> 00:53:11,139
+using the relay because relay we operate using a very small voltage like 5 volts
+
+582
+00:53:11,139 --> 00:53:13,619
+right? We can operate the relay using 5 volts.
+
+583
+00:53:14,739 --> 00:53:20,920
+And 70 milliampere probably, right? It depends on the relay, but typically 70 milliampere,
+
+584
+00:53:20,980 --> 00:53:28,460
+5 volts, we can operate the relay. Then relay would operate probably 230 volts, 5 ampere.
+
+585
+00:53:29,460 --> 00:53:38,420
+Well, high voltage and a higher current, right? Now, you can see that. Now, for example,
+
+586
+00:53:38,420 --> 00:53:48,179
+let me take that example, 5 volt 70 milliampere. That is we can operate the relay. The relay
+
+587
+00:53:48,179 --> 00:53:59,300
+can operate 230 volts 5 ampere. A larger current, larger voltage. But you can see that even
+
+588
+00:53:59,300 --> 00:54:05,519
+the small relay requires a higher current than a micro control IEO port pin can deliver.
+
+589
+00:54:05,519 --> 00:54:07,619
+70 milliampere.
+
+590
+00:54:08,340 --> 00:54:09,880
+This is what relay requires.
+
+591
+00:54:10,800 --> 00:54:12,460
+The microcontroller IO port pin
+
+592
+00:54:12,460 --> 00:54:14,739
+in our example 80 mega 328P
+
+593
+00:54:14,739 --> 00:54:16,320
+microcontroller can deliver
+
+594
+00:54:16,320 --> 00:54:18,880
+only 40 milliampere, not 70.
+
+595
+00:54:19,280 --> 00:54:20,619
+So, we need
+
+596
+00:54:20,619 --> 00:54:21,760
+to drive the relay.
+
+597
+00:54:23,199 --> 00:54:23,739
+Right.
+
+598
+00:54:24,280 --> 00:54:26,280
+For that purpose, we can use either
+
+599
+00:54:26,280 --> 00:54:28,760
+BJT or MOSFET.
+
+600
+00:54:29,420 --> 00:54:30,920
+We can use a BJT
+
+601
+00:54:30,920 --> 00:54:32,639
+or MOSFET to drive
+
+602
+00:54:32,639 --> 00:54:33,039
+the relay.
+
+603
+00:54:33,039 --> 00:54:43,420
+But we don't need to assemble those circuits because for a very small price, very cheap
+
+604
+00:54:43,420 --> 00:54:48,980
+price, the relay breakout boards are available.
+
+605
+00:54:48,980 --> 00:54:53,599
+In the relay breakout board you have the relay, you have the transistor, you have the flyback
+
+606
+00:54:53,599 --> 00:55:02,480
+diode, you have the resistor that turn on the transistor and even you have LED.
+
+607
+00:55:02,480 --> 00:55:10,860
+right, which indicates whether relay is on or off and some screw terminals to connect
+
+608
+00:55:10,860 --> 00:55:16,940
+the high power device, right. All these things, this is called relay breakout board. This is
+
+609
+00:55:16,940 --> 00:55:21,639
+where you have to give the microcontroller signal. There are headers to give that signal.
+
+610
+00:55:22,179 --> 00:55:28,940
+All these things about 100 rupees, 125 rupees, very cheap. So therefore, you don't need to
+
+611
+00:55:28,940 --> 00:55:38,960
+construct the circuit, you can use these breakout boots, cheap breakout boots. Right. But you
+
+612
+00:55:38,960 --> 00:55:46,699
+should know how this breakout board works. In case, if you want to assemble that, then
+
+613
+00:55:46,699 --> 00:55:53,900
+you should know how it works. I'll show you. Right. Similar to our previous example. This
+
+614
+00:55:53,900 --> 00:56:01,579
+the microcontroller we have a BJT you could you could use mosfet as well no problem BJT and the
+
+615
+00:56:01,579 --> 00:56:09,900
+current limiting resistor right the emitter of the BJT we have connected to ground and the collector
+
+616
+00:56:09,900 --> 00:56:17,260
+we have connected the relay this is the relay it's a five volt relay but the relay requires 70
+
+617
+00:56:17,260 --> 00:56:23,500
+milli amperes roughly, right? The microcontroller cannot deliver that. So, we use a transistor
+
+618
+00:56:23,500 --> 00:56:32,219
+to drive the relay. And using the relay, we are going to switch a large motor, right?
+
+619
+00:56:32,219 --> 00:56:44,579
+Operator with domestic power supply, 230 volt AC, large motor. Right. Now, using code, your
+
+620
+00:56:44,579 --> 00:56:51,780
+a firm way of code, you set the I.O. port pin high. So, the voltage at this pin becomes
+
+621
+00:56:51,780 --> 00:56:58,340
+5 volts. As a result, the base voltage becomes 5 volts. Transistor base voltage becomes 5
+
+622
+00:56:58,340 --> 00:57:07,719
+volts. Now, between base and emitter, emitter is 0 volts now because connected to ground,
+
+623
+00:57:07,719 --> 00:57:13,980
+there's a voltage difference. There's a voltage difference means there will be a current flow.
+
+624
+00:57:13,980 --> 00:57:17,960
+Yes, small current flows in the base emitter circuit.
+
+625
+00:57:17,960 --> 00:57:23,179
+To limit that current we use typically 1 kilo ohm resistor.
+
+626
+00:57:23,460 --> 00:57:24,320
+It's a small current.
+
+627
+00:57:24,500 --> 00:57:27,119
+Because we drew a small current from the micro control.
+
+628
+00:57:28,179 --> 00:57:29,940
+A micro ampere current.
+
+629
+00:57:30,360 --> 00:57:32,619
+That current flows in the base emitter circuit.
+
+630
+00:57:33,119 --> 00:57:38,940
+As a result transistor flows a larger current in the collector emitter circuit.
+
+631
+00:57:39,239 --> 00:57:41,800
+Transistor flows a larger current in the collector.
+
+632
+00:57:41,800 --> 00:57:49,599
+This current flow, the large current flow in the collective reservoir, it goes through
+
+633
+00:57:49,599 --> 00:57:56,559
+the coil of the relay, relay coil. So when there is a current flow through a coil, the
+
+634
+00:57:56,559 --> 00:58:06,920
+coil creates a magnet, a magnetic field. Coil creates a magnetic field. That magnetic
+
+635
+00:58:06,920 --> 00:58:17,320
+field attracts, right, that attracts the contact and closes the switch. See what happens.
+
+636
+00:58:17,320 --> 00:58:25,119
+That magnetic field attracts this contact, right, and closes the switch. The contact
+
+637
+00:58:25,119 --> 00:58:34,460
+attracted and switch close. Now as a result, we supply power to the motor through that
+
+638
+00:58:34,460 --> 00:58:41,699
+switch and motor starts rotating. Motor or whatever the high power device we can operate.
+
+639
+00:58:41,699 --> 00:58:49,800
+Then if you want to stop the high power device using our firmware code we set the I.O. pin
+
+640
+00:58:49,800 --> 00:58:57,139
+low. As a result voltage of this pin becomes 0 volts. The base voltage of the transistor
+
+641
+00:58:57,139 --> 00:59:06,099
+becomes zero volts. Now there is no voltage difference across the base emitter circuit.
+
+642
+00:59:06,739 --> 00:59:13,619
+So we stop flowing this current. We stop flowing the current in the base emitter circuit. As a result,
+
+643
+00:59:13,619 --> 00:59:22,260
+transistor stops flowing current in the collector emitter circuit. Transistor stops flowing
+
+644
+00:59:22,260 --> 00:59:27,619
+large current in the collector emitter circuit. So this stops the current flowing through the coil,
+
+645
+00:59:27,619 --> 00:59:35,699
+relay coil. That stops current flowing through the relay coil, right? And as a result, the magnetic
+
+646
+00:59:35,699 --> 00:59:43,219
+field generated collapses. When there is no magnetic field due to the tension of the spring,
+
+647
+00:59:44,179 --> 00:59:51,380
+the contact goes back to its original position. When there is no magnetic field to attract due to the
+
+648
+00:59:52,260 --> 01:00:00,500
+tension of the spring, the contact goes back to the original position like this way. It goes back.
+
+649
+01:00:00,500 --> 01:00:06,659
+This is attracted, it goes back. No magnetic field, it goes back due to the spring of the tension.
+
+650
+01:00:07,380 --> 01:00:16,179
+Then switch becomes open, we stop the high power device. No power supply to the high power device.
+
+651
+01:00:16,179 --> 01:00:23,300
+stop the high coil. But again, due to the self-induction, there's a coil inductor, right,
+
+652
+01:00:24,179 --> 01:00:32,179
+a voltage, high voltage spikes can be generated to prevent the transistor, right, to protect the
+
+653
+01:00:32,179 --> 01:00:38,260
+transistor from these high voltage spikes we have used a flyback diode, we have used a flyback diode,
+
+654
+01:00:38,260 --> 01:00:59,139
+right. As in the previous case, we have used 1N 4001 flyback dial. And the transistor you can use for this job, BC 547, because it can handle 100 mA, the relay typically requires 70 mA.
+
+655
+01:00:59,139 --> 01:01:08,360
+70 million. And the relay has three terminals. This middle terminal we call common terminal,
+
+656
+01:01:08,579 --> 01:01:16,940
+common, C for common. NC for normally close. Yes, that is the switch normally close. That's why NC
+
+657
+01:01:16,940 --> 01:01:24,079
+normally close. The NO means normally open. It is normally open but when you energize the relay,
+
+658
+01:01:24,079 --> 01:01:30,699
+it becomes close. When you energize the relay, it becomes close, but normally open. Normally
+
+659
+01:01:30,699 --> 01:01:42,260
+open, normally close, common. Can you understand? Any question? Now with this knowledge, now
+
+660
+01:01:42,260 --> 01:01:55,559
+you should be able to develop an auto light, right? Using an LDR and a 230 volts light, right?
+
+661
+01:01:56,099 --> 01:02:04,719
+When night falls, that light automatically turns on. In the morning, it automatically turns off.
+
+662
+01:02:04,719 --> 01:02:11,539
+Using LDR, you can capture the state of the real world, physical world, whether it's a nightfall
+
+663
+01:02:11,539 --> 01:02:20,820
+over the morning and based on that you can turn on off the domestic 230 volts bulb.
+
+664
+01:02:22,739 --> 01:02:32,219
+And also you can develop an auto fan. Using LM35 you can capture the room temperature.
+
+665
+01:02:32,800 --> 01:02:39,519
+If the temperature is greater than let's say 30, 30 Celsius, you can turn on a motor of a fan.
+
+666
+01:02:39,519 --> 01:02:46,519
+If the temperature is less than 30, you can turn off the motor of a fan, auto fan.
+
+667
+01:02:46,519 --> 01:02:49,519
+If temperature goes high, you can turn on a motor.
+
+668
+01:02:49,519 --> 01:02:56,519
+If temperature goes low, you can turn off a motor.
+
+669
+01:02:56,519 --> 01:03:05,519
+Because motors in the domestic power supply we use, the bulbs we use in the domestic circuits,
+
+670
+01:03:05,519 --> 01:03:08,519
+those are high power devices.
+
+671
+01:03:08,519 --> 01:03:15,519
+So you can operate them using either transistors or relays, especially the 230 volts, if 230
+
+672
+01:03:15,519 --> 01:03:19,099
+volts involved, you can use relays.
+
+673
+01:03:19,099 --> 01:03:23,960
+If DC power involved, you can use transistors.
+
+674
+01:03:23,960 --> 01:03:26,719
+Right.
+
+675
+01:03:26,719 --> 01:03:31,760
+But I prefer if you use relays with the DC power supply, not the domestic power supply
+
+676
+01:03:31,760 --> 01:03:36,480
+because there's a risk of getting potential,
+
+677
+01:03:36,940 --> 01:03:39,460
+there's a potential for a fatal shock
+
+678
+01:03:39,460 --> 01:03:43,699
+if you make a mistake with the domestic power supply
+
+679
+01:03:43,699 --> 01:03:44,739
+because of the high voltage.
+
+680
+01:03:45,360 --> 01:03:51,099
+So it's better if you avoid working in high voltages
+
+681
+01:03:51,099 --> 01:03:53,219
+in the domestic power supply
+
+682
+01:03:53,219 --> 01:03:56,599
+unless you know what you are doing.
+
+683
+01:03:56,599 --> 01:04:01,079
+If you have previous knowledge and you know what you are doing,
+
+684
+01:04:01,760 --> 01:04:12,760
+Otherwise, don't use an optimistic power supply for experiments because it's 230 volts is high voltage.
+
+685
+01:04:12,760 --> 01:04:26,760
+There's a potential for a fatal shock. There's a risk. But if you use DC volt, DC power supplies like car batteries,
+
+686
+01:04:26,760 --> 01:04:35,099
+whatever DC power supplies from world adapters, then the risk is very low.
+
+687
+01:04:37,099 --> 01:04:38,000
+Any question?
+
+688
+01:04:42,719 --> 01:04:48,280
+It's very important to do practicals. I hope you do practicals because you have a practical exam at the end.
+
+689
+01:04:48,820 --> 01:04:53,639
+50% marks from the theory paper, 50% marks from the practical exam.
+
+690
+01:04:53,639 --> 01:05:01,079
+at the practical exam you have to within three hours you have to develop the assemble the hardware
+
+691
+01:05:01,800 --> 01:05:08,119
+right the develop the firmware and do everything within three hours and show me a working system.
+
+692
+01:05:08,840 --> 01:05:14,679
+You can't do that if you if you don't have previous practical knowledge. Many students
+
+693
+01:05:15,559 --> 01:05:21,320
+find that practical exam is very difficult for them because they don't do practicals.
+
+694
+01:05:21,320 --> 01:05:23,139
+that's the reason. If you talk to Sineers,
+
+695
+01:05:23,480 --> 01:05:25,519
+they will say the practical exam
+
+696
+01:05:25,519 --> 01:05:25,980
+is the
+
+697
+01:05:25,980 --> 01:05:29,500
+most difficult part of
+
+698
+01:05:29,500 --> 01:05:31,260
+this
+
+699
+01:05:31,260 --> 01:05:31,960
+course module.
+
+700
+01:05:35,000 --> 01:05:36,619
+Right. If no questions,
+
+701
+01:05:37,719 --> 01:05:39,099
+okay, that's all for today.
+
+702
+01:05:39,099 --> 01:05:40,719
+Next Tuesday morning,
+
+703
+01:05:40,940 --> 01:05:43,199
+we'll start our discussion
+
+704
+01:05:43,199 --> 01:05:44,260
+on timers.
+
+705
+01:05:45,360 --> 01:05:46,440
+Thank you.
+
+706
+01:05:47,340 --> 01:05:48,539
+Thank you, sir.
+
+707
+01:05:49,820 --> 01:05:50,960
+Thank you.
+
+708
+01:05:51,320 --> 01:06:21,300
+Thank you.
+

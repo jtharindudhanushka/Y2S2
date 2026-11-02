@@ -1,0 +1,171 @@
+[0:00] overflows into 0 and again implements from 0 to 255 whenever the tcnt register overflows
+[0:11] from 255 to 0 now i'm i'm taking 255 assuming that this is an 8 bit timer right so if it is a
+[0:21] 16 bit timer different value that is
+[0:25] 65535 you have to use.
+[0:30] Now whenever the timer counter register
+[0:34] TCNT register overflows from
+[0:37] 255 to 0 the timer sets
+[0:41] TOV bit time overflow
+[0:46] flag bit TOV bit of
+[0:50] TIFR
+[0:52] timer interrupt flag
+[0:54] register. What does that
+[0:56] mean? That's what we discussed
+[0:58] last week. In the
+[1:00] normal mode, timer
+[1:02] behaves as timer
+[1:04] or a counter. That's why we call
+[1:06] it normal mode. That's what we
+[1:08] discussed last week. Timer
+[1:10] counter.
+[1:12] Timers we discuss.
+[1:15] Timer
+[1:15] behaves as a timer or timer
+[1:18] behaves as a counter.
+[1:19] when the mode is normal.
+[1:22] So the default value for these
+[1:23] WGM1,
+[1:26] WGM0, WGM2,
+[1:28] these bits, default value is 0.
+[1:31] And that's why
+[1:31] without talking about those
+[1:33] bits, we used counters
+[1:36] and timers last week because
+[1:38] their default value is 0, 0, 0.
+[1:40] So they are in the normal mode.
+[1:43] Timers, counters, they are
+[1:44] in the normal mode.
+[1:45] So that's why we didn't discuss
+[1:47] those bits
+[1:48] last week.
+[1:50] When they are 0, the timer is a timer
+[1:53] or a counter.
+[1:55] If the timer is
+[1:57] fed with internal clock,
+[2:00] it's a timer.
+[2:01] If the timer is fed with
+[2:03] external clock pulses,
+[2:06] it's a counter.
+[2:07] Last week we discussed.
+[2:09] Is that clear? Any question?
+[2:11] Right.
+[2:13] Then let's talk about the third one.
+[2:16] CTC.
+[2:17] clear timer on compare
+[2:19] CDC means
+[2:22] clear timer on compare
+[2:23] not Ceylon Tobago Corporation
+[2:26] clear timer on compare
+[2:28] the third mode
+[2:29] in this mode if you set this mode
+[2:32] timer increments
+[2:34] TCNT register
+[2:36] timer counter register from 0
+[2:38] to 255
+[2:39] assuming 8 bit timer
+[2:41] so timer increments
+[2:43] TCNT register from 0
+[2:46] to 255. Then overflows to 0, starts again from 0. We load a value between 0 to 255 to OCR,
+[2:58] output compare register. To the output compare register, we load a value between 0 to 255.
+[3:06] Whenever a compare match occurs, timer clears TCNT register.
+[3:13] Timer clears TCNT register.
+[3:16] And sets OCF bit of TIFR.
+[3:21] OCF bit means output compare match flag.
+[3:26] Output compare match flag bit of timer interrupt flag register.
+[3:31] That is set.
+[3:32] Right.
+[3:33] Let me explain it again.
+[3:34] I need some space to write.
+[3:37] Now CTC, normal mode we don't need to discuss because we have discussed that last week.
+[3:46] Now let's talk about CTC mode.
+[3:49] In the CTC mode, time increments, right, time increments TCNT from 0 to 255.
+[3:59] Then starts again from 0.
+[4:03] Load a value between 0 and 255 to OZR, output compare register.
+[4:14] Whenever a match occurs, timer clears TCNT and sets OCF bit of TIFR.
+[4:27] Whenever compare match occurs, timer clears TCNT, timer count register and sets OCF, output compare match flag, output compare match flag bit of timer interrupt flag register.
+[4:43] Right.
+[4:44] So this is different to the normal mode.
+[4:47] This is different to the normal mode.
+[4:48] For example, now let's say you want to trigger something when timer or counter counted 5.
+[4:58] So what you can do is, right, you can assign TCNT 0.
+[5:07] Then you can check if, right, TCNT equals 5.
+[5:13] If TCNT equals 5, you can trigger whatever the activity you want to do.
+[5:18] You can use the CDC mode.
+[5:21] In the CDC mode, when the compare match occurred, sorry, sorry, sorry.
+[5:27] This is the normal way we do the job.
+[5:30] In the CDC mode, what we do is TCNT 0, OCR, you assign 5.
+[5:37] Then you check if OCF is set.
+[5:42] That is what you check.
+[5:43] If there is a compare match occurred, TCNT counts 5 times, then there is a compare match occurred, OCF is set.
+[5:51] You can trigger whatever the activity you want to do.
+[5:55] And after that, do you have to set that TCNT again to 0? No.
+[6:01] Timer clears TCNT to 0 automatically.
+[6:05] Again, timer counts.
+[6:07] When it counted to 5, match occurs, OCF flag is raised.
+[6:13] If the OC flag is set, you can trigger the activity again.
+[6:17] This mode is, again in this mode, CDC mode,
+[6:22] we use the timer as a timer or counter as a counter.
+[6:27] Right?
+[6:28] But little bit different to normal mode.
+[6:32] In the normal mode, right, we don't assign any value to OCR.
+[6:37] But here you assign a value to OCR.
+[6:40] If there is a match, then OCF flag is set.
+[6:45] Using the OCF flag, we can determine whether a match occurred or not.
+[6:50] But still the timer is a timer or counter.
+[6:53] No, there is no relationship to PWM.
+[6:57] Is that clear?
+[6:58] We didn't discuss this part last week.
+[7:01] But now you know.
+[7:03] Is that clear?
+[7:04] Any question?
+[7:05] Yes, sir.
+[7:06] Yes.
+[7:06] At what time do we need CTC?
+[7:10] Now, the thing is this.
+[7:12] Now, if you want to, let's say,
+[7:16] now, the task that you are doing with CTZ mode,
+[7:25] you can do with the normal mode as well.
+[7:29] And the task you do with the normal mode,
+[7:31] you can do with the CTZ mode as well.
+[7:34] Right?
+[7:36] So, these are two different modes available with the timer.
+[7:40] Right. So I cannot give you exact answer now why actually we need CDZ mode. Right. It's a very good question. Right. But I cannot give you answer right now. I'll check and let you know.
+[7:57] At the moment, what I can see is both modes can be used, right, to do the same thing.
+[8:06] But there should be, as you asked the question, there should be some specific reason to have a CDC mode.
+[8:17] Right.
+[8:17] I'll try to find out it and let you know.
+[8:20] Thank you.
+[8:21] That's a very good question.
+[8:23] Right.
+[8:23] What else?
+[8:24] Anything else?
+[8:24] Now is that clear how CTZ mode works? The CTZ mode is not very widely used. I don't know again why. I need to find out that. It is not widely used. The normal mode is widely used. Again there should be a reason for that. Why normal mode is preferred over CTZ mode when the timers and counters are used.
+[8:45] Right. Now if CTZ mode is clear, then let's move into the second mode.
+[8:52] That is phase correct mode. Phase correct PWM.
+[8:59] Right. Phase correct PWM. What is that? Let's see.
+[9:04] This is in this mode. Timer increments TCNT register.
+[9:10] We know that. Timer increments TCNT register.
+[9:15] from 0 to 255 assuming 8 bit time and then there is no overflow. That's the interesting part. No overflow. The timer after that, right, increments from 0 to 255 and then decrements from 255 to 0.
+[9:40] So when you feed pulses to the timer, timer increments TCNT register from 0 to 255 and then increments TCNT register from 255 to 0.
+[9:55] No overflow.
+[9:57] It goes to the maximum value then increments.
+[9:59] We load a value between 0 and 255 to OCR.
+[10:10] Fout compare register, load available.
+[10:14] Right.
+[10:14] Whenever a compare match occurs, right, whenever a compare match occurs, during increment,
+[10:25] during increment, that is very important, during increment, then waveform generator,
+[10:31] right, then waveform generator clears, clears, clears means low.
+[10:39] OC pin and sets.
+[10:43] Sets means high.
+[10:45] OC pin when sets the OC pin.
+[10:49] If compare match occurs during decrement.
+[10:57] So what we do is in this mode.
+[11:02] Phase correct PWM mode.
+[11:06] Right.
+[11:07] Phase correct PWM mode.
+[11:09] Timer increments, TC and T register from 0 to 255.
+[11:15] Then no overflow but decrements from 255 to 0.
+[11:20] We load a value to OZR.
+[11:22] Whenever compare match occurs during increment,
+[11:26] waveform generator clears OCP and sets OCP in if compare match occurs during decrement.
+[11:35] Right. Using a graph, let me show this. Right. Right. I'll erase all these things and draw a graph. Right. Right. Draw a line. Then again, I lost everything. Right. Now what happens is this is zero and this is top. Top piece 255.

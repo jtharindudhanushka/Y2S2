@@ -1,0 +1,264 @@
+[0:00] Comparator compare.
+[0:01] Now we are going to learn about how waveform generator generates the pulse with modulated wave.
+[0:09] When a compare match occurs, this is the place where a compare match occurs.
+[0:13] timer increments the
+[0:15] register one by one
+[0:16] 1, 2, 3, 4 likewise
+[0:18] let's say OCR is 127
+[0:21] right? This is
+[0:23] the place where compare match occurs
+[0:25] TCNT register value
+[0:27] and OCR register value
+[0:29] they match. Whenever a
+[0:31] compare match occurs
+[0:32] waveform generator
+[0:34] clears OCP
+[0:37] clears OCP
+[0:39] clears OCP means
+[0:40] waveform generator
+[0:43] sets OC pin low. Clear means low.
+[0:47] In the second graph you can see OC pin.
+[0:51] Output compare P. It could be AOB.
+[0:55] X could be AOB. OC pin is high.
+[0:58] But when a compare match occurs, as soon as
+[1:02] a compare match occurs, waveform generator sets
+[1:06] OC pin low.
+[1:08] OCP. And it clears
+[1:12] OCP low. And then it sets OCP.
+[1:15] It sets OCP when
+[1:19] TCNT overflows to zero. When
+[1:23] TCNT register overflows to bottom, OCP
+[1:27] is set. That means high. Who does that waveform
+[1:31] generate? Right. Draw it and show
+[1:35] you. Right? Time counts, counts, counts, increments. Kampaya match occurs. As soon as a Kampaya
+[1:43] match occurs, this is the place. OC pin is cleared. That means it becomes low. And then
+[1:50] OC pin is set. That means it becomes high. When time overflows to bottom. Right. Then
+[2:02] again timer increments
+[2:03] for each clock pass.
+[2:06] Again a compare match
+[2:08] occurs. OC pin
+[2:09] clears
+[2:11] zero low.
+[2:14] And then timer counts to maximum
+[2:16] overflow. OC pin
+[2:18] is set. Again
+[2:19] timer increments from zero.
+[2:22] Compare match occurs.
+[2:24] Power form generator clears OC pin
+[2:26] low. Timer continues.
+[2:28] Go to 255
+[2:30] and overflow.
+[2:32] When it overflows to bottom, waveform generator sets OCP in high. So this is the waveform you get from OCP, a digital waveform. This waveform, the percentage of time that the pulse is high, you can adjust.
+[2:52] How? When you increase OCR or decrease OCR between top and bottom, you can adjust the pulse.
+[3:02] By increasing or decreasing the value of OCR register, you can adjust the pulse.
+[3:13] Pulsate adjustment means you are changing the percentage of time that the output is high in one flux.
+[3:22] In other words, you get pulse width modulated output from output compatibility. Is that clear?
+[3:31] If not, don't hesitate. Please let me know. I know many people doesn't know about these things.
+[3:39] There are many good embedded system programmers. They know how to use
+[3:44] PWM, but they don't know how waveform generator works, how pulse width modulated output is
+[3:52] generated they don't know now you should know that but still if this is not clear please let me know
+[3:59] i'll explain okay let's start again ocr register tc and d register now the top part of the graph
+[4:12] you can see the increment of the tc and d register from bottom usually this value zero
+[4:22] If the 8-bit time, top is 255, TCND register increments to 255.
+[4:30] For each clock pulse, it increments.
+[4:34] And then it overflows to zero and increments again one by one to 255.
+[4:42] Overflows to zero.
+[4:44] Increments again.
+[4:47] Overflows to zero.
+[4:48] Increments again.
+[4:50] That's how time works.
+[4:51] Last week we discussed. Then depending on the duty cycle
+[4:55] you need, you assign a value
+[4:59] to OCR register. A value is between
+[5:02] bottom and top. In 8 bit timer between 0 and 255.
+[5:08] A value you assign to OCR. Now for example
+[5:11] if you assign 127 to OCR, you get
+[5:14] 50% duty cycle. If you assign 63 to OCR,
+[5:18] you get
+[5:19] 25% due design
+[5:22] with 8 bit time.
+[5:25] So some value
+[5:26] between bottom and top
+[5:28] you assign to OCR.
+[5:30] Timer increments. TCNT register
+[5:32] increments. Comparator
+[5:34] compares. Comparator compares
+[5:36] what? Value of
+[5:38] TCNT register against
+[5:40] value of
+[5:42] OCR register. OCR means
+[5:44] output compare register. Those two
+[5:46] values are compared. Who?
+[5:48] And if a compare match occurs, comparator triggers waveform generator. That's the job of comparator. Now you can see in this graph, in this particular place, you can see a compare match occurs, where I put the red dot.
+[6:07] The two values of the two registers, they match.
+[6:12] The comparator compares and a match occurs at this moment.
+[6:18] So comparator triggers waveform.
+[6:21] Then what the waveform degenerate does is, it clears OCP.
+[6:28] It clears OCP.
+[6:29] OCP was high, 5 volts.
+[6:33] It was high.
+[6:34] and waveform generator clears
+[6:36] that at that
+[6:38] moment it clears.
+[6:40] So OC pin becomes low, 0.
+[6:42] Who does that?
+[6:44] Waveform generator. The timer continues.
+[6:47] Timer continues,
+[6:48] it's counting.
+[6:50] Timer continues, it's counting
+[6:52] to 255, top value.
+[6:55] And then timer
+[6:56] overflows.
+[6:57] When timer overflows to 0,
+[7:00] TCNT register overflows
+[7:02] to zero, waveform generator sets OCP. Sets means high. Clear means low. Set means high. OCP,
+[7:13] right, waveform generator sets when timer overflows. Then timer again starts counting from zero.
+[7:22] For every clock pulse, timer increases. Another compare match occurs. As soon as a compare match
+[7:29] occurs, waveform generator clears
+[7:33] OCP. OCP becomes low.
+[7:37] Timer continues its counting to
+[7:41] 255, top value. Then time overflows. When time
+[7:45] overflows, waveform generator sets OCP.
+[7:49] OCP becomes high. Timer increments again
+[7:53] from zero and Kampaya match occurs. As soon as
+[7:57] the crumb damage occurs.
+[7:59] Waveform generator clears
+[8:01] OC pin. OC pin goes low.
+[8:04] And timer continues
+[8:05] increment.
+[8:07] It increments to 255.
+[8:09] It continues its job.
+[8:11] And when it comes to top 255,
+[8:14] it overflows. When time
+[8:15] overflows, OC pin,
+[8:18] the waveform generator
+[8:19] sets OC pin.
+[8:21] Sets means high.
+[8:23] So when you look at the
+[8:25] OC pin in the
+[8:27] At the OC pin you get a waveform.
+[8:29] You get a square wave.
+[8:31] That square wave, the percentage of time that one clock cycle is high.
+[8:39] One cycle is high.
+[8:41] Percentage of time that the output is high in one cycle.
+[8:45] That percentage of time that the output is high.
+[8:47] You can adjust.
+[8:49] How?
+[8:49] When you adjust the OCR.
+[8:51] Right?
+[8:52] When you adjust the OCR, the percentage of time that the OC pin is high, you can adjust.
+[8:59] For example, if the OCR is at the bottom, OCR is at the bottom, when timer starts counting,
+[9:06] the compound H occurs.
+[9:08] Then waveform generator clears the OC pin.
+[9:13] OC pin becomes low.
+[9:15] Timer goes to the maximum value and overflows.
+[9:18] When O flows, waveform generator sets OCPIN but at the same time timer becomes 0.
+[9:26] Then OCR was 0 so compare match occurs.
+[9:30] So OCPIN is again clear.
+[9:32] So that means OCPIN would maintain 0 volts throughout the time if OCR is at bottom.
+[9:44] If OCR is at top, OCP maintains 5 volts throughout the time.
+[9:52] If OCR is between top and bottom, you get this kind of scale.
+[10:00] The percentage of time that one pulse is high, you can adjust by varying the value of OCR.
+[10:09] This is your pulse modulator.
+[10:12] Can you understand?
+[10:12] still if it is not no issue at all not feeling is that okay okay how about others oh okay okay
+[10:32] I have a look.
+[10:34] I have a look.
+[10:34] I have a look.
+[10:35] I have a look.
+[10:35] I have a look.
+[10:35] I have a look.
+[10:35] I have a look.
+[10:35] I have a look.
+[10:35] I have a look.
+[10:35] I have a look.
+[10:36] I have a look.
+[10:36] I have a look.
+[10:36] I have a look.
+[10:36] I have a look.
+[10:36] I have a look.
+[10:36] I have a look.
+[10:36] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:37] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[10:38] I have a look.
+[11:02] [unclear — Sinhala / crosstalk]
+[11:32] I'm not going to be a low.
+[11:34] OCR value is not going to be a low.
+[11:36] Time is going to be a high time.
+[11:40] If you have a low and high time,
+[11:44] you will have a low and high time.
+[11:48] That's high.
+[11:50] Low and high time is high.
+[11:52] That's high.
+[11:54] That's high.
+[11:56] Low and high time is high.
+[11:58] That's high.
+[12:00] you will get this kind of
+[12:08] OCR value.
+[12:13] The percentage of time that the pulse is high is more.
+[12:19] If the OCR value is more towards bottom, percentage of time that the pulse is high is less.
+[12:28] So, depending on the value you assign to the OCR, you can get the pulse with modulated output with required due result.
+[12:36] Is that clear?
+[12:37] Right.
+[12:38] In any waveform generator, there are two modes.
+[12:43] Non-inverted mode and inverted mode.
+[12:46] Now, we discussed the non-inverted mode.
+[12:49] But there is another mode called inverted.
+[12:52] Inverted mode, the opposite of the non-inverted mode happens.
+[12:56] Right.
+[12:57] In the inverted mode, the opposite of the non-inverted mode happens.
+[13:03] What does that mean?
+[13:04] Let's see.
+[13:05] Now, in the inverted mode, the difference is very simple.
+[13:10] The timer increments and when a compare match occurred, waveform generator sets OCD.
+[13:19] In the non-inverted mode, waveform generator cleared OCD.
+[13:22] But in the inverted mode, waveform generator sets.
+[13:27] and when overflow when the waveform generator overflows then right when the
+[13:35] time overflows sorry when the time overflows waveform generator clears OC
+[13:41] then OC pin is lower. It is still a lot of flow when OC pin is higher. Then OC pin is lower and then it is clear.
+[13:51] That's it. Same. All other things are.
+[13:54] That is the only difference. When there's a compare match
+[13:58] in the non-inverted mode, OC pin is
+[14:02] clear, low. And when there's an overflow,
+[14:06] OC pin is set, high. In the non-inverted.
+[14:10] In the inverted mode, when there's a compare match,
+[14:14] OC pin is set, high, opposite. And in the
+[14:18] inverted mode. When there's an
+[14:20] O flow, O C
+[14:22] pin is clear. Low.
+[14:24] That's the difference.
+[14:26] Is that clear? Inverted
+[14:28] mode than non-inverted.
+[14:30] Any question?
+[14:32] Excuse me. Yes.
+[14:34] How to change
+[14:36] between non-inverted
+[14:38] and inverted mode? Sorry.
+[14:40] I couldn't get your question.
+[14:42] How to change between
+[14:43] non-inverted and inverted
+[14:46] mode? Yeah.
+[14:46] Yeah, right. We are going to discuss that. There are some control bits using them. You can change from non-inverted to inverted or inverted to non-inverted. Some control bits we have to use. We are going to discuss.
+[15:00] Right. Now we have discussed the duty cycle. We have discussed how PWM outputs are generated, right, using timers. Now we have that. So far, we didn't discuss PWM, how to compute PWM frequency.
+[15:20] We know that PWM frequency is very important.
+[15:24] If the frequency is low, it's a low, low frequency.
+[15:28] PWM frequencies, if it is low, too much low, then there will be some flickering effects.
+[15:37] But if it is too high, devices may not react to the change.
+[15:43] So it should not be low, it should not be high.
+[15:46] that depends on the device that we are going to use.
+[15:50] And using the data sheet of the device,
+[15:53] we can find out the PWM supported frequency range.
+[15:58] What is the minimum PWM supported frequency?

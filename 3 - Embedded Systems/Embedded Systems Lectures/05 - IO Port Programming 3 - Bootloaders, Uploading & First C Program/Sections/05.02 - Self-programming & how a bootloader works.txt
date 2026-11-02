@@ -1,0 +1,386 @@
+[0:08] That's what we are waiting for.
+[0:10] But there is a waiting. Many people doesn't.
+[0:12] They don't.
+[0:14] Self-programming.
+[0:16] In the self-programming, first we need a bootloader.
+[0:18] Bootloader is a piece of boot.
+[0:22] Using your PC you can generate a bootload.
+[0:26] It's a kind of firmware.
+[0:28] Bootloader is a kind of firmware.
+[0:30] Piece of code.
+[0:32] Using your PC you can generate a bootload.
+[0:36] and you can compile the bootloader into hex file. Then you have the hex file, bootloader's
+[0:44] hex file. This is the hex file of the bootloader. Machine code of the bootloader. Using a hardware
+[0:51] program, when you need a hardware program, right from either from manufacturer or from
+[0:57] aftermarket roller or from inventory, using a hardware program you can burn the bootloader
+[1:04] into the microcontroller's ROM.
+[1:07] Microcontroller's ROM, there are two areas.
+[1:10] One area is the bootloader space.
+[1:13] The other area is the application code space.
+[1:17] Right. So application code space.
+[1:20] Bootloader space, application code space.
+[1:24] Now we have partitioned the ROM.
+[1:26] Last semester we discussed about memory partition.
+[1:29] Now same way, we have partitioned.
+[1:32] For the bootloader space, we load the bootloader.
+[1:36] It flashed over inward the bootloader into the bootloader space.
+[1:41] To do that, you need a hardware.
+[1:44] You need a hardware.
+[1:46] Using the hardware programmer, you can flash the bootloader into the bootloader space.
+[1:51] So bootloader is a piece of code.
+[1:54] When you compile the bootloader, you get the X-Fi machine code of the bootloader.
+[1:58] In other words, if somebody asks what is a bootloader.
+[2:02] Bootloader is a pre-flash or pre-bird code into the bootloader space of rock.
+[2:12] Pre-flash or pre-bird code into the bootloader space of rock.
+[2:18] From again bootloader space, pre-flash or pre-bird.
+[2:22] flash no prebird code into the bootloader space of rock. We call bootloader. Now flash no bird in the bootloader in the rock. You need hardware programmer. Right. You must need hardware programmer to flash no bird bootloader into the bootloader space of rock. Right. Then you need a first application. First application. You install the first application.
+[2:52] right into your PC
+[2:55] host application into your PC
+[2:58] right
+[2:59] now the purpose of the host application is
+[3:02] to communicate with the bootload
+[3:05] host application communicates with the bootload
+[3:08] right
+[3:10] now the job of the host application is your application code
+[3:15] this is the firmware
+[3:17] machine code
+[3:18] ring machine code firmware machine code
+[3:21] Now what the host application is, is host application flashes your firmware into the application space of the rotor. Right. Host application flashes, right, the offer wire into the application space of the rotor.
+[3:41] How does first application do that? That is the question. First application communicates with the bootloader and flashes your firmware, mission code firmware into the application space of the robot.
+[3:58] How does that happen? Right. Now an example for our first application is AVRD. The meaning is AVRDownloaderUpload. That's why we call it AVRD.
+[4:14] ABI downloader upload, D from downloader, UDE from upload.
+[4:22] Right. Now this is, right. Now I will explain you what happens behind the scene.
+[4:29] Now whenever you power up or reset the microchartule, whenever you power up or reset the microchartule,
+[4:39] bootloader is the piece of code executed first. Whenever you power up the microcontroller,
+[4:47] bootloader is executed. Because we have pre-burned the code, bootloader is executed. When you
+[4:53] reset the microcontroller, bootloader is executed. That is the code first executed. In other
+[5:00] first instruction of the bootloader is in which address?
+[5:06] address zero of the wrong
+[5:09] so whenever you start with power up the microcontroller or restart the microcontroller
+[5:16] bootloader is executed first
+[5:20] so the job of the bootloader
+[5:23] so when you power up the door is set bootloader is executed
+[5:27] of the bootloader is to communicate with the host application. Host application running
+[5:33] in PC. Bootloader running in micro-throte. So bootloader communicates with host application.
+[5:40] Bootloader communicates with host application. Now you have PC connected to your development
+[5:46] board and you power up the development board. When you power up the development board bootloader
+[5:51] is executed. Right? Bootloader communicates with your PC. Using serial communication.
+[5:56] USB to serial, there is a USB to serial interface, from that the communication happens.
+[6:03] So good loader communicates with the host application and see whether any application code is available.
+[6:12] The purpose of the communication is to see whether any application code is available.
+[6:19] is available. Any application code. For example, how bring the hex file. So an application code
+[6:26] whether such an application code file is available. That is the purpose of the communication.
+[6:33] Bootload or communicates with the PC to see whether any application code is available.
+[6:40] If application code is available, if any application code hex file is available, for example, blinker.hex file, right? Right, similar to that, any application code is available.
+[6:56] [unclear — Sinhala / crosstalk]
+[7:26] I want to bootload an application in host application to see whether an application code is available to be built.
+[7:38] If so, it is burnt into the application code space of the rock.
+[7:44] So bootloading of a line, application code is here.
+[7:48] That is burnt into the application code space of the rock.
+[7:52] If no applicant had done, it is burdened with application code of the rock.
+[7:58] And execution, now bootloader is in execution.
+[8:02] Execution is passed to the newly birthed application code.
+[8:08] And execution is passed to the newly birthed application code.
+[8:12] Right. So what the bootloader does is, when you power up, it is executed.
+[8:17] executor that is the first code executor it communicates with the host application running
+[8:22] even BC to see whether any application code is available to be burned if so it is burned
+[8:29] into the application code space of the RAM and execution is passed to the application
+[8:34] code, newly burned application code. So your application code is then executed.
+[8:41] If no application code is available to people, when bootloader communicates in the host application, if no application code is available to people, then bootloader passes execution to whatever application code currently available in the application code space.
+[9:02] Existing code can be available in the application code space. So that execution is passed. If no new application code is available to be word, food loader passes execution to existing application code in the application code space.
+[9:22] No application code is available to the world.
+[9:25] Food loader passes execution to existing application code in the application code space of the robot.
+[9:35] Existing application code in the application code space of the robot.
+[9:41] So, I am application code that is done.
+[9:44] But if you have a client, what is the application course based?
+[9:51] What is the execution? Who does that? Code loop.
+[9:55] If you have a load in your code, you can use the power loop.
+[9:59] If you have a load in your code, you can communicate with the IDA, the most applications.
+[10:05] If you have a code, you can use the upload.
+[10:11] [unclear — Sinhala / crosstalk]
+[10:41] I have a very good thing, I have a very good thing, to be on a get-r.
+[10:43] I have a very good thing, to be in age-d.
+[10:44] I have a very good thing, to be in a r.
+[10:45] and the instructions.
+[10:46] There are many instructions on the HX2 cycle.
+[10:50] There are many instructions on the PCV cell-mounted address 0.
+[10:53] No, no, no.
+[10:55] But, there is no address 0.
+[10:57] There is no address 0.
+[10:59] There is no bootload.
+[11:00] No bootload is not.
+[11:01] No bootload is not.
+[11:02] We can communicate the most application.
+[11:04] No, no, no.
+[11:06] But, we can't do that.
+[11:07] No, no, no.
+[11:08] What is the application code?
+[11:10] We can't do that.
+[11:11] We can't do that.
+[11:12] [unclear — Sinhala / crosstalk]
+[11:42] f.Q.
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] 
+[11:42] PC, micro and APNM,
+[11:47] and what is wrong with it?
+[11:50] You get it?
+[11:52] You have to set up instructions.
+[11:55] You have to update the instructions.
+[11:58] Then the new instructions, you have to get them.
+[12:01] You have to go in the room.
+[12:03] The CD you can act upon.
+[12:06] you have a very good thing, the goodseinges.
+[12:08] you have a very good thing, the right to the all,
+[12:09] the all, the are the all, the f-c,
+[12:10] the c, a,
+[12:10] the s,
+[12:11] the w,
+[12:10] w,
+[12:10] a,
+[12:10] 
+[12:10] t,
+[12:10] t,
+[12:10] t,
+[12:10] t,
+[12:10] 
+[12:10] 
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] t,
+[12:10] t,
+[12:10] 
+[12:10] t,
+[12:10] t,
+[12:10] t,
+[12:10] t,
+[12:10] 
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] 
+[12:10] t,
+[12:10] t,
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] t,
+[12:10] 
+[12:10] [unclear — Sinhala / crosstalk]
+[12:40] I have a look.
+[12:41] I have a look,
+[12:41] [unclear — Sinhala / crosstalk]
+[12:42] the the a-
+[12:41] 
+[12:41] a-
+[12:41] a-
+[12:41] a-
+[12:41] a-
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] 
+[12:41] t-
+[12:42] t-
+[12:42] 
+[12:42] 
+[12:42] t-
+[12:42] t-
+[12:42] 
+[12:42] 
+[12:42] 
+[12:42] 
+[12:42] t-
+[12:42] I have a really good one, to be a meG, a
+[12:44] a
+[12:44] a
+[12:44] a
+[12:44] a
+[12:44] a
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] 
+[12:44] hist
+[12:45] a
+[12:44] 
+[12:44] hist
+[12:45] a
+[12:44] 
+[12:44] hist
+[12:45] a
+[12:44] hist
+[12:45] a
+[12:44] hist
+[12:45] a
+[12:45] and burn current on CPU and microcontroller.
+[12:51] So, it's not up-road.
+[12:53] No, it's not up-road.
+[12:56] It's not up-road.
+[12:58] It's not up-road.
+[13:01] It's not up-road.
+[13:05] It's not up-road.
+[13:10] [unclear — Sinhala / crosstalk]
+[13:40] The land house is not there, but there is a dead-wild code.
+[13:44] One thing is that the code is clear.
+[13:49] That's not true.
+[13:51] The control is fast.
+[13:53] The code is not there.
+[13:55] The power connector is not there.
+[13:58] The good road is not there.
+[14:01] The code is not there.
+[14:04] The code is not there.
+[14:06] [unclear — Sinhala / crosstalk]
+[14:36] So the application code is not existing and it is existing.
+[14:40] It is existing and it is not existing.
+[14:42] Then check security side is not allowed to bootload.
+[14:45] Endless loop is not allowed to be able to get it.
+[14:49] Yes, it is not that endless loop.
+[14:51] Because bootload cannot be allowed.
+[14:53] We cannot stop the check security side.
+[14:55] So bootload is not allowed to be able to communicate.
+[14:57] The current communication is accessible.
+[14:59] It is not allowed to check the application codes.
+[15:02] If so, do this, else do that.
+[15:05] communication is not successful, do this, take up very good, and do it, run, endless
+[15:12] so even the good loader running on, running on, is open source, what do you get by the
+[15:17] good loader, what do you get by the good loader, what do you get by the good loader, it's
+[15:20] a small piece of loader, this is one of the key successes in IT-ADR running, before ADR,
+[15:27] all the micro controlers, if you do, now if you want to burn a firm micro control, you
+[15:34] you must need hardware programmers. People use hardware programmers to burn hardware in the microcontrollers before AVR. AVR came in this new innovation.
+[15:48] piece of gold in the microcontroller. So microcontroller itself
+[15:52] like uploads any application gold into itself.
+[15:58] Microcontroller all the flashed and the

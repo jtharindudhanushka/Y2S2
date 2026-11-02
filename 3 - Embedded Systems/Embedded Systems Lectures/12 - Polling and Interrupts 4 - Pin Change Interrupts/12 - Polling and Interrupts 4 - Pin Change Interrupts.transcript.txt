@@ -1,0 +1,1006 @@
+12 - Polling and Interrupts 4 - Pin Change Interrupts  (3 Nov 2020 (morning))
+
+[0:00] Right. Can you see my slides?
+[0:03] Yes, sir.
+[0:04] Yes, sir. We can.
+[0:05] This is where we stopped last time. Last time we discussed about external interrupts.
+[0:12] Today the topic is pin change interrupts. One limitation of external interrupts.
+[0:19] Now when you take ATmega328P microcontroller, only two pins, only two IEO pins support for external interrupts. PD2 and PD3 would be pin 2 and pin 3. Only they support for external interrupts.
+[0:41] Now the question is this, if you have to connect, if you want to connect more sensors, right, and if you want to get the CPU interrupted with these sensors, more than two sensors, then what can we do?
+[1:04] Because we have only two external, two pins supporting external interrupts.
+[1:11] That means you can connect two sensors, like so.
+[1:15] But if you have more than two sensors to connect and you want to use interrupts,
+[1:22] then there is a problem because we have only two external interrupts supported pins.
+[1:30] Now, in that situation, we can use pin change interrupt, right?
+[1:36] Using pin change interrupts, virtually all IO pins you can use as interrupt pins.
+[1:44] That means you can connect sensors to any IO pin and interrupt the CPU, right?
+[1:52] Whenever that particular sensor needs CPU service.
+[1:57] So virtually you can make all IO pins interrupt enable using pin change interrupts.
+[2:06] So that's the flexibility, that's the advantage of using pin change interrupts.
+[2:13] Right.
+[2:14] Now let's talk about pin change interrupt registers.
+[2:19] Right.
+[2:19] This is one of the important registers that you have to use.
+[2:26] PCICR register.
+[2:27] PIN change interrupt control register. PIN change interrupt control register. Right now when you deal with these registers you don't need to worry about their names. Don't try to memorize their names because even for the exam you get all these names.
+[2:47] So in the practical exam, you get a summarized data sheet and even the final written exam, you get all these names.
+[2:57] So you don't need to worry. So idea is this.
+[3:01] Even in the field, even in the industry, when you are working on a project, you have the access to data sheet.
+[3:08] So that is OK. You don't need to memorize the contents of data sheet.
+[3:13] You should know how to refer the data sheet.
+[3:17] And after referring the data sheet, you should be able to do the task at hand.
+[3:23] Right.
+[3:25] Whatever the task in your hand, you should be able to do by referring the data sheet.
+[3:30] So no need to memorize these things.
+[3:33] Right.
+[3:34] So everything will be given.
+[3:36] So only thing you should know.
+[3:38] This is the important register that I have to use.
+[3:40] These are the bits I have to work on.
+[3:43] Right.
+[3:43] Now this register has three important bits related to pin change interrupts.
+[3:53] Now those bits are PCIe0, PCIe1, PCIe2.
+[3:59] What are they?
+[4:00] Let's see.
+[4:03] PCIe2.
+[4:06] PCIe2 means pin change interrupt enable to.
+[4:11] So, PCIe 1 means pin change interrupt enable 1.
+[4:16] So, likewise PCIe 0 means pin change interrupt enable 0.
+[4:22] So, using these bits you can enable pin change interrupts not external interrupts.
+[4:30] Pin change interrupts on port B, port B, port C and port B.
+[4:36] So, what does that mean?
+[4:37] Now, for example, if you set PCIe to that particular bit, this particular bit you set, right?
+[4:45] That means you store value 1 in this bit.
+[4:48] That means you enable all pins in the port D, pin change interrupt enable.
+[4:56] You make all pins, IO pins in the port D, pin change interrupt enable by setting this bit.
+[5:03] If you clear this bit, that means zero.
+[5:07] You disable pin change interrupts on all IO pins in port D.
+[5:13] Similarly, if you want to enable pin change interrupts on IO pins of port B,
+[5:21] then you have to set this.
+[5:23] Then you can enable pin change interrupts on port B.
+[5:29] All IO pins.
+[5:30] There are eight IO pins in port B.
+[5:32] all IEO pins you can enable for pin change interrupts.
+[5:36] If you clear this bit, by default it is clear 0.
+[5:40] That means port B, IEO pins
+[5:44] pin change interrupts disable. Right.
+[5:48] Is that clear? Okay. Then, now the question is
+[5:52] we can enable entire port for
+[5:56] pin change interrupts using this PCIE
+[5:59] bits of PCIC
+[6:02] are registered, we can enable, disable
+[6:06] entire port for pin change in front. Now entire
+[6:10] port is enabled. Then how do we enable, disable
+[6:15] individual pins of a particular
+[6:19] port? The entire port you can enable or disable for
+[6:23] pin change in front. Now you know that. Now can
+[6:27] we enable, disable individual pins of a particular port, already enabled, the entire port enabled,
+[6:36] now we are going to enable, disable individual IO bits. For that we need to use another register.
+[6:44] Actually not one register, three registers. Those registers are called PCMSK. The meaning is pin
+[6:53] change mask. 0, 1, 2. PC MSK 0 register for the port B. PC MSK 1 register for port C. PC MSK 2
+[7:08] register for port D. Right. Now, using these bits, we can enable, disable individual pins
+[7:19] of enabled port, already enabled port. For example, let's say the port B already enabled.
+[7:27] Now, how do we enable port B? So, you have to go back to the previous slide. We set this particular
+[7:33] bit, PCIE bit, so that we enable port B for pin change interrupt, entire port enabled. Then,
+[7:43] in the next slide, right, this particular bit we set PCINT0, that is pin change interrupt,
+[7:53] INT means interrupt. If you set this bit, TB0 pin is enabled for interrupts, pin change interrupts.
+[8:03] If you set this particular bit, then you enable PB5.
+[8:12] PB5 in the Arduino terms, pin number 13 on UNO board for pin change interrupts.
+[8:20] If you set this bit, you enable Arduino pin number 8, PB0 for pin change interrupts.
+[8:30] First you have to enable the entire port, then you have to enable individual bits.
+[8:36] So likewise you can enable the individual bits for pin change interrupts.
+[8:44] So using these individual bits you can enable disable pins, individual pins of enabled port.
+[8:53] First you enable the port, whether port C enable, port D enable or port B.
+[9:00] right in our microcontroller we have only three ports b c d but some microcontrollers you have
+[9:06] more ports port a b c d e g h it depends on the microcontroller there can be more ports whatever
+[9:14] it is the concept is this first you enable the port then you enable the individual pins of that
+[9:22] port. Right.
+[9:23] Then you enable the individual pins
+[9:25] of that port.
+[9:27] To do that, you have to set
+[9:29] the particular bit
+[9:31] of this pin change
+[9:34] mask register. Actually, there are
+[9:35] three registers. Why?
+[9:37] Because three ports. Port B,
+[9:40] Port C, Port D.
+[9:42] Is it clear?
+[9:44] Any question?
+[9:46] Right.
+[9:47] Yes, Isuru.
+[9:48] Sir.
+[9:49] Sir, why that bit of PCMSK1 is...
+[9:57] I can't hear your question very clearly.
+[10:00] Can you repeat it again?
+[10:02] Sir, in the second row, why it's in the bit of 70...
+[10:08] Second row means?
+[10:11] PCMSK1.
+[10:13] PCMSK1 for port C.
+[10:14] Right.
+[10:15] Your question is, this bit number 7.
+[10:19] Yes, sir. Because in the PCMSK1, that's a good question, right? Good question, but I think I should not answer because you should be able to find out the answer. Okay, anyway, I'll answer because you asked, right?
+[10:34] Now, this
+[10:37] TCMSK1
+[10:41] register represents
+[10:43] port C. In
+[10:45] ATmega 328p microcontroller
+[10:48] in the port C,
+[10:49] you don't have 8
+[10:51] IOPs. You have only 7.
+[10:54] Typically, in an 8-bit
+[10:55] architecture, every port
+[10:57] has 8
+[10:59] pins. But this particular
+[11:01] one, that is not always.
+[11:03] This is what one good example, right? The port C has only seven pins. That's why there is no meaning for this particular bit. Because there is no corresponding IO pin for this bit. Is it clear? Is it not?
+[11:21] Okay, right.
+[11:51] Let's go back to the diagram.
+[11:56] Right.
+[11:58] Your question is the difference.
+[12:01] Now, external interrupts, you can interrupt the CPU, right, when there's a logic change,
+[12:10] when the interrupt pin is held a logic low, when on the falling edge of the interrupt pin,
+[12:18] on the rising edge of the interrupt pin, you can interrupt the CPU.
+[12:23] But when you take the PCINT, that is pin change interrupts,
+[12:29] you can interrupt the CPU only on logic change.
+[12:34] Logic change means either pin goes from high to low or low to high.
+[12:39] But here you have four choices.
+[12:42] But here you have only one choice.
+[12:45] That's the difference.
+[12:45] The other thing is external interrupts are supported by only two pins.
+[12:50] But using pin change interrupts, you can make all IO pins virtually supported for interrupts.
+[13:00] So those are the differences.
+[13:03] Clear?
+[13:04] Okay, sir.
+[13:05] They do the same thing.
+[13:07] When you fix INT, INT what has logic change.
+[13:13] It's doing the same thing in the PCI-TO service.
+[13:20] This particular option, logic change option of external interrupts and PCI pin change interrupt option are similar.
+[13:32] But external interrupt, only two pins supported.
+[13:38] Pin change interrupts, any port pin.
+[13:40] Right. Now again, now here you can see the port C has only seven IO pins, not eight. One, two, three, four, five, six, seven. Not eight IO pins like other ports.
+[14:00] That's why this particular register which corresponds to port C, you don't have a bit for this. There is no meaning for this bit because only 7 IO pins, not 8 for port C.
+[14:19] Right. Now, based on pin change interrupts, let's try to develop the same system.
+[14:28] So, system, this system toggles an LED on user input while blinking another LED in every two seconds using pin change interrupts.
+[14:39] Now, two tasks, the main task blinking an LED every two seconds.
+[14:43] While doing that, if you got an input, you have to toggle another LED.
+[14:51] Now, there are two LEDs.
+[14:53] One is the onboard LED connected to pin number 30.
+[14:57] There is another external LED connected to pin number 8.
+[15:01] We blink the onboard LED every two seconds.
+[15:03] While doing that, if you got an input using a push button, then you have to toggle the external LED.
+[15:12] The same system.
+[15:13] But this time we use pin change interrupt.
+[15:17] Right.
+[15:17] The system we develop using polling.
+[15:20] And then we develop the same system using external interrupts.
+[15:24] Now we are going to develop the same system using pin change interrupts.
+[15:28] Right.
+[15:29] Now here you can see the.
+[15:33] So there was a small interruption.
+[15:35] Can you see my slides?
+[15:37] No, sir.
+[15:38] Now can you see?
+[15:39] Yes, sir.
+[15:40] Right.
+[15:41] So let's continue.
+[15:42] Now here you can see every IEO pin has pin change interrupt number.
+[15:50] Now for example, PB0, the pin change interrupt number is PCINT0.
+[15:57] PB5, pin change interrupt 5.
+[16:01] PD2, which supports external interrupts as well.
+[16:07] In 0 is the external interrupt name for this particular pin.
+[16:10] but pin change interrupt 18.
+[16:13] Right.
+[16:14] So, the IO port,
+[16:16] if you use this particular pin as an IO port,
+[16:20] you use PD2.
+[16:22] If you use this pin as for external interrupts,
+[16:26] you use int 0.
+[16:27] If you use this pin for pin change interrupts,
+[16:31] then you can use PCINT 18.
+[16:35] All these are labels
+[16:36] and all these labels,
+[16:39] they direct to one particular number.
+[16:44] Different labels for our convenience.
+[16:47] So, these are labels. All these labels represent
+[16:52] one particular number. That number represents the PIN.
+[16:56] So, our convenience based on the
+[16:59] technique that we use, there are different
+[17:03] labels. If you use this particular PIN, PIN number 44IO
+[17:08] input output so you can use
+[17:11] PD2. If you use this particular pin for external
+[17:14] interrupts then more meaningful if you use int 0
+[17:18] rather than PD2 because then your program
+[17:22] becomes more readable, understandable because
+[17:25] any reader who reads your code can immediately
+[17:30] understand you are using this particular pin for
+[17:34] external interrupts because int 0
+[17:37] they know the meaning
+[17:39] for external interrupts.
+[17:41] And if you are using the same
+[17:43] pin for pin change interrupts
+[17:45] it's better to use
+[17:47] this label PCIAT
+[17:49] AT rather than using
+[17:51] int 0. If you
+[17:53] use int 0 then the reader
+[17:54] may be right
+[17:56] misled. Reader may think
+[17:59] you are using external interrupts. No
+[18:01] actually you are using pin change interrupts.
+[18:03] So, better to use this label.
+[18:05] And when you are using Arduino wrapper functions, right, that means just number two.
+[18:11] All these are labels for given pin of micro control.
+[18:18] Can you understand?
+[18:20] Right.
+[18:20] You have to use the proper label at the proper place.
+[18:25] It is free.
+[18:27] You are free to use any label.
+[18:29] then your code name
+[18:33] mislead the reader. One good example is
+[18:37] your code, in the code you are using pin change interrupts
+[18:41] but you use external interrupt label. Then it's
+[18:45] misleading. So if you are using pin change interrupts
+[18:49] better to use pin change interrupt label. If you are using external
+[18:53] interrupts better to use external interrupt label. If you are
+[18:57] using the pin for io use avr pin label for io that is pd2 if you are using audio no use audio
+[19:05] labels right then let's move into algorithm because hardware we have already designed
+[19:11] design developed the same hardware right the hardware that we use for
+[19:16] pulling hardware that we use for external interrupts the same hardware that we are going
+[19:23] So we don't need to talk about the schematic diagram or wiring diagram, no. Same hardware, right? The external interrupts, we develop hardware and then to devouse the input, we use a capacitor in parallel to the input switch, the same hardware.
+[19:46] But now we are going to use different types of interrupts.
+[19:52] So the firmware would be different.
+[19:54] But the same hardware algorithm.
+[19:57] So we start the flowchart.
+[20:00] Pin change in truck base trigger.
+[20:02] Then the main function.
+[20:04] Any C program you have this function.
+[20:08] And start.
+[20:09] Now let's talk about this main function.
+[20:11] Our flowchart for this main function.
+[20:13] Right.
+[20:14] So as usual, we configure PB0 and PB5 as outputs.
+[20:21] So these are the two IO pins that we use to connect LEDs.
+[20:28] The PB0 we have connected the external LED on the breadboard and PB5 onboard LED connected.
+[20:37] Arduino pin number 8, Arduino pin number 13.
+[20:40] Then we configure PD2 as an input because the switch connected to PD2.
+[20:49] Actually, the PD2 means PCINT18.
+[20:54] PD2 means PCINT18.
+[20:57] Pin change interrupt 2.
+[20:59] Pin change interrupt 2.
+[21:01] So, we configure that pin as an input because the switch connected to that pin.
+[21:06] Then we pull up that pin.
+[21:08] Idea is the default state of the pin is now high when you pull up.
+[21:15] We activate the internal pull up resistance.
+[21:18] So we pull up the pin.
+[21:20] So the default state of the pin is high.
+[21:23] PD2.
+[21:24] PD2 means PCI NT18.
+[21:27] Then we enable pin change interrupt on port D.
+[21:31] We enable the entire port D for pin change interrupts.
+[21:35] Entire port D we enable for pin change interrupt.
+[21:39] Then in that port individual pin.
+[21:43] We enable pin change interrupt on PD2 that is PCI and E80.
+[21:49] The individual pin where the switch connected.
+[21:53] We enable that pin for pin change interrupt.
+[21:56] Then we enable global interrupt.
+[21:59] SEI function set interrupt function.
+[22:02] Then we enter into the endless loop.
+[22:04] And we start doing the main task.
+[22:09] Tuggling onboard LED every two seconds.
+[22:13] That is the main task.
+[22:15] Keep reading the newspaper.
+[22:17] Tuggling PB5 that is onboard LED connected to PB5 pin number 30 every two seconds.
+[22:25] That's the main task.
+[22:26] While we are doing the main task, if input, if somebody presses the button,
+[22:33] then we will be interrupted.
+[22:36] So till then we can do the main task.
+[22:39] When you got interrupted
+[22:41] then you have to attend to the input.
+[22:44] Right.
+[22:44] So when there is an interrupt
+[22:47] we have to handle the relevant interrupt handling routine.
+[22:51] So this is the interrupt handling routine for pin change interrupt.
+[22:55] Now in that routine we have to toggle the external LED.
+[23:01] Externally connected LED
+[23:02] we have to toggle. But unlike in the previous example, we can't simply do that. We have to
+[23:10] check a condition. Why? The reason is this. The pin change interrupts occur when the state of
+[23:20] a particular pin, when the state of a particular pin change. The pin change, that's why we call
+[23:28] pin change. When the state change, pin change interrupt happens. Now state change means the
+[23:37] state could go from high to low as well as from low to high. There can be two state changes.
+[23:46] High to low, low to high. Right. What does that mean? By default, the pin is high. When
+[23:54] you press the button, the pin becomes low. That means when you press the button, the state change
+[24:02] is high to low. Pin change interrupt happens. Also, when you release the button, then low to high,
+[24:12] the pin state is changed from low to high. Again, pin change interrupt happens. When you press the
+[24:18] button, interrupt happens.
+[24:20] When you release the button,
+[24:22] interrupt happens. But we
+[24:24] want to toggle the LED
+[24:26] only when
+[24:28] we press the button,
+[24:30] not when we
+[24:32] release the button. So, we want
+[24:34] to toggle the LED when we
+[24:36] press the button. We don't want to
+[24:38] toggle the LED when we release the button.
+[24:40] But the pin change interrupt
+[24:42] can happen when
+[24:44] we press the button as well as when
+[24:46] we release the button, because state change
+[24:48] happens when you press the button high to low state change when you release the button low to
+[24:53] high in our external interrupt example right we use falling edge to trigger to interrupt the cpu
+[25:05] falling edge that means the pin state going high to low falling edge only one falling edge there
+[25:13] There are no two falling edges.
+[25:15] You have one falling edge, one rising edge.
+[25:18] So that's why in that example, we didn't encounter this kind of problem.
+[25:24] But here we have that problem.
+[25:27] When you press the button, CPU is interrupted.
+[25:30] When you release the button, again CPU is interrupted.
+[25:33] We don't want that to happen.
+[25:35] We want to toggle the LED only when we press the button.
+[25:40] That's why we check using this condition.
+[25:43] if interrupt is on falling edge.
+[25:47] If interrupt is on falling edge.
+[25:50] That means, falling edge means
+[25:53] the state goes from high to low.
+[25:56] We check whether state goes from high to low.
+[26:00] If so, we toggle the LED.
+[26:03] The state goes from high to low
+[26:05] when you press the button.
+[26:07] Because default state high,
+[26:09] when you press the button, it becomes low.
+[26:11] So high to low happens when you press the button.
+[26:14] That is falling edge.
+[26:16] But when you release the button, the state was low.
+[26:21] It goes to high.
+[26:23] Low to high, that is rising edge.
+[26:26] So this condition becomes false when you release the button.
+[26:30] So we don't toggle the LED.
+[26:31] When this condition is true, then only we toggle the LED.
+[26:37] So when you press the button, LED will be toggled.
+[26:41] When you release the button, nothing will happen.
+[26:43] Although this interrupt routine is executed, nothing will happen because of this condition.
+[26:50] Can you understand that?
+[26:55] Any question?
+[26:59] Can you understand why we need this if condition?
+[27:02] Without this if condition, if we use just toggle TB0.
+[27:07] in the interrupt handling routine, what would happen is PB0 will be toggled when you press
+[27:13] the button as well as when you release the button. So if the LED was off, when you press the button,
+[27:19] it will be turned on and when you release the button again, it will be turned off.
+[27:24] But we don't want to do that. When you press the button, we want to toggle. If the LED was off,
+[27:31] when you press the button, we want to turn on the LED. And when you release the button,
+[27:36] nothing should happen.
+[27:39] But the problem of pin change interrupts
+[27:41] so they interrupt the CPU
+[27:44] when the state of the pin is changed.
+[27:47] That means this pin change interrupt handling routine
+[27:52] is executed when you press the button
+[27:55] as well as when you release the button.
+[27:57] That's why we have put this if condition.
+[28:00] Using that we check whether
+[28:02] it's a button press or button release.
+[28:05] If it is a button press, toggle the LED.
+[28:09] If it is a button release, do nothing.
+[28:12] Is it clear?
+[28:13] Any question?
+[28:15] Right.
+[28:15] Then let's move into source code.
+[28:19] Right.
+[28:21] We need this header file which contains input-output definitions.
+[28:26] Right.
+[28:28] And we need this fcpu constant.
+[28:32] that is the speed of the cpu because delay.h header file requires the speed of cpu to determine
+[28:43] delays and also this header file contains definition of underscore delay underscore
+[28:50] ms function and we are going to use interrupts so we need this header file interrupt.h then
+[28:58] you have main function in main void return 0.
+[29:03] First what we do is we configure
+[29:06] PB0 and PB5 as outputs.
+[29:12] Then we configure PD2 which is PCINT18.
+[29:20] PD2 means PCINT18 as an input.
+[29:25] Ideally you don't need this line.
+[29:27] because by default this particular bit is zero.
+[29:33] So you don't need this line actually
+[29:35] because by default the register values are zero.
+[29:39] That means all pins are input pins by default.
+[29:44] So no need to configure them explicitly.
+[29:48] However, this is a good practice.
+[29:50] That makes your code more understandable, right?
+[29:54] But on the other hand, extra one clock cycle.
+[30:00] So you waste one clock cycle, but you improve the understandability of your write.
+[30:08] Then pull up PD2, that is PCI-NT18, by activating the internal pull-up resistance.
+[30:18] We set this bit on port D, so we pull up PD2.
+[30:23] Then we need to enable port default pin change interrupts.
+[30:30] Port default pin change interrupts.
+[30:32] So we set the bit number 2.
+[30:35] Bit number 2 is the PCIe2.
+[30:39] Pin change interrupt enable 2 bit.
+[30:42] We set that bit of PCICR, pin change interrupt control register.
+[30:49] to enable the entire port for pin change interrupts.
+[30:54] Then we enable the individual pin of port D.
+[31:01] The individual pin is the PD2 or PCI-NT18 via the switch connected.
+[31:09] To do that, we use PCMSK2 register, pin change mask 2 register
+[31:16] because MAS2 register is the corresponding register for 4D.
+[31:23] In that register, we set PCINT 18 bit
+[31:33] to enable pin change interrupts on this particular pin.
+[31:40] Thereafter, we enable global interrupts
+[31:44] by calling this function set interrupt. So this function will set bit 7 that is interrupt bit of
+[31:53] sreg register status register. Status register bit number 7 that is interrupt bit we set. So we
+[32:00] enable global interrupt. Then we enter into endless loop. Right. In the endless loop we start doing
+[32:10] our main job. Toggling PB5
+[32:14] that is onboard LED connected to PB5.
+[32:19] Toggle PB5 every 2 seconds and
+[32:22] keep doing that job till you are interrupted.
+[32:27] Till you are interrupted keep doing this. If you are
+[32:30] interrupted then handle the relevant ISR.
+[32:34] If you are interrupted then handle the relevant ISR. So this is
+[32:38] the ISR, the relevant ISR. Interrupt service routine.
+[32:43] Pin change interrupt two vector.
+[32:46] Why pin change interrupt two vector? It is for port D.
+[32:49] Pin change interrupts on port D.
+[32:53] If the interrupts are on port C, pin change interrupt
+[32:58] one vector. If the interrupts are on port B,
+[33:02] pin change interrupt zero vector. So different
+[33:06] interrupt vectors for different ports.
+[33:08] pin change interrupt 2 vector for port D,
+[33:12] pin change interrupt 1 vector for port C,
+[33:16] pin change interrupt 0 vector for port B.
+[33:20] Right.
+[33:21] The relevant ISR you have to handle.
+[33:24] Now inside the ISR we need to toggle the external LED.
+[33:30] You can't do it simply because this ISR is called
+[33:35] when the state of the pin goes from high to low as well as it comes from low to high.
+[33:44] That means this ISR is called when you press the button as well as when you release the button.
+[33:50] But we want to toggle the LED, external LED connected to PB5 only when you press the button.
+[34:00] Therefore, we need to check whether it is a button press or button release.
+[34:06] To do that, we use an if condition.
+[34:10] And this is the if condition that we use to check whether it is a button press or button release.
+[34:16] We check the bit 2, right?
+[34:21] This is bit 0, bit 1, bit 2.
+[34:23] Bit 2 of PIN D.
+[34:25] PIN D register.
+[34:26] bit 2 we check whether it is equal to 0.
+[34:31] When you press the button, the PD2,
+[34:34] state of the PD2 becomes low. When you press the button,
+[34:39] state of PD2 becomes low. As a result, right?
+[34:43] Let me write that. Now,
+[34:46] when you press the button, PD2
+[34:50] pin becomes low. Right. Now, if this is
+[34:53] pin D register. Let's say pin D register has these values. It has these values. 1 XX. Why?
+[35:03] This bit is 1 because we have pull up the pin. We have pull up the pin. So that means PD2 is high
+[35:13] by default. Bit 0, bit 1, bit 2. Therefore, bit 2 is 1 of the pin D register. But when you press
+[35:21] the button, the pin becomes low, right? Now, let's take the end operation with this end,
+[35:31] the other part, 0, 0, 0, 0, 0, 1, 0, 0. Now, when you get the end operation of these two values,
+[35:42] x and 0x.
+[35:46] No, sorry.
+[35:46] x and 0, 0.
+[35:48] 0, 0, 0, 0.
+[35:52] 0, x, 0, 0.
+[35:56] This is the result.
+[35:57] So the result of the AND operation depends on x.
+[36:02] Right.
+[36:03] Let's say this is also x.
+[36:07] x and 1, x.
+[36:09] So the result of the AND operation depends on x.
+[36:12] By default x is 1.
+[36:15] Why?
+[36:15] We have pull up PD2.
+[36:18] By default value of x is 1.
+[36:20] We have pull up PD2.
+[36:23] Right.
+[36:23] So if x is 1, this condition becomes false.
+[36:28] 1 not equals to 0.
+[36:31] If x is 1, 1 means 100.
+[36:34] 100 means 4.
+[36:37] 4 is not equal to 0.
+[36:39] So if condition false.
+[36:41] That means when you have released the button, if nobody has pressed the button, this condition falls, nothing happens.
+[36:50] But when you press the button, then X becomes 0.
+[36:55] Because PD2 state becomes low.
+[36:59] As a result, X becomes PIN D register.
+[37:03] The second bit becomes 0.
+[37:06] So, entire value would be 0.
+[37:08] 0 equals to 0.
+[37:10] Yes.
+[37:11] condition is true
+[37:13] we toggle the LED.
+[37:15] Right. The idea
+[37:17] is this. If this value
+[37:19] is zero
+[37:20] the pin change interrupt
+[37:22] happens when there is a
+[37:25] when there is a state
+[37:26] change on the pin.
+[37:28] When there is a state change on the pin
+[37:30] this interrupt, this ISR is
+[37:32] executed. Now when the
+[37:34] ISR is executed
+[37:36] if the value of this bit
+[37:39] is zero
+[37:39] that means PD2 is low. When the interrupt ISR is executed, if this bit is 0, that means PD2 is low.
+[37:53] To happen the interrupt, the PD2 must be high before the interrupt happens. If it was high,
+[38:06] now it is low
+[38:08] if it was high
+[38:09] then there is a state change
+[38:12] that's why interrupt happened.
+[38:14] So high to low it was high
+[38:16] now it is low
+[38:18] interrupt happened.
+[38:20] That means state change.
+[38:22] High to low means
+[38:24] falling edge.
+[38:26] But when you release the button also
+[38:28] interrupt happens.
+[38:29] When you release the button
+[38:31] the value of x would be
+[38:34] 1. Why?
+[38:36] We have pull up PD2.
+[38:38] So, we check the value.
+[38:40] If it is one interrupt happen, then its previous state should be low.
+[38:48] Because state change, low to high happen.
+[38:51] That is rising edge.
+[38:53] In the rising edge, we don't toggle the LED, right?
+[38:57] Now, in the external interrupts, you have four choices.
+[39:01] whether the pin held low, whether state change happened,
+[39:08] whether falling edge, whether rising edge.
+[39:14] But when it comes to pin change interrupts, you don't have those choices.
+[39:17] You have only one choice, logic change.
+[39:21] But using a simple if condition,
+[39:24] we can determine whether it is on falling edge or rising edge.
+[39:29] whether the interrupt happened.
+[39:32] When you press the button or release the button,
+[39:34] you can determine.
+[39:35] In the external interrupts,
+[39:37] you don't need to determine that
+[39:38] because there are choices.
+[39:40] You have to use the correct choice.
+[39:43] If you want to determine
+[39:44] whether it's a button press,
+[39:48] you have to use the falling edge interrupt.
+[39:50] If you want to determine
+[39:52] whether it's a button release,
+[39:55] you can use rising edge interrupt.
+[39:57] But in pin change interrupts,
+[39:59] you don't have those choices. But using if condition, you can simply determine that.
+[40:04] If the current value of the pin is low, an interrupt happened, that means the previous
+[40:12] state of the pin must be high. High to low, it happened. That's why interrupt happened.
+[40:18] Falling edge. If the current value of the current state of the pin is low, interrupt happened.
+[40:26] that means it was
+[40:29] current state of the pin is
+[40:31] high and interrupt happened
+[40:33] that means it was
+[40:35] low previously, low to
+[40:37] high, rising
+[40:39] edge. Based on that
+[40:41] we can determine whether it's
+[40:43] a button press or button release.
+[40:46] If there's a button press
+[40:47] we toggle the LED
+[40:49] if it is a
+[40:51] button release we don't do
+[40:53] anything. Can you understand?
+[40:55] Any question?
+[40:56] In this line we check whether the state of the pin is low.
+[41:01] That is current state.
+[41:02] Whether it is low.
+[41:04] Then interrupt happened.
+[41:06] To happen the interrupt there should be a state change.
+[41:09] Currently low.
+[41:10] Currently low means previously high.
+[41:13] If previously also low.
+[41:15] Then there is no state change.
+[41:18] The ISR would not be executed.
+[41:20] ISR executed.
+[41:22] Currently low.
+[41:23] That means previously high.
+[41:25] High to low.
+[41:25] button press. If currently high
+[41:28] ISR executed currently high
+[41:31] that means previously low
+[41:33] low to high
+[41:34] button release. Is that clear?
+[41:37] Can you understand? Any question?
+[41:41] Okay. No questions.
+[41:43] Right.
+[41:45] One problem
+[41:47] actually not a problem
+[41:49] one
+[41:51] issue with this code is
+[41:55] when you are writing this code you have to write
+[41:58] you have written actually
+[42:00] strings of bits
+[42:03] strings of bits
+[42:04] then when you write strings of bits
+[42:06] you have to count them
+[42:07] whether it contains 8 bits
+[42:10] so it's a little bit inconvenient
+[42:12] so therefore
+[42:14] some experienced programmers
+[42:16] use a different approach
+[42:18] rather than writing
+[42:20] strings of bits
+[42:23] they use a different approach
+[42:24] The same program, same firmware, you can write something like this.
+[42:30] No strings of bits.
+[42:33] Instead of that, you use hexadecimal value.
+[42:36] Now, for example, now this particular place, we have to write 0B, 0B, 0, 0, 1, 0, 0, 0, 1.
+[42:54] pb 0 and pb 5 we have to set high now this is equivalent to 0x2121 same way this is equivalent to
+[43:12] 0, B, 1, 1, 1, 1. That is F. Then 1, 0, 1, 1. Right. This is F. This is B. P, D, 2. We need to configure as an input pin. So second bit. We have to clear.
+[43:35] Rather than using the binary values, strings of bits, you can use hexadecimal values.
+[43:44] If you are very convenient with hexadecimal and binary conversions.
+[43:49] So, experienced programmers who are very familiar with hexadecimal notation,
+[43:56] they write firmware using these hexadecimal values.
+[44:01] This is another way of writing the same code.
+[44:04] Now I discuss all these things because when you read books, when you read the firmware developed by others, you may encounter these types of writing.
+[44:18] Some people use lengthy binary strings.
+[44:22] Some people use hexadecimal constants.
+[44:25] Some people use bit shift operators, left shift and right shift operators.
+[44:31] And some people use label constants.
+[44:34] This is another version of same family.
+[44:38] The third version, we have already discussed this, using bitwise shift operators.
+[44:45] Sir? Yes.
+[44:48] Sir, is it... is it...
+[44:53] I have done a lot of the performance in the computer.
+[45:06] Now the thing is this.
+[45:09] This source code is in C. The compiler translates all these things into machine code.
+[45:18] it doesn't matter you write it in ones and zeros or hexadecimal because it is translated
+[45:25] by the compiler. For the compiler it is easier if you write it in ones and zeros. Right. But not for
+[45:33] the actual there is no effect of that for the actual execution speed because compiler translates
+[45:40] it's all these things into machine
+[45:42] code.
+[45:44] Right. If it is in
+[45:46] hexadecimal, the compiler will translate
+[45:48] that into machine code. If it
+[45:50] is in ones and zeros,
+[45:52] so compiler has
+[45:54] nothing to do.
+[45:56] So there is no effect for the
+[45:58] performance. So that's
+[46:00] why different programmers use these
+[46:02] different styles. There is no
+[46:04] big effect for the performance. Actual
+[46:06] execution speed, there is no effect.
+[46:08] And also there is no effect for the
+[46:10] the size of the code.
+[46:13] No effect for the space complexity,
+[46:15] no effect for the time complexity.
+[46:17] Right. So all these
+[46:18] things, right,
+[46:20] ultimately translated,
+[46:22] converted into machine code by the
+[46:24] compiler. Right. So this
+[46:26] is the third
+[46:28] way of using bit shift operators.
+[46:31] Using bit shift operators
+[46:32] you can write the code. Then again you
+[46:34] don't need to write lengthy binary string.
+[46:37] Now these approaches
+[46:38] are, right,
+[46:40] would be very convenient.
+[46:42] These approaches would be very convenient
+[46:44] when you are dealing with
+[46:45] 32-bit architecture, micro-metrics.
+[46:49] Now, 8-bit architecture,
+[46:50] you can write a binary string with 8 bits.
+[46:54] There is no big issue, big deal.
+[46:56] But think about 32-bit architecture.
+[46:59] Then you have to write 32 bits,
+[47:02] string of 32 ones and zeros.
+[47:05] Then you have to check
+[47:06] whether all 32 bits are there.
+[47:09] the correct bit value is at the correct position.
+[47:14] You have to check.
+[47:15] Count the bits, check whether the correct bit values
+[47:18] are at the correct position.
+[47:20] That is not convenient when you are dealing with lengthy binary string.
+[47:24] So in that situation, this would be much handy.
+[47:29] Dealing with 32-bit architecture, 64-bit architecture,
+[47:33] there are microcontrollers, 64-bit microcontrollers.
+[47:36] Not very, very widely available,
+[47:38] but there are 32-bit architecture widely available.
+[47:44] Especially when you go to the industry,
+[47:45] you have to work in the 32-bit architecture,
+[47:47] not 8-bit architecture.
+[47:49] This is one way of handling lengthy binary strings.
+[47:54] And this is another way of handling.
+[47:56] And the fourth option,
+[47:58] using label cost.
+[48:02] Right.
+[48:03] Any questions?
+[48:05] Any questions?
+[48:05] So with that we come to the end of interrupt handling.
+[48:10] No questions?
+[48:11] Ideally you should have at least one question.
+[48:14] Sir.
+[48:15] Yes.
+[48:16] Sir.
+[48:18] Yes.
+[48:19] Sir, I have.
+[48:20] Yeah, okay, ask.
+[48:21] 
+[48:21] Sir, I have.
+[48:24] Prioritizing the interrupt.
+[48:28] Interrupt.
+[48:29] 
+[48:29] Interrupt.
+[48:29] Vector.
+[48:30] 
+[48:31] Address.
+[48:32] And we have.
+[48:33] Prioritizing the answer.
+[48:34] Sir, it's a good hour.
+[48:35] I think the molemming 0, it was intra and it was PCA.
+[48:40] How much is it?
+[48:42] How much is it?
+[48:43] How much is it?
+[48:44] How much is it?
+[48:46] How much is it?
+[48:48] How much is it?
+[48:50] How much is it?
+[48:52] How much is it?
+[48:54] How much is it?
+[48:56] But there are many other interrupt vectors.
+[48:58] Right?
+[49:00] What else?
+[49:02] Yes, yes, yes.
+[49:04] Can you hear me now?
+[49:07] Yes, now it's okay.
+[49:09] Sir, if you use the interops in assembly, do you want to use the interops?
+[49:16] Yes, sir.
+[49:19] Sir, I tried to say that I had a job,
+[49:25] but I wanted to meet the interops in the assembly.
+[49:29] No, no, no.
+[49:32] I have a reference book for this.
+[49:36] This is a micro-control in Venice.
+[49:40] I have a 32 micro-control in the 328.
+[49:44] There are assembly examples in the 328 data sheet.
+[49:52] and the idea of this is to run the code in 3 to 8.
+[49:57] We have to run the micro-control code in 3 to 8.
+[50:06] We use the micro-control in this case.
+[50:10] We use the micro-control in Atmega32.
+[50:13] We use the one to the one to the one.
+[50:15] We use the one to the other.
+[50:19] I have a very good thing, I have a very good one, to be very good, to be in a very good de-dour-dou-dou,
+[50:25] to be a very good d-dou, a very good d-d-d-c, a very good d-d-c, a very good d-d,
+[50:29] [unclear — Sinhala / crosstalk]
+[50:29] I can download it with the data sheet.
+[50:31] I can compare it with the data sheet and register it.
+[50:34] I can't remember the data sheet.
+[50:39] But I can't remember the data sheet.
+[50:43] I can remember the PCICR,
+[50:47] the pin change interrupt control register.
+[50:50] I can remember the data sheet with the ATMEGA 32
+[50:55] to get a microcontroller right me got three to eight in microcontroller
+[50:59] to them register a team they come 8 bit architecture that registers they come
+[51:04] 8 bit a bag third at mega 32 kill reiki bits still tonight at mega 328
+[51:12] peak in register a pc me icr register a bit bit
+[51:16] to theose.
+[51:17] [unclear — Sinhala / crosstalk]
+[51:47] Thank you.
+[52:17] Yes, ask any question.
+[52:24] About registers, according to the AVR, architecture and assembly language book,
+[52:38] [unclear — Sinhala / crosstalk]
+[53:08] Read this slide.
+[53:13] But why these two locations?
+[53:16] One is relative address.
+[53:19] Each I.O. register has relative address in comparison to the beginning of I.O. memory.
+[53:24] This is called I.O. address.
+[53:26] So the memory address is the specific address.
+[53:29] This is the relative address.
+[53:31] Now the idea is this.
+[53:35] Now, when you go to the different architectures, so the memory physical address, you may get a different physical address.
+[53:43] If you have more memory, there will be more addresses, physical addresses.
+[53:48] But now, this is somewhere related to virtual memory.
+[53:55] In the virtual memory also, you have virtual addresses.
+[53:58] The virtual addresses are the addresses the programmer use.
+[54:03] For the programmer, they think the value or the memory location or the register at this particular address.
+[54:10] But when you change the underlying hardware, there may be different physical addresses.
+[54:16] So that mapping, virtual address to physical address, that mapping happens behind the scene.
+[54:23] So if you are going to use physical addresses, then when you change the hardware, you always have to change your addresses.
+[54:31] right that's why
+[54:33] now when you
+[54:36] create a new project you
+[54:37] specify the
+[54:39] target hardware the target
+[54:41] microcontroller that you are going to use
+[54:43] you select that from a list
+[54:46] then you get
+[54:47] a header file added to
+[54:49] your
+[54:50] what do you call
+[54:53] that header file name let me
+[54:56] check
+[54:56] IOM
+[55:00] 328p header file
+[55:02] IOM 328p header
+[55:05] file added to
+[55:07] your solution.
+[55:09] If you check in the
+[55:10] solution explorer of your
+[55:15] development environment, you would find this
+[55:17] header file IOM 328p.
+[55:20] That header file
+[55:21] is specific to
+[55:22] ATmega 328p chip
+[55:24] and that header file maps
+[55:27] your IO addresses
+[55:29] with the virtual addresses to physical addresses,
+[55:33] relative addresses to physical addresses.
+[55:35] So the header file contains physical addresses.
+[55:38] io.h header file.
+[55:40] Now this header file.
+[55:42] io.h header file contains relative addresses.
+[55:46] Because this header file, io.h,
+[55:48] is common for all microcontrollers of AVR Arctic.
+[55:51] Not only for 328p.
+[55:53] This is common header file for all AVR chips.
+[56:00] So, it uses relative addresses.
+[56:03] For example, port B.
+[56:05] Address is defined in IOR.h.
+[56:08] But that particular port B, where is it actually in the ATmega328P chip?
+[56:18] The port B, where is it actually in the ATmega32 chip?
+[56:25] Where is it actually in ATtiny chip?
+[56:29] That is the physical address.
+[56:31] That is defined in IOM328P.h header file.
+[56:38] So that's why two addresses.
+[56:40] One is the relative address.
+[56:42] One is the actual address.
+[56:43] So actual address is specific to the hardware.
+[56:46] the relative address is for the programmers.
+[56:50] Is that clear?
+[56:51] Yes, sir.
+[56:53] And the R16 and
+[56:54] dollar 16 are two different
+[56:57] things in the area?
+[57:00] Is that?
+[57:01] The register 16.
+[57:03] Even for the register 16, there are two addresses.
+[57:06] One is the actual
+[57:07] address. Actual address
+[57:09] depends on actual hardware.
+[57:11] The relative address.
+[57:13] Relative address is in the header file.
+[57:15] this right header file the header file relative address is mapped to the actual address
+[57:21] based on the the the the there's another header file related to the actual hardware
+[57:28] for example in atmega328p iom328p.h header file now let me show you that
+[57:36] in the development environment let's go to development
+[57:40] right now let me show you this now this is under dependencies you have the hardware dependent header
+[57:52] file right and in this header file this is hardware dependent now if you use a different chip you have
+[57:59] you get different dependency file right in this one you have defined all these labels right and
+[58:09] all these labels they refer a memory address. Right. They refer a memory address. Right.
+[58:18] Now if you go to, let's close this solution and open another one. Let's see. Right.
+[58:27] And this header file, you can see hardware specific definitions.
+[58:38] Now see the memory address, right, and the constant values.
+[58:45] So pin B is at this memory address.
+[58:48] And these are the, this particular register, different bits.
+[58:51] So we, for our convenience, we use the labels.
+[58:55] We use the labels.
+[58:56] But behind the scene, actually, right. Now, can you see? Yes, sir. Right. Now, what I did was, now this is a small code. And for example, port B, right.
+[59:18] right click on that go to implementation then you are directed to iom328p.h header file
+[59:27] this is a hardware specific header file and this header file port b is a label actually port b means
+[59:36] right this sfr right special function register sfr means special function register right at this
+[59:47] particular memory address.
+[59:50] And in port B, you
+[59:51] have specific bits.
+[59:54] Port B0, port
+[59:55] B1, these bits you
+[59:57] have. This bit
+[59:59] 0, there's a label. Bit 1, there's
+[1:00:01] a label. For our convenience,
+[1:00:04] we use labels.
+[1:00:05] But actually, the label
+[1:00:07] refers to a memory address.
+[1:00:09] Now think about, you don't have labels
+[1:00:11] and you have only memory addresses.
+[1:00:14] How inconvenient
+[1:00:15] to use them. Thanks to these header files, now you can use very meaningful labels, right? These are
+[1:00:23] hardware specific memory addresses. And if you go to io.h header file, right? That header file,
+[1:00:30] you have relative addresses, common for all AVR architecture hardware. Then these relative
+[1:00:36] addresses and actual addresses you need to map. So that mapping discussed in this book.
+[1:00:46] Right. Each location in IEO memory has two addresses. IEO address and data memory address.
+[1:00:57] Each location in data memory has a unique address called data memory address. Each IEO register
+[1:01:03] has a relative address
+[1:01:05] in comparison
+[1:01:07] to the beginning of IEO memory.
+[1:01:10] This address is called
+[1:01:11] IEO address. So that's
+[1:01:13] why you have two addresses
+[1:01:16] for each and every
+[1:01:17] register. So the actual memory
+[1:01:19] address and the relative address.
+[1:01:23] Is it clear?
+[1:01:33] So anything else?
+[1:01:48] There should be very important question you didn't ask.
+[1:01:56] Now,
+[1:01:58] we discuss about polling,
+[1:02:02] we discuss how to do polling using C programming.
+[1:02:07] We discuss how to do polling using Arduino wrapper functions.
+[1:02:14] Then we discuss about...
+[1:02:16] Yes.
+[1:02:18] Yes.
+[1:02:28] Yes.
+[1:02:29] Yes.
+[1:02:29] Sir, how do you say internal interrupts?
+[1:02:59] interrupt. Then under timer
+[1:03:01] we are going to talk about timers.
+[1:03:03] Under timers we are going to
+[1:03:04] discuss about timer overflow interrupt.
+[1:03:09] So that is not the question. Question is
+[1:03:13] we discuss
+[1:03:15] about polling.
+[1:03:17] And then we discuss how to do
+[1:03:19] polling using POC code.
+[1:03:21] How to do polling using
+[1:03:23] Arduino wrapper functions.
+[1:03:25] Then we discuss about
+[1:03:27] external interrupts.
+[1:03:29] How to do external interrupt using POC code.
+[1:03:32] How to do external interrupts using Arduino wrapper functions.
+[1:03:37] Attach interrupt wrapper function.
+[1:03:40] Then we discuss pin change interrupts.
+[1:03:43] We discuss how to do pin change interrupts using POC code.
+[1:03:49] But we didn't discuss how to do pin change interrupts using Arduino wrapper functions.
+[1:03:55] Why?
+[1:03:55] any idea
+[1:03:59] is that not possible using hardy no platform doesn't support the platform the software
+[1:04:10] hardy no software platform doesn't support for pin change interrupts that means we are left with
+[1:04:16] only two io pins for handling external interrupts right we are left with only two pins because only
+[1:04:24] external interrupts are supported. So, only two pins we are left. But there's a third party library.
+[1:04:33] Third party library available. Right? That library name is pin change int library. Pin change int.
+[1:04:43] It's a one word now. Pin change int library. That library is available. However, it is not officially
+[1:04:51] supported. That's why I didn't discuss. It is not officially supported. A third party
+[1:04:57] library is available. I don't know why it is not officially supported. Could be due to
+[1:05:02] performance issue or could be some security concern. I don't know. Right. There's a library
+[1:05:08] called pin change int library which is third party library not an official library. Right.
+[1:05:15] Using that you can do pin change interrupts
+[1:05:19] in Arduino platform.
+[1:05:22] But it is not officially supported.
+[1:05:25] There is no official support for pin change interrupt
+[1:05:28] in the Arduino software platform.
+[1:05:31] That's a limitation of Arduino.
+[1:05:34] So you are left with only two interrupt pins.
+[1:05:39] Is it clear?
+[1:05:43] Right.
+[1:05:43] if no more questions
+[1:05:46] then the next step is
+[1:05:48] right
+[1:05:50] you have to try this pin change
+[1:05:53] interrupts, practical
+[1:05:54] right, try the pin change
+[1:05:57] interrupts, see how
+[1:05:59] they work and when you
+[1:06:01] have tried all three
+[1:06:03] types of
+[1:06:04] options that
+[1:06:07] we discuss
+[1:06:07] for doing multiple
+[1:06:10] tasks at the same time
+[1:06:12] while seemingly at the same time. Polling, external interrupts and pin change interrupts.
+[1:06:19] If you have done all three practicals, right, and if everything is clear, then we can move
+[1:06:27] into next topic, analog to digital conversion. Under analog to digital conversion, we can
+[1:06:34] talk about internal interrupt, a particular internal interrupt call, analog to digital
+[1:06:40] conversion complete interrupt ADC complete interrupt right so analog to digital conversion
+[1:06:47] is a different subject that is the next topic we have to discuss before that we have to complete
+[1:06:54] this interrupt handling you need to do all practicals and you have to come up with right
+[1:07:01] you have to discuss all the questions that you encounter when you do practicals right before we
+[1:07:08] move into the next topic therefore now it's the time is 10 40 so i stop lecture now so till 12
+[1:07:19] o'clock you can try all these practicals and one o'clock i'm coming back and then you can discuss
+[1:07:28] all the questions that you encountered when you do practicals on interrupted right after discussing
+[1:07:36] those questions, we can move into next topic. Because we can't do practicals, no physical
+[1:07:45] interaction possible to do practicals. Therefore, I urge you to do practicals and come up with
+[1:07:52] questions. Then we can discuss the questions. Once everything is clear, we can move into
+[1:07:59] the next topic. Right. Therefore, I stop now. But you can't stop. You have to do practicals.
+[1:08:06] If you don't do practicals, then ultimately you will be in a big trouble.
+[1:08:11] So therefore, please do the practicals related to interrupt handling.
+[1:08:17] I have uploaded another exercise.
+[1:08:21] Exercise number three, which is related to interrupts.
+[1:08:24] Try that as well and come up with questions.
+[1:08:29] At one o'clock, we'll start discussing questions related to interrupt handling.
+[1:08:33] Once all questions are clear, then we can move to next topic.
+[1:08:38] Analog to digital conversion.
+[1:08:41] Is it clear?
+[1:08:43] Any question?
+[1:08:46] All right.
+[1:08:47] Then I'll stop now.
+[1:08:49] See you at 1 o'clock.
+[1:08:53] Same link.
+[1:08:55] Okay.
+[1:08:57] Thank you.

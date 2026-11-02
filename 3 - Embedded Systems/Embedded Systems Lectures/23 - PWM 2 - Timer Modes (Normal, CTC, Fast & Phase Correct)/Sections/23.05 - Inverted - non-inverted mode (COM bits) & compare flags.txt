@@ -1,0 +1,95 @@
+[0:00] Inverted mode, non-inverted mode.
+[0:02] We can specify that using com mode.
+[0:05] Com bits of the time counter control register A.
+[0:11] TCCR A.
+[0:13] Right.
+[0:13] I told you there are two OCR registers, two comparators, two waveform generators, two OC bits.
+[0:24] That's why you have four com bits.
+[0:27] Right.
+[0:27] So inverted and uninverded mode you can specify.
+[0:31] Right.
+[0:31] Then OCR output compare register
+[0:35] Again two registers
+[0:37] Right
+[0:38] So you can use these registers to hold values to be compared against time account register
+[0:44] And if register is 8 bit
+[0:47] OCR can hold any value between 0 to 2 to the power of 8 minus 1
+[0:53] That means 0 to 255
+[0:54] If the timer is 16 bit
+[0:57] the register can hold
+[0:59] any value between 2 to the power
+[1:02] 60, 0 to 2 to the power
+[1:03] 16 minus 1. 0 to
+[1:05] 65,535.
+[1:08] Then, timer interrupt
+[1:10] flag register. In the timer
+[1:12] interrupt flag register, we already
+[1:13] discussed timer overflow bit.
+[1:16] Today we are going to discuss two more
+[1:18] bits, OCF bits.
+[1:19] These OCF bits are
+[1:22] set when compare
+[1:23] match occurs between OCR
+[1:26] and
+[1:26] TC and T registers.
+[1:29] OCF output compare match
+[1:31] flag bits are sent.
+[1:33] There are two bits. Why?
+[1:35] Two OCR registers. Therefore, there are
+[1:37] two bits. OCFA
+[1:39] OCFB. If you want
+[1:41] to clear these bits,
+[1:43] you need to send them because they are
+[1:45] flag bits. Last week
+[1:46] we discussed.
+[1:49] The flag bits, if you want to clear the flag
+[1:51] bits, you have to send them.
+[1:53] When a compare match occur,
+[1:55] they are automatically
+[1:57] same. Is that clear?
+[1:59] You have to know whether compare match occurred
+[2:01] or not. We can use
+[2:03] these flag bits. If the flag bit is
+[2:05] 1, that means
+[2:07] compare match occurred.
+[2:09] If the flag bit is 0, no
+[2:11] compare match occurred yet.
+[2:13] Now these bits are very important.
+[2:15] So you can determine, you can
+[2:17] check whether compare match
+[2:19] occurred or not.
+[2:21] Just looking at these bits.
+[2:23] Now if the bit value is 1, that means
+[2:25] Compartment occurred. Then you need to
+[2:27] Clear it. Then only again
+[2:29] It will be set. So to clear
+[2:31] It, you have to set. Because
+[2:33] It's a flag bit. It's not
+[2:35] A simple control bit.
+[2:37] To clear the bit, that means to set
+[2:39] 0 to the bit
+[2:41] You have to assign value
+[2:43] 1 to the bit. When you assign value
+[2:45] 1, the bit becomes
+[2:47] 0. Because
+[2:49] It's a flag bit. Right.
+[2:51] then interrupt registers
+[2:53] timer interrupt mass register
+[2:55] we already discussed this bit
+[2:57] TOIE timer overflow
+[2:59] interrupt enable bit
+[3:00] now we are going to discuss these two bits
+[3:03] OCIE
+[3:04] output compare interrupt enable
+[3:07] output compare match interrupt enable
+[3:09] A output compare
+[3:11] match interrupt enable
+[3:13] B so these two bits
+[3:15] enable or disable
+[3:17] timer counter compare
+[3:19] match A, match B interrupts. When there is a match between the TC and the register and OCR register,
+[3:27] you can trigger an interrupt. If the OCR register is A, then you need to enable the interrupt,
+[3:34] you need to set this bit. If the OCR register is B, then to enable interrupts, you need to set this
+[3:41] bit. So when there is a match, you can trigger an interrupt by using these two bits. You can
+[3:47] enable the interrupts. Can you understand? Any question? Before we move into a practical example?
+[3:56] No. Right. System 15, fade. Gradually fades the light of an LED again and again. We are going to

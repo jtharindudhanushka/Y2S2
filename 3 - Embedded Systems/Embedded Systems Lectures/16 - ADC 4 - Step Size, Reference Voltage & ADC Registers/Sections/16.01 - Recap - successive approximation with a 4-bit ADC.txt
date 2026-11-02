@@ -1,0 +1,139 @@
+[0:00] Right. This is where we stopped last time. Yesterday, right. Now, yesterday, I don't know whether you clearly got the idea of analog to digital conversion due to the technical issues we experienced.
+[0:21] Now, if you could get that idea, I think you saw how ADC gradually came closer to the input voltage using a reference voltage.
+[0:41] The reference voltage, the ADC knows. The input voltage, the VIN, ADC doesn't know. So, using the reference voltage, ADC could gradually come closer to input voltage and every time it tries to come closer to the input voltage using a comparison, the comparator returned either 1 or 0.
+[1:11] those data accumulated in the data register.
+[1:17] And if it is a 10-bit ADC,
+[1:20] the ADC performs 10 comparisons
+[1:25] and ultimately you get 10-bit result in the data register
+[1:32] which represents the discrete value of the analog input voltage.
+[1:39] So, could you get that idea yesterday or you want me to explain it again?
+[1:46] You let me know.
+[1:49] So, what's your answer?
+[1:51] Do you want me to explain how ADC happens again or whether I want to know you could get that idea yesterday clearly?
+[2:03] Sir, some of our members didn't understand clearly, sir.
+[2:10] Okay. In that case, I'll explain it again.
+[2:14] Okay. Thank you, sir.
+[2:16] Now, let's say, let's take an example.
+[2:22] Not 10-bit example.
+[2:24] Let's say our ADC is a 4-bit ADC.
+[2:28] Right. So, input voltage could be between 0 to 5 volts and it will be converted into any number, any discrete number between 0 to, 4 bit means a maximum value 16 to 15.
+[2:49] 0 to 5 voltage would be converted into a discrete number between 0 to 15.
+[2:56] That means if you input 0, you get 0.
+[3:00] If you input 5, input voltage is 5, the output is 15.
+[3:07] If the input voltage is 2.5, output voltage is 8.
+[3:13] if the input voltage is 1.25 output voltage is 4 so output discrete number not voltage
+[3:23] discrete number this is the discrete number this is the voltage so for our convenience let's
+[3:29] consider 4 bit ADC because then we have to do this process only four times otherwise you have
+[3:37] to do it 10 times if you consider a 10-bit ADC. So same process you can extend once you got the
+[3:46] idea. Let's assume your input voltage is 3 volts and we set the reference voltage as 5 volts. Now
+[3:57] we feed 3 volts to the comparator and 5 volt reference voltage comes to DAC, digital to
+[4:06] analog converter and DASC generates a result. The result is 5 volt divided by 2 which is 2.5.
+[4:18] Then we compare it to compares. If the comparison is if V in input voltage greater than result
+[4:31] If so, return 1.
+[4:35] Else, return 0.
+[4:37] That is the comparison.
+[4:39] Now, when you look at this, you can see, yes, V in is greater than the result.
+[4:43] This is the result.
+[4:45] So, it returns 1.
+[4:47] Return value is 1.
+[4:48] So, in the data register, we accumulate this value 1.
+[4:53] And that return value, we feed back to the DAC.
+[4:59] We feed it back to the DAC.
+[5:00] If the return value is 1, DAC generates another result.
+[5:06] Then the formula is previous result, that is 2.5 volts plus Vref, which is 5 volt, divided by 4.
+[5:18] If the result is 1, return value is 1.
+[5:21] If the return value is 0, the new result BAC generates would be previous result minus Vref divided by 4.
+[5:34] Now when you calculate this, you get 3.75.
+[5:39] Now compare, the comparator compares result and input voltage.
+[5:45] Now the result is greater than input voltage.
+[5:49] So comparator return 0.
+[5:51] So we accumulate that value at the data register.
+[5:55] And that return value we feed back to the comparator.
+[5:59] Sorry to the DAC.
+[6:01] Now DAC generates another result.
+[6:04] Right.
+[6:05] The new result is previous result which is 3.75 minus y return value is 0.
+[6:13] V ref that is 5 volt divided by 8.
+[6:18] Right.
+[6:19] 5 divided by 8.
+[6:21] That is 0.625.
+[6:24] 3.75 minus 0.625.
+[6:29] Answer is 3.125.
+[6:33] Then we do the comparison.
+[6:35] Result is greater than input value.
+[6:39] So condition false.
+[6:40] Return 0.
+[6:42] return 0. We accumulate that result.
+[6:46] We accumulate that result in the data register, return 0.
+[6:50] This return value again we feed to the DAC.
+[6:54] That is the fourth circle. The process, three times
+[6:58] we have done. This is the fourth time. This time again 0.
+[7:02] So, the DAC return value is 0.
+[7:05] So, DAC generates another result. Previous result
+[7:10] which is 3.125 minus, because return value is 0.
+[7:16] You get plus if the return value is 1.
+[7:19] V ref, which is 5 volt, divided by 16.
+[7:25] Right.
+[7:25] Now, 5 divided by 16, which is 0.3125.
+[7:32] 0.3125.
+[7:34] Right.
+[7:35] 3.125 minus 0.3125.
+[7:42] So the answer is 2.8125.
+[7:47] We do the comparison.
+[7:49] Now VIN is greater than result.
+[7:53] Return 1.
+[7:55] That result is accumulated in the data register.
+[8:00] 4 times we did the comparison.
+[8:02] 4 times we did the process because it is a 4 bit ADC and this is the final result.
+[8:09] 1 0 0 1.
+[8:12] 1 0 0 1 means this is 1 2 4 8 9.
+[8:19] This is 9.
+[8:21] So 3 volts if you input the discrete number that you get 9.
+[8:27] If you input 5 volt, discrete number that you would get 15.
+[8:33] If you input 0, the discrete number that you get 0.
+[8:37] So, by doing this comparison again and again, we came closer to the input value.
+[8:46] We started with the reference voltage and then came closer.
+[8:50] Now input value is 3 volts, but we approximated that to 2.8125.
+[8:59] That is not exactly 3 volts, but closer to 3 volts.
+[9:05] To represent that, we generate, the ADC gives a discrete value.
+[9:14] Discrete value that the ADC represents is 9.
+[9:19] So, if the ADC is a 4-bit ADC, this is how it happens. Is it clear now?
+[9:27] Yes.
+[9:28] All right. Good. Now, you can see if it is a 4-bit ADC, four times you do this process.
+[9:36] If it is a 8-bit ADC, eight times you do this process. If it is a 10-bit ADC, 10 times you do this process.
+[9:45] If it is a 12-bit ADC, 12 times you do this process.
+[9:48] If you do this process more, you can come closer, more closer to the input voltage.
+[9:57] That means 12-bit ADC is more accurate compared to 8-bit ADC, 4-bit ADC.
+[10:06] The least accurate one, 4-bit ADC.
+[10:09] For example, our input voltage is 3 volt according to this example.
+[10:14] But our ADC is a 4-bit ADC.
+[10:17] 4 bit ADC could approximate the input voltage to 2.8125. But if you use 8 bit ADC, right,
+[10:26] this approximation would be much closer. If you use 10 bit, further you can go closer
+[10:34] to the input voltage. 12 bit, more accurate. But the problem is, if you increase the number
+[10:41] of bits of the ADC, you get a very accurate result, right? That means you can approximate
+[10:52] the input voltage very accurately. However, the number of times you have to do this process
+[11:00] is also increased. 4 bit ADC, 4 times you have to do this process. Comparison, the new
+[11:07] New result generation, right?
+[11:10] All these things.
+[11:10] DAZ generates a result.
+[11:12] Comparator has to compare that process.
+[11:15] You have to do four times if it is a four-bit ADC.
+[11:18] If it is eight-bit ADC, eight times you have to do.
+[11:21] Ten-bit, ten times.
+[11:22] Twelve-bit, twelve times.
+[11:24] So, twelve-bit ADC would be more accurate.
+[11:27] However, it takes long time to do the conversion.
+[11:31] Eight-bit ADC, less accurate.
+[11:33] But it can do the conversion quickly.
+[11:37] Why?
+[11:37] Only 8 processors it has to do.
+[11:40] 8 comparisons.
+[11:41] So, these things
+[11:43] you have to take into consideration.
+[11:45] If you want more accurate
+[11:47] analog to digital conversion,
+[11:50] it's better to go for
+[11:52] ADC with
+[11:54] Mobitz.
+[11:56] If you want to quickly
+[11:58] do the ADC,

@@ -1,0 +1,115 @@
+[0:07] Right.
+[0:07] This is 5 volts, 5 volt railing, the ground power supply railing and the 5 LED is connected to PB0 to PB4,
+[0:19] which are Arduino numbers 8 to
+[0:23] digital IO pin 8 to 12.
+[0:26] Now when you turn this potentiometer
+[0:30] the voltage at this
+[0:33] blue wire would vary between
+[0:36] 0 to 5. Using the ADC
+[0:39] microcontroller ADC we measure this voltage.
+[0:42] If the voltage is greater than 0
+[0:45] but less than 1 volt
+[0:48] we turn on this led. if the voltage is greater than one volt, but less than 2�, we turn on
+[0:55] these 2 led. if the voltage is greater than 2V, but less than 3V, we turn on these 3 led.
+[1:03] LED. If the voltage is greater than 3 volts but less than 4 volts, we turn on this 4 LED.
+[1:11] If the voltage is greater than 4 volts, we turn on all 5 LED. Right. That's the idea.
+[1:18] Now, the hardware design and implementation is over. So, let's move into firmware design.
+[1:25] So, we'll start with an algorithm. So, we use C programming. So, we have main function.
+[1:32] voltmeter start flowchart stop voltmeter main function. Then main function flowchart. This is
+[1:40] the main function flowchart. So, we start the main function. First, we configure PB0 to PB4 as
+[1:48] outputs. Port B, pin 0 to pin 4 because LED is 5 LED is connected to these 5 pins. PB0 to PB4
+[1:59] port B. Therefore, we need to configure them as output
+[2:03] bits. Then configure, now that part
+[2:07] is missing, as an input. Configure PC0
+[2:12] ADC0. PC0 means
+[2:15] ADC0. ADC0 input channel
+[2:19] as an input. So this as an input.
+[2:24] So this is not necessary because
+[2:27] by default, these ADC input channels are input pins.
+[2:34] They are by default, they are input pins.
+[2:37] So, this is not necessary. This step is not necessary
+[2:41] but having it, no harm. Then you have to
+[2:45] set the reference voltage. So, we set
+[2:49] the reference voltage to supply voltage of
+[2:53] ADC which is 5 volts. That is the default. Reference voltage
+[2:57] you can set to different voltages for example 1.1 volt or some other externally supplied voltage
+[3:04] but in this example we use the default voltage we set the reference voltage to supply voltage of
+[3:11] adc then we select out of the six channels we select a pc 0 that is adc 0 as the input channel
+[3:22] Right, this is the ADC input multiplexing. We select ADC zero as the input channel. Then we need to set ADC clock speed. We need to set ADC clock speed. We know that ADC takes time because it uses successive approximation. It takes time for the conversion.
+[3:43] So it cannot run at the CPU speed.
+[3:48] So we need to scale down CPU clock speed using a prescaler and set a proper speed for the ADC.
+[3:58] Thereafter we enable the ADC because by default ADC is disabled to save power.
+[4:05] So we enable ADC.
+[4:07] Then we enter into endless load.
+[4:13] Inside the endless loop, we start the ADC, we start the conversion.
+[4:20] And then we repeatedly check whether ADC is over or not.
+[4:27] The conversion is over or not.
+[4:30] We repeatedly check.
+[4:32] If it is not over, we check again whether it is over.
+[4:37] If not over, check again.
+[4:40] We repeat.
+[4:41] That is poorly.
+[4:43] Right. Using polling, we check whether ADC is over. If ADC is over, then not over falls. If ADC is over, conversion is over, then not over falls. Right. Okay. Exit. Compute the input voltage. Compute the ADC input voltage.
+[5:03] When the conversion is over, conversion result is in ADCW.
+[5:09] Conversion result is in ADCW register.
+[5:13] When conversion is over.
+[5:15] If you multiply this with Vref, Vref, reference voltage, and divided by 1024, and then you
+[5:26] will get input voltage.
+[5:28] So this is the
+[5:31] that computation we do here.
+[5:35] This computation.
+[5:36] When the ADC is over, conversion is over, we take the
+[5:40] converted value which is between 0 and
+[5:44] 1023. Vref is 5 volts
+[5:47] and we calculate the input voltage
+[5:50] at the input ADC input pin.
+[5:54] And then we turn off all LEDs.
+[5:56] setting PB0 to PB4 low.
+[6:00] If the calculated voltage is greater than 4,
+[6:05] turn on all LEDs, PB0 to PB4,
+[6:09] all pins set high.
+[6:11] If not, then we check whether input voltage
+[6:15] is greater than 3.
+[6:17] If so, turn on PB0 to set PB0 to PB3 pins high.
+[6:24] that means turn on 4 LEDs.
+[6:27] If not, check whether the input voltage is greater than 2.
+[6:32] If so, right, turn on 3 LEDs.
+[6:37] Set PB0 to PB2 high.
+[6:41] If not, check whether voltage is greater than 1.
+[6:45] If it is greater than 1, turn on 2 LEDs.
+[6:49] Set PB0 and PB1 high, those two pins.
+[6:53] If not, check whether voltage is computed voltage here.
+[6:58] The computation done here.
+[6:59] The voltage, computed voltage is greater than zero.
+[7:02] If so, turn on one LED.
+[7:06] Set PB0 high.
+[7:08] After doing that, do it again.
+[7:11] Again, convert the input voltage.
+[7:14] And check whether conversion is over.
+[7:16] If over, compute the voltage.
+[7:19] Turn on all LEDs and display the computed voltage using set of LEDs.
+[7:27] Do this again and again.
+[7:29] Now when you rotate the potentiometer, you get different voltages at the ADC input channel.
+[7:36] And accordingly, you turn on, turn off some discrete number of LEDs and represent that analog input voltage.
+[7:46] Can you understand this algorithm?
+[7:48] If not, please let me know. I am ready to explain again.
+[7:52] Oh, if you have questions, now you can ask.
+[7:56] Yes.
+[7:57] Sir, that ADC is not over loop mean comparison, right?
+[8:03] We start the ADC and then ADC takes some time because it uses successive approximation.
+[8:11] So we want to know whether ADC is over.
+[8:14] Then only we can get the result.
+[8:15] The result is in the ADCW register.
+[8:18] The ADCW register will be updated once the ADC is over.
+[8:24] So we need to check whether ADC is over.
+[8:27] We repeatedly check whether ADC is over.
+[8:30] If it is over, then we are sure that ADCW contains the result.
+[8:36] Using that result, we can calculate the input voltage.
+[8:40] To do that, we need to repeatedly check whether ADC is over.
+[8:44] That means we pull ADC.
+[8:48] Is it clear? Yes, sir.
+[8:50] Thank you. What else? Ask us
+[8:52] if you have any question, ask.
+[8:54] So this example uses
+[8:56] polling.
+[8:58] No. Right. So let's

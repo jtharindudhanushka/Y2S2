@@ -1,0 +1,75 @@
+[0:01] instead of using polling, a better way
+[0:03] using interrupts.
+[0:04] Same hardware
+[0:05] but different firmware.
+[0:08] So different algorithm.
+[0:09] Main function.
+[0:11] Main function algorithm.
+[0:13] Set PB5 as an output.
+[0:16] Set the clock source as FCPU divided by 64.
+[0:20] Set the time initial value 15,536.
+[0:25] Enable time overflow interrupt.
+[0:28] Time overflow interrupt enable.
+[0:30] Enable global interrupt.
+[0:31] In the endless loop, there is nothing.
+[0:35] But you can use this to do some other task.
+[0:39] but in this example we don't have any other data so we keep it empty then when time overflows
+[0:46] the timer interrupt cpu so we have to handle that interrupt this is the intro toggle pb5 that is
+[0:55] toggle the led reset the timer to initial value this is 500 50 536. can you understand this
+[1:04] algorithm.
+[1:07] Okay.
+[1:08] Then let's go more into source code.
+[1:11] Now we are going to use interrupt.
+[1:12] So you're doing interrupt.h.
+[1:14] Set PB5 as an output.
+[1:16] Set the clock source as
+[1:18] FCPU divided by 64.
+[1:21] Right. Using clock select
+[1:22] bits of timer counter
+[1:24] control register B.
+[1:27] Timer 1 via UOC.
+[1:28] 16 bit timer.
+[1:30] Initial value
+[1:31] 15,536.
+[1:34] enable time overflow interrupt
+[1:37] set this bit of time interrupt mask
+[1:41] register 1 timer 1 so enable the time
+[1:46] overflow interrupts enable global interrupts set interrupts
+[1:49] function endless loop you can use it to perform
+[1:53] another task but in this example we don't have any other task
+[1:57] but you can use it to perform some other task because we are not
+[2:01] going to use CPU for timing. Timing is done by the timer, independent peripheral device.
+[2:09] Then handle the time overflow interrupt. When time overflows, this interrupt service routine
+[2:16] is automatically called. Right. So the vector is timer1. We are using timer1 overflow vector.
+[2:24] Inside this, right, then we set, reset the timer to its initial value.
+[2:32] Can you understand this code?
+[2:33] Any question?
+[2:35] Yes, sir.
+[2:36] Right.
+[2:38] Same program using label constants and bit shift operators.
+[2:43] Okay, with that, we come to end of timing and counting.
+[2:48] Any questions?
+[2:50] Sir?
+[2:51] Yes.
+[2:51] Yes, sir.
+[2:52] About pre-scaling, is the 1 over 64 is the optimal value for the pre-scaling of CPU?
+[3:04] No.
+[3:06] I just use that.
+[3:07] You can use any pre-scale value.
+[3:09] In this example, I just use 64.
+[3:13] Because I like 64.
+[3:15] Is there any optimal value?
+[3:16] No, there is no such optimal value.
+[3:18] Because I use it because I like 64.
+[3:20] because you guys can play 64 tricks.
+[3:24] I don't know.
+[3:31] Any pre-scale value you can use.
+[3:34] The idea of the pre-scale is we scale down the clock frequency
+[3:38] to suit our requirements.
+[3:41] The CPU frequency is very high
+[3:44] because CPU running at very high speed.
+[3:47] right some some peripheral devices cannot work at that speed for example adc we have to scale down
+[3:53] the speed so we use a prescaler and in this timer this with timers if you connect the clock the cpu
+[4:03] clock source directly to timer the timer will quickly fill up a count to its maximum value
+[4:11] an overflow if you want to slow down the counting so we scale down the frequency of cpu using a
+[4:20] non-factor that is the pre-scale any other question okay right that's enough time timing and counting

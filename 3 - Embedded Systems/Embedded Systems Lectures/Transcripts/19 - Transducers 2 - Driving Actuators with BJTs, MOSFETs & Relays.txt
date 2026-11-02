@@ -1,0 +1,710 @@
+19 - Transducers 2 - Driving Actuators with BJTs, MOSFETs & Relays  (13 Nov 2020 (morning))
+
+[0:00] Right. This is where we stopped last time. We were discussing about sensors and actuators, that means transducers, common name, and we saw that most of the actuators require higher voltages or they draw higher currents than an I-O port pin of this time.
+[0:30] any microcontroller can deliver, right?
+[0:33] So that's a problem.
+[0:34] That means those actuators, you cannot directly connect
+[0:39] to an IOP enough a microcontroller, right?
+[0:45] So basically some microcontrollers,
+[0:47] there are basically two voltages, they operate.
+[0:51] Some microcontrollers operate at five volts.
+[0:54] Some microcontrollers, we supply 3.3 volts.
+[0:58] So, that depends on the microcontroller. You have to find out that from the data sheet.
+[1:03] Right. Let's say your microcontroller is a 5 volt operated microcontroller like 80 mega 328p.
+[1:12] That kind of microcontroller can provide you 5 volts from its IO port pins.
+[1:21] from its I.O. port pins you can get 5 volts. If the microcontroller is a 3.3 microcontroller,
+[1:32] 3.3 volt operated microcontroller, its I.O. pins can give you 3.3 volts. But you know that,
+[1:42] you saw that some actuators, for example, these thermoelectric coolers,
+[1:48] They require 12 volts power supply. The microcontroller I.O. pin can deliver maximum 5 volts.
+[1:55] Now, how can we provide 12 volts to this thermoelectric cooler?
+[2:00] Oh, another way. A microcontroller output pin, the I.O. port pin, input output port pin can deliver typically a very tiny amount of current.
+[2:13] Again, that depends on the microcontroller. The actual maximum current that the microcontroller
+[2:19] I.O. port pin can deliver, you have to find out from the data sheet. For example, 80 mega 328p
+[2:28] microcontroller can deliver an I.O. port pin of 80 mega 328p microcontroller can deliver
+[2:34] maximum of 40 milliampere. 40 milliampere. Right. Now even a small motor, right, very toy motor,
+[2:45] which is in your kit, I ask you to buy 9 volt small motor, that motor even without any load,
+[2:56] I mean, no loads condition.
+[2:59] That is the free running state.
+[3:02] The motor draws more than 75 million.
+[3:07] It draws more than 75 million.
+[3:09] But the IO port pin can deliver maximum 40 million.
+[3:13] So this 40 is not a universal value.
+[3:16] That depends on the microcontroller you use.
+[3:19] You have to get that from the data sheet.
+[3:21] I'm talking about the ATmega 328p microcontroller.
+[3:25] its I.O. port pins can deliver maximum 40 million. Now small motor, small toy motor in your kit
+[3:32] that requires when there is no load, when it is free running about 75 million. If you put a load
+[3:40] to the motor, I mean if you fix a fan, if you fix a wheel, if you fix a belt, some load if you put
+[3:49] onto the motor, the motor would draw more current, probably 100 mAh.
+[3:55] So the question is, if you directly connect the motor to an IO port pin of a microcontroller,
+[4:03] then the motor would try to draw whatever the current it requires.
+[4:11] It doesn't care whether the microcontroller, IO port pin can deliver that or not.
+[4:17] It doesn't care.
+[4:18] It tries to draw whatever it requires, whatever the amount of current it requires.
+[4:26] In this example, this tiny small motor that would try to draw 75 milliampere from IEO port pin.
+[4:36] Because you have to connect the motor directly to IEO port pin.
+[4:39] It would try to draw 75 milliampere.
+[4:41] Then micro control IO pin also tries to deliver 75 mA.
+[4:49] It tries to deliver.
+[4:50] The motor tries to draw.
+[4:53] The IO port pin tries to deliver.
+[4:56] But the maximum current that the IO port pin can deliver is 40 mA.
+[5:02] Right.
+[5:03] For this example, the 80 mega 328 P micro.
+[5:06] But it tries to deliver 75, 35 mA greater than its maximum.
+[5:11] As a result, it would be heated and locked and will soon burn out.
+[5:19] So how do we prevent this?
+[5:22] If the microcontroller cannot supply the required voltage,
+[5:26] if the microcontroller cannot deliver the required current,
+[5:31] how can we drive high power actuators?
+[5:35] That's what we are going to discuss today.
+[5:37] Is that clear?
+[5:39] Right.
+[5:39] Now, if the device is a high power device and the microcontroller is a low power very computing device, then the high power device and the low power device when you are connecting together, you need to interface them.
+[5:55] Right. You need some interface in between them. Right.
+[6:01] Driving with BJT. Driving high power actuator with BJT.
+[6:09] What is BJT? BJT stands for bipolar, bipolar, B-I-P-O-L-A-R, bipolar junction transistor.
+[6:21] Because this transistor has two junctions, right? Two polarized junctions. That's why we call it
+[6:28] bipolar, two poles, two polarized junctions, right? Although we call it BJT, it's a typical
+[6:36] transistor. Right. Now, in this small diagram, you can see this, how this transistor works.
+[6:46] The transistor is a semiconductor device and it has three pins, base, collector and emitter.
+[6:55] When you flow a small current in the base emitter circuit like this, you flow a small
+[7:02] current in the base emitter circuit. That current we measure using a micro emitter.
+[7:09] It's a very tiny current. That's why we use a micro emitter, right? And the battery provides
+[7:14] that current. And we have limited that current using a resistor. Here you can see that resistor
+[7:20] also. So the base emitter circuit current we have limited to micro ampere. Micro emitter we have used
+[7:28] to measure and the battery supplies the current. Small tiny current goes in the base.
+[7:35] When a small current flows in the base emitter circuit, the transistor will allow to flow
+[7:42] a larger current in the collector emitter circuit. It allows to flow a larger current
+[7:48] in the collector emitter circuit and that current we measure using milli-ammeter. So milli-ammeter,
+[7:55] milliampere, the 1000 microampere, 1 milliampere. So, 1000 times higher current compared to
+[8:03] the current flows in the base emitter circuit, the current flows in the collector emitter circuit
+[8:10] is 1000 times higher. So, it is a larger current. Right. Now, if you stop this current, the base
+[8:19] emitter circuit current if you stop, transistor will stop flowing collector emitter current.
+[8:26] So transistor is like an electronic switch then. To trigger the switch, collector emitter switch,
+[8:32] if you want to trigger you have to flow a current in the base emitter circuit.
+[8:37] If you flow a small current in the base emitter circuit, you can turn on the transistor and the
+[8:44] a large current will go through collector emitter circuit.
+[8:48] If you want to turn off that transistor, you stop flowing small current in the base emitter circuit.
+[8:56] As soon as you stop flowing the base emitter circuit current,
+[9:00] the transistor will immediately stop flowing the current in the collector emitter circuit also.
+[9:08] If you increase the flow, current flow in the base emitter circuit,
+[9:12] if you increase, the transistor will increase current flow in the collector emitter circuit.
+[9:18] If you decrease the current flow in the base emitter circuit, the transistor will decrease
+[9:24] the current flow in the collector emitter circuit. In other words, to control a larger current
+[9:31] using a smaller current, we can use transistor. Transistor is a device, using that you can control
+[9:38] a larger current using a smaller current. Right. So, this transistor operated with the current.
+[9:46] Therefore, BJT, bipolar junction transistors, we call current driven, current driven.
+[9:53] This transistor is driven by a current. So, we call it current driven. Right. Now, in this animation,
+[10:02] you can see how this BJT transistors work. Now you can see this base emitter small current
+[10:10] flow. That base emitter small current flow operates this gate. So using that base emitter
+[10:17] small current flow we can operate the collector emitter current flow. We can adjust. If you
+[10:25] you can see, you can do a small water flow to the them.
+[10:28] And, you can do a small but what a very great e-dent.
+[10:29] And, you can do.
+[10:30] small water in the base of the channel, you can flow.
+[10:33] a small, but relatively large,
+[10:36] a water flow in the collect-emeter-channel, if you flow,
+[10:40] a little bit large a water flow, in the base, in the channel,
+[10:43] proportion to that, you can love, a large.
+[10:43] a water flow, in the collect-emeter, in theemeter, in the...
+[10:44] a very the s, a more, a more, a more, a more, a more, a...
+[10:44] [unclear — Sinhala / crosstalk]
+[10:46] a more, a more, a more, a...
+[10:46] a more, a more, a more, a...
+[10:46] a more, a more, a...
+[10:47] a more, a...
+[10:47] a...
+[10:47] a...
+[11:00] a larger waterfall. That's how a BJT,
+[11:04] bipolar junction transistor works.
+[11:07] Right. So move forward, you should be
+[11:10] very well understood the concept of
+[11:14] transistor. Is that clear? How the transistor works.
+[11:18] Sir, can we input
+[11:20] ampere, no, milliampere
+[11:25] kind of current to base
+[11:29] and then get
+[11:30] ampere
+[11:32] current from the
+[11:35] collector? Yes.
+[11:37] Some transistors
+[11:39] are power transistors.
+[11:41] They can flow
+[11:42] ampere current. For example,
+[11:45] even 5 ampere, 10 ampere
+[11:47] in the collector
+[11:49] emitter circuit. Such transistors,
+[11:51] right, to operate
+[11:53] it, you have
+[11:55] to flow a milliampere
+[11:57] current in the base in the circuit.
+[11:59] You are correct. So how much ampere a transistor can handle?
+[12:04] So that means collector emitter continuous current.
+[12:08] How much current the collector emitter circuit can flow?
+[12:12] Right. You can find out from the data sheet of the transistor,
+[12:16] which is called collector emitter continuous current.
+[12:20] Okay. Anything else? Any other question?
+[12:24] Right. I am going to show you a data sheet.
+[12:29] of BC 546, 547, 548 series of transistors. So these are very cheap, widely used transistors.
+[12:40] Very cheap and widely used, right? The cost is about 350 rupees per transistor. Now this
+[12:48] is what the question Thilin asked. Continuous collector current. This transistor can handle
+[12:57] maximum of 100 milliampere right it can handle maximum of 100 milliampere and between its
+[13:04] collector and emitter you can have a voltage difference up to 45 volts if you are using
+[13:12] bc547 that is the transistor i ask you to buy 45 volts voltage difference you can have across the
+[13:20] collector and emitter. And the collector emitter circuit can flow maximum 100 milliamp.
+[13:27] And this is the physical shape of the transistor and the pin number one is the collector,
+[13:36] pin number two is the base, pin number three is the emitter. There are a lot of details you can
+[13:43] find in this data sheet, right, related to this particular transistor. Right. Then when you take BJT,
+[13:53] there are two kinds of BJT, NPN and PNP. So you have heard probably NPN transistors, PNP transistor.
+[14:03] Right. What is the meaning? In the NPN type, you know that there are two types of semiconductors,
+[14:10] positive semiconductors and negative semiconductor. Positive semiconductors we call p-type semiconductors,
+[14:17] negative semiconductors we call n-type semiconductor, right. So these semiconductors are made
+[14:24] by adding some impurities to the silicon, right. In the O-level science or A-level physics, I'm sure
+[14:33] you have learned, right, the P-N junctions, how to create a P-N junction. When you combine
+[14:42] two P-type and N-type semiconductors together, you get a P-N junction. And how semiconductors
+[14:48] are made using silicon by adding some impurities, right. Now, I'm not going to talk about that
+[14:56] theory part, right? You have learned that in the school. Now NPN transistor means a P-type
+[15:08] semiconductor sandwiched between two N-type semiconductors. So between two N-type semiconductors,
+[15:17] right, we have got a P-type semiconductor sandwich. So that kind of transistor we call
+[15:25] NPN. P sandwiched by two N-type semiconductors. In such transistors, we have to flow a small
+[15:35] current in the base emitter circuit to get a larger current flow in the collector emitter
+[15:43] circuit. That's what we discuss. Then we have slightly different transistor type called PNP.
+[15:50] N-type semiconductor sandwiched between two P-type semiconductors.
+[15:56] N-type semiconductor sandwiched between two P-type semiconductors.
+[16:01] In such a transistor, how can we identify that?
+[16:04] The symbol.
+[16:05] In the symbol, the arrow towards the base.
+[16:09] In the N-type NPN transistor, the arrow in the emitter arrow towards emitter.
+[16:16] Arrow indicates the current flow.
+[16:18] Arrow indicates the current flow, direction of current flow.
+[16:22] Now in the PNP type transistor, we have to flow a current from emitter to base.
+[16:29] Other way around.
+[16:31] Emitter to base.
+[16:33] And then a larger current flow will go through emitter to collector.
+[16:38] The arrow indicates the direction, flow of the current flow direction.
+[16:44] Is that clear?
+[16:45] Difference between NPN and PNP.
+[16:48] Right. Then here you can see some physical appearance, physical appearance of some transistor. Some are very small. So this is a surface mount device, SMD. These are typical through hole devices that we use.
+[17:08] right? And some transistors are fairly large and they have a small hole where you can put a
+[17:17] bolt and nut and fix the transistor to some aluminum heat sink. Because these transistors,
+[17:25] these are called power transistors, right? When they operate, they generate a lot of heat.
+[17:31] unless you remove that heat the transistor will burn out very soon. So to remove the heat what
+[17:39] we do is we mount the transistor to a heat sink. To do that you can use this hole. You can put a
+[17:47] bolt and nut and fix the transistor, mount the transistor to an aluminium heat sink to remove
+[17:54] the heat from the transistor. So they are called power transistors. So they can flow ampere current,
+[18:02] large ampere current, 10 ampere, 5 ampere, large currents they can flow. But these small tire
+[18:08] transistors, they can handle only milli amperes. So they don't generate much heat. So therefore,
+[18:15] You don't need to have heat sinks for them.
+[18:20] Some physical appearance of some transistor.
+[18:25] Right.
+[18:25] Now with all these things, let's come to our problem.
+[18:30] Our problem is how to drive a high power device using a microcontroller.
+[18:38] Driving a high power actuator from an I-O port.
+[18:42] We know that.
+[18:43] the microcontroller that we use, ATmega328P, can deliver a small current through its IO port.
+[18:51] Maximum 40 mAh. But the small motor in our kit requires 75 mAh here, even at the no load
+[19:02] condition. So that even small motor, we cannot drive directly from the IO port. So we need to
+[19:11] interface. To interface the high power actuator to the microcontroller, we can use the BJT,
+[19:19] bipolar junction for our system. I will show you the interfacing circuit. Now here you have the
+[19:28] microcontroller. This is the I.O. port pin. This is the ground pin of microcontroller,
+[19:34] power supply pin, 5 volts and these are I.O. port pins. One of the I.O. port pins we have used
+[19:40] and we have connected the transistor's base to the IO port P.
+[19:46] The emitter we have connected to the ground.
+[19:49] To the collector we have connected the motor
+[19:52] and the other side of the motor we have connected to 9 volt power supply,
+[19:57] whatever the power supply you need to drive the motor, right?
+[20:01] In our case, we have 9 volt small motors,
+[20:05] so 9 volt power supply using a 9 volt battery, whatever, right?
+[20:09] Now, even that 9 volt battery ground, the negative terminal we connect to the ground.
+[20:16] So, common ground, right, microcontroller runs at 5 volts and the motor runs at 9 volts,
+[20:23] but their ground are common, common ground.
+[20:26] 9 volt battery, negative terminal, we connect to the same ground, right.
+[20:32] Two different voltages, microcontroller operates at very low voltage.
+[20:36] The motor is operated at very high voltage 9 volts.
+[20:40] Now how does this work?
+[20:43] Let's see.
+[20:44] Now writing a firmware code, you can set this IO port pin high.
+[20:53] You can set this IO port pin high.
+[20:57] This IO port pin high.
+[20:58] Then the voltage at this pin becomes 5 volts because it is logic high.
+[21:04] You can do that using code. Then voltage at the base becomes 5 volts as a result. Now between base and emitter there is a voltage difference. Why? Emitter voltage is 0 volts. Now there is a voltage difference between base and emitter.
+[21:25] That creates a small voltage difference between base and emitter. As a result, small current flows in the base emitter circuit. We make sure this is a small current using a current limiting resistor. Using a current limiting resistor, typically 1 kilo ohm.
+[21:44] In this situation we use 1 kilo ohm resistor to limit the current in the base emitter circuit.
+[21:52] When there is a small current flows in the base emitter circuit, transistor allows to
+[21:58] flow a larger current in the collector emitter circuit.
+[22:02] A larger current goes through the collector emitter circuit.
+[22:05] Now this larger current goes through the motor.
+[22:09] When the larger current flows in the collectivity circuit from 9-volt battery to the ground,
+[22:15] that goes through the motor.
+[22:17] Right, when there is a current flow through the motor, motor starts rotating.
+[22:25] To rotate the motor, the voltage that the motor requires, motor gets that voltage from
+[22:31] the 9-volt battery.
+[22:33] the current required for the motor, let's say 75 milliampere, the motor draws that current
+[22:39] through the transistor from the battery. The microcontroller provides a very small microampere
+[22:47] current to turn on the transistor. So, there is no load on that microcontroller IO port
+[22:54] pin because it delivers just a tiny microampere current to turn on the transistor. Thereafter,
+[23:01] The transistor delivers whatever the current the motor requires to run the motor.
+[23:07] Now in our example we can use BC547 as the transistor.
+[23:14] We can use BC547 as the transistor.
+[23:18] Why?
+[23:19] It can handle 100 milliampere.
+[23:21] We know that motor draws 75 milliampere.
+[23:25] Okay, there's a 25 milliampere buffer load also.
+[23:31] So transistor can handle 75 milliampere, definitely.
+[23:36] So using this small BC547, we can drive 75 milliampere transistor.
+[23:41] Now in this situation, microcontroller even does not deliver 40 milliampere that it is capable of.
+[23:48] It delivers just a micro ampere current to what you call turn on the transistor.
+[23:58] Is that clear? Any question?
+[24:01] Now if you want to stop the motor, you set the micro control IO port pin logic low.
+[24:08] As a result, the voltage of the pin becomes 0 volts.
+[24:14] The voltage of the transistor's base becomes 0 volts.
+[24:21] Now there is no voltage difference between the base and emitter.
+[24:26] No voltage difference.
+[24:27] If no voltage difference, there will be no current flow.
+[24:31] No current flow.
+[24:32] No voltage difference means no current flow.
+[24:35] As a result, now there is no current flow in the base emitter circuit.
+[24:39] So, transistor will stop flowing the larger current in the collector emission.
+[24:46] Now, there is no current flow through the motor.
+[24:49] Ideally, motor should stop rotating.
+[24:53] But you know that because of the momentum, motor takes small time to stop.
+[25:00] Even if you cut off the power, it rotates couple of revolutions because of the momentum.
+[25:10] Now, motor is like a dynamo.
+[25:16] Why?
+[25:16] In the motor, you have a magnet and a coil.
+[25:21] Now, we know that in a magnetic field, if you move a coil, current is generated in the
+[25:29] coil.
+[25:30] So it's a dynamo now because now motor is rotating because of the momentum but there is no current flow.
+[25:38] But there is a magnetic field.
+[25:40] So in a magnetic field now a coil is rotating.
+[25:46] Now it's like a generator.
+[25:48] Oh sorry dynamo.
+[25:49] So as a result the motor can generate a voltage spike.
+[25:55] So this is called self induction.
+[25:57] Right not only in motors.
+[25:59] Right.
+[26:00] any inductor if you suddenly stop the power through an inductor due to self-induction it
+[26:07] can generate voltage spikes now we need to protect the transistor from those voltage spikes
+[26:15] right otherwise that voltage spike will destroy this transistor because typically those
+[26:22] sudden voltage spikes are very high they are very high voltage spikes suddenly generated
+[26:28] by the inductors. To protect the transistor, we should give that voltage spike an alternate
+[26:36] path to flow. So, we connect parallelly a diode to the motor. The diode will provide
+[26:44] that high voltage spike to get discharge itself. So, this diode we call flyback diode,
+[26:54] which it will allow that high voltage spike to fly back.
+[27:00] So, we call it flyback diode.
+[27:01] Another application of diode.
+[27:04] In this case, it's very important.
+[27:07] You have to connect the diode parallel to the motor
+[27:10] and its anode should be connected to the collector
+[27:14] and cathode to the positive power supply.
+[27:18] If you connect the diode the other way,
+[27:21] you go and get the protection that you need.
+[27:25] That is very important. And this diode again should be
+[27:29] able to flow high voltage and relatively
+[27:33] high current. So just a simple LEDO
+[27:37] small diode you can't use. Typically we use
+[27:40] 1N4001
+[27:44] 1N4001 diode.
+[27:48] So 1N4001 diode can handle relatively high current and a high voltage.
+[27:55] For further details of the flyback diodes and the self induction, you can read, I have
+[28:05] uploaded a link for leisure reading into the camera, right?
+[28:11] Applications of diodes.
+[28:12] So read that article.
+[28:14] that article it explains different applications of diodes. One such application is flyback
+[28:22] diode. Is that clear? Any question? And also I have uploaded the data sheet of 1N 4001 diode.
+[28:31] Right. So you can see how much current and voltage. Now here this is the 4000N series
+[28:41] diodes here you can see right 4000 n can handle 50 volts 1 ampere so fairly large and fairly high
+[28:52] voltage they can have right and this is a cheap diode one rupee 150 rupee is the cost any question
+[29:03] Excuse me, how the spike is handled by the diode?
+[29:10] Diode provides an alternative path to flow that current.
+[29:16] Now, when the motor is operated, the current flow is in this direction.
+[29:24] Let me show you.
+[29:25] When the motor is operated, current flow is in this direction.
+[29:28] Right?
+[29:29] positive terminal to negative terminal through the transistor.
+[29:33] But when the transistor is off, the motor, due to self-induction,
+[29:39] the generated current is in the other direction.
+[29:44] Right.
+[29:45] Not this direction.
+[29:47] If that current tries to go through the transistor,
+[29:51] transistor will be destroyed.
+[29:53] Because with that current, you get a high voltage spike.
+[29:57] transistor may not be able to handle that. Now what we do is we provide a diode. We know that
+[30:03] the current can flow through the diode from anode to cathode. Yes, this current can flow through
+[30:10] the diode anode to cathode, right? And it can discharge itself. But in the normal scenario,
+[30:18] when the motor is operated, current will not go through cathode to anode. Current cannot flow
+[30:25] through cathode to an order, right?
+[30:27] Then it has to go through the motor.
+[30:29] When it goes through the motor,
+[30:31] motor starts rotating. But due
+[30:33] to self-induction, the current generated
+[30:35] which will not go through
+[30:37] the motor, it will try
+[30:39] to go through the transistor to the ground.
+[30:42] If it goes, if it
+[30:43] could go through the, if you
+[30:45] let it to go through the
+[30:47] transistor to the ground, the
+[30:49] transistor will be destroyed because
+[30:51] with that current you may
+[30:53] get, not always, you may get high voltage spike. So what we do is we provide alternative path
+[31:01] to that current to flow, alternative path, fly back. Is that clear?
+[31:06] Isn't that growing high current from the microcontroller?
+[31:11] No, there is no, nothing. Now what the microcontroller does is, it provides a tiny
+[31:18] current to turn on the transistor. That's it. This is one circuit. Base emitter circuit
+[31:24] is one circuit. Collector emitter circuit is another circuit. Two circuits. The microcontroller
+[31:30] provides current in the base emitter circuit. It's a microampere small current. The collector
+[31:37] emitter current is a larger current. It's a different circuit. Using this base emitter
+[31:42] circuit we operate collect emitter circuit. That doesn't mean they have a connection.
+[31:48] They are two circuits. This is one circuit. This is another circuit. Right. The whatever
+[31:53] the current flow in this circuit collect emitter circuit. Right. So it cannot make any impact on
+[32:03] base emitter circuit. But using the base emitter circuit we operate collect emitter circuit.
+[32:09] Two different circuits. Clear? Yes. Anything else? Typically, now in your case, you can use 9 volt battery and 9 volt motor. Anything else? Any other question?
+[32:25] Sir, if you have to stop the motor, you can't stop the motor.
+[32:32] I think that's a problem with self-induction.
+[32:36] Self-induction is what is the current flow of the coil.
+[32:42] The motor is the same.
+[32:44] The coil of the inductor is what is the current flow of the coil.
+[32:47] It is the same.
+[32:49] The current flow of the coil is the magnetic field.
+[32:56] I don't know what physics is.
+[32:58] The magnetic field is generated.
+[33:00] When we are in the current, this magnetic field collapses.
+[33:05] This magnetic field collapses and strength is the strength of the magnetic field.
+[33:10] This energy is the same as the energy.
+[33:13] We don't know how to do this.
+[33:15] This energy is the same as the current.
+[33:19] When it is generated in the coil, it is the same.
+[33:22] It is the same as the current flow.
+[33:25] We are in the same way.
+[33:27] It is a very difficult time.
+[33:29] It is a high voltage spike.
+[33:31] For example, if there is a voltage variation, it is a spike.
+[33:41] And if you have a high voltage spike, you can see the transistor.
+[33:45] The transistor is not a maximum voltage.
+[33:49] So, you can see the B-C-5-0-7 data sheet, the collect meter and the other one.
+[33:56] You can see the other one, the transistor.
+[34:00] So, the current flow, the alternative path.
+[34:06] The other one is the tube light.
+[34:10] The tube light is a chock.
+[34:12] The chock is a coil.
+[34:14] The start is a bimetal strip.
+[34:17] the with a l S.
+[34:18] to the on-off-tripe, the on-off-tripe, the in-famac, the pll-d to the re-d.
+[34:22] on-off, the bimitl someo-d-d-.
+[34:22] the cb-d-.
+[34:23] And the bimetal strip switch is a coil.
+[34:29] The coil is a coil and the tube light is a filament.
+[34:35] The tube light is a mercury washboard.
+[34:39] The mercury vapor is a tube light.
+[34:42] The bimetal strip is a bimetal strip.
+[34:47] The switch is a power disconnect.
+[34:52] [unclear — Sinhala / crosstalk]
+[35:52] We can protect the current and then we can drive the diode.
+[35:54] We can generate the current and then we can block the diode.
+[36:01] We can drive high power actuators using a different type of transistor called MOSFET.
+[36:21] MOSFET means metal oxide semiconductor field effect transistor.
+[36:28] Metal oxide semiconductor field effect transistor.
+[36:33] Right.
+[36:34] This is the latest trend.
+[36:37] So, even today also BJT are used, but that is not the latest way of interfacing high
+[36:47] power actuators to microcontroller.
+[36:50] In the modern embedded systems, you will find MOSFETs, not BJT.
+[36:58] In your kit also, you have a MOSFET 2N7000, a transistor called 2N7000, which is fairly expensive compared to BJT.
+[37:09] BJT, BC547, I think you might have got for 350 rupees and then 2N7000 probably between 10 to 15
+[37:21] rupees, right? So, MOSFETs are expensive, right? The reason is this, the MOSFET switching,
+[37:28] on-off switching is very fast compared to BJT. The switching speed is very high, right? And
+[37:38] Then the BJT bipolar junction transistors are current driven. Using a current flow you
+[37:45] can drive the transistor. But MOSFET, they are voltage driven, no current flow, only
+[37:53] voltage. As a result, they generate less heat. They generate less heat. That is very important
+[38:00] for modern electronics because most of the modern electronics are wearable, portable,
+[38:06] very small, compact. So, heat generation is a big problem. So, if the device can generate,
+[38:17] if the transistor can generate less heat, that would be ideal. However, these MOSFETs are
+[38:24] expensive compared to BJT. They are expensive. Right. Now, let's see how MOSFET works. Now,
+[38:32] a MOSFET, this is the symbol, again has three pins, but they are not called base collect
+[38:39] emitter. They are called gate, drain and source. Gate, G for gate, D for drain, S for source.
+[38:51] Now, like the base of BJT, we provide a voltage to gate, but not a current. That's why we call
+[39:01] it voltage driven. In the BJT you provide a current to the base but here we provide a voltage.
+[39:09] Voltage to the gate. When you provide a voltage to the gate right then the transistor will flow
+[39:16] a current in the drain source circuit. It will flow a current in the drain source. So this is
+[39:23] voltage drill. Again, like BJT, there are two types of MOSFET, N channel and P channel.
+[39:33] N channel and P channel. In the N channel MOSFET, you have to give a positive voltage to the gate.
+[39:41] You have to give a positive voltage to the gate to turn on drain source circuit.
+[39:49] So if you give a positive voltage to the gate, the current, the transistor will allow to flow
+[39:55] a current from drain to source. From drain to source, current will flow a current according
+[40:03] to this diagram, right? You have to provide a positive voltage to the gate. Then the transistor
+[40:11] will allow you to flow a larger
+[40:13] current in drain to
+[40:15] source.
+[40:16] In the P channel MOSFET
+[40:19] you have to give a
+[40:21] negative current to the gate.
+[40:23] A negative current to the gate.
+[40:25] When you give a negative current to the gate
+[40:27] the transistor will allow
+[40:29] you to flow a larger
+[40:31] current from source
+[40:33] to drain the other way around.
+[40:35] The other direction.
+[40:37] Source to drain.
+[40:38] If you provide a negative current to the gate
+[40:40] the transistor will flow a larger current in source to drain circuit, source to drain.
+[40:48] That is P channel MOSFET, right? In the N channel, you provide a positive current to
+[40:54] the gate and transistor will allow you to flow a larger current in the drain to source
+[40:59] circuit, this type and there. P channel, when you flow, when you provide a negative voltage
+[41:07] to the gate, negative voltage to the gate, the transistor will flow a larger current
+[41:14] in source to drain circuit, source to drain circuit. Now this diagram shows N channel
+[41:20] MOSFET and in the animation I will show you a P channel MOSFET. Now you can see there
+[41:26] is no gate to drain flow, only a pressure. Pressure is a voltage. If there is a flow
+[41:35] it's a current. Now there is no flow. You can see G to D there is no flow. The water
+[41:43] coming through G channel creates a pressure and that pressure opens the gate. Pressure
+[41:51] means a voltage. We discuss. The flow is the current. Pressure required to flow. Electrons
+[42:00] is the voltage. Now this is, this animation shows you a P channel MOSFET, a negative voltage we
+[42:09] apply to the gate. As a result, proportionate to that negative voltage, proportionate to that
+[42:15] negative voltage, the transistor will flow a larger current in the source to drain circuit.
+[42:22] That negative current operates the barrier in the channel, open or close.
+[42:30] If you stop the voltage you provide to the gate, the transistor will stop the current flow in the source drain circuit.
+[42:40] If you reduce the voltage in the gate, the current transistor will reduce the current flow in the source drain circuit.
+[42:48] If you increase the voltage in the gate, the transistor will increase the current flow in the source drain circuit.
+[42:58] So, whatever the current flow in the source drain circuit is proportional to the voltage applied at the gate.
+[43:06] So, using a voltage, we can control a current flow in another circuit, right?
+[43:12] There are two circuits here you can see.
+[43:14] One is the gate source circuit.
+[43:17] The other one is the drain source circuit.
+[43:20] Using the voltage applied at the gate, we can operate the current flow in the drain source circuit.
+[43:30] Is that clear?
+[43:32] Any question?
+[43:33] Right.
+[43:34] Now, like BJT, there are two types, N channel and P channel.
+[43:40] and the symbol you can see here.
+[43:43] If you are using P channel,
+[43:44] you have to provide a negative voltage to the gate
+[43:47] and the current flow is source to drain.
+[43:50] If you are using N channel,
+[43:51] you have to provide a positive voltage to the gate.
+[43:54] Current flow is drain to source.
+[43:57] And again, the outer appearance,
+[44:00] physical appearance is similar to the BJP.
+[44:05] It is very hard to identify
+[44:07] just looking at the transistor physically
+[44:09] whether it's a BJT or MOSFET, you need the data sheet.
+[44:15] Because both BJT and MOSFET, they share the same physical appearance.
+[44:22] Unless you can remember the part number, you would not be able to recognize
+[44:29] whether a given transistor is BJT or MOSFET,
+[44:33] just looking at the physical appearance of that drone.
+[44:38] You need the data sheet.
+[44:39] But that's not a big deal because the data sheets are freely available from the manufacturer.
+[44:45] Right.
+[44:46] Now, driving a high power actuator from an IO port.
+[44:52] This time we are going to use a MOSFET.
+[44:55] The modern way of driving high power actuators.
+[44:59] Now, we know that the microcontroller IO port pin can deliver maximum 40 mA.
+[45:04] but the motor that we have requires 75 mA.
+[45:10] Right.
+[45:10] So that we cannot directly connect motor to the micro control.
+[45:13] Right.
+[45:14] Now this is the interfacing circuit.
+[45:17] Now this time there is no resistor between micro control and the transistor.
+[45:23] No resistor.
+[45:24] No current limiting resistor.
+[45:26] Because no current flow.
+[45:28] If there is no current flow, what to limit?
+[45:31] Nothing to limit.
+[45:32] Right.
+[45:33] So, different connection. Now, using the code you are firmware, you set the microcontroller pin high. Then the pin voltage becomes 5 volts. As a result, you provide a positive voltage, 5 volt is positive, to the n channel MOSFET, gate of n channel MOSFET.
+[45:55] When you provide a positive voltage to the gate of the N-channel MOSFET,
+[46:02] then the transistor flows a larger current in the drain source circuit.
+[46:09] Let's say this is 9 volt.
+[46:10] That current goes through the motor.
+[46:14] The motor starts rotating.
+[46:16] And then you change the logic state of the pin to low.
+[46:20] And the voltage at the pin becomes 0 volts.
+[46:24] That means you have removed the positive voltage at the gate.
+[46:30] You have removed.
+[46:31] You have removed now the positive voltage at the gate of N channel MOSC.
+[46:38] No positive voltage at the gate.
+[46:41] Transistor will immediately stops.
+[46:44] Transistor immediately stops the current flow through the drain source.
+[46:49] Current flow through the drain source.
+[46:51] But due to self-induction, motor generates a current and a high voltage, probably high voltage spikes.
+[46:59] But due to self-induction generated current, we can flow through the diode to the other way around and protect the traces.
+[47:10] So we have used a flyback diode.
+[47:12] Now the circuit is very straightforward, right?
+[47:15] We can use flyback diode something like 1N4001 and motor 9 volt motor and transistor 2N7000.
+[47:33] Again, if you look at the data sheet of the 2N7000, yes, 2N7000 data sheet.
+[47:42] Now this is how the pins are, grain, gate, source, middle pin gate, right?
+[47:51] Grain and source, how the pins and this is the important factor.
+[48:01] The maximum drain continuous current, 200 million, ah, 2 and 7,000 can handle 200 million.
+[48:11] Our motor requires only 75 milliampere, so more than enough.
+[48:19] And the drain source voltage, 16.
+[48:24] We are using 9 volt, well below that.
+[48:28] Drain source voltage, 16, the transistor can handle.
+[48:33] Maximum drain current continuous, 200.
+[48:37] Continuous current 200 milliampere.
+[48:39] Right. Now in our circuit, we use between the drain and source 9 volts and we flow only 75 milliampere. Transistor can handle quite easily the voltage and the current.
+[48:55] Right, that's how we decide which transistor we have to use.
+[49:01] Depending on the current and the voltage requirement, looking at the data sheets, we pick the relevant
+[49:08] transistor, most suitable transistor, right.
+[49:12] Now you can pick a larger transistor which is capable of flowing 5 ampere and can handle
+[49:21] 200 volts, but then it would be very expensive. So, we pick the transistor which is fairly
+[49:29] large enough to handle whatever the voltage or the current that we require, right? And
+[49:35] it should be inexpensive. So, therefore, we don't go for very powerful transistor. We
+[49:44] select the transistor which is appropriate for the situation, right? That is okay for the situation.
+[49:51] 27000 is okay for this situation, right? Because it can handle 200 milliampere continuous current
+[49:58] in the drain source circuit and between drain source, the voltage difference it can handle up
+[50:03] to 60 volts. We are using 9 volts, much below 60. And we are using 75 milliampere to run the motor.
+[50:12] Again, much below the 200 millivolts, a milliampere that the transistor can handle.
+[50:19] Right.
+[50:19] And the transistor is also fairly relatively inexpensive, 10 rupees, 12 rupees.
+[50:24] That's how we select transistors.
+[50:28] Is that clear?
+[50:29] Any question?
+[50:32] Right.
+[50:33] No questions.
+[50:35] Then sometimes we have to handle, we have to drive actuators that require.
+[50:42] very large voltages that grow very high current like the AC motors. You need 230 volts power
+[50:51] summit and probably they require very large currents like 5 ampere, 10 ampere, right?
+[50:57] Let's say in an industrial system, you are developing an embedded system to control a
+[51:04] conveyor belt. That belt is operated using a very large motor, a high horsepower motor.
+[51:13] The motor would be supplied 230 volts, domestic power supply. And that motor, because of the
+[51:20] high horsepower, it would draw more than 5 ampere, probably 10 ampere. Then that kind
+[51:27] of actuators, how can we drive? That is our next topic. Switching with relays, switching
+[51:36] actuators with relays. Now what's a relay? Relay is a spring-loaded electromagnetic switch.
+[51:45] Spring-loaded electromagnetic switch, right? You can turn on the switch when you supply
+[51:53] power to the relay. When you supply power to the relay, you can turn on the switch. You can generate
+[52:00] a magnetic field. As a result, the switch will be turned on. And when you disconnect the power to
+[52:07] the relay, right, the magnetic field will be collapsed. And because of the spring tension,
+[52:15] because it's a spring loaded switch, because of the spring tension of the spring, the switch will
+[52:22] move back and turn off. So it's a spring loaded electromagnetic switch. Right. Now switches,
+[52:34] these relays we use to control much high voltage and high current, control high voltages and
+[52:45] high currents for example domestic power supply 230 volts right we can operate a higher voltage
+[52:56] we can control a higher voltage and a higher current using a small voltage and a current
+[53:05] using the relay because relay we operate using a very small voltage like 5 volts
+[53:11] right? We can operate the relay using 5 volts.
+[53:14] And 70 milliampere probably, right? It depends on the relay, but typically 70 milliampere,
+[53:20] 5 volts, we can operate the relay. Then relay would operate probably 230 volts, 5 ampere.
+[53:29] Well, high voltage and a higher current, right? Now, you can see that. Now, for example,
+[53:38] let me take that example, 5 volt 70 milliampere. That is we can operate the relay. The relay
+[53:48] can operate 230 volts 5 ampere. A larger current, larger voltage. But you can see that even
+[53:59] the small relay requires a higher current than a micro control IEO port pin can deliver.
+[54:05] 70 milliampere.
+[54:08] This is what relay requires.
+[54:10] The microcontroller IO port pin
+[54:12] in our example 80 mega 328P
+[54:14] microcontroller can deliver
+[54:16] only 40 milliampere, not 70.
+[54:19] So, we need
+[54:20] to drive the relay.
+[54:23] Right.
+[54:24] For that purpose, we can use either
+[54:26] BJT or MOSFET.
+[54:29] We can use a BJT
+[54:30] or MOSFET to drive
+[54:32] the relay.
+[54:33] But we don't need to assemble those circuits because for a very small price, very cheap
+[54:43] price, the relay breakout boards are available.
+[54:48] In the relay breakout board you have the relay, you have the transistor, you have the flyback
+[54:53] diode, you have the resistor that turn on the transistor and even you have LED.
+[55:02] right, which indicates whether relay is on or off and some screw terminals to connect
+[55:10] the high power device, right. All these things, this is called relay breakout board. This is
+[55:16] where you have to give the microcontroller signal. There are headers to give that signal.
+[55:22] All these things about 100 rupees, 125 rupees, very cheap. So therefore, you don't need to
+[55:28] construct the circuit, you can use these breakout boots, cheap breakout boots. Right. But you
+[55:38] should know how this breakout board works. In case, if you want to assemble that, then
+[55:46] you should know how it works. I'll show you. Right. Similar to our previous example. This
+[55:53] the microcontroller we have a BJT you could you could use mosfet as well no problem BJT and the
+[56:01] current limiting resistor right the emitter of the BJT we have connected to ground and the collector
+[56:09] we have connected the relay this is the relay it's a five volt relay but the relay requires 70
+[56:17] milli amperes roughly, right? The microcontroller cannot deliver that. So, we use a transistor
+[56:23] to drive the relay. And using the relay, we are going to switch a large motor, right?
+[56:32] Operator with domestic power supply, 230 volt AC, large motor. Right. Now, using code, your
+[56:44] a firm way of code, you set the I.O. port pin high. So, the voltage at this pin becomes
+[56:51] 5 volts. As a result, the base voltage becomes 5 volts. Transistor base voltage becomes 5
+[56:58] volts. Now, between base and emitter, emitter is 0 volts now because connected to ground,
+[57:07] there's a voltage difference. There's a voltage difference means there will be a current flow.
+[57:13] Yes, small current flows in the base emitter circuit.
+[57:17] To limit that current we use typically 1 kilo ohm resistor.
+[57:23] It's a small current.
+[57:24] Because we drew a small current from the micro control.
+[57:28] A micro ampere current.
+[57:30] That current flows in the base emitter circuit.
+[57:33] As a result transistor flows a larger current in the collector emitter circuit.
+[57:39] Transistor flows a larger current in the collector.
+[57:41] This current flow, the large current flow in the collective reservoir, it goes through
+[57:49] the coil of the relay, relay coil. So when there is a current flow through a coil, the
+[57:56] coil creates a magnet, a magnetic field. Coil creates a magnetic field. That magnetic
+[58:06] field attracts, right, that attracts the contact and closes the switch. See what happens.
+[58:17] That magnetic field attracts this contact, right, and closes the switch. The contact
+[58:25] attracted and switch close. Now as a result, we supply power to the motor through that
+[58:34] switch and motor starts rotating. Motor or whatever the high power device we can operate.
+[58:41] Then if you want to stop the high power device using our firmware code we set the I.O. pin
+[58:49] low. As a result voltage of this pin becomes 0 volts. The base voltage of the transistor
+[58:57] becomes zero volts. Now there is no voltage difference across the base emitter circuit.
+[59:06] So we stop flowing this current. We stop flowing the current in the base emitter circuit. As a result,
+[59:13] transistor stops flowing current in the collector emitter circuit. Transistor stops flowing
+[59:22] large current in the collector emitter circuit. So this stops the current flowing through the coil,
+[59:27] relay coil. That stops current flowing through the relay coil, right? And as a result, the magnetic
+[59:35] field generated collapses. When there is no magnetic field due to the tension of the spring,
+[59:44] the contact goes back to its original position. When there is no magnetic field to attract due to the
+[59:52] tension of the spring, the contact goes back to the original position like this way. It goes back.
+[1:00:00] This is attracted, it goes back. No magnetic field, it goes back due to the spring of the tension.
+[1:00:07] Then switch becomes open, we stop the high power device. No power supply to the high power device.
+[1:00:16] stop the high coil. But again, due to the self-induction, there's a coil inductor, right,
+[1:00:24] a voltage, high voltage spikes can be generated to prevent the transistor, right, to protect the
+[1:00:32] transistor from these high voltage spikes we have used a flyback diode, we have used a flyback diode,
+[1:00:38] right. As in the previous case, we have used 1N 4001 flyback dial. And the transistor you can use for this job, BC 547, because it can handle 100 mA, the relay typically requires 70 mA.
+[1:00:59] 70 million. And the relay has three terminals. This middle terminal we call common terminal,
+[1:01:08] common, C for common. NC for normally close. Yes, that is the switch normally close. That's why NC
+[1:01:16] normally close. The NO means normally open. It is normally open but when you energize the relay,
+[1:01:24] it becomes close. When you energize the relay, it becomes close, but normally open. Normally
+[1:01:30] open, normally close, common. Can you understand? Any question? Now with this knowledge, now
+[1:01:42] you should be able to develop an auto light, right? Using an LDR and a 230 volts light, right?
+[1:01:56] When night falls, that light automatically turns on. In the morning, it automatically turns off.
+[1:02:04] Using LDR, you can capture the state of the real world, physical world, whether it's a nightfall
+[1:02:11] over the morning and based on that you can turn on off the domestic 230 volts bulb.
+[1:02:22] And also you can develop an auto fan. Using LM35 you can capture the room temperature.
+[1:02:32] If the temperature is greater than let's say 30, 30 Celsius, you can turn on a motor of a fan.
+[1:02:39] If the temperature is less than 30, you can turn off the motor of a fan, auto fan.
+[1:02:46] If temperature goes high, you can turn on a motor.
+[1:02:49] If temperature goes low, you can turn off a motor.
+[1:02:56] Because motors in the domestic power supply we use, the bulbs we use in the domestic circuits,
+[1:03:05] those are high power devices.
+[1:03:08] So you can operate them using either transistors or relays, especially the 230 volts, if 230
+[1:03:15] volts involved, you can use relays.
+[1:03:19] If DC power involved, you can use transistors.
+[1:03:23] Right.
+[1:03:26] But I prefer if you use relays with the DC power supply, not the domestic power supply
+[1:03:31] because there's a risk of getting potential,
+[1:03:36] there's a potential for a fatal shock
+[1:03:39] if you make a mistake with the domestic power supply
+[1:03:43] because of the high voltage.
+[1:03:45] So it's better if you avoid working in high voltages
+[1:03:51] in the domestic power supply
+[1:03:53] unless you know what you are doing.
+[1:03:56] If you have previous knowledge and you know what you are doing,
+[1:04:01] Otherwise, don't use an optimistic power supply for experiments because it's 230 volts is high voltage.
+[1:04:12] There's a potential for a fatal shock. There's a risk. But if you use DC volt, DC power supplies like car batteries,
+[1:04:26] whatever DC power supplies from world adapters, then the risk is very low.
+[1:04:37] Any question?
+[1:04:42] It's very important to do practicals. I hope you do practicals because you have a practical exam at the end.
+[1:04:48] 50% marks from the theory paper, 50% marks from the practical exam.
+[1:04:53] at the practical exam you have to within three hours you have to develop the assemble the hardware
+[1:05:01] right the develop the firmware and do everything within three hours and show me a working system.
+[1:05:08] You can't do that if you if you don't have previous practical knowledge. Many students
+[1:05:15] find that practical exam is very difficult for them because they don't do practicals.
+[1:05:21] that's the reason. If you talk to Sineers,
+[1:05:23] they will say the practical exam
+[1:05:25] is the
+[1:05:25] most difficult part of
+[1:05:29] this
+[1:05:31] course module.
+[1:05:35] Right. If no questions,
+[1:05:37] okay, that's all for today.
+[1:05:39] Next Tuesday morning,
+[1:05:40] we'll start our discussion
+[1:05:43] on timers.
+[1:05:45] Thank you.
+[1:05:47] Thank you, sir.
+[1:05:49] Thank you.
+[1:05:51] Thank you.

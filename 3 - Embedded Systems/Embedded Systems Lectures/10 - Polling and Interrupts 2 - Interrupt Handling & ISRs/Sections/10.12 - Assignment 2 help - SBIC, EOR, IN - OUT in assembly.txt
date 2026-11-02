@@ -1,0 +1,167 @@
+[0:00] PIN register?
+[0:03] Ah, PIN.
+[0:04] Right, okay.
+[0:06] You are talking about the second assignment.
+[0:10] Yes, sir.
+[0:11] Right, okay.
+[0:13] Now, I have given you a recommended textbook.
+[0:19] in that textbook is
+[0:21] M-B-R-E-P system programming
+[0:23] using assembly and C.
+[0:25] Could you find a time to go through
+[0:27] that? I can simply give
+[0:29] you the answer. Then you
+[0:31] won't learn. I want you to learn.
+[0:35] Yes, sir. I will.
+[0:38] Right. Go through that.
+[0:40] Excuse me, sir.
+[0:42] Yes. For that,
+[0:43] sir, can't we
+[0:45] use compare immediate?
+[0:47] It's like a compare immediate zero and the pin register zero and you want to see whether
+[1:05] a particular
+[1:06] pin is low or high.
+[1:10] Right.
+[1:13] One
+[1:14] option is
+[1:15] yes
+[1:16] you can
+[1:19] there's an instruction
+[1:22] called
+[1:23] SBIC.
+[1:26] SBIC.
+[1:28] Assembly instruction called
+[1:29] SBIC.
+[1:32] Now with that
+[1:33] If you use pin register and a bit, particular bit, you can skip the execution of next line, right?
+[1:45] If the specified bit is clear.
+[1:49] For example, let's say now your switch, push button switch is connected to PD2.
+[1:58] Am I right?
+[1:59] Yes, sir.
+[2:00] Yeah, PD2.
+[2:00] That means the number 2 bit of PIN D register.
+[2:06] So if you use SDIC PIN D comma 2.
+[2:14] This instruction, this assembly instruction.
+[2:17] This means skip the next if bit 0 is clear.
+[2:24] Skip the next instruction.
+[2:28] if the bit 0 is clear.
+[2:32] If the bit is clear, sorry.
+[2:34] Next, skip the next instruction.
+[2:37] If the bit
+[2:39] is clear, I can't exactly
+[2:44] remember the correct meaning, right?
+[2:46] You have to read the relevant book
+[2:50] then you can get the exact meaning of this SPIC.
+[2:53] Right? So simply the idea is
+[2:56] skip the next instruction.
+[2:58] If the particular specified bit in this case bit number 2 of this register is clear.
+[3:05] Now if you have pressed the button the bit number 2 is clear.
+[3:10] Zero.
+[3:12] So if it is zero skip the next line.
+[3:16] Next line could be called delay.
+[3:20] Your delay subroutine.
+[3:21] now the question ask you to delay the blink the LED in to 400 milliseconds
+[3:34] yeah 400 milliseconds if the button is released if the button is pressed 200
+[3:41] milliseconds right now if the button is pressed the bit number two is clear so
+[3:48] So if the bit number 2 is clear, skip this.
+[3:52] So you can write a function to delay 200 milliseconds.
+[3:56] And you can call that function twice to get the 400 millisecond delay.
+[4:02] And if the button is pressed, skip one delay.
+[4:06] Then your blinking rate would be 200 milliseconds.
+[4:09] Can you understand what I explained?
+[4:13] Good.
+[4:14] Right.
+[4:14] You can have a routine function called delay which delays the execution for 200 milliseconds.
+[4:24] If you call that function twice, you get the 400 milliseconds delay.
+[4:30] But if the button is pressed using this SBIC instruction, you can skip the next instruction and skip one delay.
+[4:39] So, your blinking rate will be 200 milliseconds.
+[4:41] I think that would be enough for you to move further.
+[4:47] If I can give you the source code and everything, then what happens is you will be good type, not good programmers, you can be good typists.
+[5:08] You have to be programmers.
+[5:20] You have to be programmers.
+[5:29] Nirasha, this is the instruction that you need.
+[5:33] Thank you.
+[5:34] right.
+[5:37] What else you want to know?
+[5:42] Now if you want to toggle an LED,
+[5:46] toggle a pin, you have to use
+[5:48] exclusive O operator.
+[5:52] Exclusive O operator in assembly is EOR.
+[5:55] EOR is the
+[5:58] assembly instruction for exclusive O.
+[6:01] EOR. So other than that
+[6:04] other instructions you already know.
+[6:07] You know SBI,
+[6:09] CBI,
+[6:10] LDI, BRNE,
+[6:13] DEC,
+[6:15] JMP,
+[6:17] call, then
+[6:18] RET, return.
+[6:21] Other instructions you know.
+[6:23] These are the two critical instructions
+[6:24] you should know. One is
+[6:26] if you want to toggle the
+[6:28] state of a particular pin, you have to use
+[6:30] exclusive O operator.
+[6:32] the assembly instruction is EOR.
+[6:35] And
+[6:36] if a particular
+[6:38] register bit is clear,
+[6:41] if you want to skip the next
+[6:42] instruction, you can use
+[6:44] SBIC instruction.
+[6:46] SBIC instruction. So, using
+[6:48] that instruction, you can skip the
+[6:50] next instruction if
+[6:52] a particular bit of a register
+[6:54] is clear. Clear means
+[6:56] zero. What else?
+[6:58] How to
+[7:00] get the 400 millisecond delay
+[7:02] without calling two times delay.
+[7:06] Then if you are going to use,
+[7:09] if you are going to have a delay loop
+[7:11] with 400 milliseconds delay, right?
+[7:15] And then when the button press,
+[7:19] you want to get 200 milliseconds delay,
+[7:21] you need to write two loops, two delay loops.
+[7:24] That's not very efficient way, right?
+[7:27] Better to write two delay loops for 200 milliseconds
+[7:30] and call it twice
+[7:32] to get 400 milliseconds.
+[7:35] If you want
+[7:35] 400 milliseconds,
+[7:38] that's no point.
+[7:41] Then your program would be very lengthy.
+[7:43] Not even
+[7:44] 400.
+[7:45] If you want one second delay,
+[7:48] you can achieve. You need to
+[7:49] nested many loops.
+[7:52] Then you can get
+[7:58] the delay, whatever the delay you require.
+[8:00] Probably you may need two more assembly instructions.
+[8:05] In instruction and out instruction.
+[8:08] In instruction in assembly if you want to assign a value of a register, port register to a general purpose register.
+[8:17] Like R17, R16 like general purpose register.
+[8:21] If you want to assign a value of a port register.
+[8:24] Like port BO, pin BO, DDRB that kind of register value.
+[8:30] if you want to assign to a general purpose register you can use in instruction and if you want to
+[8:37] out right the value of a general purpose register to a port register you can use out instruction
+[8:46] probably you may need those two instructions as well in and out mainly you need this sbic
+[8:54] and EOR. EOR you need to
+[8:57] toggle. SBIC you need
+[8:59] to skip the delay function.
+[9:01] Delay
+[9:01] calling of delay function.
+[9:05] Right. So that you can have
+[9:07] 200 milliseconds delay.
+[9:09] If you don't skip the
+[9:10] 200 milliseconds delay then you get the
+[9:13] 400 milliseconds delay.
+[9:14] Two times you call the delay.
+[9:17] What else?
+[9:19] Thank you.
+[9:21] Others? Any question?
+[9:22] right if so that's all for today yeah thank you thank you sir thank you thank you

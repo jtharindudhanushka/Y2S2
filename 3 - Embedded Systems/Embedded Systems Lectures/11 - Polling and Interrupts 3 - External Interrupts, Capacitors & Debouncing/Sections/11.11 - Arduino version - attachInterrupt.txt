@@ -1,0 +1,145 @@
+[0:00] We don't need to worry.
+[0:03] Then, now, can we do this using Arduino wrapper function?
+[0:11] Yes, we can. But most people don't know. Right? Because it is not very popular thing in Arduino,
+[0:22] using interrupts. In the Arduino world, right? Interrupt handling is not very popular.
+[0:29] But using Arduino, you can do that. How? This is the algorithm for Arduino. Right? Start.
+[0:38] It should be not rolling base trigger, it should be interrupt base trigger, small mistake.
+[0:53] This should be, let me to correct that.
+[1:03] Interrupt base trigger.
+[1:04] Right.
+[1:05] First, we declare two digital IEO pins that the LED is connected, pin number 8 and pin
+[1:16] number 13 as LED pin 1 and LED pin 2.
+[1:22] Onboard LED pin we define as LED pin 2.
+[1:27] External LED pin we define as LED pin 1.
+[1:32] we define, we declare
+[1:33] the pin number 2
+[1:35] where the switch is connected as
+[1:38] switch pin.
+[1:39] Then setup function. In the setup
+[1:42] function, we configure LED pin
+[1:44] 1 and LED pin 2. That is
+[1:45] pin number 8 and pin number 13
+[1:47] as output pins because LED
+[1:49] is connected to those two pins.
+[1:52] We configure switch pin
+[1:53] as input pin. Switch pin
+[1:56] is the pin number 2 which is the
+[1:57] pin 0 pin as
+[2:00] input and then pull up.
+[2:02] Because before state of that pin is high, you want to keep it high. Then map the pin number,
+[2:13] map the pin number to interrupt number. You need to map the input pin number, that is pin number 2,
+[2:21] which is switch pin, that is pin number 2 to interrupt number. You need to map.
+[2:28] Then attach interrupt to toggle function. There's a function. To that function you need to attach
+[2:36] interrupt. End of the setup. Then in the loop function, toggle the onboard LED every two seconds.
+[2:45] Repeat at you. Toggle the onboard LED every two seconds. And this is the toggle function.
+[2:51] So, we attach that toggle function to interrupt.
+[2:56] When there is an interrupt, this function is automatically called and inside the function
+[3:02] toggle the external input.
+[3:05] Toggle the external input.
+[3:08] Now this is the interrupt handling routine.
+[3:11] This interrupt handling routine we have attached to the interrupt, right?
+[3:16] Attach interrupt to toggle function.
+[3:18] We have attached this interrupt handling routine to the interrupt.
+[3:22] So, if there is an interrupt, this is called and inside the function we toggle the external
+[3:29] input.
+[3:31] Can you understand this algorithm?
+[3:37] Any question?
+[3:39] This algorithm is for using Arduino wrapper function.
+[3:46] Right. Then let's move into source code.
+[3:55] Using Arduino wrapper function.
+[3:57] Right. Set up loop.
+[4:01] First we declare the pins.
+[4:04] Pin number 8, LED pin 1.
+[4:06] Pin number 13, LED pin 2.
+[4:09] number 2 switch pin. Then we configure LED pin as output, LED pin 2 as output, switch pin as input
+[4:19] and also pull up. Thereafter we need to map IO pin to interrupt number. For that we use another
+[4:29] wrapper function digital pin to interrupt. This is the pin, digital pin that we use.
+[4:38] Now we need to map that to interrupt number. The digital pin number is pin number two,
+[4:44] or do you know pin number two? That is PD2, AVR terms PD2. That is in zero pin, right? Now,
+[4:59] Now this one pin number 2.
+[5:08] How do you know pin number 2?
+[5:15] AVR PD2 that is pin sorry, pin 0.
+[5:26] IN 0 P. Now we need to map this pin to, this value of this switch pin is 2. We need to map it to 0.
+[5:41] Why? IN 0 is the interrupt.
+[5:47] So Arduino pin number 2, AVR PD2, we need to map to in 0. That mapping we can do using digital pin to interrupt function. Can you understand?
+[6:04] switch pin means two that is Arduino pin number two in AVR terms it is PD2
+[6:16] but we need to use the interrupt number so we map the pin to correct interrupt number
+[6:22] to do that we use digital pin to interrupt wrapper function right now then we need to attach
+[6:32] For that we use another wrapper function called attach interrupt. Attach interrupt. Attach
+[6:43] the interrupt to this toggle function. Toggle is the interrupt handling routine, toggle
+[6:49] function. What is the interrupt that we attach? Int 0 interrupt. Int 0 interrupt. That is
+[6:57] interrupt number in zero. Interrupt attached to the toggle function on the falling edge,
+[7:05] on the falling edge. Another wrapper function. Then in the main loop, toggle on board LED
+[7:14] every two seconds. Can you understand this line? Line number 15, can you understand?
+[7:21] If not, let me know.
+[7:27] We read the state of LED pin 2, that is pin number 13.
+[7:32] We read the state of pin number 13 and the negation of that.
+[7:38] If the pin number 13 is low, negation of that is high.
+[7:44] Digital write, pin number 13 high.
+[7:47] The next time we read the state of pin number 13, that now it is high, negation of that low.
+[7:55] Digital right, pin number 13 low. We toggle the state of pin number 13 every two seconds.
+[8:03] That means onboard LED, we blink every two seconds. And we do this job again and again.
+[8:13] So, we keep doing this job. And we don't know when there will be an interrupt, but sometimes
+[8:24] we get an input. When we get an input, as a result we get an input. If there is an input,
+[8:31] if somebody presses the button, then there is an input, as a result there will be an
+[8:37] So, we need to handle the interrupt. Now, we have attached the interrupt in zero interrupt to the toggle function. On the falling edge, the interrupt happens. So, toggle function is the interrupt handling routine. Now, you have to handle it. This is the toggle function.
+[8:57] In the toggle function, we toggle the external LED. We toggle the external LED. The same way. We read the state of external LED which is connected to pin number 8. If it is high, negation of that low. Digital right, pin number 8, low.
+[9:20] The next time, we read the state of pin number 8, if it is high, if it is low, now it is
+[9:29] low, right?
+[9:33] The negation of that high, digital write, pin number 8 high, we toggle the.
+[9:41] Can you understand this?
+[9:43] This is how we use Arduino wrapper functions to handle external interrupts.
+[9:53] Now there are two external interrupt pins in zero pin and in one pin. So you can use those two pins
+[10:01] to handle external interrupts. Any question?
+[10:05] Sir, can you explain the 10th and 11th line? 10, 11, is it the numbers? 10 and 11. 10 and 11, yes.
+[10:23] Now, the switch pin variable, this is a variable and it's a constant, sorry, actually constant.
+[10:29] Switch pin is a constant. Its value is 2. 2 means Rdnopin number 2.
+[10:37] AVR terms PD2 again 2. But interrupt terms, it should be in 0. So how do we map pin number 2 to
+[10:48] in 0? This function. Digital pin to interrupt function maps the switch pin value, the IO pin
+[10:57] value to interrupt number. IOPin value to interrupt number is mapped by digital pin to interrupt
+[11:05] function. So you don't need to know about when if you are an Arduino user, you don't need to know
+[11:11] about the interrupt number. You only, you should know only the IOPin number. If you know the IOPin
+[11:19] number that will be mapped to the correct interrupt number by this function. Because
+[11:24] Arduino platform, we don't expect the users to know interrupts. The users are not the computer
+[11:33] science people in the Arduino platform. The platform developed not for the engineering or
+[11:39] computer science or IT students. It was developed for non-technical people. So, they don't know.
+[11:47] They shouldn't know about the interrupt number. Only thing they should know is the digital IOP
+[11:54] If you put the digital IOP number, the correct interrupt number this function will give.
+[12:01] And to that interrupt, you attach a function.
+[12:06] Because again, the users, they don't know about ISR, interrupt service routine.
+[12:12] They don't need to know ISR.
+[12:15] They don't need to know about the interrupt vector.
+[12:18] Those are technical things.
+[12:20] So, what we do is we simply attach the relevant interrupt to a function and that function
+[12:28] is called on the falling edge.
+[12:31] So, it could be rising edge.
+[12:36] It could be logic change.
+[12:38] So, possible value, there are possible values for this parameter.
+[12:44] that function is called when you press the button and this is executed. Inside the function we toggle
+[12:53] the LD. So you don't need to know about the registers, you don't need to know about the
+[13:00] interrupt vectors, you don't need to know about the ISR, you don't need to know about the interrupt
+[13:05] numbers? Nothing. So the possible values for this argument, falling, rising, change, low.
+[13:19] Low means you keep the pin, you keep the pin hold at logic low. Then change means logic change.
+[13:31] Falling, the pin going low. Rising, pin going high. Those are the possible values.
+[13:38] Low, change, falling and rising.
+[13:43] Actually, this function, toggle function, when you attach the toggle function to interrupt,
+[13:49] actually this function is called inside the ISR. But the Arduino users, they don't need to know
+[13:56] about the ISR. Behind the scene, inside this function,
+[14:01] attach interrupt function, the ISR, the relevant ISR
+[14:05] and the interrupt vector is used and inside that
+[14:08] this function is called. Inside the ISR this function is called.
+[14:13] So you can read the definition of these
+[14:16] wrapper functions. You can go to the
+[14:19] relevant folder and open the C
+[14:23] files and read the definitions.
+[14:25] Then you can understand how these things happen behind the C.
+[14:30] Any question?
+[14:32] Is that clear, Azul?
+[14:35] Anything else?
+[14:41] But when you are using C programming, you don't need to know about the registers.
+[14:45] You need to know about the ISR.
+[14:46] You need to know about the interrupt vectors and everything you should know.
+[14:49] But in Arduino platform, you don't need to know about these things.
+[14:53] Very easy.
+[14:56] Right.
+[14:57] Our next topic is pin change interrupts.

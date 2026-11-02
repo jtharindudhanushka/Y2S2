@@ -1,0 +1,119 @@
+[0:00] Set the clock source as FCPU divided by 64.
+[0:05] That is the free scale.
+[0:06] Set the clock source.
+[0:07] Set the timer to 15,536 initial value.
+[0:15] We calculated in the previous slide.
+[0:17] Endless loop.
+[0:19] Then monitor whether time overflows.
+[0:23] Tov flag.
+[0:24] Monitor the Tov flag.
+[0:25] If the bit is set, Tov bit is set.
+[0:28] Toggle the LED.
+[0:30] Reset the timer to original value.
+[0:33] That is 15,536.
+[0:37] Clear the TOV flag, repeat.
+[0:41] So you can blink the LED every 200 milliseconds.
+[0:45] Very accurately, very precise.
+[0:49] Your measurements, why?
+[0:50] Now time measurements is done by a timer, hardware timer, not a software based timer.
+[0:56] And also during that 200 milliseconds time, you can use CPU to do some other task.
+[1:03] Because now the CPU is not tied up with running a busy loop.
+[1:08] Can you understand the algorithm?
+[1:10] Any question?
+[1:11] No.
+[1:12] Right.
+[1:13] Source code.
+[1:14] Main function.
+[1:15] Configure PB5 as an output.
+[1:18] Can set the clock source using the timer counter control register B but timer 1.
+[1:25] This time timer 1.
+[1:26] 16 bit timer.
+[1:27] Set the clock source as FCPU divided by 64.
+[1:31] The clock select bits, these 3 bits
+[1:34] CS0, CS1, CS2
+[1:36] Using these 3 bits
+[1:38] Select the clock source as
+[1:40] FCPU
+[1:42] Divided by 64
+[1:43] This is the setting
+[1:46] We are going to use
+[1:47] So for that you need
+[1:49] 011
+[1:50] CS2 0, CS1 1
+[1:53] CS0 1
+[1:54] 011 clock select bit
+[1:57] Now the clock source is internal
+[1:59] Now timer
+[2:00] works as a timer.
+[2:04] It doesn't become a
+[2:06] counter because clock source
+[2:08] entered. Then initial value
+[2:10] earlier we calculated.
+[2:12] Set the TCT
+[2:13] timer counter register 1
+[2:15] because timer 1 to
+[2:17] 15,506. Endless loop.
+[2:21] Inside the loop we check
+[2:22] the TOV flag.
+[2:24] In the timer interrupt flag
+[2:26] register with 0 is the
+[2:28] TOV flag. We check that
+[2:30] flag. Whether the flag, the value is 1, that particular bit is 1. If it is 1, that means
+[2:37] an overflow, that means 200 milliseconds elapse. Chuggle the LED. Set the initial value to
+[2:46] the timer again. Reset the timer. Clear the DOV flag. To clear the DOV flag, you have
+[2:53] to set it. You have to set it. To clear the TOE flag, you have to set it. Very important.
+[3:00] Because the next time when time overflows, again the hardware sets TOE flag. To enable
+[3:07] hardware to set TOE flag, we need to clear it. Can you understand this also? Any question?
+[3:13] Sir, can you explain the part inside the if condition?
+[3:17] Right. Let's assume ti, you say ti fr1 and operator 00000001. Let's assume the value of ti fr, I might interrupt flag register is xxxxx.
+[3:40] [unclear — Sinhala / crosstalk]
+[3:57] operation bitwise and x and 0 one operand is 0 no matter the value of other operand if you take
+[4:06] end operation, outcome would be 0. X and 0.
+[4:11] One operand is 0. So no matter the value of other
+[4:14] operand, when you take end operation, outcome is 0.
+[4:18] Likewise, then the last bit. X and 1.
+[4:23] Now if X is 1, 1 and 1, outcome is
+[4:26] 1. If X is 0, 0 and 1
+[4:30] outcome is 0. So the outcome depends on
+[4:34] x because this operand is already 1. So the outcome of the end operation depends on x.
+[4:40] Now this is the if condition expression we evaluate. x means here x means tov1 flag
+[4:51] flag bit. This bit is set
+[4:54] when time overflows. That means
+[4:57] right when
+[5:00] timer 1 overflows
+[5:03] if condition is something like this. If
+[5:06] 00000001
+[5:11] that means condition true
+[5:13] if time overflows. When timer 1
+[5:17] does not overflow.
+[5:20] If condition is something like this.
+[5:22] If 1, 2,
+[5:24] 3, 4,
+[5:25] then if condition falls,
+[5:28] so this part is not executed.
+[5:30] This part is executed only when
+[5:32] time overflows.
+[5:34] While x becomes 1.
+[5:36] If x is 0,
+[5:37] this part is not executed.
+[5:39] Is that clear?
+[5:41] What else?
+[5:42] Any other question? Ask.
+[5:44] If you have any question, simply ask.
+[5:47] Don't worry. Even if it is a simple question, you may probably think that that's a stupid question.
+[5:54] Doesn't matter because you all are here to learn. So you can ask any question.
+[6:00] Right. In this system, we poll time overflow bit.
+[6:06] We check time overflow bit repeatedly to see whether timer is overflowing.
+[6:12] So that's not a good approach. Why we know that?
+[6:16] polling consumes CPU type that could have been used for some some other purpose and also right
+[6:25] so while you are polling certain things may go undetected so the best way is to handle this kind
+[6:33] of situation is using intervibs. So before we move into that let's try to write the same firmware
+[6:41] using labeled constants.
+[6:45] The same firmware using label constants
+[6:47] and with shift operators.
+[6:49] Now more understandable,
+[6:51] the code is more understandable.
+[6:53] And you don't need to write lengthy
+[6:55] binary strings.
+[6:57] Right.
+[6:57] The same system using interrupts
