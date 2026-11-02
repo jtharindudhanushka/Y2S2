@@ -45,6 +45,32 @@ p.print("Report.pdf");      // Output: Printing PDF : Report.pdf</pre></div>
 </div>
 <p class="small"><b>Flow:</b> client calls <code>print()</code> on Printer &rarr; goes to PrinterAdapter &rarr; adapter calls <code>ModernPrinter.printPDF()</code> &rarr; adaptee does the work. Without the adapter: compile error &ldquo;cannot find symbol printDocument()&rdquo;. Payment example: <code>StripeAdapter implements Payment { pay(amt) &rarr; stripe.makePayment(amt) }</code>. Java library adapters: <code>InputStreamReader</code> (InputStream&rarr;Reader), <code>Arrays.asList()</code> (array&rarr;List), <code>Collections.enumeration()</code>.</p>
 
+<h2>Object adapter vs class adapter vs two-way adapter</h2>
+<table>
+<tr><th style="width:14%"></th><th style="width:29%">Object adapter (default, used above)</th><th style="width:29%">Class adapter</th><th>Two-way adapter</th></tr>
+<tr><td><b>How</b></td><td><b>Composition</b>: implements Target, <b>holds</b> an Adaptee object</td><td><b>Inheritance</b>: implements Target <b>and extends</b> Adaptee</td><td>Implements <b>both</b> interfaces (old and new) and translates in both directions</td></tr>
+<tr><td><b>Java</b></td><td><code>class A implements Target { Adaptee x; }</code></td><td><code>class A extends Adaptee implements Target</code></td><td><code>class A implements OldIf, NewIf</code></td></tr>
+<tr><td><b>Pros</b></td><td>Works with the adaptee <b>and all its subclasses</b>; adaptee can be swapped at runtime; loose coupling (composition over inheritance)</td><td>No extra object / delegation call; can <b>override</b> adaptee behaviour</td><td>One object usable by <b>old and new clients</b> at the same time (gradual migration, system integration)</td></tr>
+<tr><td><b>Cons</b></td><td>One more object + delegation call</td><td>Java has single class inheritance, so it can&rsquo;t extend two classes; fails if adaptee is <code>final</code>; tied to one adaptee class (tight coupling)</td><td>More complex; must keep both translations correct; bigger class</td></tr>
+<tr><td><b>Use when</b></td><td>Almost always; <b>default exam answer</b></td><td>Target is an interface, adaptee not final, only that one class needs adapting</td><td>Both systems must keep calling each other during a migration (old app &harr; new printer / old bank API &harr; new loan module)</td></tr>
+</table>
+<div class="two">
+<div>{{uml:classadapter}}
+<pre>public class PrinterClassAdapter extends ModernPrinter implements Printer {
+    public void print(String text) { printPDF(text); }   // inherited method
+}
+Printer p = new PrinterClassAdapter();
+p.print("Report.pdf");</pre></div>
+<div>{{uml:twoway}}
+<pre>public interface PdfPrinter { void printPDF(String file); }
+public class TwoWayPrinterAdapter implements Printer, PdfPrinter {
+    private Printer oldP; private PdfPrinter newP;
+    public TwoWayPrinterAdapter(Printer o, PdfPrinter n) { oldP = o; newP = n; }
+    public void print(String text)    { newP.printPDF(text); }   // old client -&gt; new
+    public void printPDF(String file) { oldP.print(file); }      // new client -&gt; old
+}</pre></div>
+</div>
+
 <h2>Advantages / disadvantages / challenge &rarr; mechanism</h2>
 <table>
 <tr><th style="width:28%">Advantages</th><th style="width:27%">Disadvantages</th><th>Challenge &rarr; mechanism</th></tr>

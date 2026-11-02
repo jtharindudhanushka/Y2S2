@@ -49,4 +49,28 @@ def multi():
     return d.svg()
 
 
-U = {'generic': generic, 'printer': printer, 'scanner': scanner, 'parking': parking, 'multi': multi}
+
+def classadapter():
+    d = D(360)
+    t = d.cls('Printer', 10, 8, stereo='interface', attrs=None, ops=['+ print(text)'])
+    e = d.cls('ModernPrinter', 190, 8, attrs=None, ops=['+ printPDF(file)'])
+    a = d.cls('PrinterClassAdapter', 80, 105, attrs=None, ops=['+ print(text)'])
+    d.link([(a.x + 30, a.y), (a.x + 30, a.y - 25), (t.cx, a.y - 25), (t.cx, t.y + t.h)], 'realize')
+    d.link([(a.x + a.w - 30, a.y), (a.x + a.w - 30, a.y - 25), (e.cx, a.y - 25), (e.cx, e.y + e.h)], 'inherit')
+    d.text(10, 175, 'is-a Target AND is-a Adaptee (no field)', 9, italic=True)
+    return d.svg()
+
+
+def twoway():
+    d = D(380)
+    t = d.cls('Printer', 10, 8, stereo='interface', attrs=None, ops=['+ print(text)'])
+    e = d.cls('PdfPrinter', 200, 8, stereo='interface', attrs=None, ops=['+ printPDF(file)'])
+    a = d.cls('TwoWayPrinterAdapter', 70, 110, attrs=['- oldP : Printer', '- newP : PdfPrinter'],
+              ops=['+ print(text)', '+ printPDF(file)'])
+    d.link([(a.x + 30, a.y), (a.x + 30, a.y - 25), (t.cx, a.y - 25), (t.cx, t.y + t.h)], 'realize')
+    d.link([(a.x + a.w - 30, a.y), (a.x + a.w - 30, a.y - 25), (e.cx, a.y - 25), (e.cx, e.y + e.h)], 'realize')
+    d.text(10, 205, 'implements BOTH interfaces: old and new clients can use it', 9, italic=True)
+    return d.svg()
+
+
+U = {'classadapter': classadapter, 'twoway': twoway, 'generic': generic, 'printer': printer, 'scanner': scanner, 'parking': parking, 'multi': multi}
